@@ -29,6 +29,7 @@ describe('Proxy Hosts endpoints', () => {
 				block_exploits:          false,
 				caching_enabled:         false,
 				allow_websocket_upgrade: false,
+				enable_proxy_protocol:   false,
 				http2_support:           false,
 				hsts_enabled:            false,
 				hsts_subdomains:         false,
@@ -39,7 +40,8 @@ describe('Proxy Hosts endpoints', () => {
 			expect(data).to.have.property('id');
 			expect(data.id).to.be.greaterThan(0);
 			expect(data).to.have.property('enabled');
-			expect(data).to.have.property("enabled", true);
+			expect(data).to.have.property('enabled', true);
+			expect(data).to.have.property('enable_proxy_protocol', false);
 			expect(data).to.have.property('meta');
 			expect(typeof data.meta.nginx_online).to.be.equal('undefined');
 		});

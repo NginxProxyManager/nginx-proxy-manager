@@ -248,3 +248,16 @@ On startup, we generate a resolvers directive for Nginx unless this is defined:
 
 In this configuration, all DNS queries performed by Nginx will fall to the `/etc/hosts` file
 and then the `/etc/resolv.conf`.
+
+## Using PROXY protocol
+
+If you are using PROXY protocol support for any proxy host or stream you will need to expose ports `88` and `444` for HTTP and HTTPS listeners with PROXY protocol support.
+```yml
+    ports:
+      # Public HTTP Port with PROXY protocol:
+      - '88:88'
+      # Public HTTPS Port with PROXY protocol:
+      - '444:444'
+```
+
+NPM will still listen on ports `80` and `443` for proxy hosts and streams where the PROXY protocol option has not been enabled.
