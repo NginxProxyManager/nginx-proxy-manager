@@ -4,6 +4,7 @@ import langDe from "./lang/de.json";
 import langPt from "./lang/pt.json";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
+import langEt from "./lang/et.json";
 import langFr from "./lang/fr.json";
 import langGa from "./lang/ga.json";
 import langId from "./lang/id.json";
@@ -19,6 +20,7 @@ import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
 import langTr from "./lang/tr.json";
 import langHu from "./lang/hu.json";
+import langNo from "./lang/no.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
@@ -28,6 +30,7 @@ const localeOptions = [
   ["en", "en-US", langEn],
   ["de", "de-DE", langDe],
   ["es", "es-ES", langEs],
+  ["et", "et-EE", langEt],
   ["pt", "pt-PT", langPt],
   ["fr", "fr-FR", langFr],
   ["ga", "ga-IE", langGa],
@@ -45,6 +48,7 @@ const localeOptions = [
   ["id", "id-ID", langId],
   ["tr", "tr-TR", langTr],
   ["hu", "hu-HU", langHu],
+  ["no", "no-NO", langNo],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -68,6 +72,7 @@ const getFlagCodeForLocale = (locale?: string) => {
     vi: "vn", // Vietnam
     ko: "kr", // Korea
     cs: "cz", // Czechia
+    ga: "ie", // Ireland (Irish)
   };
 
   if (specialCases[thisLocale]) {

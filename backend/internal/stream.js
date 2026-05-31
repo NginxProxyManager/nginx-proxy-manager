@@ -178,7 +178,6 @@ const internalStream = {
 	 */
 	get: (access, data) => {
 		const thisData = data || {};
-
 		return access
 			.can("streams:get", thisData.id)
 			.then((access_data) => {
@@ -186,7 +185,7 @@ const internalStream = {
 					.query()
 					.where("is_deleted", 0)
 					.andWhere("id", thisData.id)
-					.allowGraph("[owner,certificate]")
+					.allowGraph(streamModel.defaultAllowGraph)
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
@@ -201,7 +200,7 @@ const internalStream = {
 			})
 			.then((row) => {
 				let thisRow = row;
-				if (!thisRow || !thisRow.id) {
+				if (!thisRow?.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
 				thisRow = internalHost.cleanRowCertificateMeta(thisRow);
@@ -227,7 +226,7 @@ const internalStream = {
 				return internalStream.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 
@@ -275,7 +274,7 @@ const internalStream = {
 				});
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (row.enabled) {
@@ -323,7 +322,7 @@ const internalStream = {
 				return internalStream.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (!row.enabled) {
@@ -375,7 +374,7 @@ const internalStream = {
 					.query()
 					.where("is_deleted", 0)
 					.groupBy("id")
-					.allowGraph("[owner,certificate]")
+					.allowGraph(streamModel.defaultAllowGraph)
 					.orderBy("incoming_port", "ASC");
 
 				if (access_data.permission_visibility !== "all") {

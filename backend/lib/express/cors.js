@@ -3,7 +3,7 @@ export default (req, res, next) => {
 		res.set({
 			"Access-Control-Allow-Origin": req.headers.origin,
 			"Access-Control-Allow-Credentials": true,
-			"Access-Control-Allow-Methods": "OPTIONS, GET, POST",
+			"Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE",
 			"Access-Control-Allow-Headers":
 				"Content-Type, Cache-Control, Pragma, Expires, Authorization, X-Dataset-Total, X-Dataset-Offset, X-Dataset-Limit",
 			"Access-Control-Max-Age": 5 * 60,

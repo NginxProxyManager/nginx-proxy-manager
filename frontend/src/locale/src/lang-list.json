@@ -5,7 +5,10 @@
   "locale-es-ES": {
     "defaultMessage": "Español"
   },
-  "locale-ie-GA": {
+  "locale-et-EE": {
+    "defaultMessage": "Eesti"
+  },
+  "locale-ga-IE": {
     "defaultMessage": "Gaeilge"
   },
   "locale-de-DE": {
@@ -58,5 +61,8 @@
   },
   "locale-hu-HU": {
     "defaultMessage": "Magyar"
+  },
+  "locale-no-NO": {
+    "defaultMessage": "Norsk"
   }
 }
