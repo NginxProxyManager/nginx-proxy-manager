@@ -1,3 +1,4 @@
+import { plugin as cypressGrepPlugin } from "@cypress/grep/plugin";
 import { SwaggerValidation } from "@jc21/cypress-swagger-validation";
 import chalk from "chalk";
 import backendTask from "./backendApi/task.mjs";
@@ -11,6 +12,8 @@ export default (on, config) => {
 		);
 	}
 
+	cypressGrepPlugin(config);
+
 	// Plugin Events
 	on("task", SwaggerValidation(config));
 	on("task", backendTask(config));
@@ -20,6 +23,11 @@ export default (on, config) => {
 				`${chalk.cyan.bold("[")}${chalk.blue.bold("LOG")}${chalk.cyan.bold("]")} ${chalk.red.bold(message)}`,
 			);
 			return null;
+		},
+	});
+	on("task", {
+		getFixturesFolder() {
+			return config.fixturesFolder;
 		},
 	});
 
