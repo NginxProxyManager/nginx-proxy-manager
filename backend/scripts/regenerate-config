@@ -1,0 +1,76 @@
+#!/usr/bin/env node
+
+import * as process from "node:process"; // Use the node: protocol for built-ins
+import internalNginx from "../internal/nginx.js";
+import { global as logger } from "../logger.js";
+import deadHostModel from "../models/dead_host.js";
+import proxyHostModel from "../models/proxy_host.js";
+import redirectionHostModel from "../models/redirection_host.js";
+import streamModel from "../models/stream.js";
+
+const args = process.argv.slice(2);
+const UNATTENDED = args.includes("-y") || args.includes("--yes");
+const DRY_RUN = args.includes("--dry-run");
+
+if (args.includes("--help") || args.includes("-h")) {
+	console.log("\nThis will iterate over all Hosts and regnerate their Nginx configs.\n")
+	console.log("Usage: ./regenerate-config [-h|--help] [-y|--yes] [--dry-run]\n");
+	process.exit(0);
+}
+
+// ask for the user to confirm the action if not in unattended mode
+if (!UNATTENDED && !DRY_RUN) {
+	const readline = await import("node:readline");
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout,
+	});
+
+	const question = (query) =>
+		new Promise((resolve) => rl.question(query, resolve));
+
+	const answer = await question(
+		"This will iterate over all Hosts and regnerate their Nginx configs.\n\nAre you sure you want to proceed? (y/N) ",
+	);
+	rl.close();
+
+	if (answer.toLowerCase() !== "y") {
+		console.log("Aborting.");
+		process.exit(0);
+	}
+}
+
+const logIt = (msg, type = "info") => logger[type](
+	`${DRY_RUN ? '[DRY RUN] ' : ''}${msg}`,
+);
+
+// Let's do it.
+
+const processItems = async (model, type) => {
+	const rows = await model
+		.query()
+		.where("is_deleted", 0)
+		.andWhere("enabled", 1)
+		.groupBy("id")
+		.allowGraph(model.defaultAllowGraph)
+		.withGraphFetched(`[${model.defaultExpand.join(", ")}]`)
+		.orderBy(...model.defaultOrder);
+
+	logIt(`[${type}] Found ${rows.length} rows to process...`);
+	for (const row of rows) {
+		if (!DRY_RUN) {
+			logIt(`[${type}] Regenerating config #${row.id}: ${row.domain_names ? row.domain_names.join(", ") : 'port ' + row.incoming_port}`);
+			await internalNginx.configure(proxyHostModel, "proxy_host", row);
+		} else {
+			logIt(`[${type}] Skipping generation of config #${row.id}: ${row.domain_names ? row.domain_names.join(", ") : 'port ' + row.incoming_port}`);
+		}
+	}
+};
+
+await processItems(proxyHostModel, "Proxy Host");
+await processItems(redirectionHostModel, "Redirection Host");
+await processItems(deadHostModel, "404 Host");
+await processItems(streamModel, "Stream");
+
+logIt("Completed", "success");
+process.exit(0);
