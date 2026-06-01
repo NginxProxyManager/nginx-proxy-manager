@@ -63,6 +63,25 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			}
 		}
 
+		// Each location has its own forward_scheme/host/port that the backend
+		// schema requires regardless of whether the location targets an upstream
+		// host. Fill placeholder values for upstream-mode locations so the
+		// schema validation passes; nginx ignores them when proxy_pass uses
+		// the upstream block instead of $forward_scheme://$server:$port.
+		if (Array.isArray(payload.locations)) {
+			payload.locations = payload.locations.map((loc: any) => {
+				if (loc?.upstreamHostId && loc.upstreamHostId > 0) {
+					return {
+						...loc,
+						forwardScheme: loc.forwardScheme || "http",
+						forwardHost: loc.forwardHost && loc.forwardHost.trim() !== "" ? loc.forwardHost : "127.0.0.1",
+						forwardPort: loc.forwardPort && loc.forwardPort >= 1 ? loc.forwardPort : 80,
+					};
+				}
+				return loc;
+			});
+		}
+
 		setProxyHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
 			onSuccess: () => {
