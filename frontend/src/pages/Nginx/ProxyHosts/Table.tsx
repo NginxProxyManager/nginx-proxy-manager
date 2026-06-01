@@ -66,27 +66,35 @@ function DestinationCell({ host }: { host: ProxyHost }) {
 		return <>{proxyLine}</>;
 	}
 
+	// With custom locations, every routing rule (including the proxy-level
+	// default) is shown as `<path> → <destination>` so the listing reads
+	// uniformly. The "/" line is suppressed when the user has defined an
+	// explicit "/" location override.
 	return (
-		<div>
-			{!rootIsCovered && <div>{proxyLine}</div>}
-			<div className="text-secondary small mt-1">
-				{allLocations.map((loc: ProxyLocation, i: number) => {
-					const upId = loc.upstreamHostId ?? 0;
-					return (
-						<div key={`${loc.path}-${i}`}>
-							<code>{loc.path}</code>
-							{" → "}
-							{upId > 0 ? (
-								renderUpstreamLink(upId)
-							) : (
-								<span>
-									{loc.forwardScheme}://{loc.forwardHost}:{loc.forwardPort}
-								</span>
-							)}
-						</div>
-					);
-				})}
-			</div>
+		<div className="text-secondary small">
+			{!rootIsCovered && (
+				<div>
+					<code>/</code>
+					{" → "}
+					{proxyLine}
+				</div>
+			)}
+			{allLocations.map((loc: ProxyLocation, i: number) => {
+				const upId = loc.upstreamHostId ?? 0;
+				return (
+					<div key={`${loc.path}-${i}`}>
+						<code>{loc.path}</code>
+						{" → "}
+						{upId > 0 ? (
+							renderUpstreamLink(upId)
+						) : (
+							<span>
+								{loc.forwardScheme}://{loc.forwardHost}:{loc.forwardPort}
+							</span>
+						)}
+					</div>
+				);
+			})}
 		</div>
 	);
 }
