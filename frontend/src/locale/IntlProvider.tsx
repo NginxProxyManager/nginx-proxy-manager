@@ -81,9 +81,17 @@ const loadMessages = (locale?: string): typeof langList & LocaleMessages => {
 
 const getFlagCodeForLocale = (locale?: string) => {
   const normalizedLocale = normalizeLocale(locale);
-  const [, region] = normalizedLocale.split("-");
-  if (region) {
-    return region.toUpperCase();
+
+  // Locales where the flag should follow the region rather than the language,
+  // because the locale code itself carries the region (e.g. pt-BR → Brazil
+  // rather than Portugal). Keep this list small and explicit; ad-hoc inputs
+  // like "en-US" still fall through to the language-based path below so a
+  // user with `en-US` still gets the EN flag, not US.
+  const localeFullCases: Record<string, string> = {
+    "pt-br": "br",
+  };
+  if (localeFullCases[normalizedLocale]) {
+    return localeFullCases[normalizedLocale].toUpperCase();
   }
 
   const thisLocale = normalizedLocale.slice(0, 2);
