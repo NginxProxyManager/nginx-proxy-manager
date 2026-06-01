@@ -1,4 +1,4 @@
-FROM cypress/included:15.11.0
+FROM cypress/included:15.15.0
 
 # Disable Cypress CLI colors
 ENV FORCE_COLOR=0

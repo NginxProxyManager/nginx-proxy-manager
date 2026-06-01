@@ -15,7 +15,7 @@
 		"defaultMessage": "La désactivation de l'authentification à deux facteurs rendra votre compte moins sécurisé."
 	},
 	"2fa.disabled": {
-		"defaultMessage": "Désactivé"
+		"defaultMessage": "Désactivée"
 	},
 	"2fa.done": {
 		"defaultMessage": "J'ai sauvegardé mes codes de secours"
@@ -24,7 +24,7 @@
 		"defaultMessage": "Activer l'authentification à deux facteurs"
 	},
 	"2fa.enabled": {
-		"defaultMessage": "Activé"
+		"defaultMessage": "Activée"
 	},
 	"2fa.enter-code": {
 		"defaultMessage": "Entrez le code de vérification"
@@ -45,7 +45,7 @@
 		"defaultMessage": "Clé secrète"
 	},
 	"2fa.setup-instructions": {
-		"defaultMessage": "Scannez ce code QR avec votre application d'authentification ou entrez le secret manuellement."
+		"defaultMessage": "Scannez ce QR code avec votre application d'authentification, ou entrez la clé secrète manuellement."
 	},
 	"2fa.status": {
 		"defaultMessage": "Statut"
@@ -81,7 +81,7 @@
 		"defaultMessage": "Aucune authentification de base requise"
 	},
 	"access-list.rule-source.placeholder": {
-		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+		"defaultMessage": "192.168.1.100 ou 192.168.1.0/24 ou 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Valide n'importe quelle règle"
@@ -135,7 +135,7 @@
 		"defaultMessage": "Journaux d'audit"
 	},
 	"auto": {
-		"defaultMessage": "Automatique"
+		"defaultMessage": "Auto"
 	},
 	"cancel": {
 		"defaultMessage": "Annuler"
@@ -228,10 +228,10 @@
 		"defaultMessage": "Ces domaines doivent déjà être configurés pour pointer vers cette installation."
 	},
 	"certificates.key-type": {
-		"defaultMessage": "Key Type"
+		"defaultMessage": "Type de clé"
 	},
 	"certificates.key-type-description": {
-		"defaultMessage": "RSA is widely compatible, ECDSA is faster and more secure but may not be supported by older systems"
+		"defaultMessage": "RSA est largement répandu, ECDSA est plus rapide et plus sécurisé, mais peut ne pas être supporté par les systèmes plus anciens"
 	},
 	"certificates.key-type-ecdsa": {
 		"defaultMessage": "ECDSA 256"
@@ -264,7 +264,7 @@
 		"defaultMessage": "Détails"
 	},
 	"column.email": {
-		"defaultMessage": "eMail"
+		"defaultMessage": "e-mail"
 	},
 	"column.event": {
 		"defaultMessage": "Évènement"
@@ -369,7 +369,7 @@
 		"defaultMessage": "Utiliser le challenge DNS"
 	},
 	"email-address": {
-		"defaultMessage": "Adresse eMail"
+		"defaultMessage": "Adresse e-mail"
 	},
 	"empty-search": {
 		"defaultMessage": "Aucun résultat trouvé"
@@ -387,13 +387,13 @@
 		"defaultMessage": "Les noms d'utilisateurs autorisés doivent être uniques"
 	},
 	"error.invalid-auth": {
-		"defaultMessage": "Adresse eMail ou mot de passe invalide"
+		"defaultMessage": "Adresse e-mail ou mot de passe invalide"
 	},
 	"error.invalid-domain": {
 		"defaultMessage": "Domaine invalide : {domain}"
 	},
 	"error.invalid-email": {
-		"defaultMessage": "Adresse eMail invalide"
+		"defaultMessage": "Adresse e-mail invalide"
 	},
 	"error.max-character-length": {
 		"defaultMessage": "La longueur maximale est {max} caractère{max, plural, one {} other {s}}"
@@ -458,18 +458,6 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
-	"load-balancing.add-server": {
-		"defaultMessage": "Ajouter un serveur"
-	},
-	"load-balancing.host": {
-		"defaultMessage": "H?te"
-	},
-	"load-balancing.port": {
-		"defaultMessage": "Port"
-	},
-	"load-balancing.weight": {
-		"defaultMessage": "Poids"
-	},
 	"loading": {
 		"defaultMessage": "Chargement…"
 	},
@@ -480,7 +468,7 @@
 		"defaultMessage": "Entrez le code"
 	},
 	"login.2fa-description": {
-		"defaultMessage": "Entrez le code de votre application d'authentification"
+		"defaultMessage": "Entrez le code depuis votre application d'authentification"
 	},
 	"login.2fa-title": {
 		"defaultMessage": "Authentification à deux facteurs"
@@ -611,21 +599,6 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Nom d'hôte de redirection / IP"
 	},
-	"proxy-host.forward-target-type": {
-		"defaultMessage": "Type de destination"
-	},
-	"proxy-host.forward-target-type.direct": {
-		"defaultMessage": "Direct"
-	},
-	"proxy-host.forward-target-type.direct.description": {
-		"defaultMessage": "Transférer vers un seul hôte et port"
-	},
-	"proxy-host.forward-target-type.upstream": {
-		"defaultMessage": "Hôte upstream"
-	},
-	"proxy-host.forward-target-type.upstream.description": {
-		"defaultMessage": "Utiliser un hôte upstream pour la répartition de charge sur plusieurs serveurs"
-	},
 	"proxy-hosts": {
 		"defaultMessage": "Hôtes proxy"
 	},
@@ -654,7 +627,7 @@
 		"defaultMessage": "300 Choix multiples"
 	},
 	"redirection-hosts.http-code.301": {
-		"defaultMessage": "301 Déplacé de façon permanente"
+		"defaultMessage": "301 Déplacé définitivement"
 	},
 	"redirection-hosts.http-code.302": {
 		"defaultMessage": "302 Déplacé temporairement"
@@ -707,36 +680,6 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Redirection"
 	},
-	"settings.real-ip-header": {
-		"defaultMessage": "En-tête IP réelle"
-	},
-	"settings.real-ip-header.cf-connecting-ip": {
-		"defaultMessage": "CF-Connecting-IP"
-	},
-	"settings.real-ip-header.cf-connecting-ip.description": {
-		"defaultMessage": "Utiliser derrière Cloudflare"
-	},
-	"settings.real-ip-header.custom": {
-		"defaultMessage": "Personnalisé"
-	},
-	"settings.real-ip-header.custom.placeholder": {
-		"defaultMessage": "Entrez le nom de l'en-tête personnalisé"
-	},
-	"settings.real-ip-header.description": {
-		"defaultMessage": "En-tête HTTP utilisé pour déterminer l'adresse IP réelle du client"
-	},
-	"settings.real-ip-header.x-forwarded-for": {
-		"defaultMessage": "X-Forwarded-For"
-	},
-	"settings.real-ip-header.x-forwarded-for.description": {
-		"defaultMessage": "En-tête alternatif courant"
-	},
-	"settings.real-ip-header.x-real-ip": {
-		"defaultMessage": "X-Real-IP"
-	},
-	"settings.real-ip-header.x-real-ip.description": {
-		"defaultMessage": "En-tête standard, fonctionne avec la plupart des proxys inverses"
-	},
 	"setup.preamble": {
 		"defaultMessage": "Commencez par créer votre compte administrateur."
 	},
@@ -756,7 +699,7 @@
 		"defaultMessage": "Hôte destinataire"
 	},
 	"stream.forward-host.placeholder": {
-		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
+		"defaultMessage": "example.com ou 10.0.0.1 ou 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Port d'entrée"
@@ -777,31 +720,7 @@
 		"defaultMessage": "Test"
 	},
 	"update-available": {
-		"defaultMessage": "Mise à jour disponible : {latestVersion}"
-	},
-	"upstream-host": {
-		"defaultMessage": "Hôte upstream"
-	},
-	"upstream-host.help": {
-		"defaultMessage": "Sélectionnez un hôte upstream au lieu du transfert direct."
-	},
-	"upstream-host.method": {
-		"defaultMessage": "Méthode"
-	},
-	"upstream-host.none": {
-		"defaultMessage": "Aucun (Direct)"
-	},
-	"upstream-host.none.subtitle": {
-		"defaultMessage": "Aucun hôte upstream sélectionné"
-	},
-	"upstream-host.servers": {
-		"defaultMessage": "Serveurs"
-	},
-	"upstream-hosts": {
-		"defaultMessage": "Hôtes upstream"
-	},
-	"upstream-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Hôte upstream} other {Hôtes upstream}}"
+		"defaultMessage": "Mise à jour disponible : {latestVersion}"
 	},
 	"user": {
 		"defaultMessage": "Utilisateur"
@@ -846,7 +765,7 @@
 		"defaultMessage": "Passer au mode Lumineux"
 	},
 	"user.two-factor": {
-		"defaultMessage": "Auth. deux facteurs"
+		"defaultMessage": "Auth. à deux facteurs"
 	},
 	"username": {
 		"defaultMessage": "Nom d'utilisateur"

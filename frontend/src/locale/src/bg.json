@@ -459,16 +459,16 @@
 		"defaultMessage": "Let's Encrypt чрез HTTP"
 	},
 	"load-balancing.add-server": {
-		"defaultMessage": "???????? ?? ??????"
+		"defaultMessage": "Добавяне на сървър"
 	},
 	"load-balancing.host": {
-		"defaultMessage": "????"
+		"defaultMessage": "Хост"
 	},
 	"load-balancing.port": {
-		"defaultMessage": "????"
+		"defaultMessage": "Порт"
 	},
 	"load-balancing.weight": {
-		"defaultMessage": "?????"
+		"defaultMessage": "Тегло"
 	},
 	"loading": {
 		"defaultMessage": "Зареждане…"

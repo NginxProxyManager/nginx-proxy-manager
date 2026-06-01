@@ -9,10 +9,12 @@
 const allLocales = [
   ["en", "en-US"],
   ["de", "de-DE"],
+  ["pt_br", "pt-BR"],
   ["pt", "pt-PT"],
   ["es", "es-ES"],
   ["et", "et-EE"],
   ["fr", "fr-FR"],
+  ["ga", "ga-IE"],
   ["it", "it-IT"],
   ["ja", "ja-JP"],
   ["nl", "nl-NL"],

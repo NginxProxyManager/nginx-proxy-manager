@@ -1,86 +1,56 @@
 import { IconX } from "@tabler/icons-react";
 import { useFormikContext } from "formik";
-import { useState } from "react";
 import type { LoadBalancingServer } from "src/api/backend";
 import { T } from "src/locale";
 
 interface Props {
-	initialValues: LoadBalancingServer[];
 	name?: string;
 }
 
-export function LoadBalancingFields({ initialValues, name = "loadBalancingServers" }: Props) {
-	const [values, setValues] = useState<LoadBalancingServer[]>(initialValues || []);
-	const { setFieldValue } = useFormikContext();
+const blankItem: LoadBalancingServer = {
+	host: "",
+	port: 80,
+};
 
-	const blankItem: LoadBalancingServer = {
-		host: "",
-		port: 80,
-	};
+// Formik is the single source of truth: the parent owns `values[name]` and we
+// mutate it directly. When the bound array is empty we render one synthetic
+// blank row so the user has something to fill in; the moment they type, the
+// row is promoted into the real array.
+export function LoadBalancingFields({ name = "loadBalancingServers" }: Props) {
+	const { values: formValues, setFieldValue } = useFormikContext<any>();
+	const stored: LoadBalancingServer[] = (formValues?.[name] as LoadBalancingServer[]) || [];
+	const display = stored.length ? stored : [blankItem];
 
-	if (values.length === 0) {
-		setValues([blankItem]);
-	}
+	const write = (next: LoadBalancingServer[]) => setFieldValue(name, next);
 
-	const setFormField = (newValues: LoadBalancingServer[]) => {
-		const filtered = newValues
-			.map((item) => {
-				const host = typeof item.host === "string" ? item.host.trim() : "";
-				const port = Number.parseInt(String(item.port || ""), 10);
-				const weight = Number.parseInt(String(item.weight || ""), 10);
-				const normalized: LoadBalancingServer = {
-					host,
-					port: Number.isFinite(port) ? port : 0,
-				};
-
-				if (Number.isFinite(weight) && weight > 0) {
-					normalized.weight = weight;
-				}
-
-				return normalized;
-			})
-			.filter((item) => item.host !== "" && item.port > 0);
-
-		setFieldValue(name, filtered);
-	};
-
-	const handleAdd = () => {
-		setValues([...values, blankItem]);
-	};
+	// "Add" appends to what's visible, not just what's stored, so clicking Add on
+	// an empty form promotes the synthetic row AND adds a second one — matching
+	// the user's mental model of "Add another".
+	const handleAdd = () => write([...display, blankItem]);
 
 	const handleRemove = (idx: number) => {
-		const newValues = values.filter((_: LoadBalancingServer, i: number) => i !== idx);
-		if (newValues.length === 0) {
-			newValues.push(blankItem);
-		}
-		setValues(newValues);
-		setFormField(newValues);
+		// If the user removes the synthetic row, stored is still []; nothing to do.
+		if (!stored.length) return;
+		write(stored.filter((_: LoadBalancingServer, i: number) => i !== idx));
 	};
 
-	const handleChange = (idx: number, field: string, fieldValue: string) => {
-		const newValues = values.map((value: LoadBalancingServer, i: number) => {
-			if (i !== idx) {
-				return value;
-			}
-
+	const handleChange = (idx: number, field: "host" | "port" | "weight", fieldValue: string) => {
+		// Editing the synthetic blank row promotes it into stored.
+		const base = stored.length ? stored : [blankItem];
+		const next = base.map((value: LoadBalancingServer, i: number) => {
+			if (i !== idx) return value;
 			if (field === "port" || field === "weight") {
 				const parsed = Number.parseInt(fieldValue, 10);
-				return {
-					...value,
-					[field]: Number.isFinite(parsed) ? parsed : 0,
-				};
+				return { ...value, [field]: Number.isFinite(parsed) ? parsed : 0 };
 			}
-
 			return { ...value, [field]: fieldValue };
 		});
-
-		setValues(newValues);
-		setFormField(newValues);
+		write(next);
 	};
 
 	return (
 		<>
-			{values.map((item: LoadBalancingServer, idx: number) => (
+			{display.map((item: LoadBalancingServer, idx: number) => (
 				<div key={idx} className="row mb-2 align-items-end">
 					<div className="col-md-5">
 						<div className="mb-2">

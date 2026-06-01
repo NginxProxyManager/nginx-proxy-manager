@@ -1,7 +1,13 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useMemo } from "react";
-import type { ProxyHost } from "src/api/backend";
+import {
+	createColumnHelper,
+	getCoreRowModel,
+	getSortedRowModel,
+	type SortingState,
+	useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
+import type { ProxyHost, ProxyLocation } from "src/api/backend";
 import {
 	AccessListFormatter,
 	CertificateFormatter,
@@ -12,9 +18,84 @@ import {
 	TrueFalseFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
+import { useUpstreamHosts } from "src/hooks";
 import { intl, T } from "src/locale";
 import { showUpstreamHostModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
+
+// DestinationCell renders the "Destination" column. A proxy host can route
+// through an upstream at two levels: proxy-level (the whole host forwards via
+// upstream_host_id), or per-location (each /path entry can carry its own
+// upstream_host_id). The previous implementation only honored the proxy-level
+// case, which made any host using location-based upstream routing look like a
+// plain forward (`http://host:port`) — its upstream usage was invisible from
+// the list view.
+function DestinationCell({ host }: { host: ProxyHost }) {
+	const { data: upstreams } = useUpstreamHosts();
+
+	// Proxy-level upstream — preserve original behavior.
+	const proxyUpstreamId = host.upstreamHostId ?? 0;
+	if (proxyUpstreamId > 0 && host.upstreamHost) {
+		return (
+			<button
+				type="button"
+				className="btn btn-action btn-sm px-1"
+				onClick={(e) => {
+					e.preventDefault();
+					showUpstreamHostModal(proxyUpstreamId);
+				}}
+			>
+				{host.upstreamHost.name}
+			</button>
+		);
+	}
+
+	const forwardLine = `${host.forwardScheme}://${host.forwardHost}:${host.forwardPort}`;
+	const locationUpstreams = (host.locations || []).filter(
+		(l: ProxyLocation) => l.upstreamHostId && l.upstreamHostId > 0,
+	);
+
+	if (locationUpstreams.length === 0) {
+		return forwardLine;
+	}
+
+	// If `/` is itself routed via an upstream, every request matches a location
+	// override and the proxy-level forward is unreachable — showing it just
+	// confuses operators. Suppress it in that case.
+	const rootIsCovered = locationUpstreams.some((l) => l.path === "/");
+
+	return (
+		<div>
+			{!rootIsCovered && <div>{forwardLine}</div>}
+			<div className="text-secondary small mt-1">
+				{locationUpstreams.map((loc, i) => {
+					const up = upstreams?.find((u) => u.id === loc.upstreamHostId);
+					const upId = up?.id ?? 0;
+					return (
+						<div key={`${loc.path}-${i}`}>
+							<code>{loc.path}</code>
+							{" → "}
+							{up && upId > 0 ? (
+								<button
+									type="button"
+									className="btn btn-link btn-sm p-0 align-baseline"
+									onClick={(e) => {
+										e.preventDefault();
+										showUpstreamHostModal(upId);
+									}}
+								>
+									{up.name}
+								</button>
+							) : (
+								<span>upstream #{loc.upstreamHostId}</span>
+							)}
+						</div>
+					);
+				})}
+			</div>
+		</div>
+	);
+}
 
 interface Props {
 	data: ProxyHost[];
@@ -31,6 +112,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
+				enableSorting: false,
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
@@ -42,6 +124,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row, {
 				id: "domainNames",
 				header: intl.formatMessage({ id: "column.source" }),
+				sortingFn: (a, b) => {
+					const aVal = a.original.domainNames?.[0] ?? "";
+					const bVal = b.original.domainNames?.[0] ?? "";
+					return aVal.localeCompare(bVal);
+				},
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
@@ -50,27 +137,16 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row, {
 				id: "forwardHost",
 				header: intl.formatMessage({ id: "column.destination" }),
-				cell: (info: any) => {
-					const value = info.getValue();
-					if (value.upstreamHostId > 0 && value.upstreamHost) {
-						return (
-							<button
-								type="button"
-								className="btn btn-action btn-sm px-1"
-								onClick={(e) => {
-									e.preventDefault();
-									showUpstreamHostModal(value.upstreamHostId);
-								}}
-							>
-								{value.upstreamHost.name}
-							</button>
-						);
-					}
-					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
+				sortingFn: (a, b) => {
+					const aVal = `${a.original.forwardHost}:${a.original.forwardPort}`;
+					const bVal = `${b.original.forwardHost}:${b.original.forwardPort}`;
+					return aVal.localeCompare(bVal);
 				},
+				cell: (info: any) => <DestinationCell host={info.getValue()} />,
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {
 				id: "certificate",
+				enableSorting: false,
 				header: intl.formatMessage({ id: "column.ssl" }),
 				cell: (info: any) => {
 					return <CertificateFormatter certificate={info.getValue()} />;
@@ -78,6 +154,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			}),
 			columnHelper.accessor((row: any) => row.accessList, {
 				id: "accessList",
+				enableSorting: false,
 				header: intl.formatMessage({ id: "column.access" }),
 				cell: (info: any) => {
 					return <AccessListFormatter access={info.getValue()} />;
@@ -159,10 +236,15 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 		[columnHelper, onEdit, onDisableToggle, onDelete],
 	);
 
+	const [sorting, setSorting] = useState<SortingState>([]);
+
 	const tableInstance = useReactTable<ProxyHost>({
 		columns,
 		data,
+		state: { sorting },
+		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
+		getSortedRowModel: getSortedRowModel(),
 		rowCount: data.length,
 		meta: {
 			isFetching,

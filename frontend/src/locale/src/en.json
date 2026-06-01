@@ -626,6 +626,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Forward Hostname / IP"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Forward Target Type"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Direct"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Forward to a single host and port"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Upstream Host"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Use an upstream host for load balancing across multiple servers"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy Hosts"
 	},
@@ -737,6 +752,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Redirect"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Real IP Header"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Use when behind Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Custom"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Enter custom header name"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "HTTP header used to determine the real client IP address"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Common alternative header"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Standard header, works with most reverse proxies"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Get started by creating your admin account."
 	},
@@ -802,6 +847,33 @@
 	},
 	"update-available": {
 		"defaultMessage": "Update Available: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Upstream Host"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Optionally select a global upstream host to use instead of the direct forward or inline load balancing."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Method"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "None (Direct)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "No upstream host selected"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Servers"
+	},
+	"upstream-host.servers-required": {
+		"defaultMessage": "At least one upstream server is required"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Upstream Hosts"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Upstream Host} other {Upstream Hosts}}"
 	},
 	"user": {
 		"defaultMessage": "User"

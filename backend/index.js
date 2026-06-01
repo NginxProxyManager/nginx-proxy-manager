@@ -3,6 +3,7 @@
 import app from "./app.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
+import internalNginx from "./internal/nginx.js";
 import { global as logger } from "./logger.js";
 import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
@@ -17,7 +18,20 @@ async function appStart() {
 		.then(() => {
 			if (!IP_RANGES_FETCH_ENABLED) {
 				logger.info("IP Ranges fetch is disabled by environment variable");
-				return;
+				// nginx.conf no longer hardcodes real_ip_header — it expects ip_ranges.conf
+				// to set it. When fetching is disabled, that file is never written by
+				// fetch(), so render it once with empty ranges so real_ip_header is still
+				// present and respects the configured setting.
+				return internalIpRanges
+					.generateConfig([])
+					.then(() =>
+						internalNginx.reload().catch((err) => {
+							logger.warn(`nginx reload after ip_ranges init failed (likely starting): ${err.message}`);
+						}),
+					)
+					.catch((err) => {
+						logger.error(`Failed to write initial ip_ranges.conf: ${err.message}`);
+					});
 			}
 			logger.info("IP Ranges fetch is enabled");
 			return internalIpRanges.fetch().catch((err) => {
@@ -26,7 +40,9 @@ async function appStart() {
 		})
 		.then(() => {
 			internalCertificate.initTimer();
-			internalIpRanges.initTimer();
+			if (IP_RANGES_FETCH_ENABLED) {
+				internalIpRanges.initTimer();
+			}
 
 			const server = app.listen(3000, () => {
 				logger.info(`Backend PID ${process.pid} listening on port 3000 ...`);

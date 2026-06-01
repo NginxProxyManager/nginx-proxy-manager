@@ -177,20 +177,11 @@ const setupNginxConfigs = async () => {
 		{ model: streamModel, type: "stream" },
 	];
 
-	// Delete all existing host config files so stale configs don't
-	// block nginx from starting (e.g. after a template change)
-	for (const { type } of hostTypes) {
-		const dir = `/data/nginx/${type}`;
-		if (fs.existsSync(dir)) {
-			for (const file of fs.readdirSync(dir)) {
-				if (file.endsWith(".conf") || file.endsWith(".conf.err")) {
-					fs.unlinkSync(`${dir}/${file}`);
-				}
-			}
-		}
-	}
-
-	// Regenerate configs for all enabled hosts
+	// Regenerate configs in place (each generateConfig overwrites the existing
+	// .conf for that host id). We deliberately do NOT pre-delete the whole
+	// directory: if a regenerate fails (template error, transient DB error),
+	// the previous good config stays in place and nginx keeps serving that
+	// host instead of going dark on restart.
 	for (const { model, type, noEnabledFilter } of hostTypes) {
 		const query = model
 			.query()
@@ -209,6 +200,31 @@ const setupNginxConfigs = async () => {
 				await internalNginx.generateConfig(type, row);
 			} catch (err) {
 				logger.warn(`Failed to generate ${type} config #${row.id}: ${err.message}`);
+			}
+		}
+
+		// Orphan determination uses ALL non-deleted hosts of this type — including
+		// disabled ones. The disable endpoint already removes the .conf on its own,
+		// so disabled hosts normally have no file on disk. But if one *does* exist
+		// (e.g. an older build, or manual recovery), leave it alone — it's not an
+		// orphan. Only truly DB-gone hosts and stale .err markers get cleaned up.
+		const knownIds = new Set(
+			(
+				await model
+					.query()
+					.select("id")
+					.where("is_deleted", 0)
+			).map((r) => `${r.id}`),
+		);
+		const dir = `/data/nginx/${type}`;
+		if (fs.existsSync(dir)) {
+			for (const file of fs.readdirSync(dir)) {
+				const match = file.match(/^(\d+)\.conf(\.err)?$/);
+				if (!match) continue;
+				const isErrMarker = match[2] === ".err";
+				if (isErrMarker || !knownIds.has(match[1])) {
+					fs.unlinkSync(`${dir}/${file}`);
+				}
 			}
 		}
 

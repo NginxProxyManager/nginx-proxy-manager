@@ -88,7 +88,13 @@ const internalUser = {
 		}
 
 		return access
-			.can("users:update", data.id)
+			.can("users:permissions", data.id)
+			.catch(() => {
+				delete data.roles;
+			})
+			.then(() => {
+				return access.can("users:update", data.id);
+			})
 			.then(() => {
 				// Make sure that the user being updated doesn't change their email to another user that is already using it
 				// 1. get user we want to update
@@ -172,7 +178,7 @@ const internalUser = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
 				// Custom omissions

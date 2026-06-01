@@ -112,10 +112,19 @@ const internalIpRanges = {
 					internalIpRanges.last_ip_ranges = clean_ip_ranges;
 
 					return internalIpRanges.generateConfig(clean_ip_ranges).then(() => {
-						if (internalIpRanges.iteration_count) {
-							// Reload nginx
-							return internalNginx.reload();
-						}
+						// Always reload nginx after writing the config — even on the very first
+						// iteration. nginx and backend boot in parallel under s6, so by the time
+						// we finish fetching IP ranges nginx has typically already loaded its
+						// config without ip_ranges.conf (it's an optional include) and is running
+						// without `real_ip_header` set. Skipping the reload meant the configured
+						// real-ip header (e.g. cf-connecting-ip) wasn't honored until the user
+						// manually re-saved the setting.
+						//
+						// If nginx isn't up yet, the reload will fail; we log and continue so the
+						// boot sequence isn't broken — nginx will read the file when it starts.
+						return internalNginx.reload().catch((err) => {
+							logger.warn(`nginx reload after ip_ranges write failed (likely starting): ${err.message}`);
+						});
 					});
 				})
 				.then(() => {
@@ -138,11 +147,20 @@ const internalIpRanges = {
 		try {
 			const setting = await settingModel.query().where("id", "real-ip-header").first();
 			if (setting?.value) {
-				realIpHeader = setting.value === "custom" && setting.meta?.custom
+				const candidate = setting.value === "custom" && setting.meta?.custom
 					? setting.meta.custom
 					: setting.value;
+				// Defense-in-depth: even though the PUT schema validates this, the value lands
+				// in a raw nginx directive, so reject anything that isn't a plain header name.
+				if (/^[A-Za-z][A-Za-z0-9-]{0,127}$/.test(candidate)) {
+					realIpHeader = candidate;
+				} else {
+					logger.warn(`Ignoring invalid real-ip-header setting "${candidate}" — falling back to X-Real-IP`);
+				}
 			}
-		} catch (_) {}
+		} catch (err) {
+			logger.warn(`Could not read real-ip-header setting: ${err.message} — falling back to X-Real-IP`);
+		}
 
 		const renderEngine = utils.getRenderEngine();
 		return new Promise((resolve, reject) => {

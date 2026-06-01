@@ -133,14 +133,16 @@ const internalUpstreamHost = {
 			expand: ["owner", "servers", "proxy_hosts.[certificate,access_list.[clients,items],upstream_host.[servers]]"],
 		});
 
-		// Regenerate upstream config
+		// Regenerate upstream config (configure() already tests + reloads nginx).
 		await internalNginx.configure(upstreamHostModel, "upstream_host", freshRow);
 
-		// Bulk regenerate all referencing proxy host configs
+		// Bulk regenerate referencing proxy host configs only when there are any.
+		// bulkGenerateConfigs() doesn't reload on its own, so trigger one extra
+		// reload here; if there are no dependents, configure() already reloaded.
 		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
 			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
+			await internalNginx.reload();
 		}
-		await internalNginx.reload();
 
 		return freshRow;
 	},

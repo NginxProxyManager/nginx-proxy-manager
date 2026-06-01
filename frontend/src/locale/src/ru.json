@@ -1,51 +1,51 @@
 {
 	"2fa.backup-codes-remaining": {
-		"defaultMessage": "Оставшиеся резервные коды: {count}"
+		"defaultMessage": "Осталось резервных кодов: {count}"
 	},
 	"2fa.backup-warning": {
-		"defaultMessage": "Сохраните эти резервные коды в надёжном месте. Каждый код можно использовать только один раз."
+		"defaultMessage": "Сохраните коды в надежном месте. Они одноразовые."
 	},
 	"2fa.disable": {
-		"defaultMessage": "Отключить двухфакторную аутентификацию"
+		"defaultMessage": "Выключить двухфакторную аутентификацию"
 	},
 	"2fa.disable-confirm": {
-		"defaultMessage": "Отключить 2FA"
+		"defaultMessage": "Выключить 2FA"
 	},
 	"2fa.disable-warning": {
-		"defaultMessage": "Отключение двухфакторной аутентификации сделает вашу учётную запись менее защищённой."
+		"defaultMessage": "Выключение двухфакторной аутентификации снизит защиту вашего аккаунта."
 	},
 	"2fa.disabled": {
-		"defaultMessage": "Отключено"
+		"defaultMessage": "Выключена"
 	},
 	"2fa.done": {
-		"defaultMessage": "Я сохранил свои резервные коды"
+		"defaultMessage": "Я сохранил резервные коды"
 	},
 	"2fa.enable": {
 		"defaultMessage": "Включить двухфакторную аутентификацию"
 	},
 	"2fa.enabled": {
-		"defaultMessage": "Включено"
+		"defaultMessage": "Включена"
 	},
 	"2fa.enter-code": {
-		"defaultMessage": "Введите код подтверждения"
+		"defaultMessage": "Введите код проверки"
 	},
 	"2fa.enter-code-disable": {
-		"defaultMessage": "Введите код подтверждения для отключения"
+		"defaultMessage": "Введите код проверки для выключения"
 	},
 	"2fa.regenerate": {
-		"defaultMessage": "Перегенерировать"
+		"defaultMessage": "Перевыпустить"
 	},
 	"2fa.regenerate-backup": {
-		"defaultMessage": "Перегенерировать резервные коды"
+		"defaultMessage": "Перевыпустить резервные коды"
 	},
 	"2fa.regenerate-instructions": {
-		"defaultMessage": "Введите код подтверждения для генерации новых резервных кодов. Старые коды будут аннулированы."
+		"defaultMessage": "Введите код проверки, чтобы создать новые резервные коды. Прежние перестанут работать."
 	},
 	"2fa.secret-key": {
 		"defaultMessage": "Секретный ключ"
 	},
 	"2fa.setup-instructions": {
-		"defaultMessage": "Отсканируйте этот QR-код приложением для аутентификации или введите секрет вручную."
+		"defaultMessage": "Отсканируйте QR-код приложением или введите ключ настройки вручную."
 	},
 	"2fa.status": {
 		"defaultMessage": "Статус"
@@ -54,7 +54,7 @@
 		"defaultMessage": "Двухфакторная аутентификация"
 	},
 	"2fa.verify-enable": {
-		"defaultMessage": "Подтвердить и включить"
+		"defaultMessage": "Проверить и включить"
 	},
 	"access-list": {
 		"defaultMessage": "Список доступа"
@@ -72,16 +72,16 @@
 		"defaultMessage": "Обратите внимание: разрешающие и запрещающие директивы применяются в порядке их определения."
 	},
 	"access-list.pass-auth": {
-		"defaultMessage": "Передавать авторизацию на upstream-сервер"
+		"defaultMessage": "Проксировать авторизацию"
 	},
 	"access-list.public": {
-		"defaultMessage": "Общедоступный"
+		"defaultMessage": "Публичный"
 	},
 	"access-list.public.subtitle": {
 		"defaultMessage": "Без аутентификации"
 	},
 	"access-list.rule-source.placeholder": {
-		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+		"defaultMessage": "192.168.1.100 или 192.168.1.0/24 или 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Любое совпадение"
@@ -348,7 +348,7 @@
 		"defaultMessage": "Подстановочные домены не поддерживаются этим центром сертификации"
 	},
 	"domains.advanced": {
-		"defaultMessage": "Дополнительно"
+		"defaultMessage": "Расширенные"
 	},
 	"domains.force-ssl": {
 		"defaultMessage": "Всегда SSL"
@@ -363,7 +363,7 @@
 		"defaultMessage": "Поддержка HTTP/2"
 	},
 	"domains.trust-forwarded-proto": {
-		"defaultMessage": "Доверять заголовкам Forwarded Proto от upstream"
+		"defaultMessage": "Доверять X-Forwarded-Proto"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Проверка через DNS"
@@ -438,7 +438,7 @@
 		"defaultMessage": "Поддержка WebSocket"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Порт перенаправления"
+		"defaultMessage": "Целевой порт"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Схема"
@@ -458,23 +458,11 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt через HTTP"
 	},
-	"load-balancing.add-server": {
-		"defaultMessage": "???????? ??????"
-	},
-	"load-balancing.host": {
-		"defaultMessage": "????"
-	},
-	"load-balancing.port": {
-		"defaultMessage": "????"
-	},
-	"load-balancing.weight": {
-		"defaultMessage": "???"
-	},
 	"loading": {
 		"defaultMessage": "Загрузка…"
 	},
 	"login.2fa-code": {
-		"defaultMessage": "Код подтверждения"
+		"defaultMessage": "Код проверки"
 	},
 	"login.2fa-code-placeholder": {
 		"defaultMessage": "Введите код"
@@ -486,7 +474,7 @@
 		"defaultMessage": "Двухфакторная аутентификация"
 	},
 	"login.2fa-verify": {
-		"defaultMessage": "Подтвердить"
+		"defaultMessage": "Проверить"
 	},
 	"login.title": {
 		"defaultMessage": "Авторизация"
@@ -609,22 +597,7 @@
 		"defaultMessage": "Прокси-хост"
 	},
 	"proxy-host.forward-host": {
-		"defaultMessage": "Хост / IP перенаправления"
-	},
-	"proxy-host.forward-target-type": {
-		"defaultMessage": "Тип цели перенаправления"
-	},
-	"proxy-host.forward-target-type.direct": {
-		"defaultMessage": "Прямое"
-	},
-	"proxy-host.forward-target-type.direct.description": {
-		"defaultMessage": "Перенаправление на один хост и порт"
-	},
-	"proxy-host.forward-target-type.upstream": {
-		"defaultMessage": "Upstream-хост"
-	},
-	"proxy-host.forward-target-type.upstream.description": {
-		"defaultMessage": "Использовать upstream-хост для балансировки нагрузки между несколькими серверами"
+		"defaultMessage": "Целевой хост"
 	},
 	"proxy-hosts": {
 		"defaultMessage": "Прокси-хосты"
@@ -633,13 +606,13 @@
 		"defaultMessage": "{count} {count, plural, one {прокси-хост} few {прокси-хоста} many {прокси-хостов} other {прокси-хоста}}"
 	},
 	"public": {
-		"defaultMessage": "Общедоступный"
+		"defaultMessage": "Публичный"
 	},
 	"redirection-host": {
 		"defaultMessage": "Редирект-хост"
 	},
 	"redirection-host.forward-domain": {
-		"defaultMessage": "Домен перенаправления"
+		"defaultMessage": "Целевой домен"
 	},
 	"redirection-host.forward-http-code": {
 		"defaultMessage": "HTTP-код"
@@ -651,22 +624,22 @@
 		"defaultMessage": "{count} {count, plural, one {редирект-хост} few {редирект-хоста} many {редирект-хостов} other {редирект-хоста}}"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Множество выборов"
+		"defaultMessage": "300 Множественный выбор"
 	},
 	"redirection-hosts.http-code.301": {
-		"defaultMessage": "301 Перемещён навсегда"
+		"defaultMessage": "301 Ресурс перемещен навсегда"
 	},
 	"redirection-hosts.http-code.302": {
-		"defaultMessage": "302 Перемещён временно"
+		"defaultMessage": "302 Ресурс временно перемещен"
 	},
 	"redirection-hosts.http-code.303": {
-		"defaultMessage": "303 Смотреть другое"
+		"defaultMessage": "303 Смотрите другой ресурс"
 	},
 	"redirection-hosts.http-code.307": {
 		"defaultMessage": "307 Временное перенаправление"
 	},
 	"redirection-hosts.http-code.308": {
-		"defaultMessage": "308 Постоянное перенаправление"
+		"defaultMessage": "308 Ресурс перемещен навсегда"
 	},
 	"role.admin": {
 		"defaultMessage": "Администратор"
@@ -707,36 +680,6 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Перенаправление"
 	},
-	"settings.real-ip-header": {
-		"defaultMessage": "Заголовок реального IP"
-	},
-	"settings.real-ip-header.cf-connecting-ip": {
-		"defaultMessage": "CF-Connecting-IP"
-	},
-	"settings.real-ip-header.cf-connecting-ip.description": {
-		"defaultMessage": "Использовать за Cloudflare"
-	},
-	"settings.real-ip-header.custom": {
-		"defaultMessage": "Пользовательский"
-	},
-	"settings.real-ip-header.custom.placeholder": {
-		"defaultMessage": "Введите имя пользовательского заголовка"
-	},
-	"settings.real-ip-header.description": {
-		"defaultMessage": "HTTP-заголовок для определения реального IP-адреса клиента"
-	},
-	"settings.real-ip-header.x-forwarded-for": {
-		"defaultMessage": "X-Forwarded-For"
-	},
-	"settings.real-ip-header.x-forwarded-for.description": {
-		"defaultMessage": "Распространённый альтернативный заголовок"
-	},
-	"settings.real-ip-header.x-real-ip": {
-		"defaultMessage": "X-Real-IP"
-	},
-	"settings.real-ip-header.x-real-ip.description": {
-		"defaultMessage": "Стандартный заголовок, работает с большинством обратных прокси"
-	},
 	"setup.preamble": {
 		"defaultMessage": "Начните с создания учётной записи администратора."
 	},
@@ -753,10 +696,10 @@
 		"defaultMessage": "Поток"
 	},
 	"stream.forward-host": {
-		"defaultMessage": "Хост перенаправления"
+		"defaultMessage": "Целевой хост"
 	},
 	"stream.forward-host.placeholder": {
-		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
+		"defaultMessage": "example.com или 10.0.0.1 или 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Входящий порт"
@@ -778,30 +721,6 @@
 	},
 	"update-available": {
 		"defaultMessage": "Доступно обновление: {latestVersion}"
-	},
-	"upstream-host": {
-		"defaultMessage": "Upstream-хост"
-	},
-	"upstream-host.help": {
-		"defaultMessage": "Выберите upstream-хост вместо прямого перенаправления."
-	},
-	"upstream-host.method": {
-		"defaultMessage": "Метод"
-	},
-	"upstream-host.none": {
-		"defaultMessage": "Нет (Прямое)"
-	},
-	"upstream-host.none.subtitle": {
-		"defaultMessage": "Upstream-хост не выбран"
-	},
-	"upstream-host.servers": {
-		"defaultMessage": "Серверы"
-	},
-	"upstream-hosts": {
-		"defaultMessage": "Upstream-хосты"
-	},
-	"upstream-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Upstream-хост} few {Upstream-хоста} other {Upstream-хостов}}"
 	},
 	"user": {
 		"defaultMessage": "Пользователь"
@@ -846,7 +765,7 @@
 		"defaultMessage": "Включить светлую тему"
 	},
 	"user.two-factor": {
-		"defaultMessage": "Двухфакторная авт."
+		"defaultMessage": "Настроить 2FA"
 	},
 	"username": {
 		"defaultMessage": "Имя пользователя"

@@ -40,6 +40,7 @@
 										"type": "string",
 										"minLength": 1,
 										"maxLength": 255,
+										"pattern": "^[a-zA-Z0-9._\\-\\[\\]:]+$",
 										"example": "10.0.0.1"
 									},
 									"port": {

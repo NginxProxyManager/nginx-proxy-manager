@@ -459,16 +459,16 @@
 		"defaultMessage": "Let's Encrypt cez HTTP"
 	},
 	"load-balancing.add-server": {
-		"defaultMessage": "Prida? server"
+		"defaultMessage": "Pridať server"
 	},
 	"load-balancing.host": {
-		"defaultMessage": "Host"
+		"defaultMessage": "Hostiteľ"
 	},
 	"load-balancing.port": {
 		"defaultMessage": "Port"
 	},
 	"load-balancing.weight": {
-		"defaultMessage": "V?ha"
+		"defaultMessage": "Váha"
 	},
 	"loading": {
 		"defaultMessage": "Načítava sa…"
@@ -780,28 +780,28 @@
 		"defaultMessage": "Dostupná aktualizace: {latestVersion}"
 	},
 	"upstream-host": {
-		"defaultMessage": "Upstream hostitel"
+		"defaultMessage": "Upstream hostiteľ"
 	},
 	"upstream-host.help": {
-		"defaultMessage": "Vyberte upstream hostitel místo přímého přesměrování."
+		"defaultMessage": "Vyberte upstream hostiteľa namiesto priameho presmerovania."
 	},
 	"upstream-host.method": {
-		"defaultMessage": "Metoda"
+		"defaultMessage": "Metóda"
 	},
 	"upstream-host.none": {
-		"defaultMessage": "Žádný (přímo)"
+		"defaultMessage": "Žiadny (priamo)"
 	},
 	"upstream-host.none.subtitle": {
-		"defaultMessage": "Nebyl vybrán upstream hostitel"
+		"defaultMessage": "Nebol vybraný žiadny upstream hostiteľ"
 	},
 	"upstream-host.servers": {
 		"defaultMessage": "Servery"
 	},
 	"upstream-hosts": {
-		"defaultMessage": "Upstream hostitelé"
+		"defaultMessage": "Upstream hostitelia"
 	},
 	"upstream-hosts.count": {
-		"defaultMessage": "{count} {count, plural, one {Upstream hostitel} few {Upstream hostitelé} other {Upstream hostitelů}}"
+		"defaultMessage": "{count} {count, plural, one {Upstream hostiteľ} few {Upstream hostitelia} other {Upstream hostiteľov}}"
 	},
 	"user": {
 		"defaultMessage": "používateľa"

@@ -57,6 +57,7 @@
 		"permissions": {
 			"type": "object",
 			"description": "Permissions if expanded in request",
+			"additionalProperties": false,
 			"required": [
 				"visibility",
 				"proxy_hosts",

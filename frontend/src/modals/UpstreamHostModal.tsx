@@ -27,9 +27,38 @@ const UpstreamHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
+		// Normalize servers at submit time: trim host, coerce numeric strings, drop
+		// rows the user left blank. LoadBalancingFields stores the raw editable
+		// array in Formik (so what you see is what's submitted), so the cleanup
+		// happens here rather than on every keystroke.
+		const rawServers = (values?.servers || []) as Array<Record<string, unknown>>;
+		const servers = rawServers
+			.map((s) => {
+				const host = typeof s.host === "string" ? s.host.trim() : "";
+				const port = Number.parseInt(String(s.port ?? ""), 10);
+				const weight = Number.parseInt(String(s.weight ?? ""), 10);
+				const out: { host: string; port: number; weight?: number } = {
+					host,
+					port: Number.isFinite(port) ? port : 0,
+				};
+				if (Number.isFinite(weight) && weight > 0) out.weight = weight;
+				return out;
+			})
+			.filter((s) => s.host !== "" && s.port > 0);
+
+		// Guard at the modal so the user sees a translated message instead of the
+		// raw AJV string the backend would return for an empty `servers` array.
+		if (servers.length === 0) {
+			setErrorMsg(<T id="upstream-host.servers-required" />);
+			setIsSubmitting(false);
+			setSubmitting(false);
+			return;
+		}
+
 		const payload = {
 			id: id === "new" ? undefined : id,
 			...values,
+			servers,
 		};
 
 		setUpstreamHost(payload, {
@@ -180,10 +209,7 @@ const UpstreamHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												</div>
 											</div>
 											<div className="tab-pane" id="tab-servers" role="tabpanel">
-												<LoadBalancingFields
-													initialValues={data?.servers || []}
-													name="servers"
-												/>
+												<LoadBalancingFields name="servers" />
 											</div>
 										</div>
 									</div>

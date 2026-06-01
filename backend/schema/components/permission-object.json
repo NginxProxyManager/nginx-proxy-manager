@@ -1,5 +1,6 @@
 {
 	"type": "object",
+	"additionalProperties": false,
 	"minProperties": 1,
 	"properties": {
 		"visibility": {
@@ -43,6 +44,12 @@
 			"description": "Certificates Permissions",
 			"enum": ["hidden", "view", "manage"],
 			"example": "hidden"
+		},
+		"upstream_hosts": {
+			"type": "string",
+			"description": "Upstream Hosts Permissions",
+			"enum": ["hidden", "view", "manage"],
+			"example": "manage"
 		}
 	}
 }

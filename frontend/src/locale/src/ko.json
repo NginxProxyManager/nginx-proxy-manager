@@ -459,16 +459,16 @@
 		"defaultMessage": "Let's Encrypt (HTTP 방식)"
 	},
 	"load-balancing.add-server": {
-		"defaultMessage": "?? ??"
+		"defaultMessage": "서버 추가"
 	},
 	"load-balancing.host": {
-		"defaultMessage": "???"
+		"defaultMessage": "호스트"
 	},
 	"load-balancing.port": {
-		"defaultMessage": "??"
+		"defaultMessage": "포트"
 	},
 	"load-balancing.weight": {
-		"defaultMessage": "???"
+		"defaultMessage": "가중치"
 	},
 	"loading": {
 		"defaultMessage": "불러오는 중…"

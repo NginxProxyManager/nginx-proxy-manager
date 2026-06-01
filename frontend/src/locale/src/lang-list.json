@@ -8,7 +8,7 @@
   "locale-et-EE": {
     "defaultMessage": "Eesti"
   },
-  "locale-ie-GA": {
+  "locale-ga-IE": {
     "defaultMessage": "Gaeilge"
   },
   "locale-de-DE": {
@@ -40,6 +40,9 @@
   },
   "locale-pl-PL": {
     "defaultMessage": "Polski"
+  },
+  "locale-pt-BR": {
+    "defaultMessage": "Português (Brasil)"
   },
   "locale-it-IT": {
     "defaultMessage": "Italiano"
