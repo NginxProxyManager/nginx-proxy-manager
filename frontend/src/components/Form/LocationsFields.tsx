@@ -16,6 +16,11 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	const [values, setValues] = useState<ProxyLocation[]>(initialValues || []);
 	const { setFieldValue } = useFormikContext();
 	const [advVisible, setAdvVisible] = useState<number[]>([]);
+	// User's explicit Direct/Upstream radio choice per location index. Needed
+	// because the persisted shape only carries upstreamHostId — when the user
+	// switches to Upstream but hasn't picked a host yet, upstreamHostId is 0
+	// and a pure derivation would snap the radio back to Direct on re-render.
+	const [targetTypeOverrides, setTargetTypeOverrides] = useState<Record<number, "direct" | "upstream">>({});
 
 	const blankItem: ProxyLocation = {
 		path: "",
@@ -37,6 +42,16 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		const newValues = values.filter((_: ProxyLocation, i: number) => i !== idx);
 		setValues(newValues);
 		setFormField(newValues);
+		// Compact the override map so indices > idx shift down by one.
+		setTargetTypeOverrides((prev) => {
+			const next: Record<number, "direct" | "upstream"> = {};
+			for (const [k, v] of Object.entries(prev)) {
+				const i = Number(k);
+				if (i < idx) next[i] = v;
+				else if (i > idx) next[i - 1] = v;
+			}
+			return next;
+		});
 	};
 
 	const handleChange = (idx: number, field: string, fieldValue: string | number) => {
@@ -60,6 +75,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	};
 
 	const handleTargetTypeChange = (idx: number, targetType: "direct" | "upstream") => {
+		setTargetTypeOverrides((prev) => ({ ...prev, [idx]: targetType }));
 		const newValues = values.map((v: ProxyLocation, i: number) =>
 			i === idx
 				? {
@@ -90,7 +106,8 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	return (
 		<>
 			{values.map((item: ProxyLocation, idx: number) => {
-				const targetType = item.upstreamHostId && item.upstreamHostId > 0 ? "upstream" : "direct";
+				const derivedTargetType = item.upstreamHostId && item.upstreamHostId > 0 ? "upstream" : "direct";
+				const targetType = targetTypeOverrides[idx] ?? derivedTargetType;
 				return (
 				<div key={idx} className={cn("card", "card-active", "mb-3", styles.locationCard)}>
 					<div className="card-body">
