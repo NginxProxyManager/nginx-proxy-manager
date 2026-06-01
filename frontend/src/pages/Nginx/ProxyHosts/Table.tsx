@@ -24,70 +24,64 @@ import { showUpstreamHostModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
 // DestinationCell renders the "Destination" column. A proxy host can route
-// through an upstream at two levels: proxy-level (the whole host forwards via
-// upstream_host_id), or per-location (each /path entry can carry its own
-// upstream_host_id). The previous implementation only honored the proxy-level
-// case, which made any host using location-based upstream routing look like a
-// plain forward (`http://host:port`) — its upstream usage was invisible from
-// the list view.
+// at two levels: proxy-level (the whole host forwards via forwardHost:port
+// or upstreamHostId), and per-location (each /path entry carries its own
+// direct forward fields OR upstream_host_id). The cell shows the proxy-level
+// destination on the first line and every custom location underneath, so
+// operators can see at a glance how each path will be routed.
 function DestinationCell({ host }: { host: ProxyHost }) {
 	const { data: upstreams } = useUpstreamHosts();
 
-	// Proxy-level upstream — preserve original behavior.
 	const proxyUpstreamId = host.upstreamHostId ?? 0;
-	if (proxyUpstreamId > 0 && host.upstreamHost) {
+	const allLocations = host.locations || [];
+
+	// If `/` is itself a custom location, the proxy-level destination is
+	// unreachable (every request matches a location override). Suppress it.
+	const rootIsCovered = allLocations.some((l: ProxyLocation) => l.path === "/");
+
+	const renderUpstreamLink = (upId: number, fallbackName?: string) => {
+		const up = upstreams?.find((u) => u.id === upId);
+		const name = up?.name ?? fallbackName ?? `upstream #${upId}`;
 		return (
 			<button
 				type="button"
-				className="btn btn-action btn-sm px-1"
+				className="btn btn-link btn-sm p-0 align-baseline"
 				onClick={(e) => {
 					e.preventDefault();
-					showUpstreamHostModal(proxyUpstreamId);
+					showUpstreamHostModal(upId);
 				}}
 			>
-				{host.upstreamHost.name}
+				{name}
 			</button>
 		);
+	};
+
+	const proxyLine =
+		proxyUpstreamId > 0
+			? renderUpstreamLink(proxyUpstreamId, host.upstreamHost?.name)
+			: `${host.forwardScheme}://${host.forwardHost}:${host.forwardPort}`;
+
+	if (allLocations.length === 0) {
+		// Plain proxy host with no custom locations — keep the cell tight.
+		return <>{proxyLine}</>;
 	}
-
-	const forwardLine = `${host.forwardScheme}://${host.forwardHost}:${host.forwardPort}`;
-	const locationUpstreams = (host.locations || []).filter(
-		(l: ProxyLocation) => l.upstreamHostId && l.upstreamHostId > 0,
-	);
-
-	if (locationUpstreams.length === 0) {
-		return forwardLine;
-	}
-
-	// If `/` is itself routed via an upstream, every request matches a location
-	// override and the proxy-level forward is unreachable — showing it just
-	// confuses operators. Suppress it in that case.
-	const rootIsCovered = locationUpstreams.some((l) => l.path === "/");
 
 	return (
 		<div>
-			{!rootIsCovered && <div>{forwardLine}</div>}
+			{!rootIsCovered && <div>{proxyLine}</div>}
 			<div className="text-secondary small mt-1">
-				{locationUpstreams.map((loc, i) => {
-					const up = upstreams?.find((u) => u.id === loc.upstreamHostId);
-					const upId = up?.id ?? 0;
+				{allLocations.map((loc: ProxyLocation, i: number) => {
+					const upId = loc.upstreamHostId ?? 0;
 					return (
 						<div key={`${loc.path}-${i}`}>
 							<code>{loc.path}</code>
 							{" → "}
-							{up && upId > 0 ? (
-								<button
-									type="button"
-									className="btn btn-link btn-sm p-0 align-baseline"
-									onClick={(e) => {
-										e.preventDefault();
-										showUpstreamHostModal(upId);
-									}}
-								>
-									{up.name}
-								</button>
+							{upId > 0 ? (
+								renderUpstreamLink(upId)
 							) : (
-								<span>upstream #{loc.upstreamHostId}</span>
+								<span>
+									{loc.forwardScheme}://{loc.forwardHost}:{loc.forwardPort}
+								</span>
 							)}
 						</div>
 					);
