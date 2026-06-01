@@ -6,6 +6,7 @@ import certificateModel from "./models/certificate.js";
 import settingModel from "./models/setting.js";
 import userModel from "./models/user.js";
 import userPermissionModel from "./models/user_permission.js";
+import fs from "fs";
 
 export const isSetup = async () => {
 	const row = await userModel.query().select("id").where("is_deleted", 0).first();
@@ -120,18 +121,14 @@ const setupCertbotPlugins = async () => {
 
 				// Make sure credentials file exists
 				const credentials_loc = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
-				// Escape single quotes and backslashes
 				if (typeof certificate.meta.dns_provider_credentials === "string") {
-					const escapedCredentials = certificate.meta.dns_provider_credentials
-						.replaceAll("\\", "\\\\")
-						.replaceAll("'", "\\'");
-					const credentials_cmd = `[ -f '${credentials_loc}' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo '${escapedCredentials}' > '${credentials_loc}' && chmod 600 '${credentials_loc}'; }`;
-					promises.push(utils.exec(credentials_cmd));
+					promises.push(fs.mkdir("/etc/letsencrypt/credentials", { recursive: true })
+								  .then(() => fs.writeFile(credentials_loc, certificate.meta.dns_provider_credentials, { mode: 0o600, flag: "wx" })));
 				}
 			}
 			return true;
 		});
-
+		
 		await installPlugins(plugins);
 
 		if (promises.length) {
