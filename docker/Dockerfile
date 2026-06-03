@@ -3,8 +3,8 @@
 
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
-ARG BASE_IMAGE=nginxproxymanager/nginx-full:certbot-node
-FROM nginxproxymanager/testca AS testca
+ARG BASE_IMAGE=docker.io/nginxproxymanager/nginx-full:certbot-node
+FROM docker.io/nginxproxymanager/testca AS testca
 FROM $BASE_IMAGE
 
 ARG TARGETPLATFORM
