@@ -36,7 +36,7 @@ env:
 
 jobs:
   build:
-    # Internal Infisical (vault.svc.eh168.alexson.org) is not reachable from GitHub-hosted runners.
+    # Internal Infisical + rootless Podman: use org gen runners (not ubuntu-latest).
     runs-on: [self-hosted, linux, gen]
     steps:
       - name: Checkout
@@ -52,32 +52,55 @@ jobs:
           recursive: "false"
           secret_keys: docker.io-user,docker.io-token
 
-      - name: Build frontend
-        run: |
-          chmod +x scripts/frontend-build
-          # PRs: lint + vitest. Branch pushes: faster (locale + build only).
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            ./scripts/frontend-build
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.skip_frontend_tests }}" != "true" ]; then
-            ./scripts/frontend-build
-          else
-            SKIP_TESTS=1 ./scripts/frontend-build
-          fi
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Docker Hub
-        if: >-
-          github.event_name != 'pull_request' &&
-          (github.event_name != 'workflow_dispatch' || inputs.push)
-        uses: docker/login-action@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          username: ${{ env.DOCKER_IO_USER }}
-          password: ${{ env.DOCKER_IO_TOKEN }}
+          node-version: "22"
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+          CI: true
+        run: |
+          set -euo pipefail
+          corepack enable
+          yarn install --immutable || yarn install
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            yarn lint
+            yarn locale-compile
+            yarn vitest run --no-color
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.skip_frontend_tests }}" != "true" ]; then
+            yarn lint
+            yarn locale-compile
+            yarn vitest run --no-color
+          else
+            yarn locale-compile
+          fi
+          yarn build
+
+      - name: Set image tags
+        id: tags
+        run: |
+          set -euo pipefail
+          tags=()
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            tags+=("${{ env.IMAGE }}:${GITHUB_REF#refs/tags/}")
+          else
+            tags+=("${{ env.IMAGE }}:${{ github.ref_name }}")
+          fi
+          tags+=("${{ env.IMAGE }}:sha-${GITHUB_SHA::7}")
+          if [[ "${{ github.ref }}" == refs/heads/master ]]; then
+            tags+=("${{ env.IMAGE }}:latest")
+          fi
+          {
+            echo "tags<<EOF"
+            printf '%s\n' "${tags[@]}"
+            echo "EOF"
+            echo "tag_list=${tags[*]}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Set build metadata
         id: buildmeta
@@ -85,34 +108,73 @@ jobs:
           echo "date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> "$GITHUB_OUTPUT"
           echo "version=${{ github.ref_type == 'tag' && github.ref_name || github.ref_name }}" >> "$GITHUB_OUTPUT"
 
-      - name: Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=sha,prefix=sha-,format=short
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
+      - name: Build image with Podman
+        env:
+          BUILDAH_ISOLATION: chroot
+        run: |
+          set -euo pipefail
+          podman_cmd=(podman)
+          if [[ -n "${CONTAINER_HOST:-}" ]]; then
+            podman_cmd=(podman --remote)
+          fi
+          tag_args=()
+          while IFS= read -r tag; do
+            [[ -n "$tag" ]] && tag_args+=(-t "$tag")
+          done <<< "${{ steps.tags.outputs.tags }}"
+          "${podman_cmd[@]}" build \
+            --security-opt label=disable \
+            "${tag_args[@]}" \
+            -f docker/Dockerfile \
+            --build-arg TARGETPLATFORM=linux/amd64 \
+            --build-arg BUILDPLATFORM=linux/amd64 \
+            --build-arg BUILD_VERSION="${{ steps.buildmeta.outputs.version }}" \
+            --build-arg BUILD_COMMIT="${{ github.sha }}" \
+            --build-arg BUILD_DATE="${{ steps.buildmeta.outputs.date }}" \
+            --label "org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}" \
+            --label "org.opencontainers.image.revision=${{ github.sha }}" \
+            .
+          "${podman_cmd[@]}" images | grep nginx-proxy-manager || true
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: docker/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: >-
-            ${{ github.event_name != 'pull_request' &&
-            (github.event_name != 'workflow_dispatch' || inputs.push) }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            BUILD_VERSION=${{ steps.buildmeta.outputs.version }}
-            BUILD_COMMIT=${{ github.sha }}
-            BUILD_DATE=${{ steps.buildmeta.outputs.date }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Log in to Docker Hub
+        if: >-
+          github.event_name != 'pull_request' &&
+          (github.event_name != 'workflow_dispatch' || inputs.push)
+        run: |
+          set -euo pipefail
+          if [ -z "${DOCKER_IO_USER:-}" ] || [ -z "${DOCKER_IO_TOKEN:-}" ]; then
+            echo "::error::DOCKER_IO_USER and DOCKER_IO_TOKEN must be set (Infisical /Docker)."
+            exit 1
+          fi
+          podman_cmd=(podman)
+          if [[ -n "${CONTAINER_HOST:-}" ]]; then
+            podman_cmd=(podman --remote)
+          fi
+          printf '%s' "$DOCKER_IO_TOKEN" | "${podman_cmd[@]}" login docker.io \
+            --username "$DOCKER_IO_USER" \
+            --password-stdin
+
+      - name: Push image to Docker Hub
+        if: >-
+          github.event_name != 'pull_request' &&
+          (github.event_name != 'workflow_dispatch' || inputs.push)
+        run: |
+          set -euo pipefail
+          podman_cmd=(podman)
+          if [[ -n "${CONTAINER_HOST:-}" ]]; then
+            podman_cmd=(podman --remote)
+          fi
+          while IFS= read -r tag; do
+            [[ -n "$tag" ]] && "${podman_cmd[@]}" push "$tag"
+          done <<< "${{ steps.tags.outputs.tags }}"
+
+      - name: Logout from Docker Hub
+        if: always()
+        run: |
+          podman_cmd=(podman)
+          if [[ -n "${CONTAINER_HOST:-}" ]]; then
+            podman_cmd=(podman --remote)
+          fi
+          "${podman_cmd[@]}" logout docker.io || true
 
       - name: Build summary
         if: always()
@@ -123,8 +185,10 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "**Tags:**" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          echo "${{ steps.meta.outputs.tags }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "${{ steps.tags.outputs.tags }}" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "_Platform: linux/amd64 (self-hosted Podman)._"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "_PR builds are not pushed to Docker Hub._" >> "$GITHUB_STEP_SUMMARY"

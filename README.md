@@ -129,8 +129,8 @@ Workflow: [`.github/workflows/docker-image.yml`](.github/workflows/docker-image.
 
 | Event | Behavior |
 |-------|----------|
-| Push to `develop` | Build multi-arch, push `develop` + `sha-<short>` |
-| Push to `master` | Build multi-arch, push `latest` + `sha-<short>` |
+| Push to `develop` | Build `linux/amd64`, push `develop` + `sha-<short>` |
+| Push to `master` | Build `linux/amd64`, push `latest` + `sha-<short>` |
 | Tag `v*` | Push version tags |
 | Pull request | Build only (no push) |
 | Manual run | Optional push / skip frontend tests |
@@ -144,7 +144,7 @@ Workflow: [`.github/workflows/docker-image.yml`](.github/workflows/docker-image.
 
 Project `secrets-vi-5-a`, environment `prod` via [`.github/actions/infisical-oidc-load`](.github/actions/infisical-oidc-load) (vendored from [`general-alexson/.github-private`](https://github.com/general-alexson/.github-private/tree/main/actions/infisical-oidc-load)). **This fork must stay public** (GitHub does not allow private forks of a public upstream), so org-shared private actions cannot be used—only the local copy. Infisical OIDC must allow `repo:general-alexson/nginx-proxy-manager`.
 
-**Runner:** `runs-on: [self-hosted, linux, gen]` — the vault URL is internal; `ubuntu-latest` cannot reach it (connection timeout). Uses org runners from [github-actions-runner-podman](https://github.com/infrastructure-alexson/github-actions-runner-podman) (`general-alexson`, `gen` label). No GitHub repository variables or secrets are required.
+**Runner:** `runs-on: [self-hosted, linux, gen]` — internal Infisical vault and rootless Podman on these runners (no `docker run` / Buildx on `ubuntu-latest`). Frontend is built with Node/yarn; the image is built with `podman --remote` (`linux/amd64`). No GitHub repository variables or secrets are required.
 
 Create the Hub repository `nginx-proxy-manager` under account `salexson` before the first push.
 
