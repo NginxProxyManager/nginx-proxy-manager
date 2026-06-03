@@ -56,8 +56,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
-          cache: yarn
-          cache-dependency-path: frontend/yarn.lock
+
+      - name: Enable Yarn
+        run: |
+          set -euo pipefail
+          corepack enable
+          corepack prepare yarn@1.22.22 --activate
+          yarn --version
+
+      - name: Cache frontend dependencies
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('frontend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Verify Node.js version (> 20)
         run: |
@@ -76,7 +89,6 @@ jobs:
           CI: true
         run: |
           set -euo pipefail
-          corepack enable
           yarn install --immutable || yarn install
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             yarn lint
