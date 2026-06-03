@@ -675,25 +675,25 @@
 		"defaultMessage": "外部認証情報ストア"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "OIDCでVault、AWS Secrets Manager、Azure Key Vault、Infisicalに接続。"
+		"defaultMessage": "OIDCでVault、AWS Secrets Manager、Azure Key Vault、Infisicalに接続します。"
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "OIDCテスト"
+		"defaultMessage": "OIDCをテスト"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "解決テスト"
+		"defaultMessage": "取得テスト"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "シークレットパス"
+		"defaultMessage": "シークレットのパス"
 	},
 	"credentials": {
 		"defaultMessage": "DNS認証情報"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "シークレットパス"
+		"defaultMessage": "シークレットのパス"
 	},
 	"credentials.source": {
-		"defaultMessage": "認証情報のソース"
+		"defaultMessage": "認証情報の取得元"
 	},
 	"credentials.source.external": {
 		"defaultMessage": "外部ストア（Vault、AWS など）"
@@ -705,16 +705,16 @@
 		"defaultMessage": "手動入力（一回限り）"
 	},
 	"credentials.stored": {
-		"defaultMessage": "保存済み認証情報"
+		"defaultMessage": "保存済みの認証情報"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "/dataボリュームに暗号化保存し、DNS証明書で再利用可能。"
+		"defaultMessage": "/dataボリュームに暗号化して保存し、DNS証明書で再利用できます。"
 	},
 	"credentials.migrate": {
 		"defaultMessage": "従来のDNS認証情報を移行"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count}件の証明書がインライン認証情報をボールトへ移行します。"
+		"defaultMessage": "{count}件の証明書がインラインの認証情報をボールトへ移行します。"
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -723,9 +723,9 @@
 		"defaultMessage": "Webhook"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "署名シークレット（X-NPM-Signature検証用）"
+		"defaultMessage": "署名シークレット（X-NPM-Signatureの検証用）"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "ホストまたは証明書の変更時に署名付きHTTPコールバックを受信。"
+		"defaultMessage": "プロキシホストまたは証明書の変更時に、署名付きHTTPコールバックを受信します。"
 	}
 }

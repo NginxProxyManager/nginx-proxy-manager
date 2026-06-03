@@ -783,19 +783,19 @@
 		"defaultMessage": "Kopieer deze sleutel nu — hij wordt niet opnieuw getoond."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Deze API-sleutel intrekken? Automatiseringen die hem gebruiken stoppen."
+		"defaultMessage": "Deze API-sleutel intrekken? Automatiseringen die hem gebruiken stoppen dan."
 	},
 	"api-keys.subtitle": {
 		"defaultMessage": "Bearer-tokens (npmak_…) voor scripts en CI. Alleen beheerders."
 	},
 	"credential": {
-		"defaultMessage": "Credential"
+		"defaultMessage": "Inloggegevens"
 	},
 	"credential-provider": {
-		"defaultMessage": "Credentialprovider"
+		"defaultMessage": "Aanbieder van inloggegevens"
 	},
 	"credential-providers": {
-		"defaultMessage": "Externe credentialopslag"
+		"defaultMessage": "Externe opslag voor inloggegevens"
 	},
 	"credential-providers.subtitle": {
 		"defaultMessage": "Koppel Vault, AWS Secrets Manager, Azure Key Vault of Infisical via OIDC."
@@ -804,19 +804,19 @@
 		"defaultMessage": "OIDC testen"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Resolutie testen"
+		"defaultMessage": "Ophalen testen"
 	},
 	"credential-providers.resolve-path": {
 		"defaultMessage": "Pad naar geheim"
 	},
 	"credentials": {
-		"defaultMessage": "DNS-credentials"
+		"defaultMessage": "DNS-inloggegevens"
 	},
 	"credentials.secret-path": {
 		"defaultMessage": "Pad naar geheim"
 	},
 	"credentials.source": {
-		"defaultMessage": "Bron van credential"
+		"defaultMessage": "Bron van inloggegevens"
 	},
 	"credentials.source.external": {
 		"defaultMessage": "Externe opslag (Vault, AWS, …)"
@@ -828,16 +828,16 @@
 		"defaultMessage": "Handmatig invoeren (eenmalig)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Opgeslagen credential"
+		"defaultMessage": "Opgeslagen inloggegevens"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Versleuteld op het /data-volume, herbruikbaar voor DNS-certificaten."
+		"defaultMessage": "Versleuteld op het /data-volume en herbruikbaar voor DNS-certificaten."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Legacy DNS-credentials migreren"
+		"defaultMessage": "Oude DNS-inloggegevens migreren"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificaat(en) verplaatsen inline credentials naar de kluis."
+		"defaultMessage": "{count} certificaat(en) verplaatsen ingesloten inloggegevens naar de kluis."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -849,6 +849,6 @@
 		"defaultMessage": "Handtekeninggeheim (voor X-NPM-Signature-verificatie)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Ondertekende HTTP-callbacks bij wijziging van hosts of certificaten."
+		"defaultMessage": "Ondertekende HTTP-callbacks bij wijzigingen aan proxy-hosts of certificaten."
 	}
 }

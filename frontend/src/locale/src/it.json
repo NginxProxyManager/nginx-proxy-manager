@@ -663,7 +663,7 @@
 		"defaultMessage": "Chiavi API per automazione"
 	},
 	"api-keys.copy-once": {
-		"defaultMessage": "Copia questa chiave ora — non verrà mostrata di nuovo."
+		"defaultMessage": "Copia questa chiave ora — non verrà più mostrata."
 	},
 	"api-keys.revoke-confirm": {
 		"defaultMessage": "Revocare questa chiave API? Le automazioni che la usano smetteranno di funzionare."
@@ -672,7 +672,7 @@
 		"defaultMessage": "Token Bearer (npmak_…) per script e CI. Solo amministratori."
 	},
 	"credential": {
-		"defaultMessage": "Credenziale"
+		"defaultMessage": "Credenziali"
 	},
 	"credential-provider": {
 		"defaultMessage": "Provider credenziali"
@@ -687,37 +687,37 @@
 		"defaultMessage": "Test OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test risoluzione"
+		"defaultMessage": "Test recupero"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Percorso segreto"
+		"defaultMessage": "Percorso del segreto"
 	},
 	"credentials": {
 		"defaultMessage": "Credenziali DNS"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Percorso segreto"
+		"defaultMessage": "Percorso del segreto"
 	},
 	"credentials.source": {
-		"defaultMessage": "Origine credenziale"
+		"defaultMessage": "Origine credenziali"
 	},
 	"credentials.source.external": {
 		"defaultMessage": "Archivio esterno (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Memorizzato nel vault NPM"
+		"defaultMessage": "Memorizzate nel vault NPM"
 	},
 	"credentials.source.manual": {
 		"defaultMessage": "Inserimento manuale (una tantum)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Credenziale memorizzata"
+		"defaultMessage": "Credenziali memorizzate"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Crittografato sul volume /data, riutilizzabile per certificati DNS."
+		"defaultMessage": "Crittografate sul volume /data e riutilizzabili per certificati DNS."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Migra credenziali DNS legacy"
+		"defaultMessage": "Migra credenziali DNS esistenti"
 	},
 	"credentials.migrate.summary": {
 		"defaultMessage": "{count} certificato/i sposterebbero le credenziali inline nel vault."
@@ -732,6 +732,6 @@
 		"defaultMessage": "Segreto di firma (verifica X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Callback HTTP firmati al cambio di host o certificati."
+		"defaultMessage": "Callback HTTP firmati al cambio di proxy host o certificati."
 	}
 }

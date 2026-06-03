@@ -705,13 +705,13 @@
 		"defaultMessage": "Penyimpanan kredensial eksternal"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Hubungkan Vault, AWS Secrets Manager, Azure Key Vault, atau Infisical via OIDC."
+		"defaultMessage": "Hubungkan Vault, AWS Secrets Manager, Azure Key Vault, atau Infisical melalui OIDC."
 	},
 	"credential-providers.test-oidc": {
 		"defaultMessage": "Uji OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Uji resolusi"
+		"defaultMessage": "Uji pengambilan"
 	},
 	"credential-providers.resolve-path": {
 		"defaultMessage": "Jalur rahasia"

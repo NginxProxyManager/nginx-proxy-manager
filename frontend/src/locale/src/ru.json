@@ -783,10 +783,10 @@
 		"defaultMessage": "Скопируйте ключ сейчас — он больше не будет показан."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Отозвать этот API-ключ? Автоматизации перестанут работать."
+		"defaultMessage": "Отозвать этот API-ключ? Автоматизации, использующие его, перестанут работать."
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "Bearer-токены (npmak_…) для скриптов и CI. Только администраторы."
+		"defaultMessage": "Bearer-токены (npmak_…) для скриптов и CI. Только для администраторов."
 	},
 	"credential": {
 		"defaultMessage": "Учётные данные"
@@ -798,13 +798,13 @@
 		"defaultMessage": "Внешние хранилища учётных данных"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Подключение Vault, AWS Secrets Manager, Azure Key Vault или Infisical через OIDC."
+		"defaultMessage": "Подключите Vault, AWS Secrets Manager, Azure Key Vault или Infisical через OIDC."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Тест OIDC"
+		"defaultMessage": "Проверить OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Тест разрешения"
+		"defaultMessage": "Проверить получение"
 	},
 	"credential-providers.resolve-path": {
 		"defaultMessage": "Путь к секрету"
@@ -822,7 +822,7 @@
 		"defaultMessage": "Внешнее хранилище (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "В хранилище NPM"
+		"defaultMessage": "В хранилище секретов NPM"
 	},
 	"credentials.source.manual": {
 		"defaultMessage": "Ввести вручную (однократно)"
@@ -831,13 +831,13 @@
 		"defaultMessage": "Сохранённые учётные данные"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Шифрование на томе /data, повторное использование для DNS-сертификатов."
+		"defaultMessage": "Шифруются на томе /data и повторно используются для DNS-сертификатов."
 	},
 	"credentials.migrate": {
 		"defaultMessage": "Миграция устаревших DNS-учётных данных"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} сертификат(ов) перенесут встроенные данные в хранилище."
+		"defaultMessage": "{count} сертификат(ов) перенесёт встроенные учётные данные в хранилище."
 	},
 	"webhook": {
 		"defaultMessage": "Вебхук"
@@ -846,9 +846,9 @@
 		"defaultMessage": "Вебхуки"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Секрет подписи (проверка X-NPM-Signature)"
+		"defaultMessage": "Секрет подписи (для проверки X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Подписанные HTTP-уведомления при изменении хостов или сертификатов."
+		"defaultMessage": "Подписанные HTTP-уведомления при изменении прокси-хостов или сертификатов."
 	}
 }

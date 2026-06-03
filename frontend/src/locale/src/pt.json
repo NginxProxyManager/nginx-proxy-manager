@@ -690,7 +690,7 @@
 		"defaultMessage": "Copie esta chave agora — não será mostrada novamente."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Revogar esta chave API? Automações que a usam deixarão de funcionar."
+		"defaultMessage": "Revogar esta chave API? As automações que a usam deixarão de funcionar."
 	},
 	"api-keys.subtitle": {
 		"defaultMessage": "Tokens Bearer (npmak_…) para scripts e CI. Apenas administradores."
@@ -711,7 +711,7 @@
 		"defaultMessage": "Testar OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Testar resolução"
+		"defaultMessage": "Testar obtenção"
 	},
 	"credential-providers.resolve-path": {
 		"defaultMessage": "Caminho do segredo"
@@ -729,7 +729,7 @@
 		"defaultMessage": "Armazenamento externo (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Guardado no cofre NPM"
+		"defaultMessage": "Guardada no cofre NPM"
 	},
 	"credentials.source.manual": {
 		"defaultMessage": "Introduzir manualmente (uma vez)"
@@ -738,13 +738,13 @@
 		"defaultMessage": "Credencial guardada"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Encriptado no volume /data, reutilizável para certificados DNS."
+		"defaultMessage": "Encriptada no volume /data e reutilizável para certificados DNS."
 	},
 	"credentials.migrate": {
 		"defaultMessage": "Migrar credenciais DNS antigas"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificado(s) moveriam credenciais inline para o cofre."
+		"defaultMessage": "{count} certificado(s) moveriam credenciais integradas para o cofre."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -756,6 +756,6 @@
 		"defaultMessage": "Segredo de assinatura (verificação X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Callbacks HTTP assinados quando hosts ou certificados mudam."
+		"defaultMessage": "Callbacks HTTP assinados quando proxy hosts ou certificados mudam."
 	}
 }

@@ -669,13 +669,13 @@
 		"defaultMessage": "Skopiuj ten klucz teraz — nie zostanie ponownie wyświetlony."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Cofnąć ten klucz API? Automatyzacje go używające przestaną działać."
+		"defaultMessage": "Cofnąć ten klucz API? Automatyzacje, które go używają, przestaną działać."
 	},
 	"api-keys.subtitle": {
 		"defaultMessage": "Tokeny Bearer (npmak_…) dla skryptów i CI. Tylko administratorzy."
 	},
 	"credential": {
-		"defaultMessage": "Poświadczenie"
+		"defaultMessage": "Poświadczenia"
 	},
 	"credential-provider": {
 		"defaultMessage": "Dostawca poświadczeń"
@@ -690,19 +690,19 @@
 		"defaultMessage": "Test OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test rozwiązywania"
+		"defaultMessage": "Test pobierania"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Ścieżka sekretu"
+		"defaultMessage": "Ścieżka do sekretu"
 	},
 	"credentials": {
 		"defaultMessage": "Poświadczenia DNS"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Ścieżka sekretu"
+		"defaultMessage": "Ścieżka do sekretu"
 	},
 	"credentials.source": {
-		"defaultMessage": "Źródło poświadczenia"
+		"defaultMessage": "Źródło poświadczeń"
 	},
 	"credentials.source.external": {
 		"defaultMessage": "Magazyn zewnętrzny (Vault, AWS, …)"
@@ -714,16 +714,16 @@
 		"defaultMessage": "Wprowadź ręcznie (jednorazowo)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Zapisane poświadczenie"
+		"defaultMessage": "Zapisane poświadczenia"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Szyfrowane na wolumenie /data, wielokrotnego użytku dla certyfikatów DNS."
+		"defaultMessage": "Szyfrowane na wolumenie /data i wielokrotnego użytku dla certyfikatów DNS."
 	},
 	"credentials.migrate": {
 		"defaultMessage": "Migruj starsze poświadczenia DNS"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certyfikat(ów) przeniesie poświadczenia inline do skarbca."
+		"defaultMessage": "{count} certyfikat(ów) przeniesie osadzone poświadczenia do skarbca."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -735,6 +735,6 @@
 		"defaultMessage": "Sekret podpisu (weryfikacja X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Podpisane wywołania HTTP przy zmianie hostów lub certyfikatów."
+		"defaultMessage": "Podpisane wywołania HTTP przy zmianie hostów proxy lub certyfikatów."
 	}
 }

@@ -717,13 +717,13 @@
 		"defaultMessage": "외부 자격 증명 저장소"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "OIDC로 Vault, AWS Secrets Manager, Azure Key Vault 또는 Infisical 연결."
+		"defaultMessage": "OIDC로 Vault, AWS Secrets Manager, Azure Key Vault 또는 Infisical에 연결합니다."
 	},
 	"credential-providers.test-oidc": {
 		"defaultMessage": "OIDC 테스트"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "해석 테스트"
+		"defaultMessage": "조회 테스트"
 	},
 	"credential-providers.resolve-path": {
 		"defaultMessage": "비밀 경로"
@@ -735,7 +735,7 @@
 		"defaultMessage": "비밀 경로"
 	},
 	"credentials.source": {
-		"defaultMessage": "자격 증명 소스"
+		"defaultMessage": "자격 증명 출처"
 	},
 	"credentials.source.external": {
 		"defaultMessage": "외부 저장소(Vault, AWS, …)"
@@ -750,10 +750,10 @@
 		"defaultMessage": "저장된 자격 증명"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "/data 볼륨에 암호화되어 DNS 인증서에 재사용 가능."
+		"defaultMessage": "/data 볼륨에 암호화되어 DNS 인증서에 재사용할 수 있습니다."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "레거시 DNS 자격 증명 마이그레이션"
+		"defaultMessage": "기존 DNS 자격 증명 마이그레이션"
 	},
 	"credentials.migrate.summary": {
 		"defaultMessage": "{count}개 인증서의 인라인 자격 증명이 금고로 이동합니다."
@@ -768,6 +768,6 @@
 		"defaultMessage": "서명 비밀(X-NPM-Signature 검증용)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "호스트 또는 인증서 변경 시 서명된 HTTP 콜백 수신."
+		"defaultMessage": "프록시 호스트 또는 인증서 변경 시 서명된 HTTP 콜백을 수신합니다."
 	}
 }

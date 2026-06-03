@@ -720,7 +720,7 @@
 		"defaultMessage": "Probar OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Probar resolución"
+		"defaultMessage": "Probar obtención"
 	},
 	"credential-providers.resolve-path": {
 		"defaultMessage": "Ruta del secreto"
@@ -738,7 +738,7 @@
 		"defaultMessage": "Almacén externo (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Guardado en la bóveda de NPM"
+		"defaultMessage": "Guardada en la bóveda de NPM"
 	},
 	"credentials.source.manual": {
 		"defaultMessage": "Introducir manualmente (una vez)"
@@ -747,13 +747,13 @@
 		"defaultMessage": "Credencial guardada"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Cifrado en el volumen /data y reutilizable para certificados DNS."
+		"defaultMessage": "Cifrada en el volumen /data y reutilizable para certificados DNS."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Migrar credenciales DNS heredadas"
+		"defaultMessage": "Migrar credenciales DNS antiguas"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificado(s) moverían credenciales en línea a la bóveda."
+		"defaultMessage": "{count} certificado(s) moverían credenciales integradas a la bóveda."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -762,9 +762,9 @@
 		"defaultMessage": "Webhooks"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Secreto de firma (para verificar X-NPM-Signature)"
+		"defaultMessage": "Secreto de firma (verificación X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Reciba callbacks HTTP firmados cuando cambien hosts o certificados."
+		"defaultMessage": "Reciba callbacks HTTP firmados al cambiar hosts proxy o certificados."
 	}
 }

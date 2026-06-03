@@ -708,19 +708,19 @@
 		"defaultMessage": "Bearer токени (npmak_…) за скриптове и CI. Само за администратори."
 	},
 	"credential": {
-		"defaultMessage": "Удостоверение"
+		"defaultMessage": "Удостоверителни данни"
 	},
 	"credential-provider": {
-		"defaultMessage": "Доставчик на удостоверения"
+		"defaultMessage": "Доставчик на удостоверителни данни"
 	},
 	"credential-providers": {
-		"defaultMessage": "Външни хранилища за удостоверения"
+		"defaultMessage": "Външни хранилища за удостоверителни данни"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Свързване с Vault, AWS Secrets Manager, Azure Key Vault или Infisical чрез OIDC."
+		"defaultMessage": "Свържете Vault, AWS Secrets Manager, Azure Key Vault или Infisical чрез OIDC."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Тест OIDC"
+		"defaultMessage": "Тест на OIDC"
 	},
 	"credential-providers.test-resolve": {
 		"defaultMessage": "Тест на извличане"
@@ -729,13 +729,13 @@
 		"defaultMessage": "Път до тайната"
 	},
 	"credentials": {
-		"defaultMessage": "DNS удостоверения"
+		"defaultMessage": "DNS удостоверителни данни"
 	},
 	"credentials.secret-path": {
 		"defaultMessage": "Път до тайната"
 	},
 	"credentials.source": {
-		"defaultMessage": "Източник на удостоверение"
+		"defaultMessage": "Източник на удостоверителни данни"
 	},
 	"credentials.source.external": {
 		"defaultMessage": "Външно хранилище (Vault, AWS, …)"
@@ -747,27 +747,27 @@
 		"defaultMessage": "Ръчно въвеждане (еднократно)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Съхранено удостоверение"
+		"defaultMessage": "Съхранени удостоверителни данни"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Криптирано в тома /data и преизползваемо за DNS сертификати."
+		"defaultMessage": "Криптирани в тома /data и преизползваеми за DNS сертификати."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Мигриране на стари DNS удостоверения"
+		"defaultMessage": "Мигриране на стари DNS удостоверителни данни"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} сертификат(а) ще преместят вградените удостоверения в трезора."
+		"defaultMessage": "{count} сертификат(а) ще преместят вградените удостоверителни данни в трезора."
 	},
 	"webhook": {
-		"defaultMessage": "Уебкук"
+		"defaultMessage": "Уебкуук"
 	},
 	"webhooks": {
-		"defaultMessage": "Уебкукове"
+		"defaultMessage": "Уебкуукове"
 	},
 	"webhooks.signing-secret": {
 		"defaultMessage": "Тайна за подпис (за проверка на X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Получавайте подписани HTTP известия при промяна на хостове или сертификати."
+		"defaultMessage": "Подписани HTTP известия при промяна на прокси хостове или сертификати."
 	}
 }

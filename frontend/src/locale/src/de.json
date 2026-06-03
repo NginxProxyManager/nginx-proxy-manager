@@ -660,10 +660,10 @@
 		"defaultMessage": "API-Schlüssel für Automatisierung"
 	},
 	"api-keys.copy-once": {
-		"defaultMessage": "Schlüssel jetzt kopieren — er wird nicht erneut angezeigt."
+		"defaultMessage": "Kopieren Sie diesen Schlüssel jetzt — er wird nicht erneut angezeigt."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Diesen API-Schlüssel widerrufen? Automatisierungen, die ihn nutzen, funktionieren nicht mehr."
+		"defaultMessage": "Diesen API-Schlüssel widerrufen? Automatisierungen, die ihn nutzen, funktionieren dann nicht mehr."
 	},
 	"api-keys.subtitle": {
 		"defaultMessage": "Bearer-Token (npmak_…) für Skripte und CI. Nur für Administratoren."
@@ -672,28 +672,28 @@
 		"defaultMessage": "Anmeldedaten"
 	},
 	"credential-provider": {
-		"defaultMessage": "Anmeldedaten-Anbieter"
+		"defaultMessage": "Anbieter für Anmeldedaten"
 	},
 	"credential-providers": {
 		"defaultMessage": "Externe Anmeldedaten-Speicher"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Vault, AWS Secrets Manager, Azure Key Vault oder Infisical per OIDC verbinden."
+		"defaultMessage": "Verbinden Sie Vault, AWS Secrets Manager, Azure Key Vault oder Infisical per OIDC."
 	},
 	"credential-providers.test-oidc": {
 		"defaultMessage": "OIDC testen"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Auflösung testen"
+		"defaultMessage": "Abruf testen"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Geheimer Pfad"
+		"defaultMessage": "Pfad zum Geheimnis"
 	},
 	"credentials": {
 		"defaultMessage": "DNS-Anmeldedaten"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Geheimer Pfad"
+		"defaultMessage": "Pfad zum Geheimnis"
 	},
 	"credentials.source": {
 		"defaultMessage": "Quelle der Anmeldedaten"
@@ -711,13 +711,13 @@
 		"defaultMessage": "Gespeicherte Anmeldedaten"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Verschlüsselt auf dem /data-Volume, wiederverwendbar für DNS-Zertifikate."
+		"defaultMessage": "Verschlüsselt auf dem /data-Volume und für DNS-Zertifikate wiederverwendbar."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Legacy-DNS-Anmeldedaten migrieren"
+		"defaultMessage": "Bestehende DNS-Anmeldedaten migrieren"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} Zertifikat(e) würden Inline-Anmeldedaten in den Tresor verschieben."
+		"defaultMessage": "{count} Zertifikat(e) würden eingebettete Anmeldedaten in den Tresor übernehmen."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -726,9 +726,9 @@
 		"defaultMessage": "Webhooks"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Signaturgeheimnis (für X-NPM-Signature-Verifizierung)"
+		"defaultMessage": "Signaturgeheimnis (zur Prüfung von X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Signierte HTTP-Rückrufe bei Änderungen an Hosts oder Zertifikaten."
+		"defaultMessage": "Signierte HTTP-Rückrufe bei Änderungen an Proxy-Hosts oder Zertifikaten."
 	}
 }

@@ -669,10 +669,10 @@
 		"defaultMessage": "请立即复制此密钥，之后将不再显示。"
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "撤销此 API 密钥？使用它的自动化将停止工作。"
+		"defaultMessage": "确定撤销此 API 密钥？使用它的自动化将停止工作。"
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "用于脚本和 CI 的 Bearer 令牌（npmak_…）。仅管理员。"
+		"defaultMessage": "用于脚本和 CI 的 Bearer 令牌（npmak_…），仅管理员可用。"
 	},
 	"credential": {
 		"defaultMessage": "凭据"
@@ -690,7 +690,7 @@
 		"defaultMessage": "测试 OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "测试解析"
+		"defaultMessage": "测试获取"
 	},
 	"credential-providers.resolve-path": {
 		"defaultMessage": "密钥路径"
@@ -708,22 +708,22 @@
 		"defaultMessage": "外部存储（Vault、AWS 等）"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "存储在 NPM 保险库"
+		"defaultMessage": "保存在 NPM 密钥库"
 	},
 	"credentials.source.manual": {
 		"defaultMessage": "手动输入（一次性）"
 	},
 	"credentials.stored": {
-		"defaultMessage": "已存储凭据"
+		"defaultMessage": "已保存的凭据"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "加密保存在 /data 卷上，可用于 DNS 证书。"
+		"defaultMessage": "加密保存在 /data 卷上，可重复用于 DNS 证书。"
 	},
 	"credentials.migrate": {
 		"defaultMessage": "迁移旧版 DNS 凭据"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} 个证书将把内联凭据移入保险库。"
+		"defaultMessage": "{count} 个证书将把内联凭据迁入密钥库。"
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -735,6 +735,6 @@
 		"defaultMessage": "签名密钥（用于验证 X-NPM-Signature）"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "主机或证书变更时接收签名的 HTTP 回调。"
+		"defaultMessage": "代理主机或证书变更时接收带签名的 HTTP 回调。"
 	}
 }

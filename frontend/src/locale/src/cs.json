@@ -792,22 +792,22 @@
 		"defaultMessage": "Externí úložiště přihlašovacích údajů"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Propojení Vault, AWS Secrets Manager, Azure Key Vault nebo Infisical přes OIDC."
+		"defaultMessage": "Propojte Vault, AWS Secrets Manager, Azure Key Vault nebo Infisical přes OIDC."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Test OIDC"
+		"defaultMessage": "Otestovat OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test načtení"
+		"defaultMessage": "Otestovat načtení"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Cesta k tajemství"
+		"defaultMessage": "Cesta k tajnému údaji"
 	},
 	"credentials": {
 		"defaultMessage": "DNS přihlašovací údaje"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Cesta k tajemství"
+		"defaultMessage": "Cesta k tajnému údaji"
 	},
 	"credentials.source": {
 		"defaultMessage": "Zdroj přihlašovacích údajů"
@@ -843,6 +843,6 @@
 		"defaultMessage": "Podpisové tajemství (pro ověření X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Podepsané HTTP callbacky při změně hostitelů nebo certifikátů."
+		"defaultMessage": "Podepsané HTTP callbacky při změně proxy hostitelů nebo certifikátů."
 	}
 }

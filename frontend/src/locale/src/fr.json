@@ -786,10 +786,10 @@
 		"defaultMessage": "Révoquer cette clé API ? Les automatisations qui l'utilisent cesseront de fonctionner."
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "Jetons Bearer (npmak_…) pour scripts et CI. Administrateurs uniquement."
+		"defaultMessage": "Jetons Bearer (npmak_…) pour scripts et CI. Réservé aux administrateurs."
 	},
 	"credential": {
-		"defaultMessage": "Identifiant"
+		"defaultMessage": "Identifiants"
 	},
 	"credential-provider": {
 		"defaultMessage": "Fournisseur d'identifiants"
@@ -801,10 +801,10 @@
 		"defaultMessage": "Connectez Vault, AWS Secrets Manager, Azure Key Vault ou Infisical via OIDC."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Tester OIDC"
+		"defaultMessage": "Tester l'OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Tester la résolution"
+		"defaultMessage": "Tester la récupération"
 	},
 	"credential-providers.resolve-path": {
 		"defaultMessage": "Chemin du secret"
@@ -822,22 +822,22 @@
 		"defaultMessage": "Stockage externe (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Stocké dans le coffre NPM"
+		"defaultMessage": "Stockés dans le coffre NPM"
 	},
 	"credentials.source.manual": {
 		"defaultMessage": "Saisie manuelle (ponctuelle)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Identifiant enregistré"
+		"defaultMessage": "Identifiants enregistrés"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Chiffré sur le volume /data, réutilisable pour les certificats DNS."
+		"defaultMessage": "Chiffrés sur le volume /data et réutilisables pour les certificats DNS."
 	},
 	"credentials.migrate": {
 		"defaultMessage": "Migrer les anciens identifiants DNS"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificat(s) déplaceraient les identifiants inline vers le coffre."
+		"defaultMessage": "{count} certificat(s) déplaceraient les identifiants intégrés vers le coffre."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -849,6 +849,6 @@
 		"defaultMessage": "Secret de signature (vérification X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Callbacks HTTP signés lors des changements d'hôtes ou de certificats."
+		"defaultMessage": "Callbacks HTTP signés lors des changements d'hôtes proxy ou de certificats."
 	}
 }

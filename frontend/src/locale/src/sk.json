@@ -792,22 +792,22 @@
 		"defaultMessage": "Externé úložiská prihlasovacích údajov"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Prepojenie Vault, AWS Secrets Manager, Azure Key Vault alebo Infisical cez OIDC."
+		"defaultMessage": "Prepojte Vault, AWS Secrets Manager, Azure Key Vault alebo Infisical cez OIDC."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Test OIDC"
+		"defaultMessage": "Otestovať OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test načítania"
+		"defaultMessage": "Otestovať načítanie"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Cesta k tajomstvu"
+		"defaultMessage": "Cesta k tajnému údaju"
 	},
 	"credentials": {
 		"defaultMessage": "DNS prihlasovacie údaje"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Cesta k tajomstvu"
+		"defaultMessage": "Cesta k tajnému údaju"
 	},
 	"credentials.source": {
 		"defaultMessage": "Zdroj prihlasovacích údajov"
@@ -825,7 +825,7 @@
 		"defaultMessage": "Uložené prihlasovacie údaje"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Šifrované na zväzku /data, znovu použiteľné pre DNS certifikáty."
+		"defaultMessage": "Šifrované na zväzku /data a znovu použiteľné pre DNS certifikáty."
 	},
 	"credentials.migrate": {
 		"defaultMessage": "Migrácia starých DNS prihlasovacích údajov"
@@ -843,6 +843,6 @@
 		"defaultMessage": "Podpisové tajomstvo (overenie X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Podpísané HTTP callbacky pri zmene hostiteľov alebo certifikátov."
+		"defaultMessage": "Podpísané HTTP callbacky pri zmene proxy hostiteľov alebo certifikátov."
 	}
 }
