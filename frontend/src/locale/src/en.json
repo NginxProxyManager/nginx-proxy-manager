@@ -419,6 +419,9 @@
 	"expires.on": {
 		"defaultMessage": "Expires: {date}"
 	},
+	"filter.all": {
+		"defaultMessage": "All"
+	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
