@@ -60,12 +60,9 @@ const internalProxyHost = {
 				// Directive-anchored sanitizer: strip any manually typed `reuseport` from
 				// listen directives in advanced_config. The global reuseport singleton is
 				// owned by default.conf — a duplicate declaration crashes nginx on reload.
-				// Capture group $2 preserves the terminating semicolon.
 				if (thisData.advanced_config) {
-					thisData.advanced_config = thisData.advanced_config.replace(
-						/^(\s*listen\s+[^;]*?)\breuseport\b([^;]*;)/gim,
-						'$1$2',
-					).replace(/\s+;/g, ';');
+					// Global word-boundary parsing catches multiple directives even on a single line
+					thisData.advanced_config = thisData.advanced_config.replace(/\b(listen\s+[^;]*?)\breuseport\s*/gi, '$1');
 				}
 
 				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
@@ -197,12 +194,9 @@ const internalProxyHost = {
 				// Directive-anchored sanitizer: strip any manually typed `reuseport` from
 				// listen directives in advanced_config. The global reuseport singleton is
 				// owned by default.conf — a duplicate declaration crashes nginx on reload.
-				// Capture group $2 preserves the terminating semicolon.
 				if (thisData.advanced_config) {
-					thisData.advanced_config = thisData.advanced_config.replace(
-						/^(\s*listen\s+[^;]*?)\breuseport\b([^;]*;)/gim,
-						'$1$2',
-					).replace(/\s+;/g, ';');
+					// Global word-boundary parsing catches multiple directives even on a single line
+					thisData.advanced_config = thisData.advanced_config.replace(/\b(listen\s+[^;]*?)\breuseport\s*/gi, '$1');
 				}
 
 				return proxyHostModel

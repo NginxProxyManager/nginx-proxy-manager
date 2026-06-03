@@ -20,6 +20,12 @@ if [ "${RMEM_LIMIT}" -lt "${RECOMMENDED_BUFFER}" ] && [ "${RMEM_LIMIT}" -ne 0 ];
     echo "⚠️    sysctl -w net.core.wmem_max=${RECOMMENDED_BUFFER}"
 fi
 
+# Capture whether IPv6 was disabled globally by 50-ipv6.sh before we overwrite default.conf
+IPV6_DISABLED=0
+if grep -q "#listen \[::\]" /etc/nginx/conf.d/default.conf; then
+    IPV6_DISABLED=1
+fi
+
 # Upstream compilation guard & Operator kill-switch:
 # If Nginx lacks HTTP/3 capabilities OR if NPM_HTTP3_DISABLED=1,
 # strip the `quic` listen lines from the default.conf server blocks
@@ -31,7 +37,20 @@ if [ ! -f /etc/nginx/conf.d/default.conf.orig ]; then
 fi
 cp /etc/nginx/conf.d/default.conf.orig /etc/nginx/conf.d/default.conf
 
+# Strip QUIC sockets from default.conf if unsupported or globally disabled
 if ! nginx -V 2>&1 | grep -q -- "--with-http_v3_module" || [ "${NPM_HTTP3_DISABLED}" = "1" ]; then
     echo "ℹ️  HTTP/3: Stripping QUIC sockets from default.conf (unsupported or globally disabled)"
     sed -i '/quic/d' /etc/nginx/conf.d/default.conf
+    
+    # Cascade sanitization down to static configuration directory blocks
+    if [ -d /data/nginx/proxy_host ]; then
+        echo "ℹ️  HTTP/3: Mass-sanitizing existing proxy host configurations to prevent boot crashes"
+        find /data/nginx/proxy_host -name "*.conf" -type f -exec sed -i '/quic/d' {} +
+    fi
+fi
+
+# If IPv6 was disabled globally, ensure IPv6 sockets (including QUIC ones if still active) remain commented out in default.conf
+if [ "${IPV6_DISABLED}" = "1" ] || [ "$(is_true "${DISABLE_IPV6:-}")" = '1' ]; then
+    echo "ℹ️  IPv6 is disabled globally. Deactivating IPv6 sockets in default.conf..."
+    sed -i 's/^[^#]*listen \[::\]/#listen [::]/g' /etc/nginx/conf.d/default.conf
 fi
