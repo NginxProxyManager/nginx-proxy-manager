@@ -62,7 +62,7 @@ const internalProxyHost = {
 				// owned by default.conf — a duplicate declaration crashes nginx on reload.
 				if (thisData.advanced_config) {
 					// Global word-boundary parsing catches multiple directives even on a single line
-					thisData.advanced_config = thisData.advanced_config.replace(/\b(listen\s+[^;]*?)\breuseport\s*/gi, '$1');
+					thisData.advanced_config = thisData.advanced_config.replace(/\b(listen\s+[^;]*?)\breuseport\s*/gi, '$1').replace(/\s+;/g, ';');
 				}
 
 				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
@@ -196,7 +196,7 @@ const internalProxyHost = {
 				// owned by default.conf — a duplicate declaration crashes nginx on reload.
 				if (thisData.advanced_config) {
 					// Global word-boundary parsing catches multiple directives even on a single line
-					thisData.advanced_config = thisData.advanced_config.replace(/\b(listen\s+[^;]*?)\breuseport\s*/gi, '$1');
+					thisData.advanced_config = thisData.advanced_config.replace(/\b(listen\s+[^;]*?)\breuseport\s*/gi, '$1').replace(/\s+;/g, ';');
 				}
 
 				return proxyHostModel
