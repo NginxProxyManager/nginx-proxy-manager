@@ -45,7 +45,7 @@ jobs:
         if: >-
           github.event_name != 'pull_request' &&
           (github.event_name != 'workflow_dispatch' || inputs.push)
-        uses: infrastructure-alexson/.github-private/actions/infisical-oidc-load@v1
+        uses: general-alexson/.github-private/actions/infisical-oidc-load@v1
         with:
           secret_path: /Docker
           recursive: "false"
