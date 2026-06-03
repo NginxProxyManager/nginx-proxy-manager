@@ -125,7 +125,7 @@ Configure endpoints (admin only):
 | POST | `/api/webhooks` |
 | DELETE | `/api/webhooks/{id}` |
 
-Events: `proxy_host.created|updated|deleted|enabled|disabled`, `certificate.created|updated|deleted|renewed`. Verify `X-NPM-Signature: sha256=<hmac>` over the raw JSON body.
+Events: `proxy_host.created|updated|deleted|enabled|disabled`, `certificate.created|updated|deleted|renewed|failed`. Verify `X-NPM-Signature: sha256=<hmac>` over the raw JSON body. Failed deliveries are retried up to three times with backoff.
 
 ## Docker volume
 

@@ -5,6 +5,7 @@ import {
 	readProviderSecret,
 	writeProviderSecret,
 } from "../lib/secrets/provider-storage.js";
+import { STORAGE_PATH_PLACEHOLDER } from "../lib/secrets/storage.js";
 import utils from "../lib/utils.js";
 import credentialProviderModel from "../models/credential_provider.js";
 import internalAuditLog from "./audit-log.js";
@@ -29,7 +30,7 @@ const internalCredentialProvider = {
 			oidc_client_id: data.oidc_client_id || null,
 			oidc_audience: data.oidc_audience || null,
 			oidc_scope: data.oidc_scope || null,
-			oidc_client_secret_path: "pending.enc",
+			oidc_client_secret_path: STORAGE_PATH_PLACEHOLDER,
 			meta: data.meta || {},
 		});
 

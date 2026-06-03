@@ -242,6 +242,22 @@ services:
       - authentik-redis
       - db-postgres
 
+  # Optional: HashiCorp Vault dev server for credential provider integration tests
+  # Start with: docker compose -f docker/docker-compose.dev.yml --profile vault up -d vault-dev
+  vault-dev:
+    profiles: ["vault"]
+    image: hashicorp/vault:1.15
+    container_name: npm2dev.vault
+    networks:
+      - nginx_proxy_manager
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: npm-dev-root
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    ports:
+      - 8200:8200
+    cap_add:
+      - IPC_LOCK
+
   authentik-ldap:
     image: ghcr.io/goauthentik/ldap:2024.10.1
     container_name: npm2dev.authentik-ldap

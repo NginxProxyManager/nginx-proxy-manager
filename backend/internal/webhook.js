@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { encrypt, decrypt } from "../lib/secrets/crypto.js";
-import { ensureCredentialDirs } from "../lib/secrets/storage.js";
+import { ensureCredentialDirs, STORAGE_PATH_PLACEHOLDER } from "../lib/secrets/storage.js";
 import fs from "node:fs";
 import path from "node:path";
 import webhookEndpointModel from "../models/webhook_endpoint.js";
@@ -38,7 +38,7 @@ const internalWebhook = {
 			url: data.url,
 			events: data.events,
 			owner_user_id: access.token.getUserId(1),
-			secret_path: "pending.enc",
+			secret_path: STORAGE_PATH_PLACEHOLDER,
 			is_enabled: data.is_enabled !== false ? 1 : 0,
 		});
 

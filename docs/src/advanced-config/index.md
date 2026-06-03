@@ -10,6 +10,14 @@ DNS API tokens are stored encrypted on the **`/data`** volume (`/data/credential
 
 For REST automation (API keys, async certificate jobs, signed webhooks, external secret stores), see the [Automation API](/advanced/automation-api) guide.
 
+To exercise HashiCorp Vault locally during development:
+
+```bash
+docker compose -f docker/docker-compose.dev.yml --profile vault up -d vault-dev
+```
+
+Vault listens on `http://127.0.0.1:8200` with dev root token `npm-dev-root`. Configure a provider in NPM pointing at `http://vault-dev:8200` from inside the stack network.
+
 ## Running processes as a user/group
 
 By default, the services (nginx etc) will run as `root` user inside the docker container.

@@ -1,7 +1,12 @@
 import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import errs from "../lib/error.js";
 import { validateDnsCredentialsFormat } from "../lib/secrets/resolve.js";
-import { deleteCredentialFile, readCredentialFile, writeCredentialFile } from "../lib/secrets/storage.js";
+import {
+	deleteCredentialFile,
+	readCredentialFile,
+	STORAGE_PATH_PLACEHOLDER,
+	writeCredentialFile,
+} from "../lib/secrets/storage.js";
 import utils from "../lib/utils.js";
 import certificateModel from "../models/certificate.js";
 import credentialModel from "../models/credential.js";
@@ -18,7 +23,7 @@ const internalCredential = {
 			name: data.name,
 			dns_provider: data.dns_provider,
 			owner_user_id: access.token.getUserId(1),
-			storage_path: "pending.enc",
+			storage_path: STORAGE_PATH_PLACEHOLDER,
 			encryption_key_id: "v1",
 		});
 

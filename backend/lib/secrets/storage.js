@@ -2,6 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { CREDENTIALS_DIR, PROVIDERS_DIR, decrypt, encrypt } from "./crypto.js";
 
+/** DB placeholder before encrypted file is written (not a secret). */
+export const STORAGE_PATH_PLACEHOLDER = "__uninitialized__";
+
 export const ensureCredentialDirs = () => {
 	fs.mkdirSync(CREDENTIALS_DIR, { recursive: true, mode: 0o700 });
 	fs.mkdirSync(PROVIDERS_DIR, { recursive: true, mode: 0o700 });

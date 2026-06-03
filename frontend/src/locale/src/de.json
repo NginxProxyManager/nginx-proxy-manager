@@ -652,5 +652,83 @@
 	},
 	"users": {
 		"defaultMessage": "Benutzer"
+	},
+	"api-key": {
+		"defaultMessage": "API Key"
+	},
+	"api-keys": {
+		"defaultMessage": "Automation API Keys"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Copy this key now — it will not be shown again."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Revoke this API key? Automations using it will stop working."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer tokens (npmak_…) for scripts and CI. Admin only."
+	},
+	"credential": {
+		"defaultMessage": "Credential"
+	},
+	"credential-provider": {
+		"defaultMessage": "Credential Provider"
+	},
+	"credential-providers": {
+		"defaultMessage": "External Credential Stores"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Connect Vault, AWS Secrets Manager, Azure Key Vault, or Infisical via OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Test OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Test resolve"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Secret path to resolve"
+	},
+	"credentials": {
+		"defaultMessage": "DNS Credentials"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Secret path"
+	},
+	"credentials.source": {
+		"defaultMessage": "Credential source"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "External store (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Stored in NPM vault"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Enter manually (one-time)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Stored credential"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Encrypted on the /data volume and reusable for DNS certificates."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migrate legacy DNS credentials"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} certificate(s) would move inline credentials into the vault."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooks"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Signing secret (use for X-NPM-Signature verification)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Receive signed HTTP callbacks when hosts or certificates change."
 	}
 }
