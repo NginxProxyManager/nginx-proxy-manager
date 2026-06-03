@@ -142,7 +142,7 @@ Workflow: [`.github/workflows/docker-image.yml`](.github/workflows/docker-image.
 | `/Docker` | `docker.io-user` | `DOCKER_IO_USER` |
 | `/Docker` | `docker.io-token` | `DOCKER_IO_TOKEN` |
 
-Project `secrets-vi-5-a`, environment `prod` via local [`.github/actions/infisical-oidc-load`](.github/actions/infisical-oidc-load) (same as [`general-alexson/.github-private`](https://github.com/general-alexson/.github-private/tree/main/actions/infisical-oidc-load)). **Note:** org-shared private actions only work from **private** repos in the org; this fork is **public**, so the action is vendored here. Alternative: make the repo private to use `@v1` from `.github-private` directly. Infisical OIDC must allow `repo:general-alexson/nginx-proxy-manager`.
+Project `secrets-vi-5-a`, environment `prod` (via [`general-alexson/.github-private` → `infisical-oidc-load@v1`](https://github.com/general-alexson/.github-private/tree/main/actions/infisical-oidc-load)). Requires this repo to be **private** so org-shared actions from `.github-private` resolve. Infisical OIDC must allow `repo:general-alexson/nginx-proxy-manager`.
 
 Create the Hub repository `nginx-proxy-manager` under account `salexson` before the first push.
 
