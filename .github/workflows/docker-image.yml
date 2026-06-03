@@ -59,6 +59,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
 
       - name: Enable Yarn
         run: |
@@ -66,14 +68,27 @@ jobs:
           corepack enable
           corepack prepare yarn@1.22.22 --activate
           yarn --version
+          yarn config set network-timeout 600000 -g
+          yarn config set network-concurrency 4 -g
 
-      - name: Cache frontend dependencies
+      - name: Cache frontend node_modules
         uses: actions/cache@v4
         with:
           path: frontend/node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('frontend/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-modules-${{ hashFiles('frontend/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-modules-
+
+      - name: Check registry connectivity
+        run: |
+          set -euo pipefail
+          for url in https://registry.yarnpkg.com https://registry.npmjs.org; do
+            if ! curl -fsSL --connect-timeout 15 --max-time 60 -o /dev/null "$url"; then
+              echo "::error::Cannot reach $url from the runner — yarn install will fail. Check host/container egress and DNS."
+              exit 1
+            fi
+            echo "OK: $url"
+          done
 
       - name: Verify Node.js version (> 20)
         run: |
@@ -92,7 +107,24 @@ jobs:
           CI: true
         run: |
           set -euo pipefail
-          yarn install --immutable || yarn install
+          yarn_install() {
+            if [ -d node_modules ] && [ -n "$(ls -A node_modules 2>/dev/null || true)" ]; then
+              yarn install --frozen-lockfile --prefer-offline "$@" || yarn install --frozen-lockfile "$@"
+            else
+              yarn install --frozen-lockfile "$@"
+            fi
+          }
+          attempt=1
+          max_attempts=5
+          until yarn_install; do
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "::error::yarn install failed after ${max_attempts} attempts"
+              exit 1
+            fi
+            echo "::warning::yarn install failed (attempt ${attempt}/${max_attempts}); retrying in 30s..."
+            attempt=$((attempt + 1))
+            sleep 30
+          done
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             yarn lint
             yarn locale-compile
