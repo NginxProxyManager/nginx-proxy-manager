@@ -15,7 +15,7 @@ let isNginxHttp3Supported = false;
 try {
 	const output = execSync("nginx -V 2>&1", { encoding: "utf8" });
 	isNginxHttp3Supported = output.includes("--with-http_v3_module");
-} catch (e) {
+} catch (_e) {
 	// Fall back to false if nginx is not found or fails to execute (e.g. in some local dev setups)
 	isNginxHttp3Supported = false;
 }

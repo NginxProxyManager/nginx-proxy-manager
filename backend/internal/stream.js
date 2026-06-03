@@ -28,6 +28,14 @@ const internalStream = {
 		return access
 			.can("streams:create", data)
 			.then((/*access_data*/) => {
+				if (
+					(data.udp_forwarding === true || data.udp_forwarding === 1 || data.udp_forwarding === "1") &&
+					(Number(data.incoming_port) === 443) &&
+					process.env.NPM_HTTP3_DISABLED !== "1"
+				) {
+					throw new errs.ValidationError("Port 443 UDP cannot be used for streams when HTTP/3 (QUIC) is globally enabled.");
+				}
+
 				// TODO: At this point the existing ports should have been checked
 				data.owner_user_id = access.token.getUserId(1);
 
@@ -112,6 +120,16 @@ const internalStream = {
 					throw new errs.InternalValidationError(
 						`Stream could not be updated, IDs do not match: ${row.id} !== ${thisData.id}`,
 					);
+				}
+
+				const isUdp = typeof thisData.udp_forwarding !== "undefined" ? thisData.udp_forwarding : row.udp_forwarding;
+				const port = typeof thisData.incoming_port !== "undefined" ? thisData.incoming_port : row.incoming_port;
+				if (
+					(isUdp === true || isUdp === 1 || isUdp === "1") &&
+					(Number(port) === 443) &&
+					process.env.NPM_HTTP3_DISABLED !== "1"
+				) {
+					throw new errs.ValidationError("Port 443 UDP cannot be used for streams when HTTP/3 (QUIC) is globally enabled.");
 				}
 
 				if (create_certificate) {
