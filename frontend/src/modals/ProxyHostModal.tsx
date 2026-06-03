@@ -42,10 +42,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
-		const { ...payload } = {
+		const { http3Support, ...payload } = {
 			id: id === "new" ? undefined : id,
 			...values,
 		};
+
+		payload.http3_support = http3Support ? 1 : 0;
 
 		setProxyHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
