@@ -4,6 +4,12 @@ outline: deep
 
 # Advanced Configuration
 
+## Credential vault and automation
+
+DNS API tokens are stored encrypted on the **`/data`** volume (`/data/credentials/`). Mount the same volume across upgrades. Optionally set `NPM_SECRETS_ENCRYPTION_KEY` (32-byte value, base64-encoded) instead of the auto-generated key under `/data/keys/secrets.json`.
+
+For REST automation (API keys, async certificate jobs, signed webhooks, external secret stores), see the [Automation API](/advanced/automation-api) guide.
+
 ## Running processes as a user/group
 
 By default, the services (nginx etc) will run as `root` user inside the docker container.

@@ -78,32 +78,42 @@ const internalWebhook = {
 			.where("is_deleted", 0)
 			.andWhere("is_enabled", 1);
 
+		const maxAttempts = 3;
+
 		for (const endpoint of endpoints) {
 			if (!endpoint.events?.includes(event) && !endpoint.events?.includes("*")) {
 				continue;
 			}
 
-			try {
-				const secret = readWebhookSecret(endpoint.id);
-				const body = JSON.stringify({ event, payload, timestamp: new Date().toISOString() });
-				const signature = crypto.createHmac("sha256", secret).update(body).digest("hex");
+			const secret = readWebhookSecret(endpoint.id);
+			const body = JSON.stringify({ event, payload, timestamp: new Date().toISOString() });
+			const signature = crypto.createHmac("sha256", secret).update(body).digest("hex");
 
-				const response = await fetch(endpoint.url, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						"X-NPM-Event": event,
-						"X-NPM-Signature": `sha256=${signature}`,
-					},
-					body,
-					signal: AbortSignal.timeout(10000),
-				});
+			for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+				try {
+					const response = await fetch(endpoint.url, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"X-NPM-Event": event,
+							"X-NPM-Signature": `sha256=${signature}`,
+						},
+						body,
+						signal: AbortSignal.timeout(10000),
+					});
 
-				if (!response.ok) {
-					debug(logger, `Webhook ${endpoint.id} returned ${response.status}`);
+					if (response.ok) {
+						break;
+					}
+
+					debug(logger, `Webhook ${endpoint.id} returned ${response.status} (attempt ${attempt}/${maxAttempts})`);
+				} catch (err) {
+					debug(logger, `Webhook ${endpoint.id} failed: ${err.message} (attempt ${attempt}/${maxAttempts})`);
 				}
-			} catch (err) {
-				debug(logger, `Webhook ${endpoint.id} failed: ${err.message}`);
+
+				if (attempt < maxAttempts) {
+					await new Promise((resolve) => setTimeout(resolve, attempt * 500));
+				}
 			}
 		}
 	},

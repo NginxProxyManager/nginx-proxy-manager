@@ -37,6 +37,8 @@ mkdir -p \
 	/var/lib/nginx/cache/private \
 	/var/cache/nginx/proxy_temp
 
+chmod 700 /data/credentials /data/credentials/providers 2>/dev/null || true
+
 touch /var/log/nginx/error.log || true
 chmod 777 /var/log/nginx/error.log || true
 chmod -R 777 /var/cache/nginx || true
