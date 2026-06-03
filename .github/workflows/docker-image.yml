@@ -33,6 +33,9 @@ permissions:
 env:
   IMAGE: docker.io/salexson/nginx-proxy-manager
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  # Host Podman via DOCKER_HOST; avoid Buildx spawning nested rootless containers in the runner.
+  DOCKER_BUILDKIT: "0"
+  BUILDAH_ISOLATION: chroot
 
 jobs:
   build:
@@ -103,15 +106,6 @@ jobs:
           fi
           yarn build
 
-      - name: Verify Docker CLI
-        run: |
-          set -euo pipefail
-          docker version
-          echo "DOCKER_HOST=${DOCKER_HOST:-<default>}"
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Set build metadata
         id: buildmeta
         run: |
@@ -129,32 +123,57 @@ jobs:
             type=sha,prefix=sha-,format=short
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
 
+      - name: Build image on host engine
+        run: |
+          set -euo pipefail
+          echo "DOCKER_HOST=${DOCKER_HOST:-<default>}"
+          docker version
+          tag_args=()
+          while IFS= read -r tag; do
+            [[ -n "$tag" ]] && tag_args+=(-t "$tag")
+          done <<< "${{ steps.meta.outputs.tags }}"
+          docker build \
+            --pull \
+            --security-opt label=disable \
+            "${tag_args[@]}" \
+            -f docker/Dockerfile \
+            --build-arg TARGETPLATFORM=linux/amd64 \
+            --build-arg BUILDPLATFORM=linux/amd64 \
+            --build-arg BUILD_VERSION="${{ steps.buildmeta.outputs.version }}" \
+            --build-arg BUILD_COMMIT="${{ github.sha }}" \
+            --build-arg BUILD_DATE="${{ steps.buildmeta.outputs.date }}" \
+            --label "org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}" \
+            --label "org.opencontainers.image.revision=${{ github.sha }}" \
+            .
+          docker images | grep nginx-proxy-manager || true
+
       - name: Log in to Docker Hub
         if: >-
           github.event_name != 'pull_request' &&
           (github.event_name != 'workflow_dispatch' || inputs.push)
-        uses: docker/login-action@v3
-        with:
-          username: ${{ env.DOCKER_IO_USER }}
-          password: ${{ env.DOCKER_IO_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DOCKER_IO_USER:-}" ] || [ -z "${DOCKER_IO_TOKEN:-}" ]; then
+            echo "::error::DOCKER_IO_USER and DOCKER_IO_TOKEN must be set (Infisical /Docker)."
+            exit 1
+          fi
+          printf '%s' "$DOCKER_IO_TOKEN" | docker login docker.io \
+            --username "$DOCKER_IO_USER" \
+            --password-stdin
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: docker/Dockerfile
-          platforms: linux/amd64
-          push: >-
-            ${{ github.event_name != 'pull_request' &&
-            (github.event_name != 'workflow_dispatch' || inputs.push) }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            BUILD_VERSION=${{ steps.buildmeta.outputs.version }}
-            BUILD_COMMIT=${{ github.sha }}
-            BUILD_DATE=${{ steps.buildmeta.outputs.date }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Push image to Docker Hub
+        if: >-
+          github.event_name != 'pull_request' &&
+          (github.event_name != 'workflow_dispatch' || inputs.push)
+        run: |
+          set -euo pipefail
+          while IFS= read -r tag; do
+            [[ -n "$tag" ]] && docker push "$tag"
+          done <<< "${{ steps.meta.outputs.tags }}"
+
+      - name: Logout from Docker Hub
+        if: always()
+        run: docker logout docker.io || true
 
       - name: Build summary
         if: always()
@@ -168,7 +187,7 @@ jobs:
           echo "${{ steps.meta.outputs.tags }}" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "_Platform: linux/amd64 via Docker Buildx on self-hosted gen runner._"
+          echo "_Platform: linux/amd64 via host docker/podman socket (no Buildx)._"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "_PR builds are not pushed to Docker Hub._" >> "$GITHUB_STEP_SUMMARY"
