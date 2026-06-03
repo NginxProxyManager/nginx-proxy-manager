@@ -774,70 +774,70 @@
 		"defaultMessage": "Brukere"
 	},
 	"api-key": {
-		"defaultMessage": "API Key"
+		"defaultMessage": "API-nøkkel"
 	},
 	"api-keys": {
-		"defaultMessage": "Automation API Keys"
+		"defaultMessage": "API-nøkler for automatisering"
 	},
 	"api-keys.copy-once": {
-		"defaultMessage": "Copy this key now — it will not be shown again."
+		"defaultMessage": "Kopier denne nøkkelen nå — den vises ikke igjen."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Revoke this API key? Automations using it will stop working."
+		"defaultMessage": "Tilbakekalle denne API-nøkkelen? Automatiseringer som bruker den stopper."
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "Bearer tokens (npmak_…) for scripts and CI. Admin only."
+		"defaultMessage": "Bearer-tokens (npmak_…) for skript og CI. Kun administratorer."
 	},
 	"credential": {
-		"defaultMessage": "Credential"
+		"defaultMessage": "Legitimasjon"
 	},
 	"credential-provider": {
-		"defaultMessage": "Credential Provider"
+		"defaultMessage": "Legitimasjonsleverandør"
 	},
 	"credential-providers": {
-		"defaultMessage": "External Credential Stores"
+		"defaultMessage": "Eksterne legitimasjonslagre"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Connect Vault, AWS Secrets Manager, Azure Key Vault, or Infisical via OIDC."
+		"defaultMessage": "Koble Vault, AWS Secrets Manager, Azure Key Vault eller Infisical via OIDC."
 	},
 	"credential-providers.test-oidc": {
 		"defaultMessage": "Test OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test resolve"
+		"defaultMessage": "Test oppløsning"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Secret path to resolve"
+		"defaultMessage": "Hemmelig sti"
 	},
 	"credentials": {
-		"defaultMessage": "DNS Credentials"
+		"defaultMessage": "DNS-legitimasjon"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Secret path"
+		"defaultMessage": "Hemmelig sti"
 	},
 	"credentials.source": {
-		"defaultMessage": "Credential source"
+		"defaultMessage": "Kilde for legitimasjon"
 	},
 	"credentials.source.external": {
-		"defaultMessage": "External store (Vault, AWS, …)"
+		"defaultMessage": "Eksternt lager (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Stored in NPM vault"
+		"defaultMessage": "Lagret i NPM-hvelv"
 	},
 	"credentials.source.manual": {
-		"defaultMessage": "Enter manually (one-time)"
+		"defaultMessage": "Skriv inn manuelt (engangs)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Stored credential"
+		"defaultMessage": "Lagret legitimasjon"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Encrypted on the /data volume and reusable for DNS certificates."
+		"defaultMessage": "Kryptert på /data-volumet, gjenbrukbar for DNS-sertifikater."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Migrate legacy DNS credentials"
+		"defaultMessage": "Migrer eldre DNS-legitimasjon"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificate(s) would move inline credentials into the vault."
+		"defaultMessage": "{count} sertifikat(er) flytter inline-legitimasjon til hvelvet."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -846,9 +846,9 @@
 		"defaultMessage": "Webhooks"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Signing secret (use for X-NPM-Signature verification)"
+		"defaultMessage": "Signeringshemmelighet (for X-NPM-Signature-verifisering)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Receive signed HTTP callbacks when hosts or certificates change."
+		"defaultMessage": "Signerte HTTP-tilbakeringinger ved endring av verter eller sertifikater."
 	}
 }

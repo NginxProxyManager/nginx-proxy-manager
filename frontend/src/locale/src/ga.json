@@ -681,70 +681,70 @@
 		"defaultMessage": "Úsáideoirí"
 	},
 	"api-key": {
-		"defaultMessage": "API Key"
+		"defaultMessage": "Eochair API"
 	},
 	"api-keys": {
-		"defaultMessage": "Automation API Keys"
+		"defaultMessage": "Eochracha API uathoibrithe"
 	},
 	"api-keys.copy-once": {
-		"defaultMessage": "Copy this key now — it will not be shown again."
+		"defaultMessage": "Cóipeáil an eochair seo anois — ní thaispeánfar arís í."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Revoke this API key? Automations using it will stop working."
+		"defaultMessage": "Cúlghairm an eochair API seo? Stopfaidh uathoibriú a úsáideann í."
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "Bearer tokens (npmak_…) for scripts and CI. Admin only."
+		"defaultMessage": "Comharthaí Bearer (npmak_…) do scripteanna agus CI. Riarthóirí amháin."
 	},
 	"credential": {
-		"defaultMessage": "Credential"
+		"defaultMessage": "Dintiúr"
 	},
 	"credential-provider": {
-		"defaultMessage": "Credential Provider"
+		"defaultMessage": "Soláthraí dintiúir"
 	},
 	"credential-providers": {
-		"defaultMessage": "External Credential Stores"
+		"defaultMessage": "Stórálacha seachtracha dintiúir"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Connect Vault, AWS Secrets Manager, Azure Key Vault, or Infisical via OIDC."
+		"defaultMessage": "Ceangail Vault, AWS Secrets Manager, Azure Key Vault nó Infisical trí OIDC."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Test OIDC"
+		"defaultMessage": "Tástáil OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test resolve"
+		"defaultMessage": "Tástáil réitigh"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Secret path to resolve"
+		"defaultMessage": "Conair rúnda"
 	},
 	"credentials": {
-		"defaultMessage": "DNS Credentials"
+		"defaultMessage": "Dintiúir DNS"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Secret path"
+		"defaultMessage": "Conair rúnda"
 	},
 	"credentials.source": {
-		"defaultMessage": "Credential source"
+		"defaultMessage": "Foinse dintiúir"
 	},
 	"credentials.source.external": {
-		"defaultMessage": "External store (Vault, AWS, …)"
+		"defaultMessage": "Stór seachtrach (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Stored in NPM vault"
+		"defaultMessage": "Stóráilte i stórlann NPM"
 	},
 	"credentials.source.manual": {
-		"defaultMessage": "Enter manually (one-time)"
+		"defaultMessage": "Iontráil de láimh (uair amháin)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Stored credential"
+		"defaultMessage": "Dintiúr stóráilte"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Encrypted on the /data volume and reusable for DNS certificates."
+		"defaultMessage": "Criptithe ar an toirt /data, in-athúsáidte do dheimhnithe DNS."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Migrate legacy DNS credentials"
+		"defaultMessage": "Aistrigh seandintiúir DNS"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificate(s) would move inline credentials into the vault."
+		"defaultMessage": "Bogfadh {count} deimhniú(í) dintiúir inlíne go dtí an stórlann."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -753,9 +753,9 @@
 		"defaultMessage": "Webhooks"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Signing secret (use for X-NPM-Signature verification)"
+		"defaultMessage": "Rún sínithe (do fhíorú X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Receive signed HTTP callbacks when hosts or certificates change."
+		"defaultMessage": "Glaoanna HTTP sínithe nuair a athraíonn óstach nó deimhnithe."
 	}
 }

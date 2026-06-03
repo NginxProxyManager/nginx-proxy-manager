@@ -768,81 +768,81 @@
 		"defaultMessage": "Používatelia"
 	},
 	"api-key": {
-		"defaultMessage": "API Key"
+		"defaultMessage": "API kľúč"
 	},
 	"api-keys": {
-		"defaultMessage": "Automation API Keys"
+		"defaultMessage": "API kľúče pre automatizáciu"
 	},
 	"api-keys.copy-once": {
-		"defaultMessage": "Copy this key now — it will not be shown again."
+		"defaultMessage": "Skopírujte tento kľúč teraz — už sa znova nezobrazí."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Revoke this API key? Automations using it will stop working."
+		"defaultMessage": "Zrušiť tento API kľúč? Automatizácie, ktoré ho používajú, prestanú fungovať."
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "Bearer tokens (npmak_…) for scripts and CI. Admin only."
+		"defaultMessage": "Bearer tokeny (npmak_…) pre skripty a CI. Len pre administrátorov."
 	},
 	"credential": {
-		"defaultMessage": "Credential"
+		"defaultMessage": "Prihlasovacie údaje"
 	},
 	"credential-provider": {
-		"defaultMessage": "Credential Provider"
+		"defaultMessage": "Poskytovateľ prihlasovacích údajov"
 	},
 	"credential-providers": {
-		"defaultMessage": "External Credential Stores"
+		"defaultMessage": "Externé úložiská prihlasovacích údajov"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Connect Vault, AWS Secrets Manager, Azure Key Vault, or Infisical via OIDC."
+		"defaultMessage": "Prepojenie Vault, AWS Secrets Manager, Azure Key Vault alebo Infisical cez OIDC."
 	},
 	"credential-providers.test-oidc": {
 		"defaultMessage": "Test OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test resolve"
+		"defaultMessage": "Test načítania"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Secret path to resolve"
+		"defaultMessage": "Cesta k tajomstvu"
 	},
 	"credentials": {
-		"defaultMessage": "DNS Credentials"
+		"defaultMessage": "DNS prihlasovacie údaje"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Secret path"
+		"defaultMessage": "Cesta k tajomstvu"
 	},
 	"credentials.source": {
-		"defaultMessage": "Credential source"
+		"defaultMessage": "Zdroj prihlasovacích údajov"
 	},
 	"credentials.source.external": {
-		"defaultMessage": "External store (Vault, AWS, …)"
+		"defaultMessage": "Externé úložisko (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Stored in NPM vault"
+		"defaultMessage": "Uložené v trezore NPM"
 	},
 	"credentials.source.manual": {
-		"defaultMessage": "Enter manually (one-time)"
+		"defaultMessage": "Zadať ručne (jednorazovo)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Stored credential"
+		"defaultMessage": "Uložené prihlasovacie údaje"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Encrypted on the /data volume and reusable for DNS certificates."
+		"defaultMessage": "Šifrované na zväzku /data, znovu použiteľné pre DNS certifikáty."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Migrate legacy DNS credentials"
+		"defaultMessage": "Migrácia starých DNS prihlasovacích údajov"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificate(s) would move inline credentials into the vault."
+		"defaultMessage": "{count} certifikát(ov) presunie vložené údaje do trezora."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
 	},
 	"webhooks": {
-		"defaultMessage": "Webhooks"
+		"defaultMessage": "Webhooky"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Signing secret (use for X-NPM-Signature verification)"
+		"defaultMessage": "Podpisové tajomstvo (overenie X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Receive signed HTTP callbacks when hosts or certificates change."
+		"defaultMessage": "Podpísané HTTP callbacky pri zmene hostiteľov alebo certifikátov."
 	}
 }

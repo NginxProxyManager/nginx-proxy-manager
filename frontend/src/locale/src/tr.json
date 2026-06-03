@@ -681,81 +681,81 @@
 		"defaultMessage": "Kullanıcılar"
 	},
 	"api-key": {
-		"defaultMessage": "API Key"
+		"defaultMessage": "API anahtarı"
 	},
 	"api-keys": {
-		"defaultMessage": "Automation API Keys"
+		"defaultMessage": "Otomasyon API anahtarları"
 	},
 	"api-keys.copy-once": {
-		"defaultMessage": "Copy this key now — it will not be shown again."
+		"defaultMessage": "Bu anahtarı şimdi kopyalayın — tekrar gösterilmeyecek."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Revoke this API key? Automations using it will stop working."
+		"defaultMessage": "Bu API anahtarı iptal edilsin mi? Kullanan otomasyonlar çalışmayı durdurur."
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "Bearer tokens (npmak_…) for scripts and CI. Admin only."
+		"defaultMessage": "Betikler ve CI için Bearer belirteçleri (npmak_…). Yalnızca yöneticiler."
 	},
 	"credential": {
-		"defaultMessage": "Credential"
+		"defaultMessage": "Kimlik bilgisi"
 	},
 	"credential-provider": {
-		"defaultMessage": "Credential Provider"
+		"defaultMessage": "Kimlik bilgisi sağlayıcısı"
 	},
 	"credential-providers": {
-		"defaultMessage": "External Credential Stores"
+		"defaultMessage": "Harici kimlik bilgisi depoları"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Connect Vault, AWS Secrets Manager, Azure Key Vault, or Infisical via OIDC."
+		"defaultMessage": "OIDC ile Vault, AWS Secrets Manager, Azure Key Vault veya Infisical bağlayın."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Test OIDC"
+		"defaultMessage": "OIDC testi"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test resolve"
+		"defaultMessage": "Çözümleme testi"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Secret path to resolve"
+		"defaultMessage": "Gizli yol"
 	},
 	"credentials": {
-		"defaultMessage": "DNS Credentials"
+		"defaultMessage": "DNS kimlik bilgileri"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Secret path"
+		"defaultMessage": "Gizli yol"
 	},
 	"credentials.source": {
-		"defaultMessage": "Credential source"
+		"defaultMessage": "Kimlik bilgisi kaynağı"
 	},
 	"credentials.source.external": {
-		"defaultMessage": "External store (Vault, AWS, …)"
+		"defaultMessage": "Harici depo (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Stored in NPM vault"
+		"defaultMessage": "NPM kasasında saklandı"
 	},
 	"credentials.source.manual": {
-		"defaultMessage": "Enter manually (one-time)"
+		"defaultMessage": "Manuel gir (tek seferlik)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Stored credential"
+		"defaultMessage": "Kayıtlı kimlik bilgisi"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Encrypted on the /data volume and reusable for DNS certificates."
+		"defaultMessage": "/data biriminde şifreli, DNS sertifikaları için yeniden kullanılabilir."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Migrate legacy DNS credentials"
+		"defaultMessage": "Eski DNS kimlik bilgilerini taşı"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificate(s) would move inline credentials into the vault."
+		"defaultMessage": "{count} sertifika satır içi kimlik bilgilerini kasaya taşır."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
 	},
 	"webhooks": {
-		"defaultMessage": "Webhooks"
+		"defaultMessage": "Webhooklar"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Signing secret (use for X-NPM-Signature verification)"
+		"defaultMessage": "İmza gizlisi (X-NPM-Signature doğrulaması)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Receive signed HTTP callbacks when hosts or certificates change."
+		"defaultMessage": "Ana bilgisayar veya sertifika değişince imzalı HTTP geri çağrıları."
 	}
 }

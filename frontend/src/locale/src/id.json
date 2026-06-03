@@ -681,81 +681,81 @@
 		"defaultMessage": "Pengguna"
 	},
 	"api-key": {
-		"defaultMessage": "API Key"
+		"defaultMessage": "Kunci API"
 	},
 	"api-keys": {
-		"defaultMessage": "Automation API Keys"
+		"defaultMessage": "Kunci API otomasi"
 	},
 	"api-keys.copy-once": {
-		"defaultMessage": "Copy this key now — it will not be shown again."
+		"defaultMessage": "Salin kunci ini sekarang — tidak akan ditampilkan lagi."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Revoke this API key? Automations using it will stop working."
+		"defaultMessage": "Cabut kunci API ini? Otomasi yang menggunakannya akan berhenti."
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "Bearer tokens (npmak_…) for scripts and CI. Admin only."
+		"defaultMessage": "Token Bearer (npmak_…) untuk skrip dan CI. Hanya admin."
 	},
 	"credential": {
-		"defaultMessage": "Credential"
+		"defaultMessage": "Kredensial"
 	},
 	"credential-provider": {
-		"defaultMessage": "Credential Provider"
+		"defaultMessage": "Penyedia kredensial"
 	},
 	"credential-providers": {
-		"defaultMessage": "External Credential Stores"
+		"defaultMessage": "Penyimpanan kredensial eksternal"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Connect Vault, AWS Secrets Manager, Azure Key Vault, or Infisical via OIDC."
+		"defaultMessage": "Hubungkan Vault, AWS Secrets Manager, Azure Key Vault, atau Infisical via OIDC."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Test OIDC"
+		"defaultMessage": "Uji OIDC"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test resolve"
+		"defaultMessage": "Uji resolusi"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Secret path to resolve"
+		"defaultMessage": "Jalur rahasia"
 	},
 	"credentials": {
-		"defaultMessage": "DNS Credentials"
+		"defaultMessage": "Kredensial DNS"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Secret path"
+		"defaultMessage": "Jalur rahasia"
 	},
 	"credentials.source": {
-		"defaultMessage": "Credential source"
+		"defaultMessage": "Sumber kredensial"
 	},
 	"credentials.source.external": {
-		"defaultMessage": "External store (Vault, AWS, …)"
+		"defaultMessage": "Penyimpanan eksternal (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Stored in NPM vault"
+		"defaultMessage": "Disimpan di brankas NPM"
 	},
 	"credentials.source.manual": {
-		"defaultMessage": "Enter manually (one-time)"
+		"defaultMessage": "Masukkan manual (sekali)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Stored credential"
+		"defaultMessage": "Kredensial tersimpan"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Encrypted on the /data volume and reusable for DNS certificates."
+		"defaultMessage": "Terenkripsi di volume /data, dapat dipakai ulang untuk sertifikat DNS."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Migrate legacy DNS credentials"
+		"defaultMessage": "Migrasi kredensial DNS lama"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificate(s) would move inline credentials into the vault."
+		"defaultMessage": "{count} sertifikat akan memindahkan kredensial inline ke brankas."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
 	},
 	"webhooks": {
-		"defaultMessage": "Webhooks"
+		"defaultMessage": "Webhook"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Signing secret (use for X-NPM-Signature verification)"
+		"defaultMessage": "Rahasia tanda tangan (verifikasi X-NPM-Signature)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Receive signed HTTP callbacks when hosts or certificates change."
+		"defaultMessage": "Callback HTTP bertanda tangan saat host atau sertifikat berubah."
 	}
 }

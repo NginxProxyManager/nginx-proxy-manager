@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * Copy missing translation keys from en.json into other locale files (English fallback).
+ * After merging new keys, run: node locale-translate-vault.cjs
  */
 const fs = require("fs");
 const path = require("path");

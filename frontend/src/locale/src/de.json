@@ -654,70 +654,70 @@
 		"defaultMessage": "Benutzer"
 	},
 	"api-key": {
-		"defaultMessage": "API Key"
+		"defaultMessage": "API-Schlüssel"
 	},
 	"api-keys": {
-		"defaultMessage": "Automation API Keys"
+		"defaultMessage": "API-Schlüssel für Automatisierung"
 	},
 	"api-keys.copy-once": {
-		"defaultMessage": "Copy this key now — it will not be shown again."
+		"defaultMessage": "Schlüssel jetzt kopieren — er wird nicht erneut angezeigt."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Revoke this API key? Automations using it will stop working."
+		"defaultMessage": "Diesen API-Schlüssel widerrufen? Automatisierungen, die ihn nutzen, funktionieren nicht mehr."
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "Bearer tokens (npmak_…) for scripts and CI. Admin only."
+		"defaultMessage": "Bearer-Token (npmak_…) für Skripte und CI. Nur für Administratoren."
 	},
 	"credential": {
-		"defaultMessage": "Credential"
+		"defaultMessage": "Anmeldedaten"
 	},
 	"credential-provider": {
-		"defaultMessage": "Credential Provider"
+		"defaultMessage": "Anmeldedaten-Anbieter"
 	},
 	"credential-providers": {
-		"defaultMessage": "External Credential Stores"
+		"defaultMessage": "Externe Anmeldedaten-Speicher"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Connect Vault, AWS Secrets Manager, Azure Key Vault, or Infisical via OIDC."
+		"defaultMessage": "Vault, AWS Secrets Manager, Azure Key Vault oder Infisical per OIDC verbinden."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Test OIDC"
+		"defaultMessage": "OIDC testen"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test resolve"
+		"defaultMessage": "Auflösung testen"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Secret path to resolve"
+		"defaultMessage": "Geheimer Pfad"
 	},
 	"credentials": {
-		"defaultMessage": "DNS Credentials"
+		"defaultMessage": "DNS-Anmeldedaten"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Secret path"
+		"defaultMessage": "Geheimer Pfad"
 	},
 	"credentials.source": {
-		"defaultMessage": "Credential source"
+		"defaultMessage": "Quelle der Anmeldedaten"
 	},
 	"credentials.source.external": {
-		"defaultMessage": "External store (Vault, AWS, …)"
+		"defaultMessage": "Externer Speicher (Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Stored in NPM vault"
+		"defaultMessage": "Im NPM-Tresor gespeichert"
 	},
 	"credentials.source.manual": {
-		"defaultMessage": "Enter manually (one-time)"
+		"defaultMessage": "Manuell eingeben (einmalig)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Stored credential"
+		"defaultMessage": "Gespeicherte Anmeldedaten"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Encrypted on the /data volume and reusable for DNS certificates."
+		"defaultMessage": "Verschlüsselt auf dem /data-Volume, wiederverwendbar für DNS-Zertifikate."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Migrate legacy DNS credentials"
+		"defaultMessage": "Legacy-DNS-Anmeldedaten migrieren"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificate(s) would move inline credentials into the vault."
+		"defaultMessage": "{count} Zertifikat(e) würden Inline-Anmeldedaten in den Tresor verschieben."
 	},
 	"webhook": {
 		"defaultMessage": "Webhook"
@@ -726,9 +726,9 @@
 		"defaultMessage": "Webhooks"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Signing secret (use for X-NPM-Signature verification)"
+		"defaultMessage": "Signaturgeheimnis (für X-NPM-Signature-Verifizierung)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Receive signed HTTP callbacks when hosts or certificates change."
+		"defaultMessage": "Signierte HTTP-Rückrufe bei Änderungen an Hosts oder Zertifikaten."
 	}
 }

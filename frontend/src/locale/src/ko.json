@@ -693,81 +693,81 @@
 		"defaultMessage": "사용자"
 	},
 	"api-key": {
-		"defaultMessage": "API Key"
+		"defaultMessage": "API 키"
 	},
 	"api-keys": {
-		"defaultMessage": "Automation API Keys"
+		"defaultMessage": "자동화 API 키"
 	},
 	"api-keys.copy-once": {
-		"defaultMessage": "Copy this key now — it will not be shown again."
+		"defaultMessage": "지금 이 키를 복사하세요. 다시 표시되지 않습니다."
 	},
 	"api-keys.revoke-confirm": {
-		"defaultMessage": "Revoke this API key? Automations using it will stop working."
+		"defaultMessage": "이 API 키를 취소하시겠습니까? 사용 중인 자동화가 중단됩니다."
 	},
 	"api-keys.subtitle": {
-		"defaultMessage": "Bearer tokens (npmak_…) for scripts and CI. Admin only."
+		"defaultMessage": "스크립트 및 CI용 Bearer 토큰(npmak_…). 관리자 전용."
 	},
 	"credential": {
-		"defaultMessage": "Credential"
+		"defaultMessage": "자격 증명"
 	},
 	"credential-provider": {
-		"defaultMessage": "Credential Provider"
+		"defaultMessage": "자격 증명 공급자"
 	},
 	"credential-providers": {
-		"defaultMessage": "External Credential Stores"
+		"defaultMessage": "외부 자격 증명 저장소"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Connect Vault, AWS Secrets Manager, Azure Key Vault, or Infisical via OIDC."
+		"defaultMessage": "OIDC로 Vault, AWS Secrets Manager, Azure Key Vault 또는 Infisical 연결."
 	},
 	"credential-providers.test-oidc": {
-		"defaultMessage": "Test OIDC"
+		"defaultMessage": "OIDC 테스트"
 	},
 	"credential-providers.test-resolve": {
-		"defaultMessage": "Test resolve"
+		"defaultMessage": "해석 테스트"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Secret path to resolve"
+		"defaultMessage": "비밀 경로"
 	},
 	"credentials": {
-		"defaultMessage": "DNS Credentials"
+		"defaultMessage": "DNS 자격 증명"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Secret path"
+		"defaultMessage": "비밀 경로"
 	},
 	"credentials.source": {
-		"defaultMessage": "Credential source"
+		"defaultMessage": "자격 증명 소스"
 	},
 	"credentials.source.external": {
-		"defaultMessage": "External store (Vault, AWS, …)"
+		"defaultMessage": "외부 저장소(Vault, AWS, …)"
 	},
 	"credentials.source.internal": {
-		"defaultMessage": "Stored in NPM vault"
+		"defaultMessage": "NPM 금고에 저장됨"
 	},
 	"credentials.source.manual": {
-		"defaultMessage": "Enter manually (one-time)"
+		"defaultMessage": "수동 입력(일회성)"
 	},
 	"credentials.stored": {
-		"defaultMessage": "Stored credential"
+		"defaultMessage": "저장된 자격 증명"
 	},
 	"credentials.subtitle": {
-		"defaultMessage": "Encrypted on the /data volume and reusable for DNS certificates."
+		"defaultMessage": "/data 볼륨에 암호화되어 DNS 인증서에 재사용 가능."
 	},
 	"credentials.migrate": {
-		"defaultMessage": "Migrate legacy DNS credentials"
+		"defaultMessage": "레거시 DNS 자격 증명 마이그레이션"
 	},
 	"credentials.migrate.summary": {
-		"defaultMessage": "{count} certificate(s) would move inline credentials into the vault."
+		"defaultMessage": "{count}개 인증서의 인라인 자격 증명이 금고로 이동합니다."
 	},
 	"webhook": {
-		"defaultMessage": "Webhook"
+		"defaultMessage": "웹훅"
 	},
 	"webhooks": {
-		"defaultMessage": "Webhooks"
+		"defaultMessage": "웹훅"
 	},
 	"webhooks.signing-secret": {
-		"defaultMessage": "Signing secret (use for X-NPM-Signature verification)"
+		"defaultMessage": "서명 비밀(X-NPM-Signature 검증용)"
 	},
 	"webhooks.subtitle": {
-		"defaultMessage": "Receive signed HTTP callbacks when hosts or certificates change."
+		"defaultMessage": "호스트 또는 인증서 변경 시 서명된 HTTP 콜백 수신."
 	}
 }
