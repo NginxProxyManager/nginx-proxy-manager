@@ -1,0 +1,66 @@
+# Vendored from general-alexson/.github-private (private repos cannot be used as
+# cross-repo actions unless explicitly shared). Keep in sync with upstream action.
+name: Infisical OIDC load secrets
+description: Authenticate with Infisical via GitHub OIDC and load secrets into GITHUB_ENV (masked).
+
+inputs:
+  infisical_domain:
+    description: Infisical API base URL (no trailing slash)
+    required: false
+    default: https://vault.svc.eh168.alexson.org
+  env_slug:
+    description: Infisical environment slug
+    required: false
+    default: prod
+  project_slug:
+    description: Infisical project slug
+    required: false
+    default: secrets-vi-5-a
+  project_id:
+    description: Infisical project UUID (optional; skips slug lookup)
+    required: false
+    default: ""
+  identity_id:
+    description: Machine identity ID with OIDC auth enabled
+    required: false
+    default: 8977b274-e440-4612-9097-69faf3ecbe2a
+  oidc_audience:
+    description: GitHub OIDC audience (default = repository owner org URL)
+    required: false
+    default: ""
+  secret_path:
+    description: Infisical folder path
+    required: false
+    default: /
+  recursive:
+    description: Include secrets in subfolders
+    required: false
+    default: "true"
+  secret_keys:
+    description: Comma-separated Infisical secret keys to load (empty = all keys at secret_path)
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Fetch secrets from Infisical
+      shell: bash
+      env:
+        INFISICAL_DOMAIN: ${{ inputs.infisical_domain }}
+        IDENTITY_ID: ${{ inputs.identity_id }}
+        ENV_SLUG: ${{ inputs.env_slug }}
+        PROJECT_SLUG: ${{ inputs.project_slug }}
+        PROJECT_ID: ${{ inputs.project_id }}
+        SECRET_PATH: ${{ inputs.secret_path }}
+        RECURSIVE: ${{ inputs.recursive }}
+        SECRET_KEYS: ${{ inputs.secret_keys }}
+        OIDC_AUDIENCE: ${{ inputs.oidc_audience != '' && inputs.oidc_audience || format('https://github.com/{0}', github.repository_owner) }}
+      run: |
+        set +x
+        set -euo pipefail
+        JWT_FILE="${RUNNER_TEMP}/github-oidc.jwt"
+        export JWT_FILE
+        URL="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${OIDC_AUDIENCE}"
+        curl -sf -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "$URL" | jq -r '.value' > "$JWT_FILE"
+        python3 "${{ github.action_path }}/infisical_oidc.py"

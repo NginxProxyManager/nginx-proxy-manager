@@ -142,7 +142,7 @@ Workflow: [`.github/workflows/docker-image.yml`](.github/workflows/docker-image.
 | `/Docker` | `docker.io-user` | `DOCKER_IO_USER` |
 | `/Docker` | `docker.io-token` | `DOCKER_IO_TOKEN` |
 
-Project `secrets-vi-5-a`, environment `prod` (via [`infisical-oidc-load`](https://github.com/general-alexson/.github-private/tree/main/actions/infisical-oidc-load)). The repo must be allowed on the Infisical machine identity OIDC subject (same setup as other `*-alexson` workflows).
+Project `secrets-vi-5-a`, environment `prod` (local action [`.github/actions/infisical-oidc-load`](.github/actions/infisical-oidc-load), vendored from [`general-alexson/.github-private`](https://github.com/general-alexson/.github-private)). The repo must be allowed on the Infisical machine identity OIDC subject (`repo:general-alexson/*` or broader `repo:*-alexson/*`).
 
 Create the Hub repository `nginx-proxy-manager` under account `salexson` before the first push.
 
