@@ -108,7 +108,8 @@ export default function Webhooks() {
 							<td>
 								<Button
 									size="sm"
-									variant="outline-danger"
+									variant="outline"
+									actionType="danger"
 									onClick={() =>
 										showDeleteConfirmModal({
 											title: "Delete webhook",

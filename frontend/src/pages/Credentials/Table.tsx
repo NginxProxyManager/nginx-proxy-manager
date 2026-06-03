@@ -67,19 +67,31 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 		[onDelete, onEdit],
 	);
 
-	const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
+	const tableInstance = useReactTable({
+		data,
+		columns,
+		getCoreRowModel: getCoreRowModel(),
+		rowCount: data.length,
+		meta: {
+			isFetching,
+		},
+	});
 
-	if (!data.length) {
-		return (
-			<EmptyData
-				object="credential"
-				isFiltered={isFiltered}
-				onNew={onNew}
-				permissionSection={CREDENTIALS}
-				permission={MANAGE}
-			/>
-		);
-	}
-
-	return <TableLayout table={table} isFetching={isFetching} />;
+	return (
+		<TableLayout
+			tableInstance={tableInstance}
+			emptyState={
+				<EmptyData
+					object="credential"
+					objects="credentials"
+					tableInstance={tableInstance}
+					isFiltered={isFiltered}
+					onNew={onNew}
+					color="cyan"
+					permissionSection={CREDENTIALS}
+					permission={MANAGE}
+				/>
+			}
+		/>
+	);
 }

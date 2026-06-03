@@ -69,10 +69,10 @@ export default function TableWrapper() {
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={CREDENTIALS} permission={MANAGE} hideError>
-									<Button size="sm" variant="outline-secondary" onClick={() => handleMigrate(true)}>
+									<Button size="sm" variant="outline" actionType="secondary" onClick={() => handleMigrate(true)}>
 										<T id="credentials.migrate" /> (preview)
 									</Button>
-									<Button size="sm" variant="outline-warning" onClick={() => handleMigrate(false)}>
+									<Button size="sm" variant="outline" actionType="warning" onClick={() => handleMigrate(false)}>
 										<T id="credentials.migrate" />
 									</Button>
 									<Button size="sm" className="btn-cyan" onClick={() => showCredentialModal()}>

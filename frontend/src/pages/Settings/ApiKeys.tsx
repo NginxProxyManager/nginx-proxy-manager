@@ -102,7 +102,8 @@ export default function ApiKeys() {
 							<td>
 								<Button
 									size="sm"
-									variant="outline-danger"
+									variant="outline"
+									actionType="danger"
 									onClick={() =>
 										showDeleteConfirmModal({
 											title: "Revoke API key",

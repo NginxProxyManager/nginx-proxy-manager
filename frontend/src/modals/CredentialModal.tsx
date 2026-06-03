@@ -104,7 +104,7 @@ const CredentialModal = EasyModal.create(({ item, visible, remove }: Props) => {
 							</div>
 						</Modal.Body>
 						<Modal.Footer>
-							<Button variant="link" onClick={remove}>
+							<Button onClick={remove}>
 								<T id="cancel" />
 							</Button>
 							<Button type="submit" className="btn-cyan" disabled={isSubmitting}>

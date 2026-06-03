@@ -238,7 +238,7 @@ export default function CredentialProviders() {
 							<T id="save" />
 						</Button>
 						{editingId ? (
-							<Button variant="outline-secondary" onClick={resetForm}>
+							<Button variant="outline" actionType="secondary" onClick={resetForm}>
 								<T id="cancel" />
 							</Button>
 						) : null}
@@ -272,18 +272,19 @@ export default function CredentialProviders() {
 											setResolvePath((prev) => ({ ...prev, [p.id]: e.target.value }))
 										}
 									/>
-									<Button size="sm" variant="outline-secondary" onClick={() => handleTestOidc(p.id)}>
+									<Button size="sm" variant="outline" actionType="secondary" onClick={() => handleTestOidc(p.id)}>
 										<T id="credential-providers.test-oidc" />
 									</Button>
-									<Button size="sm" variant="outline-secondary" onClick={() => handleTestResolve(p.id)}>
+									<Button size="sm" variant="outline" actionType="secondary" onClick={() => handleTestResolve(p.id)}>
 										<T id="credential-providers.test-resolve" />
 									</Button>
-									<Button size="sm" variant="outline-primary" onClick={() => startEdit(p)}>
+									<Button size="sm" variant="outline" actionType="primary" onClick={() => startEdit(p)}>
 										<T id="action.edit" />
 									</Button>
 									<Button
 										size="sm"
-										variant="outline-danger"
+										variant="outline"
+										actionType="danger"
 										onClick={() =>
 											showDeleteConfirmModal({
 												title: "Delete provider",
