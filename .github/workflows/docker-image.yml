@@ -36,7 +36,8 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Internal Infisical (vault.svc.eh168.alexson.org) is not reachable from GitHub-hosted runners.
+    runs-on: [self-hosted, linux, gen]
     steps:
       - name: Checkout
         uses: actions/checkout@v4

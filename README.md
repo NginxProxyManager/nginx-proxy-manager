@@ -144,6 +144,8 @@ Workflow: [`.github/workflows/docker-image.yml`](.github/workflows/docker-image.
 
 Project `secrets-vi-5-a`, environment `prod` via [`.github/actions/infisical-oidc-load`](.github/actions/infisical-oidc-load) (vendored from [`general-alexson/.github-private`](https://github.com/general-alexson/.github-private/tree/main/actions/infisical-oidc-load)). **This fork must stay public** (GitHub does not allow private forks of a public upstream), so org-shared private actions cannot be used—only the local copy. Infisical OIDC must allow `repo:general-alexson/nginx-proxy-manager`.
 
+**Runner:** `runs-on: [self-hosted, linux, gen]` — the vault URL is internal; `ubuntu-latest` cannot reach it (connection timeout). Uses org runners from [github-actions-runner-podman](https://github.com/infrastructure-alexson/github-actions-runner-podman) (`general-alexson`, `gen` label). No GitHub repository variables or secrets are required.
+
 Create the Hub repository `nginx-proxy-manager` under account `salexson` before the first push.
 
 
