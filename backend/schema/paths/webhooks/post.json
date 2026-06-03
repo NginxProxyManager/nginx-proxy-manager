@@ -1,0 +1,27 @@
+{
+	"operationId": "createWebhook",
+	"summary": "Create a webhook endpoint",
+	"tags": ["webhooks"],
+	"security": [{ "bearerAuth": [] }],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"required": ["name", "url", "events"],
+					"properties": {
+						"name": { "type": "string" },
+						"url": { "type": "string" },
+						"events": { "type": "array", "items": { "type": "string" } },
+						"secret": { "type": "string" },
+						"is_enabled": { "type": "boolean" }
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": { "description": "Created" }
+	}
+}

@@ -1,0 +1,1 @@
+{ "operationId": "testCredentialProvider", "summary": "Test OIDC connection", "tags": ["credential-providers"], "responses": { "200": { "description": "OK" } } }

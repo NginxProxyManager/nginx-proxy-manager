@@ -1,0 +1,25 @@
+{
+	"operationId": "createApiKey",
+	"summary": "Create an API key",
+	"tags": ["api-keys"],
+	"security": [{ "bearerAuth": [] }],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"required": ["name"],
+					"properties": {
+						"name": { "type": "string" },
+						"permissions": { "type": "object" },
+						"expires_on": { "type": ["string", "null"] }
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": { "description": "Created" }
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"operationId": "listWebhooks",
+	"summary": "List webhook endpoints",
+	"tags": ["webhooks"],
+	"security": [{ "bearerAuth": [] }],
+	"responses": {
+		"200": { "description": "OK" }
+	}
+}

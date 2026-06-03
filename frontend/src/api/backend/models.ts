@@ -16,6 +16,7 @@ export interface UserPermissions {
 	streams: string;
 	accessLists: string;
 	certificates: string;
+	credentials: string;
 }
 
 export interface User {

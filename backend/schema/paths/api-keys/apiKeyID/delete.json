@@ -1,0 +1,9 @@
+{
+	"operationId": "deleteApiKey",
+	"summary": "Revoke an API key",
+	"tags": ["api-keys"],
+	"security": [{ "bearerAuth": [] }],
+	"responses": {
+		"200": { "description": "OK" }
+	}
+}

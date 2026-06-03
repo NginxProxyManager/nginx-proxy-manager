@@ -1,4 +1,6 @@
 import { installPlugins } from "./lib/certbot.js";
+import { materializeCertbotCredentials } from "./lib/secrets/resolve.js";
+import { ensureCredentialDirs } from "./lib/secrets/storage.js";
 import utils from "./lib/utils.js";
 import { setup as logger } from "./logger.js";
 import authModel from "./models/auth.js";
@@ -61,6 +63,7 @@ const setupDefaultUser = async () => {
 			user_id: user.id,
 			visibility: "all",
 			proxy_hosts: "manage",
+			credentials: "manage",
 			redirection_hosts: "manage",
 			dead_hosts: "manage",
 			streams: "manage",
@@ -118,15 +121,18 @@ const setupCertbotPlugins = async () => {
 					plugins.push(certificate.meta.dns_provider);
 				}
 
-				// Make sure credentials file exists
-				const credentials_loc = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
-				// Escape single quotes and backslashes
-				if (typeof certificate.meta.dns_provider_credentials === "string") {
-					const escapedCredentials = certificate.meta.dns_provider_credentials
-						.replaceAll("'", "\\'")
-						.replaceAll("\\", "\\\\");
-					const credentials_cmd = `[ -f '${credentials_loc}' ] || { mkdir -p /etc/letsencrypt/credentials 2> /dev/null; echo '${escapedCredentials}' > '${credentials_loc}' && chmod 600 '${credentials_loc}'; }`;
-					promises.push(utils.exec(credentials_cmd));
+				// Make sure credentials file exists (from vault or legacy meta)
+				if (
+					certificate.meta?.credential_ref?.type === "internal" ||
+					typeof certificate.meta.dns_provider_credentials === "string"
+				) {
+					promises.push(
+						materializeCertbotCredentials(certificate).catch((err) => {
+							logger.warn(
+								`Could not restore credentials for certificate #${certificate.id}: ${err.message}`,
+							);
+						}),
+					);
 				}
 			}
 			return true;
@@ -163,4 +169,9 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
-export default () => setupDefaultUser().then(setupDefaultSettings).then(setupCertbotPlugins).then(setupLogrotation);
+export default () =>
+	ensureCredentialDirs()
+		.then(setupDefaultUser)
+		.then(setupDefaultSettings)
+		.then(setupCertbotPlugins)
+		.then(setupLogrotation);

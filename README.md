@@ -35,6 +35,8 @@ so that the barrier to entry here is low.
 - Access Lists and basic HTTP Authentication for your hosts
 - Advanced Nginx configuration available for super users
 - User management, permissions, and audit log
+- **Credential vault** on the `/data` volume (encrypted DNS API tokens, optional external stores via OIDC)
+- **Automation API** (API keys, async certificate jobs, signed webhooks) — see [docs](docs/src/advanced/automation-api.md)
 
 ::: warning
 `armv7` is no longer supported in version 2.14+. This is due to Nodejs dropping support for armhf. Please
@@ -73,6 +75,8 @@ services:
 ```
 
 This is the bare minimum configuration required. See the [documentation](https://nginxproxymanager.com/setup/) for more.
+
+**Important:** Mount `./data:/data` so the credential vault, encryption keys, and automation settings persist across container restarts. Optional: set `NPM_SECRETS_ENCRYPTION_KEY` (32+ bytes, base64) to control encryption instead of the auto-generated key under `/data/keys/`.
 
 3. Bring up your stack by running
 

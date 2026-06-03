@@ -33,6 +33,26 @@
 			"description": "Endpoints related to Certificates"
 		},
 		{
+			"name": "credentials",
+			"description": "Endpoints related to stored DNS credentials"
+		},
+		{
+			"name": "credential-providers",
+			"description": "External secret store providers (Vault, AWS, Azure, Infisical)"
+		},
+		{
+			"name": "api-keys",
+			"description": "Endpoints for automation API keys"
+		},
+		{
+			"name": "jobs",
+			"description": "Endpoints for async background jobs"
+		},
+		{
+			"name": "webhooks",
+			"description": "Endpoints for outbound webhook configuration"
+		},
+		{
 			"name": "404-hosts",
 			"description": "Endpoints related to 404 Hosts"
 		},
@@ -126,6 +146,9 @@
 		"/nginx/certificates/{certID}": {
 			"get": {
 				"$ref": "./paths/nginx/certificates/certID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/nginx/certificates/certID/put.json"
 			},
 			"delete": {
 				"$ref": "./paths/nginx/certificates/certID/delete.json"
@@ -356,6 +379,100 @@
 		"/users/{userID}/login": {
 			"post": {
 				"$ref": "./paths/users/userID/login/post.json"
+			}
+		},
+		"/credentials": {
+			"get": {
+				"$ref": "./paths/credentials/get.json"
+			},
+			"post": {
+				"$ref": "./paths/credentials/post.json"
+			}
+		},
+		"/credentials/migrate-legacy": {
+			"post": {
+				"$ref": "./paths/credentials/migrate-legacy/post.json"
+			}
+		},
+		"/credentials/{credentialID}": {
+			"get": {
+				"$ref": "./paths/credentials/credentialID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/credentials/credentialID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/credentials/credentialID/delete.json"
+			}
+		},
+		"/credentials/{credentialID}/test": {
+			"post": {
+				"$ref": "./paths/credentials/credentialID/test/post.json"
+			}
+		},
+		"/credential-providers": {
+			"get": {
+				"$ref": "./paths/credential-providers/get.json"
+			},
+			"post": {
+				"$ref": "./paths/credential-providers/post.json"
+			}
+		},
+		"/credential-providers/{providerID}": {
+			"get": {
+				"$ref": "./paths/credential-providers/providerID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/credential-providers/providerID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/credential-providers/providerID/delete.json"
+			}
+		},
+		"/credential-providers/{providerID}/test": {
+			"post": {
+				"$ref": "./paths/credential-providers/providerID/test/post.json"
+			}
+		},
+		"/credential-providers/{providerID}/test-resolve": {
+			"post": {
+				"$ref": "./paths/credential-providers/providerID/test-resolve/post.json"
+			}
+		},
+		"/api-keys": {
+			"get": {
+				"$ref": "./paths/api-keys/get.json"
+			},
+			"post": {
+				"$ref": "./paths/api-keys/post.json"
+			}
+		},
+		"/api-keys/{apiKeyID}": {
+			"delete": {
+				"$ref": "./paths/api-keys/apiKeyID/delete.json"
+			}
+		},
+		"/jobs": {
+			"get": {
+				"$ref": "./paths/jobs/get.json"
+			}
+		},
+		"/jobs/{jobID}": {
+			"get": {
+				"$ref": "./paths/jobs/jobID/get.json"
+			}
+		},
+		"/webhooks": {
+			"get": {
+				"$ref": "./paths/webhooks/get.json"
+			},
+			"post": {
+				"$ref": "./paths/webhooks/post.json"
+			}
+		},
+		"/webhooks/{webhookID}": {
+			"delete": {
+				"$ref": "./paths/webhooks/webhookID/delete.json"
 			}
 		}
 	}

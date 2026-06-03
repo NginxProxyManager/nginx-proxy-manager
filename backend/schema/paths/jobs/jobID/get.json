@@ -1,0 +1,9 @@
+{
+	"operationId": "getJob",
+	"summary": "Get async job status",
+	"tags": ["jobs"],
+	"security": [{ "bearerAuth": [] }],
+	"responses": {
+		"200": { "description": "OK" }
+	}
+}

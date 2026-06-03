@@ -1,0 +1,16 @@
+{
+	"operationId": "listApiKeys",
+	"summary": "List API keys",
+	"tags": ["api-keys"],
+	"security": [{ "bearerAuth": [] }],
+	"responses": {
+		"200": {
+			"description": "OK",
+			"content": {
+				"application/json": {
+					"schema": { "type": "array", "items": { "type": "object" } }
+				}
+			}
+		}
+	}
+}

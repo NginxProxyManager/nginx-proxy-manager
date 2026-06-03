@@ -1,6 +1,7 @@
 import express from "express";
 import dnsPlugins from "../../certbot/dns-plugins.json" with { type: "json" };
 import internalCertificate from "../../internal/certificate.js";
+import internalJob from "../../internal/job.js";
 import errs from "../../lib/error.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
@@ -75,10 +76,14 @@ router
 				req.body,
 			);
 			req.setTimeout(900000); // 15 minutes timeout
-			const result = await internalCertificate.create(
-				res.locals.access,
-				payload,
-			);
+
+			if (req.query.async === "true") {
+				const job = await internalJob.runCertificateCreate(res.locals.access, payload);
+				res.status(202).send({ job_id: job.id, status: job.status });
+				return;
+			}
+
+			const result = await internalCertificate.create(res.locals.access, payload);
 			res.status(201).send(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -242,9 +247,39 @@ router
 	})
 
 	/**
+	 * PUT /api/nginx/certificates/123
+	 *
+	 * Update an existing certificate
+	 */
+	.put(async (req, res, next) => {
+		try {
+			const payload = await validator(
+				{
+					additionalProperties: false,
+					properties: {
+						nice_name: { type: "string" },
+						domain_names: {
+							type: "array",
+							items: { type: "string" },
+						},
+						meta: { type: "object" },
+					},
+				},
+				req.body,
+			);
+			payload.id = Number.parseInt(req.params.certificate_id, 10);
+			const result = await internalCertificate.update(res.locals.access, payload);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
 	 * DELETE /api/nginx/certificates/123
 	 *
-	 * Update and existing certificate
+	 * Delete an existing certificate
 	 */
 	.delete(async (req, res, next) => {
 		try {
@@ -313,8 +348,16 @@ router
 	.post(async (req, res, next) => {
 		req.setTimeout(900000); // 15 minutes timeout
 		try {
+			const certId = Number.parseInt(req.params.certificate_id, 10);
+
+			if (req.query.async === "true") {
+				const job = await internalJob.runCertificateRenew(res.locals.access, { id: certId });
+				res.status(202).send({ job_id: job.id, status: job.status });
+				return;
+			}
+
 			const result = await internalCertificate.renew(res.locals.access, {
-				id: Number.parseInt(req.params.certificate_id, 10),
+				id: certId,
 			});
 			res.status(200).send(result);
 		} catch (err) {

@@ -1,0 +1,6 @@
+{
+	"operationId": "listJobs",
+	"summary": "List recent async jobs",
+	"tags": ["jobs"],
+	"responses": { "200": { "description": "OK" } }
+}

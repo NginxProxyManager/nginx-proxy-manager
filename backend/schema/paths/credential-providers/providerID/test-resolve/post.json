@@ -1,0 +1,1 @@
+{ "operationId": "testCredentialProviderResolve", "summary": "Test secret resolution", "tags": ["credential-providers"], "responses": { "200": { "description": "OK" } } }

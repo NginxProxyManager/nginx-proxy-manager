@@ -1,0 +1,1 @@
+{ "operationId": "deleteCredentialProvider", "summary": "Delete credential provider", "tags": ["credential-providers"], "responses": { "200": { "description": "OK" } } }
