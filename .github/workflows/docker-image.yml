@@ -55,9 +55,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "22.x"
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
+
+      - name: Verify Node.js version (> 20)
+        run: |
+          set -euo pipefail
+          node --version
+          major="$(node -p "Number(process.versions.node.split('.')[0])")"
+          if [ "$major" -le 20 ]; then
+            echo "::error::Node.js > 20 required (got $(node --version))"
+            exit 1
+          fi
 
       - name: Build frontend
         working-directory: frontend

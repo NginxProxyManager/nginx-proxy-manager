@@ -4,6 +4,9 @@
 	"type": "module",
 	"author": "Jamie Curnow <jc@jc21.com>",
 	"license": "MIT",
+	"engines": {
+		"node": ">20"
+	},
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
