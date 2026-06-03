@@ -45,7 +45,8 @@ jobs:
         if: >-
           github.event_name != 'pull_request' &&
           (github.event_name != 'workflow_dispatch' || inputs.push)
-        uses: general-alexson/.github-private/actions/infisical-oidc-load@v1
+        # Public repos cannot use org-shared private actions (GitHub: private repos only).
+        uses: ./.github/actions/infisical-oidc-load
         with:
           secret_path: /Docker
           recursive: "false"
