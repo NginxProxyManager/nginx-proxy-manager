@@ -33,8 +33,8 @@ permissions:
 env:
   IMAGE: docker.io/salexson/nginx-proxy-manager
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  # Host Podman via DOCKER_HOST; avoid Buildx spawning nested rootless containers in the runner.
-  DOCKER_BUILDKIT: "0"
+  # Build via host Podman socket (podman --remote). The in-runner `docker` CLI is a shim and
+  # cannot build images here (rootless newuidmap). Images still push to Docker Hub.
   BUILDAH_ISOLATION: chroot
 
 jobs:
@@ -123,16 +123,17 @@ jobs:
             type=sha,prefix=sha-,format=short
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
 
-      - name: Build image on host engine
+      - name: Build image on host Podman
         run: |
           set -euo pipefail
-          echo "DOCKER_HOST=${DOCKER_HOST:-<default>}"
-          docker version
+          echo "CONTAINER_HOST=${CONTAINER_HOST:-}"
+          echo "DOCKER_HOST=${DOCKER_HOST:-}"
+          podman --remote version
           tag_args=()
           while IFS= read -r tag; do
             [[ -n "$tag" ]] && tag_args+=(-t "$tag")
           done <<< "${{ steps.meta.outputs.tags }}"
-          docker build \
+          podman --remote build \
             --pull \
             --security-opt label=disable \
             "${tag_args[@]}" \
@@ -145,7 +146,7 @@ jobs:
             --label "org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}" \
             --label "org.opencontainers.image.revision=${{ github.sha }}" \
             .
-          docker images | grep nginx-proxy-manager || true
+          podman --remote images | grep nginx-proxy-manager || true
 
       - name: Log in to Docker Hub
         if: >-
@@ -157,7 +158,7 @@ jobs:
             echo "::error::DOCKER_IO_USER and DOCKER_IO_TOKEN must be set (Infisical /Docker)."
             exit 1
           fi
-          printf '%s' "$DOCKER_IO_TOKEN" | docker login docker.io \
+          printf '%s' "$DOCKER_IO_TOKEN" | podman --remote login docker.io \
             --username "$DOCKER_IO_USER" \
             --password-stdin
 
@@ -168,12 +169,12 @@ jobs:
         run: |
           set -euo pipefail
           while IFS= read -r tag; do
-            [[ -n "$tag" ]] && docker push "$tag"
+            [[ -n "$tag" ]] && podman --remote push "$tag"
           done <<< "${{ steps.meta.outputs.tags }}"
 
       - name: Logout from Docker Hub
         if: always()
-        run: docker logout docker.io || true
+        run: podman --remote logout docker.io || true
 
       - name: Build summary
         if: always()
@@ -187,7 +188,7 @@ jobs:
           echo "${{ steps.meta.outputs.tags }}" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "_Platform: linux/amd64 via host docker/podman socket (no Buildx)._"
+          echo "_Platform: linux/amd64 — built with podman --remote on host, pushed to Docker Hub._"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "_PR builds are not pushed to Docker Hub._" >> "$GITHUB_STEP_SUMMARY"
