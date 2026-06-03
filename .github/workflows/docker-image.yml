@@ -59,8 +59,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
-          cache: yarn
-          cache-dependency-path: frontend/yarn.lock
 
       - name: Enable Yarn
         run: |
@@ -71,13 +69,15 @@ jobs:
           yarn config set network-timeout 600000 -g
           yarn config set network-concurrency 4 -g
 
-      - name: Cache frontend node_modules
+      - name: Cache frontend dependencies
         uses: actions/cache@v4
         with:
-          path: frontend/node_modules
-          key: ${{ runner.os }}-yarn-modules-${{ hashFiles('frontend/yarn.lock') }}
+          path: |
+            frontend/node_modules
+            ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('frontend/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-modules-
+            ${{ runner.os }}-yarn-
 
       - name: Check registry connectivity
         run: |
