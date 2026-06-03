@@ -1,0 +1,40 @@
+#!/bin/bash -e
+# Build production image locally (linux/amd64). Push with scripts/publish-image.
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
+
+IMAGE="${NPM_IMAGE:-docker.io/salexson/nginx-proxy-manager}"
+TAG="${NPM_TAG:-develop}"
+SKIP_FRONTEND="${SKIP_FRONTEND:-0}"
+NO_CACHE="${NO_CACHE:-0}"
+
+cd "${DIR}/.." || exit 1
+
+if [ "${SKIP_FRONTEND}" != "1" ]; then
+	"${DIR}/frontend-build"
+fi
+
+if [ "$BUILD_COMMIT" = "" ]; then
+	BUILD_COMMIT=$(git log -n 1 --format=%h 2>/dev/null || echo "unknown")
+fi
+
+echo -e "${BLUE}❯ ${CYAN}Building ${YELLOW}${IMAGE}:${TAG}${RESET}"
+
+CACHE_ARGS=()
+if [ "${NO_CACHE}" = "1" ]; then
+	CACHE_ARGS+=(--no-cache)
+fi
+
+docker build --pull "${CACHE_ARGS[@]}" \
+	-t "${IMAGE}:${TAG}" \
+	-f docker/Dockerfile \
+	--build-arg TARGETPLATFORM=linux/amd64 \
+	--build-arg BUILDPLATFORM=linux/amd64 \
+	--build-arg BUILD_VERSION="${BUILD_VERSION:-${TAG}}" \
+	--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \
+	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
+	.
+
+echo -e "${BLUE}❯ ${GREEN}Image ready: ${YELLOW}${IMAGE}:${TAG}${RESET}"
+echo -e "${BLUE}❯ ${CYAN}Test: docker run --rm -p 81:81 -v npm-data:/data ${IMAGE}:${TAG}${RESET}"

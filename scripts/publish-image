@@ -1,0 +1,23 @@
+#!/bin/bash -e
+# Build and push to Docker Hub (default: docker.io/salexson/nginx-proxy-manager).
+# Requires: docker login docker.io
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
+
+IMAGE="${NPM_IMAGE:-docker.io/salexson/nginx-proxy-manager}"
+TAG="${NPM_TAG:-develop}"
+
+export NPM_IMAGE="${IMAGE}" NPM_TAG="${TAG}"
+"${DIR}/build-image"
+
+echo -e "${BLUE}❯ ${CYAN}Pushing ${YELLOW}${IMAGE}:${TAG}${RESET}"
+docker push "${IMAGE}:${TAG}"
+
+if [ "${NPM_TAG_LATEST}" = "1" ] && [ "${TAG}" != "latest" ]; then
+	docker tag "${IMAGE}:${TAG}" "${IMAGE}:latest"
+	docker push "${IMAGE}:latest"
+	echo -e "${BLUE}❯ ${GREEN}Also pushed ${YELLOW}${IMAGE}:latest${RESET}"
+fi
+
+echo -e "${BLUE}❯ ${GREEN}Publish complete${RESET}"

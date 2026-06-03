@@ -92,6 +92,61 @@ Sometimes this can take a little bit because of the entropy of keys.
 [http://127.0.0.1:81](http://127.0.0.1:81)
 
 
+## Fork image (docker.io/salexson)
+
+This fork publishes to **`docker.io/salexson/nginx-proxy-manager`**. Build the frontend, then the production image:
+
+**Windows (PowerShell):**
+
+```powershell
+cd nginx-proxy-manager
+.\scripts\build-push.ps1                    # build :develop
+.\scripts\build-push.ps1 -Push              # build and push (docker login first)
+.\scripts\build-push.ps1 -SkipTests -Push   # faster: skip lint/vitest
+```
+
+**Linux / macOS / Git Bash:**
+
+```bash
+docker login docker.io
+SKIP_TESTS=1 ./scripts/publish-image              # push :develop
+NPM_TAG=latest NPM_TAG_LATEST=0 ./scripts/publish-image
+```
+
+Environment variables: `NPM_IMAGE` (default `docker.io/salexson/nginx-proxy-manager`), `NPM_TAG` (default `develop`), `SKIP_TESTS=1`, `SKIP_FRONTEND=1` if `frontend/dist` is already built.
+
+**Test locally after build:**
+
+```bash
+docker compose -f docker/docker-compose.hub.yml up -d
+```
+
+Multi-arch publish (optional): `./scripts/buildx --push -t docker.io/salexson/nginx-proxy-manager:latest` after `./scripts/frontend-build`.
+
+### GitHub Actions
+
+Workflow: [`.github/workflows/docker-image.yml`](.github/workflows/docker-image.yml)
+
+| Event | Behavior |
+|-------|----------|
+| Push to `develop` | Build multi-arch, push `develop` + `sha-<short>` |
+| Push to `master` | Build multi-arch, push `latest` + `sha-<short>` |
+| Tag `v*` | Push version tags |
+| Pull request | Build only (no push) |
+| Manual run | Optional push / skip frontend tests |
+
+**Docker Hub credentials** come from Infisical (not GitHub Secrets):
+
+| Infisical path | Key | Env in workflow |
+|----------------|-----|-----------------|
+| `/Docker` | `docker.io-user` | `DOCKER_IO_USER` |
+| `/Docker` | `docker.io-token` | `DOCKER_IO_TOKEN` |
+
+Project `secrets-vi-5-a`, environment `prod` (via [`infisical-oidc-load`](https://github.com/infrastructure-alexson/.github-private/tree/main/actions/infisical-oidc-load)). The repo must be allowed on the Infisical machine identity OIDC subject (same setup as other `*-alexson` workflows).
+
+Create the Hub repository `nginx-proxy-manager` under account `salexson` before the first push.
+
+
 ## Contributing
 
 All are welcome to create pull requests for this project, against the `develop` branch. Official releases are created from the `master` branch.

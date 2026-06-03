@@ -1,0 +1,15 @@
+# Run your published image locally (adjust image tag as needed).
+services:
+  app:
+    image: "docker.io/salexson/nginx-proxy-manager:develop"
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    # Optional: fixed vault encryption key (32 bytes, base64)
+    # environment:
+    #   NPM_SECRETS_ENCRYPTION_KEY: "your-base64-32-byte-key"
