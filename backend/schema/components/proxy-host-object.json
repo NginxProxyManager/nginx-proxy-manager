@@ -23,7 +23,8 @@
 		"locations",
 		"hsts_enabled",
 		"hsts_subdomains",
-		"trust_forwarded_proto"
+		"trust_forwarded_proto",
+		"http3_support"
 	],
 	"properties": {
 		"id": {
@@ -145,6 +146,14 @@
 		"trust_forwarded_proto":{
 			"type": "boolean",
 			"description": "Trust the forwarded headers",
+			"example": false
+		},
+		"http3_support": {
+			"description": "Enable HTTP/3 (QUIC over UDP) for this proxy host",
+			"anyOf": [
+				{ "type": "integer", "enum": [0, 1] },
+				{ "type": "boolean" }
+			],
 			"example": false
 		},
 		"certificate": {
