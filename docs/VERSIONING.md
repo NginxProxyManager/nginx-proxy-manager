@@ -47,7 +47,14 @@ NPM_TAG_LATEST=1 ./scripts/publish-semver   # also push :latest
 
 ## Branch builds
 
-Pushes to `develop` / `master` (when `docker/Dockerfile` changes) still publish `:develop`, `:sha-<short>`, and `:latest`. The image label `NPM_BUILD_VERSION` uses `v` + `VERSION` from the repo.
+Pushes to `develop` / `master` (when paths under the workflow filter change) publish:
+
+- `:develop` or `:master` (branch name)
+- `:sha-<short>`
+- `:vX.Y.Z`, `:vX.Y`, `:vX` from [`VERSION`](../VERSION) (e.g. `3.0.0` → `v3.0.0`, `v3.0`, `v3`)
+- `:latest` (non-PR pushes)
+
+The image label `NPM_BUILD_VERSION` uses `v` + `VERSION` from the repo. Bump `VERSION` before merging when you want Hub semver tags to move.
 
 ## API
 

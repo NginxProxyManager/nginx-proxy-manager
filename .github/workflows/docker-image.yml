@@ -6,12 +6,13 @@ on:
       - develop
       - master
     paths:
+      - .github/workflows/docker-image.yml
       - docker/Dockerfile
       - VERSION
       - backend/package.json
       - frontend/package.json
     tags:
-      - "v*"
+      - "v*.*.*"
   pull_request:
     branches:
       - develop
@@ -174,9 +175,9 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha,prefix=sha-,format=short,enable=${{ github.ref_type != 'tag' }}
-            type=semver,pattern=v{{major}}.{{minor}}.{{patch}},enable=${{ github.ref_type == 'tag' }}
-            type=semver,pattern=v{{major}}.{{minor}},enable=${{ github.ref_type == 'tag' }}
-            type=semver,pattern=v{{major}},enable=${{ github.ref_type == 'tag' }}
+            type=semver,pattern=v{{major}}.{{minor}}.{{patch}},value=${{ steps.buildmeta.outputs.version }},enable=${{ github.event_name != 'pull_request' }}
+            type=semver,pattern=v{{major}}.{{minor}},value=${{ steps.buildmeta.outputs.version }},enable=${{ github.event_name != 'pull_request' }}
+            type=semver,pattern=v{{major}},value=${{ steps.buildmeta.outputs.version }},enable=${{ github.event_name != 'pull_request' }}
             type=raw,value=latest,enable=${{ github.event_name != 'pull_request' }}
 
       - name: Build image on host Podman
