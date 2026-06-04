@@ -20,10 +20,10 @@ if hash docker 2>/dev/null; then
 			DOCS_BUILD=/tmp/npm-docs-build
 			rm -rf \"\${DOCS_BUILD}\"
 			cp -a /app/docs \"\${DOCS_BUILD}\"
-			cd \"\${DOCS_BUILD}\" && npm ci && npm run build
-			cd /app/frontend && npm ci && npm run lint && npm run locale-compile && npm run test -- run --no-color && npm run build
-			rm -rf /app/frontend/dist/docs && mkdir -p /app/frontend/dist/docs
-			cp -a \"\${DOCS_BUILD}/dist/.\" /app/frontend/dist/docs/
+			cd \"\${DOCS_BUILD}\" && npm install && npm run build && \
+			cd /app/frontend && npm ci && npm run lint && npm run locale-compile && npm run test -- run --no-color && npm run build && \
+			rm -rf /app/frontend/dist/docs && mkdir -p /app/frontend/dist/docs && \
+			cp -a \"\${DOCS_BUILD}/dist/.\" /app/frontend/dist/docs/ && \
 			chown -R $(id -u):$(id -g) /app/frontend
 		"
 
