@@ -93,46 +93,6 @@ Sometimes this can take a little bit because of the entropy of keys.
 [http://127.0.0.1:81](http://127.0.0.1:81)
 
 
-## Fork image (docker.io/salexson)
-
-This fork publishes to **`docker.io/salexson/nginx-proxy-manager`**. Build the frontend, then the production image:
-
-**Windows (PowerShell):**
-
-```powershell
-cd nginx-proxy-manager
-.\scripts\build-push.ps1                    # build :develop
-.\scripts\build-push.ps1 -Push              # build and push (docker login first)
-.\scripts\build-push.ps1 -SkipTests -Push   # faster: skip lint/vitest
-```
-
-**Linux / macOS / Git Bash:**
-
-```bash
-docker login docker.io
-SKIP_TESTS=1 ./scripts/publish-image              # push :develop
-NPM_TAG=latest NPM_TAG_LATEST=0 ./scripts/publish-image
-```
-
-Environment variables: `NPM_IMAGE` (default `docker.io/salexson/nginx-proxy-manager`), `NPM_TAG` (default `develop`), `SKIP_TESTS=1`, `SKIP_FRONTEND=1` if `frontend/dist` is already built.
-
-**Versioning:** upstream owns releases and `v*` tags. This fork only publishes branch/`sha-*`/`latest` images — see [`docs/VERSIONING.md`](docs/VERSIONING.md). [`.version`](.version) tracks upstream; do not bump it here.
-
-**Test locally after build:**
-
-```bash
-docker compose -f docker/docker-compose.hub.yml up -d
-```
-
-Multi-arch publish (optional): `./scripts/buildx --push -t docker.io/salexson/nginx-proxy-manager:latest` after `./scripts/frontend-build`.
-
-Create the Hub repository `nginx-proxy-manager` under account `salexson` before the first push.
-
-### Test server deploy (`oci-test`)
-
-Ansible installs **Docker Engine**, pulls the image, and enables **`nginx-proxy-manager-test.service`** on the test host. See [deploy/README.md](deploy/README.md).
-
-
 ## Contributing
 
 All are welcome to create pull requests for this project, against the `develop` branch. Official releases are created from the `master` branch.
