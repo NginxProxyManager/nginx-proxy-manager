@@ -38,7 +38,7 @@
 							"certificate": {
 								"type": "object",
 								"additionalProperties": false,
-								"required": ["cn", "issuer", "dates"],
+								"required": ["issuer", "dates"],
 								"properties": {
 									"cn": {
 										"type": "string",

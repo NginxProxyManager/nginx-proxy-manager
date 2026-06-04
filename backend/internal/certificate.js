@@ -686,13 +686,16 @@ const internalCertificate = {
 	 * @return {Object} object containing the parsed fields from the subject line
 	 */
 	parseX509Output: (line, prefix) => {
-		const subjectValue = line.trim().slice(prefix.length);
+		const subjectValue = line.trim().slice(prefix.length).trim();
 
 		return subjectValue
-			.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
-			.map((e) => e.trim().split(/\s*=\s*/, 2))
+			.split(/[,/](?=(?:(?:[^"]*"){2})*[^"]*$)/)
+			.filter((entry) => entry.trim().length > 0)
+			.map((entry) => entry.trim().split("=", 2).map((part) => part.trim()))
 			.reduce((obj, [key, value]) => {
-				obj[key] = value.replace(/^"/, "").replace(/"$/, "");
+				if (key && typeof value !== "undefined") {
+					obj[key] = value.replace(/^"/, "").replace(/"$/, "");
+				}
 				return obj;
 			}, {});
 	},
@@ -713,20 +716,17 @@ const internalCertificate = {
 			// Examples:
 			// subject=CN = something.example.com
 			// subject=C = NoCountry, O = NoOrg, OU = NoOrgUnit, CN = Some Value With Spaces
+			// subject=O=mkcert development certificate, OU=root@example
 			const subjectParams = internalCertificate.parseX509Output(result, "subject=");
-			if (typeof subjectParams.CN === "undefined") {
-				throw new error.ValidationError(`Could not determine subject from certificate: ${result}`);
+			if (typeof subjectParams.CN !== "undefined") {
+				certData.cn = subjectParams.CN;
 			}
-			certData.cn = subjectParams.CN;
 
 			const result2 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-issuer", "-noout"]);
 			// Examples:
 			// issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
 			const issuerParams = internalCertificate.parseX509Output(result2, "issuer=");
-			if (typeof issuerParams.CN === "undefined") {
-				throw new error.ValidationError(`Could not determine issuer from certificate: ${result2}`);
-			}
-			certData.issuer = issuerParams.CN;
+			certData.issuer = issuerParams.CN || result2.trim().slice("issuer=".length).trim();
 
 			const result3 = await utils.execFile("openssl", ["x509", "-in", certificateFile, "-dates", "-noout"]);
 			// notBefore=Jul 14 04:04:29 2018 GMT
