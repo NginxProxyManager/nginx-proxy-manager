@@ -39,6 +39,26 @@
 			"description": "Endpoints related to Certificates"
 		},
 		{
+			"name": "credentials",
+			"description": "Endpoints related to stored DNS credentials"
+		},
+		{
+			"name": "credential-providers",
+			"description": "External secret store providers (Vault, AWS, Azure, Infisical)"
+		},
+		{
+			"name": "api-keys",
+			"description": "Endpoints for automation API keys"
+		},
+		{
+			"name": "jobs",
+			"description": "Endpoints for async background jobs"
+		},
+		{
+			"name": "webhooks",
+			"description": "Endpoints for outbound webhook configuration"
+		},
+		{
 			"name": "404-hosts",
 			"description": "Endpoints related to 404 Hosts"
 		},
@@ -16740,7 +16760,8 @@
 													"dead_hosts": "manage",
 													"streams": "manage",
 													"access_lists": "manage",
-													"certificates": "manage"
+													"certificates": "manage",
+													"credentials": "manage"
 												}
 											}
 										]
@@ -16993,7 +17014,8 @@
 												"dead_hosts": "manage",
 												"streams": "manage",
 												"access_lists": "manage",
-												"certificates": "manage"
+												"certificates": "manage",
+												"credentials": "manage"
 											}
 										}
 									}
@@ -18452,6 +18474,2054 @@
 								}
 							}
 						}
+					}
+				}
+			}
+		},
+		"/credentials": {
+			"get": {
+				"operationId": "listCredentials",
+				"summary": "List stored DNS credentials",
+				"tags": [
+					"credentials"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"credentials.view"
+						]
+					}
+				],
+				"description": "Lists DNS credentials stored in the encrypted NPM vault on the data volume.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"description": "Stored DNS credential list",
+									"items": {
+										"type": "object",
+										"description": "Credential metadata (secret stored on persistent volume)",
+										"required": [
+											"id",
+											"created_on",
+											"modified_on",
+											"owner_user_id",
+											"name",
+											"dns_provider"
+										],
+										"additionalProperties": false,
+										"properties": {
+											"id": {
+												"description": "Unique identifier",
+												"readOnly": true,
+												"type": "integer",
+												"minimum": 1,
+												"example": 11
+											},
+											"created_on": {
+												"description": "Date and time of creation",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"modified_on": {
+												"description": "Date and time of last update",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"owner_user_id": {
+												"description": "User ID",
+												"type": "integer",
+												"minimum": 1,
+												"example": 2
+											},
+											"name": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 255,
+												"example": "Cloudflare Production"
+											},
+											"dns_provider": {
+												"type": "string",
+												"minLength": 1,
+												"example": "cloudflare"
+											},
+											"last_used_at": {
+												"type": [
+													"string",
+													"null"
+												],
+												"example": "2026-06-03T12:00:00.000Z"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"operationId": "createCredential",
+				"summary": "Create a stored DNS credential",
+				"tags": [
+					"credentials"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"credentials.manage"
+						]
+					}
+				],
+				"description": "Creates a named DNS credential (certbot provider INI) in the internal vault for certificate issuance.",
+				"requestBody": {
+					"description": "DNS credential payload",
+					"required": true,
+					"content": {
+						"application/json": {
+							"example": {
+								"name": "Cypress test credential",
+								"dns_provider": "acmedns",
+								"credentials": "dns_acmedns_api_url = http://127.0.0.1:80/"
+							},
+							"schema": {
+								"type": "object",
+								"additionalProperties": false,
+								"required": [
+									"name",
+									"dns_provider",
+									"credentials"
+								],
+								"properties": {
+									"name": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255,
+										"example": "Cypress test credential"
+									},
+									"dns_provider": {
+										"type": "string",
+										"minLength": 1,
+										"example": "acmedns"
+									},
+									"credentials": {
+										"type": "string",
+										"minLength": 1,
+										"description": "Certbot DNS plugin credentials file content (INI format)",
+										"example": "dns_acmedns_api_url = http://127.0.0.1:80/"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Credential metadata (secret stored on persistent volume)",
+									"required": [
+										"id",
+										"created_on",
+										"modified_on",
+										"owner_user_id",
+										"name",
+										"dns_provider"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"id": {
+											"description": "Unique identifier",
+											"readOnly": true,
+											"type": "integer",
+											"minimum": 1,
+											"example": 11
+										},
+										"created_on": {
+											"description": "Date and time of creation",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"modified_on": {
+											"description": "Date and time of last update",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"owner_user_id": {
+											"description": "User ID",
+											"type": "integer",
+											"minimum": 1,
+											"example": 2
+										},
+										"name": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 255,
+											"example": "Cloudflare Production"
+										},
+										"dns_provider": {
+											"type": "string",
+											"minLength": 1,
+											"example": "cloudflare"
+										},
+										"last_used_at": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": "2026-06-03T12:00:00.000Z"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/credentials/migrate-legacy": {
+			"post": {
+				"operationId": "migrateLegacyCredentials",
+				"summary": "Migrate plaintext DNS credentials from certificates into the vault",
+				"tags": [
+					"credentials"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"credentials.manage"
+						]
+					}
+				],
+				"description": "Moves inline DNS provider credentials from certificates into the vault. Supports dry-run preview before apply.",
+				"requestBody": {
+					"description": "Migration options",
+					"content": {
+						"application/json": {
+							"example": {
+								"dry_run": true
+							},
+							"schema": {
+								"type": "object",
+								"additionalProperties": false,
+								"properties": {
+									"dry_run": {
+										"type": "boolean",
+										"example": true
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"example": {
+									"dry_run": true,
+									"count": 0,
+									"results": []
+								},
+								"schema": {
+									"type": "object",
+									"required": [
+										"dry_run",
+										"count",
+										"results"
+									],
+									"properties": {
+										"dry_run": {
+											"type": "boolean",
+											"example": true
+										},
+										"count": {
+											"type": "integer",
+											"example": 0
+										},
+										"results": {
+											"type": "array",
+											"example": [],
+											"items": {
+												"type": "object",
+												"required": [
+													"certificate_id",
+													"status"
+												],
+												"properties": {
+													"certificate_id": {
+														"type": "integer",
+														"minimum": 1
+													},
+													"domain_names": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														}
+													},
+													"dns_provider": {
+														"type": "string"
+													},
+													"status": {
+														"type": "string",
+														"enum": [
+															"skipped",
+															"migrated",
+															"would_migrate"
+														]
+													},
+													"credential_id": {
+														"type": "integer",
+														"minimum": 1
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/credentials/{credentialID}": {
+			"get": {
+				"operationId": "getCredential",
+				"summary": "Get a stored DNS credential",
+				"tags": [
+					"credentials"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"credentials.view"
+						]
+					}
+				],
+				"description": "Returns metadata for one stored DNS credential. Secret payload is not exposed.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "credentialID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Credential ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Credential metadata (secret stored on persistent volume)",
+									"required": [
+										"id",
+										"created_on",
+										"modified_on",
+										"owner_user_id",
+										"name",
+										"dns_provider"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"id": {
+											"description": "Unique identifier",
+											"readOnly": true,
+											"type": "integer",
+											"minimum": 1,
+											"example": 11
+										},
+										"created_on": {
+											"description": "Date and time of creation",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"modified_on": {
+											"description": "Date and time of last update",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"owner_user_id": {
+											"description": "User ID",
+											"type": "integer",
+											"minimum": 1,
+											"example": 2
+										},
+										"name": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 255,
+											"example": "Cloudflare Production"
+										},
+										"dns_provider": {
+											"type": "string",
+											"minLength": 1,
+											"example": "cloudflare"
+										},
+										"last_used_at": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": "2026-06-03T12:00:00.000Z"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateCredential",
+				"summary": "Update a stored DNS credential",
+				"tags": [
+					"credentials"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"credentials.manage"
+						]
+					}
+				],
+				"description": "Updates a stored DNS credential name or encrypted provider configuration.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "credentialID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Credential ID",
+						"example": 1
+					}
+				],
+				"requestBody": {
+					"description": "Credential update payload",
+					"required": true,
+					"content": {
+						"application/json": {
+							"example": {
+								"name": "Updated credential name"
+							},
+							"schema": {
+								"type": "object",
+								"additionalProperties": false,
+								"properties": {
+									"name": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255,
+										"example": "Updated credential name"
+									},
+									"dns_provider": {
+										"type": "string",
+										"minLength": 1,
+										"example": "acmedns"
+									},
+									"credentials": {
+										"type": "string",
+										"minLength": 1,
+										"example": "dns_acmedns_api_url = http://127.0.0.1:80/"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"description": "Credential metadata (secret stored on persistent volume)",
+									"required": [
+										"id",
+										"created_on",
+										"modified_on",
+										"owner_user_id",
+										"name",
+										"dns_provider"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"id": {
+											"description": "Unique identifier",
+											"readOnly": true,
+											"type": "integer",
+											"minimum": 1,
+											"example": 11
+										},
+										"created_on": {
+											"description": "Date and time of creation",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"modified_on": {
+											"description": "Date and time of last update",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"owner_user_id": {
+											"description": "User ID",
+											"type": "integer",
+											"minimum": 1,
+											"example": 2
+										},
+										"name": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 255,
+											"example": "Cloudflare Production"
+										},
+										"dns_provider": {
+											"type": "string",
+											"minLength": 1,
+											"example": "cloudflare"
+										},
+										"last_used_at": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": "2026-06-03T12:00:00.000Z"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteCredential",
+				"summary": "Delete a stored DNS credential",
+				"tags": [
+					"credentials"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"credentials.manage"
+						]
+					}
+				],
+				"description": "Deletes a stored DNS credential from the vault.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "credentialID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Credential ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "boolean"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/credentials/{credentialID}/test": {
+			"post": {
+				"operationId": "testCredential",
+				"summary": "Verify a stored credential can be read from the vault",
+				"tags": [
+					"credentials"
+				],
+				"security": [
+					{
+						"bearerAuth": [
+							"credentials.view"
+						]
+					}
+				],
+				"description": "Validates that a stored credential can be decrypted and parsed for the configured DNS provider.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "credentialID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Credential ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"example": {
+									"ok": true,
+									"dns_provider": "acmedns",
+									"plugin_name": "ACME DNS"
+								},
+								"schema": {
+									"type": "object",
+									"properties": {
+										"ok": {
+											"type": "boolean",
+											"example": true
+										},
+										"dns_provider": {
+											"type": "string",
+											"example": "acmedns"
+										},
+										"plugin_name": {
+											"type": "string",
+											"example": "ACME DNS"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/credential-providers": {
+			"get": {
+				"operationId": "listCredentialProviders",
+				"summary": "List credential providers",
+				"tags": [
+					"credential-providers"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Lists external credential store providers (Vault, AWS, Azure, Infisical, HTTP). Client secrets are not included in responses.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"example": [],
+								"schema": {
+									"type": "array",
+									"description": "Credential provider list",
+									"items": {
+										"type": "object",
+										"description": "External credential store provider configuration",
+										"required": [
+											"id",
+											"created_on",
+											"modified_on",
+											"owner_user_id",
+											"name",
+											"type",
+											"meta",
+											"has_oidc_secret"
+										],
+										"additionalProperties": false,
+										"properties": {
+											"id": {
+												"description": "Unique identifier",
+												"readOnly": true,
+												"type": "integer",
+												"minimum": 1,
+												"example": 11
+											},
+											"created_on": {
+												"description": "Date and time of creation",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"modified_on": {
+												"description": "Date and time of last update",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"owner_user_id": {
+												"description": "User ID",
+												"type": "integer",
+												"minimum": 1,
+												"example": 2
+											},
+											"name": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 255,
+												"example": "Cypress vault stub"
+											},
+											"type": {
+												"type": "string",
+												"enum": [
+													"vault",
+													"aws",
+													"azure",
+													"infisical",
+													"http"
+												],
+												"example": "vault"
+											},
+											"oidc_issuer": {
+												"type": [
+													"string",
+													"null"
+												],
+												"example": "https://issuer.example/oauth2"
+											},
+											"oidc_client_id": {
+												"type": [
+													"string",
+													"null"
+												],
+												"example": "npm-test"
+											},
+											"oidc_audience": {
+												"type": [
+													"string",
+													"null"
+												],
+												"example": null
+											},
+											"oidc_scope": {
+												"type": [
+													"string",
+													"null"
+												],
+												"example": null
+											},
+											"meta": {
+												"type": "object",
+												"description": "Provider-specific configuration",
+												"example": {
+													"address": "http://127.0.0.1:65535",
+													"mount": "secret",
+													"role": "npm"
+												}
+											},
+											"has_oidc_secret": {
+												"type": "boolean",
+												"description": "Whether an OIDC client secret is stored for this provider",
+												"example": true
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"operationId": "createCredentialProvider",
+				"summary": "Create credential provider",
+				"tags": [
+					"credential-providers"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Registers an external credential store provider. OIDC or Universal Auth credentials are stored encrypted under the data volume.",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"example": {
+									"id": 1,
+									"created_on": "2026-06-05T06:20:47.000Z",
+									"modified_on": "2026-06-05T06:20:47.000Z",
+									"owner_user_id": 1,
+									"name": "Cypress vault stub",
+									"type": "vault",
+									"oidc_issuer": "https://issuer.example/oauth2",
+									"oidc_client_id": "npm-test",
+									"oidc_audience": null,
+									"oidc_scope": null,
+									"meta": {
+										"address": "http://127.0.0.1:65535",
+										"mount": "secret",
+										"role": "npm"
+									},
+									"has_oidc_secret": true
+								},
+								"schema": {
+									"type": "object",
+									"description": "External credential store provider configuration",
+									"required": [
+										"id",
+										"created_on",
+										"modified_on",
+										"owner_user_id",
+										"name",
+										"type",
+										"meta",
+										"has_oidc_secret"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"id": {
+											"description": "Unique identifier",
+											"readOnly": true,
+											"type": "integer",
+											"minimum": 1,
+											"example": 11
+										},
+										"created_on": {
+											"description": "Date and time of creation",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"modified_on": {
+											"description": "Date and time of last update",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"owner_user_id": {
+											"description": "User ID",
+											"type": "integer",
+											"minimum": 1,
+											"example": 2
+										},
+										"name": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 255,
+											"example": "Cypress vault stub"
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"vault",
+												"aws",
+												"azure",
+												"infisical",
+												"http"
+											],
+											"example": "vault"
+										},
+										"oidc_issuer": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": "https://issuer.example/oauth2"
+										},
+										"oidc_client_id": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": "npm-test"
+										},
+										"oidc_audience": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": null
+										},
+										"oidc_scope": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": null
+										},
+										"meta": {
+											"type": "object",
+											"description": "Provider-specific configuration",
+											"example": {
+												"address": "http://127.0.0.1:65535",
+												"mount": "secret",
+												"role": "npm"
+											}
+										},
+										"has_oidc_secret": {
+											"type": "boolean",
+											"description": "Whether an OIDC client secret is stored for this provider",
+											"example": true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/credential-providers/{providerID}": {
+			"get": {
+				"operationId": "getCredentialProvider",
+				"summary": "Get credential provider",
+				"tags": [
+					"credential-providers"
+				],
+				"description": "Returns one credential provider configuration by id without secret material.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "providerID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Credential provider ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"example": {
+									"id": 1,
+									"created_on": "2026-06-05T06:20:47.000Z",
+									"modified_on": "2026-06-05T06:20:47.000Z",
+									"owner_user_id": 1,
+									"name": "Cypress vault stub",
+									"type": "vault",
+									"oidc_issuer": "https://issuer.example/oauth2",
+									"oidc_client_id": "npm-test",
+									"oidc_audience": null,
+									"oidc_scope": null,
+									"meta": {},
+									"has_oidc_secret": true
+								},
+								"schema": {
+									"type": "object",
+									"description": "External credential store provider configuration",
+									"required": [
+										"id",
+										"created_on",
+										"modified_on",
+										"owner_user_id",
+										"name",
+										"type",
+										"meta",
+										"has_oidc_secret"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"id": {
+											"description": "Unique identifier",
+											"readOnly": true,
+											"type": "integer",
+											"minimum": 1,
+											"example": 11
+										},
+										"created_on": {
+											"description": "Date and time of creation",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"modified_on": {
+											"description": "Date and time of last update",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"owner_user_id": {
+											"description": "User ID",
+											"type": "integer",
+											"minimum": 1,
+											"example": 2
+										},
+										"name": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 255,
+											"example": "Cypress vault stub"
+										},
+										"type": {
+											"type": "string",
+											"enum": [
+												"vault",
+												"aws",
+												"azure",
+												"infisical",
+												"http"
+											],
+											"example": "vault"
+										},
+										"oidc_issuer": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": "https://issuer.example/oauth2"
+										},
+										"oidc_client_id": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": "npm-test"
+										},
+										"oidc_audience": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": null
+										},
+										"oidc_scope": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": null
+										},
+										"meta": {
+											"type": "object",
+											"description": "Provider-specific configuration",
+											"example": {
+												"address": "http://127.0.0.1:65535",
+												"mount": "secret",
+												"role": "npm"
+											}
+										},
+										"has_oidc_secret": {
+											"type": "boolean",
+											"description": "Whether an OIDC client secret is stored for this provider",
+											"example": true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "updateCredentialProvider",
+				"summary": "Update credential provider",
+				"tags": [
+					"credential-providers"
+				],
+				"description": "Updates provider settings. Omit secret fields to keep existing encrypted values.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "providerID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Credential provider ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			},
+			"delete": {
+				"operationId": "deleteCredentialProvider",
+				"summary": "Delete credential provider",
+				"tags": [
+					"credential-providers"
+				],
+				"description": "Soft-deletes a credential provider. Existing certificate references may fail resolution until updated.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "providerID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Credential provider ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			}
+		},
+		"/credential-providers/{providerID}/test": {
+			"post": {
+				"operationId": "testCredentialProvider",
+				"summary": "Test provider authentication",
+				"tags": [
+					"credential-providers"
+				],
+				"description": "Verifies that the provider can obtain an access token (OIDC client credentials or Infisical Universal Auth).",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "providerID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Credential provider ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			}
+		},
+		"/credential-providers/{providerID}/test-resolve": {
+			"post": {
+				"operationId": "testCredentialProviderResolve",
+				"summary": "Test secret resolution",
+				"tags": [
+					"credential-providers"
+				],
+				"description": "Tests resolving a secret path through the provider without returning secret contents (response includes byte length only).",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "providerID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Credential provider ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			}
+		},
+		"/api-keys": {
+			"get": {
+				"operationId": "listApiKeys",
+				"summary": "List API keys",
+				"tags": [
+					"api-keys"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Lists automation API keys. Secrets are never returned; each entry indicates whether a key is still configured.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"example": [],
+								"schema": {
+									"type": "array",
+									"description": "API key list",
+									"items": {
+										"type": "object",
+										"description": "Automation API key metadata (secret hash is never returned)",
+										"required": [
+											"id",
+											"created_on",
+											"modified_on",
+											"owner_user_id",
+											"name",
+											"permissions"
+										],
+										"additionalProperties": false,
+										"properties": {
+											"id": {
+												"description": "Unique identifier",
+												"readOnly": true,
+												"type": "integer",
+												"minimum": 1,
+												"example": 11
+											},
+											"created_on": {
+												"description": "Date and time of creation",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"modified_on": {
+												"description": "Date and time of last update",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"owner_user_id": {
+												"description": "User ID",
+												"type": "integer",
+												"minimum": 1,
+												"example": 2
+											},
+											"name": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 255,
+												"example": "Cypress automation key"
+											},
+											"permissions": {
+												"type": "object",
+												"description": "Scoped permissions granted to this API key",
+												"additionalProperties": {
+													"type": "string"
+												},
+												"example": {
+													"proxy_hosts": "manage",
+													"certificates": "manage",
+													"credentials": "manage"
+												}
+											},
+											"expires_on": {
+												"type": [
+													"string",
+													"null"
+												],
+												"example": null
+											},
+											"last_used_at": {
+												"type": [
+													"string",
+													"null"
+												],
+												"example": null
+											},
+											"is_revoked": {
+												"type": "integer",
+												"enum": [
+													0,
+													1
+												],
+												"example": 0
+											},
+											"key": {
+												"type": "string",
+												"description": "Raw API key; returned only on create",
+												"pattern": "^npmak_",
+												"example": "npmak_a1b2c3d4_base64urlsecret"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"operationId": "createApiKey",
+				"summary": "Create an API key",
+				"tags": [
+					"api-keys"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Creates a long-lived API key for automation. The raw key is returned once in the response and cannot be retrieved again.",
+				"requestBody": {
+					"description": "API key configuration",
+					"required": true,
+					"content": {
+						"application/json": {
+							"example": {
+								"name": "Cypress automation key",
+								"permissions": {
+									"proxy_hosts": "manage"
+								}
+							},
+							"schema": {
+								"type": "object",
+								"required": [
+									"name"
+								],
+								"properties": {
+									"name": {
+										"type": "string",
+										"example": "Cypress automation key"
+									},
+									"permissions": {
+										"type": "object",
+										"example": {
+											"proxy_hosts": "manage"
+										}
+									},
+									"expires_on": {
+										"type": [
+											"string",
+											"null"
+										],
+										"example": null
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"example": {
+									"id": 1,
+									"created_on": "2026-06-05T06:20:47.000Z",
+									"modified_on": "2026-06-05T06:20:47.000Z",
+									"owner_user_id": 1,
+									"name": "Cypress automation key",
+									"permissions": {
+										"proxy_hosts": "manage"
+									},
+									"expires_on": null,
+									"last_used_at": null,
+									"is_revoked": 0,
+									"key": "npmak_a1b2c3d4_base64urlsecret"
+								},
+								"schema": {
+									"type": "object",
+									"description": "Automation API key metadata (secret hash is never returned)",
+									"required": [
+										"id",
+										"created_on",
+										"modified_on",
+										"owner_user_id",
+										"name",
+										"permissions"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"id": {
+											"description": "Unique identifier",
+											"readOnly": true,
+											"type": "integer",
+											"minimum": 1,
+											"example": 11
+										},
+										"created_on": {
+											"description": "Date and time of creation",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"modified_on": {
+											"description": "Date and time of last update",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"owner_user_id": {
+											"description": "User ID",
+											"type": "integer",
+											"minimum": 1,
+											"example": 2
+										},
+										"name": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 255,
+											"example": "Cypress automation key"
+										},
+										"permissions": {
+											"type": "object",
+											"description": "Scoped permissions granted to this API key",
+											"additionalProperties": {
+												"type": "string"
+											},
+											"example": {
+												"proxy_hosts": "manage",
+												"certificates": "manage",
+												"credentials": "manage"
+											}
+										},
+										"expires_on": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": null
+										},
+										"last_used_at": {
+											"type": [
+												"string",
+												"null"
+											],
+											"example": null
+										},
+										"is_revoked": {
+											"type": "integer",
+											"enum": [
+												0,
+												1
+											],
+											"example": 0
+										},
+										"key": {
+											"type": "string",
+											"description": "Raw API key; returned only on create",
+											"pattern": "^npmak_",
+											"example": "npmak_a1b2c3d4_base64urlsecret"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api-keys/{apiKeyID}": {
+			"delete": {
+				"operationId": "deleteApiKey",
+				"summary": "Revoke an API key",
+				"tags": [
+					"api-keys"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Revokes an API key by id. Revoked keys fail authentication immediately.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "apiKeyID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "API key ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			}
+		},
+		"/jobs": {
+			"get": {
+				"operationId": "listJobs",
+				"summary": "List recent async jobs",
+				"tags": [
+					"jobs"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Lists recent asynchronous automation jobs (certificate issuance, migrations, etc.).",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"example": [],
+								"schema": {
+									"type": "array",
+									"description": "Background job list",
+									"items": {
+										"type": "object",
+										"description": "Asynchronous background job",
+										"required": [
+											"id",
+											"created_on",
+											"modified_on",
+											"owner_user_id",
+											"type",
+											"status",
+											"payload"
+										],
+										"additionalProperties": false,
+										"properties": {
+											"id": {
+												"description": "Unique identifier",
+												"readOnly": true,
+												"type": "integer",
+												"minimum": 1,
+												"example": 11
+											},
+											"created_on": {
+												"description": "Date and time of creation",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"modified_on": {
+												"description": "Date and time of last update",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"owner_user_id": {
+												"description": "User ID",
+												"type": "integer",
+												"minimum": 1,
+												"example": 2
+											},
+											"type": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 64,
+												"example": "certificate.create"
+											},
+											"status": {
+												"type": "string",
+												"enum": [
+													"pending",
+													"running",
+													"completed",
+													"failed"
+												],
+												"example": "pending"
+											},
+											"payload": {
+												"type": "object",
+												"description": "Job input payload",
+												"example": {}
+											},
+											"result": {
+												"type": [
+													"object",
+													"null"
+												],
+												"description": "Job result when completed",
+												"example": null
+											},
+											"error": {
+												"type": [
+													"string",
+													"null"
+												],
+												"description": "Error message when failed",
+												"example": null
+											},
+											"finished_on": {
+												"type": [
+													"string",
+													"null"
+												],
+												"description": "Completion timestamp",
+												"example": null
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/jobs/{jobID}": {
+			"get": {
+				"operationId": "getJob",
+				"summary": "Get async job status",
+				"tags": [
+					"jobs"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Returns status and result metadata for one background job by id.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "jobID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Job ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"example": {
+									"id": 1,
+									"created_on": "2026-06-05T06:20:47.000Z",
+									"modified_on": "2026-06-05T06:20:47.000Z",
+									"owner_user_id": 1,
+									"type": "certificate.create",
+									"status": "pending",
+									"payload": {},
+									"result": null,
+									"error": null,
+									"finished_on": null
+								},
+								"schema": {
+									"type": "object",
+									"description": "Asynchronous background job",
+									"required": [
+										"id",
+										"created_on",
+										"modified_on",
+										"owner_user_id",
+										"type",
+										"status",
+										"payload"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"id": {
+											"description": "Unique identifier",
+											"readOnly": true,
+											"type": "integer",
+											"minimum": 1,
+											"example": 11
+										},
+										"created_on": {
+											"description": "Date and time of creation",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"modified_on": {
+											"description": "Date and time of last update",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"owner_user_id": {
+											"description": "User ID",
+											"type": "integer",
+											"minimum": 1,
+											"example": 2
+										},
+										"type": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 64,
+											"example": "certificate.create"
+										},
+										"status": {
+											"type": "string",
+											"enum": [
+												"pending",
+												"running",
+												"completed",
+												"failed"
+											],
+											"example": "pending"
+										},
+										"payload": {
+											"type": "object",
+											"description": "Job input payload",
+											"example": {}
+										},
+										"result": {
+											"type": [
+												"object",
+												"null"
+											],
+											"description": "Job result when completed",
+											"example": null
+										},
+										"error": {
+											"type": [
+												"string",
+												"null"
+											],
+											"description": "Error message when failed",
+											"example": null
+										},
+										"finished_on": {
+											"type": [
+												"string",
+												"null"
+											],
+											"description": "Completion timestamp",
+											"example": null
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/webhooks": {
+			"get": {
+				"operationId": "listWebhooks",
+				"summary": "List webhook endpoints",
+				"tags": [
+					"webhooks"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Lists outbound webhook endpoints configured for automation events.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"example": [],
+								"schema": {
+									"type": "array",
+									"description": "Webhook endpoint list",
+									"items": {
+										"type": "object",
+										"description": "Outbound webhook endpoint configuration",
+										"required": [
+											"id",
+											"created_on",
+											"modified_on",
+											"owner_user_id",
+											"name",
+											"url",
+											"events",
+											"is_enabled"
+										],
+										"additionalProperties": false,
+										"properties": {
+											"id": {
+												"description": "Unique identifier",
+												"readOnly": true,
+												"type": "integer",
+												"minimum": 1,
+												"example": 11
+											},
+											"created_on": {
+												"description": "Date and time of creation",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"modified_on": {
+												"description": "Date and time of last update",
+												"readOnly": true,
+												"type": "string",
+												"example": "2025-10-28T04:17:54.000Z"
+											},
+											"owner_user_id": {
+												"description": "User ID",
+												"type": "integer",
+												"minimum": 1,
+												"example": 2
+											},
+											"name": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 255,
+												"example": "Cypress webhook"
+											},
+											"url": {
+												"type": "string",
+												"minLength": 1,
+												"maxLength": 2048,
+												"example": "http://127.0.0.1:65535/npm-webhook-test"
+											},
+											"events": {
+												"type": "array",
+												"minItems": 1,
+												"items": {
+													"type": "string"
+												},
+												"example": [
+													"certificate.created"
+												]
+											},
+											"is_enabled": {
+												"description": "Whether the endpoint receives events",
+												"anyOf": [
+													{
+														"type": "boolean"
+													},
+													{
+														"type": "integer",
+														"enum": [
+															0,
+															1
+														]
+													}
+												],
+												"example": 1
+											},
+											"secret": {
+												"type": "string",
+												"description": "HMAC signing secret; returned only on create when generated by the server",
+												"minLength": 1,
+												"example": "ff387bfac72d5913371afd9d8c651e61369f2ba886b2d72a9402f441913aa279"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"operationId": "createWebhook",
+				"summary": "Create a webhook endpoint",
+				"tags": [
+					"webhooks"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Creates a webhook endpoint with optional HMAC signing secret.",
+				"requestBody": {
+					"description": "Webhook endpoint configuration",
+					"required": true,
+					"content": {
+						"application/json": {
+							"example": {
+								"name": "Cypress webhook",
+								"url": "http://127.0.0.1:65535/npm-webhook-test",
+								"events": [
+									"certificate.created"
+								]
+							},
+							"schema": {
+								"type": "object",
+								"required": [
+									"name",
+									"url",
+									"events"
+								],
+								"properties": {
+									"name": {
+										"type": "string",
+										"example": "Cypress webhook"
+									},
+									"url": {
+										"type": "string",
+										"example": "http://127.0.0.1:65535/npm-webhook-test"
+									},
+									"events": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"example": [
+											"certificate.created"
+										]
+									},
+									"secret": {
+										"type": "string",
+										"example": "custom-signing-secret"
+									},
+									"is_enabled": {
+										"type": "boolean",
+										"example": true
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"example": {
+									"id": 1,
+									"created_on": "2026-06-05T06:20:47.000Z",
+									"modified_on": "2026-06-05T06:20:47.000Z",
+									"owner_user_id": 1,
+									"name": "Cypress webhook",
+									"url": "http://127.0.0.1:65535/npm-webhook-test",
+									"events": [
+										"certificate.created"
+									],
+									"is_enabled": 1,
+									"secret": "ff387bfac72d5913371afd9d8c651e61369f2ba886b2d72a9402f441913aa279"
+								},
+								"schema": {
+									"type": "object",
+									"description": "Outbound webhook endpoint configuration",
+									"required": [
+										"id",
+										"created_on",
+										"modified_on",
+										"owner_user_id",
+										"name",
+										"url",
+										"events",
+										"is_enabled"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"id": {
+											"description": "Unique identifier",
+											"readOnly": true,
+											"type": "integer",
+											"minimum": 1,
+											"example": 11
+										},
+										"created_on": {
+											"description": "Date and time of creation",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"modified_on": {
+											"description": "Date and time of last update",
+											"readOnly": true,
+											"type": "string",
+											"example": "2025-10-28T04:17:54.000Z"
+										},
+										"owner_user_id": {
+											"description": "User ID",
+											"type": "integer",
+											"minimum": 1,
+											"example": 2
+										},
+										"name": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 255,
+											"example": "Cypress webhook"
+										},
+										"url": {
+											"type": "string",
+											"minLength": 1,
+											"maxLength": 2048,
+											"example": "http://127.0.0.1:65535/npm-webhook-test"
+										},
+										"events": {
+											"type": "array",
+											"minItems": 1,
+											"items": {
+												"type": "string"
+											},
+											"example": [
+												"certificate.created"
+											]
+										},
+										"is_enabled": {
+											"description": "Whether the endpoint receives events",
+											"anyOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "integer",
+													"enum": [
+														0,
+														1
+													]
+												}
+											],
+											"example": 1
+										},
+										"secret": {
+											"type": "string",
+											"description": "HMAC signing secret; returned only on create when generated by the server",
+											"minLength": 1,
+											"example": "ff387bfac72d5913371afd9d8c651e61369f2ba886b2d72a9402f441913aa279"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/webhooks/{webhookID}": {
+			"delete": {
+				"operationId": "deleteWebhook",
+				"summary": "Delete a webhook endpoint",
+				"tags": [
+					"webhooks"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"description": "Deletes a webhook configuration by id.",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "webhookID",
+						"schema": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"required": true,
+						"description": "Webhook endpoint ID",
+						"example": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
 					}
 				}
 			}

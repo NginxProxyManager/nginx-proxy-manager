@@ -11,9 +11,15 @@
 	],
 	"description": "Creates a webhook endpoint with optional HMAC signing secret.",
 	"requestBody": {
+		"description": "Webhook endpoint configuration",
 		"required": true,
 		"content": {
 			"application/json": {
+				"example": {
+					"name": "Cypress webhook",
+					"url": "http://127.0.0.1:65535/npm-webhook-test",
+					"events": ["certificate.created"]
+				},
 				"schema": {
 					"type": "object",
 					"required": [
@@ -23,22 +29,27 @@
 					],
 					"properties": {
 						"name": {
-							"type": "string"
+							"type": "string",
+							"example": "Cypress webhook"
 						},
 						"url": {
-							"type": "string"
+							"type": "string",
+							"example": "http://127.0.0.1:65535/npm-webhook-test"
 						},
 						"events": {
 							"type": "array",
 							"items": {
 								"type": "string"
-							}
+							},
+							"example": ["certificate.created"]
 						},
 						"secret": {
-							"type": "string"
+							"type": "string",
+							"example": "custom-signing-secret"
 						},
 						"is_enabled": {
-							"type": "boolean"
+							"type": "boolean",
+							"example": true
 						}
 					}
 				}
@@ -47,7 +58,25 @@
 	},
 	"responses": {
 		"201": {
-			"description": "Created"
+			"description": "Created",
+			"content": {
+				"application/json": {
+					"example": {
+						"id": 1,
+						"created_on": "2026-06-05T06:20:47.000Z",
+						"modified_on": "2026-06-05T06:20:47.000Z",
+						"owner_user_id": 1,
+						"name": "Cypress webhook",
+						"url": "http://127.0.0.1:65535/npm-webhook-test",
+						"events": ["certificate.created"],
+						"is_enabled": 1,
+						"secret": "ff387bfac72d5913371afd9d8c651e61369f2ba886b2d72a9402f441913aa279"
+					},
+					"schema": {
+						"$ref": "../../components/webhook-object.json"
+					}
+				}
+			}
 		}
 	}
 }

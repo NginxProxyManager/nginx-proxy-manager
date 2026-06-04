@@ -10,6 +10,19 @@
 		}
 	],
 	"description": "Deletes a webhook configuration by id.",
+	"parameters": [
+		{
+			"in": "path",
+			"name": "webhookID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Webhook endpoint ID",
+			"example": 1
+		}
+	],
 	"responses": {
 		"200": {
 			"description": "OK"

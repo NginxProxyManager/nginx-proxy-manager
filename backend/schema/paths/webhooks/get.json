@@ -12,7 +12,15 @@
 	"description": "Lists outbound webhook endpoints configured for automation events.",
 	"responses": {
 		"200": {
-			"description": "OK"
+			"description": "OK",
+			"content": {
+				"application/json": {
+					"example": [],
+					"schema": {
+						"$ref": "../../components/webhook-list.json"
+					}
+				}
+			}
 		}
 	}
 }

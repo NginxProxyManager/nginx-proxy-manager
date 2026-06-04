@@ -10,6 +10,19 @@
 		}
 	],
 	"description": "Revokes an API key by id. Revoked keys fail authentication immediately.",
+	"parameters": [
+		{
+			"in": "path",
+			"name": "apiKeyID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "API key ID",
+			"example": 1
+		}
+	],
 	"responses": {
 		"200": {
 			"description": "OK"

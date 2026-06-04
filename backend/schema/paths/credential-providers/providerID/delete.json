@@ -5,6 +5,19 @@
 		"credential-providers"
 	],
 	"description": "Soft-deletes a credential provider. Existing certificate references may fail resolution until updated.",
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Credential provider ID",
+			"example": 1
+		}
+	],
 	"responses": {
 		"200": {
 			"description": "OK"

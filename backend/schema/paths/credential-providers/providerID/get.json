@@ -5,9 +5,43 @@
 		"credential-providers"
 	],
 	"description": "Returns one credential provider configuration by id without secret material.",
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Credential provider ID",
+			"example": 1
+		}
+	],
 	"responses": {
 		"200": {
-			"description": "OK"
+			"description": "OK",
+			"content": {
+				"application/json": {
+					"example": {
+						"id": 1,
+						"created_on": "2026-06-05T06:20:47.000Z",
+						"modified_on": "2026-06-05T06:20:47.000Z",
+						"owner_user_id": 1,
+						"name": "Cypress vault stub",
+						"type": "vault",
+						"oidc_issuer": "https://issuer.example/oauth2",
+						"oidc_client_id": "npm-test",
+						"oidc_audience": null,
+						"oidc_scope": null,
+						"meta": {},
+						"has_oidc_secret": true
+					},
+					"schema": {
+						"$ref": "../../../components/credential-provider-object.json"
+					}
+				}
+			}
 		}
 	}
 }

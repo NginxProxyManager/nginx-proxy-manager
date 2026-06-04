@@ -15,11 +15,9 @@
 			"description": "OK",
 			"content": {
 				"application/json": {
+					"example": [],
 					"schema": {
-						"type": "array",
-						"items": {
-							"type": "object"
-						}
+						"$ref": "../../components/api-key-list.json"
 					}
 				}
 			}

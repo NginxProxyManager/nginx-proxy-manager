@@ -4,10 +4,23 @@
 	"tags": [
 		"jobs"
 	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
 	"description": "Lists recent asynchronous automation jobs (certificate issuance, migrations, etc.).",
 	"responses": {
 		"200": {
-			"description": "OK"
+			"description": "OK",
+			"content": {
+				"application/json": {
+					"example": [],
+					"schema": {
+						"$ref": "../../components/job-list.json"
+					}
+				}
+			}
 		}
 	}
 }
