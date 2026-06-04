@@ -89,13 +89,14 @@ const CredentialModal = EasyModal.create(({ item, visible, remove }: Props) => {
 								</Field>
 							</div>
 							<div className="mb-3">
-								<label className="form-label">
+								<label htmlFor="credCredentials" className="form-label">
 									<T id="certificates.dns.credentials" />
 									{!isNew ? " (leave empty to keep existing)" : null}
 								</label>
 								<Field name="credentials">
 									{({ field }: any) => (
 										<CodeEditor
+											id="credCredentials"
 											language="ini"
 											data-color-mode="dark"
 											minHeight={120}

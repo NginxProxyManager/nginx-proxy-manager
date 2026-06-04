@@ -17,9 +17,9 @@ interface Props {
 }
 
 export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onNew }: Props) {
-	const columnHelper = createColumnHelper<StoredCredential>();
-	const columns = useMemo(
-		() => [
+	const columns = useMemo(() => {
+		const columnHelper = createColumnHelper<StoredCredential>();
+		return [
 			columnHelper.accessor("name", {
 				header: intl.formatMessage({ id: "column.name" }),
 				cell: (info) => (
@@ -63,9 +63,8 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 					</span>
 				),
 			}),
-		],
-		[onDelete, onEdit],
-	);
+		];
+	}, [onDelete, onEdit]);
 
 	const tableInstance = useReactTable({
 		data,

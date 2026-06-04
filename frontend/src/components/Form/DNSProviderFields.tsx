@@ -137,10 +137,11 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 					{credentialSource === "external" && externalProviders?.length ? (
 						<div className="mt-3 row g-2">
 							<div className="col-md-6">
-								<label className="form-label">
+								<label htmlFor="externalCredentialProvider" className="form-label">
 									<T id="credential-providers" />
 								</label>
 								<select
+									id="externalCredentialProvider"
 									className="form-select"
 									value={String(v.meta?.credentialRef?.providerId || "")}
 									onChange={(e) => {
@@ -162,10 +163,11 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 								</select>
 							</div>
 							<div className="col-md-6">
-								<label className="form-label">
+								<label htmlFor="externalSecretPath" className="form-label">
 									<T id="credentials.secret-path" />
 								</label>
 								<input
+									id="externalSecretPath"
 									className="form-control"
 									placeholder="dns/cloudflare/prod"
 									value={v.meta?.credentialRef?.path || ""}

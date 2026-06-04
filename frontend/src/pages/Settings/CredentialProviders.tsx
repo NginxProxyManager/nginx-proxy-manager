@@ -155,20 +155,22 @@ export default function CredentialProviders() {
 				<div className="card-body">
 					<div className="row g-3">
 						<div className="col-md-6">
-							<label className="form-label">
+							<label htmlFor="providerName" className="form-label">
 								<T id="credential-providers.field.name" />
 							</label>
 							<input
+								id="providerName"
 								className="form-control"
 								value={form.name}
 								onChange={(e) => setForm({ ...form, name: e.target.value })}
 							/>
 						</div>
 						<div className="col-md-6">
-							<label className="form-label">
+							<label htmlFor="providerType" className="form-label">
 								<T id="credential-providers.field.type" />
 							</label>
 							<select
+								id="providerType"
 								className="form-select"
 								value={form.type}
 								disabled={!!editingId}
