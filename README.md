@@ -129,11 +129,10 @@ Workflow: [`.github/workflows/docker-image.yml`](.github/workflows/docker-image.
 
 | Event | Behavior |
 |-------|----------|
-| Push to `develop` | Build `linux/amd64`, push `develop` + `sha-<short>` |
-| Push to `master` | Build `linux/amd64`, push `latest` + `sha-<short>` |
-| Tag `v*` | Push version tags |
+| Push to `develop` / `master` | Only when **`docker/Dockerfile`** changes — build and push `latest`, branch tag, `sha-<short>` |
+| Tag `v*` | Build and push version tags + `latest` |
 | Pull request | Build only (no push) |
-| Manual run | Optional push / skip frontend tests |
+| Manual run | Full rebuild anytime; optional push / skip frontend tests |
 
 **Docker Hub credentials** come from Infisical (not GitHub Secrets):
 

@@ -5,6 +5,8 @@ on:
     branches:
       - develop
       - master
+    paths:
+      - docker/Dockerfile
     tags:
       - "v*"
   pull_request:
@@ -153,7 +155,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=sha,prefix=sha-,format=short
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
+            type=raw,value=latest,enable=${{ github.event_name != 'pull_request' }}
 
       - name: Build image on host Podman
         run: |

@@ -21,7 +21,7 @@ Workflow: [`.github/workflows/deploy-test-server.yml`](../.github/workflows/depl
 | Trigger | When |
 |---------|------|
 | **workflow_dispatch** | Manual — choose host, image tag, tags, check mode |
-| **workflow_run** | After **Docker image** succeeds on `develop` → deploy `:develop` |
+| **workflow_run** | After **Docker image** succeeds on `develop` (runs only when `docker/Dockerfile` changed or manual/tag build) → deploy `:develop` |
 
 Runs on `[self-hosted, linux, gen]` with Infisical OIDC (same secrets as image build):
 
