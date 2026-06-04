@@ -59,7 +59,7 @@ try {
 
 // get all translations used in frontend code
 const tmpobj = tmp.fileSync({ postfix: ".json" });
-spawnSync("yarn", ["locale-extract", "--out-file", tmpobj.name]);
+spawnSync("npm", ["run", "locale-extract", "--", "--out-file", tmpobj.name], { stdio: "inherit", shell: true });
 
 const allLocalesInProject = require(tmpobj.name);
 

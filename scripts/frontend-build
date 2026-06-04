@@ -17,9 +17,9 @@ cd "${DIR}/.." || exit 1
 echo -e "${BLUE}❯ ${CYAN}Building frontend ...${RESET}"
 
 if [ "${SKIP_TESTS}" = "1" ]; then
-	TEST_CMD="yarn locale-compile"
+	TEST_CMD="npm run locale-compile"
 else
-	TEST_CMD="yarn lint && yarn locale-compile && yarn vitest run --no-color"
+	TEST_CMD="npm run lint && npm run locale-compile && npm run test -- run --no-color"
 fi
 
 docker run --rm \
@@ -29,7 +29,7 @@ docker run --rm \
 	-w /app "${DOCKER_IMAGE}" \
 	sh -c "set -e
 		cd /app/docs && npm install && npm run build
-		cd /app/frontend && yarn install && ${TEST_CMD} && yarn build
+		cd /app/frontend && npm ci && ${TEST_CMD} && npm run build
 		rm -rf /app/frontend/dist/docs && mkdir -p /app/frontend/dist/docs
 		cp -a /app/docs/dist/. /app/frontend/dist/docs/
 		chown -R $(id -u):$(id -g) /app/frontend /app/docs/node_modules 2>/dev/null || true

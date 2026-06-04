@@ -10,7 +10,9 @@ on:
       - docker/Dockerfile
       - VERSION
       - backend/package.json
+      - backend/package-lock.json
       - frontend/package.json
+      - frontend/package-lock.json
     tags:
       - "v*.*.*"
   pull_request:
@@ -74,36 +76,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
-
-      - name: Enable Yarn
-        run: |
-          set -euo pipefail
-          corepack enable
-          corepack prepare yarn@1.22.22 --activate
-          yarn --version
-          yarn config set network-timeout 600000 -g
-          yarn config set network-concurrency 4 -g
-
-      - name: Cache frontend dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            frontend/node_modules
-            ~/.cache/yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('frontend/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Check registry connectivity
         run: |
           set -euo pipefail
-          for url in https://registry.yarnpkg.com https://registry.npmjs.org; do
-            if ! curl -fsSL --connect-timeout 15 --max-time 60 -o /dev/null "$url"; then
-              echo "::error::Cannot reach $url from the runner — yarn install will fail. Check host/container egress and DNS."
-              exit 1
-            fi
-            echo "OK: $url"
-          done
+          if ! curl -fsSL --connect-timeout 15 --max-time 60 -o /dev/null https://registry.npmjs.org; then
+            echo "::error::Cannot reach https://registry.npmjs.org from the runner — npm ci will fail. Check host/container egress and DNS."
+            exit 1
+          fi
+          echo "OK: https://registry.npmjs.org"
 
       - name: Verify Node.js version (> 20)
         run: |
@@ -129,36 +112,32 @@ jobs:
           CI: true
         run: |
           set -euo pipefail
-          yarn_install() {
-            if [ -d node_modules ] && [ -n "$(ls -A node_modules 2>/dev/null || true)" ]; then
-              yarn install --frozen-lockfile --prefer-offline "$@" || yarn install --frozen-lockfile "$@"
-            else
-              yarn install --frozen-lockfile "$@"
-            fi
+          npm_ci() {
+            npm ci --prefer-offline "$@" || npm ci "$@"
           }
           attempt=1
           max_attempts=5
-          until yarn_install; do
+          until npm_ci; do
             if [ "$attempt" -ge "$max_attempts" ]; then
-              echo "::error::yarn install failed after ${max_attempts} attempts"
+              echo "::error::npm ci failed after ${max_attempts} attempts"
               exit 1
             fi
-            echo "::warning::yarn install failed (attempt ${attempt}/${max_attempts}); retrying in 30s..."
+            echo "::warning::npm ci failed (attempt ${attempt}/${max_attempts}); retrying in 30s..."
             attempt=$((attempt + 1))
             sleep 30
           done
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            yarn lint
-            yarn locale-compile
-            yarn vitest run --no-color
+            npm run lint
+            npm run locale-compile
+            npm run test -- run --no-color
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.skip_frontend_tests }}" != "true" ]; then
-            yarn lint
-            yarn locale-compile
-            yarn vitest run --no-color
+            npm run lint
+            npm run locale-compile
+            npm run test -- run --no-color
           else
-            yarn locale-compile
+            npm run locale-compile
           fi
-          yarn build
+          npm run build
           rm -rf dist/docs
           mkdir -p dist/docs
           cp -a ../docs/dist/. dist/docs/

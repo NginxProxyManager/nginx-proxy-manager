@@ -28,9 +28,9 @@ function Build-Frontend {
 	docker pull $FrontendImage | Out-Null
 	$frontendPath = Join-Path $Root "frontend"
 	if ($SkipTests) {
-		$inner = "yarn install && yarn locale-compile && yarn build"
+		$inner = "npm ci && npm run locale-compile && npm run build"
 	} else {
-		$inner = "yarn install && yarn lint && yarn locale-compile && yarn vitest run --no-color && yarn build"
+		$inner = "npm ci && npm run lint && npm run locale-compile && npm run test -- run --no-color && npm run build"
 	}
 	docker run --rm `
 		-e CI=true `

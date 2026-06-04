@@ -47,8 +47,8 @@ WORKDIR /etc/ssl/certs
 RUN ln -s NginxProxyManager.crt 1d0e3f10.0 && update-ca-certificates
 
 WORKDIR /app
-RUN yarn install \
-	&& yarn cache clean
+RUN npm ci --omit=dev \
+	&& npm cache clean --force
 
 # Remove frontend service not required for prod, dev nginx config as well
 RUN rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/frontend /etc/nginx/conf.d/dev.conf \
