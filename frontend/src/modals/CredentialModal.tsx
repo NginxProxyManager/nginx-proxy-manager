@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Form, Formik, Field } from "formik";
 import { type ReactNode, useState } from "react";
@@ -20,6 +21,7 @@ interface Props extends InnerModalProps {
 }
 
 const CredentialModal = EasyModal.create(({ item, visible, remove }: Props) => {
+	const queryClient = useQueryClient();
 	const { data: dnsProviders, isLoading } = useDnsProviders();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +39,7 @@ const CredentialModal = EasyModal.create(({ item, visible, remove }: Props) => {
 				await updateCredential(item.id, values);
 				showObjectSuccess("credential", "saved");
 			}
+			await queryClient.invalidateQueries({ queryKey: ["credentials"] });
 			remove();
 		} catch (err: any) {
 			setErrorMsg(err.message || "Error");

@@ -20,6 +20,26 @@ describe('Credential provider endpoints', () => {
 		});
 	});
 
+	it('Rejects Infisical provider without workspace_id', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path: '/api/credential-providers',
+			data: {
+				name: 'Infisical invalid',
+				type: 'infisical',
+				oidc_client_id: 'client',
+				oidc_client_secret: 'secret',
+				meta: {
+					host: 'https://app.infisical.com',
+					auth_method: 'universal',
+				},
+			},
+			returnOnError: true,
+		}).then((result) => {
+			expect(result.error).to.include('workspace_id');
+		});
+	});
+
 	it('Create provider and test OIDC (expects failure without real IdP)', () => {
 		cy.task('backendApiPost', {
 			token: token,

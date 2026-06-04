@@ -39,7 +39,7 @@ router
 	.post(async (req, res, next) => {
 		try {
 			const payload = await validator(
-				{ ...providerBodySchema, required: ["name", "type", "oidc_issuer", "oidc_client_id", "oidc_client_secret"] },
+				{ ...providerBodySchema, required: ["name", "type"] },
 				req.body,
 			);
 			const result = await internalCredentialProvider.create(res.locals.access, payload);

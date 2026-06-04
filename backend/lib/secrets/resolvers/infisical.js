@@ -1,14 +1,14 @@
 import errs from "../../error.js";
 import { toCertbotIni } from "../format.js";
+import { normalizeInfisicalMeta } from "../meta.js";
 
 /**
  * Infisical universal auth / OIDC.
- * meta: { host, identity_id }
+ * meta: { host, workspace_id, environment_slug, auth_method, identity_id, ... }
  * secretRef.path: secret path e.g. /dns/cloudflare
  */
 export const resolveInfisical = async (provider, secretRef, accessToken) => {
-	const host = (provider.meta?.host || "https://app.infisical.com").replace(/\/$/, "");
-	const { workspace_id, environment_slug = "prod" } = provider.meta || {};
+	const { host, workspace_id, environment_slug } = normalizeInfisicalMeta(provider.meta);
 
 	if (!workspace_id) {
 		throw new errs.ValidationError("Infisical provider requires workspace_id in meta");

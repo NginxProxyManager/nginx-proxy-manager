@@ -1,5 +1,6 @@
 import credentialProviderModel from "../../../models/credential_provider.js";
 import errs from "../../error.js";
+import { getInfisicalAccessToken } from "../infisical-auth.js";
 import { fetchClientCredentialsToken } from "../oidc.js";
 import { readProviderSecret } from "../provider-storage.js";
 import { resolveAws } from "./aws.js";
@@ -31,6 +32,11 @@ export const loadProvider = async (providerId) => {
 };
 
 export const getProviderAccessToken = async (provider) => {
+	if (provider.type === "infisical") {
+		const clientSecret = readProviderSecret(provider.id);
+		return getInfisicalAccessToken(provider, clientSecret);
+	}
+
 	const clientSecret = readProviderSecret(provider.id);
 	if (!provider.oidc_client_id || !clientSecret) {
 		throw new errs.ValidationError("Provider OIDC client_id and client_secret are required");

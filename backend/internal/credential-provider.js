@@ -1,5 +1,6 @@
 import errs from "../lib/error.js";
 import { getProviderAccessToken, loadProvider, resolveFromProvider } from "../lib/secrets/resolvers/index.js";
+import { validateCredentialProviderPayload } from "../lib/secrets/validate-credential-provider.js";
 import {
 	deleteProviderSecret,
 	readProviderSecret,
@@ -21,6 +22,8 @@ const internalCredentialProvider = {
 		if (!PROVIDER_TYPES.includes(data.type)) {
 			throw new errs.ValidationError(`Invalid provider type. Must be one of: ${PROVIDER_TYPES.join(", ")}`);
 		}
+
+		validateCredentialProviderPayload(data, { isCreate: true });
 
 		const row = await credentialProviderModel.query().insertAndFetch({
 			name: data.name,
@@ -56,6 +59,18 @@ const internalCredentialProvider = {
 	update: async (access, data) => {
 		await access.can("credential_providers:update", data.id);
 		const row = await loadProvider(data.id);
+
+		validateCredentialProviderPayload(
+			{
+				type: row.type,
+				name: typeof data.name !== "undefined" ? data.name : row.name,
+				oidc_issuer: typeof data.oidc_issuer !== "undefined" ? data.oidc_issuer : row.oidc_issuer,
+				oidc_client_id: typeof data.oidc_client_id !== "undefined" ? data.oidc_client_id : row.oidc_client_id,
+				oidc_client_secret: data.oidc_client_secret,
+				meta: typeof data.meta !== "undefined" ? data.meta : row.meta,
+			},
+			{ isCreate: false },
+		);
 
 		const patch = {};
 		if (typeof data.name !== "undefined") patch.name = data.name;

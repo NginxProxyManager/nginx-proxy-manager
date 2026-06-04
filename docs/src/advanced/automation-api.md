@@ -98,7 +98,47 @@ Configure providers (admin, Settings → External Credential Stores or API):
 | POST | `/api/credential-providers/{id}/test` |
 | POST | `/api/credential-providers/{id}/test-resolve` |
 
-Provider `type`: `vault`, `aws`, `azure`, `infisical`, `http`. OIDC client secrets are stored encrypted under `/data/credentials/providers/`.
+Provider `type`: `vault` (HashiCorp Vault), `aws`, `azure`, `infisical`, `http`. OIDC client secrets (and Infisical Universal Auth secrets) are stored encrypted under `/data/credentials/providers/`.
+
+### Infisical
+
+Use **Universal Auth** (Machine Identity client ID + secret) or **OIDC Auth** (identity ID + JWT from a file or env var inside the container). This is not the same as Infisical’s “OIDC Auth” tab used for GitHub Actions JWT federation.
+
+Example Universal Auth provider:
+
+```json
+{
+  "name": "Infisical prod",
+  "type": "infisical",
+  "oidc_client_id": "<universal-auth-client-id>",
+  "oidc_client_secret": "<universal-auth-client-secret>",
+  "meta": {
+    "host": "https://vault.example.com",
+    "workspace_id": "<project-uuid>",
+    "environment_slug": "prod",
+    "auth_method": "universal"
+  }
+}
+```
+
+Example OIDC Auth provider (JWT supplied at runtime):
+
+```json
+{
+  "name": "Infisical CI",
+  "type": "infisical",
+  "meta": {
+    "host": "https://vault.example.com",
+    "workspace_id": "<project-uuid>",
+    "environment_slug": "prod",
+    "auth_method": "oidc",
+    "identity_id": "<machine-identity-oidc-id>",
+    "jwt_env_var": "INFISICAL_OIDC_JWT"
+  }
+}
+```
+
+Secret paths in `credential_ref.path` map to Infisical secret paths (leading slash optional).
 
 Reference in a certificate:
 

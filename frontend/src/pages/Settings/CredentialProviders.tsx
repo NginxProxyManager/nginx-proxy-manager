@@ -14,56 +14,27 @@ import { useCredentialProviders } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal } from "src/modals";
 import { showObjectSuccess } from "src/notifications";
-
-const PROVIDER_TYPES = ["vault", "aws", "azure", "infisical", "http"] as const;
-
-const defaultMeta: Record<string, string> = {
-	vault: '{"address":"https://vault.example:8200","mount":"secret","role":"npm"}',
-	aws: '{"region":"us-east-1","role_arn":"arn:aws:iam::123456789012:role/npm-dns"}',
-	azure: '{"tenant_id":"...","vault_url":"https://myvault.vault.azure.net"}',
-	infisical: '{"host":"https://app.infisical.com","workspace_id":"..."}',
-	http: '{"url_template":"https://secrets.example/api/{path}"}',
-};
-
-type FormState = {
-	name: string;
-	type: (typeof PROVIDER_TYPES)[number];
-	oidcIssuer: string;
-	oidcClientId: string;
-	oidcClientSecret: string;
-	oidcAudience: string;
-	metaJson: string;
-};
-
-const emptyForm = (type: FormState["type"] = "vault"): FormState => ({
-	name: "",
-	type,
-	oidcIssuer: "",
-	oidcClientId: "",
-	oidcClientSecret: "",
-	oidcAudience: "",
-	metaJson: defaultMeta[type],
-});
+import { OidcProviderFields } from "./credentialProviders/OidcProviderFields";
+import { ProviderMetaFields } from "./credentialProviders/ProviderMetaFields";
+import {
+	PROVIDER_TYPE_LABELS,
+	PROVIDER_TYPES,
+	buildApiPayload,
+	emptyForm,
+	formFromProvider,
+	type CredentialProviderFormState,
+} from "./credentialProviders/types";
 
 export default function CredentialProviders() {
 	const queryClient = useQueryClient();
 	const { data, isLoading, isError, error } = useCredentialProviders();
-	const [form, setForm] = useState<FormState>(emptyForm());
+	const [form, setForm] = useState<CredentialProviderFormState>(emptyForm());
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const [resolvePath, setResolvePath] = useState<Record<number, string>>({});
 	const [testResult, setTestResult] = useState<string | null>(null);
 	const [submitError, setSubmitError] = useState<string | null>(null);
 
 	if (isLoading) return <LoadingPage noLogo />;
-
-	const parseMeta = () => {
-		try {
-			return JSON.parse(form.metaJson);
-		} catch {
-			setSubmitError("Meta must be valid JSON");
-			return null;
-		}
-	};
 
 	const resetForm = () => {
 		setEditingId(null);
@@ -75,40 +46,54 @@ export default function CredentialProviders() {
 		setEditingId(p.id);
 		setSubmitError(null);
 		setTestResult(null);
-		setForm({
-			name: p.name,
-			type: p.type as FormState["type"],
-			oidcIssuer: p.oidcIssuer || "",
-			oidcClientId: p.oidcClientId || "",
-			oidcClientSecret: "",
-			oidcAudience: p.oidcAudience || "",
-			metaJson: JSON.stringify(p.meta || {}, null, 2),
-		});
+		setForm(formFromProvider(p));
+	};
+
+	const validateBeforeSave = (): string | null => {
+		if (!form.name.trim()) return "Name is required";
+		if (form.type === "infisical") {
+			if (!form.meta.workspaceId?.trim()) return "Project ID (workspace) is required";
+			if (form.meta.authMethod === "oidc") {
+				if (!form.meta.identityId?.trim()) return "Identity ID is required for Infisical OIDC Auth";
+				if (!form.meta.jwtFilePath?.trim() && !form.meta.jwtEnvVar?.trim()) {
+					return "JWT file path or environment variable is required for Infisical OIDC Auth";
+				}
+				if (form.meta.jwtFilePath?.trim() && form.meta.jwtEnvVar?.trim()) {
+					return "Set only one of JWT file path or environment variable";
+				}
+			} else {
+				if (!form.oidcClientId.trim()) return "Client ID is required";
+				if (!editingId && !form.oidcClientSecret.trim()) return "Client secret is required for new providers";
+			}
+			return null;
+		}
+		if (!form.oidcIssuer.trim()) return "OIDC issuer is required";
+		if (!form.oidcClientId.trim()) return "Client ID is required";
+		if (!editingId && !form.oidcClientSecret.trim()) return "Client secret is required for new providers";
+		if (form.type === "vault" && !form.meta.address?.trim()) return "Vault address is required";
+		if (form.type === "aws" && (!form.meta.region?.trim() || !form.meta.roleArn?.trim())) {
+			return "AWS region and role ARN are required";
+		}
+		if (form.type === "azure" && (!form.meta.tenantId?.trim() || !form.meta.vaultUrl?.trim())) {
+			return "Azure tenant ID and vault URL are required";
+		}
+		if (form.type === "http" && !form.meta.urlTemplate?.trim()) return "HTTP URL template is required";
+		return null;
 	};
 
 	const handleSave = async () => {
 		setSubmitError(null);
-		const meta = parseMeta();
-		if (!meta) return;
+		const validationError = validateBeforeSave();
+		if (validationError) {
+			setSubmitError(validationError);
+			return;
+		}
 
 		try {
-			const payload = {
-				name: form.name,
-				type: form.type,
-				oidcIssuer: form.oidcIssuer,
-				oidcClientId: form.oidcClientId,
-				oidcAudience: form.oidcAudience || undefined,
-				meta,
-				...(form.oidcClientSecret ? { oidcClientSecret: form.oidcClientSecret } : {}),
-			};
-
+			const payload = buildApiPayload(form, editingId);
 			if (editingId) {
 				await updateCredentialProvider(editingId, payload);
 			} else {
-				if (!form.oidcClientSecret) {
-					setSubmitError("Client secret is required for new providers");
-					return;
-				}
 				await createCredentialProvider(payload);
 			}
 			showObjectSuccess("credential-provider", "saved");
@@ -119,13 +104,13 @@ export default function CredentialProviders() {
 		}
 	};
 
-	const handleTestOidc = async (id: number) => {
+	const handleTestAuth = async (id: number) => {
 		setTestResult(null);
 		try {
 			const result = await testCredentialProvider(id);
-			setTestResult(`OIDC OK: ${result.name} (${result.type})`);
+			setTestResult(`Auth OK: ${result.name} (${PROVIDER_TYPE_LABELS[result.type as keyof typeof PROVIDER_TYPE_LABELS] || result.type})`);
 		} catch (e: any) {
-			setTestResult(`OIDC failed: ${e.message}`);
+			setTestResult(`Auth failed: ${e.message}`);
 		}
 	};
 
@@ -143,6 +128,8 @@ export default function CredentialProviders() {
 			setTestResult(`Resolve failed: ${e.message}`);
 		}
 	};
+
+	const showOidcFields = form.type !== "infisical" || form.meta.authMethod !== "oidc";
 
 	return (
 		<div className="card-body">
@@ -168,7 +155,9 @@ export default function CredentialProviders() {
 				<div className="card-body">
 					<div className="row g-3">
 						<div className="col-md-6">
-							<label className="form-label">Name</label>
+							<label className="form-label">
+								<T id="credential-providers.field.name" />
+							</label>
 							<input
 								className="form-control"
 								value={form.name}
@@ -176,62 +165,31 @@ export default function CredentialProviders() {
 							/>
 						</div>
 						<div className="col-md-6">
-							<label className="form-label">Type</label>
+							<label className="form-label">
+								<T id="credential-providers.field.type" />
+							</label>
 							<select
 								className="form-select"
 								value={form.type}
 								disabled={!!editingId}
-								onChange={(e) =>
-									setForm({
-										...form,
-										type: e.target.value as FormState["type"],
-										metaJson: defaultMeta[e.target.value as keyof typeof defaultMeta],
-									})
-								}
+								onChange={(e) => {
+									const type = e.target.value as CredentialProviderFormState["type"];
+									setForm(emptyForm(type));
+								}}
 							>
 								{PROVIDER_TYPES.map((t) => (
 									<option key={t} value={t}>
-										{t}
+										{PROVIDER_TYPE_LABELS[t]}
 									</option>
 								))}
 							</select>
 						</div>
-						<div className="col-12">
-							<label className="form-label">OIDC issuer</label>
-							<input
-								className="form-control"
-								value={form.oidcIssuer}
-								onChange={(e) => setForm({ ...form, oidcIssuer: e.target.value })}
-							/>
-						</div>
-						<div className="col-md-6">
-							<label className="form-label">Client ID</label>
-							<input
-								className="form-control"
-								value={form.oidcClientId}
-								onChange={(e) => setForm({ ...form, oidcClientId: e.target.value })}
-							/>
-						</div>
-						<div className="col-md-6">
-							<label className="form-label">
-								Client secret {editingId ? "(leave blank to keep)" : ""}
-							</label>
-							<input
-								type="password"
-								className="form-control"
-								value={form.oidcClientSecret}
-								onChange={(e) => setForm({ ...form, oidcClientSecret: e.target.value })}
-							/>
-						</div>
-						<div className="col-12">
-							<label className="form-label">Meta (JSON)</label>
-							<textarea
-								className="form-control font-monospace"
-								rows={4}
-								value={form.metaJson}
-								onChange={(e) => setForm({ ...form, metaJson: e.target.value })}
-							/>
-						</div>
+
+						<ProviderMetaFields form={form} editingId={editingId} onChange={setForm} />
+
+						{showOidcFields && form.type !== "infisical" ? (
+							<OidcProviderFields form={form} editingId={editingId} onChange={setForm} />
+						) : null}
 					</div>
 					<div className="btn-list mt-3">
 						<Button className="btn-cyan" onClick={handleSave}>
@@ -249,9 +207,12 @@ export default function CredentialProviders() {
 			<table className="table table-vcenter">
 				<thead>
 					<tr>
-						<th>Name</th>
-						<th>Type</th>
-						<th>OIDC</th>
+						<th>
+							<T id="credential-providers.field.name" />
+						</th>
+						<th>
+							<T id="credential-providers.field.type" />
+						</th>
 						<th />
 					</tr>
 				</thead>
@@ -259,8 +220,7 @@ export default function CredentialProviders() {
 					{data?.map((p: CredentialProvider) => (
 						<tr key={p.id}>
 							<td>{p.name}</td>
-							<td>{p.type}</td>
-							<td className="text-muted small">{p.oidcIssuer}</td>
+							<td>{PROVIDER_TYPE_LABELS[p.type as keyof typeof PROVIDER_TYPE_LABELS] || p.type}</td>
 							<td className="text-end">
 								<div className="d-flex flex-wrap gap-1 justify-content-end align-items-center">
 									<input
@@ -272,10 +232,20 @@ export default function CredentialProviders() {
 											setResolvePath((prev) => ({ ...prev, [p.id]: e.target.value }))
 										}
 									/>
-									<Button size="sm" variant="outline" actionType="secondary" onClick={() => handleTestOidc(p.id)}>
-										<T id="credential-providers.test-oidc" />
+									<Button
+										size="sm"
+										variant="outline"
+										actionType="secondary"
+										onClick={() => handleTestAuth(p.id)}
+									>
+										<T id="credential-providers.test-auth" />
 									</Button>
-									<Button size="sm" variant="outline" actionType="secondary" onClick={() => handleTestResolve(p.id)}>
+									<Button
+										size="sm"
+										variant="outline"
+										actionType="secondary"
+										onClick={() => handleTestResolve(p.id)}
+									>
 										<T id="credential-providers.test-resolve" />
 									</Button>
 									<Button size="sm" variant="outline" actionType="primary" onClick={() => startEdit(p)}>
