@@ -119,10 +119,7 @@ export const buildMetaPayload = (form: CredentialProviderFormState): Record<stri
 	}
 };
 
-export const buildApiPayload = (
-	form: CredentialProviderFormState,
-	editingId: number | null,
-): Record<string, unknown> => {
+export const buildApiPayload = (form: CredentialProviderFormState): Record<string, unknown> => {
 	const meta = buildMetaPayload(form);
 	const base: Record<string, unknown> = {
 		name: form.name,

@@ -80,7 +80,7 @@ export default function CredentialProviders() {
 		}
 
 		try {
-			const payload = buildApiPayload(form, editingId);
+			const payload = buildApiPayload(form);
 			if (editingId) {
 				await updateCredentialProvider(editingId, payload);
 			} else {
