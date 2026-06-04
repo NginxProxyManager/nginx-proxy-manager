@@ -118,26 +118,46 @@ def log_error(message: str) -> None:
     print(f"::error::{message}", file=sys.stderr)
 
 
-# GitHub Actions runner paths only (blocks path traversal from env vars).
-_GITHUB_ENV_PATH = re.compile(
-    r"^/home/runner/(?:work/_temp/_runner_file_commands/|temp/_runner_file_commands/).+"
-    r"|^[A-Za-z]:\\actions-runner\\_temp\\_runner_file_commands\\.+",
-    re.ASCII,
-)
-_JWT_FILE_PATH = re.compile(
-    r"^/home/runner/work/_temp/.+\.json$|^[A-Za-z]:\\actions-runner\\_temp\\.+\\.json$",
-    re.ASCII,
-)
+_OIDC_JWT_BASENAME = "github-oidc.jwt"
+
+
+def _reject_traversal(path_str: str) -> None:
+    if not path_str or "\0" in path_str or ".." in Path(path_str).parts:
+        raise ValueError("Invalid path")
+
+
+def _runner_temp_root() -> Path:
+    runner_temp = os.environ.get("RUNNER_TEMP", "").strip()
+    if not runner_temp:
+        raise ValueError("RUNNER_TEMP is not set")
+    _reject_traversal(runner_temp)
+    return Path(runner_temp).resolve()
+
+
+def _path_under_runner_temp(path_str: str) -> Path:
+    _reject_traversal(path_str)
+    resolved = Path(path_str).resolve()
+    temp_root = _runner_temp_root()
+    if not resolved.is_relative_to(temp_root):
+        raise ValueError("Path is outside RUNNER_TEMP")
+    if not resolved.is_file():
+        raise ValueError("Path is not a file")
+    return resolved
 
 
 def _github_env_file_for_append() -> str:
     raw = os.environ.get("GITHUB_ENV", "").strip()
     if not raw or raw != os.environ["GITHUB_ENV"].strip():
         raise ValueError("GITHUB_ENV is not set")
-    if not _GITHUB_ENV_PATH.fullmatch(raw):
-        raise ValueError("GITHUB_ENV path is not an allowed runner file")
-    if not Path(raw).is_file():
+    _reject_traversal(raw)
+    resolved = Path(raw).resolve()
+    if not resolved.is_file():
         raise ValueError("GITHUB_ENV path is not a file")
+    # GitHub Actions writes workflow env updates under _runner_file_commands.
+    if "_runner_file_commands" not in resolved.as_posix():
+        raise ValueError("GITHUB_ENV path is not an allowed runner file")
+    if not resolved.is_relative_to(_runner_temp_root()):
+        raise ValueError("GITHUB_ENV path is outside RUNNER_TEMP")
     return raw
 
 
@@ -145,16 +165,9 @@ def _read_github_oidc_jwt() -> str:
     raw = os.environ.get("JWT_FILE", "").strip()
     if not raw or raw != os.environ["JWT_FILE"].strip():
         raise ValueError("JWT_FILE is not set")
-    if not _JWT_FILE_PATH.fullmatch(raw):
-        raise ValueError("JWT_FILE path is not an allowed runner file")
-    resolved = Path(raw).resolve()
-    runner_temp = os.environ.get("RUNNER_TEMP", "").strip()
-    if runner_temp:
-        temp_root = Path(runner_temp).resolve()
-        if not resolved.is_relative_to(temp_root):
-            raise ValueError("JWT path is outside RUNNER_TEMP")
-    if not resolved.is_file():
-        raise ValueError("JWT file is missing")
+    resolved = _path_under_runner_temp(raw)
+    if resolved.name != _OIDC_JWT_BASENAME:
+        raise ValueError("JWT_FILE must be the OIDC token file from the action")
     return resolved.read_text(encoding="utf-8").strip()
 
 

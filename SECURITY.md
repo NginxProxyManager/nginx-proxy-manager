@@ -51,7 +51,7 @@ After changing application code, run your Snyk Code scan (or CI equivalent) befo
 |------|------------|
 | `express-fileupload@1.5.2` (no upstream fix) | Upload middleware limited in [`backend/app.js`](backend/app.js): `limits.fileSize`, `abortOnLimit`, `safeFileNames`, `preserveExtension`. Documented in `.snyk`. |
 | Bundled docs iframe (`/documentation`) | Only allowlisted `?section=` keys map to VitePress paths under `/docs/`; iframe uses `sandbox`. |
-| GitHub Actions Infisical loader | [`infisical_oidc.py`](.github/actions/infisical-oidc-load/infisical_oidc.py) validates `GITHUB_ENV` and `JWT_FILE` against runner path patterns before read/write. |
+| GitHub Actions Infisical loader | [`infisical_oidc.py`](.github/actions/infisical-oidc-load/infisical_oidc.py) requires `JWT_FILE` under `RUNNER_TEMP` as `github-oidc.jwt` and `GITHUB_ENV` under runner `_runner_file_commands` before read/write. |
 
 Revisit `.snyk` entries when dependencies ship fixes or when mitigations change.
 

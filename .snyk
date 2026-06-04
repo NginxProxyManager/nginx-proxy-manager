@@ -32,7 +32,7 @@ ignore:
         expires: 2027-06-03T00:00:00.000Z
   javascript/PT:
     - .github/actions/infisical-oidc-load/infisical_oidc.py:
-        reason: GITHUB_ENV and JWT_FILE are validated against GitHub Actions runner paths before read/open.
+        reason: JWT_FILE must live under RUNNER_TEMP with basename github-oidc.jwt; GITHUB_ENV must be a runner _runner_file_commands file.
         created: 2026-06-03T00:00:00.000Z
         expires: 2027-06-03T00:00:00.000Z
 patch: {}
