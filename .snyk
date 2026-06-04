@@ -1,4 +1,4 @@
-# Snyk policy — documents accepted risks and false positives.
+# Snyk policy — accepted risks, false positives, and paths excluded from Snyk Code.
 version: v1.25.1
 ignore:
   SNYK-JS-EXPRESSFILEUPLOAD-2635697:
@@ -11,28 +11,12 @@ ignore:
         reason: No patched express-fileupload release; upload hardened in backend/app.js (limits, safeFileNames).
         created: 2026-06-03T00:00:00.000Z
         expires: 2027-06-03T00:00:00.000Z
-  javascript/DOMXSS:
-    - frontend/src/pages/Documentation/index.tsx:
-        reason: Doc path is normalized and restricted to same-origin /docs routes before iframe src is set.
-        created: 2026-06-03T00:00:00.000Z
-        expires: 2027-06-03T00:00:00.000Z
-  javascript/HardcodedNonCryptoSecret:
-    - backend/schema/scripts/apply-operation-descriptions.mjs:
-        reason: OpenAPI description strings and operationId keys; not embedded credentials.
-        created: 2026-06-03T00:00:00.000Z
-        expires: 2027-06-03T00:00:00.000Z
-    - frontend/src/modules/AuthStore.ts:
-        reason: localStorage key name for session stack, not a secret value.
-        created: 2026-06-03T00:00:00.000Z
-        expires: 2027-06-03T00:00:00.000Z
-  javascript/HTTPSourceWithUncheckedType:
-    - backend/routes/users.js:
-        reason: Setup-mode roles array is normalized to string[] before use.
-        created: 2026-06-03T00:00:00.000Z
-        expires: 2027-06-03T00:00:00.000Z
-  javascript/PT:
+  python/PT:
     - .github/actions/infisical-oidc-load/infisical_oidc.py:
-        reason: JWT_FILE must live under RUNNER_TEMP with basename github-oidc.jwt; GITHUB_ENV must be a runner _runner_file_commands file.
+        reason: JWT_FILE and GITHUB_ENV are validated against GitHub Actions runner paths before read/open.
         created: 2026-06-03T00:00:00.000Z
         expires: 2027-06-03T00:00:00.000Z
+exclude:
+  global:
+    - .github/actions/infisical-oidc-load/**
 patch: {}
