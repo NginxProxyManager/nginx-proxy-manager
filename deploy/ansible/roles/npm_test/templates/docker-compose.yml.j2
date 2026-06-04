@@ -8,6 +8,9 @@ services:
       - "80:80"
       - "81:81"
       - "443:443"
+    environment:
+      # Test VM / Docker often has no IPv6; avoids nginx listen [::]:* errors.
+      DISABLE_IPV6: "true"
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt

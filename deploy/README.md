@@ -12,7 +12,9 @@ Ansible deployment for **`oci-test.eh168.alexson.org`** (image testing): install
 | Data | `./data`, `./letsencrypt` under install root |
 | Ports | 80, 81, 443 (firewalld if enabled) |
 
-Admin UI after deploy: **http://oci-test.eh168.alexson.org:81**
+Admin UI after deploy: **http://oci-test.lab.eh168.alexson.org:81**
+
+Compose sets `DISABLE_IPV6=true` on the test host when the kernel has no IPv6.
 
 ## GitHub Actions
 

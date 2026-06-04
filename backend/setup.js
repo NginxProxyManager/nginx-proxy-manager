@@ -169,9 +169,10 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
-export default () =>
-	ensureCredentialDirs()
-		.then(setupDefaultUser)
+export default () => {
+	ensureCredentialDirs();
+	return setupDefaultUser()
 		.then(setupDefaultSettings)
 		.then(setupCertbotPlugins)
 		.then(setupLogrotation);
+};
