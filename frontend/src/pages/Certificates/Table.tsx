@@ -1,6 +1,12 @@
 import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useMemo } from "react";
+import {
+	createColumnHelper,
+	getCoreRowModel,
+	getSortedRowModel,
+	type SortingState,
+	useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
 import type { Certificate } from "src/api/backend";
 import {
 	CertificateInUseFormatter,
@@ -29,6 +35,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
+				enableSorting: false,
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
@@ -40,6 +47,11 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 			columnHelper.accessor((row: any) => row, {
 				id: "domainNames",
 				header: intl.formatMessage({ id: "column.name" }),
+				sortingFn: (a, b) => {
+					const aVal = a.original.niceName || a.original.domainNames?.[0] || "";
+					const bVal = b.original.niceName || b.original.domainNames?.[0] || "";
+					return aVal.localeCompare(bVal);
+				},
 				cell: (info: any) => {
 					const value = info.getValue();
 					return (
@@ -55,6 +67,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 			columnHelper.accessor((row: any) => row, {
 				id: "provider",
 				header: intl.formatMessage({ id: "column.provider" }),
+				sortingFn: (a, b) => (a.original.provider ?? "").localeCompare(b.original.provider ?? ""),
 				cell: (info: any) => {
 					const r = info.getValue();
 					if (r.provider === "letsencrypt") {
@@ -83,6 +96,19 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 			columnHelper.accessor((row: any) => row, {
 				id: "proxyHosts",
 				header: intl.formatMessage({ id: "column.status" }),
+				sortingFn: (a, b) => {
+					const aVal =
+						(a.original.proxyHosts?.length ?? 0) +
+						(a.original.redirectionHosts?.length ?? 0) +
+						(a.original.deadHosts?.length ?? 0) +
+						(a.original.streams?.length ?? 0);
+					const bVal =
+						(b.original.proxyHosts?.length ?? 0) +
+						(b.original.redirectionHosts?.length ?? 0) +
+						(b.original.deadHosts?.length ?? 0) +
+						(b.original.streams?.length ?? 0);
+					return aVal - bVal;
+				},
 				cell: (info: any) => {
 					const r = info.getValue();
 					return (
@@ -164,15 +190,21 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 		[columnHelper, onDelete, onRenew, onDownload],
 	);
 
+	const [sorting, setSorting] = useState<SortingState>([]);
+
 	const tableInstance = useReactTable<Certificate>({
 		columns,
 		data,
+		state: { sorting },
+		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
+		getSortedRowModel: getSortedRowModel(),
 		rowCount: data.length,
 		meta: {
 			isFetching,
 		},
 		enableSortingRemoval: false,
+		sortDescFirst: false,
 	});
 
 	const customAddBtn = (

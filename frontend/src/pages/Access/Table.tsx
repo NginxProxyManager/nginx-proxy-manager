@@ -1,6 +1,12 @@
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useMemo } from "react";
+import {
+	createColumnHelper,
+	getCoreRowModel,
+	getSortedRowModel,
+	type SortingState,
+	useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
 import type { AccessList } from "src/api/backend";
 import { EmptyData, GravatarFormatter, HasPermission, ValueWithDateFormatter } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
@@ -21,6 +27,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
+				enableSorting: false,
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
@@ -32,6 +39,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor((row: any) => row, {
 				id: "name",
 				header: intl.formatMessage({ id: "column.name" }),
+				sortingFn: (a, b) => a.original.name.localeCompare(b.original.name),
 				cell: (info: any) => (
 					<ValueWithDateFormatter value={info.getValue().name} createdOn={info.getValue().createdOn} />
 				),
@@ -39,11 +47,13 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor((row: any) => row.items, {
 				id: "items",
 				header: intl.formatMessage({ id: "column.authorization" }),
+				sortingFn: (a, b) => (a.original.items?.length ?? 0) - (b.original.items?.length ?? 0),
 				cell: (info: any) => <T id="access-list.auth-count" data={{ count: info.getValue().length }} />,
 			}),
 			columnHelper.accessor((row: any) => row.clients, {
 				id: "clients",
 				header: intl.formatMessage({ id: "column.access" }),
+				sortingFn: (a, b) => (a.original.clients?.length ?? 0) - (b.original.clients?.length ?? 0),
 				cell: (info: any) => <T id="access-list.access-count" data={{ count: info.getValue().length }} />,
 			}),
 			columnHelper.accessor((row: any) => row.satisfyAny, {
@@ -114,15 +124,21 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 		[columnHelper, onEdit, onDelete],
 	);
 
+	const [sorting, setSorting] = useState<SortingState>([]);
+
 	const tableInstance = useReactTable<AccessList>({
 		columns,
 		data,
+		state: { sorting },
+		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
+		getSortedRowModel: getSortedRowModel(),
 		rowCount: data.length,
 		meta: {
 			isFetching,
 		},
 		enableSortingRemoval: false,
+		sortDescFirst: false,
 	});
 
 	return (
