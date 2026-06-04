@@ -2,7 +2,7 @@ import bodyParser from "body-parser";
 import compression from "compression";
 import express from "express";
 import fileUpload from "express-fileupload";
-import { isDebugMode } from "./lib/config.js";
+import { isDebugMode, isVerboseErrors } from "./lib/config.js";
 import cors from "./lib/express/cors.js";
 import jwt from "./lib/express/jwt.js";
 import { debug, express as logger } from "./logger.js";
@@ -58,12 +58,15 @@ app.use(jwt());
 app.use("/", mainRoutes);
 
 // production error handler
-// no stacktraces leaked to user
-app.use((err, req, res, _) => {
+// non-public errors are masked as "Internal Error" unless VERBOSE_ERRORS is set
+// stack traces stay gated behind DEBUG
+app.use((err, _req, res, _next) => {
+	const exposeMessage = err.public || isVerboseErrors();
+
 	const payload = {
 		error: {
 			code: err.status || 500,
-			message: err.public ? err.message : "Internal Error",
+			message: exposeMessage ? err.message : "Internal Error",
 		},
 	};
 
@@ -71,7 +74,7 @@ app.use((err, req, res, _) => {
 		payload.error.message_i18n = err.message_i18n;
 	}
 
-	if (isDebugMode() || (req.baseUrl + req.path).includes("nginx/certificates")) {
+	if (isDebugMode()) {
 		payload.debug = {
 			stack: typeof err.stack !== "undefined" && err.stack ? err.stack.split("\n") : null,
 			previous: err.previous,

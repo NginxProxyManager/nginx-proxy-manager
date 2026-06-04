@@ -3,6 +3,7 @@
 import app from "./app.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
+import { isVerboseErrors } from "./lib/config.js";
 import { global as logger } from "./logger.js";
 import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
@@ -30,6 +31,12 @@ async function appStart() {
 
 			const server = app.listen(3000, () => {
 				logger.info(`Backend PID ${process.pid} listening on port 3000 ...`);
+
+				if (isVerboseErrors()) {
+					logger.warn(
+						"VERBOSE_ERRORS is enabled, internal error messages will be returned to API clients",
+					);
+				}
 
 				process.on("SIGTERM", () => {
 					logger.info(`PID ${process.pid} received SIGTERM`);

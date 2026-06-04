@@ -218,6 +218,13 @@ const isPostgres = () => {
 const isDebugMode = () => !!process.env.DEBUG;
 
 /**
+ * Should non-public error messages be returned to API clients?
+ *
+ * @returns {boolean}
+ */
+const isVerboseErrors = () => !!process.env.VERBOSE_ERRORS;
+
+/**
  * Are we running in CI?
  *
  * @returns {boolean}
@@ -259,4 +266,4 @@ const useLetsencryptServer = () => {
 	return null;
 };
 
-export { isCI, configHas, configGet, isSqlite, isMysql, isPostgres, isDebugMode, getPrivateKey, getPublicKey, useLetsencryptStaging, useLetsencryptServer };
+export { isCI, configHas, configGet, isSqlite, isMysql, isPostgres, isDebugMode, isVerboseErrors, getPrivateKey, getPublicKey, useLetsencryptStaging, useLetsencryptServer };
