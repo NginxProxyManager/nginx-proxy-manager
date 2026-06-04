@@ -23,7 +23,7 @@ npm run dev
 
 ### Swagger “Try it out” on a separate docs hostname
 
-Bundled Swagger uses server URL `/api` on the **same origin** as the docs. To host static docs on another domain and still try requests, reverse-proxy `/api` to the NPM admin API (port 81). See [`deploy/nginx/docs-api-proxy.conf.example`](../deploy/nginx/docs-api-proxy.conf.example).
+Bundled Swagger uses server URL `/api` on the **same origin** as the docs. To host static docs on another domain and still try requests, reverse-proxy `/api` to the NPM admin API (port 81). Sample config: `deploy/nginx/docs-api-proxy.conf.example` in the repository root.
 
 On a single NPM instance, open **http://host:81/documentation** or static **http://host:81/docs/** — no extra proxy required.
 
