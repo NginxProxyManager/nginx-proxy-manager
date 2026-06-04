@@ -1,5 +1,7 @@
 ---
-# Copy to inventory.yml (gitignored) or pass -i inventory/inventory.yml.example in CI.
-all:
+# Legacy example — CI uses inventory/hosts.yml (committed).
+# Inventory name oci_test avoids hyphen parsing in ansible --limit.
+npm_test:
   hosts:
-    oci-test.eh168.alexson.org:
+    oci_test:
+      ansible_host: oci-test.eh168.alexson.org

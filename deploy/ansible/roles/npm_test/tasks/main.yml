@@ -44,12 +44,24 @@
   tags: [docker, npm]
 
 - name: Open firewalld ports for NPM
-  ansible.posix.firewalld:
-    port: "{{ item }}"
-    permanent: true
-    state: enabled
-    immediate: true
+  ansible.builtin.command:
+    argv:
+      - firewall-cmd
+      - --permanent
+      - --add-port={{ item }}
   loop: "{{ npm_test_firewalld_ports }}"
+  register: npm_test_fw_port
+  changed_when: npm_test_fw_port.rc == 0
+  failed_when: >-
+    npm_test_fw_port.rc != 0 and
+    'ALREADY_ENABLED' not in (npm_test_fw_port.stdout | default('')) and
+    'ALREADY_ENABLED' not in (npm_test_fw_port.stderr | default(''))
+  when: npm_test_manage_firewalld | bool
+  tags: [docker, npm]
+
+- name: Reload firewalld
+  ansible.builtin.command:
+    cmd: firewall-cmd --reload
   when: npm_test_manage_firewalld | bool
   tags: [docker, npm]
 

@@ -1,4 +1,3 @@
 ---
-collections:
-  - name: ansible.posix
-    version: ">=1.5.0"
+# No collections required (firewalld via firewall-cmd). Install Ansible >= 9 in CI if the runner image is older.
+collections: []

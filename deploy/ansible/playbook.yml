@@ -1,6 +1,6 @@
 ---
 - name: Deploy Nginx Proxy Manager to test host
-  hosts: all
+  hosts: npm_test
   become: true
   roles:
     - role: npm_test

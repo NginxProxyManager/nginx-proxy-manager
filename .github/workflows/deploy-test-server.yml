@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       host:
-        description: Target host (inventory hostname)
+        description: Inventory host name (see deploy/ansible/inventory/hosts.yml)
         required: false
-        default: oci-test.eh168.alexson.org
+        default: oci_test
       image_tag:
         description: Docker image tag to deploy
         required: false
@@ -102,25 +102,14 @@ jobs:
           echo "ANSIBLE_SSH_COMMON_ARGS=-o CertificateFile=${cert_file} -o IdentitiesOnly=yes" >> "$GITHUB_ENV"
           rm -f "$ca_file" "$pub_file"
 
-      - name: Install Ansible collections
+      - name: Install Ansible 9+
         run: |
           set -euo pipefail
-          ansible-galaxy collection install -r deploy/ansible/requirements.yml
-
-      - name: Prepare inventory
-        run: |
-          set -euo pipefail
-          inv="deploy/ansible/inventory/inventory.yml"
-          if [ ! -f "$inv" ]; then
-            cp deploy/ansible/inventory/inventory.yml.example "$inv"
-            echo "::warning::Using inventory.yml.example — add $inv for production overrides."
-          fi
-
-      - name: Verify Ansible
-        run: |
-          set -euo pipefail
-          ansible --version | head -1
+          python3 -m pip install --user "ansible>=9,<11"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.local/bin:$PATH"
           ansible-playbook --version | head -1
+          ansible --version | head -1
 
       - name: Run Ansible playbook
         working-directory: deploy/ansible
@@ -128,10 +117,12 @@ jobs:
           ANSIBLE_PRIVATE_KEY_FILE: ${{ env.ANSIBLE_SSH_PRIVATE_KEY_FILE }}
           ANSIBLE_SSH_COMMON_ARGS: ${{ env.ANSIBLE_SSH_COMMON_ARGS }}
           NPM_TEST_IMAGE: ${{ steps.image.outputs.image }}
+          PATH: ${{ env.HOME }}/.local/bin:${{ env.PATH }}
         run: |
           set +x
           set -euo pipefail
           test -f "${ANSIBLE_PRIVATE_KEY_FILE}"
+          test -f inventory/hosts.yml
           python3 -c "
           import json, os
           json.dump({
@@ -140,16 +131,15 @@ jobs:
               'npm_test_dockerhub_token': os.environ.get('DOCKER_IO_TOKEN', ''),
           }, open('ci_extra_vars.json', 'w'))
           "
-          EXTRA=(-e ansible_user=automation -e "@ci_extra_vars.json")
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            LIMIT="$(echo "${{ inputs.host }}" | tr -d '\r' | xargs)"
+          else
+            LIMIT="oci_test"
+          fi
+          EXTRA=(-i inventory/hosts.yml -e ansible_user=automation -e "@ci_extra_vars.json" --limit "$LIMIT")
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.check_mode }}" = "true" ]; then
             EXTRA+=(--check --diff)
           fi
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            LIMIT="$(echo "${{ inputs.host }}" | xargs)"
-          else
-            LIMIT="oci-test.eh168.alexson.org"
-          fi
-          EXTRA+=(--limit "$LIMIT")
           TAGS="$(echo "${{ inputs.tags }}" | xargs)"
           if [ -n "$TAGS" ]; then
             EXTRA+=(--tags "$TAGS")
@@ -169,7 +159,7 @@ jobs:
           {
             echo "## Test deploy"
             echo ""
-            echo "- **Host:** \`${{ github.event_name == 'workflow_dispatch' && inputs.host || 'oci-test.eh168.alexson.org' }}\`"
+            echo "- **Host:** \`${{ github.event_name == 'workflow_dispatch' && inputs.host || 'oci_test' }}\` → oci-test.eh168.alexson.org"
             echo "- **Image:** \`${{ steps.image.outputs.image }}\`"
             echo "- **Service:** \`nginx-proxy-manager-test\`"
             echo "- **Admin UI:** http://oci-test.eh168.alexson.org:81"

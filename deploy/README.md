@@ -41,19 +41,21 @@ SSH user: **`automation`** with short-lived certificate (principal `automation`)
 
 ## Inventory
 
-Copy and edit if needed:
+Committed: [`deploy/ansible/inventory/hosts.yml`](ansible/inventory/hosts.yml)
 
-```bash
-cp deploy/ansible/inventory/inventory.yml.example deploy/ansible/inventory/inventory.yml
-```
+| Inventory name | Connects to |
+|----------------|-------------|
+| `oci_test` | `oci-test.eh168.alexson.org` |
+
+Use `--limit oci_test` (underscore), not the FQDN — hyphens in `--limit` are parsed as exclusion patterns by Ansible.
 
 ## Local Ansible
 
 ```bash
 cd deploy/ansible
-ansible-galaxy collection install -r requirements.yml
-ansible-playbook playbook.yml -i inventory/inventory.yml.example \
-  --limit oci-test.eh168.alexson.org \
+pip install "ansible>=9,<11"
+ansible-playbook playbook.yml -i inventory/hosts.yml \
+  --limit oci_test \
   -e ansible_user=automation \
   -e npm_test_image=docker.io/salexson/nginx-proxy-manager:develop \
   --ask-become-pass
