@@ -112,27 +112,20 @@ jobs:
             exit 1
           fi
           echo "PYTHON=$PYTHON" >> "$GITHUB_ENV"
-          if command -v ansible-playbook >/dev/null 2>&1; then
-            ansible-playbook --version | head -1
-          else
-            "$PYTHON" -m pip install --user "ansible-core>=2.17,<2.18"
+          version_check="${GITHUB_WORKSPACE}/deploy/ansible/scripts/check_ansible_version.py"
+          install_ansible_core() {
+            "$PYTHON" -m pip install --user --upgrade "ansible-core>=2.17,<2.18"
             echo "$HOME/.local/bin" >> "$GITHUB_PATH"
             echo "PATH=$HOME/.local/bin:$PATH" >> "$GITHUB_ENV"
+          }
+          if command -v ansible-playbook >/dev/null 2>&1; then
             ansible-playbook --version | head -1
           fi
-          "${PYTHON}" -c "
-          import re, subprocess, sys
-          out = subprocess.check_output(['ansible-playbook', '--version'], text=True)
-          m = re.search(r'ansible-core\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', out)
-          ver = m.group(1) if m else ''
-          parts = [int(x) for x in ver.split('.')] if ver else []
-          if len(parts) < 2 or (parts[0], parts[1]) < (2, 17):
-              print(
-                  f"::error::ansible-core 2.17+ required, found {ver or 'unknown'}",
-                  file=sys.stderr,
-              )
-              sys.exit(1)
-          "
+          if ! "$PYTHON" "$version_check"; then
+            install_ansible_core
+            ansible-playbook --version | head -1
+            "$PYTHON" "$version_check"
+          fi
 
       - name: Run Ansible playbook
         working-directory: deploy/ansible
