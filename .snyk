@@ -1,4 +1,4 @@
-# Snyk policy — documents accepted risks and false positives for this fork.
+# Snyk policy — documents accepted risks and false positives.
 version: v1.25.1
 ignore:
   SNYK-JS-EXPRESSFILEUPLOAD-2635697:

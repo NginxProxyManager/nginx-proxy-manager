@@ -1,67 +1,53 @@
-# Deploy — NPM test server
+# Optional Ansible deployment
 
-Ansible deployment for **`oci-test.eh168.alexson.org`** (image testing): install **Docker Engine**, pull **`docker.io/salexson/nginx-proxy-manager`**, and run it under **systemd** via Docker Compose.
+Example playbook to install **Docker Engine**, run **`jc21/nginx-proxy-manager`** with Docker Compose, and enable a **systemd** unit on a test or staging host.
 
 ## What gets installed
 
 | Item | Path / name |
 |------|-------------|
-| Install root | `/opt/nginx-proxy-manager-test` |
+| Install root | `/opt/nginx-proxy-manager` (configurable) |
 | Compose file | `docker-compose.yml` |
-| systemd unit | `nginx-proxy-manager-test.service` |
+| systemd unit | `nginx-proxy-manager.service` |
 | Data | `./data`, `./letsencrypt` under install root |
 | Ports | 80, 81, 443 (firewalld if enabled) |
 
-Admin UI after deploy: **http://oci-test.lab.eh168.alexson.org:81**
+After deploy, open the admin UI at **`http://<your-host>:81`**. Bundled documentation is at **`/documentation`** and **`/docs/`** on the same host. Swagger “Try it out” works without extra nginx when `/api` is on the same origin.
 
-Bundled documentation: **http://oci-test.lab.eh168.alexson.org:81/documentation** (in-app) and **http://oci-test.lab.eh168.alexson.org:81/docs/** (static VitePress). Swagger “Try it out” works on that host without extra nginx because `/api` is the same origin.
+To serve docs on another hostname, see [`nginx/docs-api-proxy.conf.example`](nginx/docs-api-proxy.conf.example).
 
-To serve docs on a **different** hostname and proxy API calls, use [`nginx/docs-api-proxy.conf.example`](nginx/docs-api-proxy.conf.example).
+## Prerequisites
 
-Compose sets `DISABLE_IPV6=true` on the test host when the kernel has no IPv6.
-
-## Secrets and SSH
-
-Registry and deploy credentials are expected from your secret store (for example Infisical paths `/Docker` for `docker.io` login and `/Ansible` for SSH keys). Do not commit keys in the repo.
-
-SSH user: **`automation`** using the **private key**. Ensure the matching **public key** is in `~automation/.ssh/authorized_keys` on the target host.
-
-For automated runs you may set `ANSIBLE_CONFIG=ansible.ci.cfg` (see [`ansible/ansible.ci.cfg`](ansible/ansible.ci.cfg)); local runs against `oci_test` use the committed inventory SSH options.
-
-## Target host requirements
-
-- Rocky Linux / RHEL 9 family (`dnf`) — adjust role if the VM is Ubuntu
-- `automation` user with your Ansible **public key** in `authorized_keys`
-- Reachable from your management network (where you run Ansible)
+- Rocky Linux / RHEL 9 family (`dnf`) or adjust the role for your distribution
+- SSH access with sudo (or become) for the target user
+- Docker Hub pull access for `jc21/nginx-proxy-manager`
 
 ## Inventory
 
-Committed: [`deploy/ansible/inventory/hosts.yml`](ansible/inventory/hosts.yml)
+Copy [`ansible/inventory/inventory.yml.example`](ansible/inventory/inventory.yml.example) to `inventory/hosts.yml` and set `ansible_host` to your server. Use an inventory group name **without hyphens** in `--limit` (for example `npm_hosts`), because Ansible treats hyphens in limit patterns specially.
 
-| Inventory name | Connects to |
-|----------------|-------------|
-| `oci_test` | `oci-test.lab.eh168.alexson.org` (see `inventory/hosts.yml`) |
+Provide registry credentials and SSH keys via your secret store or Ansible vault — do not commit secrets to the repository.
 
-Use `--limit oci_test` (underscore), not the FQDN — hyphens in `--limit` are parsed as exclusion patterns by Ansible.
-
-## Local Ansible
+## Run the playbook
 
 ```bash
 cd deploy/ansible
 pip install "ansible-core>=2.17,<2.18"
 ansible-playbook playbook.yml -i inventory/hosts.yml \
-  --limit oci_test \
-  -e ansible_user=automation \
-  -e npm_test_image=docker.io/salexson/nginx-proxy-manager:develop \
+  --limit npm_hosts \
+  -e ansible_user=your_ssh_user \
+  -e npm_test_image=jc21/nginx-proxy-manager:latest \
   --ask-become-pass
 ```
 
-Tags: `--tags docker` (Docker only), `--tags npm` (app + systemd only).
+Tags: `--tags docker` (Docker only), `--tags npm` (application + systemd).
 
 ## Operations on the server
 
 ```bash
-sudo systemctl status nginx-proxy-manager-test
-sudo systemctl restart nginx-proxy-manager-test
-cd /opt/nginx-proxy-manager-test && sudo docker compose pull && sudo docker compose up -d
+sudo systemctl status nginx-proxy-manager
+sudo systemctl restart nginx-proxy-manager
+cd /opt/nginx-proxy-manager && sudo docker compose pull && sudo docker compose up -d
 ```
+
+Variable names and paths are defined under [`ansible/roles/npm_test/`](ansible/roles/npm_test/) and [`ansible/group_vars/all.yml`](ansible/group_vars/all.yml).

@@ -1,50 +1,34 @@
-# Versioning (upstream)
+# Versioning
 
-**This fork does not publish its own semantic version releases.** Version numbers and git tags are owned by [NginxProxyManager/nginx-proxy-manager](https://github.com/NginxProxyManager/nginx-proxy-manager).
+Nginx Proxy Manager uses [Semantic Versioning](https://semver.org/). The release number in [`.version`](../.version) is the canonical **`X.Y.Z`** value for the tree.
 
-## What we use
+## Source of truth
 
-| File | Role |
-|------|------|
-| [`.version`](../.version) | Upstream release label (e.g. `2.15.1`). **Do not bump on this fork** — take updates from upstream merges. |
-| [`backend/package.json`](../backend/package.json), [`frontend/package.json`](../frontend/package.json), [`backend/schema/swagger.json`](../backend/schema/swagger.json) | Kept in line with upstream; not independently versioned here. |
+| File | Purpose |
+|------|---------|
+| [`.version`](../.version) | Release number (e.g. `2.15.1`) |
+| [`backend/package.json`](../backend/package.json) | API / runtime package version |
+| [`frontend/package.json`](../frontend/package.json) | Frontend package version |
+| [`backend/schema/swagger.json`](../backend/schema/swagger.json) | OpenAPI `info.version` |
+| [`docs/src/public/openapi.json`](src/public/openapi.json) | Bundled spec for VitePress (regenerate after schema changes) |
 
-When merging `upstream/develop`, keep their `.version` and package/schema versions unless you are resolving a deliberate fork-only change.
-
-## Fork Docker images
-
-Local publish scripts can tag images for testing only:
-
-| Tag style | Example |
-|-----------|---------|
-| Branch | `docker.io/salexson/nginx-proxy-manager:develop` |
-| Commit | `docker.io/salexson/nginx-proxy-manager:sha-abc1234` |
-| Rolling | `:latest` when you choose to push it |
-
-There are **no** fork-managed `vX.Y.Z` Hub tags. Do not run `git tag v*` on this repository for releases.
-
-**Publish a branch build:**
+Sync package and schema versions from `.version`:
 
 ```bash
-docker login docker.io
-SKIP_TESTS=1 ./scripts/publish-image              # default :develop
-NPM_TAG=latest NPM_TAG_LATEST=0 ./scripts/publish-image
+./scripts/sync-version
 ```
 
-`./scripts/publish-semver` is disabled in this fork (upstream owns semver releases).
+## Releases
 
-## OpenAPI bundle (docs)
+Official images are published as **`jc21/nginx-proxy-manager`** on Docker Hub. Release tags follow **`vX.Y.Z`** (and related major/minor tags) on [GitHub Releases](https://github.com/NginxProxyManager/nginx-proxy-manager/releases).
 
-After upstream schema changes:
+Maintainers typically:
 
-```bash
-node backend/schema/scripts/apply-operation-descriptions.mjs
-cd docs && npm install && npm run generate:openapi
-git add docs/src/public/openapi.json
-```
-
-See [docs/README.md](README.md) and upstream [release docs](https://github.com/NginxProxyManager/nginx-proxy-manager/releases).
+1. Update [`.version`](../.version) (or run `./scripts/sync-version X.Y.Z` when that workflow is enabled for the release).
+2. Refresh OpenAPI operation descriptions if needed (`node backend/schema/scripts/apply-operation-descriptions.mjs`).
+3. Regenerate the docs bundle: `cd docs && npm install && npm run generate:openapi`.
+4. Tag `vX.Y.Z` and publish the release image.
 
 ## API version string
 
-`GET /api` reports the version baked into the image from upstream sources (e.g. `v2.15.1` when `.version` and runtime metadata match upstream).
+`GET /api` returns `version.major`, `version.minor`, `version.revision`, and `version.string` (for example `v2.15.1`).

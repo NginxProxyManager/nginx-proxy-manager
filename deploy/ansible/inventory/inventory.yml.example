@@ -1,7 +1,9 @@
----
-# Legacy example — use inventory/hosts.yml (committed) for the test host.
-# Inventory name oci_test avoids hyphen parsing in ansible --limit.
-npm_test:
-  hosts:
-    oci_test:
-      ansible_host: oci-test.lab.eh168.alexson.org
+# Copy to inventory/hosts.yml and set ansible_host to your target server.
+# Use an inventory name without hyphens for --limit (e.g. npm_hosts).
+
+all:
+  children:
+    npm_hosts:
+      hosts:
+        npm_server:
+          ansible_host: nginx-proxy-manager.example.com

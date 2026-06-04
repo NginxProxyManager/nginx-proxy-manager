@@ -46,4 +46,4 @@ npm run generate:openapi
 git add src/public/openapi.json
 ```
 
-See [VERSIONING.md](VERSIONING.md) (upstream-owned versions; fork image tags only) and [SECURITY.md](../SECURITY.md) for vulnerability reporting.
+See [VERSIONING.md](VERSIONING.md) and [SECURITY.md](../SECURITY.md).
