@@ -6,9 +6,9 @@ outline: deep
 
 ## Credential vault and automation
 
-DNS API tokens are stored encrypted on the **`/data`** volume (`/data/credentials/`). Mount the same volume across upgrades. Optionally set `NPM_SECRETS_ENCRYPTION_KEY` (32-byte value, base64-encoded) instead of the auto-generated key under `/data/keys/secrets.json`.
+DNS API tokens are stored encrypted on the **`/data`** volume (`/data/credentials/`). Manage them in the admin UI under **Settings → DNS credentials** (legacy `/credentials` URLs redirect to `/settings?tab=dns-credentials`). Mount the same volume across upgrades. Optionally set `NPM_SECRETS_ENCRYPTION_KEY` (32-byte value, base64-encoded) instead of the auto-generated key under `/data/keys/secrets.json`.
 
-For REST automation (API keys, async certificate jobs, signed webhooks, external secret stores), see the [Automation API](/advanced/automation-api) guide.
+For REST automation (API keys, async certificate jobs, signed webhooks, external secret stores), see the [Automation API](/advanced/automation-api) guide. Security reporting: [SECURITY.md](https://github.com/general-alexson/nginx-proxy-manager/blob/develop/SECURITY.md) in this repository.
 
 To exercise HashiCorp Vault locally during development:
 

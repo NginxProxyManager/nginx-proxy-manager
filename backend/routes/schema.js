@@ -34,7 +34,7 @@ router
 
 			swaggerJSON.info.version = PACKAGE.version;
 			swaggerJSON.servers[0].url = `${origin}/api`;
-			res.status(200).send(swaggerJSON);
+			res.status(200).json(swaggerJSON);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

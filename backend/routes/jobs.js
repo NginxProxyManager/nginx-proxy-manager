@@ -17,7 +17,7 @@ router
 		try {
 			const limit = req.query.limit ? Number.parseInt(req.query.limit, 10) : 50;
 			const rows = await internalJob.getAll(res.locals.access, { limit });
-			res.status(200).send(rows);
+			res.status(200).json(rows);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -35,7 +35,7 @@ router
 			const result = await internalJob.get(res.locals.access, {
 				id: Number.parseInt(req.params.job_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

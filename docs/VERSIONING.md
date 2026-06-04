@@ -22,7 +22,7 @@ Sync everything from `VERSION`:
 ## Release a version
 
 1. Bump [`VERSION`](../VERSION) (or pass the version to `sync-version`).
-2. If you added API operations, extend `backend/schema/scripts/apply-operation-descriptions.mjs` and run `node backend/schema/scripts/apply-operation-descriptions.mjs`
+2. If you added API operations, extend [`backend/schema/scripts/operation-descriptions.json`](../backend/schema/scripts/operation-descriptions.json) and run `node backend/schema/scripts/apply-operation-descriptions.mjs`
 3. Regenerate the docs OpenAPI bundle: `cd docs && npm install && npm run generate:openapi`
 4. Ensure the frontend release build includes docs: `scripts/frontend-build` / CI runs VitePress and copies `docs/dist` → `frontend/dist/docs/` (bundled at `/docs/` in the image).
 5. Commit: `git add VERSION backend/package.json frontend/package.json backend/schema/swagger.json docs/src/public/openapi.json`

@@ -3,9 +3,10 @@ import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import ReactMarkdown from "react-markdown";
+import rehypeSanitize from "rehype-sanitize";
 import { Link } from "react-router-dom";
 import { Button } from "src/components";
-import { documentationPageUrl, HELP_SECTION_DOC_PATHS } from "src/config/docs";
+import { documentationPageUrl } from "src/config/docs";
 import { getLocale, T } from "src/locale";
 import { getHelpFile } from "src/locale/src/HelpDoc";
 
@@ -21,7 +22,6 @@ const showHelpModal = (section: string, color?: string) => {
 const HelpModal = EasyModal.create(({ section, color, visible, remove }: Props) => {
 	const [markdownText, setMarkdownText] = useState("");
 	const lang = getLocale(true);
-	const fullDocPath = HELP_SECTION_DOC_PATHS[section] || "/guide/";
 
 	useEffect(() => {
 		try {
@@ -37,11 +37,11 @@ const HelpModal = EasyModal.create(({ section, color, visible, remove }: Props) 
 	return (
 		<Modal show={visible} onHide={remove} size="lg">
 			<Modal.Body>
-				<ReactMarkdown>{markdownText}</ReactMarkdown>
+				<ReactMarkdown rehypePlugins={[rehypeSanitize]}>{markdownText}</ReactMarkdown>
 			</Modal.Body>
 			<Modal.Footer className="d-flex flex-wrap gap-2">
 				<Link
-					to={documentationPageUrl(fullDocPath)}
+					to={documentationPageUrl(section)}
 					className="btn btn-outline-secondary"
 					onClick={remove}
 				>

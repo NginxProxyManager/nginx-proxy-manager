@@ -34,7 +34,7 @@ Strings live in `scripts/locale-translate-vault.cjs` and are applied to `src/*.j
 
 1. Edit the string in `scripts/locale-translate-vault.cjs` under the locale code (e.g. `de: { ... }`).
 2. Run: `node scripts/locale-translate-vault.cjs`
-3. Open the UI (Settings → API Keys, Credentials, Webhooks) in that language and sanity-check length/fit.
+3. Open the UI (Settings → DNS credentials, API keys, webhooks, external credential stores) in that language and sanity-check length/fit.
 4. Commit only the locale JSON files + script if changed.
 
 ## Terminology guide (keep consistent)

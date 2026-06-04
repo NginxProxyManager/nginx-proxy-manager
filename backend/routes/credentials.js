@@ -21,7 +21,7 @@ router
 	.get(async (req, res, next) => {
 		try {
 			const rows = await internalCredential.getAll(res.locals.access);
-			res.status(200).send(rows);
+			res.status(200).json(rows);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -31,7 +31,7 @@ router
 		try {
 			const payload = await apiValidator(getValidationSchema("/credentials", "post"), req.body);
 			const result = await internalCredential.create(res.locals.access, payload);
-			res.status(201).send(result);
+			res.status(201).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -54,7 +54,7 @@ router
 				req.body || {},
 			);
 			const result = await internalCredential.migrateLegacy(res.locals.access, payload);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -72,7 +72,7 @@ router
 			const result = await internalCredential.get(res.locals.access, {
 				id: Number.parseInt(req.params.credential_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -83,7 +83,7 @@ router
 			const payload = await apiValidator(getValidationSchema("/credentials/{credentialID}", "put"), req.body);
 			payload.id = Number.parseInt(req.params.credential_id, 10);
 			const result = await internalCredential.update(res.locals.access, payload);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -112,7 +112,7 @@ router
 			const result = await internalCredential.test(res.locals.access, {
 				id: Number.parseInt(req.params.credential_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

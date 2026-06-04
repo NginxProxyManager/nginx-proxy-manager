@@ -118,11 +118,51 @@ def log_error(message: str) -> None:
     print(f"::error::{message}", file=sys.stderr)
 
 
+# GitHub Actions runner paths only (blocks path traversal from env vars).
+_GITHUB_ENV_PATH = re.compile(
+    r"^/home/runner/(?:work/_temp/_runner_file_commands/|temp/_runner_file_commands/).+"
+    r"|^[A-Za-z]:\\actions-runner\\_temp\\_runner_file_commands\\.+",
+    re.ASCII,
+)
+_JWT_FILE_PATH = re.compile(
+    r"^/home/runner/work/_temp/.+\.json$|^[A-Za-z]:\\actions-runner\\_temp\\.+\\.json$",
+    re.ASCII,
+)
+
+
+def _github_env_file_for_append() -> str:
+    raw = os.environ.get("GITHUB_ENV", "").strip()
+    if not raw or raw != os.environ["GITHUB_ENV"].strip():
+        raise ValueError("GITHUB_ENV is not set")
+    if not _GITHUB_ENV_PATH.fullmatch(raw):
+        raise ValueError("GITHUB_ENV path is not an allowed runner file")
+    if not Path(raw).is_file():
+        raise ValueError("GITHUB_ENV path is not a file")
+    return raw
+
+
+def _read_github_oidc_jwt() -> str:
+    raw = os.environ.get("JWT_FILE", "").strip()
+    if not raw or raw != os.environ["JWT_FILE"].strip():
+        raise ValueError("JWT_FILE is not set")
+    if not _JWT_FILE_PATH.fullmatch(raw):
+        raise ValueError("JWT_FILE path is not an allowed runner file")
+    resolved = Path(raw).resolve()
+    runner_temp = os.environ.get("RUNNER_TEMP", "").strip()
+    if runner_temp:
+        temp_root = Path(runner_temp).resolve()
+        if not resolved.is_relative_to(temp_root):
+            raise ValueError("JWT path is outside RUNNER_TEMP")
+    if not resolved.is_file():
+        raise ValueError("JWT file is missing")
+    return resolved.read_text(encoding="utf-8").strip()
+
+
 def append_github_env(name: str, value: str) -> None:
-    path = os.environ.get("GITHUB_ENV")
-    if not path:
+    if not os.environ.get("GITHUB_ENV"):
         return
     register_masks(value)
+    path = _github_env_file_for_append()
     with open(path, "a", encoding="utf-8") as fh:
         if "\n" in value or "\r" in value:
             fh.write(f"{name}<<EOF\n{value.rstrip(chr(10))}\nEOF\n")
@@ -140,9 +180,7 @@ def main() -> int:
     secret_path = os.environ["SECRET_PATH"]
     recursive = os.environ.get("RECURSIVE", "true").lower() in ("1", "true", "yes")
     secret_keys = parse_secret_keys(os.environ.get("SECRET_KEYS", ""))
-    jwt_path = os.environ["JWT_FILE"]
-
-    jwt = Path(jwt_path).read_text(encoding="utf-8").strip()
+    jwt = _read_github_oidc_jwt()
 
     login_body = urllib.parse.urlencode({"identityId": identity_id, "jwt": jwt}).encode()
     login_req = urllib.request.Request(

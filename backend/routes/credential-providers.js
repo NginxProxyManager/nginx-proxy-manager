@@ -43,7 +43,7 @@ router
 				req.body,
 			);
 			const result = await internalCredentialProvider.create(res.locals.access, payload);
-			res.status(201).send(result);
+			res.status(201).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -59,7 +59,7 @@ router
 			const result = await internalCredentialProvider.get(res.locals.access, {
 				id: Number.parseInt(req.params.provider_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -70,7 +70,7 @@ router
 			const payload = await validator(providerBodySchema, req.body);
 			payload.id = Number.parseInt(req.params.provider_id, 10);
 			const result = await internalCredentialProvider.update(res.locals.access, payload);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -97,7 +97,7 @@ router
 			const result = await internalCredentialProvider.test(res.locals.access, {
 				id: Number.parseInt(req.params.provider_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -125,7 +125,7 @@ router
 				id: Number.parseInt(req.params.provider_id, 10),
 				...body,
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

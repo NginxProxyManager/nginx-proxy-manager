@@ -19,7 +19,7 @@ router
 	.get(async (req, res, next) => {
 		try {
 			const rows = await internalApiKey.getAll(res.locals.access);
-			res.status(200).send(rows);
+			res.status(200).json(rows);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -40,7 +40,7 @@ router
 				req.body,
 			);
 			const result = await internalApiKey.create(res.locals.access, payload);
-			res.status(201).send(result);
+			res.status(201).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

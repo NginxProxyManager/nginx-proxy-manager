@@ -19,6 +19,9 @@ export const docUrl = (path: string) => {
 	return `${DOCS_BASE}${normalized}`;
 };
 
+/** Build a same-origin docs URL from an already-normalized path segment. */
+export const docUrlFromNormalizedPath = (normalizedPath: string) => `${DOCS_BASE}${normalizedPath}`;
+
 /** HelpModal section name → VitePress path (under /docs) */
 export const HELP_SECTION_DOC_PATHS: Record<string, string> = {
 	ProxyHosts: "/guide/",
@@ -31,7 +34,14 @@ export const HELP_SECTION_DOC_PATHS: Record<string, string> = {
 	Settings: "/advanced/automation-api",
 };
 
-export const documentationPageUrl = (docPath: string) => {
-	const path = docPath.startsWith("/") ? docPath : `/${docPath}`;
-	return `/documentation?path=${encodeURIComponent(path)}`;
+/** Link to in-app docs for a HelpModal section (allowlisted section name). */
+export const documentationPageUrl = (section: string) =>
+	`/documentation?section=${encodeURIComponent(section)}`;
+
+/** @deprecated Prefer `documentationPageUrl(section)`; path query is normalized then allowlisted. */
+export const documentationPageUrlFromPath = (docPath: string) => {
+	const path = normalizeDocPath(docPath);
+	const section = Object.entries(HELP_SECTION_DOC_PATHS).find(([, p]) => p === path)?.[0];
+	return section ? documentationPageUrl(section) : `/documentation?path=${encodeURIComponent(path)}`;
 };
+

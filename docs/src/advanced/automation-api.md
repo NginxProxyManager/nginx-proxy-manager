@@ -61,6 +61,16 @@ The response includes `key` once (`npmak_...`). Use it as:
 
 Append `?async=true` to **POST** (create) or **renew** to receive `202` with `{ job_id, status }`. Poll `GET /api/jobs/{job_id}`.
 
+## Admin UI (Settings)
+
+| Feature | Location |
+|---------|----------|
+| DNS credentials (internal vault) | **Settings** → **DNS credentials** (`/settings?tab=dns-credentials`; `/credentials` redirects here) |
+| External stores (Vault, AWS, Azure, Infisical, HTTP) | **Settings** → **External credential stores** |
+| API keys & webhooks | **Settings** → **API keys** / **Webhooks** |
+
+Users with credentials-only permission can open Settings for the DNS credentials tab without full admin access.
+
 ## DNS credential vault
 
 Secrets are encrypted on the **`/data` persistent volume** at `/data/credentials/`. Metadata is in the database.

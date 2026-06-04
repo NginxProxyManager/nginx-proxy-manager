@@ -14,8 +14,8 @@ Store API tokens and keys for DNS providers (used by DNS challenge certificate r
 
 Connect HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, Infisical (Universal Auth), or HTTP endpoints.
 
-See [Automation API](/documentation?path=/advanced/automation-api) in the full documentation for API keys, webhooks, and external `credential_ref` paths (e.g. `/DNS/cloudflare-api-token` for Infisical).
+See [Automation API](/documentation?section=Settings) in the full documentation for API keys, webhooks, and external `credential_ref` paths (e.g. `/DNS/cloudflare-api-token` for Infisical).
 
 ### API keys and webhooks
 
-Create long-lived API keys for automation and configure outbound webhooks with HMAC signatures. Details are in the [Automation API](/documentation?path=/advanced/automation-api) guide.
+Create long-lived API keys for automation and configure outbound webhooks with HMAC signatures. Details are in the [Automation API](/documentation?section=Settings) guide.

@@ -18,4 +18,4 @@ Admins can configure **Settings → External Credential Stores** (Vault, AWS, Az
 
 ### Automation
 
-API keys and webhooks are under **Settings**. See the [Automation API](/documentation?path=/advanced/automation-api) guide for Bearer auth, async jobs, Infisical paths, and signed webhooks.
+API keys and webhooks are under **Settings**. See the [Automation API](/documentation?section=Settings) guide for Bearer auth, async jobs, Infisical paths, and signed webhooks.

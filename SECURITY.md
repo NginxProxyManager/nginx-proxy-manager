@@ -1,30 +1,77 @@
 # Security Policy
 
-## Supported Versions
+## Supported versions
 
-Only the latest stable release receives security updates.
-Older versions are not actively maintained.
+This fork tracks **3.x** on the `develop` branch and publishes images to `docker.io/salexson/nginx-proxy-manager`.
 
-| Version | Supported |
-| ------- | --------- |
-| 2.15.x (latest) | :white_check_mark: |
-| < 2.15.0 | :x: |
+| Version / tag | Supported |
+|---------------|-----------|
+| `develop`, `latest` (active fork work) | Yes |
+| Released `v3.x.x` tags | Yes while listed on [releases](https://github.com/general-alexson/nginx-proxy-manager/releases) |
+| Upstream 2.x (`jc21/nginx-proxy-manager`) | See [upstream SECURITY.md](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/master/SECURITY.md) |
 
-Docker images: `jc21/nginx-proxy-manager:latest`, `jc21/nginx-proxy-manager:2`
+Canonical version: [`VERSION`](VERSION). Sync with `./scripts/sync-version` before tagging.
 
-See all releases: https://github.com/NginxProxyManager/nginx-proxy-manager/releases
+## Reporting a vulnerability
 
-## Reporting a Vulnerability
+**Do not open a public GitHub issue for a security vulnerability.**
 
-**Do NOT open a public GitHub Issue to report a security vulnerability.**
+| Scope | Report here |
+|-------|-------------|
+| This fork (build, deploy, Infisical OIDC action, fork-only UI/API) | [Private vulnerability report — general-alexson/nginx-proxy-manager](https://github.com/general-alexson/nginx-proxy-manager/security/advisories/new) |
+| Core Nginx Proxy Manager behavior shared with upstream | [Private vulnerability report — NginxProxyManager/nginx-proxy-manager](https://github.com/NginxProxyManager/nginx-proxy-manager/security/advisories/new) (or report to the fork and we will coordinate) |
 
-Use GitHub's private vulnerability reporting:
-https://github.com/NginxProxyManager/nginx-proxy-manager/security/advisories/new
+Include:
 
-Please include:
-- Affected version (Docker image tag or release)
-- Description of the vulnerability
+- Affected version (image tag, commit SHA, or `VERSION` file)
+- Description and impact
 - Steps to reproduce
-- Potential impact
+- Suggested fix (optional)
 
-Once a fix is available, a public GitHub Security Advisory will be published.
+We aim to acknowledge reports within a few business days. Critical issues in published images are prioritized for patch releases on `develop` and Docker Hub tags documented in [`README.md`](README.md).
+
+## Dependency and code scanning
+
+Maintainers use [Snyk](https://snyk.io/) for SCA and SAST on this tree. Policy exceptions and documented false positives live in [`.snyk`](.snyk).
+
+Local checks (from repo root):
+
+```bash
+cd frontend && npm ci && npm audit
+cd ../backend && npm ci && npm audit
+cd ../test && npm ci && npm audit
+cd ../docs && npm ci && npm audit
+```
+
+After changing application code, run your Snyk Code scan (or CI equivalent) before merging security-sensitive PRs.
+
+## Known accepted risks
+
+| Item | Mitigation |
+|------|------------|
+| `express-fileupload@1.5.2` (no upstream fix) | Upload middleware limited in [`backend/app.js`](backend/app.js): `limits.fileSize`, `abortOnLimit`, `safeFileNames`, `preserveExtension`. Documented in `.snyk`. |
+| Bundled docs iframe (`/documentation`) | Only allowlisted `?section=` keys map to VitePress paths under `/docs/`; iframe uses `sandbox`. |
+| GitHub Actions Infisical loader | [`infisical_oidc.py`](.github/actions/infisical-oidc-load/infisical_oidc.py) validates `GITHUB_ENV` and `JWT_FILE` against runner path patterns before read/write. |
+
+Revisit `.snyk` entries when dependencies ship fixes or when mitigations change.
+
+## Deployment and secrets hygiene
+
+- Mount **`/data`** persistently so encryption keys and the credential vault survive restarts.
+- Prefer **`NPM_SECRETS_ENCRYPTION_KEY`** (32-byte value, base64) in production instead of relying only on the auto-generated key under `/data/keys/`.
+- Do not commit inventory, SSH keys, Infisical tokens, or API keys. CI secrets are loaded via Infisical OIDC (see [`README.md`](README.md) and [`deploy/README.md`](deploy/README.md)).
+- Restrict admin port **81** to trusted networks; use strong passwords, 2FA, and scoped **API keys** for automation.
+- Automation tokens (`npmak_…`) are shown once at creation; treat them like passwords.
+
+## Secure development
+
+- Package management uses **npm** and `package-lock.json` (not Yarn).
+- JSON API routes return structured JSON via `res.json()` to avoid accidental HTML reflection.
+- Production error responses do not include stack traces unless debug mode is enabled.
+- OpenAPI operation descriptions are maintained in [`backend/schema/scripts/operation-descriptions.json`](backend/schema/scripts/operation-descriptions.json); regenerate docs OpenAPI after schema changes ([`docs/README.md`](docs/README.md)).
+
+## Security-related documentation
+
+- [Automation API](docs/src/advanced/automation-api.md) — API keys, webhooks, credential vault
+- [Advanced configuration](docs/src/advanced-config/index.md) — `/data` volume and encryption
+- In-app help: **Settings** → DNS credentials, external stores, API keys, webhooks (`/settings?tab=…`; `/credentials` redirects to DNS credentials)

@@ -45,7 +45,7 @@ router
 				},
 			);
 			const rows = await internalAuditLog.getAll(res.locals.access, data.expand, data.query);
-			res.status(200).send(rows);
+			res.status(200).json(rows);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -97,7 +97,7 @@ router
 				id: data.event_id,
 				expand: data.expand,
 			});
-			res.status(200).send(item);
+			res.status(200).json(item);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

@@ -1,6 +1,6 @@
 # Nginx Proxy Manager documentation (VitePress)
 
-Production builds are bundled under **`/docs/`** on the admin UI static root (port 81). The React app exposes them at **`/documentation`** (iframe + section nav). Build via `scripts/frontend-build` or CI, which copies `docs/dist` to `frontend/dist/docs/`.
+Production builds are bundled under **`/docs/`** on the admin UI static root (port 81). The React app exposes them at **`/documentation`** (iframe; deep links use **`?section=`** with allowlisted Help section names, e.g. `/documentation?section=Settings`). Build via `scripts/frontend-build` or CI, which copies `docs/dist` to `frontend/dist/docs/`.
 
 VitePress `base` is `/docs/` — see [`.vitepress/config.mts`](.vitepress/config.mts).
 
@@ -39,10 +39,11 @@ On a single NPM instance, open **http://host:81/documentation** or static **http
 If you edit files under `backend/schema/`, add or refresh operation descriptions (Vacuum), then regenerate and commit the bundle:
 
 ```bash
-node backend/schema/scripts/apply-operation-descriptions.mjs   # after adding new operationIds to the script map
+# Add or edit entries in backend/schema/scripts/operation-descriptions.json, then:
+node backend/schema/scripts/apply-operation-descriptions.mjs
 cd docs
 npm run generate:openapi
 git add src/public/openapi.json
 ```
 
-See [VERSIONING.md](VERSIONING.md) for release versioning.
+See [VERSIONING.md](VERSIONING.md) for release versioning and [SECURITY.md](../SECURITY.md) for vulnerability reporting and dependency policy.

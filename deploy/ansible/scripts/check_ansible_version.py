@@ -23,6 +23,12 @@ _VERSION_PATTERNS = (
 def ansible_playbook_bin() -> str:
     override = os.environ.get("ANSIBLE_PLAYBOOK_BIN")
     if override:
+        if re.search(r"[;&|$`<>]", override) or "\n" in override or "\r" in override:
+            print("::error::Invalid ANSIBLE_PLAYBOOK_BIN", file=sys.stderr)
+            sys.exit(1)
+        if not os.path.isfile(override) or not os.access(override, os.X_OK):
+            print("::error::ANSIBLE_PLAYBOOK_BIN is not an executable file", file=sys.stderr)
+            sys.exit(1)
         return override
     local_bin = os.path.join(os.path.expanduser("~"), ".local", "bin", "ansible-playbook")
     if os.path.isfile(local_bin) and os.access(local_bin, os.X_OK):

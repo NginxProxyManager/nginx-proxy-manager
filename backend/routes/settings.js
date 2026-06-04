@@ -30,7 +30,7 @@ router
 	.get(async (req, res, next) => {
 		try {
 			const rows = await internalSetting.getAll(res.locals.access);
-			res.status(200).send(rows);
+			res.status(200).json(rows);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -74,7 +74,7 @@ router
 			const row = await internalSetting.get(res.locals.access, {
 				id: data.setting_id,
 			});
-			res.status(200).send(row);
+			res.status(200).json(row);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -91,7 +91,7 @@ router
 			const payload = await apiValidator(getValidationSchema("/settings/{settingID}", "put"), req.body);
 			payload.id = req.params.setting_id;
 			const result = await internalSetting.update(res.locals.access, payload);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

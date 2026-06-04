@@ -1,12 +1,17 @@
 import { IconExternalLink } from "@tabler/icons-react";
 import { useSearchParams } from "react-router-dom";
-import { docUrl, normalizeDocPath } from "src/config/docs";
+import { DOCS_BASE, HELP_SECTION_DOC_PATHS } from "src/config/docs";
 import { T } from "src/locale";
 import styles from "./Documentation.module.css";
 
 export default function Documentation() {
 	const [searchParams] = useSearchParams();
-	const iframeSrc = docUrl(normalizeDocPath(searchParams.get("path")));
+	const section = searchParams.get("section");
+	const docPath =
+		section && section in HELP_SECTION_DOC_PATHS
+			? HELP_SECTION_DOC_PATHS[section]
+			: "/guide/";
+	const iframeSrc = `${DOCS_BASE}${docPath}`;
 
 	return (
 		<div className="card mt-4">
@@ -36,6 +41,7 @@ export default function Documentation() {
 					<iframe
 						title="Nginx Proxy Manager documentation"
 						src={iframeSrc}
+						sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
 						className={`${styles.documentationIframe} w-100 border-0`}
 					/>
 				</div>

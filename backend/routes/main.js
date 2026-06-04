@@ -43,7 +43,7 @@ router.get("/", async (_, res /*, next*/) => {
 	const revision = Number.parseInt(parts[2], 10);
 	const setup = await isSetup();
 
-	res.status(200).send({
+	res.status(200).json({
 		status: "OK",
 		setup,
 		version: {

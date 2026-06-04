@@ -37,6 +37,7 @@ so that the barrier to entry here is low.
 - User management, permissions, and audit log
 - **Credential vault** on the `/data` volume (encrypted DNS API tokens, optional external stores via OIDC)
 - **Automation API** (API keys, async certificate jobs, signed webhooks) — see [docs](docs/src/advanced/automation-api.md)
+- **Settings** UI for DNS credentials, external credential stores, API keys, and webhooks (see [SECURITY.md](SECURITY.md) for reporting vulnerabilities)
 
 ::: warning
 `armv7` is no longer supported in version 2.14+. This is due to Nodejs dropping support for armhf. Please
