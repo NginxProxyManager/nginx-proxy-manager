@@ -1,0 +1,176 @@
+name: Deploy test server
+
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        description: Target host (inventory hostname)
+        required: false
+        default: oci-test.eh168.alexson.org
+      image_tag:
+        description: Docker image tag to deploy
+        required: false
+        default: develop
+      tags:
+        description: Ansible tags (empty=all; docker; npm)
+        required: false
+        default: ""
+      check_mode:
+        description: Ansible check mode (dry run)
+        required: false
+        default: false
+        type: boolean
+  workflow_run:
+    workflows: ["Docker image"]
+    types: [completed]
+    branches: [develop]
+
+env:
+  NPM_IMAGE: docker.io/salexson/nginx-proxy-manager
+  INFISICAL_SIGNING_PROJECT_ID: fca9f329-3988-40f8-a695-89fde921fc4d
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: [self-hosted, linux, gen]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve image tag
+        id: image
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            tag="${{ inputs.image_tag }}"
+          else
+            tag="develop"
+          fi
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "image=${{ env.NPM_IMAGE }}:${tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Load Docker Hub credentials from Infisical (OIDC)
+        uses: ./.github/actions/infisical-oidc-load
+        with:
+          secret_path: /Docker
+          recursive: "false"
+          secret_keys: docker.io-user,docker.io-token
+
+      - name: Load Ansible SSH private key from Infisical (OIDC)
+        uses: ./.github/actions/infisical-oidc-load
+        with:
+          secret_path: /Ansible
+          recursive: "false"
+          secret_keys: ansible-ssh-private-key
+
+      - name: Load SSH CA signing key from Infisical (OIDC)
+        uses: ./.github/actions/infisical-oidc-load
+        with:
+          project_id: ${{ env.INFISICAL_SIGNING_PROJECT_ID }}
+          secret_path: /
+          recursive: "false"
+          secret_keys: ssh-user-ca-private-key
+
+      - name: Sign OpenSSH user certificate for Ansible
+        run: |
+          set +x
+          set -euo pipefail
+          umask 077
+          key="${ANSIBLE_SSH_PRIVATE_KEY:-}"
+          ca="${SSH_USER_CA_PRIVATE_KEY:-}"
+          if [ -z "$key" ] || [ -z "$ca" ]; then
+            echo "::error::Missing ANSIBLE_SSH_PRIVATE_KEY or SSH_USER_CA_PRIVATE_KEY from Infisical."
+            exit 1
+          fi
+          key_file="${RUNNER_TEMP}/ansible-automation-key"
+          ca_file="${RUNNER_TEMP}/ssh-user-ca-private-key"
+          pub_file="${key_file}.pub"
+          cert_file="${key_file}-cert.pub"
+          printf '%s\n' "$key" > "$key_file"
+          printf '%s\n' "$ca" > "$ca_file"
+          chmod 600 "$key_file" "$ca_file"
+          ssh-keygen -y -f "$key_file" > "$pub_file"
+          ssh-keygen -s "$ca_file" -I "gha-${{ github.run_id }}" -n automation -V "+1h" "$pub_file"
+          chmod 644 "$cert_file"
+          echo "ANSIBLE_SSH_PRIVATE_KEY_FILE=${key_file}" >> "$GITHUB_ENV"
+          echo "ANSIBLE_SSH_COMMON_ARGS=-o CertificateFile=${cert_file} -o IdentitiesOnly=yes" >> "$GITHUB_ENV"
+          rm -f "$ca_file" "$pub_file"
+
+      - name: Install Ansible collections
+        run: |
+          set -euo pipefail
+          ansible-galaxy collection install -r deploy/ansible/requirements.yml
+
+      - name: Prepare inventory
+        run: |
+          set -euo pipefail
+          inv="deploy/ansible/inventory/inventory.yml"
+          if [ ! -f "$inv" ]; then
+            cp deploy/ansible/inventory/inventory.yml.example "$inv"
+            echo "::warning::Using inventory.yml.example — add $inv for production overrides."
+          fi
+
+      - name: Verify Ansible
+        run: |
+          set -euo pipefail
+          ansible --version | head -1
+          ansible-playbook --version | head -1
+
+      - name: Run Ansible playbook
+        working-directory: deploy/ansible
+        env:
+          ANSIBLE_PRIVATE_KEY_FILE: ${{ env.ANSIBLE_SSH_PRIVATE_KEY_FILE }}
+          ANSIBLE_SSH_COMMON_ARGS: ${{ env.ANSIBLE_SSH_COMMON_ARGS }}
+          NPM_TEST_IMAGE: ${{ steps.image.outputs.image }}
+        run: |
+          set +x
+          set -euo pipefail
+          test -f "${ANSIBLE_PRIVATE_KEY_FILE}"
+          python3 -c "
+          import json, os
+          json.dump({
+              'npm_test_image': os.environ['NPM_TEST_IMAGE'],
+              'npm_test_dockerhub_user': os.environ.get('DOCKER_IO_USER', ''),
+              'npm_test_dockerhub_token': os.environ.get('DOCKER_IO_TOKEN', ''),
+          }, open('ci_extra_vars.json', 'w'))
+          "
+          EXTRA=(-e ansible_user=automation -e "@ci_extra_vars.json")
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.check_mode }}" = "true" ]; then
+            EXTRA+=(--check --diff)
+          fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            LIMIT="$(echo "${{ inputs.host }}" | xargs)"
+          else
+            LIMIT="oci-test.eh168.alexson.org"
+          fi
+          EXTRA+=(--limit "$LIMIT")
+          TAGS="$(echo "${{ inputs.tags }}" | xargs)"
+          if [ -n "$TAGS" ]; then
+            EXTRA+=(--tags "$TAGS")
+          fi
+          ansible-playbook playbook.yml "${EXTRA[@]}"
+
+      - name: Remove CI secrets from disk
+        if: always()
+        run: |
+          set +x
+          shred -u "${ANSIBLE_SSH_PRIVATE_KEY_FILE:-/dev/null}" 2>/dev/null || true
+          shred -u "${ANSIBLE_SSH_PRIVATE_KEY_FILE:-/dev/null}-cert.pub" 2>/dev/null || true
+          rm -f deploy/ansible/ci_extra_vars.json
+
+      - name: Deploy summary
+        run: |
+          {
+            echo "## Test deploy"
+            echo ""
+            echo "- **Host:** \`${{ github.event_name == 'workflow_dispatch' && inputs.host || 'oci-test.eh168.alexson.org' }}\`"
+            echo "- **Image:** \`${{ steps.image.outputs.image }}\`"
+            echo "- **Service:** \`nginx-proxy-manager-test\`"
+            echo "- **Admin UI:** http://oci-test.eh168.alexson.org:81"
+          } >> "$GITHUB_STEP_SUMMARY"

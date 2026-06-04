@@ -1,0 +1,118 @@
+---
+- name: Install Docker CE repository
+  ansible.builtin.dnf:
+    name: dnf-plugins-core
+    state: present
+  tags: [docker, npm]
+
+- name: Add Docker CE dnf repo
+  ansible.builtin.command:
+    cmd: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    creates: /etc/yum.repos.d/docker-ce.repo
+  tags: [docker, npm]
+
+- name: Install Docker packages
+  ansible.builtin.dnf:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+    state: present
+  tags: [docker, npm]
+
+- name: Enable and start Docker
+  ansible.builtin.systemd:
+    name: docker
+    enabled: true
+    state: started
+  tags: [docker, npm]
+
+- name: Install firewalld
+  ansible.builtin.dnf:
+    name: firewalld
+    state: present
+  when: npm_test_manage_firewalld | bool
+  tags: [docker, npm]
+
+- name: Enable firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    enabled: true
+    state: started
+  when: npm_test_manage_firewalld | bool
+  tags: [docker, npm]
+
+- name: Open firewalld ports for NPM
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop: "{{ npm_test_firewalld_ports }}"
+  when: npm_test_manage_firewalld | bool
+  tags: [docker, npm]
+
+- name: Create install directory
+  ansible.builtin.file:
+    path: "{{ npm_test_install_dir }}"
+    state: directory
+    mode: "0755"
+  tags: [npm]
+
+- name: Create data directories
+  ansible.builtin.file:
+    path: "{{ npm_test_install_dir }}/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - data
+    - letsencrypt
+  tags: [npm]
+
+- name: Deploy docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ npm_test_install_dir }}/docker-compose.yml"
+    mode: "0644"
+  notify: Restart nginx-proxy-manager test service
+  tags: [npm]
+
+- name: Log in to Docker Hub
+  ansible.builtin.shell: |
+    set -euo pipefail
+    printf '%s' '{{ npm_test_dockerhub_token }}' | docker login docker.io \
+      --username '{{ npm_test_dockerhub_user }}' \
+      --password-stdin
+  args:
+    executable: /bin/bash
+  no_log: true
+  changed_when: false
+  when:
+    - npm_test_dockerhub_user | length > 0
+    - npm_test_dockerhub_token | length > 0
+  tags: [npm]
+
+- name: Pull container image
+  ansible.builtin.command:
+    cmd: docker compose -f {{ npm_test_install_dir }}/docker-compose.yml pull
+  changed_when: true
+  tags: [npm]
+
+- name: Install systemd unit
+  ansible.builtin.template:
+    src: nginx-proxy-manager-test.service.j2
+    dest: "/etc/systemd/system/{{ npm_test_service_name }}.service"
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart nginx-proxy-manager test service
+  tags: [npm]
+
+- name: Enable and start nginx-proxy-manager test service
+  ansible.builtin.systemd:
+    name: "{{ npm_test_service_name }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+  tags: [npm]

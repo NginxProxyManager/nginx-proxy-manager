@@ -148,6 +148,10 @@ Project `secrets-vi-5-a`, environment `prod` via [`.github/actions/infisical-oid
 
 Create the Hub repository `nginx-proxy-manager` under account `salexson` before the first push.
 
+### Test server deploy (`oci-test`)
+
+Workflow: [`.github/workflows/deploy-test-server.yml`](.github/workflows/deploy-test-server.yml) — installs **Docker Engine**, deploys the image, and enables **`nginx-proxy-manager-test.service`** on `oci-test.eh168.alexson.org`. See [deploy/README.md](deploy/README.md).
+
 
 ## Contributing
 

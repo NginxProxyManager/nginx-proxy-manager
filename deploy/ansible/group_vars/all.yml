@@ -1,0 +1,10 @@
+---
+npm_test_install_dir: /opt/nginx-proxy-manager-test
+npm_test_compose_project: nginx-proxy-manager-test
+npm_test_service_name: nginx-proxy-manager-test
+npm_test_image: docker.io/salexson/nginx-proxy-manager:develop
+npm_test_manage_firewalld: true
+npm_test_firewalld_ports:
+  - 80/tcp
+  - 81/tcp
+  - 443/tcp

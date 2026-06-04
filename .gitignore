@@ -9,4 +9,6 @@ test/node_modules
 docker/dev/dnsrouter-config.json.tmp
 docker/dev/resolv.conf
 .claude
+deploy/ansible/inventory/inventory.yml
+deploy/ansible/ci_extra_vars.json
 

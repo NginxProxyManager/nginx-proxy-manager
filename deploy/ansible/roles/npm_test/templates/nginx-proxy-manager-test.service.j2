@@ -1,0 +1,18 @@
+[Unit]
+Description=Nginx Proxy Manager test instance ({{ npm_test_image }})
+Documentation=https://github.com/general-alexson/nginx-proxy-manager
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory={{ npm_test_install_dir }}
+ExecStart=/usr/bin/docker compose up -d --remove-orphans
+ExecStop=/usr/bin/docker compose down
+ExecReload=/usr/bin/docker compose pull && /usr/bin/docker compose up -d --remove-orphans
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

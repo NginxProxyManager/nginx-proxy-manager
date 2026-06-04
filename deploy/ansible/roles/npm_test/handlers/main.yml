@@ -1,0 +1,10 @@
+---
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart nginx-proxy-manager test service
+  ansible.builtin.systemd:
+    name: "{{ npm_test_service_name }}"
+    state: restarted
+    enabled: true

@@ -1,0 +1,13 @@
+# Managed by Ansible — {{ npm_test_install_dir }}
+services:
+  app:
+    image: "{{ npm_test_image }}"
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt

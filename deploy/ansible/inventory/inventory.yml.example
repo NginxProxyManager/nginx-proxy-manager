@@ -1,0 +1,5 @@
+---
+# Copy to inventory.yml (gitignored) or pass -i inventory/inventory.yml.example in CI.
+all:
+  hosts:
+    oci-test.eh168.alexson.org:
