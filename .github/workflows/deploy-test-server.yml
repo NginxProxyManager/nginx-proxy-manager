@@ -40,7 +40,7 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
     runs-on: [self-hosted, linux, gen]
     env:
-      # github-action-runner image: Python 3.12 + ansible-core in /opt/ci-venv/bin
+      # github-action-runner image: Python 3.12 + ansible-core 2.17+ in /opt/ci-venv/bin
       PATH: /opt/ci-venv/bin:/opt/runner/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     steps:
       - name: Checkout
@@ -115,15 +115,30 @@ jobs:
           if command -v ansible-playbook >/dev/null 2>&1; then
             ansible-playbook --version | head -1
           else
-            "$PYTHON" -m pip install --user "ansible>=9,<11"
+            "$PYTHON" -m pip install --user "ansible-core>=2.17,<2.18"
             echo "$HOME/.local/bin" >> "$GITHUB_PATH"
             echo "PATH=$HOME/.local/bin:$PATH" >> "$GITHUB_ENV"
             ansible-playbook --version | head -1
           fi
+          "${PYTHON}" -c "
+          import re, subprocess, sys
+          out = subprocess.check_output(['ansible-playbook', '--version'], text=True)
+          m = re.search(r'ansible-core\\s+([0-9]+\\.[0-9]+\\.[0-9]+)', out)
+          ver = m.group(1) if m else ''
+          parts = [int(x) for x in ver.split('.')] if ver else []
+          if len(parts) < 2 or (parts[0], parts[1]) < (2, 17):
+              print(
+                  f"::error::ansible-core 2.17+ required, found {ver or 'unknown'}",
+                  file=sys.stderr,
+              )
+              sys.exit(1)
+          "
 
       - name: Run Ansible playbook
         working-directory: deploy/ansible
         env:
+          ANSIBLE_CONFIG: ${{ github.workspace }}/deploy/ansible/ansible.ci.cfg
+          ANSIBLE_HOST_KEY_CHECKING: "False"
           ANSIBLE_PRIVATE_KEY_FILE: ${{ env.ANSIBLE_SSH_PRIVATE_KEY_FILE }}
           NPM_TEST_IMAGE: ${{ steps.image.outputs.image }}
         run: |
@@ -131,22 +146,12 @@ jobs:
           set -euo pipefail
           test -f "${ANSIBLE_PRIVATE_KEY_FILE}"
           test -f inventory/hosts.yml
-          "${PYTHON}" -c "
-          import json, os
-          json.dump({
-              'npm_test_image': os.environ['NPM_TEST_IMAGE'],
-              'npm_test_dockerhub_user': os.environ.get('DOCKER_IO_USER', ''),
-              'npm_test_dockerhub_token': os.environ.get('DOCKER_IO_TOKEN', ''),
-          }, open('ci_extra_vars.json', 'w'))
-          "
+          test -f ansible.ci.cfg
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             LIMIT="$(echo "${{ inputs.host }}" | tr -d '\r' | xargs)"
           else
             LIMIT="oci_test"
           fi
-          known_hosts="${RUNNER_TEMP}/ansible-known_hosts"
-          : > "$known_hosts"
-          chmod 600 "$known_hosts"
           target_host="$(
             ansible-inventory -i inventory/hosts.yml --host "$LIMIT" 2>/dev/null \
               | "${PYTHON}" -c "import sys,json; print(json.load(sys.stdin).get('ansible_host',''))"
@@ -155,15 +160,27 @@ jobs:
             echo "::error::Could not resolve ansible_host for inventory host ${LIMIT}."
             exit 1
           fi
-          if ! ssh-keyscan -T 20 -H "$target_host" >> "$known_hosts" 2>/dev/null \
-            || [ ! -s "$known_hosts" ]; then
-            echo "::error::ssh-keyscan failed for ${target_host} (host unreachable or no SSH host keys)."
+          ssh_test_args=(
+            -i "${ANSIBLE_PRIVATE_KEY_FILE}"
+            -o IdentitiesOnly=yes
+            -o BatchMode=yes
+            -o StrictHostKeyChecking=no
+            -o UserKnownHostsFile=/dev/null
+            -o GlobalKnownHostsFile=/dev/null
+          )
+          if ! ssh "${ssh_test_args[@]}" "automation@${target_host}" true; then
+            echo "::error::SSH preflight failed for automation@${target_host} (key, user, or network)."
             exit 1
           fi
-          ssh_common_args="-o IdentitiesOnly=yes -o UserKnownHostsFile=${known_hosts} -o GlobalKnownHostsFile=/dev/null -o StrictHostKeyChecking=yes"
-          export ANSIBLE_SSH_COMMON_ARGS="$ssh_common_args"
-          echo "ANSIBLE_KNOWN_HOSTS_FILE=${known_hosts}" >> "$GITHUB_ENV"
-          echo "ANSIBLE_SSH_COMMON_ARGS=${ssh_common_args}" >> "$GITHUB_ENV"
+          "${PYTHON}" -c "
+          import json, os
+          json.dump({
+              'npm_test_image': os.environ['NPM_TEST_IMAGE'],
+              'npm_test_dockerhub_user': os.environ.get('DOCKER_IO_USER', ''),
+              'npm_test_dockerhub_token': os.environ.get('DOCKER_IO_TOKEN', ''),
+              'ansible_host_key_checking': False,
+          }, open('ci_extra_vars.json', 'w'))
+          "
           EXTRA=(-i inventory/hosts.yml -e ansible_user=automation -e "@ci_extra_vars.json" --limit "$LIMIT")
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.check_mode }}" = "true" ]; then
             EXTRA+=(--check --diff)
@@ -180,7 +197,6 @@ jobs:
           set +x
           shred -u "${ANSIBLE_SSH_PRIVATE_KEY_FILE:-/dev/null}" 2>/dev/null || true
           shred -u "${ANSIBLE_SSH_PRIVATE_KEY_FILE:-/dev/null}.pub" 2>/dev/null || true
-          shred -u "${ANSIBLE_KNOWN_HOSTS_FILE:-/dev/null}" 2>/dev/null || true
           rm -f deploy/ansible/ci_extra_vars.json
 
       - name: Deploy summary
@@ -188,8 +204,8 @@ jobs:
           {
             echo "## Test deploy"
             echo ""
-            echo "- **Host:** \`${{ github.event_name == 'workflow_dispatch' && inputs.host || 'oci_test' }}\` → oci-test.eh168.alexson.org"
+            echo "- **Host:** \`${{ github.event_name == 'workflow_dispatch' && inputs.host || 'oci_test' }}\` → oci-test.lab.eh168.alexson.org"
             echo "- **Image:** \`${{ steps.image.outputs.image }}\`"
             echo "- **Service:** \`nginx-proxy-manager-test\`"
-            echo "- **Admin UI:** http://oci-test.eh168.alexson.org:81"
+            echo "- **Admin UI:** http://oci-test.lab.eh168.alexson.org:81"
           } >> "$GITHUB_STEP_SUMMARY"

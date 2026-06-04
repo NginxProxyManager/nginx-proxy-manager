@@ -32,7 +32,7 @@ Runs on `[self-hosted, linux, gen]` with Infisical OIDC (same secrets as image b
 
 SSH user: **`automation`** using the **private key** (no SSH CA certificates yet). Ensure the matching **public key** is in `~automation/.ssh/authorized_keys` on the target host.
 
-CI uses an isolated `known_hosts` file (via `ssh-keyscan` on the inventory `ansible_host`), so the runner’s `~/.ssh/known_hosts` does not affect deploys.
+CI sets `ANSIBLE_CONFIG=ansible.ci.cfg` and disables host key checking for the ephemeral test runner (inventory host vars + SSH preflight). Local runs against `oci_test` use the same inventory SSH options.
 
 ## Target host requirements
 
@@ -54,7 +54,7 @@ Use `--limit oci_test` (underscore), not the FQDN — hyphens in `--limit` are p
 
 ```bash
 cd deploy/ansible
-pip install "ansible>=9,<11"
+pip install "ansible-core>=2.17,<2.18"
 ansible-playbook playbook.yml -i inventory/hosts.yml \
   --limit oci_test \
   -e ansible_user=automation \
