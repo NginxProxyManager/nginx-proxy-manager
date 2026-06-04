@@ -150,7 +150,7 @@ services:
       POSTGRES_PASSWORD: 'npmpass'
       POSTGRES_DB: 'npm'
     volumes:
-      - ./postgresql:/var/lib/postgresql
+      - ./postgres_data:/var/lib/postgresql/data
 ```
 
 ::: warning

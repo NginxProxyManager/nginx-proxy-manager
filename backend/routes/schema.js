@@ -18,7 +18,7 @@ router
 	/**
 	 * GET /schema
 	 */
-	.get(async (req, res) => {
+	.get(async (req, res, next) => {
 		try {
 			const swaggerJSON = await getCompiledSchema();
 

@@ -99,14 +99,27 @@ export default function TableWrapper() {
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}
-					onDelete={(id: number) =>
+					onDelete={(id: number) => {
+						const host = data?.find((h) => h.id === id);
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "proxy-host" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["proxy-hosts"], ["proxy-host", id]],
-							children: <T id="object.delete.content" tData={{ object: "proxy-host" }} />,
-						})
-					}
+							children: (
+								<>
+									<T id="object.delete.content" tData={{ object: "proxy-host" }} />
+									{host?.domainNames?.length ? (
+										<div className="mt-2 fw-bold text-break">{host.domainNames.join(", ")}</div>
+									) : null}
+									{host?.forwardHost ? (
+										<div className="mt-1 text-muted small">
+											({host.forwardScheme}://{host.forwardHost}:{host.forwardPort})
+										</div>
+									) : null}
+								</>
+							),
+						});
+					}}
 					onDisableToggle={handleDisableToggle}
 					onNew={() => showProxyHostModal("new")}
 				/>
