@@ -11,8 +11,8 @@ describe("Vault provider integration", () => {
 
 	before(function () {
 		return cy
-			.env("VAULT_INTEGRATION")
-			.then((integration) => {
+			.env(["VAULT_INTEGRATION"])
+			.then(({ VAULT_INTEGRATION: integration }) => {
 				const runVault = integration === true || integration === 1 || integration === "1";
 				if (!runVault) {
 					this.skip();
