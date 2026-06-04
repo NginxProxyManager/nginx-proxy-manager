@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Sync root .version (X.Y.Z) into package.json files and OpenAPI info.version."""
+"""Sync root .version (X.Y.Z) into package.json files and OpenAPI info.version.
+
+This fork does not bump versions locally; pass no arguments and keep .version from upstream.
+"""
 from __future__ import annotations
 
 import json
@@ -25,7 +28,10 @@ def normalize(raw: str) -> str:
 
 def load_version(arg: str | None) -> str:
     if arg:
-        return normalize(arg)
+        raise ValueError(
+            "This fork does not set versions from the CLI. "
+            "Update .version from upstream NginxProxyManager/nginx-proxy-manager, then run without arguments."
+        )
     if not VERSION_FILE.is_file():
         raise FileNotFoundError(f"Missing {VERSION_FILE}")
     return normalize(VERSION_FILE.read_text(encoding="utf-8"))
@@ -47,7 +53,7 @@ def main() -> int:
         print(f"::error::{exc}", file=sys.stderr)
         return 1
 
-    VERSION_FILE.write_text(f"{version}\n", encoding="utf-8")
+    # Keep .version as-is (upstream source of truth); only sync into package/schema files.
     for path in TARGETS:
         update_json(path, version)
 

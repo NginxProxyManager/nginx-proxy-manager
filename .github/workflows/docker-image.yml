@@ -13,8 +13,6 @@ on:
       - backend/package-lock.json
       - frontend/package.json
       - frontend/package-lock.json
-    tags:
-      - "v*.*.*"
   pull_request:
     branches:
       - develop
@@ -52,15 +50,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Sync semantic version into codebase
-        run: |
-          set -euo pipefail
-          if [ "${{ github.ref_type }}" = "tag" ]; then
-            python3 scripts/sync-version.py "${{ github.ref_name }}"
-          else
-            python3 scripts/sync-version.py
-          fi
 
       - name: Load Docker Hub credentials from Infisical (OIDC)
         if: >-
@@ -147,14 +136,9 @@ jobs:
         run: |
           set -euo pipefail
           echo "date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> "$GITHUB_OUTPUT"
-          if [ "${{ github.ref_type }}" = "tag" ]; then
-            ref="${{ github.ref_name }}"
-            ver="${ref#v}"
-            echo "version=v${ver}" >> "$GITHUB_OUTPUT"
-          else
-            ver="$(tr -d ' \n\r' < .version)"
-            echo "version=v${ver}" >> "$GITHUB_OUTPUT"
-          fi
+          # Image label only — fork does not publish upstream semver tags to Docker Hub.
+          ver="$(tr -d ' \n\r' < .version)"
+          echo "version=v${ver}" >> "$GITHUB_OUTPUT"
 
       - name: Docker metadata
         id: meta
@@ -163,10 +147,7 @@ jobs:
           images: ${{ env.IMAGE }}
           tags: |
             type=ref,event=branch
-            type=sha,prefix=sha-,format=short,enable=${{ github.ref_type != 'tag' }}
-            type=semver,pattern=v{{major}}.{{minor}}.{{patch}},value=${{ steps.buildmeta.outputs.version }},enable=${{ github.event_name != 'pull_request' }}
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ steps.buildmeta.outputs.version }},enable=${{ github.event_name != 'pull_request' }}
-            type=semver,pattern=v{{major}},value=${{ steps.buildmeta.outputs.version }},enable=${{ github.event_name != 'pull_request' }}
+            type=sha,prefix=sha-,format=short
             type=raw,value=latest,enable=${{ github.event_name != 'pull_request' }}
 
       - name: Build image on host Podman

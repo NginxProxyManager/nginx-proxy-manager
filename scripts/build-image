@@ -11,10 +11,6 @@ NO_CACHE="${NO_CACHE:-0}"
 
 cd "${DIR}/.." || exit 1
 
-if [ -f .version ] && [ "${SKIP_VERSION_SYNC:-0}" != "1" ]; then
-	"${DIR}/sync-version" >/dev/null
-fi
-
 if [ "${SKIP_FRONTEND}" != "1" ]; then
 	"${DIR}/frontend-build"
 fi

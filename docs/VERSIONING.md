@@ -1,65 +1,50 @@
-# Semantic versioning
+# Versioning (upstream)
 
-This fork uses [Semantic Versioning](https://semver.org/) as **`X.Y.Z`** in the repo and **`vX.Y.Z`**, **`vX.Y`**, **`vX`** on Docker Hub.
+**This fork does not publish its own semantic version releases.** Version numbers and git tags are owned by [NginxProxyManager/nginx-proxy-manager](https://github.com/NginxProxyManager/nginx-proxy-manager).
 
-## Source of truth
+## What we use
 
-| File | Purpose |
-|------|---------|
-| [`.version`](../.version) | Canonical release number (`3.0.0`), same as upstream |
-| [`backend/package.json`](../backend/package.json) | API / runtime version (synced) |
-| [`frontend/package.json`](../frontend/package.json) | Frontend package version (synced) |
-| [`backend/schema/swagger.json`](../backend/schema/swagger.json) | OpenAPI `info.version` (synced) |
-| [`docs/src/public/openapi.json`](src/public/openapi.json) | Bundled spec for VitePress API reference (regenerate after schema changes) |
+| File | Role |
+|------|------|
+| [`.version`](../.version) | Upstream release label (e.g. `2.15.1`). **Do not bump on this fork** — take updates from upstream merges. |
+| [`backend/package.json`](../backend/package.json), [`frontend/package.json`](../frontend/package.json), [`backend/schema/swagger.json`](../backend/schema/swagger.json) | Kept in line with upstream; not independently versioned here. |
 
-Sync everything from `.version`:
+When merging `upstream/develop`, keep their `.version` and package/schema versions unless you are resolving a deliberate fork-only change.
 
-```bash
-./scripts/sync-version          # read .version
-./scripts/sync-version 3.1.0    # set .version and sync
-```
+## Fork Docker images
 
-## Release a version
+CI and local publish scripts tag images for testing only:
 
-1. Bump [`.version`](../.version) (or pass the version to `sync-version`).
-2. If you added API operations, extend [`backend/schema/scripts/operation-descriptions.json`](../backend/schema/scripts/operation-descriptions.json) and run `node backend/schema/scripts/apply-operation-descriptions.mjs`
-3. Regenerate the docs OpenAPI bundle: `cd docs && npm install && npm run generate:openapi`
-4. Ensure the frontend release build includes docs: `scripts/frontend-build` / CI runs VitePress and copies `docs/dist` → `frontend/dist/docs/` (bundled at `/docs/` in the image).
-5. Commit: `git add .version backend/package.json frontend/package.json backend/schema/swagger.json docs/src/public/openapi.json`
-6. Tag and push (must match `vX.Y.Z`):
+| Tag style | Example |
+|-----------|---------|
+| Branch | `docker.io/salexson/nginx-proxy-manager:develop` |
+| Commit | `docker.io/salexson/nginx-proxy-manager:sha-abc1234` |
+| Rolling | `:latest` on non-PR pushes |
 
-```bash
-git tag v3.0.0
-git push origin v3.0.0
-```
+There are **no** fork-managed `vX.Y.Z` Hub tags. Do not run `git tag v*` on this repository for releases.
 
-7. GitHub Actions **Docker image** workflow builds and pushes:
-
-- `docker.io/salexson/nginx-proxy-manager:v3.0.0`
-- `docker.io/salexson/nginx-proxy-manager:v3.0`
-- `docker.io/salexson/nginx-proxy-manager:v3`
-- `latest` (on non-PR pushes)
-
-## Local publish
+**Publish a branch build:**
 
 ```bash
 docker login docker.io
-./scripts/publish-semver              # uses .version
-./scripts/publish-semver 3.1.0        # bump, build, push v3.1.0 / v3.1 / v3
-NPM_TAG_LATEST=1 ./scripts/publish-semver   # also push :latest
+SKIP_TESTS=1 ./scripts/publish-image              # default :develop
+NPM_TAG=latest NPM_TAG_LATEST=0 ./scripts/publish-image
 ```
 
-## Branch builds
+`./scripts/publish-semver` is disabled in this fork (upstream owns semver releases).
 
-Pushes to `develop` / `master` (when paths under the workflow filter change) publish:
+## OpenAPI bundle (docs)
 
-- `:develop` or `:master` (branch name)
-- `:sha-<short>`
-- `:vX.Y.Z`, `:vX.Y`, `:vX` from [`.version`](../.version) (e.g. `3.0.0` → `v3.0.0`, `v3.0`, `v3`)
-- `:latest` (non-PR pushes)
+After upstream schema changes:
 
-The image label `NPM_BUILD_VERSION` uses `v` + the version from `.version`. Bump `.version` before merging when you want Hub semver tags to move.
+```bash
+node backend/schema/scripts/apply-operation-descriptions.mjs
+cd docs && npm install && npm run generate:openapi
+git add docs/src/public/openapi.json
+```
 
-## API
+See [docs/README.md](README.md) and upstream [release docs](https://github.com/NginxProxyManager/nginx-proxy-manager/releases).
 
-`GET /api` returns `version.major`, `version.minor`, `version.revision`, and `version.string` (e.g. `v3.0.0`).
+## API version string
+
+`GET /api` reports the version baked into the image from upstream sources (e.g. `v2.15.1` when `.version` and runtime metadata match upstream).

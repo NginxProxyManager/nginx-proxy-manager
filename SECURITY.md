@@ -2,15 +2,14 @@
 
 ## Supported versions
 
-This fork tracks **3.x** on the `develop` branch and publishes images to `docker.io/salexson/nginx-proxy-manager`.
+This fork publishes test images to `docker.io/salexson/nginx-proxy-manager` (`develop`, `sha-*`, `latest`). **Semantic versioning and security releases are upstream.**
 
-| Version / tag | Supported |
+| Image / scope | Supported |
 |---------------|-----------|
-| `develop`, `latest` (active fork work) | Yes |
-| Released `v3.x.x` tags | Yes while listed on [releases](https://github.com/general-alexson/nginx-proxy-manager/releases) |
-| Upstream 2.x (`jc21/nginx-proxy-manager`) | See [upstream SECURITY.md](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/master/SECURITY.md) |
+| `develop`, `latest`, `sha-*` (fork CI) | Best-effort for this fork |
+| Upstream releases (`jc21/nginx-proxy-manager`, tags from [NginxProxyManager/nginx-proxy-manager](https://github.com/NginxProxyManager/nginx-proxy-manager)) | See [upstream SECURITY.md](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/master/SECURITY.md) |
 
-Canonical version: [`.version`](.version). Sync with `./scripts/sync-version` before tagging.
+[`.version`](.version) mirrors upstream; do not bump or tag releases on this fork.
 
 ## Reporting a vulnerability
 
