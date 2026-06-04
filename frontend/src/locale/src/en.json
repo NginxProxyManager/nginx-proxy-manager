@@ -188,33 +188,6 @@
 	"documentation.open-new-tab": {
 		"defaultMessage": "Open in new tab"
 	},
-	"documentation.section.advanced-config": {
-		"defaultMessage": "Advanced configuration"
-	},
-	"documentation.section.api-reference": {
-		"defaultMessage": "API reference (Redoc)"
-	},
-	"documentation.section.api-swagger": {
-		"defaultMessage": "API reference (Swagger UI)"
-	},
-	"documentation.section.automation-api": {
-		"defaultMessage": "Automation API"
-	},
-	"documentation.section.certbot": {
-		"defaultMessage": "Certbot"
-	},
-	"documentation.section.faq": {
-		"defaultMessage": "FAQ"
-	},
-	"documentation.section.guide": {
-		"defaultMessage": "Guide"
-	},
-	"documentation.section.setup": {
-		"defaultMessage": "Setup"
-	},
-	"documentation.section.upgrading": {
-		"defaultMessage": "Upgrading"
-	},
 	"credentials.secret-path": {
 		"defaultMessage": "Infisical folder + secret key"
 	},
