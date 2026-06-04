@@ -1,0 +1,13 @@
+{
+	"operationId": "createCredentialProvider",
+	"summary": "Create credential provider",
+	"tags": [
+		"credential-providers"
+	],
+	"description": "Registers an external credential store provider. OIDC or Universal Auth credentials are stored encrypted under the data volume.",
+	"responses": {
+		"201": {
+			"description": "Created"
+		}
+	}
+}

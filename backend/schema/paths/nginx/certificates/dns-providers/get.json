@@ -1,12 +1,17 @@
 {
 	"operationId": "getDNSProviders",
 	"summary": "Get DNS Providers for Certificates",
-	"tags": ["certificates"],
+	"tags": [
+		"certificates"
+	],
 	"security": [
 		{
-			"bearerAuth": ["certificates.view"]
+			"bearerAuth": [
+				"certificates.view"
+			]
 		}
 	],
+	"description": "Lists DNS providers supported for ACME DNS challenge certificate issuance.",
 	"responses": {
 		"200": {
 			"description": "200 response",

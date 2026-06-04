@@ -1,12 +1,17 @@
 {
 	"operationId": "createCertificate",
 	"summary": "Create a Certificate",
-	"tags": ["certificates"],
+	"tags": [
+		"certificates"
+	],
 	"security": [
 		{
-			"bearerAuth": ["certificates.manage"]
+			"bearerAuth": [
+				"certificates.manage"
+			]
 		}
 	],
+	"description": "Requests a new certificate (HTTP, DNS, or custom workflow depending on payload).",
 	"requestBody": {
 		"description": "Certificate Payload",
 		"required": true,
@@ -15,7 +20,9 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["provider"],
+					"required": [
+						"provider"
+					],
 					"properties": {
 						"provider": {
 							"$ref": "../../../components/certificate-object.json#/properties/provider"
@@ -33,7 +40,9 @@
 				},
 				"example": {
 					"provider": "letsencrypt",
-					"domain_names": ["test.example.com"],
+					"domain_names": [
+						"test.example.com"
+					],
 					"meta": {
 						"dns_challenge": false
 					}
@@ -56,7 +65,9 @@
 								"owner_user_id": 1,
 								"provider": "letsencrypt",
 								"nice_name": "test.example.com",
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"meta": {
 									"dns_challenge": false,
 									"letsencrypt_certificate": {

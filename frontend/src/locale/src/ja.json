@@ -649,5 +649,83 @@
 	},
 	"users": {
 		"defaultMessage": "ユーザー"
+	},
+	"api-key": {
+		"defaultMessage": "APIキー"
+	},
+	"api-keys": {
+		"defaultMessage": "自動化用APIキー"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "今すぐこのキーをコピーしてください。再表示されません。"
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "このAPIキーを失効しますか？使用中の自動化は動作しなくなります。"
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "スクリプトとCI用のBearerトークン（npmak_…）。管理者のみ。"
+	},
+	"credential": {
+		"defaultMessage": "認証情報"
+	},
+	"credential-provider": {
+		"defaultMessage": "認証情報プロバイダー"
+	},
+	"credential-providers": {
+		"defaultMessage": "外部認証情報ストア"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "OIDCでVault、AWS Secrets Manager、Azure Key Vault、Infisicalに接続します。"
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "OIDCをテスト"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "取得テスト"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "シークレットのパス"
+	},
+	"credentials": {
+		"defaultMessage": "DNS認証情報"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "シークレットのパス"
+	},
+	"credentials.source": {
+		"defaultMessage": "認証情報の取得元"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "外部ストア（Vault、AWS など）"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "NPMボールトに保存"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "手動入力（一回限り）"
+	},
+	"credentials.stored": {
+		"defaultMessage": "保存済みの認証情報"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "/dataボリュームに暗号化して保存し、DNS証明書で再利用できます。"
+	},
+	"credentials.migrate": {
+		"defaultMessage": "従来のDNS認証情報を移行"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count}件の証明書がインラインの認証情報をボールトへ移行します。"
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "署名シークレット（X-NPM-Signatureの検証用）"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "プロキシホストまたは証明書の変更時に、署名付きHTTPコールバックを受信します。"
 	}
 }

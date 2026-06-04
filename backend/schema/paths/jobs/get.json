@@ -1,0 +1,13 @@
+{
+	"operationId": "listJobs",
+	"summary": "List recent async jobs",
+	"tags": [
+		"jobs"
+	],
+	"description": "Lists recent asynchronous automation jobs (certificate issuance, migrations, etc.).",
+	"responses": {
+		"200": {
+			"description": "OK"
+		}
+	}
+}

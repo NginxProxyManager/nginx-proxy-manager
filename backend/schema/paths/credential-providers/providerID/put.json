@@ -1,0 +1,13 @@
+{
+	"operationId": "updateCredentialProvider",
+	"summary": "Update credential provider",
+	"tags": [
+		"credential-providers"
+	],
+	"description": "Updates provider settings. Omit secret fields to keep existing encrypted values.",
+	"responses": {
+		"200": {
+			"description": "OK"
+		}
+	}
+}

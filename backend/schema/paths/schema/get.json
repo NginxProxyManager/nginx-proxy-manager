@@ -1,7 +1,10 @@
 {
 	"operationId": "schema",
 	"summary": "Returns this swagger API schema",
-	"tags": ["public"],
+	"tags": [
+		"public"
+	],
+	"description": "Returns the fully dereferenced OpenAPI document for this running instance. Used by dev Swagger on port 3082 and for live schema inspection.",
 	"responses": {
 		"200": {
 			"description": "200 response"

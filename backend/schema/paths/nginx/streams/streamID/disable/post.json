@@ -1,12 +1,17 @@
 {
 	"operationId": "disableStream",
 	"summary": "Disable a Stream",
-	"tags": ["streams"],
+	"tags": [
+		"streams"
+	],
 	"security": [
 		{
-			"bearerAuth": ["streams.manage"]
+			"bearerAuth": [
+				"streams.manage"
+			]
 		}
 	],
+	"description": "Disables a stream in nginx without deleting the record.",
 	"parameters": [
 		{
 			"in": "path",

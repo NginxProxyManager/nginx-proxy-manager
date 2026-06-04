@@ -22,7 +22,7 @@ import errs from "./error.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export default function (tokenString) {
+export default function (tokenString, permissionsOverride = null) {
 	const Token = TokenModel();
 	let tokenData = null;
 	let initialised = false;
@@ -30,6 +30,7 @@ export default function (tokenString) {
 	let allowInternalAccess = false;
 	let userRoles = [];
 	let permissions = {};
+	const overridePermissions = permissionsOverride;
 
 	/**
 	 * Loads the Token object from the token string
@@ -83,6 +84,9 @@ export default function (tokenString) {
 				initialised = true;
 				userRoles = user.roles;
 				permissions = user.permissions;
+				if (overridePermissions && typeof overridePermissions === "object") {
+					permissions = _.assign({}, permissions, overridePermissions);
+				}
 			} else {
 				throw new errs.AuthError("User cannot be loaded for Token");
 			}
@@ -199,6 +203,8 @@ export default function (tokenString) {
 	return {
 		token: Token,
 
+		isAdmin: () => _.indexOf(userRoles, "admin") !== -1,
+
 		/**
 		 *
 		 * @param   {Boolean}  [allowInternal]
@@ -241,6 +247,7 @@ export default function (tokenString) {
 						permission_streams: permissions.streams,
 						permission_access_lists: permissions.access_lists,
 						permission_certificates: permissions.certificates,
+						permission_credentials: permissions.credentials,
 					},
 				};
 

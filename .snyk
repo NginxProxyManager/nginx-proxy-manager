@@ -1,0 +1,15 @@
+# Snyk policy — accepted risks, false positives, and paths excluded from Snyk Code.
+version: v1.25.1
+ignore:
+  SNYK-JS-EXPRESSFILEUPLOAD-2635697:
+    - "*":
+        reason: No patched express-fileupload release; upload hardened in backend/app.js (limits, safeFileNames).
+        created: 2026-06-03T00:00:00.000Z
+        expires: 2027-06-03T00:00:00.000Z
+  SNYK-JS-EXPRESSFILEUPLOAD-2635946:
+    - "*":
+        reason: No patched express-fileupload release; upload hardened in backend/app.js (limits, safeFileNames).
+        created: 2026-06-03T00:00:00.000Z
+        expires: 2027-06-03T00:00:00.000Z
+exclude: {}
+patch: {}

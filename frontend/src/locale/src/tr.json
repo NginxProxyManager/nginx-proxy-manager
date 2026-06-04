@@ -679,5 +679,83 @@
 	},
 	"users": {
 		"defaultMessage": "Kullanıcılar"
+	},
+	"api-key": {
+		"defaultMessage": "API anahtarı"
+	},
+	"api-keys": {
+		"defaultMessage": "Otomasyon API anahtarları"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Bu anahtarı şimdi kopyalayın — tekrar gösterilmeyecek."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Bu API anahtarı iptal edilsin mi? Kullanan otomasyonlar çalışmayı durdurur."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Betikler ve CI için Bearer belirteçleri (npmak_…). Yalnızca yöneticiler."
+	},
+	"credential": {
+		"defaultMessage": "Kimlik bilgisi"
+	},
+	"credential-provider": {
+		"defaultMessage": "Kimlik bilgisi sağlayıcısı"
+	},
+	"credential-providers": {
+		"defaultMessage": "Harici kimlik bilgisi depoları"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "OIDC ile Vault, AWS Secrets Manager, Azure Key Vault veya Infisical bağlayın."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "OIDC testi"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Çözümleme testi"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Gizli yol"
+	},
+	"credentials": {
+		"defaultMessage": "DNS kimlik bilgileri"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Gizli yol"
+	},
+	"credentials.source": {
+		"defaultMessage": "Kimlik bilgisi kaynağı"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Harici depo (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "NPM kasasında saklandı"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Manuel gir (tek seferlik)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Kayıtlı kimlik bilgisi"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "/data biriminde şifreli, DNS sertifikaları için yeniden kullanılabilir."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Eski DNS kimlik bilgilerini taşı"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} sertifika satır içi kimlik bilgilerini kasaya taşır."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooklar"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "İmza gizlisi (X-NPM-Signature doğrulaması)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Ana bilgisayar veya sertifika değişince imzalı HTTP geri çağrıları."
 	}
 }

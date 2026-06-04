@@ -1,0 +1,13 @@
+{
+	"operationId": "testCredentialProvider",
+	"summary": "Test provider authentication",
+	"tags": [
+		"credential-providers"
+	],
+	"description": "Verifies that the provider can obtain an access token (OIDC client credentials or Infisical Universal Auth).",
+	"responses": {
+		"200": {
+			"description": "OK"
+		}
+	}
+}

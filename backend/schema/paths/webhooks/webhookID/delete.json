@@ -1,0 +1,18 @@
+{
+	"operationId": "deleteWebhook",
+	"summary": "Delete a webhook endpoint",
+	"tags": [
+		"webhooks"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"description": "Deletes a webhook configuration by id.",
+	"responses": {
+		"200": {
+			"description": "OK"
+		}
+	}
+}

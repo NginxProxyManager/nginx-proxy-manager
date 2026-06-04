@@ -1,12 +1,17 @@
 {
 	"operationId": "deleteCertificate",
 	"summary": "Delete a Certificate",
-	"tags": ["certificates"],
+	"tags": [
+		"certificates"
+	],
 	"security": [
 		{
-			"bearerAuth": ["certificates.manage"]
+			"bearerAuth": [
+				"certificates.manage"
+			]
 		}
 	],
+	"description": "Deletes a certificate record. Does not remove files already deployed to disk until nginx is reloaded.",
 	"parameters": [
 		{
 			"in": "path",

@@ -1,7 +1,10 @@
 {
 	"operationId": "loginWith2FA",
 	"summary": "Verify 2FA code and get full token",
-	"tags": ["tokens"],
+	"tags": [
+		"tokens"
+	],
+	"description": "Completes login when two-factor authentication is required for the account.",
 	"requestBody": {
 		"description": "2fa Challenge Payload",
 		"required": true,
@@ -22,7 +25,10 @@
 							"example": "012345"
 						}
 					},
-					"required": ["challenge_token", "code"],
+					"required": [
+						"challenge_token",
+						"code"
+					],
 					"type": "object"
 				},
 				"example": {

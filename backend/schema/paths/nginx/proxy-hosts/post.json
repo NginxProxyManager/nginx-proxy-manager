@@ -1,7 +1,9 @@
 {
 	"operationId": "createProxyHost",
 	"summary": "Create a Proxy Host",
-	"tags": ["proxy-hosts"],
+	"tags": [
+		"proxy-hosts"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Creates a proxy host with domain names, upstream target, and optional TLS and access settings.",
 	"requestBody": {
 		"description": "Proxy Host Payload",
 		"required": true,
@@ -49,7 +52,7 @@
 							"$ref": "../../../components/proxy-host-object.json#/properties/hsts_subdomains"
 						},
 						"trust_forwarded_proto": {
-    						"$ref": "../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
+							"$ref": "../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
 						},
 						"http2_support": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/http2_support"

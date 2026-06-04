@@ -1,0 +1,13 @@
+{
+	"operationId": "deleteCredentialProvider",
+	"summary": "Delete credential provider",
+	"tags": [
+		"credential-providers"
+	],
+	"description": "Soft-deletes a credential provider. Existing certificate references may fail resolution until updated.",
+	"responses": {
+		"200": {
+			"description": "OK"
+		}
+	}
+}

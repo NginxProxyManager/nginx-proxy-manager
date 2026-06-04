@@ -8,6 +8,11 @@ import auditLogRoutes from "./audit-log.js";
 import ciRoutes from "./ci.js";
 import accessListsRoutes from "./nginx/access_lists.js";
 import certificatesHostsRoutes from "./nginx/certificates.js";
+import apiKeysRoutes from "./api-keys.js";
+import credentialProvidersRoutes from "./credential-providers.js";
+import credentialsRoutes from "./credentials.js";
+import jobsRoutes from "./jobs.js";
+import webhooksRoutes from "./webhooks.js";
 import deadHostsRoutes from "./nginx/dead_hosts.js";
 import proxyHostsRoutes from "./nginx/proxy_hosts.js";
 import redirectionHostsRoutes from "./nginx/redirection_hosts.js";
@@ -32,16 +37,20 @@ router.use(logRequest);
  * GET /api
  */
 router.get("/", async (_, res /*, next*/) => {
-	const version = pjson.version.split("-").shift().split(".");
+	const parts = pjson.version.split("-").shift().split(".");
+	const major = Number.parseInt(parts[0], 10);
+	const minor = Number.parseInt(parts[1], 10);
+	const revision = Number.parseInt(parts[2], 10);
 	const setup = await isSetup();
 
-	res.status(200).send({
+	res.status(200).json({
 		status: "OK",
 		setup,
 		version: {
-			major: Number.parseInt(version.shift(), 10),
-			minor: Number.parseInt(version.shift(), 10),
-			revision: Number.parseInt(version.shift(), 10),
+			major,
+			minor,
+			revision,
+			string: `v${major}.${minor}.${revision}`,
 		},
 	});
 });
@@ -59,6 +68,11 @@ router.use("/nginx/dead-hosts", deadHostsRoutes);
 router.use("/nginx/streams", streamsRoutes);
 router.use("/nginx/access-lists", accessListsRoutes);
 router.use("/nginx/certificates", certificatesHostsRoutes);
+router.use("/credentials", credentialsRoutes);
+router.use("/credential-providers", credentialProvidersRoutes);
+router.use("/api-keys", apiKeysRoutes);
+router.use("/jobs", jobsRoutes);
+router.use("/webhooks", webhooksRoutes);
 
 // Only include CI routes if we're in a CI environment
 if (isCI()) {

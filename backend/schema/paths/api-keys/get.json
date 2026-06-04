@@ -1,0 +1,28 @@
+{
+	"operationId": "listApiKeys",
+	"summary": "List API keys",
+	"tags": [
+		"api-keys"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"description": "Lists automation API keys. Secrets are never returned; each entry indicates whether a key is still configured.",
+	"responses": {
+		"200": {
+			"description": "OK",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "array",
+						"items": {
+							"type": "object"
+						}
+					}
+				}
+			}
+		}
+	}
+}
