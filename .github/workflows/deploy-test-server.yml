@@ -40,6 +40,9 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: [self-hosted, linux, gen]
+    env:
+      # github-action-runner image: Python 3.12 + ansible-core in /opt/ci-venv/bin
+      PATH: /opt/ci-venv/bin:/opt/runner/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -102,14 +105,33 @@ jobs:
           echo "ANSIBLE_SSH_COMMON_ARGS=-o CertificateFile=${cert_file} -o IdentitiesOnly=yes" >> "$GITHUB_ENV"
           rm -f "$ca_file" "$pub_file"
 
-      - name: Install Ansible 9+
+      - name: Verify Python and Ansible
         run: |
           set -euo pipefail
-          python3 -m pip install --user "ansible>=9,<11"
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          export PATH="$HOME/.local/bin:$PATH"
-          ansible-playbook --version | head -1
-          ansible --version | head -1
+          PYTHON=""
+          for candidate in /opt/ci-venv/bin/python3 python3.12 python3; do
+            if command -v "$candidate" >/dev/null 2>&1; then
+              PYTHON="$(command -v "$candidate")"
+              break
+            fi
+            if [ -x "$candidate" ]; then
+              PYTHON="$candidate"
+              break
+            fi
+          done
+          if [ -z "$PYTHON" ]; then
+            echo "::error::No python3 on runner (expected /opt/ci-venv/bin/python3). Rebuild github-action-runner image."
+            exit 1
+          fi
+          echo "PYTHON=$PYTHON" >> "$GITHUB_ENV"
+          if command -v ansible-playbook >/dev/null 2>&1; then
+            ansible-playbook --version | head -1
+          else
+            "$PYTHON" -m pip install --user "ansible>=9,<11"
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+            echo "PATH=$HOME/.local/bin:$PATH" >> "$GITHUB_ENV"
+            ansible-playbook --version | head -1
+          fi
 
       - name: Run Ansible playbook
         working-directory: deploy/ansible
@@ -117,13 +139,12 @@ jobs:
           ANSIBLE_PRIVATE_KEY_FILE: ${{ env.ANSIBLE_SSH_PRIVATE_KEY_FILE }}
           ANSIBLE_SSH_COMMON_ARGS: ${{ env.ANSIBLE_SSH_COMMON_ARGS }}
           NPM_TEST_IMAGE: ${{ steps.image.outputs.image }}
-          PATH: ${{ env.HOME }}/.local/bin:${{ env.PATH }}
         run: |
           set +x
           set -euo pipefail
           test -f "${ANSIBLE_PRIVATE_KEY_FILE}"
           test -f inventory/hosts.yml
-          python3 -c "
+          "${PYTHON}" -c "
           import json, os
           json.dump({
               'npm_test_image': os.environ['NPM_TEST_IMAGE'],
