@@ -8,7 +8,7 @@ on:
     paths:
       - .github/workflows/docker-image.yml
       - docker/Dockerfile
-      - VERSION
+      - .version
       - backend/package.json
       - backend/package-lock.json
       - frontend/package.json
@@ -152,7 +152,7 @@ jobs:
             ver="${ref#v}"
             echo "version=v${ver}" >> "$GITHUB_OUTPUT"
           else
-            ver="$(tr -d ' \n\r' < VERSION)"
+            ver="$(tr -d ' \n\r' < .version)"
             echo "version=v${ver}" >> "$GITHUB_OUTPUT"
           fi
 

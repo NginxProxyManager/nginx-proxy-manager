@@ -112,12 +112,12 @@ cd nginx-proxy-manager
 docker login docker.io
 SKIP_TESTS=1 ./scripts/publish-image              # push :develop
 NPM_TAG=latest NPM_TAG_LATEST=0 ./scripts/publish-image
-./scripts/publish-semver                          # push v3.0.0, v3.0, v3 from VERSION
+./scripts/publish-semver                          # push v3.0.0, v3.0, v3 from .version
 ```
 
 Environment variables: `NPM_IMAGE` (default `docker.io/salexson/nginx-proxy-manager`), `NPM_TAG` (default `develop`), `SKIP_TESTS=1`, `SKIP_FRONTEND=1` if `frontend/dist` is already built.
 
-**Semantic versioning:** see [`docs/VERSIONING.md`](docs/VERSIONING.md). Canonical version is [`VERSION`](VERSION); tag `git tag v3.0.0 && git push origin v3.0.0` to release.
+**Semantic versioning:** see [`docs/VERSIONING.md`](docs/VERSIONING.md). Canonical version is [`.version`](.version) (upstream convention); tag `git tag v3.0.0 && git push origin v3.0.0` to release.
 
 **Test locally after build:**
 

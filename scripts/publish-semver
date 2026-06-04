@@ -1,6 +1,6 @@
 #!/bin/bash -e
 # Build once and push docker.io/salexson/nginx-proxy-manager:vX.Y.Z, vX.Y, and vX.
-# Version from VERSION file or first argument (e.g. 3.0.0 or v3.0.0).
+# Version from .version file or first argument (e.g. 3.0.0 or v3.0.0).
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$DIR/.common.sh"
@@ -16,7 +16,7 @@ else
 	"${DIR}/sync-version"
 fi
 
-VERSION="$(tr -d ' \n\r' < VERSION)"
+VERSION="$(tr -d ' \n\r' < .version)"
 VERSION="${VERSION#v}"
 IFS=. read -r MAJOR MINOR PATCH <<< "$VERSION"
 

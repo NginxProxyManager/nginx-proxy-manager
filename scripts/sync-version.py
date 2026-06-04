@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sync root VERSION (X.Y.Z) into package.json files and OpenAPI info.version."""
+"""Sync root .version (X.Y.Z) into package.json files and OpenAPI info.version."""
 from __future__ import annotations
 
 import json
@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION_FILE = ROOT / "VERSION"
+VERSION_FILE = ROOT / ".version"
 TARGETS = (
     ROOT / "backend" / "package.json",
     ROOT / "frontend" / "package.json",

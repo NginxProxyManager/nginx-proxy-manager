@@ -14,7 +14,7 @@ const REPO_ROOT = join(DOCS_ROOT, "..");
 const SCHEMA_DIR = join(REPO_ROOT, "backend", "schema");
 const SCHEMA_PATH = join(SCHEMA_DIR, "swagger.json");
 const OUT_PATH = join(DOCS_ROOT, "src", "public", "openapi.json");
-const VERSION_FILE = join(REPO_ROOT, "VERSION");
+const VERSION_FILE = join(REPO_ROOT, ".version");
 
 const loadVersion = () => {
 	try {

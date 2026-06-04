@@ -10,7 +10,7 @@ This fork tracks **3.x** on the `develop` branch and publishes images to `docker
 | Released `v3.x.x` tags | Yes while listed on [releases](https://github.com/general-alexson/nginx-proxy-manager/releases) |
 | Upstream 2.x (`jc21/nginx-proxy-manager`) | See [upstream SECURITY.md](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/master/SECURITY.md) |
 
-Canonical version: [`VERSION`](VERSION). Sync with `./scripts/sync-version` before tagging.
+Canonical version: [`.version`](.version). Sync with `./scripts/sync-version` before tagging.
 
 ## Reporting a vulnerability
 
@@ -23,7 +23,7 @@ Canonical version: [`VERSION`](VERSION). Sync with `./scripts/sync-version` befo
 
 Include:
 
-- Affected version (image tag, commit SHA, or `VERSION` file)
+- Affected version (image tag, commit SHA, or `.version` file)
 - Description and impact
 - Steps to reproduce
 - Suggested fix (optional)

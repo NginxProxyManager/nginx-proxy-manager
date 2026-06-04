@@ -9,7 +9,7 @@ on:
       - backend/schema/**
       - docs/scripts/generate-openapi.mjs
       - docs/src/public/openapi.json
-      - VERSION
+      - .version
   pull_request:
     branches:
       - develop
@@ -18,7 +18,7 @@ on:
       - backend/schema/**
       - docs/scripts/generate-openapi.mjs
       - docs/src/public/openapi.json
-      - VERSION
+      - .version
 
 jobs:
   openapi-bundle:

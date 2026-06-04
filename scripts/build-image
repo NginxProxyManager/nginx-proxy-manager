@@ -11,7 +11,7 @@ NO_CACHE="${NO_CACHE:-0}"
 
 cd "${DIR}/.." || exit 1
 
-if [ -f VERSION ] && [ "${SKIP_VERSION_SYNC:-0}" != "1" ]; then
+if [ -f .version ] && [ "${SKIP_VERSION_SYNC:-0}" != "1" ]; then
 	"${DIR}/sync-version" >/dev/null
 fi
 
@@ -24,8 +24,8 @@ if [ "$BUILD_COMMIT" = "" ]; then
 fi
 
 if [ -z "${BUILD_VERSION:-}" ]; then
-	if [ -f VERSION ]; then
-		BUILD_VERSION="v$(tr -d ' \n\r' < VERSION)"
+	if [ -f .version ]; then
+		BUILD_VERSION="v$(tr -d ' \n\r' < .version)"
 	else
 		BUILD_VERSION="${TAG}"
 	fi
