@@ -2,6 +2,7 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+	base: "/docs/",
 	title: "Nginx Proxy Manager",
 	description: "Expose your services easily and securely",
 	head: [
@@ -70,6 +71,14 @@ export default defineConfig({
 	metaChunk: true,
 	srcDir: "./src",
 	outDir: "./dist",
+	vite: {
+		optimizeDeps: {
+			include: ["redoc", "swagger-ui-dist"],
+		},
+		ssr: {
+			noExternal: ["swagger-ui-dist"],
+		},
+	},
 	themeConfig: {
 		// https://vitepress.dev/reference/default-theme-config
 		logo: { src: "/logo.svg", width: 24, height: 24 },
@@ -83,6 +92,8 @@ export default defineConfig({
 					{ text: "Setup Instructions", link: "/setup/" },
 					{ text: "Advanced Configuration", link: "/advanced-config/" },
 					{ text: "Automation API", link: "/advanced/automation-api" },
+					{ text: "API Reference (Redoc)", link: "/api-reference" },
+					{ text: "API Reference (Swagger UI)", link: "/api-reference/swagger" },
 					{ text: "Upgrading", link: "/upgrading/" },
 					{ text: "Frequently Asked Questions", link: "/faq/" },
 					{ text: "Certbot", link: "/certbot/" },

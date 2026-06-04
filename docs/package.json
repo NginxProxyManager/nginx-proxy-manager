@@ -3,9 +3,14 @@
     "dev": "vitepress dev --host",
     "build": "vitepress build",
     "preview": "vitepress preview",
-    "set-version": "./scripts/set-version.sh"
+    "set-version": "./scripts/set-version.sh",
+    "generate:openapi": "node scripts/generate-openapi.mjs",
+    "predev": "node scripts/generate-openapi.mjs",
+    "prebuild": "node scripts/generate-openapi.mjs"
   },
   "devDependencies": {
+    "redoc": "^2.5.2",
+    "swagger-ui-dist": "^5.31.0",
     "vitepress": "^1.6.4"
   },
   "dependencies": {}

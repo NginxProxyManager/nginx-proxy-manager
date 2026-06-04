@@ -10,6 +10,7 @@ This fork uses [Semantic Versioning](https://semver.org/) as **`X.Y.Z`** in the 
 | [`backend/package.json`](../backend/package.json) | API / runtime version (synced) |
 | [`frontend/package.json`](../frontend/package.json) | Frontend package version (synced) |
 | [`backend/schema/swagger.json`](../backend/schema/swagger.json) | OpenAPI `info.version` (synced) |
+| [`docs/src/public/openapi.json`](src/public/openapi.json) | Bundled spec for VitePress API reference (regenerate after schema changes) |
 
 Sync everything from `VERSION`:
 
@@ -21,15 +22,17 @@ Sync everything from `VERSION`:
 ## Release a version
 
 1. Bump [`VERSION`](../VERSION) (or pass the version to `sync-version`).
-2. Commit: `git add VERSION backend/package.json frontend/package.json backend/schema/swagger.json`
-3. Tag and push (must match `vX.Y.Z`):
+2. Regenerate the docs OpenAPI bundle: `cd docs && npm install && npm run generate:openapi`
+3. Ensure the frontend release build includes docs: `scripts/frontend-build` / CI runs VitePress and copies `docs/dist` → `frontend/dist/docs/` (bundled at `/docs/` in the image).
+4. Commit: `git add VERSION backend/package.json frontend/package.json backend/schema/swagger.json docs/src/public/openapi.json`
+5. Tag and push (must match `vX.Y.Z`):
 
 ```bash
 git tag v3.0.0
 git push origin v3.0.0
 ```
 
-4. GitHub Actions **Docker image** workflow builds and pushes:
+6. GitHub Actions **Docker image** workflow builds and pushes:
 
 - `docker.io/salexson/nginx-proxy-manager:v3.0.0`
 - `docker.io/salexson/nginx-proxy-manager:v3.0`

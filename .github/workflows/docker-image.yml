@@ -115,6 +115,13 @@ jobs:
             exit 1
           fi
 
+      - name: Build documentation (VitePress)
+        working-directory: docs
+        run: |
+          set -euo pipefail
+          npm ci 2>/dev/null || npm install
+          npm run build
+
       - name: Build frontend
         working-directory: frontend
         env:
@@ -152,6 +159,9 @@ jobs:
             yarn locale-compile
           fi
           yarn build
+          rm -rf dist/docs
+          mkdir -p dist/docs
+          cp -a ../docs/dist/. dist/docs/
 
       - name: Set build metadata
         id: buildmeta

@@ -20,6 +20,11 @@ export function SiteFooter() {
 					<div className="col-lg-auto ms-lg-auto">
 						<ul className="list-inline list-inline-dots mb-0">
 							<li className="list-inline-item">
+								<a href="/documentation" className="link-secondary">
+									<T id="documentation" />
+								</a>
+							</li>
+							<li className="list-inline-item">
 								<a
 									href="https://github.com/NginxProxyManager/nginx-proxy-manager"
 									target="_blank"

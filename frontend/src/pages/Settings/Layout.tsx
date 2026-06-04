@@ -1,5 +1,8 @@
+import { IconHelp } from "@tabler/icons-react";
 import { useState } from "react";
+import { Button } from "src/components";
 import { T } from "src/locale";
+import { showHelpModal } from "src/modals";
 import CredentialProviders from "./CredentialProviders";
 import DefaultSite from "./DefaultSite";
 
@@ -18,10 +21,17 @@ export default function Layout() {
 			<div className="card-status-top bg-teal" />
 			<div className="card-table">
 				<div className="card-header">
-					<div className="row w-full">
-						<h2 className="mt-1 mb-0">
-							<T id="settings" />
-						</h2>
+					<div className="row w-full align-items-center">
+						<div className="col">
+							<h2 className="mt-1 mb-0">
+								<T id="settings" />
+							</h2>
+						</div>
+						<div className="col-auto">
+							<Button size="sm" variant="outline" actionType="secondary" onClick={() => showHelpModal("Settings", "teal")}>
+								<IconHelp size={20} />
+							</Button>
+						</div>
 					</div>
 				</div>
 				<div className="row g-0">

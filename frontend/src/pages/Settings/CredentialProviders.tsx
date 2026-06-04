@@ -53,18 +53,8 @@ export default function CredentialProviders() {
 		if (!form.name.trim()) return "Name is required";
 		if (form.type === "infisical") {
 			if (!form.meta.workspaceId?.trim()) return "Project ID (workspace) is required";
-			if (form.meta.authMethod === "oidc") {
-				if (!form.meta.identityId?.trim()) return "Identity ID is required for Infisical OIDC Auth";
-				if (!form.meta.jwtFilePath?.trim() && !form.meta.jwtEnvVar?.trim()) {
-					return "JWT file path or environment variable is required for Infisical OIDC Auth";
-				}
-				if (form.meta.jwtFilePath?.trim() && form.meta.jwtEnvVar?.trim()) {
-					return "Set only one of JWT file path or environment variable";
-				}
-			} else {
-				if (!form.oidcClientId.trim()) return "Client ID is required";
-				if (!editingId && !form.oidcClientSecret.trim()) return "Client secret is required for new providers";
-			}
+			if (!form.oidcClientId.trim()) return "Client ID is required";
+			if (!editingId && !form.oidcClientSecret.trim()) return "Client secret is required for new providers";
 			return null;
 		}
 		if (!form.oidcIssuer.trim()) return "OIDC issuer is required";
@@ -129,8 +119,6 @@ export default function CredentialProviders() {
 		}
 	};
 
-	const showOidcFields = form.type !== "infisical" || form.meta.authMethod !== "oidc";
-
 	return (
 		<div className="card-body">
 			<h3 className="card-title">
@@ -189,7 +177,7 @@ export default function CredentialProviders() {
 
 						<ProviderMetaFields form={form} editingId={editingId} onChange={setForm} />
 
-						{showOidcFields && form.type !== "infisical" ? (
+						{form.type !== "infisical" ? (
 							<OidcProviderFields form={form} editingId={editingId} onChange={setForm} />
 						) : null}
 					</div>

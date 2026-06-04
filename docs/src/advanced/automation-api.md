@@ -4,7 +4,11 @@ outline: deep
 
 # Automation API
 
-Nginx Proxy Manager exposes a REST API at `/api` on the admin port (default `81`). OpenAPI schema: `GET /api/schema`.
+Nginx Proxy Manager exposes a REST API at `/api` on the admin port (default `81`).
+
+- **Full reference (Redoc):** [API Reference](/api-reference)
+- **Try it out (Swagger UI):** [API Reference (Swagger)](/api-reference/swagger) — requires `/api` on the same host as the docs site
+- **Live schema from a running instance:** `GET /api/schema`
 
 ## Authentication
 
@@ -102,9 +106,9 @@ Provider `type`: `vault` (HashiCorp Vault), `aws`, `azure`, `infisical`, `http`.
 
 ### Infisical
 
-Use **Universal Auth** (Machine Identity client ID + secret) or **OIDC Auth** (identity ID + JWT from a file or env var inside the container). This is not the same as Infisical’s “OIDC Auth” tab used for GitHub Actions JWT federation.
+Use **Universal Auth** (Machine Identity client ID + secret). GitHub Actions and other CI should use separate Infisical OIDC federation outside NPM, not the admin UI.
 
-Example Universal Auth provider:
+Example provider:
 
 ```json
 {
@@ -117,23 +121,6 @@ Example Universal Auth provider:
     "workspace_id": "<project-uuid>",
     "environment_slug": "prod",
     "auth_method": "universal"
-  }
-}
-```
-
-Example OIDC Auth provider (JWT supplied at runtime):
-
-```json
-{
-  "name": "Infisical CI",
-  "type": "infisical",
-  "meta": {
-    "host": "https://vault.example.com",
-    "workspace_id": "<project-uuid>",
-    "environment_slug": "prod",
-    "auth_method": "oidc",
-    "identity_id": "<machine-identity-oidc-id>",
-    "jwt_env_var": "INFISICAL_OIDC_JWT"
   }
 }
 ```

@@ -24,23 +24,17 @@ export const validateCredentialProviderPayload = (data, { isCreate = false } = {
 
 	switch (data.type) {
 		case "infisical": {
+			const rawAuth = meta.auth_method || meta.authMethod;
+			if (rawAuth === "oidc") {
+				throw new errs.ValidationError(
+					"Infisical OIDC Auth is no longer supported; use Universal Auth (client ID and client secret)",
+				);
+			}
 			const inf = normalizeInfisicalMeta(meta);
 			if (!inf.workspace_id) {
 				throw new errs.ValidationError("Infisical provider requires workspace_id in meta");
 			}
-			if (inf.auth_method === "oidc") {
-				if (!inf.identity_id) {
-					throw new errs.ValidationError("Infisical OIDC Auth requires identity_id in meta");
-				}
-				if (!inf.jwt_file_path && !inf.jwt_env_var) {
-					throw new errs.ValidationError(
-						"Infisical OIDC Auth requires jwt_file_path or jwt_env_var in meta",
-					);
-				}
-				if (inf.jwt_file_path && inf.jwt_env_var) {
-					throw new errs.ValidationError("Set only one of jwt_file_path or jwt_env_var");
-				}
-			} else if (isCreate) {
+			if (isCreate) {
 				requireString(data.oidc_client_id, "client ID");
 				requireString(data.oidc_client_secret, "client secret");
 			}

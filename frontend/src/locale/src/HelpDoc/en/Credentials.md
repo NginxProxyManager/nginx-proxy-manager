@@ -14,8 +14,8 @@ Certificates that still store `dns_provider_credentials` inline can be moved int
 
 ### External stores
 
-Admins can configure **Settings → External Credential Stores** (Vault, AWS, Azure, Infisical, HTTP) with OIDC. Certificates can reference secrets by path instead of the internal vault.
+Admins can configure **Settings → External Credential Stores** (Vault, AWS, Azure, Infisical, HTTP). Certificates can reference secrets by path instead of the internal vault.
 
 ### Automation
 
-API keys and webhooks are under **Settings**. See the [Automation API](https://nginxproxymanager.com/advanced/automation-api/) documentation for Bearer auth, async jobs, and signed webhooks.
+API keys and webhooks are under **Settings**. See the [Automation API](/documentation?path=/advanced/automation-api) guide for Bearer auth, async jobs, Infisical paths, and signed webhooks.

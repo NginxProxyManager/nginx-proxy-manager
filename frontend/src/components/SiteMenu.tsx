@@ -1,5 +1,6 @@
 import {
 	IconBook,
+	IconBook2,
 	IconDeviceDesktop,
 	IconHome,
 	IconKey,
@@ -91,6 +92,11 @@ const menuItems: MenuItem[] = [
 		label: "credentials",
 		permissionSection: CREDENTIALS,
 		permission: VIEW,
+	},
+	{
+		to: "/documentation",
+		icon: IconBook2,
+		label: "documentation",
 	},
 	{
 		to: "/users",

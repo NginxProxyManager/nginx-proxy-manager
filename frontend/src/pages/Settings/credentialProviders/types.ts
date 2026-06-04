@@ -10,8 +10,6 @@ export const PROVIDER_TYPE_LABELS: Record<ProviderType, string> = {
 	http: "HTTP",
 };
 
-export type InfisicalAuthMethod = "universal" | "oidc";
-
 export type CredentialProviderFormState = {
 	name: string;
 	type: ProviderType;
@@ -36,10 +34,6 @@ export const defaultMetaForType = (type: ProviderType): Record<string, string> =
 				host: "https://app.infisical.com",
 				workspaceId: "",
 				environmentSlug: "prod",
-				authMethod: "universal",
-				identityId: "",
-				jwtFilePath: "",
-				jwtEnvVar: "",
 			};
 		case "http":
 			return { urlTemplate: "https://secrets.example/api/{path}" };
@@ -76,10 +70,6 @@ export const formFromProvider = (p: {
 		meta.host = String(raw.host || meta.host);
 		meta.workspaceId = String(raw.workspace_id || raw.workspaceId || "");
 		meta.environmentSlug = String(raw.environment_slug || raw.environmentSlug || "prod");
-		meta.authMethod = raw.auth_method === "oidc" || raw.authMethod === "oidc" ? "oidc" : "universal";
-		meta.identityId = String(raw.identity_id || raw.identityId || "");
-		meta.jwtFilePath = String(raw.jwt_file_path || raw.jwtFilePath || "");
-		meta.jwtEnvVar = String(raw.jwt_env_var || raw.jwtEnvVar || "");
 	} else if (type === "vault") {
 		meta.address = String(raw.address || "");
 		meta.mount = String(raw.mount || "secret");
@@ -114,14 +104,7 @@ export const buildMetaPayload = (form: CredentialProviderFormState): Record<stri
 				host: meta.host,
 				workspaceId: meta.workspaceId,
 				environmentSlug: meta.environmentSlug || "prod",
-				authMethod: meta.authMethod === "oidc" ? "oidc" : "universal",
-				...(meta.authMethod === "oidc"
-					? {
-							identityId: meta.identityId,
-							...(meta.jwtFilePath ? { jwtFilePath: meta.jwtFilePath } : {}),
-							...(meta.jwtEnvVar ? { jwtEnvVar: meta.jwtEnvVar } : {}),
-						}
-					: {}),
+				authMethod: "universal",
 			};
 		case "vault":
 			return { address: meta.address, mount: meta.mount, role: meta.role };
@@ -148,12 +131,8 @@ export const buildApiPayload = (
 	};
 
 	if (form.type === "infisical") {
-		if (form.meta.authMethod !== "oidc") {
-			base.oidcClientId = form.oidcClientId;
-			if (form.oidcClientSecret || !editingId) {
-				if (form.oidcClientSecret) base.oidcClientSecret = form.oidcClientSecret;
-			}
-		}
+		base.oidcClientId = form.oidcClientId;
+		if (form.oidcClientSecret) base.oidcClientSecret = form.oidcClientSecret;
 		return base;
 	}
 

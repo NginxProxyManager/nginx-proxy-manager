@@ -117,7 +117,7 @@
 		"defaultMessage": "External Credential Stores"
 	},
 	"credential-providers.subtitle": {
-		"defaultMessage": "Connect HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, Infisical, or a custom HTTP endpoint. Infisical uses Universal Auth or Machine Identity OIDC Auth (not the same as GitHub OIDC for CI)."
+		"defaultMessage": "Connect HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, Infisical (Universal Auth), or a custom HTTP endpoint."
 	},
 	"credential-providers.field.name": {
 		"defaultMessage": "Name"
@@ -140,15 +140,6 @@
 	"credential-providers.oidc.audience": {
 		"defaultMessage": "Audience (optional)"
 	},
-	"credential-providers.infisical.auth-method": {
-		"defaultMessage": "Authentication"
-	},
-	"credential-providers.infisical.auth-universal": {
-		"defaultMessage": "Universal Auth (client ID + secret)"
-	},
-	"credential-providers.infisical.auth-oidc": {
-		"defaultMessage": "OIDC Auth (identity ID + JWT)"
-	},
 	"credential-providers.infisical.host": {
 		"defaultMessage": "Infisical host"
 	},
@@ -157,15 +148,6 @@
 	},
 	"credential-providers.infisical.environment": {
 		"defaultMessage": "Environment slug"
-	},
-	"credential-providers.infisical.identity-id": {
-		"defaultMessage": "Identity ID"
-	},
-	"credential-providers.infisical.jwt-file": {
-		"defaultMessage": "JWT file path"
-	},
-	"credential-providers.infisical.jwt-env": {
-		"defaultMessage": "JWT environment variable"
 	},
 	"credential-providers.infisical.client-id": {
 		"defaultMessage": "Universal Auth client ID"
@@ -199,6 +181,39 @@
 	},
 	"credentials": {
 		"defaultMessage": "DNS Credentials"
+	},
+	"documentation": {
+		"defaultMessage": "Documentation"
+	},
+	"documentation.open-new-tab": {
+		"defaultMessage": "Open in new tab"
+	},
+	"documentation.section.advanced-config": {
+		"defaultMessage": "Advanced configuration"
+	},
+	"documentation.section.api-reference": {
+		"defaultMessage": "API reference (Redoc)"
+	},
+	"documentation.section.api-swagger": {
+		"defaultMessage": "API reference (Swagger UI)"
+	},
+	"documentation.section.automation-api": {
+		"defaultMessage": "Automation API"
+	},
+	"documentation.section.certbot": {
+		"defaultMessage": "Certbot"
+	},
+	"documentation.section.faq": {
+		"defaultMessage": "FAQ"
+	},
+	"documentation.section.guide": {
+		"defaultMessage": "Guide"
+	},
+	"documentation.section.setup": {
+		"defaultMessage": "Setup"
+	},
+	"documentation.section.upgrading": {
+		"defaultMessage": "Upgrading"
 	},
 	"credentials.secret-path": {
 		"defaultMessage": "Infisical folder + secret key"
@@ -577,6 +592,9 @@
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
+	},
+	"help.view-full-docs": {
+		"defaultMessage": "View full documentation"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"

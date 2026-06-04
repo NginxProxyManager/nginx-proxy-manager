@@ -4,7 +4,7 @@ import { toCertbotIni } from "../format.js";
 import { normalizeInfisicalMeta } from "../meta.js";
 
 /**
- * Infisical universal auth / OIDC.
+ * Infisical Universal Auth.
  * secretRef.path: folder + secret key (e.g. /DNS/cloudflare-api-token) or key only at /
  * secretRef.field: optional secret key when path is folder only (e.g. path /DNS, field cloudflare-api-token)
  */
