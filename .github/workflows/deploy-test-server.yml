@@ -92,7 +92,6 @@ jobs:
           fi
           chmod 644 "$pub_file"
           echo "ANSIBLE_SSH_PRIVATE_KEY_FILE=${key_file}" >> "$GITHUB_ENV"
-          echo "ANSIBLE_SSH_COMMON_ARGS=-o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new" >> "$GITHUB_ENV"
 
       - name: Verify Python and Ansible
         run: |
@@ -126,7 +125,6 @@ jobs:
         working-directory: deploy/ansible
         env:
           ANSIBLE_PRIVATE_KEY_FILE: ${{ env.ANSIBLE_SSH_PRIVATE_KEY_FILE }}
-          ANSIBLE_SSH_COMMON_ARGS: ${{ env.ANSIBLE_SSH_COMMON_ARGS }}
           NPM_TEST_IMAGE: ${{ steps.image.outputs.image }}
         run: |
           set +x
@@ -146,6 +144,26 @@ jobs:
           else
             LIMIT="oci_test"
           fi
+          known_hosts="${RUNNER_TEMP}/ansible-known_hosts"
+          : > "$known_hosts"
+          chmod 600 "$known_hosts"
+          target_host="$(
+            ansible-inventory -i inventory/hosts.yml --host "$LIMIT" 2>/dev/null \
+              | "${PYTHON}" -c "import sys,json; print(json.load(sys.stdin).get('ansible_host',''))"
+          )"
+          if [ -z "$target_host" ]; then
+            echo "::error::Could not resolve ansible_host for inventory host ${LIMIT}."
+            exit 1
+          fi
+          if ! ssh-keyscan -T 20 -H "$target_host" >> "$known_hosts" 2>/dev/null \
+            || [ ! -s "$known_hosts" ]; then
+            echo "::error::ssh-keyscan failed for ${target_host} (host unreachable or no SSH host keys)."
+            exit 1
+          fi
+          ssh_common_args="-o IdentitiesOnly=yes -o UserKnownHostsFile=${known_hosts} -o GlobalKnownHostsFile=/dev/null -o StrictHostKeyChecking=yes"
+          export ANSIBLE_SSH_COMMON_ARGS="$ssh_common_args"
+          echo "ANSIBLE_KNOWN_HOSTS_FILE=${known_hosts}" >> "$GITHUB_ENV"
+          echo "ANSIBLE_SSH_COMMON_ARGS=${ssh_common_args}" >> "$GITHUB_ENV"
           EXTRA=(-i inventory/hosts.yml -e ansible_user=automation -e "@ci_extra_vars.json" --limit "$LIMIT")
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.check_mode }}" = "true" ]; then
             EXTRA+=(--check --diff)
@@ -162,6 +180,7 @@ jobs:
           set +x
           shred -u "${ANSIBLE_SSH_PRIVATE_KEY_FILE:-/dev/null}" 2>/dev/null || true
           shred -u "${ANSIBLE_SSH_PRIVATE_KEY_FILE:-/dev/null}.pub" 2>/dev/null || true
+          shred -u "${ANSIBLE_KNOWN_HOSTS_FILE:-/dev/null}" 2>/dev/null || true
           rm -f deploy/ansible/ci_extra_vars.json
 
       - name: Deploy summary

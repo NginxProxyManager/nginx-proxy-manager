@@ -32,6 +32,8 @@ Runs on `[self-hosted, linux, gen]` with Infisical OIDC (same secrets as image b
 
 SSH user: **`automation`** using the **private key** (no SSH CA certificates yet). Ensure the matching **public key** is in `~automation/.ssh/authorized_keys` on the target host.
 
+CI uses an isolated `known_hosts` file (via `ssh-keyscan` on the inventory `ansible_host`), so the runner’s `~/.ssh/known_hosts` does not affect deploys.
+
 ## Target host requirements
 
 - Rocky Linux / RHEL 9 family (`dnf`) — adjust role if the VM is Ubuntu
@@ -44,7 +46,7 @@ Committed: [`deploy/ansible/inventory/hosts.yml`](ansible/inventory/hosts.yml)
 
 | Inventory name | Connects to |
 |----------------|-------------|
-| `oci_test` | `oci-test.eh168.alexson.org` |
+| `oci_test` | `oci-test.lab.eh168.alexson.org` (see `inventory/hosts.yml`) |
 
 Use `--limit oci_test` (underscore), not the FQDN — hyphens in `--limit` are parsed as exclusion patterns by Ansible.
 
