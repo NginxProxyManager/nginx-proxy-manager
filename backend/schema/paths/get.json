@@ -18,7 +18,8 @@
 								"version": {
 									"major": 2,
 									"minor": 1,
-									"revision": 0
+									"revision": 0,
+									"string": "v2.1.0"
 								}
 							}
 						}

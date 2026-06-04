@@ -20,10 +20,11 @@
 			"example": {
 				"major": 2,
 				"minor": 0,
-				"revision": 0
+				"revision": 0,
+				"string": "v2.0.0"
 			},
 			"additionalProperties": false,
-			"required": ["major", "minor", "revision"],
+			"required": ["major", "minor", "revision", "string"],
 			"properties": {
 				"major": {
 					"type": "integer",
@@ -39,6 +40,11 @@
 					"type": "integer",
 					"minimum": 0,
 					"example": 1
+				},
+				"string": {
+					"type": "string",
+					"description": "Semantic version string",
+					"example": "v2.10.1"
 				}
 			}
 		}

@@ -5,17 +5,26 @@
  *   docker compose -f docker/docker-compose.dev.yml --profile vault up -d vault-dev
  *   export CYPRESS_VAULT_INTEGRATION=1
  */
-const runVault = Cypress.env("VAULT_INTEGRATION") === true || Cypress.env("VAULT_INTEGRATION") === "1";
-
-(runVault ? describe : describe.skip)("Vault provider integration", () => {
+describe("Vault provider integration", () => {
 	let token;
 	let providerId;
 
-	before(() => {
-		cy.resetUsers();
-		cy.getToken().then((tok) => {
-			token = tok;
-		});
+	before(function () {
+		return cy
+			.env("VAULT_INTEGRATION")
+			.then((integration) => {
+				const runVault = integration === true || integration === 1 || integration === "1";
+				if (!runVault) {
+					this.skip();
+				}
+			})
+			.then(() => {
+				cy.resetUsers();
+				return cy.getToken();
+			})
+			.then((tok) => {
+				token = tok;
+			});
 	});
 
 	it("Creates vault provider pointing at dev Vault and tests OIDC path", () => {
