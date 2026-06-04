@@ -16,7 +16,5 @@ ignore:
         reason: JWT_FILE and GITHUB_ENV are validated against GitHub Actions runner paths before read/open.
         created: 2026-06-03T00:00:00.000Z
         expires: 2027-06-03T00:00:00.000Z
-exclude:
-  global:
-    - .github/actions/infisical-oidc-load/**
+exclude: {}
 patch: {}
