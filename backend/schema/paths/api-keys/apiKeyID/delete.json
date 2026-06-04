@@ -1,9 +1,18 @@
 {
 	"operationId": "deleteApiKey",
 	"summary": "Revoke an API key",
-	"tags": ["api-keys"],
-	"security": [{ "bearerAuth": [] }],
+	"tags": [
+		"api-keys"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"description": "Revokes an API key by id. Revoked keys fail authentication immediately.",
 	"responses": {
-		"200": { "description": "OK" }
+		"200": {
+			"description": "OK"
+		}
 	}
 }

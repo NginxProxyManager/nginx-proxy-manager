@@ -1,1 +1,13 @@
-{ "operationId": "listCredentialProviders", "summary": "List credential providers", "tags": ["credential-providers"], "responses": { "200": { "description": "OK" } } }
+{
+	"operationId": "listCredentialProviders",
+	"summary": "List credential providers",
+	"tags": [
+		"credential-providers"
+	],
+	"description": "Lists external credential store providers (Vault, AWS, Azure, Infisical, HTTP). Client secrets are not included in responses.",
+	"responses": {
+		"200": {
+			"description": "OK"
+		}
+	}
+}

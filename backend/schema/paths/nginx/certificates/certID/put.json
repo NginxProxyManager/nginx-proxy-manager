@@ -1,8 +1,17 @@
 {
 	"operationId": "updateCertificate",
 	"summary": "Update a Certificate",
-	"tags": ["certificates"],
-	"security": [{ "bearerAuth": ["certificates.manage"] }],
+	"tags": [
+		"certificates"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"certificates.manage"
+			]
+		}
+	],
+	"description": "Updates certificate metadata such as friendly name or linked hosts.",
 	"requestBody": {
 		"required": true,
 		"content": {
@@ -11,12 +20,18 @@
 					"type": "object",
 					"additionalProperties": false,
 					"properties": {
-						"nice_name": { "type": "string" },
+						"nice_name": {
+							"type": "string"
+						},
 						"domain_names": {
 							"type": "array",
-							"items": { "type": "string" }
+							"items": {
+								"type": "string"
+							}
 						},
-						"meta": { "type": "object" }
+						"meta": {
+							"type": "object"
+						}
 					}
 				}
 			}
@@ -27,7 +42,9 @@
 			"description": "OK",
 			"content": {
 				"application/json": {
-					"schema": { "$ref": "../../../../components/certificate-object.json" }
+					"schema": {
+						"$ref": "../../../../components/certificate-object.json"
+					}
 				}
 			}
 		}

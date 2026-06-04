@@ -14,6 +14,10 @@ Ansible deployment for **`oci-test.eh168.alexson.org`** (image testing): install
 
 Admin UI after deploy: **http://oci-test.lab.eh168.alexson.org:81**
 
+Bundled documentation: **http://oci-test.lab.eh168.alexson.org:81/documentation** (in-app) and **http://oci-test.lab.eh168.alexson.org:81/docs/** (static VitePress). Swagger “Try it out” works on that host without extra nginx because `/api` is the same origin.
+
+To serve docs on a **different** hostname and proxy API calls, use [`nginx/docs-api-proxy.conf.example`](nginx/docs-api-proxy.conf.example).
+
 Compose sets `DISABLE_IPV6=true` on the test host when the kernel has no IPv6.
 
 ## GitHub Actions

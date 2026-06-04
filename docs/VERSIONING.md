@@ -22,17 +22,18 @@ Sync everything from `VERSION`:
 ## Release a version
 
 1. Bump [`VERSION`](../VERSION) (or pass the version to `sync-version`).
-2. Regenerate the docs OpenAPI bundle: `cd docs && npm install && npm run generate:openapi`
-3. Ensure the frontend release build includes docs: `scripts/frontend-build` / CI runs VitePress and copies `docs/dist` → `frontend/dist/docs/` (bundled at `/docs/` in the image).
-4. Commit: `git add VERSION backend/package.json frontend/package.json backend/schema/swagger.json docs/src/public/openapi.json`
-5. Tag and push (must match `vX.Y.Z`):
+2. If you added API operations, extend `backend/schema/scripts/apply-operation-descriptions.mjs` and run `node backend/schema/scripts/apply-operation-descriptions.mjs`
+3. Regenerate the docs OpenAPI bundle: `cd docs && npm install && npm run generate:openapi`
+4. Ensure the frontend release build includes docs: `scripts/frontend-build` / CI runs VitePress and copies `docs/dist` → `frontend/dist/docs/` (bundled at `/docs/` in the image).
+5. Commit: `git add VERSION backend/package.json frontend/package.json backend/schema/swagger.json docs/src/public/openapi.json`
+6. Tag and push (must match `vX.Y.Z`):
 
 ```bash
 git tag v3.0.0
 git push origin v3.0.0
 ```
 
-6. GitHub Actions **Docker image** workflow builds and pushes:
+7. GitHub Actions **Docker image** workflow builds and pushes:
 
 - `docker.io/salexson/nginx-proxy-manager:v3.0.0`
 - `docker.io/salexson/nginx-proxy-manager:v3.0`

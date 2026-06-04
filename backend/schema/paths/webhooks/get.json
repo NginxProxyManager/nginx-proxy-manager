@@ -1,9 +1,18 @@
 {
 	"operationId": "listWebhooks",
 	"summary": "List webhook endpoints",
-	"tags": ["webhooks"],
-	"security": [{ "bearerAuth": [] }],
+	"tags": [
+		"webhooks"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"description": "Lists outbound webhook endpoints configured for automation events.",
 	"responses": {
-		"200": { "description": "OK" }
+		"200": {
+			"description": "OK"
+		}
 	}
 }

@@ -18,14 +18,28 @@ npm run dev
 
 | URL (under `/docs/` in production) | Viewer |
 |-----|--------|
-| `/docs/api-reference` | Redoc (read-only) |
+| `/docs/api-reference/` | Redoc (read-only) |
 | `/docs/api-reference/swagger` | Swagger UI (try-it-out against `/api` on the same host) |
+
+### Swagger “Try it out” on a separate docs hostname
+
+Bundled Swagger uses server URL `/api` on the **same origin** as the docs. To host static docs on another domain and still try requests, reverse-proxy `/api` to the NPM admin API (port 81). See [`deploy/nginx/docs-api-proxy.conf.example`](../deploy/nginx/docs-api-proxy.conf.example).
+
+On a single NPM instance, open **http://host:81/documentation** or static **http://host:81/docs/** — no extra proxy required.
+
+### Dev: live schema vs bundled docs
+
+| URL | Purpose |
+|-----|---------|
+| `http://localhost:3082` | Swagger UI → live `GET /api/schema` from dev stack (`docker/docker-compose.dev.yml`) |
+| `http://localhost:3081/documentation` | Bundled Redoc/Swagger from last frontend build |
 
 ## When you change the API schema
 
-If you edit files under `backend/schema/`, regenerate and commit the bundle:
+If you edit files under `backend/schema/`, add or refresh operation descriptions (Vacuum), then regenerate and commit the bundle:
 
 ```bash
+node backend/schema/scripts/apply-operation-descriptions.mjs   # after adding new operationIds to the script map
 cd docs
 npm run generate:openapi
 git add src/public/openapi.json

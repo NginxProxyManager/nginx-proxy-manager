@@ -99,6 +99,7 @@
 				"tags": [
 					"public"
 				],
+				"description": "Public health check for the admin API. Returns setup status and semantic version fields without authentication.",
 				"responses": {
 					"200": {
 						"description": "200 response",
@@ -197,6 +198,7 @@
 						]
 					}
 				],
+				"description": "Returns paginated audit log entries for administrative review.",
 				"responses": {
 					"200": {
 						"description": "200 response",
@@ -453,6 +455,7 @@
 						]
 					}
 				],
+				"description": "Returns a single audit log entry by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -722,6 +725,7 @@
 						]
 					}
 				],
+				"description": "Returns all access lists (HTTP authentication and access rules) configured in NPM.",
 				"parameters": [
 					{
 						"in": "query",
@@ -836,6 +840,7 @@
 						]
 					}
 				],
+				"description": "Creates an access list for use on proxy hosts, redirection hosts, or streams.",
 				"requestBody": {
 					"description": "Access List Payload",
 					"required": true,
@@ -1104,6 +1109,7 @@
 						]
 					}
 				],
+				"description": "Returns one access list including authorization and access rule entries.",
 				"parameters": [
 					{
 						"in": "path",
@@ -1219,6 +1225,7 @@
 						]
 					}
 				],
+				"description": "Updates an access list and its nested auth or access items.",
 				"parameters": [
 					{
 						"in": "path",
@@ -1496,6 +1503,7 @@
 						]
 					}
 				],
+				"description": "Deletes an access list. Hosts referencing it must be updated separately.",
 				"parameters": [
 					{
 						"in": "path",
@@ -1542,6 +1550,7 @@
 						]
 					}
 				],
+				"description": "Lists SSL certificates known to NPM including managed, custom, and in-progress orders.",
 				"parameters": [
 					{
 						"in": "query",
@@ -1879,6 +1888,7 @@
 						]
 					}
 				],
+				"description": "Requests a new certificate (HTTP, DNS, or custom workflow depending on payload).",
 				"requestBody": {
 					"description": "Certificate Payload",
 					"required": true,
@@ -2367,6 +2377,7 @@
 						]
 					}
 				],
+				"description": "Lists DNS providers supported for ACME DNS challenge certificate issuance.",
 				"responses": {
 					"200": {
 						"description": "200 response",
@@ -2445,6 +2456,7 @@
 						]
 					}
 				],
+				"description": "Validates stored certificates and reports expiry or configuration issues.",
 				"requestBody": {
 					"description": "Certificate Files",
 					"content": {
@@ -2613,6 +2625,7 @@
 						]
 					}
 				],
+				"description": "Tests HTTP reachability for domain validation prior to certificate issuance.",
 				"requestBody": {
 					"description": "Test Payload",
 					"required": true,
@@ -2679,6 +2692,7 @@
 						]
 					}
 				],
+				"description": "Returns one certificate record and metadata by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -3010,6 +3024,7 @@
 						]
 					}
 				],
+				"description": "Updates certificate metadata such as friendly name or linked hosts.",
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -3334,6 +3349,7 @@
 						]
 					}
 				],
+				"description": "Deletes a certificate record. Does not remove files already deployed to disk until nginx is reloaded.",
 				"parameters": [
 					{
 						"in": "path",
@@ -3380,6 +3396,7 @@
 						]
 					}
 				],
+				"description": "Downloads certificate and private key material for a certificate id (requires permission).",
 				"parameters": [
 					{
 						"in": "path",
@@ -3422,6 +3439,7 @@
 						]
 					}
 				],
+				"description": "Triggers renewal for an existing managed certificate.",
 				"parameters": [
 					{
 						"in": "path",
@@ -3755,6 +3773,7 @@
 						]
 					}
 				],
+				"description": "Uploads custom certificate and key files for use on proxy hosts.",
 				"parameters": [
 					{
 						"in": "path",
@@ -3859,6 +3878,7 @@
 						]
 					}
 				],
+				"description": "Lists reverse proxy hosts (domain to upstream mapping).",
 				"parameters": [
 					{
 						"in": "query",
@@ -4657,6 +4677,7 @@
 						]
 					}
 				],
+				"description": "Creates a proxy host with domain names, upstream target, and optional TLS and access settings.",
 				"requestBody": {
 					"description": "Proxy Host Payload",
 					"required": true,
@@ -5649,6 +5670,7 @@
 						]
 					}
 				],
+				"description": "Returns one proxy host by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -6452,6 +6474,7 @@
 						]
 					}
 				],
+				"description": "Updates proxy host domains, upstream, advanced options, or certificate linkage.",
 				"parameters": [
 					{
 						"in": "path",
@@ -7445,6 +7468,7 @@
 						]
 					}
 				],
+				"description": "Deletes a proxy host by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -7491,6 +7515,7 @@
 						]
 					}
 				],
+				"description": "Enables a proxy host and applies nginx configuration.",
 				"parameters": [
 					{
 						"in": "path",
@@ -7579,6 +7604,7 @@
 						]
 					}
 				],
+				"description": "Disables a proxy host in nginx without removing the database record.",
 				"parameters": [
 					{
 						"in": "path",
@@ -7667,6 +7693,7 @@
 						]
 					}
 				],
+				"description": "Lists HTTP redirection hosts (domain-level redirects).",
 				"parameters": [
 					{
 						"in": "query",
@@ -8310,6 +8337,7 @@
 						]
 					}
 				],
+				"description": "Creates a redirection host with source domains and target URL or scheme.",
 				"requestBody": {
 					"description": "Redirection Host Payload",
 					"required": true,
@@ -9077,6 +9105,7 @@
 						]
 					}
 				],
+				"description": "Returns one redirection host by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -9713,6 +9742,7 @@
 						]
 					}
 				],
+				"description": "Updates redirection host matching rules and destination.",
 				"parameters": [
 					{
 						"in": "path",
@@ -10472,6 +10502,7 @@
 						]
 					}
 				],
+				"description": "Deletes a redirection host by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -10518,6 +10549,7 @@
 						]
 					}
 				],
+				"description": "Enables a redirection host in nginx.",
 				"parameters": [
 					{
 						"in": "path",
@@ -10606,6 +10638,7 @@
 						]
 					}
 				],
+				"description": "Disables a redirection host without deleting configuration.",
 				"parameters": [
 					{
 						"in": "path",
@@ -10694,6 +10727,7 @@
 						]
 					}
 				],
+				"description": "Lists 404 / catch-all hosts (dead hosts) configured in NPM.",
 				"parameters": [
 					{
 						"in": "query",
@@ -11292,6 +11326,7 @@
 						]
 					}
 				],
+				"description": "Creates a 404 host that serves a default site when no other host matches.",
 				"requestBody": {
 					"description": "404 Host Payload",
 					"required": true,
@@ -11971,6 +12006,7 @@
 						]
 					}
 				],
+				"description": "Returns one 404 host configuration by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -12562,6 +12598,7 @@
 						]
 					}
 				],
+				"description": "Updates a 404 host domain names, forwarding, or enabled state.",
 				"parameters": [
 					{
 						"in": "path",
@@ -13241,6 +13278,7 @@
 						]
 					}
 				],
+				"description": "Deletes a 404 host by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -13287,6 +13325,7 @@
 						]
 					}
 				],
+				"description": "Enables a previously disabled 404 host and reloads nginx when required.",
 				"parameters": [
 					{
 						"in": "path",
@@ -13375,6 +13414,7 @@
 						]
 					}
 				],
+				"description": "Disables a 404 host without deleting its configuration.",
 				"parameters": [
 					{
 						"in": "path",
@@ -13463,6 +13503,7 @@
 						]
 					}
 				],
+				"description": "Lists TCP/UDP stream proxies configured in NPM.",
 				"parameters": [
 					{
 						"in": "query",
@@ -14055,6 +14096,7 @@
 						]
 					}
 				],
+				"description": "Creates a layer-4 stream forwarding entry.",
 				"requestBody": {
 					"description": "Stream Payload",
 					"required": true,
@@ -14744,6 +14786,7 @@
 						]
 					}
 				],
+				"description": "Returns one stream definition by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -15329,6 +15372,7 @@
 						]
 					}
 				],
+				"description": "Updates stream listen ports, upstream, or protocol options.",
 				"parameters": [
 					{
 						"in": "path",
@@ -16001,6 +16045,7 @@
 						]
 					}
 				],
+				"description": "Deletes a stream by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -16047,6 +16092,7 @@
 						]
 					}
 				],
+				"description": "Enables a stream and reloads nginx configuration.",
 				"parameters": [
 					{
 						"in": "path",
@@ -16135,6 +16181,7 @@
 						]
 					}
 				],
+				"description": "Disables a stream in nginx without deleting the record.",
 				"parameters": [
 					{
 						"in": "path",
@@ -16221,6 +16268,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Returns reporting data about configured hosts for dashboards and diagnostics.",
 				"responses": {
 					"200": {
 						"description": "200 response",
@@ -16274,6 +16322,7 @@
 				"tags": [
 					"public"
 				],
+				"description": "Returns the fully dereferenced OpenAPI document for this running instance. Used by dev Swagger on port 3082 and for live schema inspection.",
 				"responses": {
 					"200": {
 						"description": "200 response"
@@ -16295,6 +16344,7 @@
 						]
 					}
 				],
+				"description": "Lists application settings keys and values visible to the authenticated administrator.",
 				"responses": {
 					"200": {
 						"description": "200 response",
@@ -16399,6 +16449,7 @@
 						]
 					}
 				],
+				"description": "Returns one setting by id or key identifier.",
 				"parameters": [
 					{
 						"in": "path",
@@ -16508,6 +16559,7 @@
 						]
 					}
 				],
+				"description": "Updates a single application setting value.",
 				"parameters": [
 					{
 						"in": "path",
@@ -16666,6 +16718,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Refreshes an existing JWT using a valid refresh token cookie or body field.",
 				"responses": {
 					"200": {
 						"description": "200 response",
@@ -16711,6 +16764,7 @@
 				"tags": [
 					"tokens"
 				],
+				"description": "Authenticates with email and password and returns JWT access and refresh tokens.",
 				"requestBody": {
 					"description": "Credentials Payload",
 					"required": true,
@@ -16823,6 +16877,7 @@
 				"tags": [
 					"tokens"
 				],
+				"description": "Completes login when two-factor authentication is required for the account.",
 				"requestBody": {
 					"description": "2fa Challenge Payload",
 					"required": true,
@@ -16903,6 +16958,7 @@
 				"tags": [
 					"public"
 				],
+				"description": "Checks whether a newer upstream release is available compared to the running version.",
 				"responses": {
 					"200": {
 						"description": "200 response",
@@ -16970,6 +17026,7 @@
 						]
 					}
 				],
+				"description": "Lists administrator accounts and role assignments.",
 				"parameters": [
 					{
 						"in": "query",
@@ -17190,6 +17247,7 @@
 						]
 					}
 				],
+				"description": "Creates a new administrator user with roles and permissions.",
 				"requestBody": {
 					"description": "User Payload",
 					"required": true,
@@ -17439,6 +17497,7 @@
 						]
 					}
 				],
+				"description": "Returns one user record by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -17635,6 +17694,7 @@
 						]
 					}
 				],
+				"description": "Updates user profile fields such as name or email.",
 				"parameters": [
 					{
 						"in": "path",
@@ -17878,6 +17938,7 @@
 						]
 					}
 				],
+				"description": "Deletes a user account by id.",
 				"parameters": [
 					{
 						"in": "path",
@@ -17917,6 +17978,7 @@
 				"tags": [
 					"users"
 				],
+				"description": "Starts TOTP enrollment and returns QR code / secret material for the user.",
 				"parameters": [
 					{
 						"in": "path",
@@ -17979,6 +18041,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Returns whether two-factor authentication is enabled for the user.",
 				"parameters": [
 					{
 						"in": "path",
@@ -18036,6 +18099,7 @@
 				"tags": [
 					"users"
 				],
+				"description": "Disables two-factor authentication for a user (requires administrative permission).",
 				"parameters": [
 					{
 						"in": "path",
@@ -18088,6 +18152,7 @@
 				"tags": [
 					"users"
 				],
+				"description": "Confirms TOTP enrollment with a verification code and enables 2FA.",
 				"parameters": [
 					{
 						"in": "path",
@@ -18188,6 +18253,7 @@
 				"tags": [
 					"users"
 				],
+				"description": "Regenerates one-time backup codes after verifying an existing TOTP code.",
 				"parameters": [
 					{
 						"in": "path",
@@ -18295,6 +18361,7 @@
 						]
 					}
 				],
+				"description": "Updates password or authentication-related fields for a user.",
 				"parameters": [
 					{
 						"in": "path",
@@ -18383,6 +18450,7 @@
 						]
 					}
 				],
+				"description": "Updates fine-grained permissions and roles assigned to a user.",
 				"parameters": [
 					{
 						"in": "path",
@@ -18531,6 +18599,7 @@
 						]
 					}
 				],
+				"description": "Issues a session token for the target user (administrative impersonation).",
 				"parameters": [
 					{
 						"in": "path",
@@ -18745,6 +18814,7 @@
 						]
 					}
 				],
+				"description": "Lists DNS credentials stored in the encrypted NPM vault on the data volume.",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -18829,6 +18899,7 @@
 						]
 					}
 				],
+				"description": "Creates a named DNS credential (certbot provider INI) in the internal vault for certificate issuance.",
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -18944,6 +19015,7 @@
 						]
 					}
 				],
+				"description": "Moves inline DNS provider credentials from certificates into the vault. Supports dry-run preview before apply.",
 				"requestBody": {
 					"content": {
 						"application/json": {
@@ -19006,6 +19078,7 @@
 						]
 					}
 				],
+				"description": "Returns metadata for one stored DNS credential. Secret payload is not exposed.",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -19087,6 +19160,7 @@
 						]
 					}
 				],
+				"description": "Updates a stored DNS credential name or encrypted provider configuration.",
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -19194,6 +19268,7 @@
 						]
 					}
 				],
+				"description": "Deletes a stored DNS credential from the vault.",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -19222,6 +19297,7 @@
 						]
 					}
 				],
+				"description": "Validates that a stored credential can be decrypted and parsed for the configured DNS provider.",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -19254,6 +19330,7 @@
 				"tags": [
 					"credential-providers"
 				],
+				"description": "Lists external credential store providers (Vault, AWS, Azure, Infisical, HTTP). Client secrets are not included in responses.",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19266,6 +19343,7 @@
 				"tags": [
 					"credential-providers"
 				],
+				"description": "Registers an external credential store provider. OIDC or Universal Auth credentials are stored encrypted under the data volume.",
 				"responses": {
 					"201": {
 						"description": "Created"
@@ -19280,6 +19358,7 @@
 				"tags": [
 					"credential-providers"
 				],
+				"description": "Returns one credential provider configuration by id without secret material.",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19292,6 +19371,7 @@
 				"tags": [
 					"credential-providers"
 				],
+				"description": "Updates provider settings. Omit secret fields to keep existing encrypted values.",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19304,6 +19384,7 @@
 				"tags": [
 					"credential-providers"
 				],
+				"description": "Soft-deletes a credential provider. Existing certificate references may fail resolution until updated.",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19314,10 +19395,11 @@
 		"/credential-providers/{providerID}/test": {
 			"post": {
 				"operationId": "testCredentialProvider",
-				"summary": "Test OIDC connection",
+				"summary": "Test provider authentication",
 				"tags": [
 					"credential-providers"
 				],
+				"description": "Verifies that the provider can obtain an access token (OIDC client credentials or Infisical Universal Auth).",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19332,6 +19414,7 @@
 				"tags": [
 					"credential-providers"
 				],
+				"description": "Tests resolving a secret path through the provider without returning secret contents (response includes byte length only).",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19351,6 +19434,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Lists automation API keys. Secrets are never returned; each entry indicates whether a key is still configured.",
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -19378,6 +19462,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Creates a long-lived API key for automation. The raw key is returned once in the response and cannot be retrieved again.",
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -19424,6 +19509,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Revokes an API key by id. Revoked keys fail authentication immediately.",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19438,6 +19524,7 @@
 				"tags": [
 					"jobs"
 				],
+				"description": "Lists recent asynchronous automation jobs (certificate issuance, migrations, etc.).",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19457,6 +19544,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Returns status and result metadata for one background job by id.",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19476,6 +19564,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Lists outbound webhook endpoints configured for automation events.",
 				"responses": {
 					"200": {
 						"description": "OK"
@@ -19493,6 +19582,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Creates a webhook endpoint with optional HMAC signing secret.",
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -19547,6 +19637,7 @@
 						"bearerAuth": []
 					}
 				],
+				"description": "Deletes a webhook configuration by id.",
 				"responses": {
 					"200": {
 						"description": "OK"

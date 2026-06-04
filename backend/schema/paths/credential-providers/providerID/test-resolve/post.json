@@ -1,1 +1,13 @@
-{ "operationId": "testCredentialProviderResolve", "summary": "Test secret resolution", "tags": ["credential-providers"], "responses": { "200": { "description": "OK" } } }
+{
+	"operationId": "testCredentialProviderResolve",
+	"summary": "Test secret resolution",
+	"tags": [
+		"credential-providers"
+	],
+	"description": "Tests resolving a secret path through the provider without returning secret contents (response includes byte length only).",
+	"responses": {
+		"200": {
+			"description": "OK"
+		}
+	}
+}

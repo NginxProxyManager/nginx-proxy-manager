@@ -13,6 +13,7 @@ services:
     networks:
       nginx_proxy_manager:
         aliases:
+          - npm
           - website1.example.com
           - website2.example.com
           - website3.example.com
@@ -114,13 +115,14 @@ services:
     networks:
       - nginx_proxy_manager
 
+  # Live OpenAPI from the running backend (GET /api/schema). Bundled Redoc/Swagger: http://localhost:3081/documentation
   swagger:
     image: swaggerapi/swagger-ui:latest
     container_name: npm2dev.swagger
     ports:
       - 3082:80
     environment:
-      URL: "http://npm:81/api/schema"
+      URL: "http://fullstack:81/api/schema"
       PORT: "80"
     depends_on:
       - fullstack

@@ -1,12 +1,17 @@
 {
 	"operationId": "getStream",
 	"summary": "Get a Stream",
-	"tags": ["streams"],
+	"tags": [
+		"streams"
+	],
 	"security": [
 		{
-			"bearerAuth": ["streams.view"]
+			"bearerAuth": [
+				"streams.view"
+			]
 		}
 	],
+	"description": "Returns one stream definition by id.",
 	"parameters": [
 		{
 			"in": "path",
