@@ -1,3 +1,3 @@
 ---
-# No collections required (firewalld via firewall-cmd). Install ansible-core >= 2.17 in CI if the runner image is older.
+# No collections required (firewalld via firewall-cmd). Install ansible-core >= 2.17 on the control node.
 collections: []

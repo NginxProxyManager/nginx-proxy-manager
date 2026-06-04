@@ -6,7 +6,7 @@ This fork publishes test images to `docker.io/salexson/nginx-proxy-manager` (`de
 
 | Image / scope | Supported |
 |---------------|-----------|
-| `develop`, `latest`, `sha-*` (fork CI) | Best-effort for this fork |
+| `develop`, `latest`, `sha-*` (fork images) | Best-effort for this fork |
 | Upstream releases (`jc21/nginx-proxy-manager`, tags from [NginxProxyManager/nginx-proxy-manager](https://github.com/NginxProxyManager/nginx-proxy-manager)) | See [upstream SECURITY.md](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/master/SECURITY.md) |
 
 [`.version`](.version) mirrors upstream; do not bump or tag releases on this fork.
@@ -17,7 +17,7 @@ This fork publishes test images to `docker.io/salexson/nginx-proxy-manager` (`de
 
 | Scope | Report here |
 |-------|-------------|
-| This fork (build, deploy, Infisical OIDC action, fork-only UI/API) | [Private vulnerability report — general-alexson/nginx-proxy-manager](https://github.com/general-alexson/nginx-proxy-manager/security/advisories/new) |
+| This fork (fork-only UI/API or deploy tooling) | [Private vulnerability report — general-alexson/nginx-proxy-manager](https://github.com/general-alexson/nginx-proxy-manager/security/advisories/new) |
 | Core Nginx Proxy Manager behavior shared with upstream | [Private vulnerability report — NginxProxyManager/nginx-proxy-manager](https://github.com/NginxProxyManager/nginx-proxy-manager/security/advisories/new) (or report to the fork and we will coordinate) |
 
 Include:
@@ -42,7 +42,7 @@ cd ../test && npm ci && npm audit
 cd ../docs && npm ci && npm audit
 ```
 
-After changing application code, run your Snyk Code scan (or CI equivalent) before merging security-sensitive PRs.
+After changing application code, run your Snyk Code scan before merging security-sensitive changes.
 
 ## Known accepted risks
 
@@ -50,7 +50,6 @@ After changing application code, run your Snyk Code scan (or CI equivalent) befo
 |------|------------|
 | `express-fileupload@1.5.2` (no upstream fix) | Upload middleware limited in [`backend/app.js`](backend/app.js): `limits.fileSize`, `abortOnLimit`, `safeFileNames`, `preserveExtension`. Documented in `.snyk`. |
 | Bundled docs iframe (`/documentation`) | Only allowlisted `?section=` keys map to VitePress paths under `/docs/`; iframe uses `sandbox`. |
-| GitHub Actions Infisical loader | [`infisical_oidc.py`](.github/actions/infisical-oidc-load/infisical_oidc.py) requires `JWT_FILE` under `RUNNER_TEMP` as `github-oidc.jwt` and `GITHUB_ENV` under runner `_runner_file_commands` before read/write. |
 
 Revisit `.snyk` entries when dependencies ship fixes or when mitigations change.
 
@@ -58,7 +57,7 @@ Revisit `.snyk` entries when dependencies ship fixes or when mitigations change.
 
 - Mount **`/data`** persistently so encryption keys and the credential vault survive restarts.
 - Prefer **`NPM_SECRETS_ENCRYPTION_KEY`** (32-byte value, base64) in production instead of relying only on the auto-generated key under `/data/keys/`.
-- Do not commit inventory, SSH keys, Infisical tokens, or API keys. CI secrets are loaded via Infisical OIDC (see [`README.md`](README.md) and [`deploy/README.md`](deploy/README.md)).
+- Do not commit inventory, SSH keys, Infisical tokens, or API keys. Load deploy secrets from your vault at runtime (see [`deploy/README.md`](deploy/README.md)).
 - Restrict admin port **81** to trusted networks; use strong passwords, 2FA, and scoped **API keys** for automation.
 - Automation tokens (`npmak_…`) are shown once at creation; treat them like passwords.
 

@@ -1,5 +1,5 @@
 ---
-# Legacy example — CI uses inventory/hosts.yml (committed).
+# Legacy example — use inventory/hosts.yml (committed) for the test host.
 # Inventory name oci_test avoids hyphen parsing in ansible --limit.
 npm_test:
   hosts:

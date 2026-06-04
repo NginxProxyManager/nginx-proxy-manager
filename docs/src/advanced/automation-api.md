@@ -116,7 +116,7 @@ Provider `type`: `vault` (HashiCorp Vault), `aws`, `azure`, `infisical`, `http`.
 
 ### Infisical
 
-Use **Universal Auth** (Machine Identity client ID + secret). GitHub Actions and other CI should use separate Infisical OIDC federation outside NPM, not the admin UI.
+Use **Universal Auth** (Machine Identity client ID + secret). Automation outside the admin UI (for example a separate CI/CD OIDC integration with Infisical) should not reuse the same credentials as the NPM provider entry unless you intend that trust boundary.
 
 Example provider:
 

@@ -20,31 +20,19 @@ To serve docs on a **different** hostname and proxy API calls, use [`nginx/docs-
 
 Compose sets `DISABLE_IPV6=true` on the test host when the kernel has no IPv6.
 
-## GitHub Actions
+## Secrets and SSH
 
-Workflow: [`.github/workflows/deploy-test-server.yml`](../.github/workflows/deploy-test-server.yml)
+Registry and deploy credentials are expected from your secret store (for example Infisical paths `/Docker` for `docker.io` login and `/Ansible` for SSH keys). Do not commit keys in the repo.
 
-| Trigger | When |
-|---------|------|
-| **workflow_dispatch** | Manual — choose host, image tag, tags, check mode |
-| **workflow_run** | After **Docker image** succeeds on `develop` (runs only when `docker/Dockerfile` changed or manual/tag build) → deploy `:develop` |
+SSH user: **`automation`** using the **private key**. Ensure the matching **public key** is in `~automation/.ssh/authorized_keys` on the target host.
 
-Runs on `[self-hosted, linux, gen]` with Infisical OIDC (same secrets as image build):
-
-| Infisical | Keys |
-|-----------|------|
-| `/Docker` | `docker.io-user`, `docker.io-token` |
-| `/Ansible` | `ansible-ssh-private-key`, `ansible-ssh-public-key` (public optional; derived from private if omitted) |
-
-SSH user: **`automation`** using the **private key** (no SSH CA certificates yet). Ensure the matching **public key** is in `~automation/.ssh/authorized_keys` on the target host.
-
-CI sets `ANSIBLE_CONFIG=ansible.ci.cfg` and disables host key checking for the ephemeral test runner (inventory host vars + SSH preflight). Local runs against `oci_test` use the same inventory SSH options.
+For automated runs you may set `ANSIBLE_CONFIG=ansible.ci.cfg` (see [`ansible/ansible.ci.cfg`](ansible/ansible.ci.cfg)); local runs against `oci_test` use the committed inventory SSH options.
 
 ## Target host requirements
 
 - Rocky Linux / RHEL 9 family (`dnf`) — adjust role if the VM is Ubuntu
 - `automation` user with your Ansible **public key** in `authorized_keys`
-- Reachable from **general-alexson** gen runners on the management network
+- Reachable from your management network (where you run Ansible)
 
 ## Inventory
 

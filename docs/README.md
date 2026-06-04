@@ -1,6 +1,6 @@
 # Nginx Proxy Manager documentation (VitePress)
 
-Production builds are bundled under **`/docs/`** on the admin UI static root (port 81). The React app exposes them at **`/documentation`** (iframe; deep links use **`?section=`** with allowlisted Help section names, e.g. `/documentation?section=Settings`). Build via `scripts/frontend-build` or CI, which copies `docs/dist` to `frontend/dist/docs/`.
+Production builds are bundled under **`/docs/`** on the admin UI static root (port 81). The React app exposes them at **`/documentation`** (iframe; deep links use **`?section=`** with allowlisted Help section names, e.g. `/documentation?section=Settings`). Build via `scripts/frontend-build`, which copies `docs/dist` to `frontend/dist/docs/`.
 
 VitePress `base` is `/docs/` — see [`.vitepress/config.mts`](.vitepress/config.mts).
 

@@ -126,32 +126,11 @@ docker compose -f docker/docker-compose.hub.yml up -d
 
 Multi-arch publish (optional): `./scripts/buildx --push -t docker.io/salexson/nginx-proxy-manager:latest` after `./scripts/frontend-build`.
 
-### GitHub Actions
-
-Workflow: [`.github/workflows/docker-image.yml`](.github/workflows/docker-image.yml)
-
-| Event | Behavior |
-|-------|----------|
-| Push to `develop` / `master` | Only when **`docker/Dockerfile`** (and related paths) change — build and push `latest`, branch tag, `sha-<short>` |
-| Pull request | Build only (no push) |
-| Manual run | Full rebuild anytime; optional push / skip frontend tests |
-
-**Docker Hub credentials** come from Infisical (not GitHub Secrets):
-
-| Infisical path | Key | Env in workflow |
-|----------------|-----|-----------------|
-| `/Docker` | `docker.io-user` | `DOCKER_IO_USER` |
-| `/Docker` | `docker.io-token` | `DOCKER_IO_TOKEN` |
-
-Project `secrets-vi-5-a`, environment `prod` via [`.github/actions/infisical-oidc-load`](.github/actions/infisical-oidc-load) (vendored from [`general-alexson/.github-private`](https://github.com/general-alexson/.github-private/tree/main/actions/infisical-oidc-load)). **This fork must stay public** (GitHub does not allow private forks of a public upstream), so org-shared private actions cannot be used—only the local copy. Infisical OIDC must allow `repo:general-alexson/nginx-proxy-manager`.
-
-**Runner:** `runs-on: [self-hosted, linux, gen]` — internal Infisical vault; image build uses `podman --remote build` on the host (the in-runner `docker` CLI is a Podman shim and cannot build). Images are published to **Docker Hub** (`docker.io/salexson/...`). Frontend is built with Node/npm. Platform: `linux/amd64`. No GitHub repository variables or secrets are required.
-
 Create the Hub repository `nginx-proxy-manager` under account `salexson` before the first push.
 
 ### Test server deploy (`oci-test`)
 
-Workflow: [`.github/workflows/deploy-test-server.yml`](.github/workflows/deploy-test-server.yml) — installs **Docker Engine**, deploys the image, and enables **`nginx-proxy-manager-test.service`** on `oci-test.eh168.alexson.org`. See [deploy/README.md](deploy/README.md).
+Ansible installs **Docker Engine**, pulls the image, and enables **`nginx-proxy-manager-test.service`** on the test host. See [deploy/README.md](deploy/README.md).
 
 
 ## Contributing

@@ -13,13 +13,13 @@ When merging `upstream/develop`, keep their `.version` and package/schema versio
 
 ## Fork Docker images
 
-CI and local publish scripts tag images for testing only:
+Local publish scripts can tag images for testing only:
 
 | Tag style | Example |
 |-----------|---------|
 | Branch | `docker.io/salexson/nginx-proxy-manager:develop` |
 | Commit | `docker.io/salexson/nginx-proxy-manager:sha-abc1234` |
-| Rolling | `:latest` on non-PR pushes |
+| Rolling | `:latest` when you choose to push it |
 
 There are **no** fork-managed `vX.Y.Z` Hub tags. Do not run `git tag v*` on this repository for releases.
 
