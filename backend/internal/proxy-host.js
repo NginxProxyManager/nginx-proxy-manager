@@ -253,7 +253,7 @@ const internalProxyHost = {
 				return query.then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
 				const thisRow = internalHost.cleanRowCertificateMeta(row);
@@ -279,7 +279,7 @@ const internalProxyHost = {
 				return internalProxyHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 
@@ -327,7 +327,7 @@ const internalProxyHost = {
 				});
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (row.enabled) {
@@ -375,7 +375,7 @@ const internalProxyHost = {
 				return internalProxyHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (!row.enabled) {

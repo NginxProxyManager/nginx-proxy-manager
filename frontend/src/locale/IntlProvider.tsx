@@ -72,6 +72,7 @@ const getFlagCodeForLocale = (locale?: string) => {
     vi: "vn", // Vietnam
     ko: "kr", // Korea
     cs: "cz", // Czechia
+    ga: "ie", // Ireland (Irish)
   };
 
   if (specialCases[thisLocale]) {

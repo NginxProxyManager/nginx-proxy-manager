@@ -211,7 +211,7 @@ const isPostgres = () => {
 };
 
 /**
- * Are we running in debug mdoe?
+ * Are we running in debug mode?
  *
  * @returns {boolean}
  */

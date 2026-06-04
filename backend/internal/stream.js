@@ -200,7 +200,7 @@ const internalStream = {
 			})
 			.then((row) => {
 				let thisRow = row;
-				if (!thisRow || !thisRow.id) {
+				if (!thisRow?.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
 				thisRow = internalHost.cleanRowCertificateMeta(thisRow);
@@ -226,7 +226,7 @@ const internalStream = {
 				return internalStream.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 
@@ -274,7 +274,7 @@ const internalStream = {
 				});
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (row.enabled) {
@@ -322,7 +322,7 @@ const internalStream = {
 				return internalStream.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (!row.enabled) {

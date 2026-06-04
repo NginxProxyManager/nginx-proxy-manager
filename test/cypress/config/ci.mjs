@@ -2,6 +2,7 @@ import { defineConfig } from 'cypress';
 import pluginSetup from '../plugins/index.mjs';
 
 export default defineConfig({
+	allowCypressEnv: false,
 	requestTimeout: 30000,
 	defaultCommandTimeout: 20000,
 	reporter: "cypress-multi-reporters",

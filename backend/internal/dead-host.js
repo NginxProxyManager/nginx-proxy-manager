@@ -206,7 +206,7 @@ const internalDeadHost = {
 		}
 
 		const row = await query.then(utils.omitRow(omissions()));
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 		// Custom omissions
@@ -226,7 +226,7 @@ const internalDeadHost = {
 	delete: async (access, data) => {
 		await access.can("dead_hosts:delete", data.id)
 		const row = await internalDeadHost.get(access, { id: data.id });
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 
@@ -264,7 +264,7 @@ const internalDeadHost = {
 			id: data.id,
 			expand: ["certificate", "owner"],
 		});
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 		if (row.enabled) {
@@ -303,7 +303,7 @@ const internalDeadHost = {
 	disable: async (access, data) => {
 		await access.can("dead_hosts:update", data.id)
 		const row = await internalDeadHost.get(access, { id: data.id });
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 		if (!row.enabled) {

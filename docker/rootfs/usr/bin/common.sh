@@ -21,6 +21,10 @@ NPMGROUP=npm
 NPMHOME=/tmp/npmuserhome
 export NPMUSER NPMGROUP NPMHOME
 
+# Query the certbot version just once and use it elsewhere
+CERTBOT_VERSION="$(certbot --version | grep -Eo '[0-9](\.[0-9]+)+')"
+export CERTBOT_VERSION
+
 if [[ "$PUID" -ne '0' ]] && [ "$PGID" = '0' ]; then
 	# set group id to same as user id,
 	# the user probably forgot to specify the group id and

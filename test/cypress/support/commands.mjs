@@ -48,14 +48,16 @@ Cypress.Commands.add("validateSwaggerFile", (url, savePath) => {
  * @param {*}       data          The API response data to check against the swagger schema
  */
 Cypress.Commands.add('validateSwaggerSchema', (method, code, path, data) => {
-	cy.task('validateSwaggerSchema', {
-		file:           Cypress.env('swaggerBase'),
-		endpoint:       path,
-		method:         method,
-		statusCode:     code,
-		responseSchema: data,
-		verbose:        true
-	}).should('equal', null);
+	cy.env(['swaggerBase']).then(({ swaggerBase }) => {
+		cy.task('validateSwaggerSchema', {
+			file:           swaggerBase,
+			endpoint:       path,
+			method:         method,
+			statusCode:     code,
+			responseSchema: data,
+			verbose:        true
+		}).should('equal', null);
+	});
 });
 
 Cypress.Commands.add('createInitialUser', (defaultUser) => {
@@ -149,5 +151,34 @@ Cypress.Commands.add('waitForCertificateStatus', (token, certID, expected, timeo
 		errorMsg: 'Waiting for certificate status failed',
 		timeout:  timeout * 1000,
 		interval: 5000
+	});
+});
+
+// Creates CA files for testing, if they already exist they will be deleted
+// and recreated with the same content. This is to ensure that the files exist
+// for testing and are in a known state.
+Cypress.Commands.add('createCustomCerts', ({domain, certFile, keyFile}) => {
+	domain = domain || 'website1.example.com';
+	certFile = certFile || 'website1.pem';
+	keyFile = keyFile || 'website1.key.pem';
+
+	return cy.task('getFixturesFolder').then((fixturesFolder) => {
+		const fullCertFile = `${fixturesFolder}/${certFile}`;
+		const fullKeyFile = `${fixturesFolder}/${keyFile}`;
+		const cmd = `mkcert -cert-file="${fullCertFile}" -key-file="${fullKeyFile}" "${domain}"`;
+		cy.log(`Creating custom certs with command: ${cmd}`);
+		return cy.exec(cmd).then((result) => {
+			cy.log(`mkcert output:\n${JSON.stringify(result)}`);
+			expect(result.exitCode).to.eq(0);
+			return cy.exec('mkcert -install').then((result2) => {
+				cy.log(`mkcert install output:\n${JSON.stringify(result2)}`);
+				expect(result2.exitCode).to.eq(0);
+			}).then(() => {
+				return cy.wrap({
+					certFile: fullCertFile,
+					keyFile: fullKeyFile,
+				});
+			});
+		});
 	});
 });
