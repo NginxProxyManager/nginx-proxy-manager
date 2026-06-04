@@ -1,0 +1,64 @@
+#!/bin/bash -e
+# Build once and push docker.io/salexson/nginx-proxy-manager:vX.Y.Z, vX.Y, and vX.
+# Version from VERSION file or first argument (e.g. 3.0.0 or v3.0.0).
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
+
+IMAGE="${NPM_IMAGE:-docker.io/salexson/nginx-proxy-manager}"
+SKIP_FRONTEND="${SKIP_FRONTEND:-0}"
+
+cd "${DIR}/.." || exit 1
+
+if [ -n "${1:-}" ]; then
+	"${DIR}/sync-version" "$1"
+else
+	"${DIR}/sync-version"
+fi
+
+VERSION="$(tr -d ' \n\r' < VERSION)"
+VERSION="${VERSION#v}"
+IFS=. read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+TAG_FULL="v${VERSION}"
+TAG_MINOR="v${MAJOR}.${MINOR}"
+TAG_MAJOR="v${MAJOR}"
+
+export BUILD_VERSION="${TAG_FULL}"
+export NPM_TAG="${TAG_FULL}"
+
+if [ "${SKIP_FRONTEND}" != "1" ]; then
+	"${DIR}/frontend-build"
+fi
+
+if [ "$BUILD_COMMIT" = "" ]; then
+	BUILD_COMMIT=$(git log -n 1 --format=%h 2>/dev/null || echo "unknown")
+fi
+
+echo -e "${BLUE}❯ ${CYAN}Building ${YELLOW}${IMAGE}:${TAG_FULL}${RESET}"
+
+docker build --pull \
+	-t "${IMAGE}:${TAG_FULL}" \
+	-f docker/Dockerfile \
+	--build-arg TARGETPLATFORM=linux/amd64 \
+	--build-arg BUILDPLATFORM=linux/amd64 \
+	--build-arg BUILD_VERSION="${BUILD_VERSION}" \
+	--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \
+	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
+	.
+
+docker tag "${IMAGE}:${TAG_FULL}" "${IMAGE}:${TAG_MINOR}"
+docker tag "${IMAGE}:${TAG_FULL}" "${IMAGE}:${TAG_MAJOR}"
+
+for tag in "${TAG_FULL}" "${TAG_MINOR}" "${TAG_MAJOR}"; do
+	echo -e "${BLUE}❯ ${CYAN}Pushing ${YELLOW}${IMAGE}:${tag}${RESET}"
+	docker push "${IMAGE}:${tag}"
+done
+
+if [ "${NPM_TAG_LATEST:-0}" = "1" ]; then
+	docker tag "${IMAGE}:${TAG_FULL}" "${IMAGE}:latest"
+	docker push "${IMAGE}:latest"
+	echo -e "${BLUE}❯ ${GREEN}Also pushed ${YELLOW}${IMAGE}:latest${RESET}"
+fi
+
+echo -e "${BLUE}❯ ${GREEN}Published ${YELLOW}${TAG_FULL}${RESET}, ${YELLOW}${TAG_MINOR}${RESET}, ${YELLOW}${TAG_MAJOR}${RESET}"

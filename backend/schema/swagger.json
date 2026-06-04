@@ -2,7 +2,7 @@
 	"openapi": "3.1.0",
 	"info": {
 		"title": "Nginx Proxy Manager API",
-		"version": "2.x.x",
+		"version": "3.0.0",
 		"description": "This is the official API documentation for Nginx Proxy Manager.\n\nMost endpoints require authentication via Bearer Token (JWT). You can generate a token by logging in via the `POST /tokens` endpoint.\n\nFor more information, visit the [Nginx Proxy Manager Documentation](https://nginxproxymanager.com)."
 	},
 	"servers": [

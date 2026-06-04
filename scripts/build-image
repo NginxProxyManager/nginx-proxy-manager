@@ -11,12 +11,24 @@ NO_CACHE="${NO_CACHE:-0}"
 
 cd "${DIR}/.." || exit 1
 
+if [ -f VERSION ] && [ "${SKIP_VERSION_SYNC:-0}" != "1" ]; then
+	"${DIR}/sync-version" >/dev/null
+fi
+
 if [ "${SKIP_FRONTEND}" != "1" ]; then
 	"${DIR}/frontend-build"
 fi
 
 if [ "$BUILD_COMMIT" = "" ]; then
 	BUILD_COMMIT=$(git log -n 1 --format=%h 2>/dev/null || echo "unknown")
+fi
+
+if [ -z "${BUILD_VERSION:-}" ]; then
+	if [ -f VERSION ]; then
+		BUILD_VERSION="v$(tr -d ' \n\r' < VERSION)"
+	else
+		BUILD_VERSION="${TAG}"
+	fi
 fi
 
 echo -e "${BLUE}❯ ${CYAN}Building ${YELLOW}${IMAGE}:${TAG}${RESET}"
@@ -31,7 +43,7 @@ docker build --pull "${CACHE_ARGS[@]}" \
 	-f docker/Dockerfile \
 	--build-arg TARGETPLATFORM=linux/amd64 \
 	--build-arg BUILDPLATFORM=linux/amd64 \
-	--build-arg BUILD_VERSION="${BUILD_VERSION:-${TAG}}" \
+	--build-arg BUILD_VERSION="${BUILD_VERSION}" \
 	--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \
 	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
 	.

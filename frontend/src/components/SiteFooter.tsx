@@ -10,7 +10,7 @@ export function SiteFooter() {
 			return "";
 		}
 		const v = health.data.version;
-		return `v${v.major}.${v.minor}.${v.revision}`;
+		return v.string ?? `v${v.major}.${v.minor}.${v.revision}`;
 	};
 
 	return (

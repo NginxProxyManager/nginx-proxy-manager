@@ -7,6 +7,9 @@ on:
       - master
     paths:
       - docker/Dockerfile
+      - VERSION
+      - backend/package.json
+      - frontend/package.json
     tags:
       - "v*"
   pull_request:
@@ -46,6 +49,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Sync semantic version into codebase
+        run: |
+          set -euo pipefail
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            python3 scripts/sync-version.py "${{ github.ref_name }}"
+          else
+            python3 scripts/sync-version.py
+          fi
 
       - name: Load Docker Hub credentials from Infisical (OIDC)
         if: >-
@@ -143,8 +155,16 @@ jobs:
       - name: Set build metadata
         id: buildmeta
         run: |
+          set -euo pipefail
           echo "date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> "$GITHUB_OUTPUT"
-          echo "version=${{ github.ref_type == 'tag' && github.ref_name || github.ref_name }}" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            ref="${{ github.ref_name }}"
+            ver="${ref#v}"
+            echo "version=v${ver}" >> "$GITHUB_OUTPUT"
+          else
+            ver="$(tr -d ' \n\r' < VERSION)"
+            echo "version=v${ver}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Docker metadata
         id: meta
@@ -153,8 +173,10 @@ jobs:
           images: ${{ env.IMAGE }}
           tags: |
             type=ref,event=branch
-            type=ref,event=tag
-            type=sha,prefix=sha-,format=short
+            type=sha,prefix=sha-,format=short,enable=${{ github.ref_type != 'tag' }}
+            type=semver,pattern=v{{major}}.{{minor}}.{{patch}},enable=${{ github.ref_type == 'tag' }}
+            type=semver,pattern=v{{major}}.{{minor}},enable=${{ github.ref_type == 'tag' }}
+            type=semver,pattern=v{{major}},enable=${{ github.ref_type == 'tag' }}
             type=raw,value=latest,enable=${{ github.event_name != 'pull_request' }}
 
       - name: Build image on host Podman

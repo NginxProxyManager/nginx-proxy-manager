@@ -2,6 +2,8 @@ export interface AppVersion {
 	major: number;
 	minor: number;
 	revision: number;
+	/** Semantic version label from API (e.g. v3.0.0). */
+	string?: string;
 }
 
 export interface UserPermissions {

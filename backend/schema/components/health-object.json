@@ -18,12 +18,13 @@
 			"type": "object",
 			"description": "The version object",
 			"example": {
-				"major": 2,
+				"major": 3,
 				"minor": 0,
-				"revision": 0
+				"revision": 0,
+				"string": "v3.0.0"
 			},
 			"additionalProperties": false,
-			"required": ["major", "minor", "revision"],
+			"required": ["major", "minor", "revision", "string"],
 			"properties": {
 				"major": {
 					"type": "integer",
@@ -39,6 +40,11 @@
 					"type": "integer",
 					"minimum": 0,
 					"example": 1
+				},
+				"string": {
+					"type": "string",
+					"description": "Semantic version with v prefix",
+					"example": "v3.0.0"
 				}
 			}
 		}

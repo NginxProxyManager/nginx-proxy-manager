@@ -37,16 +37,20 @@ router.use(logRequest);
  * GET /api
  */
 router.get("/", async (_, res /*, next*/) => {
-	const version = pjson.version.split("-").shift().split(".");
+	const parts = pjson.version.split("-").shift().split(".");
+	const major = Number.parseInt(parts[0], 10);
+	const minor = Number.parseInt(parts[1], 10);
+	const revision = Number.parseInt(parts[2], 10);
 	const setup = await isSetup();
 
 	res.status(200).send({
 		status: "OK",
 		setup,
 		version: {
-			major: Number.parseInt(version.shift(), 10),
-			minor: Number.parseInt(version.shift(), 10),
-			revision: Number.parseInt(version.shift(), 10),
+			major,
+			minor,
+			revision,
+			string: `v${major}.${minor}.${revision}`,
 		},
 	});
 });

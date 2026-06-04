@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
-	<img src="https://img.shields.io/badge/version-2.15.1-green.svg?style=for-the-badge">
+	<img src="https://img.shields.io/badge/version-3.0.0-green.svg?style=for-the-badge">
 	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
 		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
 	</a>
@@ -111,9 +111,12 @@ cd nginx-proxy-manager
 docker login docker.io
 SKIP_TESTS=1 ./scripts/publish-image              # push :develop
 NPM_TAG=latest NPM_TAG_LATEST=0 ./scripts/publish-image
+./scripts/publish-semver                          # push v3.0.0, v3.0, v3 from VERSION
 ```
 
 Environment variables: `NPM_IMAGE` (default `docker.io/salexson/nginx-proxy-manager`), `NPM_TAG` (default `develop`), `SKIP_TESTS=1`, `SKIP_FRONTEND=1` if `frontend/dist` is already built.
+
+**Semantic versioning:** see [`docs/VERSIONING.md`](docs/VERSIONING.md). Canonical version is [`VERSION`](VERSION); tag `git tag v3.0.0 && git push origin v3.0.0` to release.
 
 **Test locally after build:**
 
@@ -130,7 +133,7 @@ Workflow: [`.github/workflows/docker-image.yml`](.github/workflows/docker-image.
 | Event | Behavior |
 |-------|----------|
 | Push to `develop` / `master` | Only when **`docker/Dockerfile`** changes — build and push `latest`, branch tag, `sha-<short>` |
-| Tag `v*` | Build and push version tags + `latest` |
+| Tag `v*` (e.g. `v3.0.0`) | Build and push **`vX.Y.Z`**, **`vX.Y`**, **`vX`**, and `latest` |
 | Pull request | Build only (no push) |
 | Manual run | Full rebuild anytime; optional push / skip frontend tests |
 
