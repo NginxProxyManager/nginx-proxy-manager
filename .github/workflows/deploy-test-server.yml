@@ -27,7 +27,6 @@ on:
 
 env:
   NPM_IMAGE: docker.io/salexson/nginx-proxy-manager
-  INFISICAL_SIGNING_PROJECT_ID: fca9f329-3988-40f8-a695-89fde921fc4d
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
@@ -65,45 +64,35 @@ jobs:
           recursive: "false"
           secret_keys: docker.io-user,docker.io-token
 
-      - name: Load Ansible SSH private key from Infisical (OIDC)
+      - name: Load Ansible SSH key pair from Infisical (OIDC)
         uses: ./.github/actions/infisical-oidc-load
         with:
           secret_path: /Ansible
           recursive: "false"
-          secret_keys: ansible-ssh-private-key
+          secret_keys: ansible-ssh-private-key,ansible-ssh-public-key
 
-      - name: Load SSH CA signing key from Infisical (OIDC)
-        uses: ./.github/actions/infisical-oidc-load
-        with:
-          project_id: ${{ env.INFISICAL_SIGNING_PROJECT_ID }}
-          secret_path: /
-          recursive: "false"
-          secret_keys: ssh-user-ca-private-key
-
-      - name: Sign OpenSSH user certificate for Ansible
+      - name: Prepare Ansible SSH private key
         run: |
           set +x
           set -euo pipefail
           umask 077
           key="${ANSIBLE_SSH_PRIVATE_KEY:-}"
-          ca="${SSH_USER_CA_PRIVATE_KEY:-}"
-          if [ -z "$key" ] || [ -z "$ca" ]; then
-            echo "::error::Missing ANSIBLE_SSH_PRIVATE_KEY or SSH_USER_CA_PRIVATE_KEY from Infisical."
+          if [ -z "$key" ]; then
+            echo "::error::Missing ANSIBLE_SSH_PRIVATE_KEY (Infisical /Ansible ansible-ssh-private-key)."
             exit 1
           fi
           key_file="${RUNNER_TEMP}/ansible-automation-key"
-          ca_file="${RUNNER_TEMP}/ssh-user-ca-private-key"
           pub_file="${key_file}.pub"
-          cert_file="${key_file}-cert.pub"
           printf '%s\n' "$key" > "$key_file"
-          printf '%s\n' "$ca" > "$ca_file"
-          chmod 600 "$key_file" "$ca_file"
-          ssh-keygen -y -f "$key_file" > "$pub_file"
-          ssh-keygen -s "$ca_file" -I "gha-${{ github.run_id }}" -n automation -V "+1h" "$pub_file"
-          chmod 644 "$cert_file"
+          chmod 600 "$key_file"
+          if [ -n "${ANSIBLE_SSH_PUBLIC_KEY:-}" ]; then
+            printf '%s\n' "$ANSIBLE_SSH_PUBLIC_KEY" > "$pub_file"
+          else
+            ssh-keygen -y -f "$key_file" > "$pub_file"
+          fi
+          chmod 644 "$pub_file"
           echo "ANSIBLE_SSH_PRIVATE_KEY_FILE=${key_file}" >> "$GITHUB_ENV"
-          echo "ANSIBLE_SSH_COMMON_ARGS=-o CertificateFile=${cert_file} -o IdentitiesOnly=yes" >> "$GITHUB_ENV"
-          rm -f "$ca_file" "$pub_file"
+          echo "ANSIBLE_SSH_COMMON_ARGS=-o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new" >> "$GITHUB_ENV"
 
       - name: Verify Python and Ansible
         run: |
@@ -172,7 +161,7 @@ jobs:
         run: |
           set +x
           shred -u "${ANSIBLE_SSH_PRIVATE_KEY_FILE:-/dev/null}" 2>/dev/null || true
-          shred -u "${ANSIBLE_SSH_PRIVATE_KEY_FILE:-/dev/null}-cert.pub" 2>/dev/null || true
+          shred -u "${ANSIBLE_SSH_PRIVATE_KEY_FILE:-/dev/null}.pub" 2>/dev/null || true
           rm -f deploy/ansible/ci_extra_vars.json
 
       - name: Deploy summary

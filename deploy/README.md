@@ -28,15 +28,14 @@ Runs on `[self-hosted, linux, gen]` with Infisical OIDC (same secrets as image b
 | Infisical | Keys |
 |-----------|------|
 | `/Docker` | `docker.io-user`, `docker.io-token` |
-| `/Ansible` | `ansible-ssh-private-key` |
-| Signing project `fca9f329-3988-40f8-a695-89fde921fc4d` | `ssh-user-ca-private-key` |
+| `/Ansible` | `ansible-ssh-private-key`, `ansible-ssh-public-key` (public optional; derived from private if omitted) |
 
-SSH user: **`automation`** with short-lived certificate (principal `automation`).
+SSH user: **`automation`** using the **private key** (no SSH CA certificates yet). Ensure the matching **public key** is in `~automation/.ssh/authorized_keys` on the target host.
 
 ## Target host requirements
 
 - Rocky Linux / RHEL 9 family (`dnf`) — adjust role if the VM is Ubuntu
-- `automation` user trusted via your SSH CA
+- `automation` user with your Ansible **public key** in `authorized_keys`
 - Reachable from **general-alexson** gen runners on the management network
 
 ## Inventory
