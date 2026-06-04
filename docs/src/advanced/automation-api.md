@@ -6,7 +6,7 @@ outline: deep
 
 Nginx Proxy Manager exposes a REST API at `/api` on the admin port (default `81`).
 
-- **Full reference (Redoc):** [API Reference](/api-reference)
+- **Full reference (Redoc):** [API Reference](/api-reference/)
 - **Try it out (Swagger UI):** [API Reference (Swagger)](/api-reference/swagger) — requires `/api` on the same host as the docs site
 - **Live schema from a running instance:** `GET /api/schema`
 

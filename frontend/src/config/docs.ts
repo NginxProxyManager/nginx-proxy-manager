@@ -31,7 +31,7 @@ export const DOC_SECTIONS: DocSection[] = [
 	{ id: "setup", labelId: "documentation.section.setup", path: "/setup/" },
 	{ id: "advanced-config", labelId: "documentation.section.advanced-config", path: "/advanced-config/" },
 	{ id: "automation-api", labelId: "documentation.section.automation-api", path: "/advanced/automation-api" },
-	{ id: "api-reference", labelId: "documentation.section.api-reference", path: "/api-reference" },
+	{ id: "api-reference", labelId: "documentation.section.api-reference", path: "/api-reference/" },
 	{ id: "api-swagger", labelId: "documentation.section.api-swagger", path: "/api-reference/swagger" },
 	{ id: "faq", labelId: "documentation.section.faq", path: "/faq/" },
 	{ id: "certbot", labelId: "documentation.section.certbot", path: "/certbot/" },

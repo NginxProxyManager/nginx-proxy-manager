@@ -92,7 +92,7 @@ export default defineConfig({
 					{ text: "Setup Instructions", link: "/setup/" },
 					{ text: "Advanced Configuration", link: "/advanced-config/" },
 					{ text: "Automation API", link: "/advanced/automation-api" },
-					{ text: "API Reference (Redoc)", link: "/api-reference" },
+					{ text: "API Reference (Redoc)", link: "/api-reference/" },
 					{ text: "API Reference (Swagger UI)", link: "/api-reference/swagger" },
 					{ text: "Upgrading", link: "/upgrading/" },
 					{ text: "Frequently Asked Questions", link: "/faq/" },
