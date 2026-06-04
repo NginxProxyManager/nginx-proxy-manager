@@ -6,7 +6,7 @@ import certificateModel from "./models/certificate.js";
 import settingModel from "./models/setting.js";
 import userModel from "./models/user.js";
 import userPermissionModel from "./models/user_permission.js";
-import fs from "fs";
+import fs from "fs/promises";
 
 export const isSetup = async () => {
 	const row = await userModel.query().select("id").where("is_deleted", 0).first();
@@ -123,7 +123,8 @@ const setupCertbotPlugins = async () => {
 				const credentials_loc = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
 				if (typeof certificate.meta.dns_provider_credentials === "string") {
 					promises.push(fs.mkdir("/etc/letsencrypt/credentials", { recursive: true })
-								  .then(() => fs.writeFile(credentials_loc, certificate.meta.dns_provider_credentials, { mode: 0o600, flag: "wx" })));
+								  .then(() => fs.writeFile(credentials_loc, certificate.meta.dns_provider_credentials, { mode: 0o600, flag: "wx" }))
+								  .catch((err) => { if (err.code !== "EEXIST") throw err; }));
 				}
 			}
 			return true;
