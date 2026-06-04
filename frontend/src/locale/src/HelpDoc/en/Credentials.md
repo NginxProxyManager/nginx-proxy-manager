@@ -4,7 +4,7 @@ Stored credentials live on the **`/data` volume** under `/data/credentials/`, en
 
 ### Adding a credential
 
-1. Open **Credentials** in the sidebar.
+1. Open **Settings** → **DNS credentials** (or use `/settings?tab=dns-credentials`).
 2. Choose **Add Credential**, pick the DNS provider, and paste the certbot INI content (same format as the legacy credentials file).
 3. When creating or editing a DNS certificate, choose **Stored in NPM vault** and select the credential.
 

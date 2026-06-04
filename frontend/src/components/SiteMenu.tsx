@@ -3,7 +3,6 @@ import {
 	IconBook2,
 	IconDeviceDesktop,
 	IconHome,
-	IconKey,
 	IconLock,
 	IconSettings,
 	IconShield,
@@ -19,6 +18,7 @@ import {
 	CERTIFICATES,
 	CREDENTIALS,
 	DEAD_HOSTS,
+	hasPermission,
 	type MANAGE,
 	PROXY_HOSTS,
 	REDIRECTION_HOSTS,
@@ -26,6 +26,7 @@ import {
 	STREAMS,
 	VIEW,
 } from "src/modules/Permissions";
+import { useUser } from "src/hooks";
 
 interface MenuItem {
 	label: string;
@@ -87,18 +88,6 @@ const menuItems: MenuItem[] = [
 		permission: VIEW,
 	},
 	{
-		to: "/credentials",
-		icon: IconKey,
-		label: "credentials",
-		permissionSection: CREDENTIALS,
-		permission: VIEW,
-	},
-	{
-		to: "/documentation",
-		icon: IconBook2,
-		label: "documentation",
-	},
-	{
 		to: "/users",
 		icon: IconUser,
 		label: "users",
@@ -114,13 +103,41 @@ const menuItems: MenuItem[] = [
 		to: "/settings",
 		icon: IconSettings,
 		label: "settings",
-		permissionSection: ADMIN,
+	},
+	{
+		to: "/documentation",
+		icon: IconBook2,
+		label: "documentation",
 	},
 ];
+
+function SettingsNavItem({ to, icon: Icon, label, onClick }: { to: string; icon: React.ElementType; label: string; onClick?: () => void }) {
+	const { data } = useUser("me");
+	const visible =
+		hasPermission(ADMIN, VIEW, data?.permissions, data?.roles) ||
+		hasPermission(CREDENTIALS, VIEW, data?.permissions, data?.roles);
+	if (!visible) return null;
+	return (
+		<li className="nav-item">
+			<NavLink to={to} onClick={onClick}>
+				<span className="nav-link-icon d-md-none d-lg-inline-block">
+					<Icon height={24} width={24} />
+				</span>
+				<span className="nav-link-title">
+					<T id={label} />
+				</span>
+			</NavLink>
+		</li>
+	);
+}
 
 const getMenuItem = (item: MenuItem, onClick?: () => void) => {
 	if (item.items && item.items.length > 0) {
 		return getMenuDropown(item, onClick);
+	}
+
+	if (item.to === "/settings" && item.icon) {
+		return <SettingsNavItem key="settings" to={item.to} icon={item.icon} label={item.label} onClick={onClick} />;
 	}
 
 	return (

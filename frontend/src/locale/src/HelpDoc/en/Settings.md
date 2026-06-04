@@ -6,6 +6,10 @@ Admin-only configuration for automation and default behavior.
 
 Set the default site shown when no proxy host matches the request.
 
+### DNS credentials
+
+Store API tokens and keys for DNS providers (used by DNS challenge certificate requests). Add, edit, and delete credentials here instead of the former standalone **Credentials** page. Bookmarks to `/credentials` redirect to this tab.
+
 ### External credential stores
 
 Connect HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, Infisical (Universal Auth), or HTTP endpoints.

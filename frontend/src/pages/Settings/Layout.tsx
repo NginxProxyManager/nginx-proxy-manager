@@ -1,20 +1,81 @@
 import { IconHelp } from "@tabler/icons-react";
-import { useState } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "src/components";
+import { useUser } from "src/hooks";
 import { T } from "src/locale";
 import { showHelpModal } from "src/modals";
+import { ADMIN, CREDENTIALS, hasPermission, VIEW } from "src/modules/Permissions";
+import ApiKeys from "./ApiKeys";
 import CredentialProviders from "./CredentialProviders";
 import DefaultSite from "./DefaultSite";
-
-import ApiKeys from "./ApiKeys";
+import DnsCredentials from "./DnsCredentials";
 import Webhooks from "./Webhooks";
 
-type SettingsTab = "default-site" | "credential-providers" | "api-keys" | "webhooks";
+export type SettingsTab = "default-site" | "dns-credentials" | "credential-providers" | "api-keys" | "webhooks";
+
+const tabFromQuery = (raw: string | null, allowed: SettingsTab[]): SettingsTab => {
+	if (raw && allowed.includes(raw as SettingsTab)) {
+		return raw as SettingsTab;
+	}
+	return allowed[0] ?? "dns-credentials";
+};
 
 export default function Layout() {
-	const [tab, setTab] = useState<SettingsTab>("default-site");
-	// Taken from https://preview.tabler.io/settings.html
-	// Refer to that when updating this content
+	const { data } = useUser("me");
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const isAdmin = hasPermission(ADMIN, VIEW, data?.permissions, data?.roles);
+	const canCredentials = hasPermission(CREDENTIALS, VIEW, data?.permissions, data?.roles);
+
+	const allowedTabs = useMemo(() => {
+		const tabs: SettingsTab[] = [];
+		if (isAdmin) {
+			tabs.push("default-site", "credential-providers", "api-keys", "webhooks");
+		}
+		if (isAdmin || canCredentials) {
+			const insertAt = tabs.indexOf("credential-providers");
+			if (insertAt === -1) {
+				tabs.push("dns-credentials");
+			} else {
+				tabs.splice(insertAt, 0, "dns-credentials");
+			}
+		}
+		return tabs;
+	}, [isAdmin, canCredentials]);
+
+	const [tab, setTab] = useState<SettingsTab>(() => tabFromQuery(searchParams.get("tab"), allowedTabs));
+
+	useEffect(() => {
+		const next = tabFromQuery(searchParams.get("tab"), allowedTabs);
+		setTab(next);
+	}, [searchParams, allowedTabs]);
+
+	const selectTab = (next: SettingsTab) => {
+		setTab(next);
+		if (next === allowedTabs[0]) {
+			setSearchParams({});
+		} else {
+			setSearchParams({ tab: next });
+		}
+	};
+
+	const tabLabel: Record<SettingsTab, string> = {
+		"default-site": "settings.default-site",
+		"dns-credentials": "credentials",
+		"credential-providers": "credential-providers",
+		"api-keys": "api-keys",
+		webhooks: "webhooks",
+	};
+
+	const tabPanel: Record<SettingsTab, ReactNode> = {
+		"default-site": <DefaultSite />,
+		"dns-credentials": <DnsCredentials />,
+		"credential-providers": <CredentialProviders />,
+		"api-keys": <ApiKeys />,
+		webhooks: <Webhooks />,
+	};
 
 	return (
 		<div className="card mt-4">
@@ -38,43 +99,20 @@ export default function Layout() {
 					<div className="col-12 col-md-3 border-end">
 						<div className="card-body mt-0 pt-0">
 							<div className="list-group list-group-transparent">
-								<button
-									type="button"
-									className={`list-group-item list-group-item-action ${tab === "default-site" ? "active" : ""}`}
-									onClick={() => setTab("default-site")}
-								>
-									<T id="settings.default-site" />
-								</button>
-								<button
-									type="button"
-									className={`list-group-item list-group-item-action ${tab === "credential-providers" ? "active" : ""}`}
-									onClick={() => setTab("credential-providers")}
-								>
-									<T id="credential-providers" />
-								</button>
-								<button
-									type="button"
-									className={`list-group-item list-group-item-action ${tab === "api-keys" ? "active" : ""}`}
-									onClick={() => setTab("api-keys")}
-								>
-									<T id="api-keys" />
-								</button>
-								<button
-									type="button"
-									className={`list-group-item list-group-item-action ${tab === "webhooks" ? "active" : ""}`}
-									onClick={() => setTab("webhooks")}
-								>
-									<T id="webhooks" />
-								</button>
+								{allowedTabs.map((id) => (
+									<button
+										key={id}
+										type="button"
+										className={`list-group-item list-group-item-action ${tab === id ? "active" : ""}`}
+										onClick={() => selectTab(id)}
+									>
+										<T id={tabLabel[id]} />
+									</button>
+								))}
 							</div>
 						</div>
 					</div>
-					<div className="col-12 col-md-9 d-flex flex-column">
-						{tab === "default-site" && <DefaultSite />}
-						{tab === "credential-providers" && <CredentialProviders />}
-						{tab === "api-keys" && <ApiKeys />}
-						{tab === "webhooks" && <Webhooks />}
-					</div>
+					<div className="col-12 col-md-9 d-flex flex-column">{tabPanel[tab]}</div>
 				</div>
 			</div>
 		</div>
