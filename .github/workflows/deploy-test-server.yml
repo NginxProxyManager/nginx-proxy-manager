@@ -115,8 +115,9 @@ jobs:
           version_check="${GITHUB_WORKSPACE}/deploy/ansible/scripts/check_ansible_version.py"
           install_ansible_core() {
             "$PYTHON" -m pip install --user --upgrade "ansible-core>=2.17,<2.18"
-            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-            echo "PATH=$HOME/.local/bin:$PATH" >> "$GITHUB_ENV"
+            export PATH="${HOME}/.local/bin:${PATH}"
+            echo "${HOME}/.local/bin" >> "$GITHUB_PATH"
+            echo "PATH=${PATH}" >> "$GITHUB_ENV"
           }
           if command -v ansible-playbook >/dev/null 2>&1; then
             ansible-playbook --version | head -1
