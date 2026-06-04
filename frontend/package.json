@@ -29,10 +29,10 @@
 		"generate-password-browser": "^1.1.0",
 		"humps": "^2.0.1",
 		"query-string": "^9.3.1",
-		"react": "^19.2.6",
+		"react": "^19.2.7",
 		"react-bootstrap": "^2.10.10",
-		"react-dom": "^19.2.6",
-		"react-intl": "^10.1.9",
+		"react-dom": "^19.2.7",
+		"react-intl": "^10.1.11",
 		"react-markdown": "^10.1.0",
 		"react-router-dom": "^7.15.1",
 		"react-select": "^5.10.2",
@@ -41,7 +41,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",
-		"@formatjs/cli": "^6.16.3",
+		"@formatjs/cli": "^6.16.6",
 		"@tanstack/react-query-devtools": "^5.100.14",
 		"@testing-library/dom": "^10.4.1",
 		"@testing-library/jest-dom": "^6.9.1",
@@ -49,7 +49,7 @@
 		"@types/country-flag-icons": "^1.2.2",
 		"@types/humps": "^2.0.6",
 		"@types/node": "^25.9.1",
-		"@types/react": "^19.2.15",
+		"@types/react": "^19.2.16",
 		"@types/react-dom": "^19.2.3",
 		"@types/react-table": "^7.7.20",
 		"@vitejs/plugin-react": "^6.0.2",
@@ -57,10 +57,10 @@
 		"postcss": "^8.5.15",
 		"postcss-simple-vars": "^7.0.1",
 		"sass": "^1.100.0",
-		"tmp": "^0.2.6",
+		"tmp": "^0.2.7",
 		"typescript": "6.0.3",
-		"vite": "^8.0.14",
+		"vite": "^8.0.16",
 		"vite-plugin-checker": "^0.14.1",
-		"vitest": "^4.1.7"
+		"vitest": "^4.1.8"
 	}
 }
