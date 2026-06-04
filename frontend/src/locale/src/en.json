@@ -201,7 +201,7 @@
 		"defaultMessage": "DNS Credentials"
 	},
 	"credentials.secret-path": {
-		"defaultMessage": "Secret path"
+		"defaultMessage": "Infisical folder + secret key"
 	},
 	"credentials.source": {
 		"defaultMessage": "Credential source"
@@ -234,7 +234,7 @@
 		"defaultMessage": "Test resolve"
 	},
 	"credential-providers.resolve-path": {
-		"defaultMessage": "Secret path to resolve"
+		"defaultMessage": "Folder and secret key (e.g. /DNS/cloudflare-api-token)"
 	},
 	"action.add": {
 		"defaultMessage": "Add"

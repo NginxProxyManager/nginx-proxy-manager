@@ -169,7 +169,7 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 								<input
 									id="externalSecretPath"
 									className="form-control"
-									placeholder="dns/cloudflare/prod"
+									placeholder="/DNS/cloudflare-api-token"
 									value={v.meta?.credentialRef?.path || ""}
 									onChange={(e) => {
 										setFieldValue("meta.credentialRef", {

@@ -228,7 +228,7 @@ export default function CredentialProviders() {
 									<input
 										className="form-control form-control-sm"
 										style={{ maxWidth: 140 }}
-										placeholder="secret/path"
+										placeholder="/DNS/cloudflare-api-token"
 										value={resolvePath[p.id] || ""}
 										onChange={(e) =>
 											setResolvePath((prev) => ({ ...prev, [p.id]: e.target.value }))

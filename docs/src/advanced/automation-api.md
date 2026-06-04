@@ -138,7 +138,12 @@ Example OIDC Auth provider (JWT supplied at runtime):
 }
 ```
 
-Secret paths in `credential_ref.path` map to Infisical secret paths (leading slash optional).
+`credential_ref.path` is the Infisical **folder + secret key** (environment comes from the provider’s `environment_slug`, not from this path):
+
+- `/DNS/cloudflare-api-token` — secret key `cloudflare-api-token` in folder `/DNS`
+- `cloudflare-api-token` — same key at project root (`secretPath=/`)
+
+Alternatively set `path` to the folder (e.g. `/DNS`) and `field` to the secret key.
 
 Reference in a certificate:
 
@@ -149,8 +154,7 @@ Reference in a certificate:
   "credential_ref": {
     "type": "external",
     "provider_id": 1,
-    "path": "dns/cloudflare/prod",
-    "field": "optional_json_key"
+    "path": "/DNS/cloudflare-api-token"
   }
 }
 ```
