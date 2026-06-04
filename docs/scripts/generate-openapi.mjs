@@ -10,7 +10,9 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DOCS_ROOT = join(__dirname, "..");
-const REPO_ROOT = join(DOCS_ROOT, "..");
+const REPO_ROOT = process.env.NPM_REPO_ROOT
+	? join(process.env.NPM_REPO_ROOT)
+	: join(DOCS_ROOT, "..");
 const SCHEMA_DIR = join(REPO_ROOT, "backend", "schema");
 const SCHEMA_PATH = join(SCHEMA_DIR, "swagger.json");
 const OUT_PATH = join(DOCS_ROOT, "src", "public", "openapi.json");
