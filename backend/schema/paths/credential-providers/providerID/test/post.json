@@ -20,7 +20,19 @@
 	],
 	"responses": {
 		"200": {
-			"description": "OK"
+			"description": "OK",
+			"content": {
+				"application/json": {
+					"example": {
+						"ok": true,
+						"type": "vault",
+						"name": "Cypress vault stub"
+					},
+					"schema": {
+						"$ref": "../../../../components/credential-provider-test-object.json"
+					}
+				}
+			}
 		}
 	}
 }

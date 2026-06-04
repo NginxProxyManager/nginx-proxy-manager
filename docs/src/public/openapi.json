@@ -2319,6 +2319,43 @@
 							}
 						}
 					},
+					"202": {
+						"description": "Async acceptance when query parameter async=true",
+						"content": {
+							"application/json": {
+								"example": {
+									"job_id": 1,
+									"status": "pending"
+								},
+								"schema": {
+									"type": "object",
+									"description": "Async certificate request accepted; poll the job endpoint for completion",
+									"required": [
+										"job_id",
+										"status"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"job_id": {
+											"type": "integer",
+											"minimum": 1,
+											"example": 1
+										},
+										"status": {
+											"type": "string",
+											"enum": [
+												"pending",
+												"running",
+												"completed",
+												"failed"
+											],
+											"example": "pending"
+										}
+									}
+								}
+							}
+						}
+					},
 					"400": {
 						"description": "400 response",
 						"content": {
@@ -19615,7 +19652,38 @@
 				],
 				"responses": {
 					"200": {
-						"description": "OK"
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"example": {
+									"ok": true,
+									"type": "vault",
+									"name": "Cypress vault stub"
+								},
+								"schema": {
+									"type": "object",
+									"description": "Credential provider connectivity test result",
+									"required": [
+										"ok"
+									],
+									"additionalProperties": false,
+									"properties": {
+										"ok": {
+											"type": "boolean",
+											"example": true
+										},
+										"type": {
+											"type": "string",
+											"example": "vault"
+										},
+										"name": {
+											"type": "string",
+											"example": "Cypress vault stub"
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 			}

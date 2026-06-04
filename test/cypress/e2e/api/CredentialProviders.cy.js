@@ -36,7 +36,8 @@ describe('Credential provider endpoints', () => {
 			},
 			returnOnError: true,
 		}).then((result) => {
-			expect(result.error).to.include('workspace_id');
+			expect(result.error).to.have.property('message');
+			expect(result.error.message).to.include('workspace_id');
 		});
 	});
 
@@ -66,7 +67,9 @@ describe('Credential provider endpoints', () => {
 				returnOnError: true,
 			}).then((result) => {
 				// OIDC or network will fail in CI; endpoint must be reachable
-				expect(result).to.satisfy((r) => r.ok === true || typeof r.error !== 'undefined');
+				expect(result).to.satisfy(
+					(r) => r.ok === true || (r.error && typeof r.error.message === 'string'),
+				);
 			});
 
 			cy.task('backendApiDelete', {

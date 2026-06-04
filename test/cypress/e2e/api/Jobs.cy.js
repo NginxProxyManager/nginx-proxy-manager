@@ -25,7 +25,7 @@ describe('Jobs endpoints', () => {
 			token: token,
 			path: '/api/nginx/certificates?async=true',
 			data: {
-				domain_names: ['async-job.example.com'],
+				domain_names: ['website1.example.com'],
 				meta: { dns_challenge: false },
 				provider: 'letsencrypt',
 			},

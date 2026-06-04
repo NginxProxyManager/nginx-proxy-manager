@@ -88,6 +88,20 @@
 				}
 			}
 		},
+		"202": {
+			"description": "Async acceptance when query parameter async=true",
+			"content": {
+				"application/json": {
+					"example": {
+						"job_id": 1,
+						"status": "pending"
+					},
+					"schema": {
+						"$ref": "../../../components/certificate-async-object.json"
+					}
+				}
+			}
+		},
 		"400": {
 			"description": "400 response",
 			"content": {
