@@ -3,6 +3,7 @@
 import app from "./app.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
+import internalNginx from "./internal/nginx.js";
 import { global as logger } from "./logger.js";
 import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
@@ -14,6 +15,9 @@ async function appStart() {
 	return migrateUp()
 		.then(setup)
 		.then(getCompiledSchema)
+		.then(() => {
+			logger.info(`Upstream resolver: ${internalNginx.getUpstreamResolver()}`);
+		})
 		.then(() => {
 			if (!IP_RANGES_FETCH_ENABLED) {
 				logger.info("IP Ranges fetch is disabled by environment variable");

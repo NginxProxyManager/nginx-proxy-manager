@@ -89,6 +89,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
 							trustForwardedProto: data?.trustForwardedProto || false,
+							dynamicUpstreamResolve: data?.dynamicUpstreamResolve || false,
 							// Advanced tab
 							advancedConfig: data?.advancedConfig || "",
 							meta: data?.meta || {},
@@ -317,6 +318,32 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																				<input
 																					{...field}
 																					id="allowWebsocketUpgrade"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
+															<label className="row" htmlFor="dynamicUpstreamResolve">
+																<span className="col">
+																	<T id="host.flags.dynamic-upstream-resolve" />
+																	<div className="small text-muted mt-1">
+																		<T id="host.flags.dynamic-upstream-resolve-description" />
+																	</div>
+																</span>
+																<span className="col-auto">
+																	<Field name="dynamicUpstreamResolve" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="dynamicUpstreamResolve"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
 																					})}
