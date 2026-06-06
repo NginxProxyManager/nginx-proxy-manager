@@ -376,13 +376,13 @@
 		"full_plugin_name": "dns-joker"
 	},
 	"kas": {
-        "name": "All-Inkl",
-        "package_name": "certbot-dns-kas",
-        "version": "~=0.1.1",
-        "dependencies": "kasserver",
-        "credentials": "dns_kas_user = your_kas_user\ndns_kas_password = your_kas_password",
-        "full_plugin_name": "dns-kas"
-    },
+		"credentials": "dns_kas_user = your_kas_user\ndns_kas_password = your_kas_password",
+		"dependencies": "",
+		"full_plugin_name": "dns-kas",
+		"name": "All-Inkl",
+		"package_name": "certbot-dns-kas",
+		"version": "~=1.0"
+ 	},
 	"leaseweb": {
 		"name": "LeaseWeb",
 		"package_name": "certbot-dns-leaseweb",
