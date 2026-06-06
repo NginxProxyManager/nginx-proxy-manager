@@ -77,6 +77,9 @@
 						},
 						"locations": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/locations"
+						},
+						"host_group_label": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/host_group_label"
 						}
 					}
 				},
@@ -123,6 +126,7 @@
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
 								"trust_forwarded_proto": false,
+								"host_group_label": "",
 								"certificate": null,
 								"owner": {
 									"id": 1,
