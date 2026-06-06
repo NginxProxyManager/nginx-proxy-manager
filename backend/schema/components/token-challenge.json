@@ -1,0 +1,18 @@
+{
+	"type": "object",
+	"description": "Token object",
+	"required": ["requires_2fa", "challenge_token"],
+	"additionalProperties": false,
+	"properties": {
+		"requires_2fa": {
+			"description": "Whether this token request requires two-factor authentication",
+			"example": true,
+			"type": "boolean"
+		},
+		"challenge_token": {
+			"description": "Challenge Token used in subsequent 2FA verification",
+			"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
+			"type": "string"
+		}
+	}
+}

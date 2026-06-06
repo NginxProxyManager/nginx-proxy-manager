@@ -64,7 +64,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
     restart: unless-stopped
     environment:
       TZ: "Australia/Brisbane"

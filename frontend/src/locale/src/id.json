@@ -1,0 +1,683 @@
+{
+	"access-list": {
+		"defaultMessage": "Daftar Akses"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {Aturan} other {Aturan}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {Pengguna} other {Pengguna}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Jika setidaknya 1 aturan ada, aturan tolak semua ini akan ditambahkan paling akhir"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Perhatikan bahwa direktif izinkan dan tolak akan diterapkan sesuai urutan yang didefinisikan."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Teruskan Auth ke Upstream"
+	},
+	"access-list.public": {
+		"defaultMessage": "Dapat Diakses Publik"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Tidak perlu basic auth"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 atau 192.168.1.0/24 atau 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Penuhi Salah Satu"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {Pengguna} other {Pengguna}}, {rules} {rules, plural, one {Aturan} other {Aturan}} - Dibuat: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Daftar Akses"
+	},
+	"action.add": {
+		"defaultMessage": "Tambah"
+	},
+	"action.add-location": {
+		"defaultMessage": "Tambah Lokasi"
+	},
+	"action.allow": {
+		"defaultMessage": "Izinkan"
+	},
+	"action.close": {
+		"defaultMessage": "Tutup"
+	},
+	"action.delete": {
+		"defaultMessage": "Hapus"
+	},
+	"action.deny": {
+		"defaultMessage": "Tolak"
+	},
+	"action.disable": {
+		"defaultMessage": "Nonaktifkan"
+	},
+	"action.download": {
+		"defaultMessage": "Unduh"
+	},
+	"action.edit": {
+		"defaultMessage": "Edit"
+	},
+	"action.enable": {
+		"defaultMessage": "Aktifkan"
+	},
+	"action.permissions": {
+		"defaultMessage": "Izin"
+	},
+	"action.renew": {
+		"defaultMessage": "Perpanjang"
+	},
+	"action.view-details": {
+		"defaultMessage": "Lihat Detail"
+	},
+	"auditlogs": {
+		"defaultMessage": "Log Audit"
+	},
+	"auto": {
+		"defaultMessage": "Otomatis"
+	},
+	"cancel": {
+		"defaultMessage": "Batal"
+	},
+	"certificate": {
+		"defaultMessage": "Sertifikat"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Sertifikat"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Kunci Sertifikat"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Sertifikat Intermediate"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Digunakan"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Tidak ada sertifikat yang ditetapkan"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Host ini tidak akan menggunakan HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Tidak Ada"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Tidak Digunakan"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Perpanjang Sertifikat"
+	},
+	"certificates": {
+		"defaultMessage": "Sertifikat"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Sertifikat Kustom"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Berkas kunci yang dilindungi frasa sandi tidak didukung."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Konten File Kredensial"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Plugin ini memerlukan file konfigurasi yang berisi token API atau kredensial lain untuk penyedia Anda"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Data ini akan disimpan sebagai teks biasa di database dan dalam file!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Detik Propagasi"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Biarkan kosong untuk menggunakan nilai baku plugin. Jumlah detik menunggu propagasi DNS."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "Penyedia DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Pilih Penyedia..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Bagian ini memerlukan pengetahuan tentang Certbot dan plugin DNS-nya. Silakan merujuk dokumentasi plugin terkait."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi tampaknya bukan Nginx Proxy Manager. Pastikan domain Anda mengarah ke IP tempat instance NPM berjalan."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Gagal memeriksa keterjangkauan karena kesalahan komunikasi dengan site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Tidak ada server yang tersedia pada domain ini. Pastikan domain Anda ada dan mengarah ke IP tempat instance NPM berjalan dan bila perlu port 80 diteruskan di router Anda."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Server Anda dapat dijangkau dan pembuatan sertifikat seharusnya memungkinkan."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi mengembalikan kode status tak terduga {code}. Apakah itu server NPM? Pastikan domain Anda mengarah ke IP tempat instance NPM berjalan."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi mengembalikan data yang tidak terduga. Apakah itu server NPM? Pastikan domain Anda mengarah ke IP tempat instance NPM berjalan."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Hasil Uji"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Domain ini harus sudah dikonfigurasi agar mengarah ke instalasi ini."
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "dengan Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Minta Sertifikat Baru"
+	},
+	"column.access": {
+		"defaultMessage": "Akses"
+	},
+	"column.authorization": {
+		"defaultMessage": "Otorisasi"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Otorisasi"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Lokasi Kustom"
+	},
+	"column.destination": {
+		"defaultMessage": "Tujuan"
+	},
+	"column.details": {
+		"defaultMessage": "Detail"
+	},
+	"column.email": {
+		"defaultMessage": "Email"
+	},
+	"column.event": {
+		"defaultMessage": "Peristiwa"
+	},
+	"column.expires": {
+		"defaultMessage": "Kedaluwarsa"
+	},
+	"column.http-code": {
+		"defaultMessage": "Kode HTTP"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Port Masuk"
+	},
+	"column.name": {
+		"defaultMessage": "Nama"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protokol"
+	},
+	"column.provider": {
+		"defaultMessage": "Penyedia"
+	},
+	"column.roles": {
+		"defaultMessage": "Peran"
+	},
+	"column.rules": {
+		"defaultMessage": "Aturan"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Pemenuhan"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Semua"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Salah Satu"
+	},
+	"column.scheme": {
+		"defaultMessage": "Skema"
+	},
+	"column.source": {
+		"defaultMessage": "Sumber"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Status"
+	},
+	"created-on": {
+		"defaultMessage": "Dibuat: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Dasbor"
+	},
+	"dead-host": {
+		"defaultMessage": "Host 404"
+	},
+	"dead-hosts": {
+		"defaultMessage": "Host 404"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host 404} other {Host 404}}"
+	},
+	"disabled": {
+		"defaultMessage": "Nonaktif"
+	},
+	"domain-names": {
+		"defaultMessage": "Nama Domain"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Maksimum {count} nama domain"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Mulai mengetik untuk menambahkan domain..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Wildcard tidak diizinkan untuk tipe ini"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Wildcard tidak didukung untuk CA ini"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Paksa SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS Diaktifkan"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS Subdomain"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "Dukungan HTTP/2"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Gunakan DNS Challenge"
+	},
+	"email-address": {
+		"defaultMessage": "Alamat email"
+	},
+	"empty-search": {
+		"defaultMessage": "Tidak ada hasil"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Mengapa tidak membuatnya?"
+	},
+	"enabled": {
+		"defaultMessage": "Aktif"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Setidaknya satu Otorisasi atau satu Aturan Akses diperlukan"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Nama pengguna otorisasi harus unik"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Email atau kata sandi tidak valid"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Domain tidak valid: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Alamat email tidak valid"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Panjang maksimum adalah {max} karakter{max, plural, one {} other {}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Terlalu banyak domain, maksimum {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Maksimum adalah {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Panjang minimum adalah {min} karakter{min, plural, one {} other {}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Minimum adalah {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Kata sandi harus cocok"
+	},
+	"error.required": {
+		"defaultMessage": "Ini wajib diisi"
+	},
+	"expires.on": {
+		"defaultMessage": "Kedaluwarsa: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Fork saya di GitHub"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Blokir Eksploit Umum"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Cache Aset"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Pertahankan Path"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protokol"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Dukungan Websocket"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Port Terusan"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Skema"
+	},
+	"hosts": {
+		"defaultMessage": "Host"
+	},
+	"http-only": {
+		"defaultMessage": "HTTP Saja"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt via DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt via HTTP"
+	},
+	"loading": {
+		"defaultMessage": "Memuat…"
+	},
+	"login.title": {
+		"defaultMessage": "Masuk ke akun Anda"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Konfigurasi Nginx Kustom"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Masukkan konfigurasi Nginx kustom Anda di sini dengan risiko Anda sendiri!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Anda tidak memiliki akses untuk melihat ini."
+	},
+	"notfound.action": {
+		"defaultMessage": "Bawa saya pulang"
+	},
+	"notfound.content": {
+		"defaultMessage": "Maaf, halaman yang Anda cari tidak ditemukan"
+	},
+	"notfound.title": {
+		"defaultMessage": "Ups… Anda baru saja menemukan halaman error"
+	},
+	"notification.error": {
+		"defaultMessage": "Kesalahan"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} telah dihapus"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} telah dinonaktifkan"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} telah diaktifkan"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} telah diperpanjang"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} telah disimpan"
+	},
+	"notification.success": {
+		"defaultMessage": "Berhasil"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Tambah {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "Hapus {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Apakah Anda yakin ingin menghapus {object} ini?"
+	},
+	"object.edit": {
+		"defaultMessage": "Edit {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "Tidak ada {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "{object} dibuat"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "{object} dihapus"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "{object} dinonaktifkan"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "{object} diaktifkan"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "{object} diperpanjang"
+	},
+	"object.event.updated": {
+		"defaultMessage": "{object} diperbarui"
+	},
+	"offline": {
+		"defaultMessage": "Offline"
+	},
+	"online": {
+		"defaultMessage": "Online"
+	},
+	"options": {
+		"defaultMessage": "Opsi"
+	},
+	"password": {
+		"defaultMessage": "Kata sandi"
+	},
+	"password.generate": {
+		"defaultMessage": "Buat kata sandi acak"
+	},
+	"password.hide": {
+		"defaultMessage": "Sembunyikan Kata Sandi"
+	},
+	"password.show": {
+		"defaultMessage": "Tampilkan Kata Sandi"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Tersembunyi"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Kelola"
+	},
+	"permissions.view": {
+		"defaultMessage": "Hanya Lihat"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Semua Item"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Visibilitas Item"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Hanya Item yang Dibuat"
+	},
+	"proxy-host": {
+		"defaultMessage": "Host Proxy"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Hostname / IP Terusan"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Host Proxy"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host Proxy} other {Host Proxy}}"
+	},
+	"public": {
+		"defaultMessage": "Publik"
+	},
+	"redirection-host": {
+		"defaultMessage": "Host Pengalihan"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Domain Terusan"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "Kode HTTP"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Host Pengalihan"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host Pengalihan} other {Host Pengalihan}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Banyak Pilihan"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Pindah permanen"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Pindah sementara"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Lihat lainnya"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Pengalihan sementara"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Pengalihan permanen"
+	},
+	"role.admin": {
+		"defaultMessage": "Administrator"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Pengguna Standar"
+	},
+	"save": {
+		"defaultMessage": "Simpan"
+	},
+	"setting": {
+		"defaultMessage": "Pengaturan"
+	},
+	"settings": {
+		"defaultMessage": "Pengaturan"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Situs Default"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "Halaman 404"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Tidak Ada Respons (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Halaman Ucapan Selamat"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Apa yang ditampilkan saat Nginx diakses dengan Host yang tidak dikenal"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "HTML Kustom"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Masukkan konten HTML kustom Anda di sini -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Alihkan"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Mulai dengan membuat akun admin Anda."
+	},
+	"setup.title": {
+		"defaultMessage": "Selamat datang!"
+	},
+	"sign-in": {
+		"defaultMessage": "Masuk"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "Sertifikat SSL"
+	},
+	"stream": {
+		"defaultMessage": "Stream"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Host Terusan"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com atau 10.0.0.1 atau 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Port Masuk"
+	},
+	"streams": {
+		"defaultMessage": "Stream"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {Stream} other {Stream}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Uji"
+	},
+	"update-available": {
+		"defaultMessage": "Pembaruan Tersedia: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "Pengguna"
+	},
+	"user.change-password": {
+		"defaultMessage": "Ubah Kata Sandi"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Konfirmasi Kata Sandi"
+	},
+	"user.current-password": {
+		"defaultMessage": "Kata Sandi Saat Ini"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Edit Profil"
+	},
+	"user.full-name": {
+		"defaultMessage": "Nama Lengkap"
+	},
+	"user.login-as": {
+		"defaultMessage": "Masuk sebagai {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "Keluar"
+	},
+	"user.new-password": {
+		"defaultMessage": "Kata Sandi Baru"
+	},
+	"user.nickname": {
+		"defaultMessage": "Nama Panggilan"
+	},
+	"user.set-password": {
+		"defaultMessage": "Atur Kata Sandi"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Atur Izin untuk {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Beralih ke mode gelap"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Beralih ke mode terang"
+	},
+	"username": {
+		"defaultMessage": "Nama pengguna"
+	},
+	"users": {
+		"defaultMessage": "Pengguna"
+	}
+}

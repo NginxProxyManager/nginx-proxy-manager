@@ -1,3 +1,4 @@
+import { useLocaleState } from "src/context";
 import { formatDateTime, T } from "src/locale";
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
 	disabled?: boolean;
 }
 export function ValueWithDateFormatter({ value, createdOn, disabled }: Props) {
+	const { locale } = useLocaleState();
 	return (
 		<div className="flex-fill">
 			<div className="font-weight-medium">
@@ -13,7 +15,7 @@ export function ValueWithDateFormatter({ value, createdOn, disabled }: Props) {
 			</div>
 			{createdOn ? (
 				<div className={`text-secondary mt-1 ${disabled ? "text-red" : ""}`}>
-					<T id={disabled ? "disabled" : "created-on"} data={{ date: formatDateTime(createdOn) }} />
+					<T id={disabled ? "disabled" : "created-on"} data={{ date: formatDateTime(createdOn, locale) }} />
 				</div>
 			) : null}
 		</div>

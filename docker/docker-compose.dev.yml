@@ -94,7 +94,7 @@ services:
           - pgdb.internal
 
   stepca:
-    image: jc21/testca
+    image: nginxproxymanager/testca
     container_name: npm2dev.stepca
     volumes:
       - "./dev/resolv.conf:/etc/resolv.conf:ro"
@@ -192,7 +192,7 @@ services:
       - "../test/results:/results"
       - "./dev/resolv.conf:/etc/resolv.conf:ro"
       - "/etc/localtime:/etc/localtime:ro"
-    command: cypress run --browser chrome --config-file=cypress/config/ci.js
+    command: cypress run --browser chrome --config-file=cypress/config/ci.mjs
     networks:
       - nginx_proxy_manager
 

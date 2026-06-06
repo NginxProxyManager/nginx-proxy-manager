@@ -3,7 +3,16 @@
 describe('Streams', () => {
 	let token;
 
+	const certFile = 'website1.pem';
+	const keyFile = 'website1.key.pem';
+
 	before(() => {
+		cy.createCustomCerts({
+			domain: 'website1.example.com',
+			certFile,
+			keyFile,
+		})
+
 		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
@@ -19,15 +28,6 @@ describe('Streams', () => {
 				},
 			}).then((data) => {
 				cy.validateSwaggerSchema('put', 200, '/settings/{settingID}', data);
-			});
-		});
-
-		// Create a custom cert pair
-		cy.exec('mkcert -cert-file=/test/cypress/fixtures/website1.pem -key-file=/test/cypress/fixtures/website1.key.pem website1.example.com').then((result) => {
-			expect(result.code).to.eq(0);
-			// Install CA
-			cy.exec('mkcert -install').then((result) => {
-				expect(result.code).to.eq(0);
 			});
 		});
 
@@ -56,7 +56,7 @@ describe('Streams', () => {
 			expect(data).to.have.property('udp_forwarding', false);
 
 			cy.exec('curl --noproxy -- http://website1.example.com:1500').then((result) => {
-				expect(result.code).to.eq(0);
+				expect(result.exitCode).to.eq(0);
 				expect(result.stdout).to.contain('yay it works');
 			});
 		});
@@ -107,7 +107,7 @@ describe('Streams', () => {
 			expect(data).to.have.property('udp_forwarding', true);
 
 			cy.exec('curl --noproxy -- http://website1.example.com:1502').then((result) => {
-				expect(result.code).to.eq(0);
+				expect(result.exitCode).to.eq(0);
 				expect(result.stdout).to.contain('yay it works');
 			});
 		});
@@ -134,8 +134,8 @@ describe('Streams', () => {
 				token: token,
 				path:  `/api/nginx/certificates/${certID}/upload`,
 				files:  {
-					certificate: 'website1.pem',
-					certificate_key: 'website1.key.pem',
+					certificate: certFile,
+					certificate_key: keyFile,
 				},
 			}).then((data) => {
 				cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
@@ -176,6 +176,7 @@ describe('Streams', () => {
 							'cert_chain_of_trust',
 							'cert_extlifeSpan',
 							'cert_revocation',
+							'engine_problem',
 							'overall_grade',
 						];
 

@@ -31,6 +31,6 @@ for file in *.json; do
 		fi
 
 		echo "Sorting $file"
-		jq --tab --sort-keys . "$file" | sponge "$file"
+		tmp=$(mktemp) && jq --tab --sort-keys . "$file" > "$tmp" && mv "$tmp" "$file"
 	fi
 done

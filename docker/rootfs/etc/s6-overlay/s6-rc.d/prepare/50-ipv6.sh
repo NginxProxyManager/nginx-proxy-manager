@@ -8,11 +8,15 @@ set -e
 
 log_info 'IPv6 ...'
 
+is_mounted() {
+	awk -v p="$1" '$5 == p { found=1 } END { exit !found }' /proc/self/mountinfo
+}
+
 process_folder () {
 	FILES=$(find "$1" -type f -name "*.conf")
 	SED_REGEX=
 
-	if [ "$(is_true "$DISABLE_IPV6")" = '1' ]; then
+	if [ "$(is_true "${DISABLE_IPV6:-}")" = '1' ]; then
 		# IPV6 is disabled
 		echo "Disabling IPV6 in hosts in: $1"
 		SED_REGEX='s/^([^#]*)listen \[::\]/\1#listen [::]/g'
@@ -25,7 +29,16 @@ process_folder () {
 	for FILE in $FILES
 	do
 		echo "- ${FILE}"
-		echo "$(sed -E "$SED_REGEX" "$FILE")" > $FILE
+		TMPFILE="${FILE}.tmp"
+
+		if is_mounted "${FILE}"; then
+			echo "WARNING: skipping ${FILE} — mounted file" >&2
+		elif sed -E "$SED_REGEX" "$FILE" > "$TMPFILE" && [ -s "$TMPFILE" ]; then
+			mv "$TMPFILE" "$FILE"
+		else
+			echo "WARNING: skipping ${FILE} — sed produced empty output" >&2
+			rm -f "$TMPFILE"
+		fi
 	done
 
 	# ensure the files are still owned by the npm user

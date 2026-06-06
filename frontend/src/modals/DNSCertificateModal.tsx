@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Form, Formik } from "formik";
+import { Form, Formik, Field } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
@@ -44,6 +44,7 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 						provider: "letsencrypt",
 						meta: {
 							dnsChallenge: true,
+							keyType: "ecdsa",
 						},
 					} as any
 				}
@@ -63,6 +64,30 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 							<div className="card m-0 border-0">
 								<div className="card-body">
 									<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
+									<Field name="meta.keyType">
+										{({ field }: any) => (
+											<div className="mb-3">
+												<label htmlFor="keyType" className="form-label">
+													<T id="certificates.key-type" />
+												</label>
+												<select
+													id="keyType"
+													className="form-select"
+													{...field}
+												>
+													<option value="rsa">
+														<T id="certificates.key-type-rsa" />
+													</option>
+													<option value="ecdsa">
+														<T id="certificates.key-type-ecdsa" />
+													</option>
+												</select>
+												<small className="form-text text-muted">
+													<T id="certificates.key-type-description" />
+												</small>
+											</div>
+										)}
+									</Field>
 									<DNSProviderFields />
 								</div>
 							</div>

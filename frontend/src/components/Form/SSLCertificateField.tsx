@@ -2,6 +2,7 @@ import { IconShield } from "@tabler/icons-react";
 import { Field, useFormikContext } from "formik";
 import Select, { type ActionMeta, components, type OptionProps } from "react-select";
 import type { Certificate } from "src/api/backend";
+import { useLocaleState } from "src/context";
 import { useCertificates } from "src/hooks";
 import { formatDateTime, intl, T } from "src/locale";
 
@@ -41,6 +42,7 @@ export function SSLCertificateField({
 	allowNew,
 	forHttp = true,
 }: Props) {
+	const { locale } = useLocaleState();
 	const { isLoading, isError, error, data } = useCertificates();
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
@@ -75,7 +77,7 @@ export function SSLCertificateField({
 		data?.map((cert: Certificate) => ({
 			value: cert.id,
 			label: cert.niceName,
-			subLabel: `${cert.provider === "letsencrypt" ? intl.formatMessage({ id: "lets-encrypt" }) : cert.provider} — ${intl.formatMessage({ id: "expires.on" }, { date: cert.expiresOn ? formatDateTime(cert.expiresOn) : "N/A" })}`,
+			subLabel: `${cert.provider === "letsencrypt" ? intl.formatMessage({ id: "lets-encrypt" }) : cert.provider} — ${intl.formatMessage({ id: "expires.on" }, { date: cert.expiresOn ? formatDateTime(cert.expiresOn, locale) : "N/A" })}`,
 			icon: <IconShield size={14} className="text-pink" />,
 		})) || [];
 

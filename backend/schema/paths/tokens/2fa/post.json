@@ -1,0 +1,55 @@
+{
+	"operationId": "loginWith2FA",
+	"summary": "Verify 2FA code and get full token",
+	"tags": ["tokens"],
+	"requestBody": {
+		"description": "2fa Challenge Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"challenge_token": {
+							"minLength": 1,
+							"type": "string",
+							"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+						},
+						"code": {
+							"minLength": 6,
+							"maxLength": 8,
+							"type": "string",
+							"example": "012345"
+						}
+					},
+					"required": ["challenge_token", "code"],
+					"type": "object"
+				},
+				"example": {
+					"challenge_token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4",
+					"code": "012345"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"expires": "2025-02-04T20:40:46.340Z",
+								"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/token-object.json"
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}
