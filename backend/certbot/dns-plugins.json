@@ -418,10 +418,10 @@
 	"kas": {
 		"name": "All-Inkl",
 		"package_name": "certbot-dns-kas",
-		"version": "~=1.0"
+		"version": "~=1.0",
 		"dependencies": "",
 		"credentials": "dns_kas_user = your_kas_user\ndns_kas_password = your_kas_password",
-		"full_plugin_name": "dns-kas",
+		"full_plugin_name": "dns-kas"
  	},
 	"leaseweb": {
 		"credentials": "dns_leaseweb_api_token = 01234556789",
