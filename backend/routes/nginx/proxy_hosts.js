@@ -5,6 +5,7 @@ import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
 import { debug, express as logger } from "../../logger.js";
 import { getValidationSchema } from "../../schema/index.js";
+import proxyHostLogs from "./proxy_host_logs.js";
 
 const router = express.Router({
 	caseSensitive: true,
@@ -205,5 +206,7 @@ router
 			next(err);
 		}
 	});
+
+router.use("/", proxyHostLogs);
 
 export default router;

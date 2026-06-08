@@ -96,5 +96,16 @@ export default (config) => {
 				options.returnOnError || false,
 			);
 		},
+
+		writeMockLog: (options) => {
+			const { hostId, type, content } = options;
+			const api = new Client(config);
+			return api.request(
+				"post",
+				"/api/ci/mock-log",
+				false,
+				{ hostId, type, content }
+			);
+		},
 	};
 };
