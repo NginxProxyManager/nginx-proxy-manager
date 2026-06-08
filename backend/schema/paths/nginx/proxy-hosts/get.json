@@ -47,6 +47,7 @@
 									"ssl_forced": false,
 									"caching_enabled": false,
 									"block_exploits": false,
+									"drop_unauthorized": false,
 									"advanced_config": "",
 									"meta": {
 										"nginx_online": true,

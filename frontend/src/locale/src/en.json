@@ -65,11 +65,26 @@
 	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
+	"access-list.authorized-client-cas": {
+		"defaultMessage": "Authorized Client Certificate"
+	},
+	"access-list.client-ca-search-placeholder": {
+		"defaultMessage": "Client Certificate"
+	},
+	"access-list.client-cas": {
+		"defaultMessage": "Client Certificate"
+	},
+	"access-list.clientca-count": {
+		"defaultMessage": "{count} Client {count, plural, one {CA} other {CAs}}"
+	},
 	"access-list.help-rules-last": {
 		"defaultMessage": "When at least 1 rule exists, this deny all rule will be added last"
 	},
 	"access-list.help.rules-order": {
 		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
+	},
+	"access-list.no-client-cas": {
+		"defaultMessage": "No Client Certificate added."
 	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Pass Auth to Upstream"
@@ -87,7 +102,7 @@
 		"defaultMessage": "Satisfy Any"
 	},
 	"access-list.subtitle": {
-		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}} - Created: {date}"
+		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}}, {clientcas} Client {clientcas, plural, one {CA} other {CAs}} - Created: {date}"
 	},
 	"access-lists": {
 		"defaultMessage": "Access Lists"
@@ -173,6 +188,9 @@
 	"certificates": {
 		"defaultMessage": "Certificates"
 	},
+	"certificates.clientca": {
+		"defaultMessage": "Client Certificate"
+	},
 	"certificates.custom": {
 		"defaultMessage": "Custom Certificate"
 	},
@@ -245,6 +263,9 @@
 	"certificates.request.title": {
 		"defaultMessage": "Request a new Certificate"
 	},
+	"clientca": {
+		"defaultMessage": "Client Certificate"
+	},
 	"column.access": {
 		"defaultMessage": "Access"
 	},
@@ -253,6 +274,9 @@
 	},
 	"column.authorizations": {
 		"defaultMessage": "Authorizations"
+	},
+	"column.client-cas": {
+		"defaultMessage": "Client CAs"
 	},
 	"column.custom-locations": {
 		"defaultMessage": "Custom Locations"
@@ -381,7 +405,7 @@
 		"defaultMessage": "Enabled"
 	},
 	"error.access.at-least-one": {
-		"defaultMessage": "Either one Authorization or one Access Rule is required"
+		"defaultMessage": "Either one Authorization, one Access Rule or one Client Certificate is required"
 	},
 	"error.access.duplicate-usernames": {
 		"defaultMessage": "Authorization Usernames must be unique"
@@ -427,6 +451,9 @@
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache Assets"
+	},
+	"host.flags.drop-unauthorized": {
+		"defaultMessage": "Drop Unauthorized Requests"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Preserve Path"

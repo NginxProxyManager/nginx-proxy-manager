@@ -36,6 +36,48 @@
 			"type": "integer",
 			"minimum": 0,
 			"example": 3
+		},
+		"clientcas": {
+			"type": "array",
+			"example": [
+				{
+					"id": 1,
+					"created_on": "2025-10-28T01:10:26.000Z",
+					"modified_on": "2025-10-28T01:10:26.000Z",
+					"access_list_id": 1,
+					"certificate_id": 5,
+					"meta": {}
+				}
+			],
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"$ref": "../common.json#/properties/id"
+					},
+					"created_on": {
+						"$ref": "../common.json#/properties/created_on"
+					},
+					"modified_on": {
+						"$ref": "../common.json#/properties/modified_on"
+					},
+					"access_list_id": {
+						"$ref": "../common.json#/properties/access_list_id"
+					},
+					"certificate_id": {
+						"type": "integer",
+						"minimum": 1
+					},
+					"certificate": {
+						"$ref": "./certificate-object.json"
+					},
+					"meta": {
+						"type": "object",
+						"example": {}
+					}
+				}
+			}
 		}
 	}
 }

@@ -11,11 +11,15 @@ import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
-const showCustomCertificateModal = () => {
-	EasyModal.show(CustomCertificateModal);
+const showCustomCertificateModal = (provider: "other" | "clientca" = "other") => {
+	EasyModal.show(CustomCertificateModal, { provider });
 };
 
-const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModalProps) => {
+interface Props extends InnerModalProps {
+	provider?: "other" | "clientca";
+}
+
+const CustomCertificateModal = EasyModal.create(({ visible, remove, provider = "other" }: Props) => {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,7 +34,9 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 			const formData = new FormData();
 
 			formData.append("certificate", certificate);
-			formData.append("certificate_key", certificateKey);
+			if (provider === "other") {
+				formData.append("certificate_key", certificateKey);
+			}
 			if (intermediateCertificate !== null) {
 				formData.append("intermediate_certificate", intermediateCertificate);
 			}
@@ -62,7 +68,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 				initialValues={
 					{
 						niceName: "",
-						provider: "other",
+						provider,
 						certificate: null,
 						certificateKey: null,
 						intermediateCertificate: null,
@@ -74,7 +80,10 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 					<Form>
 						<Modal.Header closeButton>
 							<Modal.Title>
-								<T id="object.add" tData={{ object: "certificates.custom" }} />
+								<T
+									id="object.add"
+									tData={{ object: provider === "clientca" ? "certificates.clientca" : "certificates.custom" }}
+								/>
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body className="p-0">
@@ -111,37 +120,39 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 											</div>
 										)}
 									</Field>
-									<Field name="certificateKey">
-										{({ field, form }: any) => (
-											<div className="mb-3">
-												<label htmlFor="certificateKey" className="form-label">
-													<T id="certificate.custom-certificate-key" />
-												</label>
-												<input
-													id="certificateKey"
-													type="file"
-													required
-													autoComplete="off"
-													className="form-control"
-													onChange={(event) => {
-														form.setFieldValue(
-															field.name,
-															event.currentTarget.files?.length
-																? event.currentTarget.files[0]
-																: null,
-														);
-													}}
-												/>
-												{form.errors.certificateKey ? (
-													<div className="invalid-feedback">
-														{form.errors.certificateKey && form.touched.certificateKey
-															? form.errors.certificateKey
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
+									{provider === "other" ? (
+										<Field name="certificateKey">
+											{({ field, form }: any) => (
+												<div className="mb-3">
+													<label htmlFor="certificateKey" className="form-label">
+														<T id="certificate.custom-certificate-key" />
+													</label>
+													<input
+														id="certificateKey"
+														type="file"
+														required
+														autoComplete="off"
+														className="form-control"
+														onChange={(event) => {
+															form.setFieldValue(
+																field.name,
+																event.currentTarget.files?.length
+																	? event.currentTarget.files[0]
+																	: null,
+															);
+														}}
+													/>
+													{form.errors.certificateKey ? (
+														<div className="invalid-feedback">
+															{form.errors.certificateKey && form.touched.certificateKey
+																? form.errors.certificateKey
+																: null}
+														</div>
+													) : null}
+												</div>
+											)}
+										</Field>
+									) : null}
 									<Field name="certificate">
 										{({ field, form }: any) => (
 											<div className="mb-3">

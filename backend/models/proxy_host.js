@@ -22,6 +22,7 @@ const boolFields = [
 	"hsts_enabled",
 	"hsts_subdomains",
 	"trust_forwarded_proto",
+	"drop_unauthorized",
 ];
 
 class ProxyHost extends Model {
@@ -74,11 +75,11 @@ class ProxyHost extends Model {
 	}
 
 	static get defaultAllowGraph() {
-		return "[owner,access_list.[clients,items],certificate]";
+		return "[owner,access_list.[clientcas.[certificate],clients,items],certificate]";
 	}
 
 	static get defaultExpand() {
-		return ["owner", "certificate", "access_list.[clients,items]"];
+		return ["owner", "certificate", "access_list.[clientcas.[certificate],clients,items]"];
 	}
 
 	static get defaultOrder() {

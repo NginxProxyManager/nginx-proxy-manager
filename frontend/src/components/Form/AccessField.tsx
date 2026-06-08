@@ -34,7 +34,7 @@ interface Props {
 }
 export function AccessField({ name = "accessListId", label = "access-list", id = "accessListId" }: Props) {
 	const { locale } = useLocaleState();
-	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"]);
+	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients", "clientcas.certificate"]);
 	const { setFieldValue } = useFormikContext();
 
 	const handleChange = (newValue: any, _actionMeta: ActionMeta<AccessOption>) => {
@@ -50,6 +50,7 @@ export function AccessField({ name = "accessListId", label = "access-list", id =
 				{
 					users: item?.items?.length,
 					rules: item?.clients?.length,
+					clientcas: item?.clientcas?.length,
 					date: item?.createdOn ? formatDateTime(item?.createdOn, locale) : "N/A",
 				},
 			),

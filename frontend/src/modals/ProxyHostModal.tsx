@@ -79,6 +79,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							accessListId: data?.accessListId || 0,
 							cachingEnabled: data?.cachingEnabled || false,
 							blockExploits: data?.blockExploits || false,
+							dropUnauthorized: data?.dropUnauthorized || false,
 							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
 							// Locations tab
 							locations: data?.locations || [],
@@ -294,6 +295,29 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																				<input
 																					{...field}
 																					id="blockExploits"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+														<div>
+															<label className="row" htmlFor="dropUnauthorized">
+																<span className="col">
+																	<T id="host.flags.drop-unauthorized" />
+																</span>
+																<span className="col-auto">
+																	<Field name="dropUnauthorized" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="dropUnauthorized"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
 																					})}

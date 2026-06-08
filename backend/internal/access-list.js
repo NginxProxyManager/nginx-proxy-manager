@@ -6,6 +6,7 @@ import utils from "../lib/utils.js";
 import { access as logger } from "../logger.js";
 import accessListModel from "../models/access_list.js";
 import accessListAuthModel from "../models/access_list_auth.js";
+import accessListClientCAsModel from "../models/access_list_clientcas.js";
 import accessListClientModel from "../models/access_list_client.js";
 import proxyHostModel from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
@@ -58,13 +59,25 @@ const internalAccessList = {
 				directive: client.directive,
 			});
 		}
+		for (const certificateId of data.clientcas ?? []) {
+			await accessListClientCAsModel.query().insert({
+				access_list_id: row.id,
+				certificate_id: certificateId,
+			});
+		}
 
 		// re-fetch with expansions
 		const freshRow = await internalAccessList.get(
 			access,
 			{
 				id: data.id,
-				expand: ["owner", "items", "clients", "proxy_hosts.access_list.[clients,items]"],
+				expand: [
+					"owner",
+					"items",
+					"clients",
+					"clientcas.certificate",
+					"proxy_hosts.access_list.[clientcas.certificate,clients,items]",
+				],
 			},
 			true // skip masking
 		);
@@ -164,6 +177,16 @@ const internalAccessList = {
 				}
 			}
 		}
+		if (typeof data.clientcas !== "undefined" && data.clientcas) {
+			await accessListClientCAsModel.query().delete().where("access_list_id", data.id);
+
+			for (const certificateId of data.clientcas) {
+				await accessListClientCAsModel.query().insert({
+					access_list_id: data.id,
+					certificate_id: certificateId,
+				});
+			}
+		}
 
 		// Add to audit log
 		await internalAuditLog.add(access, {
@@ -178,7 +201,13 @@ const internalAccessList = {
 			access,
 			{
 				id: data.id,
-				expand: ["owner", "items", "clients", "proxy_hosts.[certificate,access_list.[clients,items]]"],
+				expand: [
+					"owner",
+					"items",
+					"clients",
+					"clientcas.certificate",
+					"proxy_hosts.[certificate,access_list.[clientcas.certificate,clients,items]]",
+				],
 			},
 			true // skip masking
 		);
@@ -217,7 +246,7 @@ const internalAccessList = {
 			.where("access_list.is_deleted", 0)
 			.andWhere("access_list.id", thisData.id)
 			.groupBy("access_list.id")
-			.allowGraph("[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]")
+			.allowGraph("[owner,items,clients,clientcas.certificate,proxy_hosts.[certificate,access_list.[clientcas.certificate,clients,items]]]")
 			.first();
 
 		if (accessData.permission_visibility !== "all") {
@@ -254,7 +283,7 @@ const internalAccessList = {
 		await access.can("access_lists:delete", data.id);
 		const row = await internalAccessList.get(access, {
 			id: data.id,
-			expand: ["proxy_hosts", "items", "clients"],
+			expand: ["proxy_hosts", "items", "clients", "clientcas.certificate"],
 		});
 
 		if (!row?.id) {
@@ -333,7 +362,7 @@ const internalAccessList = {
 			})
 			.where("access_list.is_deleted", 0)
 			.groupBy("access_list.id")
-			.allowGraph("[owner,items,clients]")
+			.allowGraph("[owner,items,clients,clientcas.certificate]")
 			.orderBy("access_list.name", "ASC");
 
 		if (accessData.permission_visibility !== "all") {
@@ -404,6 +433,14 @@ const internalAccessList = {
 				return true;
 			});
 		}
+		if (list && typeof list.clientcas !== "undefined") {
+			list.clientcas.map((val, idx) => {
+				if (val.certificate?.meta) {
+					list.clientcas[idx].certificate.meta = {};
+				}
+				return true;
+			});
+		}
 		return list;
 	},
 
@@ -427,10 +464,16 @@ const internalAccessList = {
 		logger.info(`Building Access file #${list.id} for: ${list.name}`);
 
 		const htpasswdFile = internalAccessList.getFilename(list);
+		const clientCaFile = internalAccessList.getClientCaFilename(list);
 
 		// 1. remove any existing access file
 		try {
 			fs.unlinkSync(htpasswdFile);
+		} catch (_err) {
+			// do nothing
+		}
+		try {
+			fs.unlinkSync(clientCaFile);
 		} catch (_err) {
 			// do nothing
 		}
@@ -471,7 +514,18 @@ const internalAccessList = {
 					});
 			});
 		}
-	}
-}
+
+		fs.writeFileSync(clientCaFile, "", { encoding: "utf8" });
+		for (const clientca of list.clientcas ?? []) {
+			if (clientca.certificate?.meta?.certificate) {
+				fs.appendFileSync(clientCaFile, `${clientca.certificate.meta.certificate}\n`, { encoding: "utf8" });
+			}
+		}
+	},
+
+	getClientCaFilename: (list) => {
+		return `/data/clientca/${list.id}`;
+	},
+};
 
 export default internalAccessList;

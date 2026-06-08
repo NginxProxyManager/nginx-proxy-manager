@@ -39,7 +39,7 @@
 					"schema": {
 						"type": "object",
 						"additionalProperties": false,
-						"required": ["certificate", "certificate_key"],
+						"required": ["certificate"],
 						"properties": {
 							"certificate": {
 								"type": "string",

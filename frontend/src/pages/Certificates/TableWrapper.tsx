@@ -132,6 +132,16 @@ export default function TableWrapper() {
 												>
 													<T id="certificates.custom" />
 												</a>
+												<a
+													className="dropdown-item"
+													href="#"
+													onClick={(e) => {
+														e.preventDefault();
+														showCustomCertificateModal("clientca");
+													}}
+												>
+													<T id="certificates.clientca" />
+												</a>
 											</div>
 										</div>
 									) : null}

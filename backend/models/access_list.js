@@ -6,6 +6,7 @@ import db from "../db.js";
 import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
 import AccessListAuth from "./access_list_auth.js";
 import AccessListClient from "./access_list_client.js";
+import AccessListClientCAs from "./access_list_clientcas.js";
 import now from "./now_helper.js";
 import ProxyHostModel from "./proxy_host.js";
 import User from "./user.js";
@@ -78,6 +79,14 @@ class AccessList extends Model {
 				join: {
 					from: "access_list.id",
 					to: "access_list_client.access_list_id",
+				},
+			},
+			clientcas: {
+				relation: Model.HasManyRelation,
+				modelClass: AccessListClientCAs,
+				join: {
+					from: "access_list.id",
+					to: "access_list_clientcas.access_list_id",
 				},
 			},
 			proxy_hosts: {

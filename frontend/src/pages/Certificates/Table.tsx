@@ -212,6 +212,16 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				>
 					<T id="certificates.custom" />
 				</a>
+				<a
+					className="dropdown-item"
+					href="#"
+					onClick={(e) => {
+						e.preventDefault();
+						showCustomCertificateModal("clientca");
+					}}
+				>
+					<T id="certificates.clientca" />
+				</a>
 			</div>
 		</div>
 	);

@@ -44,6 +44,9 @@
 						},
 						"clients": {
 							"$ref": "../../../../common.json#/properties/access_clients"
+						},
+						"clientcas": {
+							"$ref": "../../../../common.json#/properties/access_clientcas"
 						}
 					}
 				},
@@ -62,7 +65,8 @@
 							"directive": "allow",
 							"address": "192.168.0.0/24"
 						}
-					]
+					],
+					"clientcas": [1]
 				}
 			}
 		}

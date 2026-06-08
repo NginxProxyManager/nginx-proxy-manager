@@ -156,6 +156,7 @@ const internalNginx = {
 						{ ssl_forced: host.ssl_forced },
 						{ caching_enabled: host.caching_enabled },
 						{ block_exploits: host.block_exploits },
+						{ drop_unauthorized: host.drop_unauthorized },
 						{ allow_websocket_upgrade: host.allow_websocket_upgrade },
 						{ http2_support: host.http2_support },
 						{ hsts_enabled: host.hsts_enabled },
@@ -209,6 +210,11 @@ const internalNginx = {
 			let origLocations;
 
 			// Manipulate the data a bit before sending it to the template
+			if (typeof host.drop_unauthorized === "undefined") {
+				// Only proxy hosts expose this field, but hosts share templates.
+				host.drop_unauthorized = 0;
+			}
+
 			if (nice_host_type !== "default") {
 				host.use_default_location = true;
 				if (typeof host.advanced_config !== "undefined" && host.advanced_config) {
