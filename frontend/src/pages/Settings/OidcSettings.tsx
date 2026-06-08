@@ -179,7 +179,7 @@ export default function OidcSettings() {
 						<h4 className="card-title mb-0" style={{ fontSize: "0.875rem" }}><T id="settings.oidc.callback-url" /></h4>
 					</div>
 					<ul className="list-group list-group-flush">
-						<li className="list-group-item d-flex justify-content-between align-items-center py-1 cursor-pointer" style={{ paddingLeft: "8px", paddingRight: "8px" }} onClick={handleCopyLogin}>
+						<li className="list-group-item d-flex justify-content-between align-items-center py-1 cursor-pointer" style={{ paddingLeft: "8px", paddingRight: "8px" }} onClick={handleCopyLogin} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleCopyLogin(); }}>
 							<code className="text-muted user-select-all" style={{ fontSize: "0.8rem" }}>{callbackUrl}</code>
 							<button
 								type="button"
@@ -193,7 +193,7 @@ export default function OidcSettings() {
 								)}
 							</button>
 						</li>
-						<li className="list-group-item d-flex justify-content-between align-items-center py-1 cursor-pointer" style={{ paddingLeft: "8px", paddingRight: "8px" }} onClick={handleCopyLink}>
+						<li className="list-group-item d-flex justify-content-between align-items-center py-1 cursor-pointer" style={{ paddingLeft: "8px", paddingRight: "8px" }} onClick={handleCopyLink} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleCopyLink(); }}>
 							<code className="text-muted user-select-all" style={{ fontSize: "0.8rem" }}>{linkCallbackUrl}</code>
 							<button
 								type="button"
