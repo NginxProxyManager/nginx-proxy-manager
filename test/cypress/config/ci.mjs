@@ -1,6 +1,8 @@
 import { defineConfig } from 'cypress';
 import pluginSetup from '../plugins/index.mjs';
 
+const adminPort = process.env.NPM_ADMIN_PORT ?? 81;
+
 export default defineConfig({
 	allowCypressEnv: false,
 	requestTimeout: 30000,
@@ -19,6 +21,6 @@ export default defineConfig({
 		env: {
 			swaggerBase: `{{baseUrl}}/api/schema?ts=${Date.now()}`,
 		},
-		baseUrl: "http://fullstack:81",
+		baseUrl: `http://fullstack:${adminPort}`,
 	}
 });
