@@ -1,4 +1,5 @@
 import express from "express";
+import fs from "node:fs/promises";
 import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import { installPlugin } from "../lib/certbot.js";
 import { debug, express as logger } from "../logger.js";
@@ -54,6 +55,39 @@ router
 			next(err);
 		}
 		return;
+	});
+
+/**
+ * /api/ci/mock-log
+ *
+ * Write mock log files in CI environment
+ */
+router
+	.route("/mock-log")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+
+	.post(async (req, res, next) => {
+		try {
+			const { hostId, type, content } = req.body;
+			if (!hostId || !type || content === undefined) {
+				return res.status(400).send({
+					error: "Missing required fields: hostId, type, or content",
+				});
+			}
+
+			const filePath = `/data/logs/proxy-host-${hostId}_${type}.log`;
+			const dirPath = "/data/logs";
+
+			await fs.mkdir(dirPath, { recursive: true });
+			await fs.writeFile(filePath, content, "utf8");
+
+			res.status(200).send(true);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
 	});
 
 export default router;
