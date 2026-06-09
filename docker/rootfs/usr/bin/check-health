@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OK=$(curl --silent http://127.0.0.1:81/api/ | jq --raw-output '.status')
+OK=$(curl --silent "http://127.0.0.1:${NPM_ADMIN_PORT:-81}/api/" | jq --raw-output '.status')
 
 if [ "$OK" == "OK" ]; then
 	echo "OK"

@@ -105,6 +105,7 @@ services:
     environment:
       HTTP_PROXY: "squid:3128"
       HTTPS_PROXY: "squid:3128"
+      NPM_ADMIN_PORT: 81
     volumes:
       - "cypress_logs:/test/results"
       - "./dev/resolv.conf:/etc/resolv.conf:ro"
