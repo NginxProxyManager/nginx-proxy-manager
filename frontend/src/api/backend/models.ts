@@ -123,6 +123,7 @@ export interface ProxyHost {
 	meta: Record<string, any>;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
+	http3Support?: boolean;
 	enabled: boolean;
 	locations?: ProxyLocation[];
 	hstsEnabled: boolean;

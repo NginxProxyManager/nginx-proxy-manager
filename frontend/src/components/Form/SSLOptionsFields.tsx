@@ -9,14 +9,15 @@ interface Props {
 	forceDNSForNew?: boolean;
 	requireDomainNames?: boolean; // used for streams
 	color?: string;
+	isHttp3GloballyDisabled?: boolean; // when NPM_HTTP3_DISABLED=1 in the container environment
 }
-export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDNSForNew, requireDomainNames, color = "bg-cyan" }: Props) {
+export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDNSForNew, requireDomainNames, color = "bg-cyan", isHttp3GloballyDisabled = false }: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
 
 	const newCertificate = v?.certificateId === "new";
 	const hasCertificate = newCertificate || (v?.certificateId && v?.certificateId > 0);
-	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, trustForwardedProto, meta } = v;
+	const { sslForced, http2Support, http3Support, hstsEnabled, hstsSubdomains, trustForwardedProto, meta } = v;
 	const { dnsChallenge } = meta || {};
 
 	if (forceDNSForNew && newCertificate && !dnsChallenge) {
@@ -75,6 +76,29 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 					</Field>
 				</div>
 			</div>
+			{/* HTTP/3 toggle: only rendered when not globally disabled by NPM_HTTP3_DISABLED env var */}
+			{!isHttp3GloballyDisabled && (
+			<div className="row">
+				<div className="col-6">
+					<Field name="http3Support">
+						{({ field }: any) => (
+							<label className="form-check form-switch mt-1">
+								<input
+									className={http3Support ? toggleEnabled : toggleClasses}
+									type="checkbox"
+									checked={!!http3Support}
+									onChange={(e) => handleToggleChange(e, field.name)}
+									disabled={!hasCertificate}
+								/>
+								<span className="form-check-label">
+									<T id="domains.http3-support" />
+								</span>
+							</label>
+						)}
+					</Field>
+				</div>
+			</div>
+			)}
 			<div className="row">
 				<div className="col-6">
 					<Field name="hstsEnabled">

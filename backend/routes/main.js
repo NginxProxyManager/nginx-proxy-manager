@@ -4,6 +4,7 @@ import errs from "../lib/error.js";
 import logRequest from "../lib/express/log-request.js";
 import pjson from "../package.json" with { type: "json" };
 import { isSetup } from "../setup.js";
+import internalNginx from "../internal/nginx.js";
 import auditLogRoutes from "./audit-log.js";
 import ciRoutes from "./ci.js";
 import accessListsRoutes from "./nginx/access_lists.js";
@@ -43,6 +44,7 @@ router.get("/", async (_, res /*, next*/) => {
 			minor: Number.parseInt(version.shift(), 10),
 			revision: Number.parseInt(version.shift(), 10),
 		},
+		http3_disabled: internalNginx.isHttp3Disabled(),
 	});
 });
 
