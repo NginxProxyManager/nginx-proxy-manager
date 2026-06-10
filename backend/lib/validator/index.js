@@ -14,6 +14,8 @@ const ajv = new Ajv({
 	schemas: [commonDefinitions],
 });
 
+const compiledSchemas = new WeakMap();
+
 /**
  *
  * @param   {Object} schema
@@ -26,7 +28,11 @@ const validator = (schema, payload) => {
 			reject(new errs.InternalValidationError("Payload is falsy"));
 		} else {
 			try {
-				const validate = ajv.compile(schema);
+				let validate = compiledSchemas.get(schema);
+				if (!validate) {
+					validate = ajv.compile(schema);
+					compiledSchemas.set(schema, validate);
+				}
 				const valid = validate(payload);
 
 				if (valid && !validate.errors) {
