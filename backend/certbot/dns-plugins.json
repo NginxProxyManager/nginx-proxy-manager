@@ -360,12 +360,12 @@
 		"version": "~=1.2.1"
 	},
 	"hosterby": {
-  		"credentials": "dns_hosterby_access_key = YOUR_ACCESS_KEY\ndns_hosterby_secret_key = YOUR_SECRET_KEY",
-  		"dependencies": "",
-  		"full_plugin_name": "dns-hosterby",
-  		"name": "hoster.by",
-  		"package_name": "certbot-dns-hosterby",
-  		"version": "~=0.1.0"
+		"credentials": "dns_hosterby_access_key = YOUR_ACCESS_KEY\ndns_hosterby_secret_key = YOUR_SECRET_KEY",
+		"dependencies": "",
+		"full_plugin_name": "dns-hosterby",
+		"name": "hoster.by",
+		"package_name": "certbot-dns-hosterby",
+		"version": "~=0.1.0"
 	},
 	"infomaniak": {
 		"credentials": "dns_infomaniak_token = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -679,12 +679,20 @@
 		"package_name": "certbot-dns-zoneedit",
 		"version": "~=0.3.2"
 	},
-		"rcode0": {
+	"rcode0": {
 		"credentials": "dns_rcode0_api_key = acme_0123456789abcdef0123456789abcdef01234567",
 		"dependencies": "",
 		"full_plugin_name": "dns-rcode0",
 		"name": "RcodeZero",
 		"package_name": "certbot-dns-rcode0",
 		"version": "~=0.0.0.2"
+	},
+	"aliyun_esa": {
+		"credentials": "dns_aliyun_esa_access_key_id = 12345678\ndns_aliyun_esa_access_key_secret = 1234567890abcdef1234567890abcdef",
+		"dependencies": "",
+		"full_plugin_name": "dns-aliyun-esa",
+		"name": "AliyunESA",
+		"package_name": "certbot-dns-aliyun-esa",
+		"version": "~=0.1.1"
 	}
 }
