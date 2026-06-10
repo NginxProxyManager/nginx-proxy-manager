@@ -12,6 +12,115 @@ const omissions = () => {
 	return ["is_deleted", "owner.is_deleted"];
 };
 
+const validateRateLimit = (data, existingData) => {
+	const combinedData = _.assign({}, existingData || {}, data);
+	const rateLimitEnabled = combinedData.rate_limit_enabled === true || combinedData.rate_limit_enabled === 1;
+
+	if (!rateLimitEnabled) {
+		return;
+	}
+
+	const rateLimit = Number.parseInt(combinedData.rate_limit, 10);
+	const rateLimitBurst = Number.parseInt(combinedData.rate_limit_burst ?? 0, 10);
+	const rateLimitPeriod = combinedData.rate_limit_period || "minute";
+
+	if (!Number.isFinite(rateLimit) || rateLimit < 1) {
+		throw new errs.ValidationError(`Rate limit must be at least 1 request per ${rateLimitPeriod}`);
+	}
+
+	if (!Number.isFinite(rateLimitBurst) || rateLimitBurst < 0) {
+		throw new errs.ValidationError("Rate limit burst must be 0 or greater");
+	}
+
+	if (!["minute", "second"].includes(rateLimitPeriod)) {
+		throw new errs.ValidationError("Rate limit period must be either minute or second");
+	}
+};
+
+const normalizeRateLimit = (data, existingData) => {
+	const combinedData = _.assign({}, existingData || {}, data);
+	const rateLimitEnabled = combinedData.rate_limit_enabled === true || combinedData.rate_limit_enabled === 1;
+
+	if (!rateLimitEnabled) {
+		return data;
+	}
+
+	if (typeof data.rate_limit_period === "undefined" && typeof existingData?.rate_limit_period === "undefined") {
+		data.rate_limit_period = "minute";
+	}
+
+	if (typeof data.rate_limit_delay === "undefined" && typeof existingData?.rate_limit_delay === "undefined") {
+		data.rate_limit_delay = false;
+	}
+
+	return data;
+};
+
+const normalizeLoadBalancing = (data) => {
+	if (data.load_balancing_enabled === true || data.load_balancing_enabled === 1) {
+		if (typeof data.load_balancing_method === "undefined" || data.load_balancing_method === "") {
+			data.load_balancing_method = "round_robin";
+		}
+		if (!Array.isArray(data.load_balancing_servers)) {
+			data.load_balancing_servers = [];
+		}
+	}
+
+	return data;
+};
+
+const validateLoadBalancing = (data, existingData) => {
+	const combinedData = _.assign({}, existingData || {}, data);
+	const loadBalancingEnabled =
+		combinedData.load_balancing_enabled === true || combinedData.load_balancing_enabled === 1;
+
+	if (!loadBalancingEnabled) {
+		return;
+	}
+
+	const allowedMethods = new Set(["round_robin", "least_conn", "ip_hash"]);
+	const loadBalancingMethod = combinedData.load_balancing_method || "round_robin";
+
+	if (!allowedMethods.has(loadBalancingMethod)) {
+		throw new errs.ValidationError("Load balancing method must be one of: round_robin, least_conn, ip_hash");
+	}
+
+	const servers = combinedData.load_balancing_servers ?? [];
+	if (!Array.isArray(servers)) {
+		throw new errs.ValidationError("Load balancing servers must be an array");
+	}
+
+	if (servers.length === 0) {
+		throw new errs.ValidationError("Load balancing requires at least one upstream server");
+	}
+
+	servers.forEach((server, index) => {
+		if (!server || typeof server !== "object") {
+			throw new errs.ValidationError(`Load balancing server #${index + 1} is invalid`);
+		}
+
+		const host = typeof server.host === "string" ? server.host.trim() : "";
+		const port = Number.parseInt(server.port, 10);
+		const weightRaw = server.weight;
+		const weight =
+			weightRaw === "" || typeof weightRaw === "undefined" || weightRaw === null
+				? null
+				: Number.parseInt(weightRaw, 10);
+
+		if (!host) {
+			throw new errs.ValidationError(`Load balancing server #${index + 1} host is required`);
+		}
+
+		if (!Number.isFinite(port) || port < 1 || port > 65535) {
+			throw new errs.ValidationError(`Load balancing server #${index + 1} port must be between 1 and 65535`);
+		}
+
+		if (weight !== null && (!Number.isFinite(weight) || weight < 1 || weight > 100)) {
+			throw new errs.ValidationError(`Load balancing server #${index + 1} weight must be between 1 and 100`);
+		}
+	});
+};
+
 const internalProxyHost = {
 	/**
 	 * @param   {Access}  access
@@ -56,6 +165,11 @@ const internalProxyHost = {
 				if (typeof thisData.advanced_config === "undefined") {
 					thisData.advanced_config = "";
 				}
+
+				thisData = normalizeLoadBalancing(thisData);
+				thisData = normalizeRateLimit(thisData);
+				validateRateLimit(thisData);
+				validateLoadBalancing(thisData);
 
 				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
@@ -182,6 +296,10 @@ const internalProxyHost = {
 				);
 
 				thisData = internalHost.cleanSslHstsData(thisData, row);
+				thisData = normalizeLoadBalancing(thisData);
+				thisData = normalizeRateLimit(thisData, row);
+				validateRateLimit(thisData, row);
+				validateLoadBalancing(thisData, row);
 
 				return proxyHostModel
 					.query()

@@ -18,7 +18,8 @@ const showHelpModal = (section: string, color?: string) => {
 
 const HelpModal = EasyModal.create(({ section, color, visible, remove }: Props) => {
 	const [markdownText, setMarkdownText] = useState("");
-	const lang = getLocale(true);
+	const locale = getLocale().replace("-", "_").toLowerCase();
+	const lang = locale === "pt_br" ? "pt_br" : getLocale(true);
 
 	useEffect(() => {
 		try {

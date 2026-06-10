@@ -105,6 +105,15 @@ export interface ProxyLocation {
 	forwardPort: number;
 }
 
+export interface LoadBalancingServer {
+	host: string;
+	port: number;
+	weight?: number;
+}
+
+export type LoadBalancingMethod = "round_robin" | "least_conn" | "ip_hash";
+export type RateLimitPeriod = "minute" | "second";
+
 export interface ProxyHost {
 	id: number;
 	createdOn: string;
@@ -123,6 +132,14 @@ export interface ProxyHost {
 	meta: Record<string, any>;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
+	rateLimitEnabled: boolean;
+	rateLimit: number;
+	rateLimitBurst: number;
+	rateLimitPeriod: RateLimitPeriod;
+	rateLimitDelay: boolean;
+	loadBalancingEnabled: boolean;
+	loadBalancingMethod: LoadBalancingMethod;
+	loadBalancingServers: LoadBalancingServer[];
 	enabled: boolean;
 	locations?: ProxyLocation[];
 	hstsEnabled: boolean;

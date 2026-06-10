@@ -383,6 +383,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt trí HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "Cothrom? ualaigh"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Cuir freastala? leis"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Cumasaigh cothrom? ualaigh"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Cuir freastalaithe upstream amh?in n? n?os m? th?os leis."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "?stach"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Modh"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "Hash IP"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Naisc is l?"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Pr?omhfhreastala?"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Freastalaithe upstream"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Me?chan"
+	},
 	"loading": {
 		"defaultMessage": "Ag lódáil…"
 	},
@@ -517,6 +559,30 @@
 	},
 	"public": {
 		"defaultMessage": "Poiblí"
+	},
+	"rate-limit": {
+		"defaultMessage": "Teorainn r?ta"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Moilligh iarratais iomarcacha"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Cumasaigh teorainn r?ta"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Baineann s? le hiarratais HTTP agus HTTPS. Ceada?onn burst iarratais bhreise thar an r?ta bun?sach. Cumasaigh moill chun iarratais iomarcacha a mhoilli? in ?it iad a dhi?lt? l?ithreach."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "N?im?ad"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Soicind"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Iarratais in aghaidh"
 	},
 	"redirection-host": {
 		"defaultMessage": "Óstach Athsheolta"

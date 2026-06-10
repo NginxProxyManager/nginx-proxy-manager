@@ -380,6 +380,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "Lastverteilung"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Server hinzufügen"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Lastverteilung aktivieren"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "F?ge unten einen oder mehrere Upstream-Server hinzu."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Methode"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP-Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Wenigste Verbindungen"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Primärer Server"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Upstream-Server"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Gewicht"
+	},
 	"loading": {
 		"defaultMessage": "Laden…"
 	},
@@ -514,6 +556,30 @@
 	},
 	"public": {
 		"defaultMessage": "Öffentlich"
+	},
+	"rate-limit": {
+		"defaultMessage": "Rate Limit"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "?bersch?ssige Anfragen verz?gern"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Ratenbegrenzung aktivieren"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Gilt f?r HTTP- und HTTPS-Anfragen. Burst erlaubt zus?tzliche Anfragen ?ber der Basisrate. Verz?gerung aktivieren, um ?bersch?ssige Anfragen zu verlangsamen statt sofort abzulehnen."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Minute"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Sekunde"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Anfragen pro"
 	},
 	"redirection-host": {
 		"defaultMessage": "Redirection Host"

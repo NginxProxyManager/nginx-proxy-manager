@@ -1,0 +1,836 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Códigos de backup restantes: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Guarde estes códigos de backup em um lugar seguro. Cada código só pode ser usado uma vez."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Desativar Autenticação de Dois Fatores"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Desativar 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Desativar a autenticação de dois fatores tornará sua conta menos segura."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Desativado"
+	},
+	"2fa.done": {
+		"defaultMessage": "Salvei meus códigos de backup"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Ativar Autenticação de Dois Fatores"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Ativado"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Digite o código de verificação"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Digite o código de verificação para desativar"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Regenerar"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Regenerar Códigos de Backup"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Digite um código de verificação para gerar novos códigos de backup. Seus códigos antigos serão invalidados."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Chave Secreta"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Escaneie este código QR com seu aplicativo autenticador, ou insira a chave manualmente."
+	},
+	"2fa.status": {
+		"defaultMessage": "Status"
+	},
+	"2fa.title": {
+		"defaultMessage": "Autenticação de Dois Fatores"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verificar e Ativar"
+	},
+	"access-list": {
+		"defaultMessage": "Lista de Acesso"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {Regra} other {Regras}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {Usuário} other {Usuários}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Quando existir pelo menos 1 regra, esta regra de negar tudo será adicionada por último"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Note que as diretivas de permitir e negar serão aplicadas na ordem em que foram definidas."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Passar Autenticação para Upstream"
+	},
+	"access-list.public": {
+		"defaultMessage": "Acessível Publicamente"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Autenticação básica não necessária"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 ou 192.168.1.0/24 ou 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Satisfazer Qualquer"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {Usuário} other {Usuários}}, {rules} {rules, plural, one {Regra} other {Regras}} - Criado: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Listas de Acesso"
+	},
+	"action.add": {
+		"defaultMessage": "Adicionar"
+	},
+	"action.add-location": {
+		"defaultMessage": "Adicionar Localização"
+	},
+	"action.allow": {
+		"defaultMessage": "Permitir"
+	},
+	"action.close": {
+		"defaultMessage": "Fechar"
+	},
+	"action.delete": {
+		"defaultMessage": "Excluir"
+	},
+	"action.deny": {
+		"defaultMessage": "Negar"
+	},
+	"action.disable": {
+		"defaultMessage": "Desativar"
+	},
+	"action.download": {
+		"defaultMessage": "Baixar"
+	},
+	"action.edit": {
+		"defaultMessage": "Editar"
+	},
+	"action.enable": {
+		"defaultMessage": "Ativar"
+	},
+	"action.permissions": {
+		"defaultMessage": "Permissões"
+	},
+	"action.renew": {
+		"defaultMessage": "Renovar"
+	},
+	"action.view-details": {
+		"defaultMessage": "Ver Detalhes"
+	},
+	"auditlogs": {
+		"defaultMessage": "Logs de Auditoria"
+	},
+	"auto": {
+		"defaultMessage": "Automático"
+	},
+	"cancel": {
+		"defaultMessage": "Cancelar"
+	},
+	"certificate": {
+		"defaultMessage": "Certificado"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Certificado"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Chave do Certificado"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Certificado Intermediário"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Em Uso"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Nenhum certificado atribuído"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Este host não usará HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Nenhum"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Não Usado"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Renovar Certificado"
+	},
+	"certificates": {
+		"defaultMessage": "Certificados"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Certificado Personalizado"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Arquivos de chave protegidos com senha não são suportados."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Conteúdo do Arquivo de Credenciais"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Este plugin requer um arquivo de configuração contendo um token de API ou outras credenciais do seu provedor"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Estes dados serão armazenados como texto simples no banco de dados e em um arquivo!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Segundos de Propagação"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Deixe vazio para usar o valor padrão do plugin. Número de segundos para aguardar a propagação DNS."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "Provedor DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Selecione um Provedor..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Esta seção requer algum conhecimento sobre Certbot e seus plugins DNS. Por favor, consulte a documentação dos respectivos plugins."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Há um servidor neste domínio, mas não parece ser o Nginx Proxy Manager. Certifique-se de que seu domínio aponta para o IP onde sua instância do NPM está rodando."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Falha ao verificar a acessibilidade devido a um erro de comunicação com site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Não há servidor disponível neste domínio. Certifique-se de que seu domínio existe e aponta para o IP onde sua instância do NPM está rodando e, se necessário, a porta 80 está encaminhada no seu roteador."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Seu servidor está acessível e a criação de certificados deve ser possível."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Há um servidor neste domínio, mas retornou um código de status inesperado {code}. É o servidor NPM? Certifique-se de que seu domínio aponta para o IP onde sua instância do NPM está rodando."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Há um servidor neste domínio, mas retornou dados inesperados. É o servidor NPM? Certifique-se de que seu domínio aponta para o IP onde sua instância do NPM está rodando."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Resultados do Teste"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Estes domínios já devem estar configurados para apontar para esta instalação."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Tipo de Chave"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA é amplamente compatível, ECDSA é mais rápido e seguro mas pode não ser suportado por sistemas mais antigos"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "com Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Solicitar um novo Certificado"
+	},
+	"column.access": {
+		"defaultMessage": "Acesso"
+	},
+	"column.authorization": {
+		"defaultMessage": "Autorização"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Autorizações"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Localizações Personalizadas"
+	},
+	"column.destination": {
+		"defaultMessage": "Destino"
+	},
+	"column.details": {
+		"defaultMessage": "Detalhes"
+	},
+	"column.email": {
+		"defaultMessage": "E-mail"
+	},
+	"column.event": {
+		"defaultMessage": "Evento"
+	},
+	"column.expires": {
+		"defaultMessage": "Expira"
+	},
+	"column.http-code": {
+		"defaultMessage": "Código HTTP"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Porta de Entrada"
+	},
+	"column.name": {
+		"defaultMessage": "Nome"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protocolo"
+	},
+	"column.provider": {
+		"defaultMessage": "Provedor"
+	},
+	"column.roles": {
+		"defaultMessage": "Funções"
+	},
+	"column.rules": {
+		"defaultMessage": "Regras"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Satisfazer"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Todos"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Qualquer"
+	},
+	"column.scheme": {
+		"defaultMessage": "Esquema"
+	},
+	"column.source": {
+		"defaultMessage": "Origem"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Status"
+	},
+	"created-on": {
+		"defaultMessage": "Criado: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Painel"
+	},
+	"dead-host": {
+		"defaultMessage": "Host 404"
+	},
+	"dead-hosts": {
+		"defaultMessage": "Hosts 404"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host 404} other {Hosts 404}}"
+	},
+	"disabled": {
+		"defaultMessage": "Desativado"
+	},
+	"domain-names": {
+		"defaultMessage": "Nomes de Domínio"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Máximo de {count} nomes de domínio"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Comece a digitar para adicionar domínio..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Curingas não são permitidos para este tipo"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Curingas não são suportados para esta CA"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Forçar SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS Ativado"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS em Subdomínios"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "Suporte HTTP/2"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Usar Desafio DNS"
+	},
+	"email-address": {
+		"defaultMessage": "Endereço de e-mail"
+	},
+	"empty-search": {
+		"defaultMessage": "Nenhum resultado encontrado"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Por que não criar um?"
+	},
+	"enabled": {
+		"defaultMessage": "Ativado"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "É necessário pelo menos uma Autorização ou uma Regra de Acesso"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Os nomes de usuário de Autorização devem ser únicos"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "E-mail ou senha inválidos"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Domínio inválido: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Endereço de e-mail inválido"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "O comprimento máximo é de {max} {max, plural, one {caractere} other {caracteres}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Muitos domínios, o máximo é {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "O máximo é {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "O comprimento mínimo é de {min} {min, plural, one {caractere} other {caracteres}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "O mínimo é {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "As senhas devem ser iguais"
+	},
+	"error.required": {
+		"defaultMessage": "Este campo é obrigatório"
+	},
+	"expires.on": {
+		"defaultMessage": "Expira: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Faça um fork no Github"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Bloquear Exploits Comuns"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Cachear Recursos"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Preservar Caminho"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protocolos"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Suporte a Websockets"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Porta"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Esquema"
+	},
+	"hosts": {
+		"defaultMessage": "Hosts"
+	},
+	"http-only": {
+		"defaultMessage": "Somente HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt via DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt via HTTP"
+	},
+	"load-balancing": {
+		"defaultMessage": "Balanceamento de Carga"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Adicionar Servidor"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Ativar Balanceamento de Carga"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Adicione um ou mais servidores upstream abaixo."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Método"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Menos Conexões"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Porta"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Servidor Principal"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Servidores Upstream"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Peso"
+	},
+	"loading": {
+		"defaultMessage": "Carregando…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Código de Verificação"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Digite o código"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Digite o código do seu aplicativo autenticador"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Autenticação de Dois Fatores"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verificar"
+	},
+	"login.title": {
+		"defaultMessage": "Entre na sua conta"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Configuração Nginx Personalizada"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Digite sua configuração Nginx personalizada aqui por sua conta e risco!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Você não tem permissão para visualizar isto."
+	},
+	"notfound.action": {
+		"defaultMessage": "Voltar ao início"
+	},
+	"notfound.content": {
+		"defaultMessage": "Desculpe, mas a página que você está procurando não foi encontrada"
+	},
+	"notfound.title": {
+		"defaultMessage": "Ops… Você encontrou uma página de erro"
+	},
+	"notification.error": {
+		"defaultMessage": "Erro"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} foi excluído"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} foi desativado"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} foi ativado"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} foi renovado"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} foi salvo"
+	},
+	"notification.success": {
+		"defaultMessage": "Sucesso"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Adicionar {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "Excluir {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Tem certeza de que deseja excluir este {object}?"
+	},
+	"object.edit": {
+		"defaultMessage": "Editar {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "Não há {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "{object} criado"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "{object} excluído"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "{object} desativado"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "{object} ativado"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "{object} renovado"
+	},
+	"object.event.updated": {
+		"defaultMessage": "{object} atualizado"
+	},
+	"offline": {
+		"defaultMessage": "Offline"
+	},
+	"online": {
+		"defaultMessage": "Online"
+	},
+	"options": {
+		"defaultMessage": "Opções"
+	},
+	"password": {
+		"defaultMessage": "Senha"
+	},
+	"password.generate": {
+		"defaultMessage": "Gerar senha aleatória"
+	},
+	"password.hide": {
+		"defaultMessage": "Ocultar Senha"
+	},
+	"password.show": {
+		"defaultMessage": "Mostrar Senha"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Oculto"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Gerenciar"
+	},
+	"permissions.view": {
+		"defaultMessage": "Somente Visualização"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Todos os Itens"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Visibilidade dos Itens"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Somente Itens Criados"
+	},
+	"proxy-host": {
+		"defaultMessage": "Host Proxy"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Hostname / IP de Encaminhamento"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Hosts Proxy"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host Proxy} other {Hosts Proxy}}"
+	},
+	"public": {
+		"defaultMessage": "Público"
+	},
+	"rate-limit": {
+		"defaultMessage": "Limite de Requisições"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Atrasar requisições excedentes"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Ativar Limite de Requisições"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Aplica-se a requisições HTTP e HTTPS. O burst permite requisições extras além da taxa base. Ative o atraso para desacelerar requisições excedentes em vez de rejeitar imediatamente."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Minuto"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Segundo"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Requisições por"
+	},
+	"redirection-host": {
+		"defaultMessage": "Host de Redirecionamento"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Domínio de Destino"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "Código HTTP"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Hosts de Redirecionamento"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host de Redirecionamento} other {Hosts de Redirecionamento}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Múltiplas Escolhas"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Movido permanentemente"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Movido temporariamente"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Ver outro"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Redirecionamento temporário"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Redirecionamento permanente"
+	},
+	"role.admin": {
+		"defaultMessage": "Administrador"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Usuário Padrão"
+	},
+	"save": {
+		"defaultMessage": "Salvar"
+	},
+	"setting": {
+		"defaultMessage": "Configuração"
+	},
+	"settings": {
+		"defaultMessage": "Configurações"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Site Padrão"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "Página 404"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Sem Resposta (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Página de Parabéns"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "O que mostrar quando o Nginx recebe um Host desconhecido"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "HTML Personalizado"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Digite seu conteúdo HTML personalizado aqui -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Redirecionar"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Comece criando sua conta de administrador."
+	},
+	"setup.title": {
+		"defaultMessage": "Bem-vindo!"
+	},
+	"sign-in": {
+		"defaultMessage": "Entrar"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "Certificado SSL"
+	},
+	"stream": {
+		"defaultMessage": "Stream"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Host de Encaminhamento"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "exemplo.com ou 10.0.0.1 ou 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Porta de Entrada"
+	},
+	"streams": {
+		"defaultMessage": "Streams"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {Stream} other {Streams}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Testar"
+	},
+	"update-available": {
+		"defaultMessage": "Atualização Disponível: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "Usuário"
+	},
+	"user.change-password": {
+		"defaultMessage": "Alterar Senha"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Confirmar Senha"
+	},
+	"user.current-password": {
+		"defaultMessage": "Senha Atual"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Editar Perfil"
+	},
+	"user.full-name": {
+		"defaultMessage": "Nome Completo"
+	},
+	"user.login-as": {
+		"defaultMessage": "Entrar como {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "Sair"
+	},
+	"user.new-password": {
+		"defaultMessage": "Nova Senha"
+	},
+	"user.nickname": {
+		"defaultMessage": "Apelido"
+	},
+	"user.set-password": {
+		"defaultMessage": "Definir Senha"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Definir Permissões para {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Mudar para modo Escuro"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Mudar para modo Claro"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Autenticação 2FA"
+	},
+	"username": {
+		"defaultMessage": "Nome de usuário"
+	},
+	"users": {
+		"defaultMessage": "Usuários"
+	}
+}

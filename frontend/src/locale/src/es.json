@@ -395,6 +395,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt vía HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "Balanceo de carga"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Agregar servidor"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Habilitar balanceo de carga"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Agrega uno o m?s servidores upstream abajo."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "M?todo"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Menos conexiones"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Puerto"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Servidor principal"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Servidores upstream"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Peso"
+	},
 	"loading": {
 		"defaultMessage": "Cargando…"
 	},
@@ -529,6 +571,30 @@
 	},
 	"public": {
 		"defaultMessage": "Público"
+	},
+	"rate-limit": {
+		"defaultMessage": "L?mite de velocidad"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "R?faga"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Retrasar solicitudes excedentes"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Habilitar limitaci?n de tasa"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Aplica a solicitudes HTTP y HTTPS. La r?faga permite solicitudes adicionales por encima de la tasa base. Habilita el retraso para ralentizar las solicitudes excedentes en lugar de rechazarlas de inmediato."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Minuto"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Segundo"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Solicitudes por"
 	},
 	"redirection-host": {
 		"defaultMessage": "Host de Redirección"

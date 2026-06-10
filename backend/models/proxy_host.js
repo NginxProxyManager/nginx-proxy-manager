@@ -18,6 +18,9 @@ const boolFields = [
 	"block_exploits",
 	"allow_websocket_upgrade",
 	"http2_support",
+	"rate_limit_enabled",
+	"rate_limit_delay",
+	"load_balancing_enabled",
 	"enabled",
 	"hsts_enabled",
 	"hsts_subdomains",
@@ -37,6 +40,11 @@ class ProxyHost extends Model {
 		// Default for meta
 		if (typeof this.meta === "undefined") {
 			this.meta = {};
+		}
+
+		// Default for load_balancing_servers
+		if (typeof this.load_balancing_servers === "undefined") {
+			this.load_balancing_servers = [];
 		}
 
 		this.domain_names.sort();
@@ -70,7 +78,7 @@ class ProxyHost extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["domain_names", "meta", "locations"];
+		return ["domain_names", "meta", "locations", "load_balancing_servers"];
 	}
 
 	static get defaultAllowGraph() {

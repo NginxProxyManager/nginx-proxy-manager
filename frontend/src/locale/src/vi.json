@@ -380,6 +380,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt qua HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "C?n b?ng t?i"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Th?m m?y ch?"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "B?t c?n b?ng t?i"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Th?m m?t ho?c nhi?u m?y ch? upstream b?n d??i."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "M?y ch?"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Ph??ng th?c"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "?t k?t n?i nh?t"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "C?ng"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "M?y ch? ch?nh"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "M?y ch? upstream"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Tr?ng s?"
+	},
 	"loading": {
 		"defaultMessage": "Đang tải..."
 	},
@@ -514,6 +556,30 @@
 	},
 	"public": {
 		"defaultMessage": "Công khai"
+	},
+	"rate-limit": {
+		"defaultMessage": "Gi?i h?n t?c ??"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Tr? ho?n c?c y?u c?u v??t m?c"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "B?t gi?i h?n t?c ??"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "?p d?ng cho y?u c?u HTTP v? HTTPS. Burst cho ph?p th?m y?u c?u v??t qu? t?c ?? c? b?n. B?t tr? ho?n ?? l?m ch?m c?c y?u c?u v??t m?c thay v? t? ch?i ngay."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Ph?t"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Gi?y"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Y?u c?u m?i"
 	},
 	"redirection-host": {
 		"defaultMessage": "Redirection Host"

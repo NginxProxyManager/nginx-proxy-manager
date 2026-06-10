@@ -383,6 +383,48 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing": {
+		"defaultMessage": "Penyeimbangan beban"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Tambah server"
+	},
+	"load-balancing.enable": {
+		"defaultMessage": "Aktifkan penyeimbangan beban"
+	},
+	"load-balancing.help": {
+		"defaultMessage": "Tambahkan satu atau lebih server upstream di bawah."
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.method": {
+		"defaultMessage": "Metode"
+	},
+	"load-balancing.method.ip-hash": {
+		"defaultMessage": "IP Hash"
+	},
+	"load-balancing.method.least-conn": {
+		"defaultMessage": "Koneksi paling sedikit"
+	},
+	"load-balancing.method.round-robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.primary": {
+		"defaultMessage": "Server utama"
+	},
+	"load-balancing.servers": {
+		"defaultMessage": "Server upstream"
+	},
+	"load-balancing.upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Bobot"
+	},
 	"loading": {
 		"defaultMessage": "Memuat…"
 	},
@@ -517,6 +559,30 @@
 	},
 	"public": {
 		"defaultMessage": "Publik"
+	},
+	"rate-limit": {
+		"defaultMessage": "Batas laju"
+	},
+	"rate-limit.burst": {
+		"defaultMessage": "Burst"
+	},
+	"rate-limit.delay": {
+		"defaultMessage": "Tunda permintaan berlebih"
+	},
+	"rate-limit.enable": {
+		"defaultMessage": "Aktifkan batas laju"
+	},
+	"rate-limit.help": {
+		"defaultMessage": "Berlaku untuk permintaan HTTP dan HTTPS. Burst memungkinkan permintaan tambahan di atas laju dasar. Aktifkan penundaan untuk memperlambat permintaan berlebih alih-alih langsung menolak."
+	},
+	"rate-limit.period.minute": {
+		"defaultMessage": "Menit"
+	},
+	"rate-limit.period.second": {
+		"defaultMessage": "Detik"
+	},
+	"rate-limit.requests-per-minute": {
+		"defaultMessage": "Permintaan per"
 	},
 	"redirection-host": {
 		"defaultMessage": "Host Pengalihan"
