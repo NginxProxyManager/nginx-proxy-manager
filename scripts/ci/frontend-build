@@ -14,9 +14,18 @@ if hash docker 2>/dev/null; then
 	docker run --rm \
 		-e CI=true \
 		-e NODE_OPTIONS=--openssl-legacy-provider \
-		-v "$(pwd)/frontend:/app/frontend" \
-		-w /app/frontend "${DOCKER_IMAGE}" \
-		sh -c "yarn install && yarn lint && yarn locale-compile && yarn vitest run --no-color && yarn build && chown -R $(id -u):$(id -g) /app/frontend"
+		-v "$(pwd):/app" \
+		-w /app "${DOCKER_IMAGE}" \
+		sh -c "set -e
+			DOCS_BUILD=/tmp/npm-docs-build
+			rm -rf \"\${DOCS_BUILD}\"
+			cp -a /app/docs \"\${DOCS_BUILD}\"
+			cd \"\${DOCS_BUILD}\" && NPM_REPO_ROOT=/app npm install && NPM_REPO_ROOT=/app npm run build && \
+			cd /app/frontend && npm ci && npm run lint && npm run locale-compile && npm run test -- run --no-color && npm run build && \
+			rm -rf /app/frontend/dist/docs && mkdir -p /app/frontend/dist/docs && \
+			cp -a \"\${DOCS_BUILD}/dist/.\" /app/frontend/dist/docs/ && \
+			chown -R $(id -u):$(id -g) /app/frontend
+		"
 
 	echo -e "${BLUE}❯ ${GREEN}Building Frontend Complete${RESET}"
 else

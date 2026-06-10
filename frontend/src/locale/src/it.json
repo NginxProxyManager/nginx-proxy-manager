@@ -655,5 +655,83 @@
 	},
 	"users": {
 		"defaultMessage": "Utenti"
+	},
+	"api-key": {
+		"defaultMessage": "Chiave API"
+	},
+	"api-keys": {
+		"defaultMessage": "Chiavi API per automazione"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Copia questa chiave ora — non verrà più mostrata."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Revocare questa chiave API? Le automazioni che la usano smetteranno di funzionare."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Token Bearer (npmak_…) per script e CI. Solo amministratori."
+	},
+	"credential": {
+		"defaultMessage": "Credenziali"
+	},
+	"credential-provider": {
+		"defaultMessage": "Provider credenziali"
+	},
+	"credential-providers": {
+		"defaultMessage": "Archivi credenziali esterni"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Collega Vault, AWS Secrets Manager, Azure Key Vault o Infisical tramite OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Test OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Test recupero"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Percorso del segreto"
+	},
+	"credentials": {
+		"defaultMessage": "Credenziali DNS"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Percorso del segreto"
+	},
+	"credentials.source": {
+		"defaultMessage": "Origine credenziali"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Archivio esterno (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Memorizzate nel vault NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Inserimento manuale (una tantum)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Credenziali memorizzate"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Crittografate sul volume /data e riutilizzabili per certificati DNS."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migra credenziali DNS esistenti"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} certificato/i sposterebbero le credenziali inline nel vault."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Segreto di firma (verifica X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Callback HTTP firmati al cambio di proxy host o certificati."
 	}
 }

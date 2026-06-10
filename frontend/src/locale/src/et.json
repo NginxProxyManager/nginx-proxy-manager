@@ -772,5 +772,83 @@
 	},
 	"users": {
 		"defaultMessage": "Users"
+	},
+	"api-key": {
+		"defaultMessage": "API võti"
+	},
+	"api-keys": {
+		"defaultMessage": "Automatiseerimise API võtmed"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Kopeerige see võti kohe — seda enam ei kuvata."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Tühistada see API võti? Seda kasutavad automatiseerimised lakkavad töötamast."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer tokenid (npmak_…) skriptidele ja CI-le. Ainult administraatoritele."
+	},
+	"credential": {
+		"defaultMessage": "Mandaat"
+	},
+	"credential-provider": {
+		"defaultMessage": "Mandaadi pakkuja"
+	},
+	"credential-providers": {
+		"defaultMessage": "Välised mandaadi hoidlad"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Ühenda Vault, AWS Secrets Manager, Azure Key Vault või Infisical OIDC kaudu."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Testi OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Testi lahendamist"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Saladuse tee"
+	},
+	"credentials": {
+		"defaultMessage": "DNS mandaadid"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Saladuse tee"
+	},
+	"credentials.source": {
+		"defaultMessage": "Mandaadi allikas"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Väline hoidla (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Salvestatud NPM seifis"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Sisesta käsitsi (ühekordne)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Salvestatud mandaat"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Krüpteeritud /data köidel, taaskasutatav DNS sertifikaatide jaoks."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migreeri pärand DNS mandaadid"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} sertifikaat(i) viiks sisseehitatud mandaadid seifi."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhookid"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Allkirja saladus (X-NPM-Signature kontrolliks)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Allkirjastatud HTTP tagasikutsumised hostide või sertifikaatide muutumisel."
 	}
 }

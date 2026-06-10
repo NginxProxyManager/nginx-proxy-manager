@@ -92,6 +92,138 @@
 	"access-lists": {
 		"defaultMessage": "Access Lists"
 	},
+	"api-key": {
+		"defaultMessage": "API Key"
+	},
+	"api-keys": {
+		"defaultMessage": "Automation API Keys"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Copy this key now — it will not be shown again."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Revoke this API key? Automations using it will stop working."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer tokens (npmak_…) for scripts and CI. Admin only."
+	},
+	"credential": {
+		"defaultMessage": "Credential"
+	},
+	"credential-provider": {
+		"defaultMessage": "Credential Provider"
+	},
+	"credential-providers": {
+		"defaultMessage": "External Credential Stores"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Connect HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, Infisical (Universal Auth), or a custom HTTP endpoint."
+	},
+	"credential-providers.field.name": {
+		"defaultMessage": "Name"
+	},
+	"credential-providers.field.type": {
+		"defaultMessage": "Type"
+	},
+	"credential-providers.test-auth": {
+		"defaultMessage": "Test auth"
+	},
+	"credential-providers.oidc.issuer": {
+		"defaultMessage": "OIDC issuer"
+	},
+	"credential-providers.oidc.client-id": {
+		"defaultMessage": "Client ID"
+	},
+	"credential-providers.oidc.client-secret": {
+		"defaultMessage": "Client secret"
+	},
+	"credential-providers.oidc.audience": {
+		"defaultMessage": "Audience (optional)"
+	},
+	"credential-providers.infisical.host": {
+		"defaultMessage": "Infisical host"
+	},
+	"credential-providers.infisical.workspace-id": {
+		"defaultMessage": "Project ID (workspace)"
+	},
+	"credential-providers.infisical.environment": {
+		"defaultMessage": "Environment slug"
+	},
+	"credential-providers.infisical.client-id": {
+		"defaultMessage": "Universal Auth client ID"
+	},
+	"credential-providers.infisical.client-secret": {
+		"defaultMessage": "Universal Auth client secret"
+	},
+	"credential-providers.vault.address": {
+		"defaultMessage": "Vault address"
+	},
+	"credential-providers.vault.mount": {
+		"defaultMessage": "Secrets mount"
+	},
+	"credential-providers.vault.role": {
+		"defaultMessage": "Vault role"
+	},
+	"credential-providers.aws.region": {
+		"defaultMessage": "AWS region"
+	},
+	"credential-providers.aws.role-arn": {
+		"defaultMessage": "IAM role ARN"
+	},
+	"credential-providers.azure.tenant": {
+		"defaultMessage": "Tenant ID"
+	},
+	"credential-providers.azure.vault-url": {
+		"defaultMessage": "Key Vault URL"
+	},
+	"credential-providers.http.url-template": {
+		"defaultMessage": "URL template"
+	},
+	"credentials": {
+		"defaultMessage": "DNS Credentials"
+	},
+	"documentation": {
+		"defaultMessage": "Documentation"
+	},
+	"documentation.open-new-tab": {
+		"defaultMessage": "Open in new tab"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Infisical folder + secret key"
+	},
+	"credentials.source": {
+		"defaultMessage": "Credential source"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "External store (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Stored in NPM vault"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Enter manually (one-time)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Stored credential"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Encrypted on the /data volume and reusable for DNS certificates."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migrate legacy DNS credentials"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} certificate(s) would move inline credentials into the vault."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Test OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Test resolve"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Folder and secret key (e.g. /DNS/cloudflare-api-token)"
+	},
 	"action.add": {
 		"defaultMessage": "Add"
 	},
@@ -133,6 +265,18 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Audit Logs"
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooks"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Signing secret (use for X-NPM-Signature verification)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Receive signed HTTP callbacks when hosts or certificates change."
 	},
 	"auto": {
 		"defaultMessage": "Auto"
@@ -421,6 +565,9 @@
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
+	},
+	"help.view-full-docs": {
+		"defaultMessage": "View full documentation"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"

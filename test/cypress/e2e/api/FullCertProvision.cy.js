@@ -56,4 +56,41 @@ describe('Full Certificate Provisions', () => {
 		});
 	});
 
+	it('Should provision DNS certificate using vault credential_ref', () => {
+		const credentialsIni =
+			'dns_powerdns_api_url = http://ns1.pdns:8081\r\ndns_powerdns_api_key = npm';
+
+		cy.task('backendApiPost', {
+			token: token,
+			path: '/api/credentials',
+			data: {
+				name: 'PowerDNS vault test',
+				dns_provider: 'powerdns',
+				credentials: credentialsIni,
+			},
+		}).then((cred) => {
+			expect(cred).to.have.property('id');
+
+			cy.task('backendApiPost', {
+				token: token,
+				path: '/api/nginx/certificates',
+				data: {
+					domain_names: ['website3.example.com'],
+					meta: {
+						dns_challenge: true,
+						dns_provider: 'powerdns',
+						credential_ref: { type: 'internal', id: cred.id },
+						propagation_seconds: 5,
+					},
+					provider: 'letsencrypt',
+				},
+			}).then((data) => {
+				cy.validateSwaggerSchema('post', 201, '/nginx/certificates', data);
+				expect(data.meta.dns_provider).to.equal('powerdns');
+				expect(data.meta.credential_ref).to.deep.equal({ type: 'internal', id: cred.id });
+				expect(data.meta.dns_provider_credentials).to.be.undefined;
+			});
+		});
+	});
+
 });

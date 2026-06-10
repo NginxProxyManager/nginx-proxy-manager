@@ -1,12 +1,15 @@
 {
 	"operationId": "getUser2faStatus",
 	"summary": "Get user 2fa Status",
-	"tags": ["users"],
+	"tags": [
+		"users"
+	],
 	"security": [
 		{
 			"bearerAuth": []
 		}
 	],
+	"description": "Returns whether two-factor authentication is enabled for the user.",
 	"parameters": [
 		{
 			"in": "path",
@@ -36,7 +39,10 @@
 					"schema": {
 						"type": "object",
 						"additionalProperties": false,
-						"required": ["enabled", "backup_codes_remaining"],
+						"required": [
+							"enabled",
+							"backup_codes_remaining"
+						],
 						"properties": {
 							"enabled": {
 								"type": "boolean",

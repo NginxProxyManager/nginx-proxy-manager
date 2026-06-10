@@ -62,6 +62,30 @@
 				"dns_provider_credentials": {
 					"type": "string"
 				},
+				"credential_ref": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"type": {
+							"type": "string",
+							"enum": ["internal", "external"]
+						},
+						"id": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"provider_id": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"path": {
+							"type": "string"
+						},
+						"field": {
+							"type": "string"
+						}
+					}
+				},
 				"dns_provider": {
 					"type": "string"
 				},

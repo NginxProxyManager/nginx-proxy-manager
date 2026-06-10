@@ -658,5 +658,83 @@
 	},
 	"users": {
 		"defaultMessage": "用户列表"
+	},
+	"api-key": {
+		"defaultMessage": "API 密钥"
+	},
+	"api-keys": {
+		"defaultMessage": "自动化 API 密钥"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "请立即复制此密钥，之后将不再显示。"
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "确定撤销此 API 密钥？使用它的自动化将停止工作。"
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "用于脚本和 CI 的 Bearer 令牌（npmak_…），仅管理员可用。"
+	},
+	"credential": {
+		"defaultMessage": "凭据"
+	},
+	"credential-provider": {
+		"defaultMessage": "凭据提供商"
+	},
+	"credential-providers": {
+		"defaultMessage": "外部凭据存储"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "通过 OIDC 连接 Vault、AWS Secrets Manager、Azure Key Vault 或 Infisical。"
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "测试 OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "测试获取"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "密钥路径"
+	},
+	"credentials": {
+		"defaultMessage": "DNS 凭据"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "密钥路径"
+	},
+	"credentials.source": {
+		"defaultMessage": "凭据来源"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "外部存储（Vault、AWS 等）"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "保存在 NPM 密钥库"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "手动输入（一次性）"
+	},
+	"credentials.stored": {
+		"defaultMessage": "已保存的凭据"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "加密保存在 /data 卷上，可重复用于 DNS 证书。"
+	},
+	"credentials.migrate": {
+		"defaultMessage": "迁移旧版 DNS 凭据"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} 个证书将把内联凭据迁入密钥库。"
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "签名密钥（用于验证 X-NPM-Signature）"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "代理主机或证书变更时接收带签名的 HTTP 回调。"
 	}
 }

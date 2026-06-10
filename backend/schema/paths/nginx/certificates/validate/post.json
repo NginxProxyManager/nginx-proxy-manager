@@ -1,12 +1,17 @@
 {
 	"operationId": "validateCertificates",
 	"summary": "Validates given Custom Certificates",
-	"tags": ["certificates"],
+	"tags": [
+		"certificates"
+	],
 	"security": [
 		{
-			"bearerAuth": ["certificates.manage"]
+			"bearerAuth": [
+				"certificates.manage"
+			]
 		}
 	],
+	"description": "Validates stored certificates and reports expiry or configuration issues.",
 	"requestBody": {
 		"$ref": "../../../../common.json#/properties/certificate_files"
 	},
@@ -33,12 +38,19 @@
 					"schema": {
 						"type": "object",
 						"additionalProperties": false,
-						"required": ["certificate", "certificate_key"],
+						"required": [
+							"certificate",
+							"certificate_key"
+						],
 						"properties": {
 							"certificate": {
 								"type": "object",
 								"additionalProperties": false,
-								"required": ["cn", "issuer", "dates"],
+								"required": [
+									"cn",
+									"issuer",
+									"dates"
+								],
 								"properties": {
 									"cn": {
 										"type": "string",
@@ -51,7 +63,10 @@
 									"dates": {
 										"type": "object",
 										"additionalProperties": false,
-										"required": ["from", "to"],
+										"required": [
+											"from",
+											"to"
+										],
 										"properties": {
 											"from": {
 												"type": "integer"

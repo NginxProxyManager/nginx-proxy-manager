@@ -8,6 +8,8 @@ export * from "./useCheckVersion";
 export * from "./useDeadHost";
 export * from "./useDeadHosts";
 export * from "./useDnsProviders";
+export * from "./useCredentials";
+export * from "./useCredentialProviders";
 export * from "./useHealth";
 export * from "./useHostReport";
 export * from "./useProxyHost";

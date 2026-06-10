@@ -772,5 +772,83 @@
 	},
 	"users": {
 		"defaultMessage": "Gebruikers"
+	},
+	"api-key": {
+		"defaultMessage": "API-sleutel"
+	},
+	"api-keys": {
+		"defaultMessage": "API-sleutels voor automatisering"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Kopieer deze sleutel nu — hij wordt niet opnieuw getoond."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Deze API-sleutel intrekken? Automatiseringen die hem gebruiken stoppen dan."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer-tokens (npmak_…) voor scripts en CI. Alleen beheerders."
+	},
+	"credential": {
+		"defaultMessage": "Inloggegevens"
+	},
+	"credential-provider": {
+		"defaultMessage": "Aanbieder van inloggegevens"
+	},
+	"credential-providers": {
+		"defaultMessage": "Externe opslag voor inloggegevens"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Koppel Vault, AWS Secrets Manager, Azure Key Vault of Infisical via OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "OIDC testen"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Ophalen testen"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Pad naar geheim"
+	},
+	"credentials": {
+		"defaultMessage": "DNS-inloggegevens"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Pad naar geheim"
+	},
+	"credentials.source": {
+		"defaultMessage": "Bron van inloggegevens"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Externe opslag (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Opgeslagen in NPM-kluis"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Handmatig invoeren (eenmalig)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Opgeslagen inloggegevens"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Versleuteld op het /data-volume en herbruikbaar voor DNS-certificaten."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Oude DNS-inloggegevens migreren"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} certificaat(en) verplaatsen ingesloten inloggegevens naar de kluis."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooks"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Handtekeninggeheim (voor X-NPM-Signature-verificatie)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Ondertekende HTTP-callbacks bij wijzigingen aan proxy-hosts of certificaten."
 	}
 }

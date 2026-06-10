@@ -1,4 +1,4 @@
-import { formatDateTime, getFlagCodeForLocale } from "src/locale";
+import { formatDateTime, getFlagCodeForLocale } from "./Utils";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 describe("DateFormatter", () => {

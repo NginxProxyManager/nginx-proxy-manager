@@ -1,12 +1,17 @@
 {
 	"operationId": "disableProxyHost",
 	"summary": "Disable a Proxy Host",
-	"tags": ["proxy-hosts"],
+	"tags": [
+		"proxy-hosts"
+	],
 	"security": [
 		{
-			"bearerAuth": ["proxy_hosts.manage"]
+			"bearerAuth": [
+				"proxy_hosts.manage"
+			]
 		}
 	],
+	"description": "Disables a proxy host in nginx without removing the database record.",
 	"parameters": [
 		{
 			"in": "path",

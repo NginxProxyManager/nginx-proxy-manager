@@ -1,4 +1,6 @@
 import { installPlugins } from "./lib/certbot.js";
+import { materializeCertbotCredentials } from "./lib/secrets/resolve.js";
+import { ensureCredentialDirs } from "./lib/secrets/storage.js";
 import utils from "./lib/utils.js";
 import { setup as logger } from "./logger.js";
 import authModel from "./models/auth.js";
@@ -6,7 +8,6 @@ import certificateModel from "./models/certificate.js";
 import settingModel from "./models/setting.js";
 import userModel from "./models/user.js";
 import userPermissionModel from "./models/user_permission.js";
-import fs from "fs/promises";
 
 export const isSetup = async () => {
 	const row = await userModel.query().select("id").where("is_deleted", 0).first();
@@ -62,6 +63,7 @@ const setupDefaultUser = async () => {
 			user_id: user.id,
 			visibility: "all",
 			proxy_hosts: "manage",
+			credentials: "manage",
 			redirection_hosts: "manage",
 			dead_hosts: "manage",
 			streams: "manage",
@@ -119,12 +121,18 @@ const setupCertbotPlugins = async () => {
 					plugins.push(certificate.meta.dns_provider);
 				}
 
-				// Make sure credentials file exists
-				const credentials_loc = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
-				if (typeof certificate.meta.dns_provider_credentials === "string") {
-					promises.push(fs.mkdir("/etc/letsencrypt/credentials", { recursive: true })
-								  .then(() => fs.writeFile(credentials_loc, certificate.meta.dns_provider_credentials, { mode: 0o600, flag: "wx" }))
-								  .catch((err) => { if (err.code !== "EEXIST") throw err; }));
+				// Make sure credentials file exists (from vault or legacy meta)
+				if (
+					certificate.meta?.credential_ref?.type === "internal" ||
+					typeof certificate.meta.dns_provider_credentials === "string"
+				) {
+					promises.push(
+						materializeCertbotCredentials(certificate).catch((err) => {
+							logger.warn(
+								`Could not restore credentials for certificate #${certificate.id}: ${err.message}`,
+							);
+						}),
+					);
 				}
 			}
 			return true;
@@ -161,4 +169,10 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
-export default () => setupDefaultUser().then(setupDefaultSettings).then(setupCertbotPlugins).then(setupLogrotation);
+export default () => {
+	ensureCredentialDirs();
+	return setupDefaultUser()
+		.then(setupDefaultSettings)
+		.then(setupCertbotPlugins)
+		.then(setupLogrotation);
+};

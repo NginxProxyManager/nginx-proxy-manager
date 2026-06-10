@@ -30,7 +30,7 @@ router
 				expiry: typeof req.query.expiry !== "undefined" ? req.query.expiry : null,
 				scope: typeof req.query.scope !== "undefined" ? req.query.scope : null,
 			});
-			res.status(200).send(data);
+			res.status(200).json(data);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -46,7 +46,7 @@ router
 		try {
 			const data = await apiValidator(getValidationSchema("/tokens", "post"), req.body);
 			const result = await internalToken.getTokenFromEmail(data);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -68,7 +68,7 @@ router
 		try {
 			const { challenge_token, code } = await apiValidator(getValidationSchema("/tokens/2fa", "post"), req.body);
 			const result = await internalToken.verify2FA(challenge_token, code);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

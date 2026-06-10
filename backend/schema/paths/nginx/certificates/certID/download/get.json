@@ -1,12 +1,17 @@
 {
 	"operationId": "downloadCertificate",
 	"summary": "Downloads a Certificate",
-	"tags": ["certificates"],
+	"tags": [
+		"certificates"
+	],
 	"security": [
 		{
-			"bearerAuth": ["certificates.manage"]
+			"bearerAuth": [
+				"certificates.manage"
+			]
 		}
 	],
+	"description": "Downloads certificate and private key material for a certificate id (requires permission).",
 	"parameters": [
 		{
 			"in": "path",
