@@ -151,6 +151,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							proxyHosts: data.permissions?.proxyHosts,
 							redirectionHosts: data.permissions?.redirectionHosts,
 							streams: data.permissions?.streams,
+							upstreamHosts: data.permissions?.upstreamHosts,
 						} as any
 					}
 					onSubmit={onSubmit}
@@ -240,6 +241,14 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												<T id="streams" />
 											</label>
 											<Field name="streams">
+												{({ field, form }: any) => getPermissionButtons(field, form)}
+											</Field>
+										</div>
+										<div className="mb-3">
+											<label htmlFor="ignored" className="form-label">
+												<T id="upstream-hosts" />
+											</label>
+											<Field name="upstreamHosts">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
 											</Field>
 										</div>

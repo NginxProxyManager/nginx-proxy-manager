@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import errs from "../lib/error.js";
 import settingModel from "../models/setting.js";
+import internalIpRanges from "./ip_ranges.js";
 import internalNginx from "./nginx.js";
 
 const internalSetting = {
@@ -32,6 +33,10 @@ const internalSetting = {
 				});
 			})
 			.then((row) => {
+				if (row.id === "real-ip-header") {
+					return internalIpRanges.regenerate().then(() => row);
+				}
+
 				if (row.id === "default-site") {
 					// write the html if we need to
 					if (row.value === "html") {

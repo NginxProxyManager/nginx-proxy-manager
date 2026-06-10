@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Cóid chúltaca fágtha: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Sábháil na cóid chúltaca seo in áit shábháilte. Ní féidir gach cód a úsáid ach uair amháin."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Díchumasaigh fíordheimhniú dhá fhachtóir"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Díchumasaigh 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Má dhíchumasaíonn tú fíordheimhniú dhá fhachtóir, beidh do chuntas níos lú slán."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Díchumasaithe"
+	},
+	"2fa.done": {
+		"defaultMessage": "Tá mo chóid chúltaca sábháilte agam"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Cumasaigh fíordheimhniú dhá fhachtóir"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Cumasaithe"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Cuir isteach cód fíoraithe"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Cuir isteach cód fíoraithe chun díchumasú"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Athghiniúint"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Athghiniúint cóid chúltaca"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Cuir isteach cód fíoraithe chun cóid chúltaca nua a ghiniúint. Beidh do sheanchóid neamhbhailí."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Eochair rúnda"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Scan an cód QR seo le d'aip fíordheimhnithe, nó cuir isteach an rún de láimh."
+	},
+	"2fa.status": {
+		"defaultMessage": "Stádas"
+	},
+	"2fa.title": {
+		"defaultMessage": "Fíordheimhniú dhá fhachtóir"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Fíoraigh agus cumasaigh"
+	},
 	"access-list": {
 		"defaultMessage": "Liosta Rochtana"
 	},
@@ -170,6 +227,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Ní mór na fearainn seo a bheith cumraithe cheana féin chun pointeáil chuig an suiteáil seo."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Cineál eochrach"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "Tá RSA comhoiriúnach go forleathan, tá ECDSA níos tapúla agus níos slán ach b'fhéidir nach dtacóidh córais níos sine leis"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "le Let's Encrypt"
 	},
@@ -278,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Ní thacaítear le cártaí fiáine don ÚD seo"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Ardleibhéal"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Fórsáil SSL"
 	},
@@ -289,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Tacaíocht HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Muinín as ceanntásca Proto ar aghaidh ón sruth uachtarach"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Úsáid Dúshlán DNS"
@@ -383,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt trí HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Cuir freastala? leis"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "?stach"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Me?chan"
+	},
 	"loading": {
 		"defaultMessage": "Ag lódáil…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Cód fíoraithe"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Cuir isteach cód"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Cuir isteach an cód ó d'aip fíordheimhnithe"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Fíordheimhniú dhá fhachtóir"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Fíoraigh"
 	},
 	"login.title": {
 		"defaultMessage": "Logáil isteach i do chuntas"
@@ -509,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Ainm Óstach / IP Ar Aghaidh"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Cineál sprice ar aghaidh"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Díreach"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Cuir ar aghaidh chuig óstach agus port amháin"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Óstach sruth uachtarach"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Úsáid óstach sruth uachtarach le haghaidh cothromú ualach thar fhreastalaithe iolracha"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Óstaigh Seachfhreastalaí"
 	},
@@ -590,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Atreorú"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Ceanntásc fíor-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Úsáid nuair atá Cloudflare os comhair"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Saincheaptha"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Cuir isteach ainm ceanntásc saincheaptha"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "Ceanntásc HTTP a úsáidtear chun fíor-sheoladh IP an chliaint a chinneadh"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Ceanntásc malartach coitianta"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Ceanntásc caighdeánach, oibríonn le formhór na seachfhreastalaithe droim ar ais"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Tosaigh trí do chuntas riarthóra a chruthú."
 	},
@@ -632,6 +779,30 @@
 	"update-available": {
 		"defaultMessage": "Nuashonrú ar Fáil: {latestVersion}"
 	},
+	"upstream-host": {
+		"defaultMessage": "Óstach sruth uachtarach"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Roghnaigh go roghnach óstach sruth uachtarach domhanda le húsáid in ionad an chur ar aghaidh dhírigh nó cothromú ualach inlíne."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Modh"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Dada (Díreach)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Níl aon óstach sruth uachtarach roghnaithe"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Freastalaithe"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Óstaigh sruth uachtarach"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Óstach sruth uachtarach} other {Óstaigh sruth uachtarach}}"
+	},
 	"user": {
 		"defaultMessage": "Úsáideoir"
 	},
@@ -673,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Athraigh go mód Solais"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Fíordheimhniú dhá fhachtóir"
 	},
 	"username": {
 		"defaultMessage": "Ainm úsáideora"

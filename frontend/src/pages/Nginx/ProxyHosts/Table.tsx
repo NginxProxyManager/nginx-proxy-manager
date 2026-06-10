@@ -7,7 +7,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import type { ProxyHost } from "src/api/backend";
+import type { ProxyHost, ProxyLocation } from "src/api/backend";
 import {
 	AccessListFormatter,
 	CertificateFormatter,
@@ -18,8 +18,86 @@ import {
 	TrueFalseFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
+import { useUpstreamHosts } from "src/hooks";
 import { intl, T } from "src/locale";
+import { showUpstreamHostModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
+
+// DestinationCell renders the "Destination" column. A proxy host can route
+// at two levels: proxy-level (the whole host forwards via forwardHost:port
+// or upstreamHostId), and per-location (each /path entry carries its own
+// direct forward fields OR upstream_host_id). The cell shows the proxy-level
+// destination on the first line and every custom location underneath, so
+// operators can see at a glance how each path will be routed.
+function DestinationCell({ host }: { host: ProxyHost }) {
+	const { data: upstreams } = useUpstreamHosts();
+
+	const proxyUpstreamId = host.upstreamHostId ?? 0;
+	const allLocations = host.locations || [];
+
+	// If `/` is itself a custom location, the proxy-level destination is
+	// unreachable (every request matches a location override). Suppress it.
+	const rootIsCovered = allLocations.some((l: ProxyLocation) => l.path === "/");
+
+	const renderUpstreamLink = (upId: number, fallbackName?: string) => {
+		const up = upstreams?.find((u) => u.id === upId);
+		const name = up?.name ?? fallbackName ?? `upstream #${upId}`;
+		return (
+			<button
+				type="button"
+				className="btn btn-link btn-sm p-0 align-baseline"
+				onClick={(e) => {
+					e.preventDefault();
+					showUpstreamHostModal(upId);
+				}}
+			>
+				{name}
+			</button>
+		);
+	};
+
+	const proxyLine =
+		proxyUpstreamId > 0
+			? renderUpstreamLink(proxyUpstreamId, host.upstreamHost?.name)
+			: `${host.forwardScheme}://${host.forwardHost}:${host.forwardPort}`;
+
+	if (allLocations.length === 0) {
+		// Plain proxy host with no custom locations — keep the cell tight.
+		return <>{proxyLine}</>;
+	}
+
+	// With custom locations, every routing rule (including the proxy-level
+	// default) is shown as `<path> → <destination>` so the listing reads
+	// uniformly. The "/" line is suppressed when the user has defined an
+	// explicit "/" location override.
+	return (
+		<div className="text-secondary small">
+			{!rootIsCovered && (
+				<div>
+					<code>/</code>
+					{" → "}
+					{proxyLine}
+				</div>
+			)}
+			{allLocations.map((loc: ProxyLocation, i: number) => {
+				const upId = loc.upstreamHostId ?? 0;
+				return (
+					<div key={`${loc.path}-${i}`}>
+						<code>{loc.path}</code>
+						{" → "}
+						{upId > 0 ? (
+							renderUpstreamLink(upId)
+						) : (
+							<span>
+								{loc.forwardScheme}://{loc.forwardHost}:{loc.forwardPort}
+							</span>
+						)}
+					</div>
+				);
+			})}
+		</div>
+	);
+}
 
 interface Props {
 	data: ProxyHost[];
@@ -66,10 +144,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 					const bVal = `${b.original.forwardHost}:${b.original.forwardPort}`;
 					return aVal.localeCompare(bVal);
 				},
-				cell: (info: any) => {
-					const value = info.getValue();
-					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
-				},
+				cell: (info: any) => <DestinationCell host={info.getValue()} />,
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {
 				id: "certificate",

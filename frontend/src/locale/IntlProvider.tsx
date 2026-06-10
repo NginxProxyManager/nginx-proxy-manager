@@ -13,6 +13,7 @@ import langJa from "./lang/ja.json";
 import langKo from "./lang/ko.json";
 import langNl from "./lang/nl.json";
 import langPl from "./lang/pl.json";
+import langPtBr from "./lang/pt_br.json";
 import langRu from "./lang/ru.json";
 import langSk from "./lang/sk.json";
 import langCs from "./lang/cs.json";
@@ -26,12 +27,16 @@ import langList from "./lang/lang-list.json";
 // first item of each array should be the language code,
 // not the country code
 // Remember when adding to this list, also update check-locales.js script
-const localeOptions = [
+type LocaleMessages = Record<string, string>;
+type LocaleOption = [string, string, LocaleMessages];
+
+const localeOptions: LocaleOption[] = [
   ["en", "en-US", langEn],
   ["de", "de-DE", langDe],
   ["es", "es-ES", langEs],
   ["et", "et-EE", langEt],
   ["pt", "pt-PT", langPt],
+  ["pt-BR", "pt-BR", langPtBr],
   ["fr", "fr-FR", langFr],
   ["ga", "ga-IE", langGa],
   ["ja", "ja-JP", langJa],
@@ -51,8 +56,20 @@ const localeOptions = [
   ["no", "no-NO", langNo],
 ];
 
-const loadMessages = (locale?: string): typeof langList & typeof langEn => {
-  const thisLocale = (locale || "en").slice(0, 2);
+const normalizeLocale = (locale?: string) => (locale || "en").replace("_", "-").toLowerCase();
+
+const findLocaleOption = (locale?: string) => {
+  const normalizedLocale = normalizeLocale(locale);
+  return localeOptions.find(([code]) => code.toLowerCase() === normalizedLocale);
+};
+
+const loadMessages = (locale?: string): typeof langList & LocaleMessages => {
+  const exactMatch = findLocaleOption(locale);
+  if (exactMatch) {
+    return Object.assign({}, langList, langEn, exactMatch[2]);
+  }
+
+  const thisLocale = normalizeLocale(locale).slice(0, 2);
 
   // ensure this lang exists in localeOptions above, otherwise fallback to en
   if (thisLocale === "en" || !localeOptions.some(([code]) => code === thisLocale)) {
@@ -63,7 +80,21 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 };
 
 const getFlagCodeForLocale = (locale?: string) => {
-  const thisLocale = (locale || "en").slice(0, 2);
+  const normalizedLocale = normalizeLocale(locale);
+
+  // Locales where the flag should follow the region rather than the language,
+  // because the locale code itself carries the region (e.g. pt-BR → Brazil
+  // rather than Portugal). Keep this list small and explicit; ad-hoc inputs
+  // like "en-US" still fall through to the language-based path below so a
+  // user with `en-US` still gets the EN flag, not US.
+  const localeFullCases: Record<string, string> = {
+    "pt-br": "br",
+  };
+  if (localeFullCases[normalizedLocale]) {
+    return localeFullCases[normalizedLocale].toUpperCase();
+  }
+
+  const thisLocale = normalizedLocale.slice(0, 2);
 
   // only add to this if your flag is different from the locale code
   const specialCases: Record<string, string> = {

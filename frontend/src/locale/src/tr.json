@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Kalan yedek kodlar: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Bu yedek kodları güvenli bir yerde saklayın. Her kod yalnızca bir kez kullanılabilir."
+	},
+	"2fa.disable": {
+		"defaultMessage": "İki faktörlü kimlik doğrulamayı devre dışı bırak"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "2FA'yı devre dışı bırak"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "İki faktörlü kimlik doğrulamayı devre dışı bırakmak hesabınızı daha az güvenli hale getirecektir."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Devre dışı"
+	},
+	"2fa.done": {
+		"defaultMessage": "Yedek kodlarımı kaydettim"
+	},
+	"2fa.enable": {
+		"defaultMessage": "İki faktörlü kimlik doğrulamayı etkinleştir"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Etkin"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Doğrulama kodunu girin"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Devre dışı bırakmak için doğrulama kodunu girin"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Yeniden oluştur"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Yedek kodları yeniden oluştur"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Yeni yedek kodlar oluşturmak için doğrulama kodu girin. Eski kodlarınız geçersiz olacaktır."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Gizli anahtar"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Bu QR kodunu kimlik doğrulama uygulamanızla tarayın veya gizli anahtarı manuel olarak girin."
+	},
+	"2fa.status": {
+		"defaultMessage": "Durum"
+	},
+	"2fa.title": {
+		"defaultMessage": "İki Faktörlü Kimlik Doğrulama"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Doğrula ve etkinleştir"
+	},
 	"access-list": {
 		"defaultMessage": "Erişim Listesi"
 	},
@@ -42,7 +99,7 @@
 		"defaultMessage": "Konum Ekle"
 	},
 	"action.allow": {
-		"defaultMessage": "İzin Ver"
+		"defaultMessage": "İzin ver"
 	},
 	"action.close": {
 		"defaultMessage": "Kapat"
@@ -141,7 +198,7 @@
 		"defaultMessage": "DNS Sağlayıcı"
 	},
 	"certificates.dns.provider.placeholder": {
-		"defaultMessage": "Bir Sağlayıcı Seçin..."
+		"defaultMessage": "Sağlayıcı seçin..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Bu bölüm Certbot ve DNS eklentileri hakkında bazı bilgiler gerektirir. Lütfen ilgili eklenti dokümantasyonuna bakın."
@@ -169,6 +226,18 @@
 	},
 	"certificates.http.warning": {
 		"defaultMessage": "Bu alan adları zaten bu kuruluma işaret edecek şekilde yapılandırılmış olmalıdır."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Key Type"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA is widely compatible, ECDSA is faster and more secure but may not be supported by older systems"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
 	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "Let's Encrypt ile"
@@ -278,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Bu CA için joker karakterler desteklenmiyor"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Gelişmiş"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "SSL'i Zorla"
 	},
@@ -289,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Desteği"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Upstream Forwarded Proto başlıklarına güven"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge Kullan"
@@ -383,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "HTTP ile Let's Encrypt"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Add Server"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Weight"
+	},
 	"loading": {
 		"defaultMessage": "Yükleniyor…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Doğrulama kodu"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Kodu girin"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Kimlik doğrulama uygulamanızdaki kodu girin"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "İki Faktörlü Kimlik Doğrulama"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Doğrula"
 	},
 	"login.title": {
 		"defaultMessage": "Hesabınıza giriş yapın"
@@ -509,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "İletme Host Adı / IP"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Yönlendirme hedef türü"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Doğrudan"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Tek bir ana bilgisayar ve bağlantı noktasına yönlendir"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Upstream sunucu"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Birden fazla sunucu arasında yük dengeleme için upstream sunucu kullanın"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy Host'lar"
 	},
@@ -534,7 +651,7 @@
 		"defaultMessage": "{count} {count, plural, one {Yönlendirme Host'u} other {Yönlendirme Host'u}}"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Çoklu Seçenek"
+		"defaultMessage": "300 Çoklu seçim"
 	},
 	"redirection-hosts.http-code.301": {
 		"defaultMessage": "301 Kalıcı olarak taşındı"
@@ -543,7 +660,7 @@
 		"defaultMessage": "302 Geçici olarak taşındı"
 	},
 	"redirection-hosts.http-code.303": {
-		"defaultMessage": "303 Diğerini gör"
+		"defaultMessage": "303 Diğerine bak"
 	},
 	"redirection-hosts.http-code.307": {
 		"defaultMessage": "307 Geçici yönlendirme"
@@ -590,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Yönlendir"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Gerçek IP başlığı"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Cloudflare arkasında kullanın"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Özel"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Özel başlık adını girin"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "İstemcinin gerçek IP adresini belirlemek için kullanılan HTTP başlığı"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Yaygın alternatif başlık"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Standart başlık, çoğu ters proxy ile çalışır"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Yönetici hesabınızı oluşturarak başlayın."
 	},
@@ -630,7 +777,31 @@
 		"defaultMessage": "Test"
 	},
 	"update-available": {
-		"defaultMessage": "Güncelleme Mevcut: {latestVersion}"
+		"defaultMessage": "Güncelleme mevcut: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Upstream sunucu"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Doğrudan yönlendirme yerine bir upstream sunucu seçin."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Yöntem"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Yok (Doğrudan)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Upstream sunucu seçilmedi"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Sunucular"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Upstream sunucular"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Upstream sunucu} other {Upstream sunucu}}"
 	},
 	"user": {
 		"defaultMessage": "Kullanıcı"
@@ -673,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Açık moda geç"
+	},
+	"user.two-factor": {
+		"defaultMessage": "İki faktörlü doğr."
 	},
 	"username": {
 		"defaultMessage": "Kullanıcı Adı"

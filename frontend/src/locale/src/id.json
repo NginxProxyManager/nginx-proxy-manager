@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Kode cadangan tersisa: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Simpan kode cadangan ini di tempat yang aman. Setiap kode hanya dapat digunakan sekali."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Nonaktifkan autentikasi dua faktor"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Nonaktifkan 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Menonaktifkan autentikasi dua faktor akan membuat akun Anda kurang aman."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Nonaktif"
+	},
+	"2fa.done": {
+		"defaultMessage": "Saya telah menyimpan kode cadangan saya"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Aktifkan autentikasi dua faktor"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Aktif"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Masukkan kode verifikasi"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Masukkan kode verifikasi untuk menonaktifkan"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Regenerasi"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Regenerasi kode cadangan"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Masukkan kode verifikasi untuk membuat kode cadangan baru. Kode lama Anda akan menjadi tidak berlaku."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Kunci rahasia"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Pindai kode QR ini dengan aplikasi autentikator Anda, atau masukkan kunci rahasia secara manual."
+	},
+	"2fa.status": {
+		"defaultMessage": "Status"
+	},
+	"2fa.title": {
+		"defaultMessage": "Autentikasi dua faktor"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verifikasi dan aktifkan"
+	},
 	"access-list": {
 		"defaultMessage": "Daftar Akses"
 	},
@@ -60,7 +117,7 @@
 		"defaultMessage": "Unduh"
 	},
 	"action.edit": {
-		"defaultMessage": "Edit"
+		"defaultMessage": "Ubah"
 	},
 	"action.enable": {
 		"defaultMessage": "Aktifkan"
@@ -170,6 +227,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Domain ini harus sudah dikonfigurasi agar mengarah ke instalasi ini."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Tipe kunci"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA kompatibel secara luas, ECDSA lebih cepat dan lebih aman tetapi mungkin tidak didukung oleh sistem lama"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "dengan Let's Encrypt"
 	},
@@ -278,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Wildcard tidak didukung untuk CA ini"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Lanjutan"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Paksa SSL"
 	},
@@ -289,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Dukungan HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Percayai header Proto yang diteruskan dari upstream"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Gunakan DNS Challenge"
@@ -383,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Tambah server"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Bobot"
+	},
 	"loading": {
 		"defaultMessage": "Memuat…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Kode verifikasi"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Masukkan kode"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Masukkan kode dari aplikasi autentikator Anda"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Autentikasi dua faktor"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verifikasi"
 	},
 	"login.title": {
 		"defaultMessage": "Masuk ke akun Anda"
@@ -441,7 +543,7 @@
 		"defaultMessage": "Apakah Anda yakin ingin menghapus {object} ini?"
 	},
 	"object.edit": {
-		"defaultMessage": "Edit {object}"
+		"defaultMessage": "Ubah {object}"
 	},
 	"object.empty": {
 		"defaultMessage": "Tidak ada {objects}"
@@ -465,10 +567,10 @@
 		"defaultMessage": "{object} diperbarui"
 	},
 	"offline": {
-		"defaultMessage": "Offline"
+		"defaultMessage": "Luring"
 	},
 	"online": {
-		"defaultMessage": "Online"
+		"defaultMessage": "Daring"
 	},
 	"options": {
 		"defaultMessage": "Opsi"
@@ -508,6 +610,21 @@
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Hostname / IP Terusan"
+	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Tipe target terusan"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Langsung"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Teruskan ke satu host dan port"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Host upstream"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Gunakan host upstream untuk penyeimbangan beban di beberapa server"
 	},
 	"proxy-hosts": {
 		"defaultMessage": "Host Proxy"
@@ -590,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Alihkan"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Header IP asli"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Gunakan saat berada di belakang Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Kustom"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Masukkan nama header kustom"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "Header HTTP yang digunakan untuk menentukan alamat IP klien yang sebenarnya"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Header alternatif umum"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Header standar, berfungsi dengan sebagian besar reverse proxy"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Mulai dengan membuat akun admin Anda."
 	},
@@ -632,6 +779,30 @@
 	"update-available": {
 		"defaultMessage": "Pembaruan Tersedia: {latestVersion}"
 	},
+	"upstream-host": {
+		"defaultMessage": "Host upstream"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Pilih secara opsional host upstream global untuk digunakan sebagai pengganti penerusan langsung atau penyeimbangan beban inline."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Metode"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Tidak ada (Langsung)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Tidak ada host upstream yang dipilih"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Server"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Host upstream"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host upstream} other {Host upstream}}"
+	},
 	"user": {
 		"defaultMessage": "Pengguna"
 	},
@@ -673,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Beralih ke mode terang"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Autentikasi dua faktor"
 	},
 	"username": {
 		"defaultMessage": "Nama pengguna"

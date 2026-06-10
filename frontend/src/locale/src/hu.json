@@ -347,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Helyettesítő karakterek nem támogatottak ennél a CA-nál"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Speciális"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "SSL kényszerítése"
 	},
@@ -358,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 támogatás"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Upstream továbbított Proto fejlécek megbízhatósága"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge használata"
@@ -451,6 +457,18 @@
 	},
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt HTTP-n keresztül"
+	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Szerver hozzáadása"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Kiszolgáló"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Súlyozás"
 	},
 	"loading": {
 		"defaultMessage": "Betöltés…"
@@ -549,10 +567,10 @@
 		"defaultMessage": "{object} frissítve"
 	},
 	"offline": {
-		"defaultMessage": "Offline"
+		"defaultMessage": "Nem elérhető"
 	},
 	"online": {
-		"defaultMessage": "Online"
+		"defaultMessage": "Elérhető"
 	},
 	"options": {
 		"defaultMessage": "Beállítások"
@@ -592,6 +610,21 @@
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Továbbító hostnév / IP"
+	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Továbbítási cél típusa"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Közvetlen"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Továbbítás egyetlen kiszolgálóra és portra"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Upstream kiszolgáló"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Upstream kiszolgáló használata terheléselosztáshoz több szerver között"
 	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy Kiszolgálók"
@@ -674,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Átirányítás"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Valódi IP fejléc"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Használja Cloudflare mögött"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Egyéni"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Adja meg az egyéni fejléc nevét"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "Az ügyfél valódi IP-címének meghatározásához használt HTTP fejléc"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Gyakori alternatív fejléc"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Szabványos fejléc, a legtöbb fordított proxyval működik"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Kezdje az admin fiók létrehozásával."
 	},
@@ -687,7 +750,7 @@
 		"defaultMessage": "SSL tanúsítvány"
 	},
 	"stream": {
-		"defaultMessage": "Stream"
+		"defaultMessage": "Adatfolyam"
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Továbbító kiszolgáló"
@@ -715,6 +778,30 @@
 	},
 	"update-available": {
 		"defaultMessage": "Frissítés elérhető: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Upstream kiszolgáló"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Opcionálisan válasszon globális upstream kiszolgálót a közvetlen továbbítás vagy a beépített terheléselosztás helyett."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Módszer"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Nincs (közvetlen)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Nincs upstream kiszolgáló kiválasztva"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Szerverek"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Upstream kiszolgálók"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Upstream kiszolgáló} other {Upstream kiszolgáló}}"
 	},
 	"user": {
 		"defaultMessage": "Felhasználó"

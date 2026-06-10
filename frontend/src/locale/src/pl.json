@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Pozostałe kody zapasowe: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Zapisz te kody zapasowe w bezpiecznym miejscu. Każdy kod może być użyty tylko raz."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Wyłącz uwierzytelnianie dwuskładnikowe"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Wyłącz 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Wyłączenie uwierzytelniania dwuskładnikowego sprawi, że Twoje konto będzie mniej bezpieczne."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Wyłączone"
+	},
+	"2fa.done": {
+		"defaultMessage": "Zapisałem moje kody zapasowe"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Włącz uwierzytelnianie dwuskładnikowe"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Włączone"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Wprowadź kod weryfikacyjny"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Wprowadź kod weryfikacyjny, aby wyłączyć"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Wygeneruj ponownie"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Wygeneruj ponownie kody zapasowe"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Wprowadź kod weryfikacyjny, aby wygenerować nowe kody zapasowe. Stare kody zostaną unieważnione."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Klucz tajny"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Zeskanuj ten kod QR za pomocą aplikacji uwierzytelniającej lub wprowadź sekret ręcznie."
+	},
+	"2fa.status": {
+		"defaultMessage": "Status"
+	},
+	"2fa.title": {
+		"defaultMessage": "Uwierzytelnianie dwuskładnikowe"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Zweryfikuj i włącz"
+	},
 	"access-list": {
 		"defaultMessage": "wpis listy dostępu"
 	},
@@ -22,6 +79,9 @@
 	},
 	"access-list.public.subtitle": {
 		"defaultMessage": "Nie wymaga uwierzytelnienia podstawowego"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Spełnij dowolny warunek"
@@ -48,7 +108,7 @@
 		"defaultMessage": "Usuń"
 	},
 	"action.deny": {
-		"defaultMessage": "Odrzuć"
+		"defaultMessage": "Odmów"
 	},
 	"action.disable": {
 		"defaultMessage": "Wyłącz"
@@ -73,6 +133,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Logi"
+	},
+	"auto": {
+		"defaultMessage": "Automatycznie"
 	},
 	"cancel": {
 		"defaultMessage": "Anuluj"
@@ -133,6 +196,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "Dostawca DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Wybierz dostawcę..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Ta sekcja wymaga pewnej wiedzy na temat Certbot i jego wtyczek DNS. Zapoznaj się z dokumentacją odpowiednich wtyczek."
@@ -281,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Symbole wieloznaczne nie są obsługiwane dla tego CA"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Zaawansowane"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Wymuś SSL"
 	},
@@ -292,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Obsługa HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Ufaj nagłówkom Forwarded Proto z upstream"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Użyj wyzwania DNS"
@@ -386,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt przez HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Dodaj serwer"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Waga"
+	},
 	"loading": {
 		"defaultMessage": "Ładowanie…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Kod weryfikacyjny"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Wprowadź kod"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Wprowadź kod z aplikacji uwierzytelniającej"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Uwierzytelnianie dwuskładnikowe"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Zweryfikuj"
 	},
 	"login.title": {
 		"defaultMessage": "Zaloguj się na swoje konto"
@@ -512,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Przekieruj na hostname / IP"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Typ celu przekierowania"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Bezpośrednio"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Przekieruj do jednego hosta i portu"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Host upstream"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Użyj hosta upstream do równoważenia obciążenia na wielu serwerach"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy"
 	},
@@ -535,6 +649,24 @@
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {przekierowanie} few {przekierowania} many {przekierowań} other {przekierowań}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Wiele wyborów"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Przeniesiony na stałe"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Przeniesiony tymczasowo"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Zobacz inne"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Tymczasowe przekierowanie"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Stałe przekierowanie"
 	},
 	"role.admin": {
 		"defaultMessage": "Administrator"
@@ -575,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Przekierowanie"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Nagłówek prawdziwego IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Użyj za Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Niestandardowy"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Wprowadź nazwę niestandardowego nagłówka"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "Nagłówek HTTP używany do określenia prawdziwego adresu IP klienta"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Popularny alternatywny nagłówek"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Standardowy nagłówek, działa z większością reverse proxy"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Zacznij od utworzenia konta administratora."
 	},
@@ -593,6 +755,9 @@
 	"stream.forward-host": {
 		"defaultMessage": "Host docelowy"
 	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
 	"stream.incoming-port": {
 		"defaultMessage": "Port przychodzący"
 	},
@@ -610,6 +775,33 @@
 	},
 	"test": {
 		"defaultMessage": "Test"
+	},
+	"update-available": {
+		"defaultMessage": "Dostępna aktualizacja: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Host upstream"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Wybierz host upstream zamiast bezpośredniego przekierowania."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Metoda"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Brak (Bezpośrednio)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Nie wybrano hosta upstream"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Serwery"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Hosty upstream"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host upstream} few {Hosty upstream} other {Hostów upstream}}"
 	},
 	"user": {
 		"defaultMessage": "użytkownik"
@@ -652,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Przełącz na tryb jasny"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Auth. dwuskładnikowa"
 	},
 	"username": {
 		"defaultMessage": "Nazwa użytkownika"

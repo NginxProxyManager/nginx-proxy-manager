@@ -20,11 +20,20 @@ const fetchProxyHost = (id: number | "new") => {
 			meta: {},
 			allowWebsocketUpgrade: false,
 			http2Support: false,
+			rateLimitEnabled: false,
+			rateLimit: 0,
+			rateLimitBurst: 0,
+			rateLimitPeriod: "minute",
+			rateLimitDelay: false,
+			loadBalancingEnabled: false,
+			loadBalancingMethod: "round_robin",
+			loadBalancingServers: [],
 			forwardScheme: "",
 			enabled: true,
 			hstsEnabled: false,
 			hstsSubdomains: false,
 			trustForwardedProto: false,
+			upstreamHostId: 0,
 		} as ProxyHost);
 	}
 	return getProxyHost(id, ["owner"]);

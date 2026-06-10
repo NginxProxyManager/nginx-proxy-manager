@@ -318,7 +318,7 @@
 		"defaultMessage": "Opprettet: {date}"
 	},
 	"dashboard": {
-		"defaultMessage": "Dashboard"
+		"defaultMessage": "Kontrollpanel"
 	},
 	"dead-host": {
 		"defaultMessage": "404 Tjener ikke funnet"
@@ -458,6 +458,18 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Legg til server"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Vert"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Port"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Vekt"
+	},
 	"loading": {
 		"defaultMessage": "Laster…"
 	},
@@ -594,10 +606,25 @@
 		"defaultMessage": "Kun opprettede elementer"
 	},
 	"proxy-host": {
-		"defaultMessage": "Proxy Host"
+		"defaultMessage": "Proxy-vert"
 	},
 	"proxy-host.forward-host": {
-		"defaultMessage": "Forward Hostname / IP"
+		"defaultMessage": "Videresend vertsnavn / IP"
+	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Videresendingsmåltype"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Direkte"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Videresend til én enkelt vert og port"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Upstream-vert"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Bruk en upstream-vert for lastbalansering på tvers av flere servere"
 	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy-verter"
@@ -624,7 +651,7 @@
 		"defaultMessage": "{count} {count, plural, one {Omdirigeringsvert} other {Omdirigeringsverter}}"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Multiple Choices"
+		"defaultMessage": "300 Flere valg"
 	},
 	"redirection-hosts.http-code.301": {
 		"defaultMessage": "301 Flyttet permanent"
@@ -680,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Omdiriger"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Ekte IP-hode"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Brukes bak Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Egendefinert"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Skriv inn egendefinert hodenavn"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "HTTP-hode brukt til å bestemme klientens ekte IP-adresse"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Vanlig alternativ hode"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Standard hode, fungerer med de fleste omvendte proksi-servere"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Kom i gang ved å opprette din administratorkonto."
 	},
@@ -721,6 +778,30 @@
 	},
 	"update-available": {
 		"defaultMessage": "Oppdatering tilgjengelig: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Upstream-vert"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Velg eventuelt en global upstream-vert å bruke i stedet for direkte videresending eller innebygd lastbalansering."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Metode"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Ingen (direkte)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Ingen upstream-vert valgt"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Servere"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Upstream-verter"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Upstream-vert} other {Upstream-verter}}"
 	},
 	"user": {
 		"defaultMessage": "Bruker"

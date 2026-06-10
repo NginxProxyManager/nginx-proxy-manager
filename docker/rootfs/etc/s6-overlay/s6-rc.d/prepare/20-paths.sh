@@ -23,6 +23,7 @@ mkdir -p \
 	/data/nginx/default_host \
 	/data/nginx/default_www \
 	/data/nginx/proxy_host \
+	/data/nginx/upstream_host \
 	/data/nginx/redirection_host \
 	/data/nginx/stream \
 	/data/nginx/dead_host \

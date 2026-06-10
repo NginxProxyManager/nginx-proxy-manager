@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Codici di backup rimanenti: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Salva questi codici di backup in un luogo sicuro. Ogni codice può essere usato solo una volta."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Disattiva autenticazione a due fattori"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Disattiva 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "La disattivazione dell'autenticazione a due fattori renderà il tuo account meno sicuro."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Disattivato"
+	},
+	"2fa.done": {
+		"defaultMessage": "Ho salvato i miei codici di backup"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Attiva autenticazione a due fattori"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Attivato"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Inserisci il codice di verifica"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Inserisci il codice di verifica per disattivare"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Rigenera"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Rigenera codici di backup"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Inserisci un codice di verifica per generare nuovi codici di backup. I vecchi codici saranno invalidati."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Chiave segreta"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Scansiona questo codice QR con la tua app di autenticazione o inserisci il segreto manualmente."
+	},
+	"2fa.status": {
+		"defaultMessage": "Stato"
+	},
+	"2fa.title": {
+		"defaultMessage": "Autenticazione a due fattori"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verifica e attiva"
+	},
 	"access-list": {
 		"defaultMessage": "Lista di Accesso"
 	},
@@ -23,6 +80,9 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "Nessuna autenticazione base richiesta"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Soddisfa Qualsiasi"
 	},
@@ -38,11 +98,17 @@
 	"action.add-location": {
 		"defaultMessage": "Aggiungi Percorso"
 	},
+	"action.allow": {
+		"defaultMessage": "Consenti"
+	},
 	"action.close": {
 		"defaultMessage": "Chiudi"
 	},
 	"action.delete": {
 		"defaultMessage": "Elimina"
+	},
+	"action.deny": {
+		"defaultMessage": "Nega"
 	},
 	"action.disable": {
 		"defaultMessage": "Disabilita"
@@ -67,6 +133,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Log di Audit"
+	},
+	"auto": {
+		"defaultMessage": "Automatico"
 	},
 	"cancel": {
 		"defaultMessage": "Annulla"
@@ -127,6 +196,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "Provider DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Seleziona un fornitore..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Questa sezione richiede conoscenze su Certbot e i relativi plugin DNS. Consulta la documentazione del plugin."
@@ -275,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Wildcard non supportate per questa CA"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Avanzato"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Forza SSL"
 	},
@@ -286,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Supporto HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Fidati degli header Forwarded Proto upstream"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Usa Challenge DNS"
@@ -380,8 +458,35 @@
 	"lets-encrypt-via-http": {
 		"defaultMessage": "Let's Encrypt via HTTP"
 	},
+	"load-balancing.add-server": {
+		"defaultMessage": "Aggiungi server"
+	},
+	"load-balancing.host": {
+		"defaultMessage": "Host"
+	},
+	"load-balancing.port": {
+		"defaultMessage": "Porta"
+	},
+	"load-balancing.weight": {
+		"defaultMessage": "Peso"
+	},
 	"loading": {
 		"defaultMessage": "Caricamento…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Codice di verifica"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Inserisci il codice"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Inserisci il codice dalla tua app di autenticazione"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Autenticazione a due fattori"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verifica"
 	},
 	"login.title": {
 		"defaultMessage": "Accedi al tuo account"
@@ -506,6 +611,21 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Hostname / IP di Destinazione"
 	},
+	"proxy-host.forward-target-type": {
+		"defaultMessage": "Tipo di destinazione"
+	},
+	"proxy-host.forward-target-type.direct": {
+		"defaultMessage": "Diretto"
+	},
+	"proxy-host.forward-target-type.direct.description": {
+		"defaultMessage": "Inoltra a un singolo host e porta"
+	},
+	"proxy-host.forward-target-type.upstream": {
+		"defaultMessage": "Host upstream"
+	},
+	"proxy-host.forward-target-type.upstream.description": {
+		"defaultMessage": "Usa un host upstream per il bilanciamento del carico su più server"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy Hosts"
 	},
@@ -529,6 +649,24 @@
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Host di Reindirizzamento} other {Host di Reindirizzamento}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Scelte multiple"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Spostato permanentemente"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Spostato temporaneamente"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Vedi altro"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Reindirizzamento temporaneo"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Reindirizzamento permanente"
 	},
 	"role.admin": {
 		"defaultMessage": "Amministratore"
@@ -569,6 +707,36 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Reindirizza"
 	},
+	"settings.real-ip-header": {
+		"defaultMessage": "Header IP reale"
+	},
+	"settings.real-ip-header.cf-connecting-ip": {
+		"defaultMessage": "CF-Connecting-IP"
+	},
+	"settings.real-ip-header.cf-connecting-ip.description": {
+		"defaultMessage": "Usa dietro Cloudflare"
+	},
+	"settings.real-ip-header.custom": {
+		"defaultMessage": "Personalizzato"
+	},
+	"settings.real-ip-header.custom.placeholder": {
+		"defaultMessage": "Inserisci il nome dell'header personalizzato"
+	},
+	"settings.real-ip-header.description": {
+		"defaultMessage": "Header HTTP usato per determinare l'indirizzo IP reale del client"
+	},
+	"settings.real-ip-header.x-forwarded-for": {
+		"defaultMessage": "X-Forwarded-For"
+	},
+	"settings.real-ip-header.x-forwarded-for.description": {
+		"defaultMessage": "Header alternativo comune"
+	},
+	"settings.real-ip-header.x-real-ip": {
+		"defaultMessage": "X-Real-IP"
+	},
+	"settings.real-ip-header.x-real-ip.description": {
+		"defaultMessage": "Header standard, funziona con la maggior parte dei reverse proxy"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Inizia creando il tuo account amministratore."
 	},
@@ -586,6 +754,9 @@
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Host di Destinazione"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com or 10.0.0.1 or 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Porta in Ingresso"
@@ -606,7 +777,31 @@
 		"defaultMessage": "Test"
 	},
 	"update-available": {
-		"defaultMessage": "Aggiornamento Disponibile: {latestVersion}"
+		"defaultMessage": "Aggiornamento disponibile: {latestVersion}"
+	},
+	"upstream-host": {
+		"defaultMessage": "Host upstream"
+	},
+	"upstream-host.help": {
+		"defaultMessage": "Seleziona un host upstream al posto dell'inoltro diretto."
+	},
+	"upstream-host.method": {
+		"defaultMessage": "Metodo"
+	},
+	"upstream-host.none": {
+		"defaultMessage": "Nessuno (Diretto)"
+	},
+	"upstream-host.none.subtitle": {
+		"defaultMessage": "Nessun host upstream selezionato"
+	},
+	"upstream-host.servers": {
+		"defaultMessage": "Server"
+	},
+	"upstream-hosts": {
+		"defaultMessage": "Host upstream"
+	},
+	"upstream-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Host upstream} other {Host upstream}}"
 	},
 	"user": {
 		"defaultMessage": "Utente"
@@ -649,6 +844,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Passa alla modalità Chiara"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Auth. due fattori"
 	},
 	"username": {
 		"defaultMessage": "Nome Utente"
