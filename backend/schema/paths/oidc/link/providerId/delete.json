@@ -1,0 +1,38 @@
+{
+	"operationId": "unlinkOidcIdentity",
+	"summary": "Unlink an OIDC identity from the authenticated user",
+	"tags": ["oidc"],
+	"security": [
+		{
+			"bearerAuth": ["user"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerId",
+			"required": true,
+			"schema": { "type": "string" },
+			"description": "The OIDC provider ID to unlink"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"unlinked": { "type": "boolean", "example": true }
+						}
+					},
+					"examples": {
+						"default": { "value": { "unlinked": true } }
+					}
+				}
+			}
+		}
+	}
+}

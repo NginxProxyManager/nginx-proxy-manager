@@ -1,0 +1,97 @@
+{
+	"operationId": "linkOidcIdentity",
+	"summary": "Link an OIDC identity to the authenticated user",
+	"tags": ["oidc"],
+	"security": [
+		{
+			"bearerAuth": ["user"]
+		}
+	],
+	"requestBody": {
+		"description": "OIDC Link Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+				"required": ["provider_id", "code_verifier", "nonce", "query_string", "state", "callback_url"],
+				"properties": {
+					"provider_id": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 50,
+						"example": "authentik"
+					},
+					"code_verifier": {
+						"type": "string",
+						"minLength": 1,
+						"example": "pkce-code-verifier"
+					},
+					"nonce": {
+						"type": "string",
+						"minLength": 1,
+						"example": "random-nonce-value"
+					},
+					"query_string": {
+						"type": "string",
+						"minLength": 1,
+						"description": "The full query string from the IdP callback redirect (code, state, iss, session_state, etc.). Forwarded as-is so the backend can reconstruct the callback URL for proper RFC 9207 issuer validation.",
+						"example": "code=auth-code&state=state-jwt&iss=https%3A%2F%2Fauth.example.com"
+					},
+					"callback_url": {
+						"type": "string",
+						"minLength": 1,
+						"description": "The redirect_uri used in the authorization request. Must match the callback URL stored in the state JWT.",
+						"example": "https://npm.example.com/api/oidc/link-callback"
+					},
+					"state": {
+						"type": "string",
+						"minLength": 1,
+						"description": "State JWT from the authorize-link request. Required for CSRF protection - binds the link request to the original authorization.",
+						"example": "eyJhbGciOiJIUzI1NiJ9..."
+					}
+				}
+				},
+				"examples": {
+					"default": {
+						"value": {
+							"provider_id": "authentik",
+							"code_verifier": "pkce-code-verifier",
+							"nonce": "random-nonce-value",
+							"query_string": "code=auth-code&state=state-jwt&iss=https%3A%2F%2Fauth.example.com",
+							"state": "eyJhbGciOiJIUzI1NiJ9...",
+							"callback_url": "https://npm.example.com/api/oidc/link-callback"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"linked": {
+								"type": "boolean",
+								"example": true
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"linked": true
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

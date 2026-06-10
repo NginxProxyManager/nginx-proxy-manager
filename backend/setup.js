@@ -99,6 +99,32 @@ const setupDefaultSettings = async () => {
 };
 
 /**
+ * Creates default OIDC configuration if it doesn't already exist in the database
+ *
+ * @returns {Promise}
+ */
+const setupOidcSettings = async () => {
+	const row = await settingModel
+		.query()
+		.select("id")
+		.where({ id: "oidc-config" })
+		.first();
+
+	if (!row?.id) {
+		await settingModel
+			.query()
+			.insert({
+				id: "oidc-config",
+				name: "OIDC Configuration",
+				description: "OpenID Connect provider configuration",
+				value: "disabled",
+				meta: { providers: [] },
+			});
+		logger.info("Default OIDC settings added");
+	}
+};
+
+/**
  * Installs all Certbot plugins which are required for an installed certificate
  *
  * @returns {Promise}
@@ -161,4 +187,4 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
-export default () => setupDefaultUser().then(setupDefaultSettings).then(setupCertbotPlugins).then(setupLogrotation);
+export default () => setupDefaultUser().then(setupDefaultSettings).then(setupOidcSettings).then(setupCertbotPlugins).then(setupLogrotation);

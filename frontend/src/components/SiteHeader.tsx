@@ -9,6 +9,7 @@ import styles from "./SiteHeader.module.css";
 export function SiteHeader() {
 	const { data: currentUser } = useUser("me");
 	const isAdmin = currentUser?.roles.includes("admin");
+	const hasPasswordAuth = currentUser?.hasPasswordAuth !== false;
 	const { logout } = useAuthState();
 
 	return (
@@ -97,28 +98,32 @@ export function SiteHeader() {
 									<IconUser width={18} />
 									<T id="user.edit-profile" />
 								</a>
-								<a
-									href="?"
-									className="dropdown-item"
-									onClick={(e) => {
-										e.preventDefault();
-										showChangePasswordModal("me");
-									}}
-								>
-									<IconLock width={18} />
-									<T id="user.change-password" />
-								</a>
-								<a
-									href="?"
-									className="dropdown-item"
-									onClick={(e) => {
-										e.preventDefault();
-										showTwoFactorModal("me");
-									}}
-								>
-									<IconShieldLock width={18} />
-									<T id="user.two-factor" />
-								</a>
+								{hasPasswordAuth && (
+									<a
+										href="?"
+										className="dropdown-item"
+										onClick={(e) => {
+											e.preventDefault();
+											showChangePasswordModal("me");
+										}}
+									>
+										<IconLock width={18} />
+										<T id="user.change-password" />
+									</a>
+								)}
+								{hasPasswordAuth && (
+									<a
+										href="?"
+										className="dropdown-item"
+										onClick={(e) => {
+											e.preventDefault();
+											showTwoFactorModal("me");
+										}}
+									>
+										<IconShieldLock width={18} />
+										<T id="user.two-factor" />
+									</a>
+								)}
 								<div className="dropdown-divider" />
 								<a
 									href="?"

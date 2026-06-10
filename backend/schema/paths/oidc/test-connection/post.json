@@ -1,0 +1,110 @@
+{
+	"operationId": "testOidcConnection",
+	"summary": "Test OIDC provider connectivity by attempting discovery",
+	"tags": ["oidc"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"requestBody": {
+		"description": "OIDC Test Connection Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["discovery_url", "client_id", "client_secret", "scopes"],
+					"properties": {
+						"discovery_url": {
+							"type": "string",
+							"format": "uri",
+							"pattern": "^https://",
+							"minLength": 1,
+							"example": "https://auth.example.com/.well-known/openid-configuration"
+						},
+						"client_id": {
+							"type": "string",
+							"minLength": 1,
+							"example": "npm-client"
+						},
+						"client_secret": {
+							"type": "string",
+							"example": "secret"
+						},
+						"scopes": {
+							"type": "string",
+							"minLength": 1,
+							"example": "openid email profile"
+						},
+						"provider_id": {
+							"type": "string",
+							"pattern": "^[a-z0-9-]+$",
+							"example": "authentik"
+						}
+					}
+				},
+				"examples": {
+					"default": {
+						"value": {
+							"discovery_url": "https://auth.example.com/.well-known/openid-configuration",
+							"client_id": "npm-client",
+							"client_secret": "secret",
+							"scopes": "openid email profile",
+							"provider_id": "authentik"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"success": {
+								"type": "boolean",
+								"example": true
+							},
+							"credentials": {
+								"type": "string",
+								"enum": ["valid", "invalid", "unsupported"],
+								"example": "valid"
+							},
+							"credentials_message": {
+								"type": "string",
+								"example": ""
+							},
+							"scopes_valid": {
+								"type": "boolean",
+								"example": true
+							},
+							"unsupported_scopes": {
+								"type": "array",
+								"example": [],
+								"items": { "type": "string" }
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"success": true,
+								"credentials": "valid",
+								"credentials_message": "",
+								"scopes_valid": true,
+								"unsupported_scopes": []
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

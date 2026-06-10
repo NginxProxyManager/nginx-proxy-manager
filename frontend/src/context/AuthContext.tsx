@@ -25,6 +25,7 @@ export interface AuthContextType {
 	cancelTwoFactor: () => void;
 	loginAs: (id: number) => Promise<void>;
 	logout: () => void;
+	setOidcTwoFactorChallenge: (challengeToken: string) => void;
 	token?: string;
 }
 
@@ -68,6 +69,10 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		setTwoFactorChallenge(null);
 	};
 
+	const setOidcTwoFactorChallenge = (challengeToken: string) => {
+		setTwoFactorChallenge({ challengeToken });
+	};
+
 	const loginAs = async (id: number) => {
 		const response = await loginAsUser(id);
 		AuthStore.add(response);
@@ -82,6 +87,31 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 			window.location.reload();
 			return;
 		}
+
+		// RP-initiated logout: if the session was OIDC-initiated, redirect to provider logout
+		const oidcProvider = localStorage.getItem("oidc_session_provider");
+		if (oidcProvider) {
+			localStorage.removeItem("oidc_session_provider");
+			const currentToken = AuthStore.token?.token ?? "";
+			AuthStore.clear();
+			setAuthenticated(false);
+			queryClient.clear();
+			// Fire-and-forget: try to get logout URL and redirect; fall back silently
+			fetch(`/api/oidc/${encodeURIComponent(oidcProvider)}/logout`, {
+				headers: { Authorization: `Bearer ${currentToken}` },
+			})
+				.then((r) => r.json())
+				.then((data) => {
+					if (data?.logout_url) {
+						window.location.href = data.logout_url;
+					}
+				})
+				.catch(() => {
+					// Ignore — user is already locally logged out
+				});
+			return;
+		}
+
 		AuthStore.clear();
 		setAuthenticated(false);
 		queryClient.clear();
@@ -110,6 +140,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		cancelTwoFactor,
 		loginAs,
 		logout,
+		setOidcTwoFactorChallenge,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

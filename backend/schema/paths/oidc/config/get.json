@@ -1,0 +1,39 @@
+{
+	"operationId": "getOidcConfig",
+	"summary": "Get OIDC configuration",
+	"tags": ["oidc"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"providers": {
+								"type": "array",
+								"example": [],
+								"items": {
+									"type": "object"
+								}
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"providers": []
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
