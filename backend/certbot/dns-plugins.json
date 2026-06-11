@@ -600,10 +600,10 @@
 		"version": "~=0.3.0"
 	},
 	"simply": {
-		"credentials": "dns_simply_account_name = UExxxxxx\ndns_simply_api_key = DsHJdsjh2812872sahj",
+		"credentials": "dns_simply_account_name = Sxxxxxx\ndns_simply_api_key = DsHJdsjh2812872sahj",
 		"dependencies": "",
 		"full_plugin_name": "dns-simply",
-		"name": "Simply",
+		"name": "Simply.com",
 		"package_name": "certbot-dns-simply",
 		"version": "~=0.1.2"
 	},
