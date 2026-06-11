@@ -395,6 +395,9 @@
 	"error.invalid-email": {
 		"defaultMessage": "Invalid email address"
 	},
+	"error.invalid-ip-or-cidr": {
+		"defaultMessage": "Must be a valid IPv4/IPv6 address or CIDR range"
+	},
 	"error.max-character-length": {
 		"defaultMessage": "Maximum length is {max} character{max, plural, one {} other {s}}"
 	},
@@ -434,8 +437,14 @@
 	"host.flags.protocols": {
 		"defaultMessage": "Protocols"
 	},
+	"host.flags.proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Support"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load Balancer IP / CIDR (set_real_ip_from)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "Forward Port"

@@ -157,6 +157,8 @@ const internalNginx = {
 						{ caching_enabled: host.caching_enabled },
 						{ block_exploits: host.block_exploits },
 						{ allow_websocket_upgrade: host.allow_websocket_upgrade },
+						{ enable_proxy_protocol: host.enable_proxy_protocol },
+						{ load_balancer_ip: host.load_balancer_ip },
 						{ http2_support: host.http2_support },
 						{ hsts_enabled: host.hsts_enabled },
 						{ hsts_subdomains: host.hsts_subdomains },
