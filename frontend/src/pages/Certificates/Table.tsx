@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconDownload, IconEdit, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
@@ -22,8 +22,9 @@ interface Props {
 	onDelete?: (id: number) => void;
 	onRenew?: (id: number) => void;
 	onDownload?: (id: number) => void;
+	onEdit?: (id: number, niceName: string) => void;
 }
-export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered }: Props) {
+export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered, onEdit }: Props) {
 	const columnHelper = createColumnHelper<Certificate>();
 	const columns = useMemo(
 		() => [
@@ -98,6 +99,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 			columnHelper.display({
 				id: "id",
 				cell: (info: any) => {
+					const value = info.row.original;
 					return (
 						<span className="dropdown">
 							<button
@@ -128,6 +130,19 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 									<T id="action.renew" />
 								</a>
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
+									{value.provider === "other"  && (
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onEdit?.(info.row.original.id, value.niceName);
+											}}
+										>
+											<IconEdit size={16} />
+											<T id="action.edit" />
+										</a>
+									)}
 									<a
 										className="dropdown-item"
 										href="#"
@@ -161,7 +176,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				},
 			}),
 		],
-		[columnHelper, onDelete, onRenew, onDownload],
+		[columnHelper, onDelete, onRenew, onDownload, onEdit],
 	);
 
 	const tableInstance = useReactTable<Certificate>({
