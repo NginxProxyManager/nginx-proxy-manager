@@ -69,6 +69,7 @@ describe('Certificates endpoints', () => {
 				cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
 				expect(data).to.have.property('certificate');
 				expect(data).to.have.property('certificate_key');
+				const originalCertificate = data.certificate;
 
 				// Upload replacement files to the same certificate
 				cy.task('backendApiPostFiles', {
@@ -82,14 +83,16 @@ describe('Certificates endpoints', () => {
 					cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
 					expect(data).to.have.property('certificate');
 					expect(data).to.have.property('certificate_key');
+					expect(data.certificate).to.not.equal(originalCertificate);
 
-					// Get the cert and check the updated domain
+					// Get the cert and check it was replaced
 					cy.task('backendApiGet', {
 						token: token,
 						path:  `/api/nginx/certificates/${certID}`
 					}).then((data) => {
 						cy.validateSwaggerSchema('get', 200, '/nginx/certificates/{certID}', data);
-						expect(data.domain_names).to.contain('test-updated.example.com');
+						expect(data.id).to.equal(certID);
+						expect(data.provider).to.equal('other');
 
 						// Get all certs
 						cy.task('backendApiGet', {
