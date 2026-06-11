@@ -128,6 +128,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Éilíonn an breiseán seo comhad cumraíochta ina bhfuil comhartha API nó dintiúir eile do do sholáthraí."
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Cuid nua an chomhaid dintiúir (ionann agus an ceann atá ann)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Stórálfar an fhaisnéis seo mar théacs simplí sa bhunachar sonraí agus i gcomhad!"
 	},
@@ -145,6 +148,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Éilíonn an chuid seo roinnt eolais faoi Certbot agus a bhreiseáin DNS. Féach ar dhoiciméadacht na mbreiseán faoi seach, le do thoil."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "Cuir socruithe DNS in eagar"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Tá freastalaí aimsithe ag an bhfearann seo ach ní cosúil gur Bainisteoir Proxy Nginx atá ann. Déan cinnte go bhfuil do fhearann ag pointeáil chuig an seoladh IP ina bhfuil d'eispéireas NPM ag rith."

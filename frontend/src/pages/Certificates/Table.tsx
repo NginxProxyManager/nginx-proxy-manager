@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconDownload, IconEdit, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
@@ -127,6 +127,23 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 									<IconRefresh size={16} />
 									<T id="action.renew" />
 								</a>
+								{info.row.original.provider === "letsencrypt" &&
+									info.row.original.meta?.dnsChallenge &&
+									info.row.original.meta?.dnsProvider && (
+									<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												showDNSCertificateModal(info.row.original);
+											}}
+										>
+											<IconEdit size={16} />
+											<T id="certificates.edit-dns-settings" />
+										</a>
+									</HasPermission>
+								)}
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
 									<a
 										className="dropdown-item"

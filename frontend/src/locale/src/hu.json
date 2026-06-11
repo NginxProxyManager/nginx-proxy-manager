@@ -185,6 +185,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Ez a plugin egy konfigurációs fájlt igényel, amely API tokent vagy egyéb hitelesítő adatokat tartalmaz a szolgáltatóhoz"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Új hitelesítő adatok fájltartalma (lecseréli a meglévőt)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Ezek az adatok sima szövegként lesznek tárolva az adatbázisban és egy fájlban!"
 	},
@@ -202,6 +205,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Ez a szakasz némi ismeretet igényel a Certbot-ról és a DNS plugin-jeiről. Kérjük, olvassa el a megfelelő plugin dokumentációját."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "DNS beállítások szerkesztése"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Található szerver ezen a domain-en, de nem úgy tűnik, hogy Nginx Proxy Manager lenne. Kérjük, győződjön meg róla, hogy a domain arra az IP címre mutat, ahol az NPM példánya fut."

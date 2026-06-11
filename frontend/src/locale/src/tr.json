@@ -128,6 +128,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Bu eklenti, sağlayıcınız için bir API token'ı veya diğer kimlik bilgilerini içeren bir yapılandırma dosyası gerektirir"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Yeni kimlik bilgileri dosyası içeriği (mevcut olanın yerini alır)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Bu veriler veritabanında ve bir dosyada düz metin olarak saklanacak!"
 	},
@@ -145,6 +148,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Bu bölüm Certbot ve DNS eklentileri hakkında bazı bilgiler gerektirir. Lütfen ilgili eklenti dokümantasyonuna bakın."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "DNS ayarlarını düzenle"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Bu alan adında bir sunucu bulundu ancak Nginx Proxy Manager gibi görünmüyor. Lütfen alan adınızın NPM örneğinizin çalıştığı IP'ye işaret ettiğinden emin olun."

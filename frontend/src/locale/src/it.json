@@ -116,6 +116,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Questo plugin richiede un file di configurazione contenente un token API o altre credenziali per il tuo provider"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Nuovo contenuto del file credenziali (sostituisce l'esistente)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Questi dati saranno memorizzati in chiaro nel database e in un file!"
 	},
@@ -130,6 +133,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Questa sezione richiede conoscenze su Certbot e i relativi plugin DNS. Consulta la documentazione del plugin."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "Modifica impostazioni DNS"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "È stato trovato un server su questo dominio, ma non sembra essere Nginx Proxy Manager. Assicurati che il dominio punti all'IP dove è in esecuzione NPM."
