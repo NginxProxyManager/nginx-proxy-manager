@@ -595,7 +595,10 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	upload: async (access, data) => {
-		const row = await internalCertificate.get(access, { id: data.id });
+		const row = await internalCertificate.get(access, {
+			id: data.id,
+			expand: ["proxy_hosts", "redirection_hosts", "dead_hosts", "streams"],
+		});
 		if (row.provider !== "other") {
 			throw new error.ValidationError("Cannot upload certificates for this type of provider");
 		}
@@ -620,6 +623,17 @@ const internalCertificate = {
 
 		certificate.meta = row.meta;
 		await internalCertificate.writeCustomCert(certificate);
+
+		// Reload nginx when the certificate is in use, so the new files are served
+		const inUseCount =
+			(row.proxy_hosts?.length || 0) +
+			(row.redirection_hosts?.length || 0) +
+			(row.dead_hosts?.length || 0) +
+			(row.streams?.length || 0);
+		if (inUseCount > 0) {
+			await internalNginx.reload();
+		}
+
 		return _.pick(row.meta, internalCertificate.allowedSslFiles);
 	},
 

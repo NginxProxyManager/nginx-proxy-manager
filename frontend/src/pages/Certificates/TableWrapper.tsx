@@ -127,7 +127,7 @@ export default function TableWrapper() {
 													href="#"
 													onClick={(e) => {
 														e.preventDefault();
-														showCustomCertificateModal();
+														showCustomCertificateModal("new");
 													}}
 												>
 													<T id="certificates.custom" />
@@ -144,6 +144,7 @@ export default function TableWrapper() {
 					data={filtered ?? data ?? []}
 					isFiltered={!!search}
 					isFetching={isFetching}
+					onEdit={showCustomCertificateModal}
 					onRenew={showRenewCertificateModal}
 					onDownload={handleDownload}
 					onDelete={(id: number) =>

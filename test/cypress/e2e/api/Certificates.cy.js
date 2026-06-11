@@ -6,12 +6,20 @@ describe('Certificates endpoints', () => {
 
 	const certFile = 'test.example.com.pem';
 	const keyFile = 'test.example.com-key.pem';
+	const updatedCertFile = 'test-updated.example.com.pem';
+	const updatedKeyFile = 'test-updated.example.com-key.pem';
 
 	before(() => {
 		cy.createCustomCerts({
 			domain: 'test.example.com',
 			certFile,
 			keyFile,
+		})
+
+		cy.createCustomCerts({
+			domain: 'test-updated.example.com',
+			certFile: updatedCertFile,
+			keyFile: updatedKeyFile,
 		})
 
 		cy.resetUsers();
@@ -62,21 +70,44 @@ describe('Certificates endpoints', () => {
 				expect(data).to.have.property('certificate');
 				expect(data).to.have.property('certificate_key');
 
-				// Get all certs
-				cy.task('backendApiGet', {
+				// Upload replacement files to the same certificate
+				cy.task('backendApiPostFiles', {
 					token: token,
-					path:  '/api/nginx/certificates?expand=owner'
+					path:  `/api/nginx/certificates/${certID}/upload`,
+					files:  {
+						certificate: updatedCertFile,
+						certificate_key: updatedKeyFile,
+					},
 				}).then((data) => {
-					cy.validateSwaggerSchema('get', 200, '/nginx/certificates', data);
-					expect(data.length).to.be.greaterThan(0);
+					cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
+					expect(data).to.have.property('certificate');
+					expect(data).to.have.property('certificate_key');
 
-					// Delete cert
-					cy.task('backendApiDelete', {
+					// Get the cert and check the updated domain
+					cy.task('backendApiGet', {
 						token: token,
 						path:  `/api/nginx/certificates/${certID}`
 					}).then((data) => {
-						cy.validateSwaggerSchema('delete', 200, '/nginx/certificates/{certID}', data);
-						expect(data).to.be.equal(true);
+						cy.validateSwaggerSchema('get', 200, '/nginx/certificates/{certID}', data);
+						expect(data.domain_names).to.contain('test-updated.example.com');
+
+						// Get all certs
+						cy.task('backendApiGet', {
+							token: token,
+							path:  '/api/nginx/certificates?expand=owner'
+						}).then((data) => {
+							cy.validateSwaggerSchema('get', 200, '/nginx/certificates', data);
+							expect(data.length).to.be.greaterThan(0);
+
+							// Delete cert
+							cy.task('backendApiDelete', {
+								token: token,
+								path:  `/api/nginx/certificates/${certID}`
+							}).then((data) => {
+								cy.validateSwaggerSchema('delete', 200, '/nginx/certificates/{certID}', data);
+								expect(data).to.be.equal(true);
+							});
+						});
 					});
 				});
 			});
