@@ -27,6 +27,7 @@ mkdir -p \
 	/data/nginx/stream \
 	/data/nginx/dead_host \
 	/data/nginx/temp \
+	/data/nginx/access_geo \
 	/data/letsencrypt-acme-challenge \
 	/run/nginx \
 	/tmp/nginx/body \
