@@ -1,0 +1,776 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "کدهای پشتیبان باقی‌مانده: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "این کدهای پشتیبان را در مکانی امن ذخیره کنید. هر کد فقط یک‌بار قابل استفاده است."
+	},
+	"2fa.disable": {
+		"defaultMessage": "غیرفعال‌سازی احراز هویت دومرحله‌ای"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "غیرفعال‌سازی احراز دومرحله‌ای"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "غیرفعال کردن احراز هویت دومرحله‌ای امنیت حساب شما را کاهش می‌دهد."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "غیرفعال"
+	},
+	"2fa.done": {
+		"defaultMessage": "کدهای پشتیبان را ذخیره کردم"
+	},
+	"2fa.enable": {
+		"defaultMessage": "فعال‌سازی احراز هویت دومرحله‌ای"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "فعال"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "کد تأیید را وارد کنید"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "برای غیرفعال‌سازی، کد تأیید را وارد کنید"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "تولید مجدد"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "تولید مجدد کدهای پشتیبان"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "برای تولید کدهای پشتیبان جدید، یک کد تأیید وارد کنید. کدهای قبلی شما باطل خواهند شد."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "کلید مخفی"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "این کد QR را با اپلیکیشن احراز هویت خود اسکن کنید یا کلید مخفی را به‌صورت دستی وارد کنید."
+	},
+	"2fa.status": {
+		"defaultMessage": "وضعیت"
+	},
+	"2fa.title": {
+		"defaultMessage": "احراز هویت دومرحله‌ای"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "تأیید و فعال‌سازی"
+	},
+	"access-list": {
+		"defaultMessage": "فهرست دسترسی"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {قانون} other {قانون}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {کاربر} other {کاربر}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "زمانی که حداقل یک قانون وجود داشته باشد، این قانونِ «رد همه» در انتها اضافه می‌شود"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "توجه داشته باشید که دستورهای «اجازه» و «رد» به ترتیبی که تعریف شده‌اند اعمال می‌شوند."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "ارسال احراز هویت به مقصد (Upstream)"
+	},
+	"access-list.public": {
+		"defaultMessage": "قابل دسترسی عمومی"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "بدون نیاز به احراز هویت پایه"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 یا 192.168.1.0/24 یا 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "برآورده شدن هر کدام"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {کاربر} other {کاربر}}، {rules} {rules, plural, one {قانون} other {قانون}} - ایجاد شده: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "فهرست‌های دسترسی"
+	},
+	"action.add": {
+		"defaultMessage": "افزودن"
+	},
+	"action.add-location": {
+		"defaultMessage": "افزودن مکان"
+	},
+	"action.allow": {
+		"defaultMessage": "اجازه"
+	},
+	"action.close": {
+		"defaultMessage": "بستن"
+	},
+	"action.delete": {
+		"defaultMessage": "حذف"
+	},
+	"action.deny": {
+		"defaultMessage": "رد"
+	},
+	"action.disable": {
+		"defaultMessage": "غیرفعال‌سازی"
+	},
+	"action.download": {
+		"defaultMessage": "دانلود"
+	},
+	"action.edit": {
+		"defaultMessage": "ویرایش"
+	},
+	"action.enable": {
+		"defaultMessage": "فعال‌سازی"
+	},
+	"action.permissions": {
+		"defaultMessage": "دسترسی‌ها"
+	},
+	"action.renew": {
+		"defaultMessage": "تمدید"
+	},
+	"action.view-details": {
+		"defaultMessage": "مشاهده جزئیات"
+	},
+	"auditlogs": {
+		"defaultMessage": "گزارش‌های بازرسی"
+	},
+	"auto": {
+		"defaultMessage": "خودکار"
+	},
+	"cancel": {
+		"defaultMessage": "لغو"
+	},
+	"certificate": {
+		"defaultMessage": "گواهی"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "گواهی"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "کلید گواهی"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "گواهی واسط"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "در حال استفاده"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "هیچ گواهی‌ای اختصاص داده نشده"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "این میزبان از HTTPS استفاده نخواهد کرد"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "هیچ‌کدام"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "استفاده نشده"
+	},
+	"certificate.renew": {
+		"defaultMessage": "تمدید گواهی"
+	},
+	"certificates": {
+		"defaultMessage": "گواهی‌ها"
+	},
+	"certificates.custom": {
+		"defaultMessage": "گواهی سفارشی"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "فایل‌های کلید محافظت‌شده با عبارت عبور پشتیبانی نمی‌شوند."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "محتوای فایل اعتبارنامه"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "این افزونه به یک فایل پیکربندی نیاز دارد که شامل توکن API یا سایر اعتبارنامه‌های ارائه‌دهنده شما باشد"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "این داده‌ها به‌صورت متن ساده در پایگاه داده و در یک فایل ذخیره خواهند شد!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "ثانیه‌های انتشار (Propagation)"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "برای استفاده از مقدار پیش‌فرض افزونه، خالی بگذارید. تعداد ثانیه‌هایی که برای انتشار DNS صبر می‌شود."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "ارائه‌دهنده DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "یک ارائه‌دهنده انتخاب کنید..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "این بخش به آشنایی با Certbot و افزونه‌های DNS آن نیاز دارد. لطفاً به مستندات افزونه مربوطه مراجعه کنید."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "سروری در این دامنه یافت شد اما به‌نظر نمی‌رسد Nginx Proxy Manager باشد. لطفاً مطمئن شوید دامنه شما به IP‌ای که نمونه NPM شما روی آن اجرا می‌شود اشاره می‌کند."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "بررسی در دسترس بودن به‌دلیل خطای ارتباطی با site24x7.com ناموفق بود."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "هیچ سروری در این دامنه در دسترس نیست. لطفاً مطمئن شوید دامنه شما وجود دارد و به IP‌ای که نمونه NPM شما روی آن اجرا می‌شود اشاره می‌کند و در صورت نیاز پورت 80 در روتر شما فوروارد شده است."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "سرور شما در دسترس است و ایجاد گواهی باید امکان‌پذیر باشد."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "سروری در این دامنه یافت شد اما کد وضعیت غیرمنتظره {code} را برگرداند. آیا این سرور NPM است؟ لطفاً مطمئن شوید دامنه شما به IP‌ای که نمونه NPM شما روی آن اجرا می‌شود اشاره می‌کند."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "سروری در این دامنه یافت شد اما داده‌ای غیرمنتظره برگرداند. آیا این سرور NPM است؟ لطفاً مطمئن شوید دامنه شما به IP‌ای که نمونه NPM شما روی آن اجرا می‌شود اشاره می‌کند."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "نتایج آزمایش"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "این دامنه‌ها باید از پیش طوری پیکربندی شده باشند که به این نصب اشاره کنند."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "نوع کلید"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA سازگاری گسترده‌ای دارد؛ ECDSA سریع‌تر و امن‌تر است اما ممکن است در سیستم‌های قدیمی پشتیبانی نشود"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "با Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "درخواست گواهی جدید"
+	},
+	"column.access": {
+		"defaultMessage": "دسترسی"
+	},
+	"column.authorization": {
+		"defaultMessage": "احراز هویت"
+	},
+	"column.authorizations": {
+		"defaultMessage": "احراز هویت‌ها"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "مکان‌های سفارشی"
+	},
+	"column.destination": {
+		"defaultMessage": "مقصد"
+	},
+	"column.details": {
+		"defaultMessage": "جزئیات"
+	},
+	"column.email": {
+		"defaultMessage": "ایمیل"
+	},
+	"column.event": {
+		"defaultMessage": "رویداد"
+	},
+	"column.expires": {
+		"defaultMessage": "انقضا"
+	},
+	"column.http-code": {
+		"defaultMessage": "کد HTTP"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "پورت ورودی"
+	},
+	"column.name": {
+		"defaultMessage": "نام"
+	},
+	"column.protocol": {
+		"defaultMessage": "پروتکل"
+	},
+	"column.provider": {
+		"defaultMessage": "ارائه‌دهنده"
+	},
+	"column.roles": {
+		"defaultMessage": "نقش‌ها"
+	},
+	"column.rules": {
+		"defaultMessage": "قوانین"
+	},
+	"column.satisfy": {
+		"defaultMessage": "برآورده‌سازی"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "همه"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "هر کدام"
+	},
+	"column.scheme": {
+		"defaultMessage": "اسکیم"
+	},
+	"column.source": {
+		"defaultMessage": "منبع"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "وضعیت"
+	},
+	"created-on": {
+		"defaultMessage": "ایجاد شده: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "داشبورد"
+	},
+	"dead-host": {
+		"defaultMessage": "میزبان 404"
+	},
+	"dead-hosts": {
+		"defaultMessage": "میزبان‌های 404"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {میزبان 404} other {میزبان 404}}"
+	},
+	"disabled": {
+		"defaultMessage": "غیرفعال"
+	},
+	"domain-names": {
+		"defaultMessage": "نام‌های دامنه"
+	},
+	"domain-names.max": {
+		"defaultMessage": "حداکثر {count} نام دامنه"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "برای افزودن دامنه شروع به تایپ کنید..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "استفاده از کاراکتر جایگزین (Wildcard) برای این نوع مجاز نیست"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "کاراکتر جایگزین (Wildcard) برای این مرجع صدور گواهی پشتیبانی نمی‌شود"
+	},
+	"domains.advanced": {
+		"defaultMessage": "پیشرفته"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "اجبار به SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "فعال‌سازی HSTS"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "زیر‌دامنه‌های HSTS"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "پشتیبانی از HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "اعتماد به هدرهای Forwarded Proto از مقصد (Upstream)"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "استفاده از چالش DNS"
+	},
+	"email-address": {
+		"defaultMessage": "آدرس ایمیل"
+	},
+	"empty-search": {
+		"defaultMessage": "نتیجه‌ای یافت نشد"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "چرا یکی ایجاد نمی‌کنید؟"
+	},
+	"enabled": {
+		"defaultMessage": "فعال"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "حداقل یک احراز هویت یا یک قانون دسترسی لازم است"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "نام‌های کاربری احراز هویت باید یکتا باشند"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "ایمیل یا رمز عبور نامعتبر است"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "دامنه نامعتبر: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "آدرس ایمیل نامعتبر است"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "حداکثر طول {max} کاراکتر است"
+	},
+	"error.max-domains": {
+		"defaultMessage": "تعداد دامنه‌ها بیش از حد است، حداکثر {max} است"
+	},
+	"error.maximum": {
+		"defaultMessage": "حداکثر {max} است"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "حداقل طول {min} کاراکتر است"
+	},
+	"error.minimum": {
+		"defaultMessage": "حداقل {min} است"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "رمزهای عبور باید مطابقت داشته باشند"
+	},
+	"error.required": {
+		"defaultMessage": "این فیلد الزامی است"
+	},
+	"expires.on": {
+		"defaultMessage": "انقضا: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "در گیت‌هاب فورک کنید"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "مسدودسازی سوءاستفاده‌های رایج"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "کش کردن فایل‌های ثابت"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "حفظ مسیر"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "پروتکل‌ها"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "پشتیبانی از وب‌سوکت"
+	},
+	"host.forward-port": {
+		"defaultMessage": "پورت فوروارد"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "اسکیم"
+	},
+	"hosts": {
+		"defaultMessage": "میزبان‌ها"
+	},
+	"http-only": {
+		"defaultMessage": "فقط HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt از طریق DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt از طریق HTTP"
+	},
+	"loading": {
+		"defaultMessage": "در حال بارگذاری…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "کد تأیید"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "کد را وارد کنید"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "کد را از اپلیکیشن احراز هویت خود وارد کنید"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "احراز هویت دومرحله‌ای"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "تأیید"
+	},
+	"login.title": {
+		"defaultMessage": "ورود به حساب کاربری"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "پیکربندی سفارشی Nginx"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# پیکربندی سفارشی Nginx خود را اینجا وارد کنید (با مسئولیت خودتان)!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "شما دسترسی لازم برای مشاهده این مورد را ندارید."
+	},
+	"notfound.action": {
+		"defaultMessage": "بازگشت به صفحه اصلی"
+	},
+	"notfound.content": {
+		"defaultMessage": "متأسفیم، صفحه‌ای که به دنبال آن هستید یافت نشد"
+	},
+	"notfound.title": {
+		"defaultMessage": "اوه… شما به یک صفحه خطا رسیدید"
+	},
+	"notification.error": {
+		"defaultMessage": "خطا"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} حذف شد"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} غیرفعال شد"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} فعال شد"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} تمدید شد"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} ذخیره شد"
+	},
+	"notification.success": {
+		"defaultMessage": "موفقیت"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "افزودن {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "حذف {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "آیا مطمئن هستید که می‌خواهید این {object} را حذف کنید؟"
+	},
+	"object.edit": {
+		"defaultMessage": "ویرایش {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "هیچ {objects} وجود ندارد"
+	},
+	"object.event.created": {
+		"defaultMessage": "{object} ایجاد شد"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "{object} حذف شد"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "{object} غیرفعال شد"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "{object} فعال شد"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "{object} تمدید شد"
+	},
+	"object.event.updated": {
+		"defaultMessage": "{object} به‌روزرسانی شد"
+	},
+	"offline": {
+		"defaultMessage": "آفلاین"
+	},
+	"online": {
+		"defaultMessage": "آنلاین"
+	},
+	"options": {
+		"defaultMessage": "گزینه‌ها"
+	},
+	"password": {
+		"defaultMessage": "رمز عبور"
+	},
+	"password.generate": {
+		"defaultMessage": "تولید رمز عبور تصادفی"
+	},
+	"password.hide": {
+		"defaultMessage": "پنهان کردن رمز عبور"
+	},
+	"password.show": {
+		"defaultMessage": "نمایش رمز عبور"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "پنهان"
+	},
+	"permissions.manage": {
+		"defaultMessage": "مدیریت"
+	},
+	"permissions.view": {
+		"defaultMessage": "فقط مشاهده"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "همه موارد"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "قابلیت مشاهده موارد"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "فقط موارد ایجادشده"
+	},
+	"proxy-host": {
+		"defaultMessage": "میزبان پراکسی"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "نام میزبان / IP مقصد"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "میزبان‌های پراکسی"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {میزبان پراکسی} other {میزبان پراکسی}}"
+	},
+	"public": {
+		"defaultMessage": "عمومی"
+	},
+	"redirection-host": {
+		"defaultMessage": "میزبان تغییر مسیر"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "دامنه مقصد"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "کد HTTP"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "میزبان‌های تغییر مسیر"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {میزبان تغییر مسیر} other {میزبان تغییر مسیر}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 انتخاب‌های متعدد"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 انتقال دائمی"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 انتقال موقت"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 مشاهده آدرس دیگر"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 تغییر مسیر موقت"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 تغییر مسیر دائمی"
+	},
+	"role.admin": {
+		"defaultMessage": "مدیر"
+	},
+	"role.standard-user": {
+		"defaultMessage": "کاربر عادی"
+	},
+	"save": {
+		"defaultMessage": "ذخیره"
+	},
+	"setting": {
+		"defaultMessage": "تنظیم"
+	},
+	"settings": {
+		"defaultMessage": "تنظیمات"
+	},
+	"settings.default-site": {
+		"defaultMessage": "سایت پیش‌فرض"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "صفحه 404"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "بدون پاسخ (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "صفحه تبریک"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "نمایش این مورد زمانی که Nginx با یک میزبان ناشناس مواجه می‌شود"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "HTML سفارشی"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- محتوای HTML سفارشی خود را اینجا وارد کنید -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "تغییر مسیر"
+	},
+	"setup.preamble": {
+		"defaultMessage": "با ساختن حساب مدیر خود شروع کنید."
+	},
+	"setup.title": {
+		"defaultMessage": "خوش آمدید!"
+	},
+	"sign-in": {
+		"defaultMessage": "ورود"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "گواهی SSL"
+	},
+	"stream": {
+		"defaultMessage": "استریم"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "میزبان مقصد"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com یا 10.0.0.1 یا 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "پورت ورودی"
+	},
+	"streams": {
+		"defaultMessage": "استریم‌ها"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {استریم} other {استریم}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "آزمایش"
+	},
+	"update-available": {
+		"defaultMessage": "به‌روزرسانی موجود است: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "کاربر"
+	},
+	"user.change-password": {
+		"defaultMessage": "تغییر رمز عبور"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "تأیید رمز عبور"
+	},
+	"user.current-password": {
+		"defaultMessage": "رمز عبور فعلی"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "ویرایش پروفایل"
+	},
+	"user.full-name": {
+		"defaultMessage": "نام کامل"
+	},
+	"user.login-as": {
+		"defaultMessage": "ورود به‌عنوان {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "خروج"
+	},
+	"user.new-password": {
+		"defaultMessage": "رمز عبور جدید"
+	},
+	"user.nickname": {
+		"defaultMessage": "نام مستعار"
+	},
+	"user.set-password": {
+		"defaultMessage": "تنظیم رمز عبور"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "تنظیم دسترسی‌ها برای {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "تغییر به حالت تیره"
+	},
+	"user.switch-light": {
+		"defaultMessage": "تغییر به حالت روشن"
+	},
+	"user.two-factor": {
+		"defaultMessage": "احراز هویت دومرحله‌ای"
+	},
+	"username": {
+		"defaultMessage": "نام کاربری"
+	},
+	"users": {
+		"defaultMessage": "کاربران"
+	}
+}
