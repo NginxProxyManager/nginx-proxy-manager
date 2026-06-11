@@ -430,6 +430,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets támogatás"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "Használja a $http_host-ot (port megőrzése)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "Továbbító port"

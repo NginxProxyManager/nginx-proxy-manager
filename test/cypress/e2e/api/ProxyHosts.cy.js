@@ -32,7 +32,8 @@ describe('Proxy Hosts endpoints', () => {
 				http2_support:           false,
 				hsts_enabled:            false,
 				hsts_subdomains:         false,
-				ssl_forced:              false
+				ssl_forced:              false,
+				use_http_host:           false
 			}
 		}).then((data) => {
 			cy.validateSwaggerSchema('post', 201, '/nginx/proxy-hosts', data);
@@ -42,6 +43,40 @@ describe('Proxy Hosts endpoints', () => {
 			expect(data).to.have.property("enabled", true);
 			expect(data).to.have.property('meta');
 			expect(typeof data.meta.nginx_online).to.be.equal('undefined');
+			expect(data).to.have.property('use_http_host', false);
+		});
+	});
+
+	it('Should be able to create a http host with use_http_host enabled', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/proxy-hosts',
+			data:  {
+				domain_names:   ['test2.example.com'],
+				forward_scheme: 'http',
+				forward_host:   '1.1.1.1',
+				forward_port:   80,
+				access_list_id: '0',
+				certificate_id: 0,
+				meta:           {
+					dns_challenge: false
+				},
+				advanced_config:         '',
+				locations:               [],
+				block_exploits:          false,
+				caching_enabled:         false,
+				allow_websocket_upgrade: false,
+				http2_support:           false,
+				hsts_enabled:            false,
+				hsts_subdomains:         false,
+				ssl_forced:              false,
+				use_http_host:           true
+			}
+		}).then((data) => {
+			cy.validateSwaggerSchema('post', 201, '/nginx/proxy-hosts', data);
+			expect(data).to.have.property('id');
+			expect(data.id).to.be.greaterThan(0);
+			expect(data).to.have.property('use_http_host', true);
 		});
 	});
 

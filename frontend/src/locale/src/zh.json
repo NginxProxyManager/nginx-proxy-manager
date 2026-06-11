@@ -364,6 +364,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets 支持"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "使用 $http_host（保留端口）"
 	},
 	"host.forward-port": {
 		"defaultMessage": "转发端口"

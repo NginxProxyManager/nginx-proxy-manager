@@ -361,6 +361,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Desteği"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "$http_host kullan (portu koru)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "İletme Portu"

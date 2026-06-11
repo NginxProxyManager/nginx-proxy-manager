@@ -23,7 +23,8 @@
 		"locations",
 		"hsts_enabled",
 		"hsts_subdomains",
-		"trust_forwarded_proto"
+		"trust_forwarded_proto",
+		"use_http_host"
 	],
 	"properties": {
 		"id": {
@@ -145,6 +146,11 @@
 		"trust_forwarded_proto":{
 			"type": "boolean",
 			"description": "Trust the forwarded headers",
+			"example": false
+		},
+		"use_http_host": {
+			"type": "boolean",
+			"description": "Use $http_host (preserves port) instead of $host for the Host and X-Forwarded-Host headers",
 			"example": false
 		},
 		"certificate": {

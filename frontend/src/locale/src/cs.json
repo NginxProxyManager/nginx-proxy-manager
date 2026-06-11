@@ -430,6 +430,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Podpora WebSockets"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "Použít $http_host (zachovat port)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "Port přesměrování"

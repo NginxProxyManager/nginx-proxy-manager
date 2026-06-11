@@ -373,6 +373,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "웹소켓 지원"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "$http_host 사용 (포트 유지)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "전달할 포트"

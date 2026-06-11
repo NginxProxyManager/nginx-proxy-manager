@@ -436,6 +436,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Support"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "Kasuta $http_host (säilita port)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "Forward Port"

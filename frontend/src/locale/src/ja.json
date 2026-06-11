@@ -358,6 +358,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websocketsサポート"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "$http_hostを使用する（ポートを保持）"
 	},
 	"host.forward-port": {
 		"defaultMessage": "転送ポート"

@@ -373,6 +373,9 @@
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Soporte de Websockets"
+	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "Usar $http_host (preservar puerto)"
 	},
 	"host.forward-port": {
 		"defaultMessage": "Puerto"

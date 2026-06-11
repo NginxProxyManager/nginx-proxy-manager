@@ -362,6 +362,9 @@
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Tacaíocht Websockets"
 	},
+	"host.flags.use-http-host": {
+		"defaultMessage": "Úsáid $http_host (Caomhnaigh an Port)"
+	},
 	"host.forward-port": {
 		"defaultMessage": "Port Ar Aghaidh"
 	},

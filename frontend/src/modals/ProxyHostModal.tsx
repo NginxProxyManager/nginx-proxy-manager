@@ -89,6 +89,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
 							trustForwardedProto: data?.trustForwardedProto || false,
+							useHttpHost: data?.useHttpHost || false,
 							// Advanced tab
 							advancedConfig: data?.advancedConfig || "",
 							meta: data?.meta || {},
@@ -328,9 +329,32 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																</span>
 															</label>
 														</div>
-													</div>
+														<div>
+															<label className="row" htmlFor="useHttpHost">
+																<span className="col">
+																	<T id="host.flags.use-http-host" />
+																</span>
+																<span className="col-auto">
+																	<Field name="useHttpHost" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					{...field}
+																					id="useHttpHost"
+																					className={cn("form-check-input", {
+																						"bg-lime": field.checked,
+																					})}
+																					type="checkbox"
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
 												</div>
 											</div>
+										</div>
 											<div className="tab-pane" id="tab-locations" role="tabpanel">
 												<LocationsFields initialValues={data?.locations || []} />
 											</div>
