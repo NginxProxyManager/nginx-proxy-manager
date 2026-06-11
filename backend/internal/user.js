@@ -35,6 +35,15 @@ const internalUser = {
 		}
 
 		await access.can("users:create", data);
+
+		if (typeof data.email !== "undefined" && data.email !== null) {
+			data.email = data.email.toLowerCase().trim();
+			const emailAvailable = await internalUser.isEmailAvailable(data.email);
+			if (!emailAvailable) {
+				throw new errs.ValidationError(`Email address already in use - ${data.email}`);
+			}
+		}
+
 		data.avatar = gravatar.url(data.email, { default: "mm" });
 
 		let user = await userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
