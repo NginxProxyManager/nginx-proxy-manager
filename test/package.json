@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"dependencies": {
+		"@cypress/grep": "^6.0.0",
 		"@jc21/cypress-swagger-validation": "^0.3.2",
 		"@quobix/vacuum": "^0.26.4",
 		"axios": "^1.16.0",

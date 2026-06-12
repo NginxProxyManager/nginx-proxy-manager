@@ -4,8 +4,16 @@ describe('Certificates endpoints', () => {
 	let token;
 	let certID;
 
+	const certFile = 'test.example.com.pem';
+	const keyFile = 'test.example.com-key.pem';
+
 	before(() => {
-		cy.createCustomCerts();
+		cy.createCustomCerts({
+			domain: 'test.example.com',
+			certFile,
+			keyFile,
+		})
+
 		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
@@ -17,8 +25,8 @@ describe('Certificates endpoints', () => {
 			token: token,
 			path:  '/api/nginx/certificates/validate',
 			files:  {
-				certificate: 'test.example.com.pem',
-				certificate_key: 'test.example.com-key.pem',
+				certificate: certFile,
+				certificate_key: keyFile,
 			},
 		}).then((data) => {
 			cy.validateSwaggerSchema('post', 200, '/nginx/certificates/validate', data);
@@ -46,8 +54,8 @@ describe('Certificates endpoints', () => {
 				token: token,
 				path:  `/api/nginx/certificates/${certID}/upload`,
 				files:  {
-					certificate: 'test.example.com.pem',
-					certificate_key: 'test.example.com-key.pem',
+					certificate: certFile,
+					certificate_key: keyFile,
 				},
 			}).then((data) => {
 				cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
