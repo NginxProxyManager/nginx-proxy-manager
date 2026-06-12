@@ -97,14 +97,24 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					isFiltered={!!filtered}
 					onEdit={(id: number) => showStreamModal(id)}
-					onDelete={(id: number) =>
+					onDelete={(id: number) => {
+						const stream = data?.find((s) => s.id === id);
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "stream" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["streams"], ["stream", id]],
-							children: <T id="object.delete.content" tData={{ object: "stream" }} />,
-						})
-					}
+							children: (
+								<>
+									<T id="object.delete.content" tData={{ object: "stream" }} />
+									{stream ? (
+										<div className="mt-2 fw-bold text-break">
+											:{stream.incomingPort} &rarr; {stream.forwardingHost}:{stream.forwardingPort}
+										</div>
+									) : null}
+								</>
+							),
+						});
+					}}
 					onDisableToggle={handleDisableToggle}
 					onNew={() => showStreamModal("new")}
 				/>
