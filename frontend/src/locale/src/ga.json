@@ -74,11 +74,11 @@
 	"action.view-details": {
 		"defaultMessage": "Féach Sonraí"
 	},
-	"auditlogs": {
-		"defaultMessage": "Logaí Iniúchta"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "Logaí Iniúchta"
 	},
 	"auto": {
 		"defaultMessage": "Uath"

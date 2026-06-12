@@ -131,11 +131,11 @@
 	"action.view-details": {
 		"defaultMessage": "Zobrazit podrobnosti"
 	},
-	"auditlogs": {
-		"defaultMessage": "Záznamy auditu"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "Záznamy auditu"
 	},
 	"auto": {
 		"defaultMessage": "Automaticky"

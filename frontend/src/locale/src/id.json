@@ -74,11 +74,11 @@
 	"action.view-details": {
 		"defaultMessage": "Lihat Detail"
 	},
-	"auditlogs": {
-		"defaultMessage": "Log Audit"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "Log Audit"
 	},
 	"auto": {
 		"defaultMessage": "Otomatis"

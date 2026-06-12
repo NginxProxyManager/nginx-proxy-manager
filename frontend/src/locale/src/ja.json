@@ -65,11 +65,11 @@
 	"action.view-details": {
 		"defaultMessage": "詳細"
 	},
-	"auditlogs": {
-		"defaultMessage": "監査ログ"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "監査ログ"
 	},
 	"cancel": {
 		"defaultMessage": "キャンセル"

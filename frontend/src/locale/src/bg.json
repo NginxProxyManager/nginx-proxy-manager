@@ -74,11 +74,11 @@
 	"action.view-details": {
 		"defaultMessage": "Преглед на детайли"
 	},
-	"auditlogs": {
-		"defaultMessage": "Журнали за одит"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "Журнали за одит"
 	},
 	"auto": {
 		"defaultMessage": "Автоматично"

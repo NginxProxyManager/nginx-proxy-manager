@@ -131,11 +131,11 @@
 	"action.view-details": {
 		"defaultMessage": "Voir les Détails"
 	},
-	"auditlogs": {
-		"defaultMessage": "Journaux d'audit"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "Journaux d'audit"
 	},
 	"auto": {
 		"defaultMessage": "Auto"

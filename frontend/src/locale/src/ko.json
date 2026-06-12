@@ -74,11 +74,11 @@
 	"action.view-details": {
 		"defaultMessage": "자세히 보기"
 	},
-	"auditlogs": {
-		"defaultMessage": "감사 로그"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "감사 로그"
 	},
 	"auto": {
 		"defaultMessage": "자동"

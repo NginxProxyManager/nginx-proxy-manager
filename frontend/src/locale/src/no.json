@@ -131,11 +131,11 @@
 	"action.view-details": {
 		"defaultMessage": "Vis detaljer"
 	},
-	"auditlogs": {
-		"defaultMessage": "Revisjonslogger"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "Revisjonslogger"
 	},
 	"auto": {
 		"defaultMessage": "Auto"
