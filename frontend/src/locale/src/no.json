@@ -131,6 +131,9 @@
 	"action.view-details": {
 		"defaultMessage": "Vis detaljer"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Revisjonslogger"
 	},

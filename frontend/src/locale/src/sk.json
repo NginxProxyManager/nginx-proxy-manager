@@ -131,6 +131,9 @@
 	"action.view-details": {
 		"defaultMessage": "Zobraziť podrobnosti"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Záznamy auditu"
 	},

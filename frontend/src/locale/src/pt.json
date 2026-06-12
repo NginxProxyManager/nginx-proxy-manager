@@ -74,6 +74,9 @@
 	"action.view-details": {
 		"defaultMessage": "Ver Detalhes"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Registos de Auditoria"
 	},

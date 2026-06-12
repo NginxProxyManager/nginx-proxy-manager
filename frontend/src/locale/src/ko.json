@@ -74,6 +74,9 @@
 	"action.view-details": {
 		"defaultMessage": "자세히 보기"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "감사 로그"
 	},

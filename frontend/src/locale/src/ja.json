@@ -65,6 +65,9 @@
 	"action.view-details": {
 		"defaultMessage": "詳細"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "監査ログ"
 	},

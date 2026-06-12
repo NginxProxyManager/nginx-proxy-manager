@@ -4,7 +4,7 @@ import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
-import { useProxyHosts } from "src/hooks";
+import { useAgents, useProxyHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showProxyHostModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
@@ -14,7 +14,9 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
+	const [agentId, setAgentId] = useState("local");
+	const { data: agents } = useAgents();
+	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"], {}, agentId);
 
 	if (isLoading) {
 		return <LoadingPage />;
@@ -25,12 +27,12 @@ export default function TableWrapper() {
 	}
 
 	const handleDelete = async (id: number) => {
-		await deleteProxyHost(id);
+		await deleteProxyHost(id, agentId);
 		showObjectSuccess("proxy-host", "deleted");
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
-		await toggleProxyHost(id, enabled);
+		await toggleProxyHost(id, enabled, agentId);
 		queryClient.invalidateQueries({ queryKey: ["proxy-hosts"] });
 		queryClient.invalidateQueries({ queryKey: ["proxy-host", id] });
 		showObjectSuccess("proxy-host", enabled ? "enabled" : "disabled");
@@ -62,6 +64,21 @@ export default function TableWrapper() {
 						</div>
 						<div className="col-md-auto col-sm-12">
 							<div className="ms-auto d-flex flex-wrap btn-list">
+								<select
+									className="form-select form-select-sm w-auto"
+									value={agentId}
+									onChange={(e) => {
+										setAgentId(e.target.value);
+										setSearch("");
+									}}
+								>
+									<option value="local">Current node</option>
+									{agents?.map((agent) => (
+										<option key={agent.id} value={`${agent.id}`} disabled={!agent.enabled}>
+											{agent.name || agent.url}
+										</option>
+									))}
+								</select>
 								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
@@ -84,7 +101,7 @@ export default function TableWrapper() {
 										<Button
 											size="sm"
 											className="btn-lime"
-											onClick={() => showProxyHostModal("new")}
+											onClick={() => showProxyHostModal("new", agentId)}
 										>
 											<T id="object.add" tData={{ object: "proxy-host" }} />
 										</Button>
@@ -98,7 +115,7 @@ export default function TableWrapper() {
 					data={filtered ?? data ?? []}
 					isFiltered={!!search}
 					isFetching={isFetching}
-					onEdit={(id: number) => showProxyHostModal(id)}
+					onEdit={(id: number) => showProxyHostModal(id, agentId)}
 					onDelete={(id: number) => {
 						const host = data?.find((h) => h.id === id);
 						showDeleteConfirmModal({
@@ -121,7 +138,7 @@ export default function TableWrapper() {
 						});
 					}}
 					onDisableToggle={handleDisableToggle}
-					onNew={() => showProxyHostModal("new")}
+					onNew={() => showProxyHostModal("new", agentId)}
 				/>
 			</div>
 		</div>

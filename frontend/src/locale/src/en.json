@@ -131,6 +131,9 @@
 	"action.view-details": {
 		"defaultMessage": "View Details"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Audit Logs"
 	},

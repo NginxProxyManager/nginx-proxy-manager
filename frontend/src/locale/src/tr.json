@@ -74,6 +74,9 @@
 	"action.view-details": {
 		"defaultMessage": "Detayları Görüntüle"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Denetim Kayıtları"
 	},

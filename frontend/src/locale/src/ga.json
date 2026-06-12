@@ -74,6 +74,9 @@
 	"action.view-details": {
 		"defaultMessage": "Féach Sonraí"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Logaí Iniúchta"
 	},

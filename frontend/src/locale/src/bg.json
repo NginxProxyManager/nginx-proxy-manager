@@ -74,6 +74,9 @@
 	"action.view-details": {
 		"defaultMessage": "Преглед на детайли"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Журнали за одит"
 	},

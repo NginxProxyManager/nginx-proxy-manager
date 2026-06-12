@@ -65,6 +65,9 @@
 	"action.view-details": {
 		"defaultMessage": "查看详情"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "审计日志"
 	},

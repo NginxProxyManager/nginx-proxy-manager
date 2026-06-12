@@ -65,6 +65,9 @@
 	"action.view-details": {
 		"defaultMessage": "Visualizza Dettagli"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Log di Audit"
 	},

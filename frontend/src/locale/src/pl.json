@@ -71,6 +71,9 @@
 	"action.view-details": {
 		"defaultMessage": "Pokaż szczegóły"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Logi"
 	},

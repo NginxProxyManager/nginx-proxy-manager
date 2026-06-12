@@ -33,6 +33,7 @@ interface Props {
 	required?: boolean;
 	allowNew?: boolean;
 	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
+	agentId?: string;
 }
 export function SSLCertificateField({
 	name = "certificateId",
@@ -41,9 +42,10 @@ export function SSLCertificateField({
 	required,
 	allowNew,
 	forHttp = true,
+	agentId,
 }: Props) {
 	const { locale } = useLocaleState();
-	const { isLoading, isError, error, data } = useCertificates();
+	const { isLoading, isError, error, data } = useCertificates(undefined, {}, agentId);
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
 

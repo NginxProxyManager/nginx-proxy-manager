@@ -65,6 +65,9 @@
 	"action.view-details": {
 		"defaultMessage": "Xem Chi tiết"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Nhật ký kiểm tra"
 	},

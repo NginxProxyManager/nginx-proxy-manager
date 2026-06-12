@@ -131,6 +131,9 @@
 	"action.view-details": {
 		"defaultMessage": "Részletek megtekintése"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auditlogs": {
 		"defaultMessage": "Audit naplók"
 	},

@@ -61,3 +61,9 @@ export * from "./updateUser";
 export * from "./uploadCertificate";
 export * from "./validateCertificate";
 export * from "./twoFactor";
+
+export * from "./createAgent";
+export * from "./deleteAgent";
+export * from "./getAgents";
+export * from "./testAgent";
+export * from "./updateAgent";
