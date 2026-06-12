@@ -10,6 +10,7 @@ import * as id from "./id/index";
 import * as it from "./it/index";
 import * as ja from "./ja/index";
 import * as ko from "./ko/index";
+import * as lv from "./lv/index";
 import * as nl from "./nl/index";
 import * as pl from "./pl/index";
 import * as ru from "./ru/index";
@@ -20,7 +21,7 @@ import * as zh from "./zh/index";
 import * as tr from "./tr/index";
 import * as hu from "./hu/index";
 
-const items: any = { en, de, pt, es, et, ja, sk, cs, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu };
+const items: any = { en, de, pt, es, et, ja, sk, cs, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu, lv };
 
 
 const fallbackLang = "en";

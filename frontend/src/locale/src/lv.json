@@ -1,0 +1,776 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Atlikušie dublējuma kodi: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Saglabāt šos rezerves kodus drošā vietā. Katru kodu var izmantot tikai vienu reizi."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Atslēgt divfaktoru autentificēšanu"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Atslēgt 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Divu faktoru autentifikācijas atspējošana padarīs jūsu kontu mazāk drošu."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Atslēgts"
+	},
+	"2fa.done": {
+		"defaultMessage": "Es saglabāju savus rezerves kodus"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Aktivizēt divfaktoru autentificēšanu"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Aktivizēts"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Ievada verifikācijas kodu"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Ievadiet verifikācijas kodu, lai izslēgtu"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Pārģenerēt"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Pārģenerēt rezerves kodus"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Ievadiet verifikācijas kodu, lai ģenerētu jaunus rezerves kodus. Tavi vecie kodi kļūs nederīgi."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Slepenā atslēga"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Skenējiet šo QR kodu ar jūsu autentificēšanas programmu vai ievadiet noslēpumu manuāli."
+	},
+	"2fa.status": {
+		"defaultMessage": "Statuss"
+	},
+	"2fa.title": {
+		"defaultMessage": "Divfaktoru autentificēšana"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Pārbaudīt un ieslēgt"
+	},
+	"access-list": {
+		"defaultMessage": "Piekļuves saraksts"
+	},
+	"access-list.access-count": {
+    "defaultMessage": "{count} {count, plural, zero {noteikumu} one {noteikums} other {noteikumi}}"
+	},
+	"access-list.auth-count": {
+    	"defaultMessage": "{count} {count, plural, zero {lietotāju} one {lietotājs} other {lietotāji}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Kad pastāv vismaz 1 noteikums, tas noliedz visu noteikumu tiks pievienots pēdējais"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Ņemiet vērā, ka atļaujas un noraidīšanas direktīvas tiks piemērotas tādā secībā, kādā tās ir noteiktas."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Padot Autorizācijas datus uz tālāk"
+	},
+	"access-list.public": {
+		"defaultMessage": "Publiski pieejams"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Pamata autorizācija nav nepieciešama"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 vai 192.168.1.0/24 vai 2001:0db8:32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Apmierināt jebkuru"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {lietotājs} other {lietotāji}}, {rules} {rules, plural, one {noteikums} other {noteikumi}} — izveidots: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Piekļuves saraksti"
+	},
+	"action.add": {
+		"defaultMessage": "Pievienot"
+	},
+	"action.add-location": {
+		"defaultMessage": "Pievienot vietu"
+	},
+	"action.allow": {
+		"defaultMessage": "Atļaut"
+	},
+	"action.close": {
+		"defaultMessage": "Aizvērt"
+	},
+	"action.delete": {
+		"defaultMessage": "Dzēst"
+	},
+	"action.deny": {
+		"defaultMessage": "Aizliegt"
+	},
+	"action.disable": {
+		"defaultMessage": "Atslēgt"
+	},
+	"action.download": {
+		"defaultMessage": "Lejupielādēt"
+	},
+	"action.edit": {
+		"defaultMessage": "Rediģēt"
+	},
+	"action.enable": {
+		"defaultMessage": "Ieslēgt"
+	},
+	"action.permissions": {
+		"defaultMessage": "Atļaujas"
+	},
+	"action.renew": {
+		"defaultMessage": "Atjaunot"
+	},
+	"action.view-details": {
+		"defaultMessage": "Skata detaļas"
+	},
+	"auditlogs": {
+		"defaultMessage": "Pārbaudes žurnāli"
+	},
+	"auto": {
+		"defaultMessage": "Automātiski"
+	},
+	"cancel": {
+		"defaultMessage": "Atcelt"
+	},
+	"certificate": {
+		"defaultMessage": "Sertifikāts"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Sertifikāts"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Sertifikāta atslēga"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Vidējā līmeņa sertifikāts"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Tiek lietots"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Nav piešķirts sertifikāts"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Šis resursdators neizmantos HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Nav"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Nav izmantots"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Atjaunot sertifikātu"
+	},
+	"certificates": {
+		"defaultMessage": "Sertifikāti"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Pielāgots sertifikāts"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Ar paroli aizsargātie atslēgas faili netiek atbalstīti."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Akreditācijas datu faila saturs"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Šis spraudnis pieprasa konfigurācijas failu, kas satur API marķieri vai citus datus jūsu nodrošinātājam"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Šie dati tiks saglabāti kā vienkāršs teksts datubāzē un failā!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Pavairošanas sekundes"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Atstājiet tukšu, lai izmantotu spraudņa noklusējuma vērtību. DNS izplatīšanas gaidīšanas sekunžu skaits."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS piegādātājs"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Izvēlēties piegādātāju..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Šī sadaļa prasa dažas zināšanas par Certbot un tās DNS spraudņiem. Lūdzu, apskatiet attiecīgo spraudņu dokumentāciju."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Šajā domēnā ir atrasts serveris, bet tas nešķiet Nginx Proxy pārvaldnieks. Lūdzu, pārliecinieties, ka jūsu domēns norāda uz IP, kur darbojas jūsu NPM instance."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Neizdevās pārbaudīt sasniedzamību komunikācijas kļūdas dēļ ar site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Šajā domēnā nav pieejams serveris. Lūdzu, pārliecinieties, ka jūsu domēns pastāv un norāda uz IP, kur darbojas jūsu NPM instance un, ja nepieciešams ports 80 tiek pārsūtīts jūsu maršrutētājs."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Jūsu serveris ir sasniedzams un ir jābūt iespējai izveidot sertifikātus."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Pie šī domēna ir atrasts serveris, bet tas atgrieza negaidītu statusa kodu {code}. Vai tas ir NPM serveris? Lūdzu, pārliecinieties, ka jūsu domēns norāda uz IP, kur darbojas jūsu NPM instance."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Šajā domēnā ir atrasts serveris, bet tas atgrieza negaidītus datus. Vai tas ir NPM serveris? Lūdzu, pārliecinieties, ka jūsu domēns norāda uz IP, kur darbojas jūsu NPM instance."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Testa rezultāti"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Šiem domēniem jābūt jau konfigurētiem, lai norādītu uz šo instanci."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Atslēgas veids"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA ir plaši savietojams, ECDSA ir ātrāka un drošāka, bet to var nebalstīt vecākas sistēmas"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "Šifrēt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Pieprasīt jaunu sertifikātu"
+	},
+	"column.access": {
+		"defaultMessage": "Piekļuve"
+	},
+	"column.authorization": {
+		"defaultMessage": "Autorizācija"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Autorizācijas"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Pielāgotas vietas"
+	},
+	"column.destination": {
+		"defaultMessage": "Galamērķis"
+	},
+	"column.details": {
+		"defaultMessage": "Detaļas"
+	},
+	"column.email": {
+		"defaultMessage": "E-pasts"
+	},
+	"column.event": {
+		"defaultMessage": "Notikums"
+	},
+	"column.expires": {
+		"defaultMessage": "Zaudē spēku"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP kods"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Ienākošais ports"
+	},
+	"column.name": {
+		"defaultMessage": "Nosaukums"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protokols"
+	},
+	"column.provider": {
+		"defaultMessage": "Piegādātājs"
+	},
+	"column.roles": {
+		"defaultMessage": "Lomas"
+	},
+	"column.rules": {
+		"defaultMessage": "Noteikumi"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Apmierinātība"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Visi"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Jebkurš"
+	},
+	"column.scheme": {
+		"defaultMessage": "Shēma"
+	},
+	"column.source": {
+		"defaultMessage": "Avots"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Statuss"
+	},
+	"created-on": {
+		"defaultMessage": "Izveidots: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Panelis"
+	},
+	"dead-host": {
+		"defaultMessage": "404 Host"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 Hosti"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, zero {404 hostu} one {404 hosts} other {404 hosti}}"
+	},
+	"disabled": {
+		"defaultMessage": "Atslēgts"
+	},
+	"domain-names": {
+		"defaultMessage": "Domēna vārdi"
+	},
+	"domain-names.max": {
+		"defaultMessage": "{count} domēna vārdu maksimums"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Sāk rakstīt, lai pievienotu domēnu..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Aizstājzīmes (wildcards) nav atļautas šim tipam"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Aizstājējzīmes (wildcards) nav atbalstītas šim CA"
+	},
+	"domains.advanced": {
+		"defaultMessage": "Paplašināti"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Piespiest SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS ieslēgts"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS apakšdomēni"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2 atbalsts"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Uzticēties augšupstraumes 'Forwarded Proto' galvenēm"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Izmantot DNS autorizācijas metodi"
+	},
+	"email-address": {
+		"defaultMessage": "E-pasta adrese"
+	},
+	"empty-search": {
+		"defaultMessage": "Rezultāti netika atrasti"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Kāpēc tu tādu neveido?"
+	},
+	"enabled": {
+		"defaultMessage": "Aktivizēts"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Nepieciešama vai nu viena autorizācija, vai viens piekļuves noteikums"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Autorizācijas lietotājvārdiem jābūt unikāliem"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Nederīgs e-pasts vai parole"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Nederīgs domēns: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Nederīga e-pasta adrese"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Maksimālais garums ir {max} {max, plural, zero {rakstzīmju} one {rakstzīme} other {rakstzīmes}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Pārāk daudz domēnu, max ir {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Maksimums ir {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Minimālais garums ir {min} {min, plural, zero {rakstzīmju} one {rakstzīme} other {rakstzīmes}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Minimālais ir {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Parolēm jāsakrīt"
+	},
+	"error.required": {
+		"defaultMessage": "Tas ir nepieciešams"
+	},
+	"expires.on": {
+		"defaultMessage": "Zaudē spēku: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Atzaro mani GitHub"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Bloķēt kopējās ekspluatācijas"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Kešot aktīvus"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Saglabāt ceļu"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protokoli"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Websockets atbalsts"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Pāradresācijas ports"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Shēma"
+	},
+	"hosts": {
+		"defaultMessage": "Datori"
+	},
+	"http-only": {
+		"defaultMessage": "Tikai HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt caur DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt caur HTTP"
+	},
+	"loading": {
+		"defaultMessage": "Ielādē..."
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Pārbaudes kods"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Ievadiet kodu"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Ievadiet kodu no jūsu autentificētājas programmas"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Divfaktoru autentificēšana"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Pārbaudīt"
+	},
+	"login.title": {
+		"defaultMessage": "Pieteikties savā kontā"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Pielāgota Nginx konfigurācija"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Ievadiet savu pielāgoto Nginx konfigurāciju šeit uz savu risku!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Jums nav iespēju to apskatīt."
+	},
+	"notfound.action": {
+		"defaultMessage": "Aizved mani mājās"
+	},
+	"notfound.content": {
+		"defaultMessage": "Mēs atvainojamies, bet lapa, kuru meklējat, netika atrasta"
+	},
+	"notfound.title": {
+		"defaultMessage": "Ak vai... Jūs tikko atradāt kļūdu lapu"
+	},
+	"notification.error": {
+		"defaultMessage": "Kļūda"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} tika dzēsts"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} tika atslēgts"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} tika ieslēgts"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} ir atjaunots"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} ir saglabāts"
+	},
+	"notification.success": {
+		"defaultMessage": "Veiksmīgi"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Pievienot {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "Dzēst {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Vai tiešām vēlaties dzēst šo {object}?"
+	},
+	"object.edit": {
+		"defaultMessage": "Rediģēt {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "{objects} nav"
+	},
+	"object.event.created": {
+		"defaultMessage": "Izveidots {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "Dzēsts {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "Atslēgts {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "Ieslēgts {object}"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "Atjaunots {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "Atjaunināts {object}"
+	},
+	"offline": {
+		"defaultMessage": "Bezsaistē"
+	},
+	"online": {
+		"defaultMessage": "Tiešsaistē"
+	},
+	"options": {
+		"defaultMessage": "Opcijas"
+	},
+	"password": {
+		"defaultMessage": "Parole"
+	},
+	"password.generate": {
+		"defaultMessage": "Ģenerēt nejaušu paroli"
+	},
+	"password.hide": {
+		"defaultMessage": "Slēpt paroli"
+	},
+	"password.show": {
+		"defaultMessage": "Rādīt paroli"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Slēpts"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Pārvaldīt"
+	},
+	"permissions.view": {
+		"defaultMessage": "Tikai skats"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Visas vienības"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Pozīcijas redzamība"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Tikai izveidotas vienības"
+	},
+	"proxy-host": {
+		"defaultMessage": "Starpniekserveris"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Pārvirzīšanas datora nosaukumu / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Starpniekserveris"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, zero {proxy hostu} one {proxy hosts} other {proxy hosti}}"
+	},
+	"public": {
+		"defaultMessage": "Publisks"
+	},
+	"redirection-host": {
+		"defaultMessage": "Pārvirzīšanas resursdators"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Pārsūtīt domēnu"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP kods"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Pārvirzīšanas resursdatori"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, zero {pāradresācijas hostu} one {pāradresācijas hosts} other {pāradresācijas hosti}}"
+	},
+	"redirection-hosts.http-code.300": {
+    	"defaultMessage": "300 Vairākas izvēles"
+	},
+	"redirection-hosts.http-code.301": {
+	    "defaultMessage": "301 Pārvietots permanently (uz visiem laikiem)"
+	},
+	"redirection-hosts.http-code.302": {
+	    "defaultMessage": "302 Pārvietots temporarily (uz laiku)"
+	},
+	"redirection-hosts.http-code.303": {
+	    "defaultMessage": "303 Skatīt citu"
+	},
+	"redirection-hosts.http-code.307": {
+	    "defaultMessage": "307 Pagaidu pāradresācija"
+	},
+	"redirection-hosts.http-code.308": {
+	    "defaultMessage": "308 Pastāvīga pāradresācija"
+	},
+	"role.admin": {
+		"defaultMessage": "Administrators"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Standarta lietotājs"
+	},
+	"save": {
+		"defaultMessage": "Saglabāt"
+	},
+	"setting": {
+		"defaultMessage": "Iestatījums"
+	},
+	"settings": {
+		"defaultMessage": "Iestatījumi"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Noklusējuma vietne"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 Lapa"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Nav atbildes (444)"
+	},
+	"settings.default-site.congratulations": {
+        "defaultMessage": "Noklusējuma apsveikuma lapa"
+    },
+    "settings.default-site.description": {
+        "defaultMessage": "Ko parādīt, ja Nginx saņem pieprasījumu ar nezināmu hostu (Host)"
+    },
+    "settings.default-site.html": {
+        "defaultMessage": "Pielāgots HTML"
+    },
+    "settings.default-site.html.placeholder": {
+        "defaultMessage": "<!-- Šeit ievadiet savu pielāgoto HTML saturu -->"
+    },
+    "settings.default-site.redirect": {
+        "defaultMessage": "Pāradresēt"
+    },
+    "setup.preamble": {
+        "defaultMessage": "Sāciet, izveidojot savu administratora kontu."
+    },
+    "setup.title": {
+        "defaultMessage": "Laipni lūdzam!"
+    },
+    "sign-in": {
+        "defaultMessage": "Pierakstīties"
+    },
+    "ssl-certificate": {
+        "defaultMessage": "SSL sertifikāts"
+    },
+    "stream": {
+        "defaultMessage": "Straume (Stream)"
+    },
+    "stream.forward-host": {
+        "defaultMessage": "Pāradresācijas hosts"
+    },
+    "stream.forward-host.placeholder": {
+        "defaultMessage": "piemērs.com vai 10.0.0.1 vai 2001:db8:3333:4444:5555:6666:7777:8888"
+    },
+    "stream.incoming-port": {
+        "defaultMessage": "Ienākošais ports"
+    },
+    "streams": {
+        "defaultMessage": "Straumes (Streams)"
+    },
+    "streams.count": {
+        "defaultMessage": "{count} {count, plural, zero {straumju} one {straume} other {straumes}}"
+    },
+    "streams.tcp": {
+        "defaultMessage": "TCP"
+    },
+    "streams.udp": {
+        "defaultMessage": "UDP"
+    },
+    "test": {
+        "defaultMessage": "Testēt"
+    },
+    "update-available": {
+        "defaultMessage": "Pieejams atjauninājums: {latestVersion}"
+    },
+    "user": {
+        "defaultMessage": "Lietotājs"
+    },
+    "user.change-password": {
+        "defaultMessage": "Mainīt paroli"
+    },
+    "user.confirm-password": {
+        "defaultMessage": "Apstiprināt paroli"
+    },
+    "user.current-password": {
+        "defaultMessage": "Pašreizējā parole"
+    },
+    "user.edit-profile": {
+        "defaultMessage": "Rediģēt profilu"
+    },
+    "user.full-name": {
+        "defaultMessage": "Vārds, uzvārds"
+    },
+    "user.login-as": {
+        "defaultMessage": "Pierakstīties kā {name}"
+    },
+    "user.logout": {
+        "defaultMessage": "Izrakstīties"
+    },
+    "user.new-password": {
+        "defaultMessage": "Jaunā parole"
+    },
+    "user.nickname": {
+        "defaultMessage": "Iesauka / Lietotājvārds"
+    },
+    "user.set-password": {
+        "defaultMessage": "Iestatīt paroli"
+    },
+    "user.set-permissions": {
+        "defaultMessage": "Iestatīt atļaujas lietotājam {name}"
+    },
+    "user.switch-dark": {
+        "defaultMessage": "Pārslēgties uz tumšo režīmu"
+    },
+    "user.switch-light": {
+        "defaultMessage": "Pārslēgties uz gaišo režīmu"
+    },
+    "user.two-factor": {
+        "defaultMessage": "Divfaktoru autentifikācija"
+    },
+    "username": {
+        "defaultMessage": "Lietotājvārds (E-pasts)"
+    },
+    "users": {
+        "defaultMessage": "Lietotāji"
+    }
+}
