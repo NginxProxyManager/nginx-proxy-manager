@@ -51,7 +51,8 @@
 					"clients": [
 						{
 							"directive": "allow",
-							"address": "192.168.0.0/24"
+							"address": "192.168.0.0/24",
+							"note": "note"
 						}
 					]
 				}
@@ -118,6 +119,7 @@
 										"modified_on": "2024-10-08T22:15:40.000Z",
 										"access_list_id": 1,
 										"address": "127.0.0.1",
+										"note": "note",
 										"directive": "allow",
 										"meta": {}
 									}

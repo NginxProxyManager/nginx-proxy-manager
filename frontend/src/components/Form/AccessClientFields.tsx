@@ -78,6 +78,16 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 								onChange={(e) => handleChange(idx, "address", e.target.value)}
 								placeholder={intl.formatMessage({ id: "access-list.rule-source.placeholder" })}
 							/>
+							<input
+								name={`clients[${idx}].note`}
+								type="text"
+								maxLength={200}
+								className="form-control"
+								autoComplete="off"
+								value={client.note ?? ""}
+								onChange={(e) => handleChange(idx, "note", e.target.value)}
+								placeholder={intl.formatMessage({ id: "access-list.rule-source.placeholder-note" })}
+							/>
 						</div>
 					</div>
 					<div className="col-1">

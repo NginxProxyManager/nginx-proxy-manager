@@ -63,10 +63,11 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			password: i.password,
 		}));
 
-		// Filter out "clients" to only use the "directive" and "address" fields
+		// Filter out "clients" to only use the "directive", "address" and "note" fields
 		payload.clients = (values.clients || []).map((i: AccessListClient) => ({
 			directive: i.directive,
 			address: i.address,
+			...(i.note?.trim() ? { note: i.note.trim() } : {}),
 		}));
 
 		setAccessList(payload, {
@@ -86,7 +87,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const toggleEnabled = cn(toggleClasses, "bg-cyan");
 
 	return (
-		<Modal show={visible} onHide={remove}>
+		<Modal show={visible} onHide={remove} size="lg">
 			{!isLoading && error && (
 				<Alert variant="danger" className="m-3">
 					{error?.message || "Unknown error"}
