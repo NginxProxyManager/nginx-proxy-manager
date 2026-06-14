@@ -1,10 +1,10 @@
 {
 	"operationId": "updateSetting",
 	"summary": "Update a setting",
-	"tags": ["Settings"],
+	"tags": ["settings"],
 	"security": [
 		{
-			"BearerAuth": ["settings"]
+			"bearerAuth": ["admin"]
 		}
 	],
 	"parameters": [
@@ -34,7 +34,8 @@
 						"value": {
 							"type": "string",
 							"minLength": 1,
-							"enum": ["congratulations", "404", "444", "redirect", "html"]
+							"enum": ["congratulations", "404", "444", "redirect", "html"],
+							"example": "html"
 						},
 						"meta": {
 							"type": "object",
@@ -46,9 +47,16 @@
 								"html": {
 									"type": "string"
 								}
+							},
+							"example": {
+								"html": "<p>hello world</p>"
 							}
 						}
 					}
+				},
+				"example": {
+					"value": "congratulations",
+					"meta": {}
 				}
 			}
 		}

@@ -1,16 +1,17 @@
 {
 	"operationId": "downloadCertificate",
 	"summary": "Downloads a Certificate",
-	"tags": ["Certificates"],
+	"tags": ["certificates"],
 	"security": [
 		{
-			"BearerAuth": ["certificates"]
+			"bearerAuth": ["certificates.manage"]
 		}
 	],
 	"parameters": [
 		{
 			"in": "path",
 			"name": "certID",
+			"description": "Certificate ID",
 			"schema": {
 				"type": "integer",
 				"minimum": 1

@@ -1,0 +1,8 @@
+.btn {
+	color: light-dark(var(--tblr-dark), var(--tblr-light)) !important;
+
+	&:hover {
+		border: var(--tblr-btn-border-width) solid transparent !important;
+		background: color-mix(in srgb, var(--tblr-btn-hover-bg) 10%, transparent) !important;
+	}
+}

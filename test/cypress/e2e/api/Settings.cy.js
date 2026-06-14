@@ -4,6 +4,7 @@ describe('Settings endpoints', () => {
 	let token;
 
 	before(() => {
+		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
 		});

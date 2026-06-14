@@ -1,0 +1,3 @@
+.locationCard {
+	border-color: light-dark(var(--tblr-gray-200), var(--tblr-gray-700)) !important;
+}

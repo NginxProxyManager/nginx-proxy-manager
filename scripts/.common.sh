@@ -21,7 +21,7 @@ get_container_ip () {
 	local container_name=$1
 	local container
 	local ip
-	container=$(docker-compose ps --all -q "${container_name}" | tail -n1)
+	container=$(docker compose ps --all -q "${container_name}" | tail -n1)
 	ip=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$container")
 	echo "$ip"
 }

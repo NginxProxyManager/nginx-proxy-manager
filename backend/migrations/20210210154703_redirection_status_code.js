@@ -1,5 +1,6 @@
-const migrate_name = 'redirection_status_code';
-const logger       = require('../logger').migrate;
+import { migrate as logger } from "../logger.js";
+
+const migrateName = "redirection_status_code";
 
 /**
  * Migrate
@@ -7,18 +8,17 @@ const logger       = require('../logger').migrate;
  * @see http://knexjs.org/#Schema
  *
  * @param   {Object} knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.up = function (knex/*, Promise*/) {
+const up = (knex) => {
+	logger.info(`[${migrateName}] Migrating Up...`);
 
-	logger.info('[' + migrate_name + '] Migrating Up...');
-
-	return knex.schema.table('redirection_host', (table) => {
-		table.integer('forward_http_code').notNull().unsigned().defaultTo(302);
-	})
-		.then(function () {
-			logger.info('[' + migrate_name + '] redirection_host Table altered');
+	return knex.schema
+		.table("redirection_host", (table) => {
+			table.integer("forward_http_code").notNull().unsigned().defaultTo(302);
+		})
+		.then(() => {
+			logger.info(`[${migrateName}] redirection_host Table altered`);
 		});
 };
 
@@ -26,16 +26,18 @@ exports.up = function (knex/*, Promise*/) {
  * Undo Migrate
  *
  * @param   {Object} knex
- * @param   {Promise} Promise
  * @returns {Promise}
  */
-exports.down = function (knex/*, Promise*/) {
-	logger.info('[' + migrate_name + '] Migrating Down...');
+const down = (knex) => {
+	logger.info(`[${migrateName}] Migrating Down...`);
 
-	return knex.schema.table('redirection_host', (table) => {
-		table.dropColumn('forward_http_code');
-	})
-		.then(function () {
-			logger.info('[' + migrate_name + '] redirection_host Table altered');
+	return knex.schema
+		.table("redirection_host", (table) => {
+			table.dropColumn("forward_http_code");
+		})
+		.then(() => {
+			logger.info(`[${migrateName}] redirection_host Table altered`);
 		});
 };
+
+export { up, down };

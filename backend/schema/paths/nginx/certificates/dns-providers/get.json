@@ -1,0 +1,48 @@
+{
+	"operationId": "getDNSProviders",
+	"summary": "Get DNS Providers for Certificates",
+	"tags": ["certificates"],
+	"security": [
+		{
+			"bearerAuth": ["certificates.view"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": [
+								{
+									"id": "vultr",
+									"name": "Vultr",
+									"credentials": "dns_vultr_key = YOUR_VULTR_API_KEY"
+								},
+								{
+									"id": "websupport",
+									"name": "Websupport.sk",
+									"credentials": "dns_websupport_identifier = <api_key>\ndns_websupport_secret_key = <secret>"
+								},
+								{
+									"id": "wedos",
+									"name": "Wedos",
+									"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_password>"
+								},
+								{
+									"id": "zoneedit",
+									"name": "ZoneEdit",
+									"credentials": "dns_zoneedit_user = <login-user-id>\ndns_zoneedit_token = <dyn-authentication-token>"
+								}
+							]
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/dns-providers-list.json"
+					}
+				}
+			}
+		}
+	}
+}

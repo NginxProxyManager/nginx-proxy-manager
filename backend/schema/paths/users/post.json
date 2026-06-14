@@ -1,10 +1,10 @@
 {
 	"operationId": "createUser",
 	"summary": "Create a User",
-	"tags": ["Users"],
+	"tags": ["users"],
 	"security": [
 		{
-			"BearerAuth": ["users"]
+			"bearerAuth": ["admin"]
 		}
 	],
 	"requestBody": {

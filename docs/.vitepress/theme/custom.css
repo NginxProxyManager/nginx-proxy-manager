@@ -24,4 +24,5 @@
 
 .inline-img img {
 	display: inline;
+	margin-right: 8px;
 }

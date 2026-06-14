@@ -5,7 +5,6 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo -e "${BLUE}❯ ${CYAN}Building docker multiarch: ${YELLOW}${*}${RESET}"
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${DIR}/.." || exit 1
 
 # determine commit if not already set
@@ -23,7 +22,7 @@ docker buildx build \
 	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
 	--build-arg GOPROXY="${GOPROXY:-}" \
 	--build-arg GOPRIVATE="${GOPRIVATE:-}" \
-	--platform linux/amd64,linux/arm64,linux/arm/7 \
+	--platform linux/amd64,linux/arm64 \
 	--progress plain \
 	--pull \
 	-f docker/Dockerfile \

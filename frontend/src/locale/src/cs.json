@@ -1,0 +1,770 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Počet zbývajících záložních kódů: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Tyto záložní kódy si uložte na bezpečném místě. Každý kód lze použít pouze jednou."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Vypnout dvoufaktorové ověřování"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Vypnout 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Vypnutím dvoufaktorového ověřování snížíte bezpečnost svého účtu."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Vypnuto"
+	},
+	"2fa.done": {
+		"defaultMessage": "Uložil jsem si své záložní kódy."
+	},
+	"2fa.enable": {
+		"defaultMessage": "Zapnout dvoufaktorové ověřování"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Zapnuto"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Zadejte ověřovací kód"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Zadejte ověřovací kód pro vypnutí"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Znovu vytvořit"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Znovu vytvořit záložní kódy"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Zadejte ověřovací kód pro vytvoření nových záložních kódů. Vaše staré kódy budou neplatné."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Tajný klíč"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Naskenujte tento QR kód pomocí své ověřovací aplikace nebo zadejte tajný klíč ručně."
+	},
+	"2fa.status": {
+		"defaultMessage": "Stav"
+	},
+	"2fa.title": {
+		"defaultMessage": "Dvoufaktorové ověření"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Ověřit a zapnout"
+	},
+	"access-list": {
+		"defaultMessage": "seznam přístupů"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {pravidlo} few {pravidla} other {pravidel}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {uživatel} few {uživatelé} other {uživatelů}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Když existuje alespoň jedno pravidlo, toto pravidlo „zamítnout vše“ bude přidáno jako poslední"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Upozornění: pravidla povolit a zamítnout budou uplatňována v pořadí, v jakém jsou definována."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Odeslat ověření na Upstream"
+	},
+	"access-list.public": {
+		"defaultMessage": "Veřejně přístupné"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Není potřeba základní ověření"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 nebo 192.168.1.0/24 nebo 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Splnit kterékoliv"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {uživatel} few {uživatelé} other {uživatelů}}, {rules} {rules, plural, one {pravidlo} few {pravidla} other {pravidel}} - Vytvořeno: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Seznamy přístupů"
+	},
+	"action.add": {
+		"defaultMessage": "Přidat"
+	},
+	"action.add-location": {
+		"defaultMessage": "Přidat umístění"
+	},
+	"action.allow": {
+		"defaultMessage": "Povolit"
+	},
+	"action.close": {
+		"defaultMessage": "Zavřít"
+	},
+	"action.delete": {
+		"defaultMessage": "Smazat"
+	},
+	"action.deny": {
+		"defaultMessage": "Zamítnout"
+	},
+	"action.disable": {
+		"defaultMessage": "Deaktivovat"
+	},
+	"action.download": {
+		"defaultMessage": "Stáhnout"
+	},
+	"action.edit": {
+		"defaultMessage": "Upravit"
+	},
+	"action.enable": {
+		"defaultMessage": "Aktivovat"
+	},
+	"action.permissions": {
+		"defaultMessage": "Oprávnění"
+	},
+	"action.renew": {
+		"defaultMessage": "Obnovit"
+	},
+	"action.view-details": {
+		"defaultMessage": "Zobrazit podrobnosti"
+	},
+	"auditlogs": {
+		"defaultMessage": "Záznamy auditu"
+	},
+	"auto": {
+		"defaultMessage": "Automaticky"
+	},
+	"cancel": {
+		"defaultMessage": "Zrušit"
+	},
+	"certificate": {
+		"defaultMessage": "certifikát"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Certifikát"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Klíč certifikátu"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Zprostředkovatelský certifikát"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Používá se"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Není přiřazen žádný certifikát"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Tento hostitel nebude používat HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Žádný"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Nepoužívá se"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Obnovit certifikát"
+	},
+	"certificates": {
+		"defaultMessage": "Certifikáty"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Vlastní certifikát"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Soubory klíčů chráněné heslem nejsou podporovány."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Obsah souboru s přihlašovacími údaji"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Tento doplněk vyžaduje konfigurační soubor obsahující API token nebo jiné přihlašovací údaje vašeho poskytovatele"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Tyto údaje budou uloženy v databázi a v souboru jako obyčejný text!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Propagace v sekundách"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Nechte prázdné pro výchozí hodnotu doplňku. Počet sekund, po které se čeká na propagaci DNS."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS poskytovatel"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Vyberte poskytovatele..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Tato sekce vyžaduje znalost Certbotu a jeho DNS doplňků. Prosím, podívejte se do dokumentace příslušného doplňku."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Na této doméně byl nalezen server, ale nezdá se, že jde o Nginx Proxy Manager. Ujistěte se, že vaše doména směřuje na IP, kde běží vaše instance NPM."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Nepodařilo se ověřit dostupnost kvůli chybě komunikace se službou site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Na této doméně není dostupný žádný server. Ujistěte se, že doména existuje a směřuje na IP adresu s NPM a pokud je to potřeba, port 80 je přesměrován ve vašem routeru."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Váš server je dostupný a vytvoření certifikátu by mělo být možné."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Na této doméně byl nalezen server, ale vrátil neočekávaný stavový kód {code}. Je to NPM server? Ujistěte se prosím, že doména směřuje na IP, kde běží vaše instance NPM."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Na této doméně byl nalezen server, ale vrátil neočekávaná data. Je to NPM server? Ujistěte se, že doména směřuje na IP, kde běží vaše instance NPM."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Výsledky testu"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Tyto domény musí být již nakonfigurovány tak, aby směřovaly na tuto instalaci."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Typ klíče"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA je široce kompatibilní, ECDSA je rychlejší a bezpečnější, ale nemusí být podporován staršími systémy"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "pomocí Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Vyžádat nový certifikát"
+	},
+	"column.access": {
+		"defaultMessage": "Přístup"
+	},
+	"column.authorization": {
+		"defaultMessage": "Autorizace"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Autorizace"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Vlastní umístění"
+	},
+	"column.destination": {
+		"defaultMessage": "Cíl"
+	},
+	"column.details": {
+		"defaultMessage": "Podrobnosti"
+	},
+	"column.email": {
+		"defaultMessage": "Email"
+	},
+	"column.event": {
+		"defaultMessage": "Událost"
+	},
+	"column.expires": {
+		"defaultMessage": "Platnost do"
+	},
+	"column.http-code": {
+		"defaultMessage": "Přístup"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Vstupní port"
+	},
+	"column.name": {
+		"defaultMessage": "Název"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protokol"
+	},
+	"column.provider": {
+		"defaultMessage": "Poskytovatel"
+	},
+	"column.roles": {
+		"defaultMessage": "Role"
+	},
+	"column.rules": {
+		"defaultMessage": "Pravidla"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Splnit"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Všechny"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Kterékoliv"
+	},
+	"column.scheme": {
+		"defaultMessage": "Schéma"
+	},
+	"column.source": {
+		"defaultMessage": "Zdroj"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Stav"
+	},
+	"created-on": {
+		"defaultMessage": "Vytvořeno: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Panel"
+	},
+	"dead-host": {
+		"defaultMessage": "404 hostitel"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 Hostitelé"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {404 hostitel} few {404 hostitelé} other {404 hostitelů}}"
+	},
+	"disabled": {
+		"defaultMessage": "Deaktivováno"
+	},
+	"domain-names": {
+		"defaultMessage": "Doménová jména"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Maximálně {count} doménových jmen"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Začněte psát pro přidání domény..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Wildcards nejsou pro tento typ povoleny"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Wildcards nejsou podporovány pro tuto certifikační autoritu"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Vynutit SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS povoleno"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS pro subdomény"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "Podpora HTTP/2"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Použít DNS výzvu"
+	},
+	"email-address": {
+		"defaultMessage": "Emailová adresa"
+	},
+	"empty-search": {
+		"defaultMessage": "Nebyly nalezeny žádné výsledky"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Proč nevytvoříte nějaký?"
+	},
+	"enabled": {
+		"defaultMessage": "Aktivováno"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Je vyžadována alespoň jedna autorizace nebo jedno přístupové pravidlo"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Uživatelská jména pro autorizaci musí být jedinečná"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Neplatný email nebo heslo"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Neplatná doména: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Neplatná emailová adresa"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Maximální délka je {max} znak{max, plural, one {} few {y} other {ů}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Příliš mnoho domén, maximum je {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Maximum je {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Minimální délka je {min} znak{min, plural, one {} few {y} other {ů}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Minimum je {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Hesla se musí shodovat"
+	},
+	"error.required": {
+		"defaultMessage": "Toto pole je povinné"
+	},
+	"expires.on": {
+		"defaultMessage": "Platnost do: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Forkněte mě na GitHubu"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Blokovat běžné exploity"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Uložit zdroje do mezipaměti"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Zachovat cestu"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protokoly"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Podpora WebSockets"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Port přesměrování"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Schéma"
+	},
+	"hosts": {
+		"defaultMessage": "Hostitelé"
+	},
+	"http-only": {
+		"defaultMessage": "Pouze HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt přes DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt přes HTTP"
+	},
+	"loading": {
+		"defaultMessage": "Načítá se…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Ověřovací kód"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Vložit kód"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Vložte kód z vaší ověřovací aplikace"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Dvoufaktorové ověření"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Ověřit"
+	},
+	"login.title": {
+		"defaultMessage": "Přihlaste se ke svému účtu"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Vlastní Nginx konfigurace"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Zadejte vlastní Nginx konfiguraci na vlastní riziko!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Nemáte oprávnění k zobrazení tohoto obsahu."
+	},
+	"notfound.action": {
+		"defaultMessage": "Zpět na hlavní stránku"
+	},
+	"notfound.content": {
+		"defaultMessage": "Omlouváme se, stránka, kterou hledáte, nebyla nalezena"
+	},
+	"notfound.title": {
+		"defaultMessage": "Ups… Našli jste chybovou stránku"
+	},
+	"notification.error": {
+		"defaultMessage": "Chyba"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} byl odstraněn"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} byl deaktivován"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} byl aktivován"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} byl obnoven"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} byl uložen"
+	},
+	"notification.success": {
+		"defaultMessage": "Úspěch"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Přidat {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "Smazat {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Opravdu chcete smazat tento {object}?"
+	},
+	"object.edit": {
+		"defaultMessage": "Upravit {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "Nejsou {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "Vytvořen {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "Smazán {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "Deaktivován {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "Aktivován {object}"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "Obnoven {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "Aktualizován {object}"
+	},
+	"offline": {
+		"defaultMessage": "Offline"
+	},
+	"online": {
+		"defaultMessage": "Online"
+	},
+	"options": {
+		"defaultMessage": "Možnosti"
+	},
+	"password": {
+		"defaultMessage": "Heslo"
+	},
+	"password.generate": {
+		"defaultMessage": "Vygenerovat náhodné heslo"
+	},
+	"password.hide": {
+		"defaultMessage": "Skrýt heslo"
+	},
+	"password.show": {
+		"defaultMessage": "Zobrazit heslo"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Skryté"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Spravovat"
+	},
+	"permissions.view": {
+		"defaultMessage": "Pouze pro zobrazení"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Všechny položky"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Viditelnost položky"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Pouze vytvořené položky"
+	},
+	"proxy-host": {
+		"defaultMessage": "proxy hostitele"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Cílový název hostitele / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Proxy hostitelé"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {proxy hostitel} few {proxy hostitelé} other {proxy hostitelů}}"
+	},
+	"public": {
+		"defaultMessage": "Veřejné"
+	},
+	"redirection-host": {
+		"defaultMessage": "přesměrovacího hostitele"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Cílová doména"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP kód"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Přesměrovací hostitelé"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {přesměrovací hostitel} few {přesměrovací hostitelé} other {přesměrovacích hostitelů}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Více možností"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Trvale přesunuto"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Dočasně přesunuto"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Podívat se na jiné"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Dočasné přesměrování"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Trvalé přesměrování"
+	},
+	"role.admin": {
+		"defaultMessage": "Administrátor"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Běžný uživatel"
+	},
+	"save": {
+		"defaultMessage": "Uložit"
+	},
+	"setting": {
+		"defaultMessage": "Nastavení"
+	},
+	"settings": {
+		"defaultMessage": "Nastavení"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Výchozí stránka"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "Stránka 404"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Bez odpovědi (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Gratulační stránka"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Co zobrazit, když Nginx zachytí neznámého hostitele"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Vlastní HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Sem zadejte vlastní HTML obsah -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Přesměrovat"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Začněte vytvořením administrátorského účtu."
+	},
+	"setup.title": {
+		"defaultMessage": "Vítejte!"
+	},
+	"sign-in": {
+		"defaultMessage": "Přihlásit se"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL certifikát"
+	},
+	"stream": {
+		"defaultMessage": "stream"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Cílový hostitel"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "napriklad.cz nebo 10.0.0.1 nebo 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Vstupní port"
+	},
+	"streams": {
+		"defaultMessage": "Streamy"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {stream} few {streamy} other {streamů}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Test"
+	},
+	"update-available": {
+		"defaultMessage": "Dostupná aktualizace: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "uživatele"
+	},
+	"user.change-password": {
+		"defaultMessage": "Změnit heslo"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Potvrdit heslo"
+	},
+	"user.current-password": {
+		"defaultMessage": "Aktuální heslo"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Upravit profil"
+	},
+	"user.full-name": {
+		"defaultMessage": "Celé jméno"
+	},
+	"user.login-as": {
+		"defaultMessage": "Přihlásit se jako {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "Odhlásit se"
+	},
+	"user.new-password": {
+		"defaultMessage": "Nové heslo"
+	},
+	"user.nickname": {
+		"defaultMessage": "Přezdívka"
+	},
+	"user.set-password": {
+		"defaultMessage": "Nastavit heslo"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Nastavit oprávnění pro {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Přepnout na tmavý režim"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Přepnout na světlý režim"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Dvoufaktorové ověření"
+	},
+	"username": {
+		"defaultMessage": "Uživatelské jméno"
+	},
+	"users": {
+		"defaultMessage": "Uživatelé"
+	}
+}

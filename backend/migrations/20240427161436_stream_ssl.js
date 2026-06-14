@@ -1,5 +1,6 @@
-const migrate_name = 'stream_ssl';
-const logger       = require('../logger').migrate;
+import { migrate as logger } from "../logger.js";
+
+const migrateName = "stream_ssl";
 
 /**
  * Migrate
@@ -9,14 +10,15 @@ const logger       = require('../logger').migrate;
  * @param   {Object} knex
  * @returns {Promise}
  */
-exports.up = function (knex) {
-	logger.info('[' + migrate_name + '] Migrating Up...');
+const up = (knex) => {
+	logger.info(`[${migrateName}] Migrating Up...`);
 
-	return knex.schema.table('stream', (table) => {
-		table.integer('certificate_id').notNull().unsigned().defaultTo(0);
-	})
-		.then(function () {
-			logger.info('[' + migrate_name + '] stream Table altered');
+	return knex.schema
+		.table("stream", (table) => {
+			table.integer("certificate_id").notNull().unsigned().defaultTo(0);
+		})
+		.then(() => {
+			logger.info(`[${migrateName}] stream Table altered`);
 		});
 };
 
@@ -26,13 +28,16 @@ exports.up = function (knex) {
  * @param   {Object} knex
  * @returns {Promise}
  */
-exports.down = function (knex) {
-	logger.info('[' + migrate_name + '] Migrating Down...');
+const down = (knex) => {
+	logger.info(`[${migrateName}] Migrating Down...`);
 
-	return knex.schema.table('stream', (table) => {
-		table.dropColumn('certificate_id');
-	})
-		.then(function () {
-			logger.info('[' + migrate_name + '] stream Table altered');
+	return knex.schema
+		.table("stream", (table) => {
+			table.dropColumn("certificate_id");
+		})
+		.then(() => {
+			logger.info(`[${migrateName}] stream Table altered`);
 		});
 };
+
+export { up, down };

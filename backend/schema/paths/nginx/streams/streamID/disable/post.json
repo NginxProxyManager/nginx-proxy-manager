@@ -1,16 +1,17 @@
 {
 	"operationId": "disableStream",
 	"summary": "Disable a Stream",
-	"tags": ["Streams"],
+	"tags": ["streams"],
 	"security": [
 		{
-			"BearerAuth": ["streams"]
+			"bearerAuth": ["streams.manage"]
 		}
 	],
 	"parameters": [
 		{
 			"in": "path",
 			"name": "streamID",
+			"description": "The ID of the Stream",
 			"schema": {
 				"type": "integer",
 				"minimum": 1

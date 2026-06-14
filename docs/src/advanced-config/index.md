@@ -14,7 +14,7 @@ on the `data` and `letsencrypt` folders at startup.
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
     environment:
       PUID: 1000
       PGID: 1000
@@ -101,7 +101,7 @@ secrets:
 
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
     restart: unless-stopped
     ports:
       # Public HTTP Port:
@@ -130,18 +130,16 @@ services:
       - db
 
   db:
-    image: jc21/mariadb-aria
+    image: 'linuxserver/mariadb'
     restart: unless-stopped
     environment:
-      # MYSQL_ROOT_PASSWORD: "npm"  # use secret instead
       MYSQL_ROOT_PASSWORD__FILE: /run/secrets/DB_ROOT_PWD
-      MYSQL_DATABASE: "npm"
-      MYSQL_USER: "npm"
-      # MYSQL_PASSWORD: "npm"  # use secret instead
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
       MYSQL_PASSWORD__FILE: /run/secrets/MYSQL_PWD
-      MARIADB_AUTO_UPGRADE: '1'
+      TZ: 'Australia/Brisbane'
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./mariadb:/config
     secrets:
       - DB_ROOT_PWD
       - MYSQL_PWD
@@ -228,3 +226,43 @@ To enable the geoip2 module, you can create the custom configuration file `/data
 load_module /usr/lib/nginx/modules/ngx_http_geoip2_module.so;
 load_module /usr/lib/nginx/modules/ngx_stream_geoip2_module.so;
 ```
+
+## Auto Initial User Creation
+
+Setting these environment variables will create the default user on startup, skipping the UI first user setup screen:
+
+```yml
+    environment:
+      INITIAL_ADMIN_EMAIL: my@example.com
+      INITIAL_ADMIN_PASSWORD: mypassword1
+```
+
+## Disable Nginx Resolver
+
+On startup, we generate a resolvers directive for Nginx unless this is defined:
+
+```yml
+    environment:
+      DISABLE_RESOLVER: true
+```
+
+In this configuration, all DNS queries performed by Nginx will fall to the `/etc/hosts` file
+and then the `/etc/resolv.conf`.
+
+
+## Changing the Admin UI port from 81 to something else
+
+First, add an env var to your docker compose file:
+```yml
+    environment:
+      NPM_ADMIN_PORT: '8000'
+```
+
+And you'll probably want to expose that port as well
+
+```yml
+    ports:
+      - '8000:8000'
+```
+
+Then you'll be able to access admin UI at `http://localhost:8000`

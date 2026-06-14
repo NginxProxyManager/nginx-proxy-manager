@@ -1,52 +1,52 @@
 // Objection Docs:
 // http://vincit.github.io/objection.js/
 
-const db    = require('../db');
-const Model = require('objection').Model;
-const User  = require('./user');
-const now   = require('./now_helper');
+import { Model } from "objection";
+import db from "../db.js";
+import now from "./now_helper.js";
+import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 class AuditLog extends Model {
-	$beforeInsert () {
-		this.created_on  = now();
+	$beforeInsert() {
+		this.created_on = now();
 		this.modified_on = now();
 
 		// Default for meta
-		if (typeof this.meta === 'undefined') {
+		if (typeof this.meta === "undefined") {
 			this.meta = {};
 		}
 	}
 
-	$beforeUpdate () {
+	$beforeUpdate() {
 		this.modified_on = now();
 	}
 
-	static get name () {
-		return 'AuditLog';
+	static get name() {
+		return "AuditLog";
 	}
 
-	static get tableName () {
-		return 'audit_log';
+	static get tableName() {
+		return "audit_log";
 	}
 
-	static get jsonAttributes () {
-		return ['meta'];
+	static get jsonAttributes() {
+		return ["meta"];
 	}
 
-	static get relationMappings () {
+	static get relationMappings() {
 		return {
 			user: {
-				relation:   Model.HasOneRelation,
+				relation: Model.HasOneRelation,
 				modelClass: User,
-				join:       {
-					from: 'audit_log.user_id',
-					to:   'user.id'
-				}
-			}
+				join: {
+					from: "audit_log.user_id",
+					to: "user.id",
+				},
+			},
 		};
 	}
 }
 
-module.exports = AuditLog;
+export default AuditLog;

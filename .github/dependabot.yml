@@ -1,0 +1,104 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    groups:
+      dev-patch-updates:
+        dependency-type: "development"
+        update-types:
+          - "patch"
+      dev-minor-updates:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+      prod-patch-updates:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+      prod-minor-updates:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    groups:
+      dev-patch-updates:
+        dependency-type: "development"
+        update-types:
+          - "patch"
+      dev-minor-updates:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+      prod-patch-updates:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+      prod-minor-updates:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+
+  - package-ecosystem: "npm"
+    directory: "/docs"
+    schedule:
+      interval: "weekly"
+    groups:
+      dev-patch-updates:
+        dependency-type: "development"
+        update-types:
+          - "patch"
+      dev-minor-updates:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+      prod-patch-updates:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+      prod-minor-updates:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+
+  - package-ecosystem: "npm"
+    directory: "/test"
+    schedule:
+      interval: "weekly"
+    groups:
+      dev-patch-updates:
+        dependency-type: "development"
+        update-types:
+          - "patch"
+      dev-minor-updates:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+      prod-patch-updates:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+      prod-minor-updates:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    schedule:
+      interval: "weekly"
+    groups:
+      updates:
+        update-types:
+          - "patch"
+          - "minor"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
