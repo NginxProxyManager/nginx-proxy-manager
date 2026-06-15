@@ -23,7 +23,8 @@
 		"locations",
 		"hsts_enabled",
 		"hsts_subdomains",
-		"trust_forwarded_proto"
+		"trust_forwarded_proto",
+		"host_group_label"
 	],
 	"properties": {
 		"id": {
@@ -146,6 +147,12 @@
 			"type": "boolean",
 			"description": "Trust the forwarded headers",
 			"example": false
+		},
+		"host_group_label": {
+			"type": "string",
+			"description": "Grouping label for organising proxy hosts (e.g. project, organisation)",
+			"maxLength": 150,
+			"example": ""
 		},
 		"certificate": {
 			"oneOf": [

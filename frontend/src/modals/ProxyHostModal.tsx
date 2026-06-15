@@ -17,7 +17,7 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
@@ -72,6 +72,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					initialValues={
 						{
 							// Details tab
+							hostGroupLabel: data?.hostGroupLabel || "",
 							domainNames: data?.domainNames || [],
 							forwardScheme: data?.forwardScheme || "http",
 							forwardHost: data?.forwardHost || "",
@@ -163,6 +164,33 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 									<div className="card-body">
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
+												<Field name="hostGroupLabel" validate={validateString(0, 150)}>
+													{({ field, form }: any) => (
+														<div className="mb-3">
+															<label className="form-label" htmlFor="hostGroupLabel">
+																<T id="proxy-host.group-label" />
+															</label>
+															<input
+																id="hostGroupLabel"
+																type="text"
+																className={`form-control ${form.errors.hostGroupLabel && form.touched.hostGroupLabel ? "is-invalid" : ""}`}
+																placeholder={intl.formatMessage({
+																	id: "proxy-host.group-label.placeholder",
+																})}
+																maxLength={150}
+																{...field}
+															/>
+															{form.errors.hostGroupLabel ? (
+																<div className="invalid-feedback">
+																	{form.errors.hostGroupLabel &&
+																	form.touched.hostGroupLabel
+																		? form.errors.hostGroupLabel
+																		: null}
+																</div>
+															) : null}
+														</div>
+													)}
+												</Field>
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
 												<div className="row">
 													<div className="col-md-3">
