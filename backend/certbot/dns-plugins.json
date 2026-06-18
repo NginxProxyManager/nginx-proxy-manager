@@ -679,12 +679,20 @@
 		"package_name": "certbot-dns-zoneedit",
 		"version": "~=0.3.2"
 	},
-		"rcode0": {
+	"rcode0": {
 		"credentials": "dns_rcode0_api_key = acme_0123456789abcdef0123456789abcdef01234567",
 		"dependencies": "",
 		"full_plugin_name": "dns-rcode0",
 		"name": "RcodeZero",
 		"package_name": "certbot-dns-rcode0",
 		"version": "~=0.0.0.2"
+	},
+	"gigahost": {
+		"credentials": "dns_gigahost_api_token=flux_live_xxxxxxxxxxxxxxxxxxxxxxxx",
+		"dependencies": "",
+		"full_plugin_name": "dns-gigahost",
+		"name": "Gigahost",
+		"package_name": "certbot-dns-gigahost",
+		"version": "~=0.1.1"
 	}
 }
