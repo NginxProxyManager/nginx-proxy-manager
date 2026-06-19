@@ -156,7 +156,6 @@ export async function del({ url, params }: DeleteArgs, abortController?: AbortCo
 	const method = "DELETE";
 	const headers = {
 		...buildAuthHeader(),
-		[contentTypeHeader]: "application/json",
 	};
 	const signal = abortController?.signal;
 	const response = await fetch(apiUrl, { method, headers, signal });

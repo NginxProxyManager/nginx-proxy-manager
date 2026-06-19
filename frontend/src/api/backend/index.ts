@@ -1,3 +1,4 @@
+export * from "./checkVersion";
 export * from "./createAccessList";
 export * from "./createCertificate";
 export * from "./createDeadHost";
@@ -59,3 +60,4 @@ export * from "./updateStream";
 export * from "./updateUser";
 export * from "./uploadCertificate";
 export * from "./validateCertificate";
+export * from "./twoFactor";

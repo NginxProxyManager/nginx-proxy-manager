@@ -1,11 +1,11 @@
 import { Model } from "objection";
 import db from "../db.js";
-import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import { castJsonIfNeed, convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
 import Certificate from "./certificate.js";
 import now from "./now_helper.js";
 import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = ["is_deleted", "enabled", "tcp_forwarding", "udp_forwarding"];
 
@@ -44,6 +44,18 @@ class Stream extends Model {
 
 	static get jsonAttributes() {
 		return ["meta"];
+	}
+
+	static get defaultAllowGraph() {
+		return "[owner,certificate]";
+	}
+
+	static get defaultExpand() {
+		return ["certificate", "owner"];
+	}
+
+	static get defaultOrder() {
+		return [castJsonIfNeed("incoming_port"), "ASC"];
 	}
 
 	static get relationMappings() {

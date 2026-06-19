@@ -17,4 +17,12 @@ describe('Basic API checks', () => {
 			expect(data.openapi).to.be.equal('3.1.0');
 		});
 	});
+
+	it('Should return a valid payload for version check', () => {
+		cy.task('backendApiGet', {
+			path: `/api/version/check?ts=${Date.now()}`,
+		}).then((data) => {
+			cy.validateSwaggerSchema('get', 200, '/version/check', data);
+		});
+	});
 });

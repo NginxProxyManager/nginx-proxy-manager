@@ -53,4 +53,26 @@ router
 		}
 	});
 
+router
+	.route("/2fa")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+
+	/**
+	 * POST /tokens/2fa
+	 *
+	 * Verify 2FA code and get full token
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const { challenge_token, code } = await apiValidator(getValidationSchema("/tokens/2fa", "post"), req.body);
+			const result = await internalToken.verify2FA(challenge_token, code);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
 export default router;

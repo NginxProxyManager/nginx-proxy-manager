@@ -1,0 +1,695 @@
+{
+	"access-list": {
+		"defaultMessage": "Списък за достъп"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {правило} other {правила}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {потребител} other {потребители}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Когато съществува поне 1 правило, това правило за отказ се добавя последно"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Обърнете внимание, че правилата Позволяване и Отказване се прилагат в реда, в който са зададени."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Предаване на автентикация към Upstream"
+	},
+	"access-list.public": {
+		"defaultMessage": "Публичен достъп"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Без базова автентикация"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 или 192.168.1.0/24 или 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Удовлетворяване на което и да е"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {потребител} other {потребители}}, {rules} {rules, plural, one {правило} other {правила}} - Създадено: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Списъци за достъп"
+	},
+	"action.add": {
+		"defaultMessage": "Добавяне"
+	},
+	"action.add-location": {
+		"defaultMessage": "Добавяне на маршрут"
+	},
+	"action.allow": {
+		"defaultMessage": "Разрешаване"
+	},
+	"action.close": {
+		"defaultMessage": "Затваряне"
+	},
+	"action.delete": {
+		"defaultMessage": "Изтриване"
+	},
+	"action.deny": {
+		"defaultMessage": "Отказване"
+	},
+	"action.disable": {
+		"defaultMessage": "Деактивиране"
+	},
+	"action.download": {
+		"defaultMessage": "Изтегляне"
+	},
+	"action.edit": {
+		"defaultMessage": "Редактиране"
+	},
+	"action.enable": {
+		"defaultMessage": "Активиране"
+	},
+	"action.permissions": {
+		"defaultMessage": "Права"
+	},
+	"action.renew": {
+		"defaultMessage": "Подновяване"
+	},
+	"action.view-details": {
+		"defaultMessage": "Преглед на детайли"
+	},
+	"auditlogs": {
+		"defaultMessage": "Журнали за одит"
+	},
+	"auto": {
+		"defaultMessage": "Автоматично"
+	},
+	"cancel": {
+		"defaultMessage": "Отказ"
+	},
+	"certificate": {
+		"defaultMessage": "Сертификат"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Сертификат"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Ключ на сертификата"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Междинен сертификат"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Използва се"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Не е назначен сертификат"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Този хост няма да използва HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Без сертификат"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Не се използва"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Подновяване на сертификат"
+	},
+	"certificates": {
+		"defaultMessage": "Сертификати"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Потребителски сертификат"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Ключове, защитени с парола, не се поддържат."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Съдържание на файл с удостоверения"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Този плъгин изисква конфигурационен файл с API токен или други идентификационни данни."
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Тези данни ще бъдат съхранени като обикновен текст в базата и във файл!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Секунди за разпространение"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Оставете празно, за да се използва стойността по подразбиране. Брой секунди за изчакване на DNS разпространение."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS доставчик"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Изберете доставчик..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Този раздел изисква познания за Certbot и неговите DNS плъгини. Моля, консултирайте се с документацията."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Сървър е намерен на този домейн, но не изглежда да е Nginx Proxy Manager. Уверете се, че домейнът сочи към IP адреса, където работи NPM."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Неуспешна проверка поради грешка в комуникацията със site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Няма достъпен сървър на този домейн. Проверете, че домейнът съществува и сочи към IP-та, където се изпълнява NPM, и ако е необходимо, че порт 80 е пренасочен."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Вашият сървър е достъпен и създаването на сертификати е възможно."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Намерен е сървър, но върна неочакван код {code}. Това NPM ли е? Уверете се, че домейнът сочи към вашия NPM сървър."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Намерен е сървър, но върна неочаквани данни. Това NPM ли е? Уверете се, че домейнът сочи към вашия NPM сървър."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Резултати от теста"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Тези домейни трябва вече да сочат към тази инсталация."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Тип ключ"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA е широко съвместим, ECDSA е по-бърз и по-сигурен, но може да не се поддържа от по-стари системи"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "с Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Заявка за нов сертификат"
+	},
+	"column.access": {
+		"defaultMessage": "Достъп"
+	},
+	"column.authorization": {
+		"defaultMessage": "Автентикация"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Автентикации"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Персонализирани маршрути"
+	},
+	"column.destination": {
+		"defaultMessage": "Дестинация"
+	},
+	"column.details": {
+		"defaultMessage": "Детайли"
+	},
+	"column.email": {
+		"defaultMessage": "Имейл"
+	},
+	"column.event": {
+		"defaultMessage": "Събитие"
+	},
+	"column.expires": {
+		"defaultMessage": "Изтича"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP код"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Входящ порт"
+	},
+	"column.name": {
+		"defaultMessage": "Име"
+	},
+	"column.protocol": {
+		"defaultMessage": "Протокол"
+	},
+	"column.provider": {
+		"defaultMessage": "Доставчик"
+	},
+	"column.roles": {
+		"defaultMessage": "Роли"
+	},
+	"column.rules": {
+		"defaultMessage": "Правила"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Удовлетворяване"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Всички"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Кое и да е"
+	},
+	"column.scheme": {
+		"defaultMessage": "Схема"
+	},
+	"column.source": {
+		"defaultMessage": "Източник"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Статус"
+	},
+	"created-on": {
+		"defaultMessage": "Създадено: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Табло"
+	},
+	"dead-host": {
+		"defaultMessage": "404 хост"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 хостове"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {404 хост} other {404 хостове}}"
+	},
+	"disabled": {
+		"defaultMessage": "Деактивиран"
+	},
+	"domain-names": {
+		"defaultMessage": "Домейн имена"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Максимум {count} домейна"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Започнете да въвеждате, за да добавите домейн..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Wildcard не е разрешен за този тип"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Wildcard не се поддържа от това CA"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Принудително SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS активирано"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS за поддомейни"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "Поддръжка на HTTP/2"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Използване на DNS Challenge"
+	},
+	"email-address": {
+		"defaultMessage": "Имейл адрес"
+	},
+	"empty-search": {
+		"defaultMessage": "Няма резултати"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Защо не създадете един?"
+	},
+	"enabled": {
+		"defaultMessage": "Активиран"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Необходимо е поне една Автентикация или едно Правило за достъп"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Потребителските имена за достъп трябва да са уникални"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Невалиден имейл или парола"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Невалиден домейн: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Невалиден имейл адрес"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Максималната дължина е {max} знак{max, plural, one {} other {а}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Твърде много домейни, максимум {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Максимум {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Минималната дължина е {min} знак{min, plural, one {} other {а}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Минимум e {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Паролите трябва да съвпадат"
+	},
+	"error.required": {
+		"defaultMessage": "Това поле е задължително"
+	},
+	"expires.on": {
+		"defaultMessage": "Изтича: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Fork в GitHub"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Блокиране на често срещани експлойти"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Кеширане на ресурси"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Запазване на пътя"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Протоколи"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Поддръжка на WebSockets"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Порт"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Схема"
+	},
+	"hosts": {
+		"defaultMessage": "Хостове"
+	},
+	"http-only": {
+		"defaultMessage": "Само HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt чрез DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt чрез HTTP"
+	},
+	"loading": {
+		"defaultMessage": "Зареждане…"
+	},
+	"login.title": {
+		"defaultMessage": "Вход в акаунта"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Персонализирана Nginx конфигурация"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Въведете вашата персонализирана Nginx конфигурация на собствен риск!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Нямате достъп до тази страница."
+	},
+	"notfound.action": {
+		"defaultMessage": "Към началната страница"
+	},
+	"notfound.content": {
+		"defaultMessage": "Страницата, която търсите, не беше намерена"
+	},
+	"notfound.title": {
+		"defaultMessage": "Упс… Намерихте грешка"
+	},
+	"notification.error": {
+		"defaultMessage": "Грешка"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} беше изтрит"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} беше деактивиран"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} беше активиран"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} беше подновен"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} беше запазен"
+	},
+	"notification.success": {
+		"defaultMessage": "Успех"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} №{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Добавяне: {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "Изтриване: {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Сигурни ли сте, че искате да изтриете {object}?"
+	},
+	"object.edit": {
+		"defaultMessage": "Редактиране: {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "Няма налични {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "Създаден {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "Изтрит {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "Деактивиран {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "Активиран {object}"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "Подновен {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "Актуализиран {object}"
+	},
+	"offline": {
+		"defaultMessage": "Офлайн"
+	},
+	"online": {
+		"defaultMessage": "Онлайн"
+	},
+	"options": {
+		"defaultMessage": "Опции"
+	},
+	"password": {
+		"defaultMessage": "Парола"
+	},
+	"password.generate": {
+		"defaultMessage": "Генериране на случайна парола"
+	},
+	"password.hide": {
+		"defaultMessage": "Скриване на паролата"
+	},
+	"password.show": {
+		"defaultMessage": "Показване на паролата"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Скрито"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Управление"
+	},
+	"permissions.view": {
+		"defaultMessage": "Само преглед"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Всички елементи"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Видимост на елементите"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Само създадените от потребителя"
+	},
+	"proxy-host": {
+		"defaultMessage": "Прокси хост"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Хост/IP за препращане"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Прокси хостове"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {прокси хост} other {прокси хостове}}"
+	},
+	"public": {
+		"defaultMessage": "Публичен"
+	},
+	"redirection-host": {
+		"defaultMessage": "Хост за пренасочване"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Домейн за пренасочване"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP код"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Хостове за пренасочване"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {хост за пренасочване} other {хостове за пренасочване}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Multiple Choices"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Преместено постоянно"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Преместено временно"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 See other"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Временно пренасочване"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Постоянно пренасочване"
+	},
+	"role.admin": {
+		"defaultMessage": "Администратор"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Обикновен потребител"
+	},
+	"save": {
+		"defaultMessage": "Запазване"
+	},
+	"setting": {
+		"defaultMessage": "Настройка"
+	},
+	"settings": {
+		"defaultMessage": "Настройки"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Сайт по подразбиране"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 страница"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Без отговор (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Страница поздравление"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Какво да се показва при заявка към неизвестен хост"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Персонализиран HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Въведете вашето персонализирано HTML съдържание тук -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Пренасочване"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Започнете, като създадете администраторски акаунт."
+	},
+	"setup.title": {
+		"defaultMessage": "Добре дошли!"
+	},
+	"sign-in": {
+		"defaultMessage": "Вход"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL сертификат"
+	},
+	"stream": {
+		"defaultMessage": "Поток"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Хост за препращане"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com или 10.0.0.1 или 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Входящ порт"
+	},
+	"streams": {
+		"defaultMessage": "Потоци"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {поток} other {потоци}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Тест"
+	},
+	"update-available": {
+		"defaultMessage": "Налична актуализация: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "Потребител"
+	},
+	"user.change-password": {
+		"defaultMessage": "Смяна на парола"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Потвърждение на парола"
+	},
+	"user.current-password": {
+		"defaultMessage": "Текуща парола"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Редактиране на профил"
+	},
+	"user.full-name": {
+		"defaultMessage": "Пълно име"
+	},
+	"user.login-as": {
+		"defaultMessage": "Вход като {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "Изход"
+	},
+	"user.new-password": {
+		"defaultMessage": "Нова парола"
+	},
+	"user.nickname": {
+		"defaultMessage": "Псевдоним"
+	},
+	"user.set-password": {
+		"defaultMessage": "Задаване на парола"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Настройка на права за {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Тъмна тема"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Светла тема"
+	},
+	"username": {
+		"defaultMessage": "Потребителско име"
+	},
+	"users": {
+		"defaultMessage": "Потребители"
+	}
+}

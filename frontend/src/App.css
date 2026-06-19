@@ -13,6 +13,15 @@
 	--tblr-backdrop-opacity: 0.8 !important;
 }
 
+[data-bs-theme="dark"] .modal-content {
+	--tblr-modal-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-bs-theme="dark"] .modal-backdrop {
+	--tblr-backdrop-bg: #000 !important;
+	--tblr-backdrop-opacity: 0.65 !important;
+}
+
 .domain-name {
 	font-family: monospace;
 }
@@ -94,4 +103,16 @@ label.row {
 		background-color: var(--tblr-bg-surface-secondary);
 		border-radius: var(--tblr-border-radius) 0 0 var(--tblr-border-radius);
 	}
+}
+
+/* Fix for dropdown menus being clipped by table-responsive containers. */
+.table-responsive .dropdown {
+	position: static;
+}
+
+/* Fix for Tabler scrollbar compensation */
+@media (min-width: 992px) {
+  :host, :root {
+    margin-left: 0;
+  }
 }

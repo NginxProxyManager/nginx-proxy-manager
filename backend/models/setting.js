@@ -4,7 +4,7 @@
 import { Model } from "objection";
 import db from "../db.js";
 
-Model.knex(db);
+Model.knex(db());
 
 class Setting extends Model {
 	$beforeInsert () {

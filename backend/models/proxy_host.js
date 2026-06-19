@@ -3,13 +3,13 @@
 
 import { Model } from "objection";
 import db from "../db.js";
-import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import { castJsonIfNeed, convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
 import AccessList from "./access_list.js";
 import Certificate from "./certificate.js";
 import now from "./now_helper.js";
 import User from "./user.js";
 
-Model.knex(db);
+Model.knex(db());
 
 const boolFields = [
 	"is_deleted",
@@ -21,6 +21,7 @@ const boolFields = [
 	"enabled",
 	"hsts_enabled",
 	"hsts_subdomains",
+	"trust_forwarded_proto",
 ];
 
 class ProxyHost extends Model {
@@ -70,6 +71,18 @@ class ProxyHost extends Model {
 
 	static get jsonAttributes() {
 		return ["domain_names", "meta", "locations"];
+	}
+
+	static get defaultAllowGraph() {
+		return "[owner,access_list.[clients,items],certificate]";
+	}
+
+	static get defaultExpand() {
+		return ["owner", "certificate", "access_list.[clients,items]"];
+	}
+
+	static get defaultOrder() {
+		return [castJsonIfNeed("domain_names"), "ASC"];
 	}
 
 	static get relationMappings() {
