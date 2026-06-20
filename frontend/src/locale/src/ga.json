@@ -77,6 +77,9 @@
 	"auditlogs": {
 		"defaultMessage": "Logaí Iniúchta"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auto": {
 		"defaultMessage": "Uath"
 	},

@@ -22,17 +22,18 @@ import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
-const showProxyHostModal = (id: number | "new") => {
-	EasyModal.show(ProxyHostModal, { id });
+const showProxyHostModal = (id: number | "new", agentId?: string) => {
+	EasyModal.show(ProxyHostModal as any, { id, agentId });
 };
 
 interface Props extends InnerModalProps {
 	id: number | "new";
+	agentId?: string;
 }
-const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
+const ProxyHostModal = EasyModal.create(({ id, agentId, visible, remove }: Props) => {
 	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
-	const { data, isLoading, error } = useProxyHost(id);
-	const { mutate: setProxyHost } = useSetProxyHost();
+	const { data, isLoading, error } = useProxyHost(id, {}, agentId);
+	const { mutate: setProxyHost } = useSetProxyHost(agentId);
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -253,7 +254,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														</Field>
 													</div>
 												</div>
-												<AccessField />
+												<AccessField agentId={agentId} />
 												<div className="my-3">
 													<h4 className="py-2">
 														<T id="options" />
@@ -339,6 +340,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													name="certificateId"
 													label="ssl-certificate"
 													allowNew
+								agentId={agentId}
 												/>
 												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
 											</div>

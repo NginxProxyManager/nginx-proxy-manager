@@ -31,10 +31,11 @@ interface Props {
 	id?: string;
 	name?: string;
 	label?: string;
+	agentId?: string;
 }
-export function AccessField({ name = "accessListId", label = "access-list", id = "accessListId" }: Props) {
+export function AccessField({ name = "accessListId", label = "access-list", id = "accessListId", agentId }: Props) {
 	const { locale } = useLocaleState();
-	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"]);
+	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"], {}, agentId);
 	const { setFieldValue } = useFormikContext();
 
 	const handleChange = (newValue: any, _actionMeta: ActionMeta<AccessOption>) => {

@@ -68,6 +68,9 @@
 	"auditlogs": {
 		"defaultMessage": "审计日志"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"cancel": {
 		"defaultMessage": "取消"
 	},

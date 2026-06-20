@@ -68,6 +68,9 @@
 	"auditlogs": {
 		"defaultMessage": "Nhật ký kiểm tra"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"cancel": {
 		"defaultMessage": "Hủy"
 	},

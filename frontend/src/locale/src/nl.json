@@ -134,6 +134,9 @@
 	"auditlogs": {
 		"defaultMessage": "Logboeken"
 	},
+	"agents": {
+		"defaultMessage": "Agents"
+	},
 	"auto": {
 		"defaultMessage": "Autom."
 	},

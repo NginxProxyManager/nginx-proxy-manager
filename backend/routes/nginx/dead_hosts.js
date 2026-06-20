@@ -1,5 +1,6 @@
 import express from "express";
 import internalDeadHost from "../../internal/dead-host.js";
+import agentForward from "../../lib/express/agent-forward.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
@@ -21,6 +22,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/dead-hosts
@@ -81,6 +83,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/dead-hosts/123
@@ -163,6 +166,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/dead-hosts/123/enable
@@ -190,6 +194,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/dead-hosts/123/disable

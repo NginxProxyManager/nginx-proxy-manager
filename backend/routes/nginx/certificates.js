@@ -2,6 +2,7 @@ import express from "express";
 import dnsPlugins from "../../certbot/dns-plugins.json" with { type: "json" };
 import internalCertificate from "../../internal/certificate.js";
 import errs from "../../lib/error.js";
+import agentForward from "../../lib/express/agent-forward.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
@@ -23,6 +24,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/certificates
@@ -95,6 +97,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/certificates/dns-providers
@@ -131,6 +134,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/certificates/test-http
@@ -167,6 +171,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/certificates/validate
@@ -201,6 +206,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/certificates/123
@@ -269,6 +275,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/certificates/123/upload
@@ -304,6 +311,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/nginx/certificates/123/renew
@@ -334,6 +342,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/nginx/certificates/123/download
