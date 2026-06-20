@@ -74,11 +74,11 @@
 	"action.view-details": {
 		"defaultMessage": "Ver Detalhes"
 	},
-	"auditlogs": {
-		"defaultMessage": "Registos de Auditoria"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "Registos de Auditoria"
 	},
 	"auto": {
 		"defaultMessage": "Automático"

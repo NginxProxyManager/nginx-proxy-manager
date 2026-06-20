@@ -131,11 +131,11 @@
 	"action.view-details": {
 		"defaultMessage": "Просмотреть сведения"
 	},
-	"auditlogs": {
-		"defaultMessage": "Журнал аудита"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "Журнал аудита"
 	},
 	"auto": {
 		"defaultMessage": "Авто"

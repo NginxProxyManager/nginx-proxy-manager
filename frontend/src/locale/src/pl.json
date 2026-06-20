@@ -71,11 +71,11 @@
 	"action.view-details": {
 		"defaultMessage": "Pokaż szczegóły"
 	},
-	"auditlogs": {
-		"defaultMessage": "Logi"
-	},
 	"agents": {
 		"defaultMessage": "Agents"
+	},
+	"auditlogs": {
+		"defaultMessage": "Logi"
 	},
 	"cancel": {
 		"defaultMessage": "Anuluj"
