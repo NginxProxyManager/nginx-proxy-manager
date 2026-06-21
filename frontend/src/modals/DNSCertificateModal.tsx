@@ -9,11 +9,16 @@ import { Button, DNSProviderFields, DomainNamesField } from "src/components";
 import { T } from "src/locale";
 import { showObjectSuccess } from "src/notifications";
 
-const showDNSCertificateModal = () => {
-	EasyModal.show(DNSCertificateModal);
+const showDNSCertificateModal = (agentId?: string, agentName?: string) => {
+	EasyModal.show(DNSCertificateModal as any, { agentId, agentName });
 };
 
-const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalProps) => {
+interface Props extends InnerModalProps {
+	agentId?: string;
+	agentName?: string;
+}
+
+const DNSCertificateModal = EasyModal.create(({ agentId, agentName, visible, remove }: Props) => {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +29,7 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 		setErrorMsg(null);
 
 		try {
-			await createCertificate(values);
+			await createCertificate(values, agentId);
 			showObjectSuccess("certificate", "saved");
 			remove();
 		} catch (err: any) {
@@ -55,6 +60,7 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 						<Modal.Header closeButton>
 							<Modal.Title>
 								<T id="object.add" tData={{ object: "lets-encrypt-via-dns" }} />
+									{agentName ? <span className="ms-2 text-muted small">on {agentName}</span> : null}
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body className="p-0">

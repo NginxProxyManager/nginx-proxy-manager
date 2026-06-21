@@ -11,11 +11,16 @@ import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
-const showCustomCertificateModal = () => {
-	EasyModal.show(CustomCertificateModal);
+const showCustomCertificateModal = (agentId?: string, agentName?: string) => {
+	EasyModal.show(CustomCertificateModal as any, { agentId, agentName });
 };
 
-const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModalProps) => {
+interface Props extends InnerModalProps {
+	agentId?: string;
+	agentName?: string;
+}
+
+const CustomCertificateModal = EasyModal.create(({ agentId, agentName, visible, remove }: Props) => {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,13 +41,13 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 			}
 
 			// Validate
-			await validateCertificate(formData);
+			await validateCertificate(formData, agentId);
 
 			// Create certificate, as other without anything else
-			const cert = await createCertificate({ niceName, provider } as Certificate);
+			const cert = await createCertificate({ niceName, provider } as Certificate, agentId);
 
 			// Upload the certificates to the created certificate
-			await uploadCertificate(cert.id, formData);
+			await uploadCertificate(cert.id, formData, agentId);
 
 			// Success
 			showObjectSuccess("certificate", "saved");
@@ -75,6 +80,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 						<Modal.Header closeButton>
 							<Modal.Title>
 								<T id="object.add" tData={{ object: "certificates.custom" }} />
+									{agentName ? <span className="ms-2 text-muted small">on {agentName}</span> : null}
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body className="p-0">

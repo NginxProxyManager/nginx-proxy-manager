@@ -9,17 +9,19 @@ import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
-const showUserModal = (id: number | "me" | "new") => {
-	EasyModal.show(UserModal, { id });
+const showUserModal = (id: number | "me" | "new", agentId?: string, agentName?: string) => {
+	EasyModal.show(UserModal as any, { id, agentId, agentName });
 };
 
 interface Props extends InnerModalProps {
 	id: number | "me" | "new";
+	agentId?: string;
+	agentName?: string;
 }
-const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
-	const { data, isLoading, error } = useUser(id);
-	const { data: currentUser, isLoading: currentIsLoading } = useUser("me");
-	const { mutate: setUser } = useSetUser();
+const UserModal = EasyModal.create(({ id, agentId, agentName, visible, remove }: Props) => {
+	const { data, isLoading, error } = useUser(id, {}, agentId);
+	const { data: currentUser, isLoading: currentIsLoading } = useUser("me", {}, agentId);
+	const { mutate: setUser } = useSetUser(agentId);
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -84,6 +86,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							<Modal.Header closeButton>
 								<Modal.Title>
 									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "user" }} />
+									{agentName ? <span className="ms-2 text-muted small">on {agentName}</span> : null}
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body>

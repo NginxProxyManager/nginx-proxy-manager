@@ -11,17 +11,19 @@ import { useUser } from "src/hooks";
 import { T } from "src/locale";
 import styles from "./PermissionsModal.module.css";
 
-const showPermissionsModal = (id: number) => {
-	EasyModal.show(PermissionsModal, { id });
+const showPermissionsModal = (id: number, agentId?: string, agentName?: string) => {
+	EasyModal.show(PermissionsModal as any, { id, agentId, agentName });
 };
 
 interface Props extends InnerModalProps {
 	id: number;
+	agentId?: string;
+	agentName?: string;
 }
-const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
+const PermissionsModal = EasyModal.create(({ id, agentId, agentName, visible, remove }: Props) => {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
-	const { data, isLoading, error } = useUser(id);
+	const { data, isLoading, error } = useUser(id, {}, agentId);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -29,7 +31,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 		try {
-			await setPermissions(id, values);
+			await setPermissions(id, values, agentId);
 			remove();
 			queryClient.invalidateQueries({ queryKey: ["users"] });
 			queryClient.invalidateQueries({ queryKey: ["user"] });
@@ -160,6 +162,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							<Modal.Header closeButton>
 								<Modal.Title>
 									<T id="user.set-permissions" data={{ name: data?.name }} />
+									{agentName ? <span className="ms-2 text-muted small">on {agentName}</span> : null}
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body>

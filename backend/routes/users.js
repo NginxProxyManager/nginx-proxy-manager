@@ -4,6 +4,7 @@ import internalUser from "../internal/user.js";
 import Access from "../lib/access.js";
 import { isCI } from "../lib/config.js";
 import errs from "../lib/error.js";
+import agentForward from "../lib/express/agent-forward.js";
 import jwtdecode from "../lib/express/jwt-decode.js";
 import userIdFromMe from "../lib/express/user-id-from-me.js";
 import apiValidator from "../lib/validator/api.js";
@@ -27,6 +28,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /api/users
@@ -145,6 +147,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 	.all(userIdFromMe)
 
 	/**
@@ -239,6 +242,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 	.all(userIdFromMe)
 
 	/**
@@ -272,6 +276,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 	.all(userIdFromMe)
 
 	/**
@@ -308,6 +313,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * POST /api/users/123/login
@@ -337,6 +343,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 	.all(userIdFromMe)
 
 	/**
@@ -399,6 +406,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 	.all(userIdFromMe)
 
 	/**
@@ -431,6 +439,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 	.all(userIdFromMe)
 
 	/**

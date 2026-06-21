@@ -9,14 +9,16 @@ import { Button } from "src/components";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 
-const showSetPasswordModal = (id: number) => {
-	EasyModal.show(SetPasswordModal, { id });
+const showSetPasswordModal = (id: number, agentId?: string, agentName?: string) => {
+	EasyModal.show(SetPasswordModal as any, { id, agentId, agentName });
 };
 
 interface Props extends InnerModalProps {
 	id: number;
+	agentId?: string;
+	agentName?: string;
 }
-const SetPasswordModal = EasyModal.create(({ id, visible, remove }: Props) => {
+const SetPasswordModal = EasyModal.create(({ id, agentId, agentName, visible, remove }: Props) => {
 	const [error, setError] = useState<ReactNode | null>(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,7 +27,7 @@ const SetPasswordModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		if (isSubmitting) return;
 		setError(null);
 		try {
-			await updateAuth(id, values.new);
+			await updateAuth(id, values.new, undefined, agentId);
 			remove();
 		} catch (err: any) {
 			setError(<T id={err.message} />);
@@ -49,6 +51,7 @@ const SetPasswordModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<Modal.Header closeButton>
 							<Modal.Title>
 								<T id="user.set-password" />
+					{agentName ? <span className="ms-2 text-muted small">on {agentName}</span> : null}
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body>

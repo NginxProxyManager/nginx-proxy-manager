@@ -22,3 +22,4 @@ export * from "./useUser";
 export * from "./useUsers";
 
 export * from "./useAgents";
+export * from "./useAgentTargets";

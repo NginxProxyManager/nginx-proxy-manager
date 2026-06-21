@@ -75,6 +75,68 @@ function buildForwardPath(req) {
 	return `/api${req.baseUrl}${req.path}${qs ? `?${qs}` : ""}`;
 }
 
+function appendUpload(formData, fieldName, file) {
+	if (Array.isArray(file)) {
+		file.forEach((entry) => {
+			appendUpload(formData, fieldName, entry);
+		});
+		return;
+	}
+	formData.append(fieldName, new Blob([file.data], { type: file.mimetype }), file.name);
+}
+
+function buildForwardBody(req, headers) {
+	if (["GET", "HEAD"].includes(req.method)) {
+		return undefined;
+	}
+
+	if (req.files && Object.keys(req.files).length) {
+		const formData = new FormData();
+		for (const [key, value] of Object.entries(req.body || {})) {
+			formData.append(key, typeof value === "string" ? value : JSON.stringify(value));
+		}
+		for (const [key, file] of Object.entries(req.files)) {
+			appendUpload(formData, key, file);
+		}
+		return formData;
+	}
+
+	headers["Content-Type"] = "application/json";
+	return JSON.stringify(req.body || {});
+}
+
+async function forwardFetch(agent, req, path, token) {
+	const headers = {
+		Authorization: `Bearer ${token}`,
+	};
+	const body = buildForwardBody(req, headers);
+	return await fetch(`${trimBaseUrl(agent.url)}${path}`, {
+		method: req.method,
+		headers,
+		body,
+	});
+}
+
+async function sendForwardResponse(response, res) {
+	res.status(response.status);
+	const contentType = response.headers.get("content-type") || "";
+	const contentDisposition = response.headers.get("content-disposition");
+	if (contentType) {
+		res.set("content-type", contentType);
+	}
+	if (contentDisposition) {
+		res.set("content-disposition", contentDisposition);
+	}
+
+	if (contentType.includes("application/json")) {
+		res.send(await response.json());
+		return;
+	}
+
+	const buffer = Buffer.from(await response.arrayBuffer());
+	res.send(buffer);
+}
+
 const internalAgentClient = {
 	findRequestedAgentId: (req) => req.query.agent_id || req.query.agent || req.query.node,
 
@@ -105,35 +167,13 @@ const internalAgentClient = {
 	forward: async (req, res) => {
 		const agent = await internalAgentClient.getAgent(internalAgentClient.findRequestedAgentId(req));
 		let token = await getToken(agent);
-		const headers = {
-			Authorization: `Bearer ${token}`,
-		};
-		let body;
-		if (!["GET", "HEAD"].includes(req.method)) {
-			headers["Content-Type"] = "application/json";
-			body = JSON.stringify(req.body || {});
-		}
 		const path = buildForwardPath(req);
-		let response = await fetch(`${trimBaseUrl(agent.url)}${path}`, {
-			method: req.method,
-			headers,
-			body,
-		});
+		let response = await forwardFetch(agent, req, path, token);
 		if (response.status === 401) {
 			token = await getToken(agent, true);
-			response = await fetch(`${trimBaseUrl(agent.url)}${path}`, {
-				method: req.method,
-				headers: { ...headers, Authorization: `Bearer ${token}` },
-				body,
-			});
+			response = await forwardFetch(agent, req, path, token);
 		}
-		const payload = await parsePayload(response);
-		res.status(response.status);
-		if (typeof payload === "string") {
-			res.send(payload);
-		} else {
-			res.send(payload);
-		}
+		await sendForwardResponse(response, res);
 	},
 };
 

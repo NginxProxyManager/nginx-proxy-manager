@@ -1,7 +1,8 @@
 import * as api from "./base";
+import { paramsForAgent } from "./agentParams";
 import type { User } from "./models";
 
-export async function updateAuth(userId: number | "me", newPassword: string, current?: string): Promise<User> {
+export async function updateAuth(userId: number | "me", newPassword: string, current?: string, agentId?: string): Promise<User> {
 	const data = {
 		type: "password",
 		current: current,
@@ -13,6 +14,7 @@ export async function updateAuth(userId: number | "me", newPassword: string, cur
 
 	return await api.put({
 		url: `/users/${userId}/auth`,
+		params: paramsForAgent(agentId),
 		data,
 	});
 }

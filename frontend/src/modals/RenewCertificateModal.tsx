@@ -11,15 +11,17 @@ import { showObjectSuccess } from "src/notifications";
 
 interface Props extends InnerModalProps {
 	id: number;
+	agentId?: string;
+	agentName?: string;
 }
 
-const showRenewCertificateModal = (id: number) => {
-	EasyModal.show(RenewCertificateModal, { id });
+const showRenewCertificateModal = (id: number, agentId?: string, agentName?: string) => {
+	EasyModal.show(RenewCertificateModal as any, { id, agentId, agentName });
 };
 
-const RenewCertificateModal = EasyModal.create(({ id, visible, remove }: Props) => {
+const RenewCertificateModal = EasyModal.create(({ id, agentId, agentName, visible, remove }: Props) => {
 	const queryClient = useQueryClient();
-	const { data, isLoading, error } = useCertificate(id);
+	const { data, isLoading, error } = useCertificate(id, {}, agentId);
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isFresh, setIsFresh] = useState(true);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,7 +31,7 @@ const RenewCertificateModal = EasyModal.create(({ id, visible, remove }: Props) 
 		setIsFresh(false);
 		setIsSubmitting(true);
 
-		renewCertificate(id)
+		renewCertificate(id, agentId)
 			.then(() => {
 				showObjectSuccess("certificate", "renewed");
 				queryClient.invalidateQueries({ queryKey: ["certificates"] });
@@ -41,13 +43,14 @@ const RenewCertificateModal = EasyModal.create(({ id, visible, remove }: Props) 
 			.finally(() => {
 				setIsSubmitting(false);
 			});
-	}, [id, data, isFresh, isSubmitting, remove, queryClient]);
+	}, [id, agentId, data, isFresh, isSubmitting, remove, queryClient]);
 
 	return (
 		<Modal show={visible} onHide={isSubmitting ? undefined : remove}>
 			<Modal.Header closeButton={!isSubmitting}>
 				<Modal.Title>
 					<T id="certificate.renew" />
+					{agentName ? <span className="ms-2 text-muted small">on {agentName}</span> : null}
 				</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>

@@ -16,3 +16,4 @@ export * from "./SiteMenu";
 export * from "./Table";
 export * from "./ThemeSwitcher";
 export * from "./Unhealthy";
+export * from "./MultiAgent";

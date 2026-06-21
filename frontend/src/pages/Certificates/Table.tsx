@@ -1,6 +1,6 @@
 import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import type { Certificate } from "src/api/backend";
 import {
 	CertificateInUseFormatter,
@@ -12,7 +12,6 @@ import {
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
-import { showCustomCertificateModal, showDNSCertificateModal, showHTTPCertificateModal } from "src/modals";
 import { CERTIFICATES, MANAGE } from "src/modules/Permissions";
 
 interface Props {
@@ -22,8 +21,9 @@ interface Props {
 	onDelete?: (id: number) => void;
 	onRenew?: (id: number) => void;
 	onDownload?: (id: number) => void;
+	customAddBtn?: ReactNode;
 }
-export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered }: Props) {
+export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered, customAddBtn }: Props) {
 	const columnHelper = createColumnHelper<Certificate>();
 	const columns = useMemo(
 		() => [
@@ -174,47 +174,6 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 		},
 		enableSortingRemoval: false,
 	});
-
-	const customAddBtn = (
-		<div className="dropdown">
-			<button type="button" className="btn dropdown-toggle btn-pink my-3" data-bs-toggle="dropdown">
-				<T id="object.add" tData={{ object: "certificate" }} />
-			</button>
-			<div className="dropdown-menu">
-				<a
-					className="dropdown-item"
-					href="#"
-					onClick={(e) => {
-						e.preventDefault();
-						showHTTPCertificateModal();
-					}}
-				>
-					<T id="lets-encrypt-via-http" />
-				</a>
-				<a
-					className="dropdown-item"
-					href="#"
-					onClick={(e) => {
-						e.preventDefault();
-						showDNSCertificateModal();
-					}}
-				>
-					<T id="lets-encrypt-via-dns" />
-				</a>
-				<div className="dropdown-divider" />
-				<a
-					className="dropdown-item"
-					href="#"
-					onClick={(e) => {
-						e.preventDefault();
-						showCustomCertificateModal();
-					}}
-				>
-					<T id="certificates.custom" />
-				</a>
-			</div>
-		</div>
-	);
 
 	return (
 		<TableLayout

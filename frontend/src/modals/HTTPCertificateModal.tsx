@@ -10,11 +10,16 @@ import { Button, DomainNamesField } from "src/components";
 import { T } from "src/locale";
 import { showObjectSuccess } from "src/notifications";
 
-const showHTTPCertificateModal = () => {
-	EasyModal.show(HTTPCertificateModal);
+const showHTTPCertificateModal = (agentId?: string, agentName?: string) => {
+	EasyModal.show(HTTPCertificateModal as any, { agentId, agentName });
 };
 
-const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalProps) => {
+interface Props extends InnerModalProps {
+	agentId?: string;
+	agentName?: string;
+}
+
+const HTTPCertificateModal = EasyModal.create(({ agentId, agentName, visible, remove }: Props) => {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +33,7 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 		setErrorMsg(null);
 
 		try {
-			await createCertificate(values);
+			await createCertificate(values, agentId);
 			showObjectSuccess("certificate", "saved");
 			remove();
 		} catch (err: any) {
@@ -44,7 +49,7 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 		setErrorMsg(null);
 		setTestResults(null);
 		try {
-			const result = await testHttpCertificate(domains);
+			const result = await testHttpCertificate(domains, agentId);
 			setTestResults(result);
 		} catch (err: any) {
 			setErrorMsg(<T id={err.message} />);
@@ -127,6 +132,7 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 						<Modal.Header closeButton>
 							<Modal.Title>
 								<T id="object.add" tData={{ object: "lets-encrypt-via-http" }} />
+									{agentName ? <span className="ms-2 text-muted small">on {agentName}</span> : null}
 							</Modal.Title>
 						</Modal.Header>
 						<Modal.Body className="p-0">
