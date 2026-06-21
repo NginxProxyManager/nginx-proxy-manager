@@ -32,6 +32,7 @@ jobs:
         working-directory: frontend
         run: |
           yarn install --frozen-lockfile
+          yarn locale-compile
           yarn build
 
       - name: Set up Docker Buildx
@@ -49,7 +50,7 @@ jobs:
         with:
           context: .
           file: docker/Dockerfile
-          push: true
+          push: "true"
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
