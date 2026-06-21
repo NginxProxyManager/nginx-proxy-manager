@@ -88,6 +88,11 @@ export default {
 		const claims = tokenSet.claims();
 		const email = claims.email || claims.preferred_username;
 
+		logger.info("[SSO DEBUG] Full claims: " + JSON.stringify(claims, null, 2));
+		logger.info("[SSO DEBUG] Config groupsClaim: " + config.groupsClaim);
+		logger.info("[SSO DEBUG] Config groupAdmin: " + config.groupAdmin);
+		logger.info("[SSO DEBUG] Config groupUser: " + config.groupUser);
+
 		if (!email) {
 			throw new errs.AuthError("No email or preferred_username provided by OIDC");
 		}
@@ -96,6 +101,9 @@ export default {
 		if (config.groupAdmin || config.groupUser) {
 			const groups = claims[config.groupsClaim] || [];
 			const groupsArr = Array.isArray(groups) ? groups : [groups];
+			logger.info("[SSO DEBUG] Groups from token (claim '" + config.groupsClaim + "'): " + JSON.stringify(groupsArr));
+			logger.info("[SSO DEBUG] Looking for admin group: '" + config.groupAdmin + "' → found: " + groupsArr.includes(config.groupAdmin));
+			logger.info("[SSO DEBUG] Looking for user group: '" + config.groupUser + "' → found: " + groupsArr.includes(config.groupUser));
 			isAdmin = config.groupAdmin && groupsArr.includes(config.groupAdmin);
 			const isUser = config.groupUser && groupsArr.includes(config.groupUser);
 
