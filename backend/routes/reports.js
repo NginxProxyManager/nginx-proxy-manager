@@ -1,5 +1,6 @@
 import express from "express";
 import internalReport from "../internal/report.js";
+import agentForward from "../lib/express/agent-forward.js";
 import jwtdecode from "../lib/express/jwt-decode.js";
 import { debug, express as logger } from "../logger.js";
 
@@ -15,6 +16,7 @@ router
 		res.sendStatus(204);
 	})
 	.all(jwtdecode())
+	.all(agentForward())
 
 	/**
 	 * GET /reports/hosts
