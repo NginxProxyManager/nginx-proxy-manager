@@ -66,8 +66,10 @@ export default {
 		const state = generators.state();
 		const nonce = generators.nonce();
 
+		const config = getConfig();
+		const scopes = process.env.OIDC_SCOPES || "openid email profile groups";
 		const url = client.authorizationUrl({
-			scope: "openid email profile",
+			scope: scopes,
 			state,
 			nonce,
 		});
