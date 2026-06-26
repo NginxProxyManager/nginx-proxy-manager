@@ -363,7 +363,7 @@
 		"defaultMessage": "HTTP/2 támogatás"
 	},
 	"domains.trust-forwarded-proto": {
-		"defaultMessage": "Upstream-továbbított Proto-fejlécek elfogadása"
+		"defaultMessage": "X-Forwarded-Proto fejlécek elfogadása"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge használata"
