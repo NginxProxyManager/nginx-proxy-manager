@@ -5,7 +5,7 @@ import "vitest/config";
 import { execFile } from "node:child_process";
 
 const runLocaleScripts = () => {
-	execFile("yarn", ["locale-compile"], { shell: true }, (error, stdout, _stderr) => {
+	execFile("yarn", ["locale-compile"], { shell: process.platform === "win32" }, (error, stdout, _stderr) => {
 		if (error) {
 			throw error;
 		}
