@@ -5,12 +5,13 @@ import "vitest/config";
 import { execFile } from "node:child_process";
 
 const runLocaleScripts = () => {
-	execFile("yarn", ["locale-compile"], { shell: process.platform === "win32" }, (error, stdout, _stderr) => {
+	const shell = process.platform === "win32";
+	execFile("yarn", ["locale-compile"], { shell }, (error, stdout, _stderr) => {
 		if (error) {
 			throw error;
 		}
 		console.log(stdout);
-		execFile("yarn", ["locale-sort"], { shell: process.platform === "win32" }, (error, stdout, _stderr) => {
+		execFile("yarn", ["locale-sort"], { shell }, (error, stdout, _stderr) => {
 			if (error) {
 				throw error;
 			}
