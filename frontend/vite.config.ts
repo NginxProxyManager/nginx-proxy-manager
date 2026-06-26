@@ -10,7 +10,7 @@ const runLocaleScripts = () => {
 			throw error;
 		}
 		console.log(stdout);
-		execFile("yarn", ["locale-sort"], { shell: true }, (error, stdout, _stderr) => {
+		execFile("yarn", ["locale-sort"], { shell: process.platform === "win32" }, (error, stdout, _stderr) => {
 			if (error) {
 				throw error;
 			}
