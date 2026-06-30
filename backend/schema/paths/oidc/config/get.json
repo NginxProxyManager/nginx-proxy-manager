@@ -22,13 +22,24 @@
 								"items": {
 									"type": "object"
 								}
+							},
+							"external_base_url": {
+								"type": ["string", "null"],
+								"example": "https://npm.example.com"
+							},
+							"external_base_url_source": {
+								"type": ["string", "null"],
+								"enum": ["env", "db", null],
+								"example": "db"
 							}
 						}
 					},
 					"examples": {
 						"default": {
 							"value": {
-								"providers": []
+								"providers": [],
+								"external_base_url": null,
+								"external_base_url_source": null
 							}
 						}
 					}

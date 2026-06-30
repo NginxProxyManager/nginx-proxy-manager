@@ -225,7 +225,8 @@ export interface OidcProviderConfig {
 	enabled: boolean;
 	usePar: boolean;
 	autoProvision: boolean;
-	autoProvisionRole: "user";
+	autoProvisionRole: "user" | "admin";
+	autoProvisionAdminConfirm?: boolean;
 	claimMapping?: {
 		email?: string;
 		name?: string;
@@ -238,4 +239,8 @@ export interface OidcProviderConfig {
 
 export interface OidcConfig {
 	providers: OidcProviderConfig[];
+	/** Configured external base URL for OIDC redirects (e.g. https://npm.example.com) */
+	externalBaseUrl?: string | null;
+	/** Where the external base URL was configured: "env" = env var (read-only), "db" = admin UI, null = not set */
+	externalBaseUrlSource?: "env" | "db" | null;
 }

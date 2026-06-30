@@ -1,4 +1,4 @@
-import { IconCheck, IconCopy, IconHelp } from "@tabler/icons-react";
+import { IconCheck, IconCopy, IconHelp, IconLock } from "@tabler/icons-react";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import { Button, Loading } from "src/components";
@@ -20,6 +20,7 @@ const emptyProvider = (): OidcProviderConfig => ({
 	usePar: false,
 	autoProvision: false,
 	autoProvisionRole: "user",
+	autoProvisionAdminConfirm: false,
 	claimMapping: {
 		email: "email",
 		name: "name",
@@ -33,9 +34,14 @@ export default function OidcSettings() {
 	const { mutate: setOidcConfig } = useSetOidcConfig();
 	const [copiedLogin, setCopiedLogin] = useState(false);
 	const [copiedLink, setCopiedLink] = useState(false);
+	const [externalBaseUrlInput, setExternalBaseUrlInput] = useState<string | null>(null);
+	const [isSavingUrl, setIsSavingUrl] = useState(false);
 
-	const callbackUrl = `${window.location.origin}/api/oidc/callback`;
-	const linkCallbackUrl = `${window.location.origin}/api/oidc/link-callback`;
+	// Use the persisted External Base URL when set so displayed URLs match what the backend sends to the IdP.
+	// Falls back to window.location.origin for deployments that aren't behind a reverse proxy.
+	const effectiveOrigin = data?.externalBaseUrl || window.location.origin;
+	const callbackUrl = `${effectiveOrigin}/api/oidc/callback`;
+	const linkCallbackUrl = `${effectiveOrigin}/api/oidc/link-callback`;
 
 	const handleCopyLogin = () => {
 		navigator.clipboard.writeText(callbackUrl);
@@ -69,16 +75,49 @@ export default function OidcSettings() {
 
 	const providers = data?.providers ?? [];
 
+	// External base URL: use in-progress edit state if present, otherwise use persisted value
+	const isEnvUrl = data?.externalBaseUrlSource === "env";
+	const persistedUrl = data?.externalBaseUrl ?? "";
+	const externalBaseUrl = externalBaseUrlInput !== null ? externalBaseUrlInput : (persistedUrl ?? "");
+
+	const handleSaveExternalUrl = () => {
+		setIsSavingUrl(true);
+		setOidcConfig(
+			{ providers, externalBaseUrl },
+			{
+				onSuccess: () => {
+					setIsSavingUrl(false);
+					setExternalBaseUrlInput(null);
+					showObjectSuccess("setting", "saved");
+				},
+				onError: (err: any) => {
+					setIsSavingUrl(false);
+					showError(err.message);
+				},
+			},
+		);
+	};
+
 	const onNew = () => {
-		showOidcProviderModal({ provider: emptyProvider(), isNew: true, allProviders: providers });
+		showOidcProviderModal({
+			provider: emptyProvider(),
+			isNew: true,
+			allProviders: providers,
+			externalBaseUrl: persistedUrl,
+		});
 	};
 
 	const onEdit = (index: number) => {
-		// File-sourced providers are read-only — guard against accidental invocation
+		// File-sourced providers are read-only, guard against accidental invocation
 		if (providers[index]?.source === "file") {
 			return;
 		}
-		showOidcProviderModal({ provider: providers[index], isNew: false, allProviders: providers });
+		showOidcProviderModal({
+			provider: providers[index],
+			isNew: false,
+			allProviders: providers,
+			externalBaseUrl: persistedUrl,
+		});
 	};
 
 	const onToggleEnabled = (index: number) => {
@@ -89,7 +128,7 @@ export default function OidcSettings() {
 		const cloned = [...providers];
 		cloned[index] = { ...cloned[index], enabled: !cloned[index].enabled };
 		setOidcConfig(
-			{ providers: cloned },
+			{ providers: cloned, externalBaseUrl: persistedUrl },
 			{
 				onError: (err: any) => showError(err.message),
 				onSuccess: () => showObjectSuccess("setting", "saved"),
@@ -100,7 +139,7 @@ export default function OidcSettings() {
 	const onDelete = async (index: number) => {
 		const provider = providers[index];
 
-		// File-sourced providers are read-only — cannot be deleted via the UI
+		// File-sourced providers are read-only, cannot be deleted via the UI
 		if (provider?.source === "file") {
 			return;
 		}
@@ -135,7 +174,7 @@ export default function OidcSettings() {
 				cloned.splice(index, 1);
 				await new Promise<void>((resolve, reject) => {
 					setOidcConfig(
-						{ providers: cloned },
+						{ providers: cloned, externalBaseUrl: persistedUrl },
 						{
 							onError: (err: any) => reject(err),
 							onSuccess: () => {
@@ -170,6 +209,48 @@ export default function OidcSettings() {
 						>
 							<IconHelp size={20} />
 						</Button>
+					</div>
+				</div>
+
+				{/* External Base URL */}
+				<div className="card card-sm mb-4">
+					<div className="card-header py-1 px-3" style={{ backgroundColor: "var(--tblr-bg-surface-secondary)" }}>
+						<h4 className="card-title mb-0" style={{ fontSize: "0.875rem" }}>
+							<T id="settings.oidc.external-base-url" />
+						</h4>
+					</div>
+					<div className="card-body py-2 px-3">
+						<div className="input-group">
+							<input
+								type="url"
+								className="form-control"
+								placeholder={intl.formatMessage({ id: "settings.oidc.external-base-url.placeholder" })}
+								value={externalBaseUrl ?? ""}
+								onChange={(e) => setExternalBaseUrlInput(e.target.value)}
+								disabled={isEnvUrl}
+								aria-label={intl.formatMessage({ id: "settings.oidc.external-base-url" })}
+							/>
+							{isEnvUrl && (
+								<span className="input-group-text text-secondary" title={intl.formatMessage({ id: "settings.oidc.external-base-url.env-tooltip" })}>
+									<IconLock size={14} className="me-1" />
+									<small><T id="settings.oidc.source.env" /></small>
+								</span>
+							)}
+							{!isEnvUrl && (
+								<Button
+									type="button"
+									color="teal"
+									size="sm"
+									isLoading={isSavingUrl}
+									onClick={handleSaveExternalUrl}
+								>
+									<T id="save" />
+								</Button>
+							)}
+						</div>
+						<small className="text-secondary d-block mt-1">
+							<T id="settings.oidc.external-base-url.help" />
+						</small>
 					</div>
 				</div>
 

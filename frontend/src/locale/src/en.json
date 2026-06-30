@@ -704,6 +704,27 @@
 	"settings.oidc.auto-provision": {
 		"defaultMessage": "Auto-provision Users"
 	},
+	"settings.oidc.auto-provision-admin-confirm": {
+		"defaultMessage": "I confirm that users from this provider should receive admin access"
+	},
+	"settings.oidc.auto-provision-admin-confirm.warning": {
+		"defaultMessage": "Admin users have full access to nginx-proxy-manager."
+	},
+	"settings.oidc.auto-provision-admin-confirm.warning.detail": {
+		"defaultMessage": "Only enable this if every user at this identity provider should be granted admin access."
+	},
+	"settings.oidc.auto-provision-admin-confirm.warning.intro": {
+		"defaultMessage": "New accounts will be created as admin users."
+	},
+	"settings.oidc.auto-provision-role": {
+		"defaultMessage": "Auto-Provision Role"
+	},
+	"settings.oidc.auto-provision-role.admin": {
+		"defaultMessage": "Admin"
+	},
+	"settings.oidc.auto-provision-role.user": {
+		"defaultMessage": "User"
+	},
 	"settings.oidc.auto-provision.description": {
 		"defaultMessage": "Automatically create local accounts for new OIDC users"
 	},
@@ -719,8 +740,26 @@
 	"settings.oidc.callback-url.link": {
 		"defaultMessage": "Copy account linking callback URL"
 	},
+	"settings.oidc.callback-url.link-label": {
+		"defaultMessage": "Account linking callback"
+	},
 	"settings.oidc.callback-url.login": {
 		"defaultMessage": "Copy login callback URL"
+	},
+	"settings.oidc.callback-url.login-label": {
+		"defaultMessage": "Login callback"
+	},
+	"settings.oidc.callback-url.modal-heading": {
+		"defaultMessage": "Redirect URIs"
+	},
+	"settings.oidc.callback-url.modal-help": {
+		"defaultMessage": "Register these URLs as allowed redirect URIs in your identity provider's application settings."
+	},
+	"settings.oidc.callback-url.source-browser": {
+		"defaultMessage": "Using current browser origin"
+	},
+	"settings.oidc.callback-url.source-external": {
+		"defaultMessage": "Using External Base URL"
 	},
 	"settings.oidc.claim-mapping.avatar": {
 		"defaultMessage": "Avatar Claim"
@@ -761,6 +800,18 @@
 	"settings.oidc.enabled": {
 		"defaultMessage": "Enabled"
 	},
+	"settings.oidc.external-base-url": {
+		"defaultMessage": "External Base URL"
+	},
+	"settings.oidc.external-base-url.env-tooltip": {
+		"defaultMessage": "Set via OIDC_EXTERNAL_BASE_URL environment variable, cannot be changed here"
+	},
+	"settings.oidc.external-base-url.help": {
+		"defaultMessage": "Only needed when NPM is behind a reverse proxy and the logout redirect uses the wrong protocol or host. Leave empty to use automatic detection."
+	},
+	"settings.oidc.external-base-url.placeholder": {
+		"defaultMessage": "https://npm.example.com"
+	},
 	"settings.oidc.no-providers": {
 		"defaultMessage": "No providers configured. Use the Add Provider button above to create one."
 	},
@@ -794,6 +845,9 @@
 	"settings.oidc.section.connection": {
 		"defaultMessage": "Connection"
 	},
+	"settings.oidc.source.env": {
+		"defaultMessage": "Env Var"
+	},
 	"settings.oidc.source.file": {
 		"defaultMessage": "Config File"
 	},
@@ -810,7 +864,7 @@
 		"defaultMessage": "Client credentials validated"
 	},
 	"settings.oidc.test-connection.credentials-unsupported": {
-		"defaultMessage": "Provider does not support PAR — credentials will be validated during login"
+		"defaultMessage": "Provider does not support PAR, credentials will be validated during login"
 	},
 	"settings.oidc.test-connection.discovery-ok": {
 		"defaultMessage": "Discovery document fetched successfully"

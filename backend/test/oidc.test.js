@@ -6,11 +6,15 @@
  * - HTML encoding: XSS prevention in htmlEncode helper
  * - OIDC error whitelisting: known error codes map to safe messages, unknown codes produce generic message
  * - HTTPS enforcement: non-HTTPS URLs are rejected
+ * - getOrigin: configured external URL overrides header detection (imports real lib/oidc-origin.js)
+ * - normaliseExternalBaseUrl: URL format validation (imports real lib/oidc-url-utils.js)
  */
 
 import { describe, it, mock, before, after } from "node:test";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
+import { getOrigin } from "../lib/oidc-origin.js";
+import { normaliseExternalBaseUrl } from "../lib/oidc-url-utils.js";
 
 // ---------------------------------------------------------------------------
 // Crypto tests — test the encrypt/decrypt logic directly without the RSA key
@@ -301,12 +305,12 @@ describe("HTTPS enforcement (SSRF mitigation)", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Auto-provision role safety tests
-// Verifies that auto_provision_role is always "user", never "admin"
+// Auto-provision role configuration tests
+// Verifies that auto_provision_role accepts both "user" and "admin"
 // ---------------------------------------------------------------------------
 
-describe("Auto-provision role safety guardrail", () => {
-	it("schema only allows 'user' role (not 'admin') for auto_provision_role", async () => {
+describe("Auto-provision role configuration", () => {
+	it("schema allows both 'user' and 'admin' roles for auto_provision_role", async () => {
 		// Load the schema file and verify the enum constraint
 		const schemaPath = new URL("../schema/paths/oidc/config/put.json", import.meta.url);
 		const { default: schema } = await import(schemaPath, { with: { type: "json" } });
@@ -314,8 +318,9 @@ describe("Auto-provision role safety guardrail", () => {
 		const providerSchema = schema.requestBody.content["application/json"].schema.properties.providers.items;
 		const roleEnum = providerSchema.properties.auto_provision_role.enum;
 
-		assert.deepEqual(roleEnum, ["user"]);
-		assert.ok(!roleEnum.includes("admin"), "admin must NOT be in the allowed enum");
+		assert.deepEqual(roleEnum, ["user", "admin"]);
+		assert.ok(roleEnum.includes("user"), "'user' must be in the allowed enum");
+		assert.ok(roleEnum.includes("admin"), "'admin' must be in the allowed enum");
 	});
 });
 
@@ -547,6 +552,167 @@ describe("Callback URL path validation", () => {
 		assert.doesNotThrow(() =>
 			validateCallbackUrl("https://evil.com/api/oidc/callback"),
 		);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// getOrigin with external base URL tests
+// Verifies that configured external_base_url takes precedence over header detection.
+// Tests the real getOrigin function imported from lib/oidc-origin.js.
+// ---------------------------------------------------------------------------
+
+describe("getOrigin with external base URL", () => {
+	it("returns configured URL when env var override is set (https)", () => {
+		const req = {
+			headers: { origin: "http://internal.local:81" },
+			protocol: "http",
+			hostname: "internal.local",
+			get: (h) => req.headers[h],
+		};
+		const result = getOrigin(req, "https://npm.example.com");
+		assert.equal(result, "https://npm.example.com");
+	});
+
+	it("returns configured URL when DB override is set", () => {
+		const req = {
+			headers: {
+				"x-forwarded-proto": "http",
+				"x-forwarded-host": "internal.local:81",
+			},
+			protocol: "http",
+			hostname: "internal.local",
+			get: (h) => req.headers[h],
+		};
+		const result = getOrigin(req, "https://npm.example.com");
+		assert.equal(result, "https://npm.example.com");
+	});
+
+	it("configured URL takes precedence over X-Forwarded headers", () => {
+		const req = {
+			headers: {
+				"x-forwarded-proto": "https",
+				"x-forwarded-host": "proxy.internal.example.com",
+			},
+			protocol: "http",
+			hostname: "localhost",
+			get: (h) => req.headers[h],
+		};
+		const result = getOrigin(req, "https://npm.example.com");
+		assert.equal(result, "https://npm.example.com");
+	});
+
+	it("falls back to Origin header detection when no external URL configured", () => {
+		const req = {
+			headers: { origin: "https://npm.example.com:8443" },
+			protocol: "http",
+			hostname: "localhost",
+			get: (h) => req.headers[h],
+		};
+		const result = getOrigin(req, null);
+		assert.equal(result, "https://npm.example.com:8443");
+	});
+
+	it("falls back to X-Forwarded-Host detection when no external URL configured", () => {
+		const req = {
+			headers: {
+				"x-forwarded-proto": "https",
+				"x-forwarded-host": "npm.example.com",
+			},
+			protocol: "http",
+			hostname: "localhost",
+			get: (h) => req.headers[h],
+		};
+		const result = getOrigin(req, undefined);
+		assert.equal(result, "https://npm.example.com");
+	});
+
+	it("falls back to Host header detection when no external URL configured", () => {
+		const req = {
+			headers: { host: "localhost:81" },
+			protocol: "http",
+			hostname: "localhost",
+			get: (h) => req.headers[h],
+		};
+		const result = getOrigin(req, "");
+		assert.equal(result, "http://localhost:81");
+	});
+
+	it("ignores empty string external URL (treats as not configured)", () => {
+		const req = {
+			headers: { origin: "https://npm.example.com" },
+			protocol: "http",
+			hostname: "localhost",
+			get: (h) => req.headers[h],
+		};
+		// Empty string is falsy — should fall through to header detection
+		const result = getOrigin(req, "");
+		assert.equal(result, "https://npm.example.com");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// normaliseExternalBaseUrl validation tests
+// Verifies URL format validation for OIDC_EXTERNAL_BASE_URL.
+// Tests the real normaliseExternalBaseUrl function imported from lib/oidc-url-utils.js.
+// ---------------------------------------------------------------------------
+
+describe("external base URL normalisation and validation", () => {
+	it("accepts valid https URL", () => {
+		assert.equal(normaliseExternalBaseUrl("https://npm.example.com"), "https://npm.example.com");
+	});
+
+	it("accepts valid http URL", () => {
+		assert.equal(normaliseExternalBaseUrl("http://npm.example.com"), "http://npm.example.com");
+	});
+
+	it("accepts URL with port", () => {
+		assert.equal(normaliseExternalBaseUrl("https://npm.example.com:8443"), "https://npm.example.com:8443");
+	});
+
+	it("strips trailing slash", () => {
+		assert.equal(normaliseExternalBaseUrl("https://npm.example.com/"), "https://npm.example.com");
+	});
+
+	it("strips multiple trailing slashes", () => {
+		assert.equal(normaliseExternalBaseUrl("https://npm.example.com///"), "https://npm.example.com");
+	});
+
+	it("returns null for URL with path component", () => {
+		assert.equal(normaliseExternalBaseUrl("https://npm.example.com/some/path"), null);
+	});
+
+	it("returns null for URL with query string", () => {
+		assert.equal(normaliseExternalBaseUrl("https://npm.example.com?foo=bar"), null);
+	});
+
+	it("returns null for URL with hash fragment", () => {
+		assert.equal(normaliseExternalBaseUrl("https://npm.example.com#section"), null);
+	});
+
+	it("returns null for non-http(s) protocol", () => {
+		assert.equal(normaliseExternalBaseUrl("ftp://npm.example.com"), null);
+	});
+
+	it("returns null for empty string", () => {
+		assert.equal(normaliseExternalBaseUrl(""), null);
+	});
+
+	it("returns null for null/undefined", () => {
+		assert.equal(normaliseExternalBaseUrl(null), null);
+		assert.equal(normaliseExternalBaseUrl(undefined), null);
+	});
+
+	it("returns null for invalid URL", () => {
+		assert.equal(normaliseExternalBaseUrl("not-a-url"), null);
+	});
+
+	it("returns null for javascript: protocol (security check)", () => {
+		assert.equal(normaliseExternalBaseUrl("javascript:alert(1)"), null);
+	});
+
+	it("returns null for URL with userinfo (open-redirect risk)", () => {
+		assert.equal(normaliseExternalBaseUrl("https://user@evil.com"), null);
+		assert.equal(normaliseExternalBaseUrl("https://user:pass@evil.com"), null);
 	});
 });
 

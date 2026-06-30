@@ -9,7 +9,7 @@
  * - Undefined env var → empty string + warning
  * - Single-provider OIDC_PROVIDER_* env vars
  * - _source: "file" on all loaded providers
- * - auto_provision_role forced to "user"
+ * - auto_provision_role and auto_provision_admin_confirm configuration
  * - Cache reset between tests
  */
 
@@ -74,6 +74,8 @@ beforeEach(() => {
 	delete process.env.OIDC_PROVIDER_CLAIM_NAME;
 	delete process.env.OIDC_PROVIDER_CLAIM_NICKNAME;
 	delete process.env.OIDC_PROVIDER_CLAIM_AVATAR;
+	delete process.env.OIDC_PROVIDER_AUTO_PROVISION_ROLE;
+	delete process.env.OIDC_PROVIDER_AUTO_PROVISION_ADMIN_CONFIRM;
 });
 
 // ---------------------------------------------------------------------------
@@ -359,28 +361,90 @@ describe("Single-provider env vars (OIDC_PROVIDER_*)", () => {
 		assert.strictEqual(providers[0].name, "From File");
 		fs.unlinkSync(file);
 	});
+
+	it("passes auto_provision_role: 'admin' through from OIDC_PROVIDER_AUTO_PROVISION_ROLE", () => {
+		process.env.OIDC_PROVIDER_ID = "env-provider";
+		process.env.OIDC_PROVIDER_DISCOVERY_URL = "https://auth.example.com/.well-known/openid-configuration";
+		process.env.OIDC_PROVIDER_CLIENT_ID = "env-client";
+		process.env.OIDC_PROVIDER_AUTO_PROVISION_ROLE = "admin";
+		const providers = getFileProviders();
+		assert.strictEqual(providers[0].auto_provision_role, "admin");
+	});
+
+	it("defaults auto_provision_role to 'user' when OIDC_PROVIDER_AUTO_PROVISION_ROLE is not set", () => {
+		process.env.OIDC_PROVIDER_ID = "env-provider";
+		process.env.OIDC_PROVIDER_DISCOVERY_URL = "https://auth.example.com/.well-known/openid-configuration";
+		process.env.OIDC_PROVIDER_CLIENT_ID = "env-client";
+		const providers = getFileProviders();
+		assert.strictEqual(providers[0].auto_provision_role, "user");
+	});
+
+	it("passes auto_provision_admin_confirm: true from OIDC_PROVIDER_AUTO_PROVISION_ADMIN_CONFIRM=true", () => {
+		process.env.OIDC_PROVIDER_ID = "env-provider";
+		process.env.OIDC_PROVIDER_DISCOVERY_URL = "https://auth.example.com/.well-known/openid-configuration";
+		process.env.OIDC_PROVIDER_CLIENT_ID = "env-client";
+		process.env.OIDC_PROVIDER_AUTO_PROVISION_ADMIN_CONFIRM = "true";
+		const providers = getFileProviders();
+		assert.strictEqual(providers[0].auto_provision_admin_confirm, true);
+	});
+
+	it("defaults auto_provision_admin_confirm to false when OIDC_PROVIDER_AUTO_PROVISION_ADMIN_CONFIRM is not set", () => {
+		process.env.OIDC_PROVIDER_ID = "env-provider";
+		process.env.OIDC_PROVIDER_DISCOVERY_URL = "https://auth.example.com/.well-known/openid-configuration";
+		process.env.OIDC_PROVIDER_CLIENT_ID = "env-client";
+		const providers = getFileProviders();
+		assert.strictEqual(providers[0].auto_provision_admin_confirm, false);
+	});
 });
 
 // ---------------------------------------------------------------------------
 // auto_provision_role enforcement
 // ---------------------------------------------------------------------------
 
-describe("auto_provision_role enforcement", () => {
-	it("forces auto_provision_role to 'user' even when file specifies 'admin'", () => {
+describe("auto_provision_role configuration", () => {
+	it("respects auto_provision_role when set to 'admin' in file config", () => {
 		const file = makeTempFile(JSON.stringify({
 			providers: [makeValidProvider({ auto_provision_role: "admin" })],
 		}));
+		process.env.OIDC_CONFIG_FILE = file;
+		const providers = getFileProviders();
+		assert.strictEqual(providers[0].auto_provision_role, "admin");
+		fs.unlinkSync(file);
+	});
+
+	it("defaults auto_provision_role to 'user' when not specified", () => {
+		const file = makeTempFile(JSON.stringify({ providers: [makeValidProvider()] }));
 		process.env.OIDC_CONFIG_FILE = file;
 		const providers = getFileProviders();
 		assert.strictEqual(providers[0].auto_provision_role, "user");
 		fs.unlinkSync(file);
 	});
 
-	it("sets auto_provision_role to 'user' by default", () => {
+	it("passes auto_provision_admin_confirm: true through from file config", () => {
+		const file = makeTempFile(JSON.stringify({
+			providers: [makeValidProvider({ auto_provision_admin_confirm: true })],
+		}));
+		process.env.OIDC_CONFIG_FILE = file;
+		const providers = getFileProviders();
+		assert.strictEqual(providers[0].auto_provision_admin_confirm, true);
+		fs.unlinkSync(file);
+	});
+
+	it("defaults auto_provision_admin_confirm to false when not specified", () => {
 		const file = makeTempFile(JSON.stringify({ providers: [makeValidProvider()] }));
 		process.env.OIDC_CONFIG_FILE = file;
 		const providers = getFileProviders();
-		assert.strictEqual(providers[0].auto_provision_role, "user");
+		assert.strictEqual(providers[0].auto_provision_admin_confirm, false);
+		fs.unlinkSync(file);
+	});
+
+	it("coerces truthy non-boolean auto_provision_admin_confirm to false (must be exactly true)", () => {
+		const file = makeTempFile(JSON.stringify({
+			providers: [makeValidProvider({ auto_provision_admin_confirm: "yes" })],
+		}));
+		process.env.OIDC_CONFIG_FILE = file;
+		const providers = getFileProviders();
+		assert.strictEqual(providers[0].auto_provision_admin_confirm, false);
 		fs.unlinkSync(file);
 	});
 });

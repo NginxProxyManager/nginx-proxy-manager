@@ -4,44 +4,13 @@ import jwtdecode from "../lib/express/jwt-decode.js";
 import apiValidator from "../lib/validator/api.js";
 import { debug, oidc as logger } from "../logger.js";
 import { getValidationSchema } from "../schema/index.js";
+import { getOrigin } from "../lib/oidc-origin.js";
 
 const router = express.Router({
 	caseSensitive: true,
 	strict: true,
 	mergeParams: true,
 });
-
-/**
- * Extract the public-facing origin (protocol + host + port) from the request.
- * Handles reverse-proxy scenarios where nginx strips the port from the Host header.
- *
- * Priority: Origin header (AJAX) > X-Forwarded-Host > Host header with X-Forwarded-Port.
- */
-function getOrigin(req) {
-	// AJAX calls include the Origin header with the full protocol://host:port
-	if (req.headers.origin) {
-		return req.headers.origin;
-	}
-
-	const proto = req.headers["x-forwarded-proto"] || req.protocol;
-
-	// X-Forwarded-Host typically preserves the original Host header including port
-	if (req.headers["x-forwarded-host"]) {
-		return `${proto}://${req.headers["x-forwarded-host"]}`;
-	}
-
-	// Fallback: use Host header, appending X-Forwarded-Port if the port was stripped
-	let host = req.get("host") || req.hostname;
-	const fwdPort = req.headers["x-forwarded-port"];
-	if (fwdPort && !host.includes(":")) {
-		const isDefault = (proto === "https" && fwdPort === "443") || (proto === "http" && fwdPort === "80");
-		if (!isDefault) {
-			host = `${host}:${fwdPort}`;
-		}
-	}
-
-	return `${proto}://${host}`;
-}
 
 /**
  * Allowed callback path prefixes.  The frontend provides the full callback URL
@@ -445,7 +414,8 @@ router
 				callbackUrl = String(req.query.callback_url);
 				validateCallbackUrl(callbackUrl);
 			} else {
-				const origin = getOrigin(req);
+				const { external_base_url } = await internalOidc.getRawConfig();
+				const origin = getOrigin(req, external_base_url);
 				callbackUrl = `${origin}/api/oidc/callback`;
 			}
 
@@ -475,7 +445,8 @@ router
 	.get(jwtdecode(), async (req, res, next) => {
 		try {
 			const { providerId } = req.params;
-			const origin = getOrigin(req);
+			const rawConfig = await internalOidc.getRawConfig();
+			const origin = getOrigin(req, rawConfig.external_base_url);
 			const postLogoutRedirectUri = `${origin}/`;
 
 			const logoutUrl = await internalOidc.getLogoutUrl(
@@ -514,7 +485,8 @@ router
 				callbackUrl = String(req.query.callback_url);
 				validateCallbackUrl(callbackUrl);
 			} else {
-				const origin = getOrigin(req);
+				const { external_base_url } = await internalOidc.getRawConfig();
+				const origin = getOrigin(req, external_base_url);
 				callbackUrl = `${origin}/api/oidc/link-callback`;
 			}
 			const result = await internalOidc.buildLinkAuthorizationUrl(

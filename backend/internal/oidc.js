@@ -12,7 +12,8 @@ import internalToken from "./token.js";
 import twoFactor from "./2fa.js";
 import Access from "../lib/access.js";
 import gravatar from "gravatar";
-import { getFileProviders } from "../lib/oidc-file-config.js";
+import { getFileProviders, getExternalBaseUrl } from "../lib/oidc-file-config.js";
+import { normaliseExternalBaseUrl } from "../lib/oidc-url-utils.js";
 
 const SETTING_ID = "oidc-config";
 
@@ -88,8 +89,9 @@ const internalOidc = {
 	 * Get the full OIDC configuration, merging DB-stored and file-sourced providers.
 	 * File providers take precedence on ID conflict.
 	 * DB providers have _source: "db"; file providers have _source: "file".
+	 * Includes external_base_url (env var takes precedence over DB) and its source.
 	 *
-	 * @returns {Promise<{providers: Array}>}
+	 * @returns {Promise<{providers: Array, external_base_url: string|null, external_base_url_source: "env"|"db"|null}>}
 	 */
 	getRawConfig: async () => {
 		const row = await settingModel
@@ -113,7 +115,29 @@ const internalOidc = {
 			return true;
 		});
 
-		return { providers: [...fileProviders, ...mergedDb] };
+		// Resolve external_base_url: env var > DB value
+		// DB value is normalised through the same validation as the env var path
+		// to reject malformed values (including userinfo like user@host).
+		const envUrl = getExternalBaseUrl();
+		const dbUrl = dbConfig.external_base_url ? normaliseExternalBaseUrl(dbConfig.external_base_url) : null;
+		let external_base_url;
+		let external_base_url_source;
+		if (envUrl) {
+			external_base_url = envUrl;
+			external_base_url_source = "env";
+		} else if (dbUrl) {
+			external_base_url = dbUrl;
+			external_base_url_source = "db";
+		} else {
+			external_base_url = null;
+			external_base_url_source = null;
+		}
+
+		return {
+			providers: [...fileProviders, ...mergedDb],
+			external_base_url,
+			external_base_url_source,
+		};
 	},
 
 	/**
@@ -132,7 +156,7 @@ const internalOidc = {
 	 * Get OIDC configuration (admin-only). Redacts client secrets.
 	 *
 	 * @param {Access} access
-	 * @returns {Promise<{providers: Array}>}
+	 * @returns {Promise<{providers: Array, external_base_url: string|null, external_base_url_source: "env"|"db"|null}>}
 	 */
 	getConfig: async (access) => {
 		await access.can("settings:get");
@@ -147,7 +171,11 @@ const internalOidc = {
 			client_secret: p.client_secret ? "••••••••" : "",
 		}));
 
-		return { providers };
+		return {
+			providers,
+			external_base_url: config.external_base_url,
+			external_base_url_source: config.external_base_url_source,
+		};
 	},
 
 	/**
@@ -217,7 +245,8 @@ const internalOidc = {
 				enabled: provider.enabled,
 				use_par: provider.use_par || false,
 				auto_provision: provider.auto_provision || false,
-				auto_provision_role: "user", // Always "user" — never "admin"
+				auto_provision_role: provider.auto_provision_role || "user",
+				auto_provision_admin_confirm: provider.auto_provision_admin_confirm === true,
 				claim_mapping: provider.claim_mapping || {
 					email: "email",
 					name: "name",
@@ -227,7 +256,10 @@ const internalOidc = {
 			});
 		}
 
-		const newMeta = { providers };
+		const newMeta = {
+			providers,
+			external_base_url: data.external_base_url || null,
+		};
 
 		// Check if setting row exists
 		const existing = await settingModel.query().where("id", SETTING_ID).first();
@@ -255,17 +287,19 @@ const internalOidc = {
 			const prev = existingDbProviders.find((ep) => ep.id === p.id);
 			if (!prev) return false;
 			// Compare non-secret fields
-			return (
-				prev.name !== p.name ||
-				prev.discovery_url !== p.discovery_url ||
-				prev.client_id !== p.client_id ||
-				prev.client_secret !== p.client_secret ||
-				prev.scopes !== p.scopes ||
-				prev.enabled !== p.enabled ||
-				prev.use_par !== p.use_par ||
-				prev.auto_provision !== p.auto_provision ||
-				JSON.stringify(prev.claim_mapping) !== JSON.stringify(p.claim_mapping)
-			);
+		return (
+			prev.name !== p.name ||
+			prev.discovery_url !== p.discovery_url ||
+			prev.client_id !== p.client_id ||
+			prev.client_secret !== p.client_secret ||
+			prev.scopes !== p.scopes ||
+			prev.enabled !== p.enabled ||
+			prev.use_par !== p.use_par ||
+			prev.auto_provision !== p.auto_provision ||
+			prev.auto_provision_role !== p.auto_provision_role ||
+			prev.auto_provision_admin_confirm !== p.auto_provision_admin_confirm ||
+			JSON.stringify(prev.claim_mapping) !== JSON.stringify(p.claim_mapping)
+		);
 		});
 
 		const providerSummary = (p) => ({
@@ -277,6 +311,8 @@ const internalOidc = {
 			scopes: p.scopes,
 			use_par: p.use_par,
 			auto_provision: p.auto_provision,
+			auto_provision_role: p.auto_provision_role,
+			auto_provision_admin_confirm: p.auto_provision_admin_confirm,
 			claim_mapping: p.claim_mapping,
 		});
 
@@ -654,12 +690,20 @@ const internalOidc = {
 		// Auto-provision a NEW user (never link to existing accounts based on email)
 		logger.info(`Auto-provisioning new user for OIDC subject: ${claims.sub} from provider: ${claims.provider_id}`);
 
+		// Admin role requires both auto_provision_role==="admin" AND the explicit confirmation flag.
+		// If only auto_provision_role is set without the confirmation, default to standard user.
+		const isAdminRole = providerConfig.auto_provision_role === "admin" && providerConfig.auto_provision_admin_confirm === true;
+		if (isAdminRole) {
+			logger.warn(`OIDC auto-provisioning admin user: sub=${claims.sub} provider=${claims.provider_id} email=${claims.email} — verify this is intentional`);
+		}
+		const roles = isAdminRole ? ["admin"] : [];
+
 		const newUser = await userModel.query().insertAndFetch({
 			email: claims.email,
 			name: claims.name || claims.email,
 			nickname: claims.nickname || claims.email.split("@")[0],
 			avatar: claims.avatar || gravatar.url(claims.email, { default: "mm" }),
-			roles: [], // Standard user — NEVER "admin" (security guardrail)
+			roles,
 			is_deleted: 0,
 			is_disabled: 0,
 		});

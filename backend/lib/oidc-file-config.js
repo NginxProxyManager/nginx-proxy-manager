@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { oidc as logger } from "../logger.js";
+import { normaliseExternalBaseUrl } from "./oidc-url-utils.js";
 
 // Regex: only expand ${OIDC_*} references — prevents leaking DB passwords, etc.
 const SAFE_ENV_VAR_RE = /\$\{(OIDC_[A-Z0-9_]+)\}/g;
@@ -99,11 +100,6 @@ function loadFromFile(filePath) {
 			continue;
 		}
 
-		// Enforce auto_provision_role can never be "admin" from file config
-		if (provider.auto_provision_role && provider.auto_provision_role !== "user") {
-			logger.warn(`OIDC file config: provider "${provider.id}" has auto_provision_role="${provider.auto_provision_role}" — forced to "user"`);
-		}
-
 		result.push({
 			id: provider.id,
 			name: provider.name,
@@ -114,7 +110,8 @@ function loadFromFile(filePath) {
 			enabled: provider.enabled !== false, // default true
 			use_par: provider.use_par || false,
 			auto_provision: provider.auto_provision || false,
-			auto_provision_role: "user", // Always "user" — never "admin"
+			auto_provision_role: provider.auto_provision_role || "user",
+			auto_provision_admin_confirm: provider.auto_provision_admin_confirm === true,
 			claim_mapping: provider.claim_mapping || {
 				email: "email",
 				name: "name",
@@ -151,7 +148,8 @@ function loadFromEnvVars() {
 		enabled: process.env.OIDC_PROVIDER_ENABLED !== "false", // default true
 		use_par: process.env.OIDC_PROVIDER_USE_PAR === "true",
 		auto_provision: process.env.OIDC_PROVIDER_AUTO_PROVISION === "true",
-		auto_provision_role: "user", // Always "user" — never "admin"
+		auto_provision_role: process.env.OIDC_PROVIDER_AUTO_PROVISION_ROLE || "user",
+		auto_provision_admin_confirm: process.env.OIDC_PROVIDER_AUTO_PROVISION_ADMIN_CONFIRM === "true",
 		claim_mapping: {
 			email:    process.env.OIDC_PROVIDER_CLAIM_EMAIL    || "email",
 			name:     process.env.OIDC_PROVIDER_CLAIM_NAME     || "name",
@@ -171,7 +169,46 @@ function loadFromEnvVars() {
 	return [provider];
 }
 
+// ---------------------------------------------------------------------------
+// External base URL — read from env var once at module load
+// ---------------------------------------------------------------------------
+
+/**
+ * Validate and normalise an external base URL string, emitting a logger
+ * warning when the value is present but invalid.
+ * Delegates to the pure normaliseExternalBaseUrl helper from oidc-url-utils.js.
+ *
+ * @param {string|undefined} raw
+ * @returns {string|null}
+ */
+function normaliseAndWarn(raw) {
+	if (!raw) {
+		return null;
+	}
+	const result = normaliseExternalBaseUrl(raw);
+	if (result === null) {
+		logger.warn(`OIDC_EXTERNAL_BASE_URL is invalid (must be http(s)://host with no path, query, fragment, or userinfo) — ignoring value: ${raw}`);
+	}
+	return result;
+}
+
+// Cached at module load — env vars are immutable at runtime
+const EXTERNAL_BASE_URL_FROM_ENV = normaliseAndWarn(process.env.OIDC_EXTERNAL_BASE_URL);
+
+/**
+ * Get the external base URL configured via the OIDC_EXTERNAL_BASE_URL environment variable.
+ * Returns the validated, normalised URL (no trailing slash) or null if not set/invalid.
+ *
+ * @returns {string|null}
+ */
+function getExternalBaseUrl() {
+	return EXTERNAL_BASE_URL_FROM_ENV;
+}
+
+// ---------------------------------------------------------------------------
 // Module-level singleton — loaded once on first access (or via loadFileConfig())
+// ---------------------------------------------------------------------------
+
 let cachedProviders = null;
 
 /**
@@ -232,4 +269,4 @@ function _resetCache() {
 	cachedProviders = null;
 }
 
-export { loadFileConfig, getFileProviders, _resetCache };
+export { loadFileConfig, getFileProviders, getExternalBaseUrl, normaliseExternalBaseUrl, _resetCache };

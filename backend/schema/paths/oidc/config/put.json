@@ -72,12 +72,17 @@
 									"default": false,
 									"example": false
 								},
-									"auto_provision_role": {
-										"type": "string",
-										"enum": ["user"],
-										"default": "user",
-										"example": "user"
-									},
+							"auto_provision_role": {
+								"type": "string",
+								"enum": ["user", "admin"],
+								"default": "user",
+								"example": "user"
+							},
+							"auto_provision_admin_confirm": {
+								"type": "boolean",
+								"default": false,
+								"example": false
+							},
 									"claim_mapping": {
 										"type": "object",
 										"additionalProperties": false,
@@ -107,8 +112,14 @@
 									}
 								}
 							}
-						}
-					}
+						},
+				"external_base_url": {
+					"type": "string",
+					"pattern": "^$|^https?://[^/?#@]+(:[0-9]+)?$",
+					"default": "",
+					"example": "https://npm.example.com"
+				}
+				}
 				},
 				"examples": {
 					"default": {
@@ -148,6 +159,15 @@
 								"items": {
 									"type": "object"
 								}
+							},
+							"external_base_url": {
+								"type": ["string", "null"],
+								"example": "https://npm.example.com"
+							},
+							"external_base_url_source": {
+								"type": ["string", "null"],
+								"enum": ["env", "db", null],
+								"example": "db"
 							}
 						}
 					},

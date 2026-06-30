@@ -25,7 +25,11 @@ export default defineConfig({
 		{
 			name: 'run-on-start',
 			configureServer(_server) {
-				runLocaleScripts();
+				// Only run during dev server, not during vitest (avoids race condition
+				// where locale-compile writes lang/*.json while Vite is importing them)
+				if (!process.env.VITEST) {
+					runLocaleScripts();
+				}
 			},
 		},
 		{

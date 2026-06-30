@@ -27,12 +27,14 @@ interface ShowProps {
 	provider: OidcProviderConfig;
 	isNew: boolean;
 	allProviders: OidcProviderConfig[];
+	/** Current external base URL, passed through to preserve it when saving providers */
+	externalBaseUrl?: string;
 }
 
 interface Props extends InnerModalProps, ShowProps {}
 
-const OidcProviderModal = EasyModal.create(({ provider, isNew, allProviders, visible, remove }: Props) => {
-	// File-sourced providers are read-only — the modal should never open for them
+const OidcProviderModal = EasyModal.create(({ provider, isNew, allProviders, externalBaseUrl, visible, remove }: Props) => {
+	// File-sourced providers are read-only, the modal should never open for them
 	// (OidcSettings guards this), but we add a safety check here as defence-in-depth.
 	const isReadOnly = provider.source === "file";
 
@@ -50,6 +52,7 @@ const OidcProviderModal = EasyModal.create(({ provider, isNew, allProviders, vis
 
 	const onSubmit = (values: OidcProviderConfig) => {
 		if (isSubmitting) return;
+		if (values.autoProvision && values.autoProvisionRole === "admin" && !values.autoProvisionAdminConfirm) return;
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
@@ -68,7 +71,7 @@ const OidcProviderModal = EasyModal.create(({ provider, isNew, allProviders, vis
 		}
 
 		setOidcConfig(
-			{ providers: cloned },
+			{ providers: cloned, externalBaseUrl: externalBaseUrl ?? "" },
 			{
 				onError: (err: any) => {
 					showError(err.message);
@@ -382,44 +385,98 @@ const OidcProviderModal = EasyModal.create(({ provider, isNew, allProviders, vis
 														)}
 													</div>
 												)}
-												{testResult === "error" && (
-													<span className="text-danger small">
-														<T id="settings.oidc.test-connection.error" />
-													</span>
-												)}
-											</div>
+										{testResult === "error" && (
+												<span className="text-danger small">
+													<T id="settings.oidc.test-connection.error" />
+												</span>
+											)}
 										</div>
+									</div>
 
 										{/* ── Options tab ── */}
 										<div className="tab-pane" id="tab-options" role="tabpanel">
 											<div className="row g-3">
-												{/* Auto-provision */}
+									{/* Auto-provision */}
+											<div className="col-md-6">
+												<label htmlFor="oidc-auto-provision" className="form-label d-block">
+													<T id="settings.oidc.auto-provision" />
+												</label>
+												<Field name="autoProvision">
+													{({ field }: any) => (
+														<label className="form-check form-switch">
+															<input
+																{...field}
+																id="oidc-auto-provision"
+																type="checkbox"
+																className="form-check-input"
+																checked={field.value}
+															/>
+															<span className="form-check-label text-secondary small">
+																<T id="settings.oidc.auto-provision.description" />
+															</span>
+														</label>
+													)}
+												</Field>
+											</div>
+
+											{/* Auto-provision role, visible when auto_provision is enabled */}
+											{values.autoProvision && (
 												<div className="col-md-6">
-													<label htmlFor="oidc-auto-provision" className="form-label d-block">
-														<T id="settings.oidc.auto-provision" />
+													<label htmlFor="oidc-auto-provision-role" className="form-label d-block">
+														<T id="settings.oidc.auto-provision-role" />
 													</label>
-													<Field name="autoProvision">
+													<Field name="autoProvisionRole">
 														{({ field }: any) => (
-															<label className="form-check form-switch">
-																<input
-																	{...field}
-																	id="oidc-auto-provision"
-																	type="checkbox"
-																	className="form-check-input"
-																	checked={field.value}
-																/>
-																<span className="form-check-label text-secondary small">
-																	<T id="settings.oidc.auto-provision.description" />
-																</span>
-															</label>
+															<select {...field} id="oidc-auto-provision-role" className="form-select">
+																<option value="user">{intl.formatMessage({ id: "settings.oidc.auto-provision-role.user" })}</option>
+																<option value="admin">{intl.formatMessage({ id: "settings.oidc.auto-provision-role.admin" })}</option>
+															</select>
 														)}
 													</Field>
-													{values.autoProvision && (
-														<small className="text-secondary d-block mt-2">
-															<T id="settings.oidc.auto-provision.note" />
-														</small>
-													)}
 												</div>
+											)}
+
+											{/* Standard user info note, visible when auto_provision is enabled and role is not admin */}
+											{values.autoProvision && values.autoProvisionRole !== "admin" && (
+												<div className="col-12">
+													<div className="alert alert-info p-2 mb-0 flex-column">
+													<small className="d-block">
+														<strong>Info:</strong>{" "}
+														<T id="settings.oidc.auto-provision.note" />
+													</small>
+													</div>
+												</div>
+											)}
+
+											{/* Admin confirmation, visible only when role=admin */}
+											{values.autoProvision && values.autoProvisionRole === "admin" && (
+												<div className="col-12">
+													<div className="alert alert-warning p-2 mb-0 flex-column">
+														<small className="d-block">
+															<strong>Warning:</strong>{" "}
+															<T id="settings.oidc.auto-provision-admin-confirm.warning.intro" />{" "}
+															<T id="settings.oidc.auto-provision-admin-confirm.warning" />
+															<br />
+															<T id="settings.oidc.auto-provision-admin-confirm.warning.detail" />
+														</small>
+														<Field name="autoProvisionAdminConfirm">
+															{({ field }: any) => (
+																<label className="form-check mb-0">
+																	<input
+																		{...field}
+																		type="checkbox"
+																		className="form-check-input"
+																		checked={!!field.value}
+																	/>
+																	<span className="form-check-label small">
+																		<T id="settings.oidc.auto-provision-admin-confirm" />
+																	</span>
+																</label>
+															)}
+														</Field>
+													</div>
+												</div>
+											)}
 
 												{/* PAR */}
 												<div className="col-md-6">
@@ -531,12 +588,12 @@ const OidcProviderModal = EasyModal.create(({ provider, isNew, allProviders, vis
 								<T id="cancel" />
 							</Button>
 							{!isReadOnly && (
-								<Button
-									type="submit"
-									className="ms-2 btn-teal"
-									isLoading={isSubmitting}
-									disabled={isSubmitting}
-								>
+							<Button
+								type="submit"
+								className="ms-2 btn-teal"
+								isLoading={isSubmitting}
+								disabled={isSubmitting || (values.autoProvision && values.autoProvisionRole === "admin" && !values.autoProvisionAdminConfirm)}
+							>
 									<T id="save" />
 								</Button>
 							)}
