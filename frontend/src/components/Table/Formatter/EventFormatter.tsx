@@ -1,4 +1,4 @@
-import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconShield, IconUser } from "@tabler/icons-react";
+import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconSettings, IconShield, IconUser } from "@tabler/icons-react";
 import cn from "classnames";
 import type { AuditLog } from "src/api/backend";
 import { useLocaleState } from "src/context";
@@ -17,6 +17,8 @@ const getEventValue = (event: AuditLog) => {
 			return event.meta?.incomingPort || "N/A";
 		case "certificate":
 			return event.meta?.domainNames?.join(", ") || event.meta?.niceName || "N/A";
+		case "setting":
+			return event.meta?.name || "Settings";
 		default:
 			return `UNKNOWN EVENT TYPE: ${event.objectType}`;
 	}
@@ -57,6 +59,9 @@ const getIcon = (row: AuditLog) => {
 			break;
 		case "certificate":
 			ico = <IconShield size={16} className={c} />;
+			break;
+		case "setting":
+			ico = <IconSettings size={16} className={c} />;
 			break;
 	}
 

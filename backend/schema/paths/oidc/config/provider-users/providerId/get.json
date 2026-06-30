@@ -1,0 +1,39 @@
+{
+	"operationId": "getOidcProviderUserCount",
+	"summary": "Get count of users linked to a specific OIDC provider",
+	"tags": ["oidc"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerId",
+			"required": true,
+			"schema": { "type": "string" },
+			"description": "The OIDC provider ID"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"total": { "type": "integer", "example": 3 },
+							"oidc_only": { "type": "integer", "example": 1 }
+						}
+					},
+					"examples": {
+						"default": { "value": { "total": 3, "oidc_only": 1 } }
+					}
+				}
+			}
+		}
+	}
+}

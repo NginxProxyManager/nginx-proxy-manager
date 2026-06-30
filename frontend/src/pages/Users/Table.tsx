@@ -1,6 +1,7 @@
 import {
 	IconDotsVertical,
 	IconEdit,
+	IconLink,
 	IconLock,
 	IconLogin2,
 	IconPower,
@@ -65,12 +66,16 @@ export default function Table({
 				header: intl.formatMessage({ id: "column.name" }),
 				cell: (info: any) => {
 					const value = info.getValue();
-					// Hack to reuse domains formatter
 					return (
 						<ValueWithDateFormatter
 							value={value.name}
 							createdOn={value.createdOn}
 							disabled={value.isDisabled}
+							suffix={value.hasPasswordAuth === false ? (
+								<span title={intl.formatMessage({ id: "user.external" })}>
+									<IconLink size={14} className="text-secondary" />
+								</span>
+							) : undefined}
 						/>
 					);
 				},
@@ -141,17 +146,19 @@ export default function Table({
 											<IconShield size={16} />
 											<T id="action.permissions" />
 										</a>
-										<a
-											className="dropdown-item"
-											href="#"
-											onClick={(e) => {
-												e.preventDefault();
-												onSetPassword?.(info.row.original.id);
-											}}
-										>
-											<IconLock size={16} />
-											<T id="user.set-password" />
-										</a>
+										{info.row.original.hasPasswordAuth !== false && (
+											<a
+												className="dropdown-item"
+												href="#"
+												onClick={(e) => {
+													e.preventDefault();
+													onSetPassword?.(info.row.original.id);
+												}}
+											>
+												<IconLock size={16} />
+												<T id="user.set-password" />
+											</a>
+										)}
 										<a
 											className="dropdown-item"
 											href="#"

@@ -1,0 +1,42 @@
+{
+	"operationId": "oidcAuthorize",
+	"summary": "Initiate OIDC authorization flow for a provider",
+	"description": "Returns an authorization URL to redirect the browser to. The frontend provides the callback URL via query param since it knows the real browser origin.",
+	"tags": ["public", "oidc"],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerId",
+			"required": true,
+			"schema": { "type": "string" },
+			"description": "The OIDC provider ID"
+		},
+		{
+			"in": "query",
+			"name": "callback_url",
+			"required": false,
+			"schema": { "type": "string", "format": "uri" },
+			"description": "Full callback URL for OIDC redirect (defaults to server-derived URL)"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"authorize_url": { "type": "string", "format": "uri", "example": "https://auth.example.com/authorize?client_id=...&redirect_uri=...&state=..." }
+						}
+					},
+					"examples": {
+						"default": {
+							"value": { "authorize_url": "https://auth.example.com/authorize?client_id=...&redirect_uri=...&state=..." }
+						}
+					}
+				}
+			}
+		}
+	}
+}

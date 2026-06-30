@@ -1,0 +1,40 @@
+{
+	"operationId": "oidcLogout",
+	"summary": "Get RP-initiated logout URL for an OIDC provider",
+	"description": "Returns the provider's end-session URL for RP-initiated logout, or null if the provider doesn't support it.",
+	"tags": ["oidc"],
+	"security": [
+		{
+			"bearerAuth": ["user"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerId",
+			"required": true,
+			"schema": { "type": "string" },
+			"description": "The OIDC provider ID"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"logout_url": { "type": ["string", "null"], "format": "uri", "example": "https://auth.example.com/oidc/logout?post_logout_redirect_uri=https://npm.example.com/" }
+						}
+					},
+					"examples": {
+						"default": {
+							"value": { "logout_url": "https://auth.example.com/oidc/logout?post_logout_redirect_uri=https://npm.example.com/" }
+						}
+					}
+				}
+			}
+		}
+	}
+}

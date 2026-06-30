@@ -55,6 +55,11 @@
 				"type": "string"
 			}
 		},
+		"has_password_auth": {
+			"type": "boolean",
+			"description": "Whether the user has a local password set",
+			"example": true
+		},
 		"permissions": {
 			"type": "object",
 			"description": "Permissions if expanded in request",

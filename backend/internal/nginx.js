@@ -83,10 +83,7 @@ const internalNginx = {
 								meta: combined_meta,
 							})
 							.then(() => {
-								internalNginx.renameConfigAsError(host_type, host);
-							})
-							.then(() => {
-								return internalNginx.deleteConfig(host_type, host, true);
+								return internalNginx.renameConfigAsError(host_type, host);
 							});
 					});
 			})
@@ -375,8 +372,10 @@ const internalNginx = {
 		const config_file_err = `${config_file}.err`;
 
 		return new Promise((resolve /*, reject*/) => {
-			fs.unlink(config_file, () => {
-				// ignore result, continue
+			// Remove any pre-existing .err file first, then rename the current
+			// config so it is preserved for debugging instead of being lost.
+			fs.unlink(config_file_err, () => {
+				// ignore result — the .err file may not exist
 				fs.rename(config_file, config_file_err, () => {
 					// also ignore result, as this is a debugging informative file anyway
 					resolve();
@@ -419,7 +418,15 @@ const internalNginx = {
 	 * @param   {string}  config
 	 * @returns {boolean}
 	 */
-	advancedConfigHasDefaultLocation: (cfg) => !!cfg.match(/^(?:.*;)?\s*?location\s*?\/\s*?{/im),
+	advancedConfigHasDefaultLocation: (cfg) => {
+		// Strip comment lines so they don't interfere with detection
+		const stripped = cfg.replace(/^\s*#.*$/gm, "");
+		// Match location blocks that resolve to "/" (root path), including
+		// nginx modifiers like "=", "~", "~*", "^~" and optional whitespace.
+		// The (?:^|;) prefix with \s* handles both start-of-line and the rare
+		// case where a directive and a location block share a line.
+		return !!stripped.match(/(?:^|;)\s*location\s+(?:[=~^~*]{1,2}\s+)?\/\s*\{/im);
+	},
 
 	/**
 	 * @returns {boolean}

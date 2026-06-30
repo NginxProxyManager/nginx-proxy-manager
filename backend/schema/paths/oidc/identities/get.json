@@ -1,0 +1,38 @@
+{
+	"operationId": "getOidcIdentities",
+	"summary": "Get the current user's linked OIDC identities",
+	"tags": ["oidc"],
+	"security": [
+		{
+			"bearerAuth": ["user"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"provider_id": { "type": "string", "example": "authentik" },
+								"provider_name": { "type": "string", "example": "Authentik" },
+								"linked_on": { "type": "string", "format": "date-time", "example": "2025-01-15T10:30:00.000Z" }
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": [
+								{ "provider_id": "authentik", "provider_name": "Authentik", "linked_on": "2025-01-15T10:30:00.000Z" }
+							]
+						}
+					}
+				}
+			}
+		}
+	}
+}

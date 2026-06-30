@@ -1,0 +1,41 @@
+{
+	"operationId": "getOidcProviders",
+	"summary": "Get enabled OIDC providers",
+	"tags": ["public", "oidc"],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"properties": {
+								"id": {
+									"type": "string",
+									"example": "authentik"
+								},
+								"name": {
+									"type": "string",
+									"example": "Authentik"
+								}
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": [
+								{
+									"id": "authentik",
+									"name": "Authentik"
+								}
+							]
+						}
+					}
+				}
+			}
+		}
+	}
+}

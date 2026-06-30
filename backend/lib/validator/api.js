@@ -7,6 +7,7 @@ const ajv = new Ajv({
 	allowUnionTypes: true,
 	strict: false,
 	coerceTypes: true,
+	validateFormats: false,
 });
 
 /**

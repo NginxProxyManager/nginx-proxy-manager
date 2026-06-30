@@ -11,7 +11,7 @@ import {
 	Unhealthy,
 } from "src/components";
 import { useAuthState } from "src/context";
-import { useHealth } from "src/hooks";
+import { useHealth, usePendingOidcLink } from "src/hooks";
 
 const Setup = lazy(() => import("src/pages/Setup"));
 const Login = lazy(() => import("src/pages/Login"));
@@ -29,6 +29,10 @@ const Streams = lazy(() => import("src/pages/Nginx/Streams"));
 function Router() {
 	const health = useHealth();
 	const { authenticated } = useAuthState();
+
+	// Complete any pending OIDC account-link after IdP redirect.
+	// Must run only when authenticated — the link endpoint requires a valid JWT.
+	usePendingOidcLink(authenticated);
 
 	if (health.isLoading) {
 		return <LoadingPage />;

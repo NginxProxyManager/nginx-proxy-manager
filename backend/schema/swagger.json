@@ -61,6 +61,10 @@
 			"description": "Endpoints for managing authentication tokens"
 		},
 		{
+			"name": "oidc",
+			"description": "Endpoints for OpenID Connect authentication"
+		},
+		{
 			"name": "users",
 			"description": "Endpoints for managing users"
 		}
@@ -356,6 +360,69 @@
 		"/users/{userID}/login": {
 			"post": {
 				"$ref": "./paths/users/userID/login/post.json"
+			}
+		},
+		"/oidc/providers": {
+			"get": {
+				"$ref": "./paths/oidc/providers/get.json"
+			}
+		},
+		"/oidc/config": {
+			"get": {
+				"$ref": "./paths/oidc/config/get.json"
+			},
+			"put": {
+				"$ref": "./paths/oidc/config/put.json"
+			}
+		},
+		"/oidc/link": {
+			"post": {
+				"$ref": "./paths/oidc/link/post.json"
+			}
+		},
+		"/oidc/test-connection": {
+			"post": {
+				"$ref": "./paths/oidc/test-connection/post.json"
+			}
+		},
+		"/oidc/identities": {
+			"get": {
+				"$ref": "./paths/oidc/identities/get.json"
+			}
+		},
+		"/oidc/link/{providerId}": {
+			"delete": {
+				"$ref": "./paths/oidc/link/providerId/delete.json"
+			}
+		},
+		"/oidc/config/provider-users/{providerId}": {
+			"get": {
+				"$ref": "./paths/oidc/config/provider-users/providerId/get.json"
+			}
+		},
+		"/oidc/{providerId}/authorize": {
+			"get": {
+				"$ref": "./paths/oidc/providerId/authorize/get.json"
+			}
+		},
+		"/oidc/callback": {
+			"get": {
+				"$ref": "./paths/oidc/callback/get.json"
+			}
+		},
+		"/oidc/{providerId}/logout": {
+			"get": {
+				"$ref": "./paths/oidc/providerId/logout/get.json"
+			}
+		},
+		"/oidc/{providerId}/authorize-link": {
+			"get": {
+				"$ref": "./paths/oidc/providerId/authorize-link/get.json"
+			}
+		},
+		"/oidc/link-callback": {
+			"get": {
+				"$ref": "./paths/oidc/link-callback/get.json"
 			}
 		}
 	}

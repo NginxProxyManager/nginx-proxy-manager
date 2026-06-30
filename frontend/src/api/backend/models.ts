@@ -28,6 +28,7 @@ export interface User {
 	nickname: string;
 	avatar: string;
 	roles: string[];
+	hasPasswordAuth?: boolean;
 	permissions?: UserPermissions;
 }
 
@@ -207,4 +208,39 @@ export interface DNSProvider {
 	id: string;
 	name: string;
 	credentials: string;
+}
+
+export interface OidcProvider {
+	id: string;
+	name: string;
+}
+
+export interface OidcProviderConfig {
+	id: string;
+	name: string;
+	discoveryUrl: string;
+	clientId: string;
+	clientSecret: string;
+	scopes: string;
+	enabled: boolean;
+	usePar: boolean;
+	autoProvision: boolean;
+	autoProvisionRole: "user" | "admin";
+	autoProvisionAdminConfirm?: boolean;
+	claimMapping?: {
+		email?: string;
+		name?: string;
+		nickname?: string;
+		avatar?: string;
+	};
+	/** Where this provider was configured: "file" = read-only config file/env vars, "db" = UI/database */
+	source?: "file" | "db";
+}
+
+export interface OidcConfig {
+	providers: OidcProviderConfig[];
+	/** Configured external base URL for OIDC redirects (e.g. https://npm.example.com) */
+	externalBaseUrl?: string | null;
+	/** Where the external base URL was configured: "env" = env var (read-only), "db" = admin UI, null = not set */
+	externalBaseUrlSource?: "env" | "db" | null;
 }
