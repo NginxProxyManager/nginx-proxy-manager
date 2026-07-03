@@ -9,6 +9,7 @@ import { type Certificate, createCertificate, uploadCertificate, validateCertifi
 import { Button, Loading } from "src/components";
 import { useCertificate } from "src/hooks";
 import { T } from "src/locale";
+import { certificateDomainChanged } from "src/modules/Certificates";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
@@ -23,6 +24,7 @@ const CustomCertificateModal = EasyModal.create(({ id, visible, remove }: Props)
 	const queryClient = useQueryClient();
 	const { data, isLoading, error } = useCertificate(id);
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
+	const [domainWarning, setDomainWarning] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -41,7 +43,16 @@ const CustomCertificateModal = EasyModal.create(({ id, visible, remove }: Props)
 			}
 
 			// Validate
-			await validateCertificate(formData);
+			const validation = await validateCertificate(formData);
+
+			// Uploading a cert for a different domain replaces the record's domain, require a second save to confirm
+			const newCn = validation?.certificate?.cn;
+			if (data?.id && certificateDomainChanged(data.domainNames, newCn) && domainWarning !== (newCn || "")) {
+				setDomainWarning(newCn || "");
+				setIsSubmitting(false);
+				setSubmitting(false);
+				return;
+			}
 
 			let certId = data?.id;
 			if (!certId) {
@@ -102,6 +113,20 @@ const CustomCertificateModal = EasyModal.create(({ id, visible, remove }: Props)
 							<Modal.Body className="p-0">
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
+								</Alert>
+								<Alert
+									variant="warning"
+									show={domainWarning !== null}
+									onClose={() => setDomainWarning(null)}
+									dismissible
+								>
+									<T
+										id="certificates.custom.domain-changed"
+										data={{
+											domains: data?.domainNames?.join(", "),
+											newDomain: domainWarning || "",
+										}}
+									/>
 								</Alert>
 								<div className="card m-0 border-0">
 									<div className="card-body">

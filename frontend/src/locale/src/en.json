@@ -176,6 +176,9 @@
 	"certificates.custom": {
 		"defaultMessage": "Custom Certificate"
 	},
+	"certificates.custom.domain-changed": {
+		"defaultMessage": "The uploaded certificate is for {newDomain} but this certificate currently covers {domains}. Hosts using this certificate may no longer match it. Save again to confirm the change."
+	},
 	"certificates.custom.warning": {
 		"defaultMessage": "Key files protected with a passphrase are not supported."
 	},

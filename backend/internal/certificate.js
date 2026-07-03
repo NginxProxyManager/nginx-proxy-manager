@@ -631,7 +631,14 @@ const internalCertificate = {
 			(row.dead_hosts?.length || 0) +
 			(row.streams?.length || 0);
 		if (inUseCount > 0) {
-			await internalNginx.reload();
+			try {
+				await internalNginx.reload();
+			} catch (err) {
+				throw new error.ConfigurationError(
+					`The certificate was saved but nginx could not be reloaded and may still be serving the previous certificate: ${err.message}`,
+					err,
+				);
+			}
 		}
 
 		return _.pick(row.meta, internalCertificate.allowedSslFiles);
