@@ -10,7 +10,7 @@ export function SiteFooter() {
 			return "";
 		}
 		const v = health.data.version;
-		return `v${v.major}.${v.minor}.${v.revision}`;
+		return v.string ?? `v${v.major}.${v.minor}.${v.revision}`;
 	};
 
 	return (
@@ -19,6 +19,11 @@ export function SiteFooter() {
 				<div className="row text-center align-items-center flex-row-reverse">
 					<div className="col-lg-auto ms-lg-auto">
 						<ul className="list-inline list-inline-dots mb-0">
+							<li className="list-inline-item">
+								<a href="/documentation" className="link-secondary">
+									<T id="documentation" />
+								</a>
+							</li>
 							<li className="list-inline-item">
 								<a
 									href="https://github.com/NginxProxyManager/nginx-proxy-manager"

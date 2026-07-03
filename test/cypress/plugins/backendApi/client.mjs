@@ -49,24 +49,20 @@ BackendApi.prototype._handleResponse = (
 	returnOnError,
 ) => {
 	logger("Response data:", response.data);
+	const apiError =
+		typeof response.data === "object" && response.data !== null
+			? response.data.error
+			: undefined;
 	if (
 		!returnOnError &&
-		typeof response.data === "object" &&
-		typeof response.data.error === "object"
+		apiError !== null &&
+		apiError !== undefined &&
+		typeof apiError === "object" &&
+		typeof apiError.message !== "undefined"
 	) {
-		if (
-			typeof response.data === "object" &&
-			typeof response.data.error === "object" &&
-			typeof response.data.error.message !== "undefined"
-		) {
-			reject(
-				new Error(
-					`${response.data.error.code}: ${response.data.error.message}`,
-				),
-			);
-		} else {
-			reject(new Error(`Error ${response.status}`));
-		}
+		reject(
+			new Error(`${apiError.code}: ${apiError.message}`),
+		);
 	} else {
 		resolve(response.data);
 	}

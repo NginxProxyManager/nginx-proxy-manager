@@ -1,0 +1,43 @@
+{
+	"operationId": "createCredentialProvider",
+	"summary": "Create credential provider",
+	"tags": [
+		"credential-providers"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"description": "Registers an external credential store provider. OIDC or Universal Auth credentials are stored encrypted under the data volume.",
+	"responses": {
+		"201": {
+			"description": "Created",
+			"content": {
+				"application/json": {
+					"example": {
+						"id": 1,
+						"created_on": "2026-06-05T06:20:47.000Z",
+						"modified_on": "2026-06-05T06:20:47.000Z",
+						"owner_user_id": 1,
+						"name": "Cypress vault stub",
+						"type": "vault",
+						"oidc_issuer": "https://issuer.example/oauth2",
+						"oidc_client_id": "npm-test",
+						"oidc_audience": null,
+						"oidc_scope": null,
+						"meta": {
+							"address": "http://127.0.0.1:65535",
+							"mount": "secret",
+							"role": "npm"
+						},
+						"has_oidc_secret": true
+					},
+					"schema": {
+						"$ref": "../../components/credential-provider-object.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,7 +1,9 @@
 import { getUnixTime, parseISO } from "date-fns";
 import type { TokenResponse } from "src/api/backend";
 
-export const TOKEN_KEY = "authentications";
+/** localStorage key for the auth session stack (not a credential). */
+export const AUTH_SESSION_STORAGE_KEY = "npm_auth_sessions";
+export const TOKEN_KEY = AUTH_SESSION_STORAGE_KEY;
 
 export class AuthStore {
 	// Get all tokens from stack

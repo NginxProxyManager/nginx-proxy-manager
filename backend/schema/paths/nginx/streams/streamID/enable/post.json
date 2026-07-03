@@ -1,12 +1,17 @@
 {
 	"operationId": "enableStream",
 	"summary": "Enable a Stream",
-	"tags": ["streams"],
+	"tags": [
+		"streams"
+	],
 	"security": [
 		{
-			"bearerAuth": ["streams.manage"]
+			"bearerAuth": [
+				"streams.manage"
+			]
 		}
 	],
+	"description": "Enables a stream and reloads nginx configuration.",
 	"parameters": [
 		{
 			"in": "path",

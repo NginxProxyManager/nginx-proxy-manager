@@ -691,5 +691,83 @@
 	},
 	"users": {
 		"defaultMessage": "Потребители"
+	},
+	"api-key": {
+		"defaultMessage": "API ключ"
+	},
+	"api-keys": {
+		"defaultMessage": "API ключове за автоматизация"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Копирайте този ключ сега — няма да се покаже отново."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Отмяна на този API ключ? Автоматизациите, които го използват, ще спрат да работят."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer токени (npmak_…) за скриптове и CI. Само за администратори."
+	},
+	"credential": {
+		"defaultMessage": "Удостоверителни данни"
+	},
+	"credential-provider": {
+		"defaultMessage": "Доставчик на удостоверителни данни"
+	},
+	"credential-providers": {
+		"defaultMessage": "Външни хранилища за удостоверителни данни"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Свържете Vault, AWS Secrets Manager, Azure Key Vault или Infisical чрез OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Тест на OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Тест на извличане"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Път до тайната"
+	},
+	"credentials": {
+		"defaultMessage": "DNS удостоверителни данни"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Път до тайната"
+	},
+	"credentials.source": {
+		"defaultMessage": "Източник на удостоверителни данни"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Външно хранилище (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Съхранено в трезора на NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Ръчно въвеждане (еднократно)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Съхранени удостоверителни данни"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Криптирани в тома /data и преизползваеми за DNS сертификати."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Мигриране на стари DNS удостоверителни данни"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} сертификат(а) ще преместят вградените удостоверителни данни в трезора."
+	},
+	"webhook": {
+		"defaultMessage": "Уебкуук"
+	},
+	"webhooks": {
+		"defaultMessage": "Уебкуукове"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Тайна за подпис (за проверка на X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Подписани HTTP известия при промяна на прокси хостове или сертификати."
 	}
 }

@@ -5,10 +5,5 @@ ts
 .cache
 .vitepress/cache
 
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
 *.gz
 *.tgz

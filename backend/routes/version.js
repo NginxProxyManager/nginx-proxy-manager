@@ -25,11 +25,11 @@ router
 	.get(async (req, res, _next) => {
 		try {
 			const data = await internalRemoteVersion.get();
-			res.status(200).send(data);
+			res.status(200).json(data);
 		} catch (error) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${error}`);
 			// Send 200 even though there's an error to avoid triggering update checks repeatedly
-			res.status(200).send({
+			res.status(200).json({
 				current: null,
 				latest: null,
 				update_available: false,

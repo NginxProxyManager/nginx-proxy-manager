@@ -7,6 +7,7 @@ import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
 import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
+import internalWebhook from "./webhook.js";
 
 const omissions = () => {
 	return ["is_deleted", "owner.is_deleted"];
@@ -102,6 +103,7 @@ const internalProxyHost = {
 						meta: thisData,
 					})
 					.then(() => {
+						void internalWebhook.dispatch("proxy_host.created", utils.omitRow(omissions())(row));
 						return row;
 					});
 			});
@@ -198,6 +200,7 @@ const internalProxyHost = {
 								meta: thisData,
 							})
 							.then(() => {
+								void internalWebhook.dispatch("proxy_host.updated", saved_row);
 								return saved_row;
 							});
 					});
@@ -303,6 +306,9 @@ const internalProxyHost = {
 							object_id: row.id,
 							meta: _.omit(row, omissions()),
 						});
+					})
+					.then(() => {
+						void internalWebhook.dispatch("proxy_host.deleted", { id: row.id });
 					});
 			})
 			.then(() => {
@@ -354,6 +360,9 @@ const internalProxyHost = {
 							object_id: row.id,
 							meta: _.omit(row, omissions()),
 						});
+					})
+					.then(() => {
+						void internalWebhook.dispatch("proxy_host.enabled", { id: row.id });
 					});
 			})
 			.then(() => {
@@ -404,6 +413,9 @@ const internalProxyHost = {
 							object_id: row.id,
 							meta: _.omit(row, omissions()),
 						});
+					})
+					.then(() => {
+						void internalWebhook.dispatch("proxy_host.disabled", { id: row.id });
 					});
 			})
 			.then(() => {

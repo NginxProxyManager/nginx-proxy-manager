@@ -655,5 +655,83 @@
 	},
 	"users": {
 		"defaultMessage": "Danh sách người dùng"
+	},
+	"api-key": {
+		"defaultMessage": "Khóa API"
+	},
+	"api-keys": {
+		"defaultMessage": "Khóa API tự động hóa"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Sao chép khóa này ngay — sẽ không hiển thị lại."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Thu hồi khóa API này? Tự động hóa đang dùng sẽ ngừng hoạt động."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Token Bearer (npmak_…) cho script và CI. Chỉ quản trị viên."
+	},
+	"credential": {
+		"defaultMessage": "Thông tin xác thực"
+	},
+	"credential-provider": {
+		"defaultMessage": "Nhà cung cấp thông tin xác thực"
+	},
+	"credential-providers": {
+		"defaultMessage": "Kho thông tin xác thực bên ngoài"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Kết nối Vault, AWS Secrets Manager, Azure Key Vault hoặc Infisical qua OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Kiểm tra OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Kiểm tra phân giải"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Đường dẫn bí mật"
+	},
+	"credentials": {
+		"defaultMessage": "Thông tin xác thực DNS"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Đường dẫn bí mật"
+	},
+	"credentials.source": {
+		"defaultMessage": "Nguồn thông tin xác thực"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Kho bên ngoài (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Lưu trong kho NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Nhập thủ công (một lần)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Thông tin xác thực đã lưu"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Mã hóa trên volume /data, tái sử dụng cho chứng chỉ DNS."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Di chuyển thông tin xác thực DNS cũ"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} chứng chỉ sẽ chuyển thông tin nội tuyến vào kho."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Bí mật ký (xác minh X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Nhận callback HTTP có chữ ký khi host hoặc chứng chỉ thay đổi."
 	}
 }

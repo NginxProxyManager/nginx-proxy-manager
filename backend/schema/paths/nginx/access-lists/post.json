@@ -1,7 +1,9 @@
 {
 	"operationId": "createAccessList",
 	"summary": "Create a Access List",
-	"tags": ["access-lists"],
+	"tags": [
+		"access-lists"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Creates an access list for use on proxy hosts, redirection hosts, or streams.",
 	"requestBody": {
 		"description": "Access List Payload",
 		"required": true,

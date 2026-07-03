@@ -1,12 +1,15 @@
 {
 	"operationId": "refreshToken",
 	"summary": "Refresh your access token",
-	"tags": ["tokens"],
+	"tags": [
+		"tokens"
+	],
 	"security": [
 		{
 			"bearerAuth": []
 		}
 	],
+	"description": "Refreshes an existing JWT using a valid refresh token cookie or body field.",
 	"responses": {
 		"200": {
 			"description": "200 response",

@@ -21,6 +21,16 @@
 		"mocha": "^11.7.5",
 		"mocha-junit-reporter": "^2.2.1"
 	},
+	"overrides": {
+		"brace-expansion": "2.0.3",
+		"diff": "8.0.3",
+		"jsonpath": "1.3.0",
+		"minimatch": "9.0.7",
+		"qs": "6.15.2",
+		"serialize-javascript": "7.0.5",
+		"tmp": "0.2.6",
+		"underscore": "1.13.8"
+	},
 	"scripts": {
 		"cypress": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress open --config-file=cypress/config/ci.mjs",
 		"cypress:headless": "HTTP_PROXY=127.0.0.1:8128 HTTPS_PROXY=127.0.0.1:8128 cypress run --config-file=cypress/config/ci.mjs",

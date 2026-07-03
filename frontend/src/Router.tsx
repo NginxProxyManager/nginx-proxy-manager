@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import {
 	ErrorNotFound,
 	LoadingPage,
@@ -25,6 +25,7 @@ const ProxyHosts = lazy(() => import("src/pages/Nginx/ProxyHosts"));
 const RedirectionHosts = lazy(() => import("src/pages/Nginx/RedirectionHosts"));
 const DeadHosts = lazy(() => import("src/pages/Nginx/DeadHosts"));
 const Streams = lazy(() => import("src/pages/Nginx/Streams"));
+const Documentation = lazy(() => import("src/pages/Documentation"));
 
 function Router() {
 	const health = useHealth();
@@ -62,6 +63,10 @@ function Router() {
 						<Routes>
 							<Route path="*" element={<ErrorNotFound />} />
 							<Route path="/certificates" element={<Certificates />} />
+							<Route
+								path="/credentials"
+								element={<Navigate to="/settings?tab=dns-credentials" replace />}
+							/>
 							<Route path="/access" element={<Access />} />
 							<Route path="/audit-log" element={<AuditLog />} />
 							<Route path="/settings" element={<Settings />} />
@@ -70,6 +75,7 @@ function Router() {
 							<Route path="/nginx/redirection" element={<RedirectionHosts />} />
 							<Route path="/nginx/404" element={<DeadHosts />} />
 							<Route path="/nginx/stream" element={<Streams />} />
+							<Route path="/documentation" element={<Documentation />} />
 							<Route path="/" element={<Dashboard />} />
 						</Routes>
 					</Suspense>

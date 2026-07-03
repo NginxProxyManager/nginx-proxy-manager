@@ -1,12 +1,17 @@
 {
 	"operationId": "getSettings",
 	"summary": "Get all settings",
-	"tags": ["settings"],
+	"tags": [
+		"settings"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
+	"description": "Lists application settings keys and values visible to the authenticated administrator.",
 	"responses": {
 		"200": {
 			"description": "200 response",

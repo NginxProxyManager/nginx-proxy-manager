@@ -658,5 +658,83 @@
 	},
 	"users": {
 		"defaultMessage": "Użytkownicy"
+	},
+	"api-key": {
+		"defaultMessage": "Klucz API"
+	},
+	"api-keys": {
+		"defaultMessage": "Klucze API do automatyzacji"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Skopiuj ten klucz teraz — nie zostanie ponownie wyświetlony."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Cofnąć ten klucz API? Automatyzacje, które go używają, przestaną działać."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Tokeny Bearer (npmak_…) dla skryptów i CI. Tylko administratorzy."
+	},
+	"credential": {
+		"defaultMessage": "Poświadczenia"
+	},
+	"credential-provider": {
+		"defaultMessage": "Dostawca poświadczeń"
+	},
+	"credential-providers": {
+		"defaultMessage": "Zewnętrzne magazyny poświadczeń"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Połącz Vault, AWS Secrets Manager, Azure Key Vault lub Infisical przez OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Test OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Test pobierania"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Ścieżka do sekretu"
+	},
+	"credentials": {
+		"defaultMessage": "Poświadczenia DNS"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Ścieżka do sekretu"
+	},
+	"credentials.source": {
+		"defaultMessage": "Źródło poświadczeń"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Magazyn zewnętrzny (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Przechowywane w skarbcu NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Wprowadź ręcznie (jednorazowo)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Zapisane poświadczenia"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Szyfrowane na wolumenie /data i wielokrotnego użytku dla certyfikatów DNS."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migruj starsze poświadczenia DNS"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} certyfikat(ów) przeniesie osadzone poświadczenia do skarbca."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooki"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Sekret podpisu (weryfikacja X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Podpisane wywołania HTTP przy zmianie hostów proxy lub certyfikatów."
 	}
 }

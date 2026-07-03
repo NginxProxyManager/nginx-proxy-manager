@@ -1,12 +1,17 @@
 {
 	"operationId": "uploadCertificate",
 	"summary": "Uploads a custom Certificate",
-	"tags": ["certificates"],
+	"tags": [
+		"certificates"
+	],
 	"security": [
 		{
-			"bearerAuth": ["certificates.manage"]
+			"bearerAuth": [
+				"certificates.manage"
+			]
 		}
 	],
+	"description": "Uploads custom certificate and key files for use on proxy hosts.",
 	"parameters": [
 		{
 			"in": "path",
@@ -39,7 +44,10 @@
 					"schema": {
 						"type": "object",
 						"additionalProperties": false,
-						"required": ["certificate", "certificate_key"],
+						"required": [
+							"certificate",
+							"certificate_key"
+						],
 						"properties": {
 							"certificate": {
 								"type": "string",

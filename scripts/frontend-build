@@ -1,0 +1,38 @@
+#!/bin/bash -e
+# Build frontend/dist for docker/Dockerfile (see scripts/ci/frontend-build).
+# Set SKIP_TESTS=1 to skip lint/vitest (faster local iteration).
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
+
+DOCKER_IMAGE=nginxproxymanager/nginx-full:certbot-node
+
+if ! hash docker 2>/dev/null; then
+	echo -e "${RED}❯ docker is required${RESET}"
+	exit 1
+fi
+
+docker pull "${DOCKER_IMAGE}"
+cd "${DIR}/.." || exit 1
+echo -e "${BLUE}❯ ${CYAN}Building frontend ...${RESET}"
+
+if [ "${SKIP_TESTS}" = "1" ]; then
+	TEST_CMD="npm run locale-compile"
+else
+	TEST_CMD="npm run lint && npm run locale-compile && npm run test -- run --no-color"
+fi
+
+docker run --rm \
+	-e CI=true \
+	-e NODE_OPTIONS=--openssl-legacy-provider \
+	-v "$(pwd):/app" \
+	-w /app "${DOCKER_IMAGE}" \
+	sh -c "set -e
+		cd /app/docs && npm install && npm run build
+		cd /app/frontend && npm ci && ${TEST_CMD} && npm run build
+		rm -rf /app/frontend/dist/docs && mkdir -p /app/frontend/dist/docs
+		cp -a /app/docs/dist/. /app/frontend/dist/docs/
+		chown -R $(id -u):$(id -g) /app/frontend /app/docs/node_modules 2>/dev/null || true
+	"
+
+echo -e "${BLUE}❯ ${GREEN}Frontend build complete (includes /docs bundle)${RESET}"

@@ -18,6 +18,6 @@ RUN wget "https://github.com/testssl/testssl.sh/archive/refs/tags/v3.2rc4.tar.gz
 
 COPY --chown=1000 ./test /test
 WORKDIR /test
-RUN yarn install && yarn cache clean
+RUN npm ci && npm cache clean --force
 ENTRYPOINT []
 CMD ["cypress", "run"]

@@ -1,6 +1,7 @@
 import express from "express";
 import dnsPlugins from "../../certbot/dns-plugins.json" with { type: "json" };
 import internalCertificate from "../../internal/certificate.js";
+import internalJob from "../../internal/job.js";
 import errs from "../../lib/error.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
@@ -56,7 +57,7 @@ router
 				data.expand,
 				data.query,
 			);
-			res.status(200).send(rows);
+			res.status(200).json(rows);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -75,11 +76,15 @@ router
 				req.body,
 			);
 			req.setTimeout(900000); // 15 minutes timeout
-			const result = await internalCertificate.create(
-				res.locals.access,
-				payload,
-			);
-			res.status(201).send(result);
+
+			if (req.query.async === "true") {
+				const job = await internalJob.runCertificateCreate(res.locals.access, payload);
+				res.status(202).json({ job_id: job.id, status: job.status });
+				return;
+			}
+
+			const result = await internalCertificate.create(res.locals.access, payload);
+			res.status(201).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -113,7 +118,7 @@ router
 			}));
 
 			clean.sort((a, b) => a.name.localeCompare(b.name));
-			res.status(200).send(clean);
+			res.status(200).json(clean);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -149,7 +154,7 @@ router
 				res.locals.access,
 				payload,
 			);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -175,7 +180,7 @@ router
 	 */
 	.post(async (req, res, next) => {
 		if (!req.files) {
-			res.status(400).send({ error: "No files were uploaded" });
+			res.status(400).json({ error: "No files were uploaded" });
 			return;
 		}
 
@@ -183,7 +188,7 @@ router
 			const result = await internalCertificate.validate({
 				files: req.files,
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -234,7 +239,37 @@ router
 				id: Number.parseInt(data.certificate_id, 10),
 				expand: data.expand,
 			});
-			res.status(200).send(row);
+			res.status(200).json(row);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
+	 * PUT /api/nginx/certificates/123
+	 *
+	 * Update an existing certificate
+	 */
+	.put(async (req, res, next) => {
+		try {
+			const payload = await validator(
+				{
+					additionalProperties: false,
+					properties: {
+						nice_name: { type: "string" },
+						domain_names: {
+							type: "array",
+							items: { type: "string" },
+						},
+						meta: { type: "object" },
+					},
+				},
+				req.body,
+			);
+			payload.id = Number.parseInt(req.params.certificate_id, 10);
+			const result = await internalCertificate.update(res.locals.access, payload);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -244,14 +279,14 @@ router
 	/**
 	 * DELETE /api/nginx/certificates/123
 	 *
-	 * Update and existing certificate
+	 * Delete an existing certificate
 	 */
 	.delete(async (req, res, next) => {
 		try {
 			const result = await internalCertificate.delete(res.locals.access, {
 				id: Number.parseInt(req.params.certificate_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -277,7 +312,7 @@ router
 	 */
 	.post(async (req, res, next) => {
 		if (!req.files) {
-			res.status(400).send({ error: "No files were uploaded" });
+			res.status(400).json({ error: "No files were uploaded" });
 			return;
 		}
 
@@ -286,7 +321,7 @@ router
 				id: Number.parseInt(req.params.certificate_id, 10),
 				files: req.files,
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -313,10 +348,18 @@ router
 	.post(async (req, res, next) => {
 		req.setTimeout(900000); // 15 minutes timeout
 		try {
+			const certId = Number.parseInt(req.params.certificate_id, 10);
+
+			if (req.query.async === "true") {
+				const job = await internalJob.runCertificateRenew(res.locals.access, { id: certId });
+				res.status(202).json({ job_id: job.id, status: job.status });
+				return;
+			}
+
 			const result = await internalCertificate.renew(res.locals.access, {
-				id: Number.parseInt(req.params.certificate_id, 10),
+				id: certId,
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

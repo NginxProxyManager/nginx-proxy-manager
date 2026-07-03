@@ -1,7 +1,10 @@
 {
 	"operationId": "disableUser2fa",
 	"summary": "Disable 2fa for user",
-	"tags": ["users"],
+	"tags": [
+		"users"
+	],
+	"description": "Disables two-factor authentication for a user (requires administrative permission).",
 	"parameters": [
 		{
 			"in": "path",

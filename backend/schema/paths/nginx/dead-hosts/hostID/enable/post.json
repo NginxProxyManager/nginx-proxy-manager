@@ -1,12 +1,17 @@
 {
 	"operationId": "enableDeadHost",
 	"summary": "Enable a 404 Host",
-	"tags": ["404-hosts"],
+	"tags": [
+		"404-hosts"
+	],
 	"security": [
 		{
-			"bearerAuth": ["dead_hosts.manage"]
+			"bearerAuth": [
+				"dead_hosts.manage"
+			]
 		}
 	],
+	"description": "Enables a previously disabled 404 host and reloads nginx when required.",
 	"parameters": [
 		{
 			"in": "path",

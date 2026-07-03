@@ -1,7 +1,9 @@
 {
 	"operationId": "getProxyHost",
 	"summary": "Get a Proxy Host",
-	"tags": ["proxy-hosts"],
+	"tags": [
+		"proxy-hosts"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Returns one proxy host by id.",
 	"parameters": [
 		{
 			"in": "path",

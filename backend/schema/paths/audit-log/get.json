@@ -1,12 +1,17 @@
 {
 	"operationId": "getAuditLogs",
 	"summary": "Get Audit Logs",
-	"tags": ["audit-log"],
+	"tags": [
+		"audit-log"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
+	"description": "Returns paginated audit log entries for administrative review.",
 	"responses": {
 		"200": {
 			"description": "200 response",

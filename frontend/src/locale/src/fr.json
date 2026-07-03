@@ -772,5 +772,83 @@
 	},
 	"users": {
 		"defaultMessage": "Utilisateurs"
+	},
+	"api-key": {
+		"defaultMessage": "Clé API"
+	},
+	"api-keys": {
+		"defaultMessage": "Clés API d'automatisation"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Copiez cette clé maintenant — elle ne sera plus affichée."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Révoquer cette clé API ? Les automatisations qui l'utilisent cesseront de fonctionner."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Jetons Bearer (npmak_…) pour scripts et CI. Réservé aux administrateurs."
+	},
+	"credential": {
+		"defaultMessage": "Identifiants"
+	},
+	"credential-provider": {
+		"defaultMessage": "Fournisseur d'identifiants"
+	},
+	"credential-providers": {
+		"defaultMessage": "Stockages externes d'identifiants"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Connectez Vault, AWS Secrets Manager, Azure Key Vault ou Infisical via OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Tester l'OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Tester la récupération"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Chemin du secret"
+	},
+	"credentials": {
+		"defaultMessage": "Identifiants DNS"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Chemin du secret"
+	},
+	"credentials.source": {
+		"defaultMessage": "Source des identifiants"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Stockage externe (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Stockés dans le coffre NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Saisie manuelle (ponctuelle)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Identifiants enregistrés"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Chiffrés sur le volume /data et réutilisables pour les certificats DNS."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migrer les anciens identifiants DNS"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} certificat(s) déplaceraient les identifiants intégrés vers le coffre."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooks"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Secret de signature (vérification X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Callbacks HTTP signés lors des changements d'hôtes proxy ou de certificats."
 	}
 }

@@ -1,12 +1,17 @@
 {
 	"operationId": "testHttpReach",
 	"summary": "Test HTTP Reachability",
-	"tags": ["certificates"],
+	"tags": [
+		"certificates"
+	],
 	"security": [
 		{
-			"bearerAuth": ["certificates.view"]
+			"bearerAuth": [
+				"certificates.view"
+			]
 		}
 	],
+	"description": "Tests HTTP reachability for domain validation prior to certificate issuance.",
 	"requestBody": {
 		"description": "Test Payload",
 		"required": true,
@@ -15,7 +20,9 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["domains"],
+					"required": [
+						"domains"
+					],
 					"properties": {
 						"domains": {
 							"$ref": "../../../../common.json#/properties/domain_names"

@@ -1,12 +1,17 @@
 {
 	"operationId": "deleteStream",
 	"summary": "Delete a Stream",
-	"tags": ["streams"],
+	"tags": [
+		"streams"
+	],
 	"security": [
 		{
-			"bearerAuth": ["streams.manage"]
+			"bearerAuth": [
+				"streams.manage"
+			]
 		}
 	],
+	"description": "Deletes a stream by id.",
 	"parameters": [
 		{
 			"in": "path",

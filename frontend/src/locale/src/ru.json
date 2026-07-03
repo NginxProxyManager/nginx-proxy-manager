@@ -772,5 +772,83 @@
 	},
 	"users": {
 		"defaultMessage": "Пользователи"
+	},
+	"api-key": {
+		"defaultMessage": "API-ключ"
+	},
+	"api-keys": {
+		"defaultMessage": "API-ключи для автоматизации"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Скопируйте ключ сейчас — он больше не будет показан."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Отозвать этот API-ключ? Автоматизации, использующие его, перестанут работать."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer-токены (npmak_…) для скриптов и CI. Только для администраторов."
+	},
+	"credential": {
+		"defaultMessage": "Учётные данные"
+	},
+	"credential-provider": {
+		"defaultMessage": "Поставщик учётных данных"
+	},
+	"credential-providers": {
+		"defaultMessage": "Внешние хранилища учётных данных"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Подключите Vault, AWS Secrets Manager, Azure Key Vault или Infisical через OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Проверить OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Проверить получение"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Путь к секрету"
+	},
+	"credentials": {
+		"defaultMessage": "DNS-учётные данные"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Путь к секрету"
+	},
+	"credentials.source": {
+		"defaultMessage": "Источник учётных данных"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Внешнее хранилище (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "В хранилище секретов NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Ввести вручную (однократно)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Сохранённые учётные данные"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Шифруются на томе /data и повторно используются для DNS-сертификатов."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Миграция устаревших DNS-учётных данных"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} сертификат(ов) перенесёт встроенные учётные данные в хранилище."
+	},
+	"webhook": {
+		"defaultMessage": "Вебхук"
+	},
+	"webhooks": {
+		"defaultMessage": "Вебхуки"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Секрет подписи (для проверки X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Подписанные HTTP-уведомления при изменении прокси-хостов или сертификатов."
 	}
 }

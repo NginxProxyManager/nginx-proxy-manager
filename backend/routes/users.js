@@ -50,7 +50,10 @@ router
 				{
 					expand:
 						typeof req.query.expand === "string"
-							? req.query.expand.split(",")
+							? req.query.expand
+									.split(",")
+									.map((part) => part.trim())
+									.filter((part) => typeof part === "string" && part.length > 0)
 							: null,
 					query: typeof req.query.query === "string" ? req.query.query : null,
 				},
@@ -60,7 +63,7 @@ router
 				data.expand,
 				data.query,
 			);
-			res.status(200).send(users);
+			res.status(200).json(users);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -83,24 +86,26 @@ router
 				const access = new Access(null);
 				await access.load(true);
 				res.locals.access = access;
-
-				// We are in setup mode, set some defaults for this first new user, such as making
-				// them an admin.
 				body.is_disabled = false;
-				if (typeof body.roles !== "object" || body.roles === null) {
-					body.roles = [];
-				}
-				if (body.roles.indexOf("admin") === -1) {
-					body.roles.push("admin");
-				}
 			}
 
 			const payload = await apiValidator(
 				getValidationSchema("/users", "post"),
 				body,
 			);
+
+			if (!setup) {
+				const roles = Array.isArray(payload.roles)
+					? payload.roles.filter((role) => typeof role === "string")
+					: [];
+				if (!roles.includes("admin")) {
+					roles.push("admin");
+				}
+				payload.roles = roles;
+			}
+
 			const user = await internalUser.create(res.locals.access, payload);
-			res.status(201).send(user);
+			res.status(201).json(user);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -184,7 +189,7 @@ router
 					data.user_id,
 				),
 			});
-			res.status(200).send(user);
+			res.status(200).json(user);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -204,7 +209,7 @@ router
 			);
 			payload.id = req.params.user_id;
 			const result = await internalUser.update(res.locals.access, payload);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -221,7 +226,7 @@ router
 			const result = await internalUser.delete(res.locals.access, {
 				id: req.params.user_id,
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -254,7 +259,7 @@ router
 			);
 			payload.id = req.params.user_id;
 			const result = await internalUser.setPassword(res.locals.access, payload);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -290,7 +295,7 @@ router
 				res.locals.access,
 				payload,
 			);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -319,7 +324,7 @@ router
 			const result = await internalUser.loginAs(res.locals.access, {
 				id: Number.parseInt(req.params.user_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -347,7 +352,7 @@ router
 	.post(async (req, res, next) => {
 		try {
 			const result = await internal2FA.startSetup(res.locals.access, req.params.user_id);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -362,7 +367,7 @@ router
 	.get(async (req, res, next) => {
 		try {
 			const status = await internal2FA.getStatus(res.locals.access, req.params.user_id);
-			res.status(200).send(status);
+			res.status(200).json(status);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -413,7 +418,7 @@ router
 				req.body,
 			);
 			const result = await internal2FA.enable(res.locals.access, req.params.user_id, code);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -445,7 +450,7 @@ router
 				req.body,
 			);
 			const result = await internal2FA.regenerateBackupCodes(res.locals.access, req.params.user_id, code);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
