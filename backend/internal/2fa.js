@@ -160,15 +160,14 @@ const internal2fa = {
 			throw new errs.ValidationError("2FA is not enabled");
 		}
 
-		const result = await verify({
-            token: code,
-            secret: auth.meta.totp_secret,
-            guardrails: createGuardrails({
-                MIN_SECRET_BYTES: 10,
-            }),
-        });
+		// Accept either a TOTP code or one of the backup/recovery codes, using the
+		// same verification path as login. Passing a backup code straight to otplib's
+		// verify() throws ("Token must contain only digits"), which previously surfaced
+		// as an "Internal error" and left users who only had their recovery codes
+		// unable to disable 2FA (see #5451).
+		const valid = await internal2fa.verifyForLogin(userId, code);
 
-		if (!result.valid) {
+		if (!valid) {
 			throw new errs.AuthError("Invalid verification code");
 		}
 
