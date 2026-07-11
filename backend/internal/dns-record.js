@@ -15,7 +15,8 @@ export const diffDomains = (desired, existingRecords) => {
 	return { toCreate, toDelete };
 };
 
-const loadProvider = async (providerId) => dnsProviderModel.query().where("id", providerId).first();
+const loadProvider = async (providerId) =>
+	dnsProviderModel.query().where("id", providerId).where("is_deleted", 0).first();
 
 /**
  * Synchronises DNS A-records for a proxy host with its configured provider.

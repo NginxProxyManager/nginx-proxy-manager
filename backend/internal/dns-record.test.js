@@ -45,9 +45,8 @@ const provider = {
 };
 
 const mockProvider = () => {
-	dnsProviderModel.query.mockReturnValue({
-		where: () => ({ first: async () => provider }),
-	});
+	const chain = { where: () => chain, first: async () => provider };
+	dnsProviderModel.query.mockReturnValue(chain);
 };
 
 afterEach(() => vi.clearAllMocks());
