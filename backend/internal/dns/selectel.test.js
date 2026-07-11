@@ -112,4 +112,25 @@ describe("selectel driver", () => {
 		expect(res.ok).toBe(false);
 		expect(res.error).toBeTruthy();
 	});
+
+	it("reuses the cached token within its TTL (no second auth call)", async () => {
+		const fetchMock = vi
+			.fn()
+			// first authenticate
+			.mockResolvedValueOnce(jsonResponse({ token: { expires_at: "2999-01-01T00:00:00Z" } }))
+			// list zones for first createRecord-less call path: use listZones twice
+			.mockResolvedValue(jsonResponse({ result: [] }));
+		__setFetch(fetchMock);
+
+		const t1 = await selectel.authenticate(creds);
+		const t2 = await selectel.authenticate(creds);
+
+		expect(t1).toBe("TOKEN123");
+		expect(t2).toBe("TOKEN123");
+		// only ONE call to the identity endpoint despite two authenticate() calls
+		const authCalls = fetchMock.mock.calls.filter(
+			([url]) => url === "https://cloud.api.selectel.ru/identity/v3/auth/tokens",
+		);
+		expect(authCalls).toHaveLength(1);
+	});
 });
