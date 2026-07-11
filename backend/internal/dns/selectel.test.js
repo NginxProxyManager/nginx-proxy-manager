@@ -58,7 +58,7 @@ describe("selectel driver", () => {
 		const token = await selectel.authenticate(creds);
 		expect(token).toBe("TOKEN123");
 		expect(fetchMock).toHaveBeenCalledWith(
-			"https://cloud.api.selectel.ru/identity/v3/auth/tokens",
+			"https://cloud.api.selcloud.ru/identity/v3/auth/tokens",
 			expect.objectContaining({ method: "POST" }),
 		);
 	});
@@ -129,7 +129,7 @@ describe("selectel driver", () => {
 		expect(t2).toBe("TOKEN123");
 		// only ONE call to the identity endpoint despite two authenticate() calls
 		const authCalls = fetchMock.mock.calls.filter(
-			([url]) => url === "https://cloud.api.selectel.ru/identity/v3/auth/tokens",
+			([url]) => url === "https://cloud.api.selcloud.ru/identity/v3/auth/tokens",
 		);
 		expect(authCalls).toHaveLength(1);
 	});

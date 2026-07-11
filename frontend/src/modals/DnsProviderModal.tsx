@@ -140,6 +140,8 @@ const DnsProviderModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsTesting(true);
 		try {
 			const result = await testDnsProvider(id);
+			// Refresh the list so the persisted status column reflects this check.
+			queryClient.invalidateQueries({ queryKey: ["dns-record-providers"] });
 			if (result.ok) {
 				showSuccess(intl.formatMessage({ id: "dns-providers.test-connection.success" }));
 			} else {

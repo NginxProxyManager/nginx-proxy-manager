@@ -182,11 +182,18 @@ const internalDnsProvider = {
 		return access
 			.can("dns_providers:get", data.id)
 			.then(() => dnsProviderModel.query().where("is_deleted", 0).andWhere("id", data.id).first())
-			.then((row) => {
+			.then(async (row) => {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
-				return getDriver(row.type).testConnection(row.credentials);
+				const result = await getDriver(row.type).testConnection(row.credentials);
+				// Persist the last connection-check result so the list view can show a status.
+				const meta = _.assign({}, row.meta, {
+					last_check_ok: result.ok,
+					last_check_error: result.ok ? null : result.error || null,
+				});
+				await dnsProviderModel.query().where("id", row.id).patch({ meta });
+				return result;
 			});
 	},
 };

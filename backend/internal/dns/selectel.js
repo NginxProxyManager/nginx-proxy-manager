@@ -20,7 +20,7 @@ export const resolveZone = (domain, zones) => {
 	return best;
 };
 
-const IDENTITY_URL = "https://cloud.api.selectel.ru/identity/v3/auth/tokens";
+const IDENTITY_URL = "https://cloud.api.selcloud.ru/identity/v3/auth/tokens";
 const DNS_BASE = "https://api.selectel.ru/domains/v2";
 
 // injectable fetch for tests
