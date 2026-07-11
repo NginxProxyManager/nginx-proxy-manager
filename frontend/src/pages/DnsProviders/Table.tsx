@@ -38,6 +38,9 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor((row: any) => row.meta, {
 				id: "status",
 				header: intl.formatMessage({ id: "column.status" }),
+				// Status is derived from meta.lastCheckOk, which the backend does not
+				// yet persist. This column is forward-compatible and will render as
+				// "—" for every row until a later backend task starts writing it.
 				cell: (info: any) => {
 					const meta = info.getValue() || {};
 					if (typeof meta.lastCheckOk === "boolean") {

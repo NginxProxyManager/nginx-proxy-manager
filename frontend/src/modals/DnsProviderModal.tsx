@@ -104,7 +104,6 @@ const DnsProviderModal = EasyModal.create(({ id, visible, remove }: Props) => {
 
 		const payload: DnsProvider = {
 			id: id === "new" ? undefined : id,
-			ownerUserId: values.ownerUserId,
 			name: values.name,
 			type: values.type,
 			defaultIp: values.defaultIp,
