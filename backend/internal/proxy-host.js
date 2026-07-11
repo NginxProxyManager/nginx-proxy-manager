@@ -86,18 +86,21 @@ const internalProxyHost = {
 			})
 			.then((row) => {
 				// Configure nginx
-				return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
+				return internalNginx.configure(proxyHostModel, "proxy_host", row).then((new_meta) => {
+					row.meta = new_meta;
 					return row;
 				});
 			})
 			.then(async (row) => {
 				// Sync DNS records (never blocks host creation)
 				const dnsMeta = await internalDnsRecord.sync(row);
-				await proxyHostModel
-					.query()
-					.where("id", row.id)
-					.patch({ meta: _.assign({}, row.meta, dnsMeta) });
-				row.meta = _.assign({}, row.meta, dnsMeta);
+				const mergedMeta = _.assign({}, row.meta, dnsMeta);
+				try {
+					await proxyHostModel.query().where("id", row.id).patch({ meta: mergedMeta });
+				} catch (_err) {
+					// meta persistence is best-effort; host and nginx are already updated
+				}
+				row.meta = mergedMeta;
 				return row;
 			})
 			.then((row) => {
@@ -229,11 +232,13 @@ const internalProxyHost = {
 							row.meta = new_meta;
 							// Sync DNS records (never blocks host update)
 							const dnsMeta = await internalDnsRecord.sync(row);
-							await proxyHostModel
-								.query()
-								.where("id", row.id)
-								.patch({ meta: _.assign({}, row.meta, dnsMeta) });
-							row.meta = _.assign({}, row.meta, dnsMeta);
+							const mergedMeta = _.assign({}, row.meta, dnsMeta);
+							try {
+								await proxyHostModel.query().where("id", row.id).patch({ meta: mergedMeta });
+							} catch (_err) {
+								// meta persistence is best-effort; host and nginx are already updated
+							}
+							row.meta = mergedMeta;
 							return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
 						});
 					});
