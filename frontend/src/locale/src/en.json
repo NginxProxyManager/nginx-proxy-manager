@@ -354,7 +354,7 @@
 		"defaultMessage": "Leave the credential fields blank to keep the currently saved credentials"
 	},
 	"dns-providers.credentials.help": {
-		"defaultMessage": "These credentials are stored encrypted and are never shown again after saving"
+		"defaultMessage": "Credentials are write-only — they are never shown again after saving. Leave blank when editing to keep the existing values."
 	},
 	"dns-providers.credentials.password": {
 		"defaultMessage": "Password"

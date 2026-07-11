@@ -39,6 +39,7 @@
 						"credentials": {
 							"type": "object",
 							"additionalProperties": false,
+							"required": ["account_id", "project_name", "username", "password"],
 							"properties": {
 								"account_id": {
 									"type": "string",
