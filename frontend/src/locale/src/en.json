@@ -332,6 +332,63 @@
 	"disabled": {
 		"defaultMessage": "Disabled"
 	},
+	"dns-provider": {
+		"defaultMessage": "DNS Provider"
+	},
+	"dns-providers": {
+		"defaultMessage": "DNS Providers"
+	},
+	"dns-providers.credentials": {
+		"defaultMessage": "Credentials"
+	},
+	"dns-providers.credentials.account-id": {
+		"defaultMessage": "Account ID"
+	},
+	"dns-providers.credentials.edit-note": {
+		"defaultMessage": "Leave the credential fields blank to keep the currently saved credentials"
+	},
+	"dns-providers.credentials.help": {
+		"defaultMessage": "These credentials are stored encrypted and are never shown again after saving"
+	},
+	"dns-providers.credentials.password": {
+		"defaultMessage": "Password"
+	},
+	"dns-providers.credentials.project-name": {
+		"defaultMessage": "Project Name"
+	},
+	"dns-providers.credentials.username": {
+		"defaultMessage": "Username"
+	},
+	"dns-providers.default-ip": {
+		"defaultMessage": "Default IP"
+	},
+	"dns-providers.default-ip.help": {
+		"defaultMessage": "The IP address used by default for new DNS records created through this provider"
+	},
+	"dns-providers.status.failed": {
+		"defaultMessage": "Failed"
+	},
+	"dns-providers.status.ok": {
+		"defaultMessage": "OK"
+	},
+	"dns-providers.test-connection": {
+		"defaultMessage": "Test connection"
+	},
+	"dns-providers.test-connection.failed": {
+		"defaultMessage": "Connection failed: {error}"
+	},
+	"dns-providers.test-connection.success": {
+		"defaultMessage": "Connection successful"
+	},
+	"dns-providers.ttl": {
+		"defaultMessage": "TTL (seconds)"
+	},
+	"dns-providers.type": {
+		"defaultMessage": "Provider Type"
+	},
+	"dns-providers.type.selectel": {
+		"defaultMessage": "Selectel"
+	},
 	"domain-names": {
 		"defaultMessage": "Domain Names"
 	},
@@ -394,6 +451,9 @@
 	},
 	"error.invalid-email": {
 		"defaultMessage": "Invalid email address"
+	},
+	"error.invalid-ip": {
+		"defaultMessage": "Invalid IPv4 address"
 	},
 	"error.max-character-length": {
 		"defaultMessage": "Maximum length is {max} character{max, plural, one {} other {s}}"
