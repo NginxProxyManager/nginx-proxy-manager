@@ -1,0 +1,776 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "剩餘備用碼：{count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "請將這些備用碼存放在安全的地方。每個備用碼都只能使用一次。"
+	},
+	"2fa.disable": {
+		"defaultMessage": "停用雙因素驗證"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "停用 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "停用雙因素驗證會降低帳號的安全性。"
+	},
+	"2fa.disabled": {
+		"defaultMessage": "已停用"
+	},
+	"2fa.done": {
+		"defaultMessage": "我已儲存備用碼"
+	},
+	"2fa.enable": {
+		"defaultMessage": "啟用雙因素驗證"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "已啟用"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "輸入驗證碼"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "輸入驗證碼以停用"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "重新產生"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "重新產生備用碼"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "請輸入驗證碼以產生新的備用碼。舊的備用碼將會失效。"
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "祕密金鑰"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "請用驗證器 App 掃描此 QR Code，或手動輸入祕密金鑰。"
+	},
+	"2fa.status": {
+		"defaultMessage": "狀態"
+	},
+	"2fa.title": {
+		"defaultMessage": "雙因素驗證"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "驗證並啟用"
+	},
+	"access-list": {
+		"defaultMessage": "存取清單"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} 條規則"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} 位使用者"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "當至少有 1 條規則時，系統會在最後加入一條「拒絕全部」規則"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "允許與拒絕規則會依照設定順序套用。"
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "將驗證資訊傳送至上游伺服器"
+	},
+	"access-list.public": {
+		"defaultMessage": "可公開存取"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "不需要基本驗證"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 或 192.168.1.0/24 或 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "符合任一條件即可"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} 位使用者，{rules} 條規則，建立於 {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "存取清單"
+	},
+	"action.add": {
+		"defaultMessage": "新增"
+	},
+	"action.add-location": {
+		"defaultMessage": "新增路徑"
+	},
+	"action.allow": {
+		"defaultMessage": "允許"
+	},
+	"action.close": {
+		"defaultMessage": "關閉"
+	},
+	"action.delete": {
+		"defaultMessage": "刪除"
+	},
+	"action.deny": {
+		"defaultMessage": "拒絕"
+	},
+	"action.disable": {
+		"defaultMessage": "停用"
+	},
+	"action.download": {
+		"defaultMessage": "下載"
+	},
+	"action.edit": {
+		"defaultMessage": "編輯"
+	},
+	"action.enable": {
+		"defaultMessage": "啟用"
+	},
+	"action.permissions": {
+		"defaultMessage": "權限"
+	},
+	"action.renew": {
+		"defaultMessage": "續期"
+	},
+	"action.view-details": {
+		"defaultMessage": "查看詳細資訊"
+	},
+	"auditlogs": {
+		"defaultMessage": "稽核紀錄"
+	},
+	"auto": {
+		"defaultMessage": "自動"
+	},
+	"cancel": {
+		"defaultMessage": "取消"
+	},
+	"certificate": {
+		"defaultMessage": "憑證"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "憑證"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "憑證私鑰"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "中繼憑證"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "使用中"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "未指派憑證"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "此主機不會使用 HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "無"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "未使用"
+	},
+	"certificate.renew": {
+		"defaultMessage": "續期憑證"
+	},
+	"certificates": {
+		"defaultMessage": "憑證"
+	},
+	"certificates.custom": {
+		"defaultMessage": "自訂憑證"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "不支援受密碼片語保護的私鑰檔案。"
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "驗證資料檔案內容"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "這個外掛需要一份設定檔，其中包含 API 權杖或服務供應商要求的其他驗證資料。"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "這些資料會以純文字儲存在資料庫與檔案中！"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "DNS 傳播時間（秒）"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "留空即可使用外掛的預設值。此欄位代表等待 DNS 傳播的秒數。"
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS 服務供應商"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "選擇服務供應商…"
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "這部分需要具備一些 Certbot 與 DNS 外掛的相關知識。請參閱對應外掛的官方文件。"
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "此網域有伺服器回應，但似乎不是 Nginx Proxy Manager。請確認網域已指向執行 NPM 的 IP 位址。"
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "由於與 site24x7.com 通訊時發生錯誤，無法檢查是否可連線。"
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "此網域沒有伺服器回應。請確認網域存在，並指向執行 NPM 的 IP 位址；如有需要，請在路由器上轉送連接埠 80。"
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "可以連線到您的伺服器，應可正常申請憑證。"
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "此網域有伺服器回應，但傳回了未預期的狀態碼 {code}。該伺服器是 NPM 嗎？請確認網域已指向執行 NPM 的 IP 位址。"
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "此網域有伺服器回應，但傳回了未預期的資料。該伺服器是 NPM 嗎？請確認網域已指向執行 NPM 的 IP 位址。"
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "測試結果"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "這些網域必須已設定為指向目前這套 Nginx Proxy Manager。"
+	},
+	"certificates.key-type": {
+		"defaultMessage": "金鑰類型"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA 相容性較廣；ECDSA 速度較快且更安全，但較舊的系統可能不支援。"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "使用 Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "申請新憑證"
+	},
+	"column.access": {
+		"defaultMessage": "存取規則"
+	},
+	"column.authorization": {
+		"defaultMessage": "驗證帳號"
+	},
+	"column.authorizations": {
+		"defaultMessage": "驗證帳號"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "自訂路徑"
+	},
+	"column.destination": {
+		"defaultMessage": "目的地"
+	},
+	"column.details": {
+		"defaultMessage": "詳細資訊"
+	},
+	"column.email": {
+		"defaultMessage": "電子郵件"
+	},
+	"column.event": {
+		"defaultMessage": "事件"
+	},
+	"column.expires": {
+		"defaultMessage": "到期時間"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP 狀態碼"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "連入連接埠"
+	},
+	"column.name": {
+		"defaultMessage": "名稱"
+	},
+	"column.protocol": {
+		"defaultMessage": "通訊協定"
+	},
+	"column.provider": {
+		"defaultMessage": "服務供應商"
+	},
+	"column.roles": {
+		"defaultMessage": "角色"
+	},
+	"column.rules": {
+		"defaultMessage": "規則"
+	},
+	"column.satisfy": {
+		"defaultMessage": "條件"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "全部"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "任一"
+	},
+	"column.scheme": {
+		"defaultMessage": "通訊協定"
+	},
+	"column.source": {
+		"defaultMessage": "來源"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "狀態"
+	},
+	"created-on": {
+		"defaultMessage": "建立時間：{date}"
+	},
+	"dashboard": {
+		"defaultMessage": "儀表板"
+	},
+	"dead-host": {
+		"defaultMessage": "404 主機"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 主機"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} 個 404 主機"
+	},
+	"disabled": {
+		"defaultMessage": "已停用"
+	},
+	"domain-names": {
+		"defaultMessage": "網域名稱"
+	},
+	"domain-names.max": {
+		"defaultMessage": "最多可使用 {count} 個網域名稱"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "輸入網域名稱以新增…"
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "此類型不允許使用萬用字元"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "此憑證授權單位不支援萬用字元"
+	},
+	"domains.advanced": {
+		"defaultMessage": "進階"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "強制使用 SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "啟用 HSTS"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS 子網域"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "支援 HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "信任上游代理傳來的 X-Forwarded-Proto／X-Forwarded-Scheme 標頭"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "使用 DNS 驗證"
+	},
+	"email-address": {
+		"defaultMessage": "電子郵件地址"
+	},
+	"empty-search": {
+		"defaultMessage": "找不到結果"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "現在就建立一個吧。"
+	},
+	"enabled": {
+		"defaultMessage": "已啟用"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "至少需要一個驗證帳號或一條存取規則"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "驗證帳號的使用者名稱不可重複"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "電子郵件地址或密碼無效"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "網域無效：{domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "電子郵件地址無效"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "長度不可超過 {max} 個字元"
+	},
+	"error.max-domains": {
+		"defaultMessage": "網域數量過多，最多為 {max} 個"
+	},
+	"error.maximum": {
+		"defaultMessage": "不可大於 {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "長度不得少於 {min} 個字元"
+	},
+	"error.minimum": {
+		"defaultMessage": "不可小於 {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "兩次輸入的密碼必須相同"
+	},
+	"error.required": {
+		"defaultMessage": "此欄位為必填"
+	},
+	"expires.on": {
+		"defaultMessage": "到期時間：{date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "在 GitHub 上 Fork 本專案"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "阻擋常見攻擊"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "快取靜態資源"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "保留路徑"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "通訊協定"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "WebSocket 支援"
+	},
+	"host.forward-port": {
+		"defaultMessage": "轉送連接埠"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "通訊協定"
+	},
+	"hosts": {
+		"defaultMessage": "主機"
+	},
+	"http-only": {
+		"defaultMessage": "僅限 HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt（DNS 驗證）"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt（HTTP 驗證）"
+	},
+	"loading": {
+		"defaultMessage": "載入中…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "驗證碼"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "輸入驗證碼"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "請輸入驗證器 App 顯示的驗證碼"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "雙因素驗證"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "驗證"
+	},
+	"login.title": {
+		"defaultMessage": "登入您的帳號"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "自訂 Nginx 設定"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# 在此輸入自訂 Nginx 設定，風險自負！"
+	},
+	"no-permission-error": {
+		"defaultMessage": "您沒有權限查看此內容。"
+	},
+	"notfound.action": {
+		"defaultMessage": "回到首頁"
+	},
+	"notfound.content": {
+		"defaultMessage": "很抱歉，找不到您要查看的頁面。"
+	},
+	"notfound.title": {
+		"defaultMessage": "糟糕…您找到了一個錯誤頁面"
+	},
+	"notification.error": {
+		"defaultMessage": "錯誤"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} 已刪除"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} 已停用"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} 已啟用"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} 已續期"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} 已儲存"
+	},
+	"notification.success": {
+		"defaultMessage": "成功"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "新增 {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "刪除 {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "確定要刪除 {object} 嗎？"
+	},
+	"object.edit": {
+		"defaultMessage": "編輯 {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "目前沒有 {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "已建立 {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "已刪除 {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "已停用 {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "已啟用 {object}"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "已續期 {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "已更新 {object}"
+	},
+	"offline": {
+		"defaultMessage": "離線"
+	},
+	"online": {
+		"defaultMessage": "線上"
+	},
+	"options": {
+		"defaultMessage": "選項"
+	},
+	"password": {
+		"defaultMessage": "密碼"
+	},
+	"password.generate": {
+		"defaultMessage": "產生隨機密碼"
+	},
+	"password.hide": {
+		"defaultMessage": "隱藏密碼"
+	},
+	"password.show": {
+		"defaultMessage": "顯示密碼"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "隱藏"
+	},
+	"permissions.manage": {
+		"defaultMessage": "管理"
+	},
+	"permissions.view": {
+		"defaultMessage": "僅供查看"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "所有項目"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "項目可見範圍"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "僅限自己建立的項目"
+	},
+	"proxy-host": {
+		"defaultMessage": "代理主機"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "轉送主機名稱 / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "代理主機"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} 個代理主機"
+	},
+	"public": {
+		"defaultMessage": "公開"
+	},
+	"redirection-host": {
+		"defaultMessage": "重新導向主機"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "轉送網域"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP 狀態碼"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "重新導向主機"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} 個重新導向主機"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 多重選擇"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 永久移動"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 暫時移動"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 查看其他位置"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 暫時重新導向"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 永久重新導向"
+	},
+	"role.admin": {
+		"defaultMessage": "管理員"
+	},
+	"role.standard-user": {
+		"defaultMessage": "一般使用者"
+	},
+	"save": {
+		"defaultMessage": "儲存"
+	},
+	"setting": {
+		"defaultMessage": "設定"
+	},
+	"settings": {
+		"defaultMessage": "設定"
+	},
+	"settings.default-site": {
+		"defaultMessage": "預設網站"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 頁面"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "無回應（444）"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "歡迎頁面"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Nginx 收到未知主機的請求時顯示的內容"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "自訂 HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- 在此輸入自訂 HTML 內容 -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "重新導向"
+	},
+	"setup.preamble": {
+		"defaultMessage": "建立管理員帳號即可開始使用。"
+	},
+	"setup.title": {
+		"defaultMessage": "歡迎！"
+	},
+	"sign-in": {
+		"defaultMessage": "登入"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL 憑證"
+	},
+	"stream": {
+		"defaultMessage": "連接埠轉送"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "轉送主機"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com 或 10.0.0.1 或 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "連入連接埠"
+	},
+	"streams": {
+		"defaultMessage": "連接埠轉送"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} 組連接埠轉送"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "測試"
+	},
+	"update-available": {
+		"defaultMessage": "有新版本可用：{latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "使用者"
+	},
+	"user.change-password": {
+		"defaultMessage": "變更密碼"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "確認密碼"
+	},
+	"user.current-password": {
+		"defaultMessage": "目前密碼"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "編輯個人資料"
+	},
+	"user.full-name": {
+		"defaultMessage": "姓名"
+	},
+	"user.login-as": {
+		"defaultMessage": "以 {name} 身分登入"
+	},
+	"user.logout": {
+		"defaultMessage": "登出"
+	},
+	"user.new-password": {
+		"defaultMessage": "新密碼"
+	},
+	"user.nickname": {
+		"defaultMessage": "暱稱"
+	},
+	"user.set-password": {
+		"defaultMessage": "設定密碼"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "設定 {name} 的權限"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "切換至深色模式"
+	},
+	"user.switch-light": {
+		"defaultMessage": "切換至淺色模式"
+	},
+	"user.two-factor": {
+		"defaultMessage": "雙因素驗證"
+	},
+	"username": {
+		"defaultMessage": "使用者名稱"
+	},
+	"users": {
+		"defaultMessage": "使用者"
+	}
+}
