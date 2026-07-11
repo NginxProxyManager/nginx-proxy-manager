@@ -19,6 +19,7 @@ const Dashboard = lazy(() => import("src/pages/Dashboard"));
 const Settings = lazy(() => import("src/pages/Settings"));
 const Certificates = lazy(() => import("src/pages/Certificates"));
 const Access = lazy(() => import("src/pages/Access"));
+const DnsProviders = lazy(() => import("src/pages/DnsProviders"));
 const AuditLog = lazy(() => import("src/pages/AuditLog"));
 const Users = lazy(() => import("src/pages/Users"));
 const ProxyHosts = lazy(() => import("src/pages/Nginx/ProxyHosts"));
@@ -63,6 +64,7 @@ function Router() {
 							<Route path="*" element={<ErrorNotFound />} />
 							<Route path="/certificates" element={<Certificates />} />
 							<Route path="/access" element={<Access />} />
+							<Route path="/dns-providers" element={<DnsProviders />} />
 							<Route path="/audit-log" element={<AuditLog />} />
 							<Route path="/settings" element={<Settings />} />
 							<Route path="/users" element={<Users />} />

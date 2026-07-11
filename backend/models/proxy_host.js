@@ -6,6 +6,7 @@ import db from "../db.js";
 import { castJsonIfNeed, convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
 import AccessList from "./access_list.js";
 import Certificate from "./certificate.js";
+import DnsProvider from "./dns_provider.js";
 import now from "./now_helper.js";
 import User from "./user.js";
 
@@ -74,7 +75,7 @@ class ProxyHost extends Model {
 	}
 
 	static get defaultAllowGraph() {
-		return "[owner,access_list.[clients,items],certificate]";
+		return "[owner,access_list.[clients,items],certificate,dns_provider]";
 	}
 
 	static get defaultExpand() {
@@ -118,6 +119,17 @@ class ProxyHost extends Model {
 				},
 				modify: (qb) => {
 					qb.where("certificate.is_deleted", 0);
+				},
+			},
+			dns_provider: {
+				relation: Model.HasOneRelation,
+				modelClass: DnsProvider,
+				join: {
+					from: "proxy_host.dns_provider_id",
+					to: "dns_provider.id",
+				},
+				modify: (qb) => {
+					qb.where("dns_provider.is_deleted", 0);
 				},
 			},
 		};

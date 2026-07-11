@@ -8,6 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import {
 	AccessField,
 	Button,
+	DnsProviderField,
 	DomainNamesField,
 	HasPermission,
 	Loading,
@@ -35,6 +36,26 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { mutate: setProxyHost } = useSetProxyHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const dnsStatusBadge = (() => {
+		if (!data?.dnsProviderId) return null;
+		const meta = data?.meta || {};
+		if (meta.dnsSynced === true) {
+			return (
+				<span className="badge bg-lime-lt text-lime ms-2">
+					<T id="dns-status.synced" />
+				</span>
+			);
+		}
+		if (meta.dnsErr) {
+			return (
+				<span className="badge bg-red-lt text-red ms-2" title={meta.dnsErr}>
+					<T id="dns-status.error" />
+				</span>
+			);
+		}
+		return null;
+	})();
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
@@ -77,6 +98,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							forwardHost: data?.forwardHost || "",
 							forwardPort: data?.forwardPort || undefined,
 							accessListId: data?.accessListId || 0,
+							dnsProviderId: data?.dnsProviderId || 0,
 							cachingEnabled: data?.cachingEnabled || false,
 							blockExploits: data?.blockExploits || false,
 							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
@@ -254,6 +276,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													</div>
 												</div>
 												<AccessField />
+												<DnsProviderField statusBadge={dnsStatusBadge} />
 												<div className="my-3">
 													<h4 className="py-2">
 														<T id="options" />

@@ -1,0 +1,97 @@
+import { IconSearch } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import Alert from "react-bootstrap/Alert";
+import { deleteDnsProvider, type DnsProvider, getDnsProviders } from "src/api/backend";
+import { Button, LoadingPage } from "src/components";
+import { T } from "src/locale";
+import { showDeleteConfirmModal, showDnsProviderModal } from "src/modals";
+import { showObjectSuccess } from "src/notifications";
+import Table from "./Table";
+
+export default function TableWrapper() {
+	const [search, setSearch] = useState("");
+	const { isFetching, isLoading, isError, error, data } = useQuery<DnsProvider[], Error>({
+		queryKey: ["dns-record-providers"],
+		queryFn: () => getDnsProviders(),
+		staleTime: 60 * 1000,
+	});
+
+	if (isLoading) {
+		return <LoadingPage />;
+	}
+
+	if (isError) {
+		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
+	}
+
+	const handleDelete = async (id: number) => {
+		await deleteDnsProvider(id);
+		showObjectSuccess("dns-provider", "deleted");
+	};
+
+	let filtered = null;
+	if (search && data) {
+		filtered = data?.filter((item) => {
+			return item.name.toLowerCase().includes(search);
+		});
+	} else if (search !== "") {
+		// this can happen if someone deletes the last item while searching
+		setSearch("");
+	}
+
+	return (
+		<div className="card mt-4">
+			<div className="card-status-top bg-teal" />
+			<div className="card-table">
+				<div className="card-header">
+					<div className="row w-full">
+						<div className="col">
+							<h2 className="mt-1 mb-0">
+								<T id="dns-providers" />
+							</h2>
+						</div>
+
+						{data?.length ? (
+							<div className="col-md-auto col-sm-12">
+								<div className="ms-auto d-flex flex-wrap btn-list">
+									<div className="input-group input-group-flat w-auto">
+										<span className="input-group-text input-group-text-sm">
+											<IconSearch size={16} />
+										</span>
+										<input
+											id="advanced-table-search"
+											type="text"
+											className="form-control form-control-sm"
+											autoComplete="off"
+											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
+										/>
+									</div>
+
+									<Button size="sm" className="btn-teal" onClick={() => showDnsProviderModal("new")}>
+										<T id="object.add" tData={{ object: "dns-provider" }} />
+									</Button>
+								</div>
+							</div>
+						) : null}
+					</div>
+				</div>
+				<Table
+					data={filtered ?? data ?? []}
+					isFetching={isFetching}
+					isFiltered={!!filtered}
+					onEdit={(id: number) => showDnsProviderModal(id)}
+					onDelete={(id: number) =>
+						showDeleteConfirmModal({
+							title: <T id="object.delete" tData={{ object: "dns-provider" }} />,
+							onConfirm: () => handleDelete(id),
+							invalidations: [["dns-record-providers"], ["dns-provider", id]],
+							children: <T id="object.delete.content" tData={{ object: "dns-provider" }} />,
+						})
+					}
+					onNew={() => showDnsProviderModal("new")}
+				/>
+			</div>
+		</div>
+	);
+}

@@ -1,0 +1,40 @@
+{
+	"operationId": "deleteDnsProvider",
+	"summary": "Delete a DNS Provider",
+	"tags": ["dns-providers"],
+	"security": [
+		{
+			"bearerAuth": ["dns_providers.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"description": "DNS Provider ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

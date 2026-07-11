@@ -85,6 +85,10 @@
 						},
 						"locations": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/locations"
+						},
+						"dns_provider_id": {
+							"type": "integer",
+							"minimum": 0
 						}
 					}
 				}

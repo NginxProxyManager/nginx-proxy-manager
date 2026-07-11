@@ -33,6 +33,10 @@
 			"description": "Endpoints related to Certificates"
 		},
 		{
+			"name": "dns-providers",
+			"description": "Endpoints related to DNS Providers"
+		},
+		{
 			"name": "404-hosts",
 			"description": "Endpoints related to 404 Hosts"
 		},
@@ -98,6 +102,30 @@
 			},
 			"delete": {
 				"$ref": "./paths/nginx/access-lists/listID/delete.json"
+			}
+		},
+		"/nginx/dns-providers": {
+			"get": {
+				"$ref": "./paths/nginx/dns-providers/get.json"
+			},
+			"post": {
+				"$ref": "./paths/nginx/dns-providers/post.json"
+			}
+		},
+		"/nginx/dns-providers/{providerID}": {
+			"get": {
+				"$ref": "./paths/nginx/dns-providers/providerID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/nginx/dns-providers/providerID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/dns-providers/providerID/delete.json"
+			}
+		},
+		"/nginx/dns-providers/{providerID}/test": {
+			"get": {
+				"$ref": "./paths/nginx/dns-providers/providerID/test/get.json"
 			}
 		},
 		"/nginx/certificates": {

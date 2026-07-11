@@ -1,0 +1,58 @@
+{
+	"operationId": "testDnsProvider",
+	"summary": "Test a DNS Provider connection",
+	"tags": ["dns-providers"],
+	"security": [
+		{
+			"bearerAuth": ["dns_providers.view"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"description": "DNS Provider ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"ok": true
+							}
+						},
+						"failure": {
+							"value": {
+								"ok": false,
+								"error": "Authentication failed"
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["ok"],
+						"properties": {
+							"ok": {
+								"type": "boolean"
+							},
+							"error": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
