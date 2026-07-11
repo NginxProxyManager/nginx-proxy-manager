@@ -208,3 +208,26 @@ export interface DNSProvider {
 	name: string;
 	credentials: string;
 }
+
+export interface DnsProviderCredentials {
+	accountId: string;
+	projectName: string;
+	username: string;
+	password: string;
+}
+
+export interface DnsProvider {
+	id?: number;
+	createdOn?: string;
+	modifiedOn?: string;
+	ownerUserId: number;
+	name: string;
+	type: "selectel";
+	credentials?: DnsProviderCredentials;
+	defaultIp: string;
+	ttl?: number;
+	meta?: Record<string, any>;
+	// Expansions:
+	owner?: User;
+	proxyHosts?: ProxyHost[];
+}
