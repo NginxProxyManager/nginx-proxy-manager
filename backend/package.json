@@ -9,6 +9,7 @@
 	"scripts": {
 		"lint": "biome lint",
 		"prettier": "biome format --write .",
+		"test": "vitest run",
 		"validate-schema": "node validate-schema.js",
 		"regenerate-config": "node scripts/regenerate-config"
 	},
@@ -44,7 +45,8 @@
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^12.1.0",
 		"@biomejs/biome": "^2.4.15",
-		"nodemon": "^3.1.14"
+		"nodemon": "^3.1.14",
+		"vitest": "^4.1.8"
 	},
 	"signale": {
 		"displayDate": true,
