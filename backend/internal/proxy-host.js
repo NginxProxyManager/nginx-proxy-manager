@@ -5,6 +5,7 @@ import utils from "../lib/utils.js";
 import proxyHostModel from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
+import internalDnsRecord from "./dns-record.js";
 import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
 
@@ -88,6 +89,16 @@ const internalProxyHost = {
 				return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
 					return row;
 				});
+			})
+			.then(async (row) => {
+				// Sync DNS records (never blocks host creation)
+				const dnsMeta = await internalDnsRecord.sync(row);
+				await proxyHostModel
+					.query()
+					.where("id", row.id)
+					.patch({ meta: _.assign({}, row.meta, dnsMeta) });
+				row.meta = _.assign({}, row.meta, dnsMeta);
+				return row;
 			})
 			.then((row) => {
 				// Audit log
@@ -214,8 +225,15 @@ const internalProxyHost = {
 							return row;
 						}
 						// Configure nginx
-						return internalNginx.configure(proxyHostModel, "proxy_host", row).then((new_meta) => {
+						return internalNginx.configure(proxyHostModel, "proxy_host", row).then(async (new_meta) => {
 							row.meta = new_meta;
+							// Sync DNS records (never blocks host update)
+							const dnsMeta = await internalDnsRecord.sync(row);
+							await proxyHostModel
+								.query()
+								.where("id", row.id)
+								.patch({ meta: _.assign({}, row.meta, dnsMeta) });
+							row.meta = _.assign({}, row.meta, dnsMeta);
 							return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
 						});
 					});
@@ -303,6 +321,10 @@ const internalProxyHost = {
 							object_id: row.id,
 							meta: _.omit(row, omissions()),
 						});
+					})
+					.then(() => {
+						// Remove DNS records (never blocks host deletion)
+						return internalDnsRecord.cleanup(row);
 					});
 			})
 			.then(() => {
