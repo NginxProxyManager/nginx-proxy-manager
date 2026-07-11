@@ -6,6 +6,7 @@ import {
 	IconSettings,
 	IconShield,
 	IconUser,
+	IconWorld,
 } from "@tabler/icons-react";
 import cn from "classnames";
 import React from "react";
@@ -82,6 +83,12 @@ const menuItems: MenuItem[] = [
 		label: "certificates",
 		permissionSection: CERTIFICATES,
 		permission: VIEW,
+	},
+	{
+		to: "/dns-providers",
+		icon: IconWorld,
+		label: "dns-providers",
+		permissionSection: ADMIN,
 	},
 	{
 		to: "/users",

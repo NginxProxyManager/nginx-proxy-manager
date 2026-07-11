@@ -2,6 +2,7 @@ export * from "./AccessClientFields";
 export * from "./AccessField";
 export * from "./BasicAuthFields";
 export * from "./DNSProviderFields";
+export * from "./DnsProviderField";
 export * from "./DomainNamesField";
 export * from "./LocationsFields";
 export * from "./NginxConfigField";

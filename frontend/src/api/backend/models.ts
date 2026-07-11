@@ -116,6 +116,7 @@ export interface ProxyHost {
 	forwardPort: number;
 	accessListId: number;
 	certificateId: number;
+	dnsProviderId?: number;
 	sslForced: boolean;
 	cachingEnabled: boolean;
 	blockExploits: boolean;
@@ -132,6 +133,7 @@ export interface ProxyHost {
 	owner?: User;
 	accessList?: AccessList;
 	certificate?: Certificate;
+	dnsProvider?: DnsProvider;
 }
 
 export interface DeadHost {
@@ -207,4 +209,27 @@ export interface DNSProvider {
 	id: string;
 	name: string;
 	credentials: string;
+}
+
+export interface DnsProviderCredentials {
+	accountId: string;
+	projectName: string;
+	username: string;
+	password: string;
+}
+
+export interface DnsProvider {
+	id?: number;
+	createdOn?: string;
+	modifiedOn?: string;
+	ownerUserId: number;
+	name: string;
+	type: "selectel";
+	credentials?: DnsProviderCredentials;
+	defaultIp: string;
+	ttl?: number;
+	meta?: Record<string, any>;
+	// Expansions:
+	owner?: User;
+	proxyHosts?: ProxyHost[];
 }

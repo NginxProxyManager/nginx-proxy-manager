@@ -39,6 +39,21 @@ const validateNumber = (min = -1, max = -1) => {
 	};
 };
 
+const validateIPv4 = () => {
+	return (value: string): string | undefined => {
+		if (typeof value === "undefined" || !value.trim().length) {
+			return intl.formatMessage({ id: "error.required" });
+		}
+		const parts = value.trim().split(".");
+		const isValid =
+			parts.length === 4 &&
+			parts.every((part) => /^\d{1,3}$/.test(part) && Number(part) >= 0 && Number(part) <= 255);
+		if (!isValid) {
+			return intl.formatMessage({ id: "error.invalid-ip" });
+		}
+	};
+};
+
 const validateEmail = () => {
 	return (value: string): string | undefined => {
 		if (!value.length) {
@@ -100,4 +115,4 @@ const validateDomains = (allowWildcards = false, maxDomains?: number) => {
 	};
 };
 
-export { validateEmail, validateNumber, validateString, validateDomains, validateDomain };
+export { validateEmail, validateIPv4, validateNumber, validateString, validateDomains, validateDomain };

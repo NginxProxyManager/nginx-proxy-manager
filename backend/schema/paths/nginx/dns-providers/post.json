@@ -1,0 +1,99 @@
+{
+	"operationId": "createDnsProvider",
+	"summary": "Create a DNS Provider",
+	"tags": ["dns-providers"],
+	"security": [
+		{
+			"bearerAuth": ["dns_providers.manage"]
+		}
+	],
+	"requestBody": {
+		"description": "DNS Provider Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["name", "type", "credentials", "default_ip"],
+					"properties": {
+						"name": {
+							"$ref": "../../../components/dns-provider-object.json#/properties/name"
+						},
+						"type": {
+							"$ref": "../../../components/dns-provider-object.json#/properties/type"
+						},
+						"credentials": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": ["account_id", "project_name", "username", "password"],
+							"properties": {
+								"account_id": {
+									"type": "string",
+									"minLength": 1
+								},
+								"project_name": {
+									"type": "string",
+									"minLength": 1
+								},
+								"username": {
+									"type": "string",
+									"minLength": 1
+								},
+								"password": {
+									"type": "string",
+									"minLength": 1
+								}
+							}
+						},
+						"default_ip": {
+							"$ref": "../../../components/dns-provider-object.json#/properties/default_ip"
+						},
+						"ttl": {
+							"$ref": "../../../components/dns-provider-object.json#/properties/ttl"
+						}
+					}
+				},
+				"example": {
+					"name": "My Selectel DNS",
+					"type": "selectel",
+					"credentials": {
+						"account_id": "123456",
+						"project_name": "default",
+						"username": "api-user",
+						"password": "secret"
+					},
+					"default_ip": "203.0.113.10",
+					"ttl": 300
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"created_on": "2026-07-11T22:15:40.000Z",
+								"modified_on": "2026-07-11T22:15:40.000Z",
+								"owner_user_id": 1,
+								"name": "My Selectel DNS",
+								"type": "selectel",
+								"default_ip": "203.0.113.10",
+								"ttl": 300,
+								"meta": {}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/dns-provider-object.json"
+					}
+				}
+			}
+		}
+	}
+}

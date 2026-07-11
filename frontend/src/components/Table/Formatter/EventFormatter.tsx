@@ -1,4 +1,13 @@
-import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconShield, IconUser } from "@tabler/icons-react";
+import {
+	IconArrowsCross,
+	IconBolt,
+	IconBoltOff,
+	IconDisc,
+	IconLock,
+	IconShield,
+	IconUser,
+	IconWorld,
+} from "@tabler/icons-react";
 import cn from "classnames";
 import type { AuditLog } from "src/api/backend";
 import { useLocaleState } from "src/context";
@@ -7,6 +16,7 @@ import { formatDateTime, T } from "src/locale";
 const getEventValue = (event: AuditLog) => {
 	switch (event.objectType) {
 		case "access-list":
+		case "dns-provider":
 		case "user":
 			return event.meta?.name;
 		case "proxy-host":
@@ -57,6 +67,9 @@ const getIcon = (row: AuditLog) => {
 			break;
 		case "certificate":
 			ico = <IconShield size={16} className={c} />;
+			break;
+		case "dns-provider":
+			ico = <IconWorld size={16} className={c} />;
 			break;
 	}
 
