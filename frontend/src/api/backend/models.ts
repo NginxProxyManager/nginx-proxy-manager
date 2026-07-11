@@ -116,6 +116,7 @@ export interface ProxyHost {
 	forwardPort: number;
 	accessListId: number;
 	certificateId: number;
+	dnsProviderId?: number;
 	sslForced: boolean;
 	cachingEnabled: boolean;
 	blockExploits: boolean;
@@ -132,6 +133,7 @@ export interface ProxyHost {
 	owner?: User;
 	accessList?: AccessList;
 	certificate?: Certificate;
+	dnsProvider?: DnsProvider;
 }
 
 export interface DeadHost {

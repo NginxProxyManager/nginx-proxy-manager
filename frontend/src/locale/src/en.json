@@ -335,6 +335,12 @@
 	"dns-provider": {
 		"defaultMessage": "DNS Provider"
 	},
+	"dns-provider.none": {
+		"defaultMessage": "None"
+	},
+	"dns-provider.none.subtitle": {
+		"defaultMessage": "No DNS records will be managed for this host"
+	},
 	"dns-providers": {
 		"defaultMessage": "DNS Providers"
 	},
@@ -388,6 +394,12 @@
 	},
 	"dns-providers.type.selectel": {
 		"defaultMessage": "Selectel"
+	},
+	"dns-status.error": {
+		"defaultMessage": "DNS sync failed"
+	},
+	"dns-status.synced": {
+		"defaultMessage": "DNS synced"
 	},
 	"domain-names": {
 		"defaultMessage": "Domain Names"
