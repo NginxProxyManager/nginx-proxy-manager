@@ -39,7 +39,7 @@ export function DnsProviderField({
 	statusBadge,
 }: Props) {
 	const { isLoading, isError, error, data } = useQuery<DnsProvider[], Error>({
-		queryKey: ["dns-providers"],
+		queryKey: ["dns-record-providers"],
 		queryFn: () => getDnsProviders(),
 		staleTime: 60 * 1000,
 	});

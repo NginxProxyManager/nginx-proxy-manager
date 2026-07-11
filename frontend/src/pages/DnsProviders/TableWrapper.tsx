@@ -12,7 +12,7 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const [search, setSearch] = useState("");
 	const { isFetching, isLoading, isError, error, data } = useQuery<DnsProvider[], Error>({
-		queryKey: ["dns-providers"],
+		queryKey: ["dns-record-providers"],
 		queryFn: () => getDnsProviders(),
 		staleTime: 60 * 1000,
 	});
@@ -85,7 +85,7 @@ export default function TableWrapper() {
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "dns-provider" }} />,
 							onConfirm: () => handleDelete(id),
-							invalidations: [["dns-providers"], ["dns-provider", id]],
+							invalidations: [["dns-record-providers"], ["dns-provider", id]],
 							children: <T id="object.delete.content" tData={{ object: "dns-provider" }} />,
 						})
 					}

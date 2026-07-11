@@ -124,7 +124,7 @@ const DnsProviderModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			} else {
 				await createDnsProvider(payload);
 			}
-			queryClient.invalidateQueries({ queryKey: ["dns-providers"] });
+			queryClient.invalidateQueries({ queryKey: ["dns-record-providers"] });
 			queryClient.invalidateQueries({ queryKey: ["dns-provider", id] });
 			showObjectSuccess("dns-provider", "saved");
 			remove();
