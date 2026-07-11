@@ -100,6 +100,11 @@ describe('DNS Providers endpoints', () => {
 			expect(data.id).to.be.greaterThan(0);
 			// Host creation must not be blocked by DNS provider failures:
 			expect(data).to.have.property('enabled', true);
+			// Dummy Selectel creds can't reach the real API from CI, so internalDnsRecord.sync()
+			// returns a graceful failure that must be merged into meta rather than thrown:
+			expect(data).to.have.property('meta');
+			expect(data.meta).to.have.property('dns_synced', false);
+			expect(data.meta.dns_err).to.be.a('string');
 			hostID = data.id;
 		});
 	});
