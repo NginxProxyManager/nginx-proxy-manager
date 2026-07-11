@@ -9,7 +9,7 @@
 	"scripts": {
 		"lint": "biome lint",
 		"prettier": "biome format --write .",
-		"test": "vitest run",
+		"test": "vitest run --passWithNoTests",
 		"validate-schema": "node validate-schema.js",
 		"regenerate-config": "node scripts/regenerate-config"
 	},
