@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "DNS Providers list",
+	"items": {
+		"$ref": "./dns-provider-object.json"
+	}
+}

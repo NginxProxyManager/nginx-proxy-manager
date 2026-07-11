@@ -1,0 +1,51 @@
+{
+	"type": "object",
+	"description": "DNS Provider object",
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "type", "default_ip", "ttl", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 100,
+			"example": "My Selectel DNS"
+		},
+		"type": {
+			"type": "string",
+			"enum": ["selectel"],
+			"example": "selectel"
+		},
+		"default_ip": {
+			"type": "string",
+			"example": "203.0.113.10"
+		},
+		"ttl": {
+			"type": "integer",
+			"minimum": 60,
+			"maximum": 604800,
+			"example": 300
+		},
+		"meta": {
+			"type": "object",
+			"example": {}
+		},
+		"owner": {
+			"$ref": "./user-object.json"
+		},
+		"proxy_hosts": {
+			"$ref": "./proxy-host-list.json"
+		}
+	}
+}
