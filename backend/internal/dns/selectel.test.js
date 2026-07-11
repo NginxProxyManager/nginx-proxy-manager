@@ -27,4 +27,12 @@ describe("resolveZone", () => {
 	it("does not match partial label (foobar vs bar)", () => {
 		expect(resolveZone("foobarexample.com", [{ id: "z9", name: "barexample.com" }])).toBeNull();
 	});
+
+	it("matches case-insensitively", () => {
+		expect(resolveZone("APP.Example.COM", zones)?.id).toBe("z1");
+	});
+
+	it("tolerates a trailing dot on the domain", () => {
+		expect(resolveZone("app.example.com.", zones)?.id).toBe("z1");
+	});
 });
