@@ -1,7 +1,11 @@
 import {
+	columnGroupingFeature,
 	columnVisibilityFeature,
+	createExpandedRowModel,
+	createGroupedRowModel,
 	createSortedRowModel,
 	metaHelper,
+	rowExpandingFeature,
 	rowSortingFeature,
 	tableFeatures,
 } from "@tanstack/react-table";
@@ -20,12 +24,18 @@ interface TableMeta {
  * unconditionally, e.g. `getVisibleFlatColumns`/`getVisibleCells`) by the
  * shared TableLayout/TableHeader/TableBody/EmptyData components, so every
  * table instance must register them even when a particular table doesn't
- * wire up controlled sorting state itself.
+ * wire up controlled sorting state itself. The same applies to grouping and
+ * expanding: TableBody calls `row.getIsGrouped()` on every row, so the
+ * features must be registered even for the tables that never group.
  */
 const features = tableFeatures({
 	rowSortingFeature,
 	sortedRowModel: createSortedRowModel(),
 	columnVisibilityFeature,
+	columnGroupingFeature,
+	groupedRowModel: createGroupedRowModel(),
+	rowExpandingFeature,
+	expandedRowModel: createExpandedRowModel(),
 	columnMeta: metaHelper<ColumnMeta>(),
 	tableMeta: metaHelper<TableMeta>(),
 });
