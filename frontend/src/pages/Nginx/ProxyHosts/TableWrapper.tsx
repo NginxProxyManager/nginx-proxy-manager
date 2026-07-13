@@ -1,6 +1,6 @@
 import { IconHelp, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
@@ -9,6 +9,7 @@ import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showProxyHostModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
+import { getBaseDomain } from "./baseDomain";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -16,12 +17,36 @@ export default function TableWrapper() {
 	const [search, setSearch] = useState("");
 	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
 
+	const filtered = useMemo(() => {
+		if (!search || !data) return null;
+		return data.filter(
+			(item) =>
+				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
+				item.forwardHost.toLowerCase().includes(search) ||
+				`${item.forwardPort}`.includes(search),
+		);
+	}, [search, data]);
+
+	const tableData = useMemo(
+		() =>
+			(filtered ?? data ?? []).map((item) => ({
+				...item,
+				baseDomain: getBaseDomain(item.domainNames?.[0]),
+			})),
+		[filtered, data],
+	);
+
 	if (isLoading) {
 		return <LoadingPage />;
 	}
 
 	if (isError) {
 		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
+	}
+
+	if (search !== "" && !data?.length) {
+		// this can happen if someone deletes the last item while searching
+		setSearch("");
 	}
 
 	const handleDelete = async (id: number) => {
@@ -35,19 +60,6 @@ export default function TableWrapper() {
 		queryClient.invalidateQueries({ queryKey: ["proxy-host", id] });
 		showObjectSuccess("proxy-host", enabled ? "enabled" : "disabled");
 	};
-
-	let filtered = null;
-	if (search && data) {
-		filtered = data?.filter(
-			(item) =>
-				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
-				item.forwardHost.toLowerCase().includes(search) ||
-				`${item.forwardPort}`.includes(search),
-		);
-	} else if (search !== "") {
-		// this can happen if someone deletes the last item while searching
-		setSearch("");
-	}
 
 	return (
 		<div className="card mt-4">
@@ -95,7 +107,7 @@ export default function TableWrapper() {
 					</div>
 				</div>
 				<Table
-					data={filtered ?? data ?? []}
+					data={tableData}
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}
