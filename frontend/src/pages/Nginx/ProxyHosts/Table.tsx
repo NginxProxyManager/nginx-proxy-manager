@@ -1,7 +1,10 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
 import {
 	createColumnHelper,
+	type ExpandedState,
 	getCoreRowModel,
+	getExpandedRowModel,
+	getGroupedRowModel,
 	getSortedRowModel,
 	type SortingState,
 	useReactTable,
@@ -21,8 +24,10 @@ import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
+type ProxyHostRow = ProxyHost & { baseDomain: string };
+
 interface Props {
-	data: ProxyHost[];
+	data: ProxyHostRow[];
 	isFiltered?: boolean;
 	isFetching?: boolean;
 	onEdit?: (id: number) => void;
@@ -31,9 +36,13 @@ interface Props {
 	onNew?: () => void;
 }
 export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
-	const columnHelper = createColumnHelper<ProxyHost>();
+	const columnHelper = createColumnHelper<ProxyHostRow>();
 	const columns = useMemo(
 		() => [
+			columnHelper.accessor((row: any) => row.baseDomain, {
+				id: "baseDomain",
+				enableSorting: false,
+			}),
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
 				enableSorting: false,
@@ -164,14 +173,23 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);
+	const [expanded, setExpanded] = useState<ExpandedState>(true);
 
-	const tableInstance = useReactTable<ProxyHost>({
+	const tableInstance = useReactTable<ProxyHostRow>({
 		columns,
 		data,
-		state: { sorting },
+		state: { sorting, expanded },
+		initialState: {
+			grouping: ["baseDomain"],
+			columnVisibility: { baseDomain: false },
+		},
 		onSortingChange: setSorting,
+		onExpandedChange: setExpanded,
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
+		getGroupedRowModel: getGroupedRowModel(),
+		getExpandedRowModel: getExpandedRowModel(),
+		autoResetExpanded: false,
 		rowCount: data.length,
 		meta: {
 			isFetching,
