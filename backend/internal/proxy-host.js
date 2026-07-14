@@ -323,7 +323,7 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id: data.id,
-					expand: ["certificate", "owner", "access_list"],
+					expand: ["certificate", "owner", "access_list.[clients,items]"],
 				});
 			})
 			.then((row) => {
