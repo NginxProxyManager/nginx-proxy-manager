@@ -1,5 +1,5 @@
 ## Mis on voog?
 
-Nginxi suhteliselt uus funktsioon, voog, edastab TCP/UDP liiklust otse võrgus olevale teisele arvutile.
+Nginxi suhteliselt uus funktsioon – voog edastab TCP/UDP liiklust otse võrgus olevasse teise arvutisse.
 
-Kui sul on mänguserverid, FTP- või SSH-serverid, võib see kasuks tulla.
+Kui teil on mänguservereid, FTP- või SSH-servereid, võib see kasuks tulla.

@@ -1,7 +1,7 @@
-## Mis on puhverserver?
+## Mis on puhverserveri host?
 
-Puhverserver on veebiteenuse sissetuleva andmevoo lõpp-punkt, mida soovite edastada.
+Puhverserveri host on veebiteenuse sissetulev lõpp-punkt, mida soovite edastada.
 
 See pakub valikulist SSL-i lõpetamist teie teenusele, millel ei pruugi olla sisseehitatud SSL-tuge.
 
-Puhverserverid on Nginxi puhverserveri halduri kõige levinum kasutusala.
+Puhverserveri hostid on Nginx Proxy Manageri kõige levinum kasutusviis.
