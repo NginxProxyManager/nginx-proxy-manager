@@ -1,4 +1,6 @@
-import { formatDateTime, getFlagCodeForLocale } from "src/locale";
+import { formatDateTime, getFlagCodeForLocale, loadMessages } from "src/locale";
+import { getHelpFile } from "src/locale/src/HelpDoc";
+import * as zhTwHelp from "src/locale/src/HelpDoc/zh-tw";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 describe("DateFormatter", () => {
@@ -83,6 +85,9 @@ describe("getFlagCodeForLocale", () => {
 	it("returns correct flag code for special-case locales", () => {
 		expect(getFlagCodeForLocale("ja-JP")).toBe("JP");
 		expect(getFlagCodeForLocale("zh-CN")).toBe("CN");
+		expect(getFlagCodeForLocale("zh")).toBe("CN");
+		expect(getFlagCodeForLocale("zh-TW")).toBe("TW");
+		expect(getFlagCodeForLocale("ZH-tw")).toBe("TW");
 		expect(getFlagCodeForLocale("vi-VN")).toBe("VN");
 		expect(getFlagCodeForLocale("ko-KR")).toBe("KR");
 		expect(getFlagCodeForLocale("cs-CZ")).toBe("CZ");
@@ -95,5 +100,21 @@ describe("getFlagCodeForLocale", () => {
 	it("falls back to EN when no locale is provided", () => {
 		expect(getFlagCodeForLocale()).toBe("EN");
 		expect(getFlagCodeForLocale(undefined)).toBe("EN");
+	});
+});
+
+describe("Chinese locale variants", () => {
+	it("loads Traditional Chinese by full locale before falling back to Simplified Chinese", () => {
+		expect(loadMessages("ZH-tw")).toEqual(loadMessages("zh-TW"));
+		expect(loadMessages("zh-TW").save).toBe("儲存");
+		expect(loadMessages("zh").save).toBe("保存");
+		expect(loadMessages("zh-CN")).toEqual(loadMessages("zh"));
+		expect(loadMessages("zh-HK")).toEqual(loadMessages("zh"));
+	});
+
+	it("selects HelpDocs by full locale before falling back to the language code", () => {
+		expect(getHelpFile("ZH-tw", "AccessLists")).toBe(getHelpFile("zh-TW", "AccessLists"));
+		expect(getHelpFile("zh-TW", "AccessLists")).toBe(zhTwHelp.AccessLists.default);
+		expect(getHelpFile("zh-CN", "AccessLists")).toBe(getHelpFile("zh", "AccessLists"));
 	});
 });
