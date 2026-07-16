@@ -2,9 +2,10 @@ import { IconSettings } from "@tabler/icons-react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import cn from "classnames";
 import { useFormikContext } from "formik";
-import { useState } from "react";
+import { type ClipboardEvent, useState } from "react";
 import type { ProxyLocation } from "src/api/backend";
 import { intl, T } from "src/locale";
+import { parseForwardUrl } from "src/modules/ForwardUrl";
 import styles from "./LocationsFields.module.css";
 
 interface Props {
@@ -40,6 +41,24 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 
 	const handleChange = (idx: number, field: string, fieldValue: string) => {
 		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, [field]: fieldValue } : v));
+		setValues(newValues);
+		setFormField(newValues);
+	};
+
+	const handlePaste = (idx: number, e: ClipboardEvent<HTMLInputElement>) => {
+		const parsed = parseForwardUrl(e.clipboardData.getData("text"));
+		if (!parsed) return;
+		e.preventDefault();
+		const newValues = values.map((v: ProxyLocation, i: number) =>
+			i === idx
+				? {
+						...v,
+						forwardHost: parsed.host + (parsed.path || ""),
+						forwardPort: parsed.port,
+						forwardScheme: parsed.scheme || v.forwardScheme,
+					}
+				: v,
+		);
 		setValues(newValues);
 		setFormField(newValues);
 	};
@@ -119,6 +138,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 										placeholder="eg: 10.0.0.1/path/"
 										value={item.forwardHost}
 										onChange={(e) => handleChange(idx, "forwardHost", e.target.value)}
+										onPaste={(e) => handlePaste(idx, e)}
 									/>
 								</div>
 							</div>

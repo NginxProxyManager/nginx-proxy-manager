@@ -18,6 +18,7 @@ import {
 } from "src/components";
 import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
 import { T } from "src/locale";
+import { parseForwardUrl } from "src/modules/ForwardUrl";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
@@ -210,6 +211,27 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		required
 																		placeholder="example.com"
 																		{...field}
+																		onPaste={(e) => {
+																			const parsed = parseForwardUrl(
+																				e.clipboardData.getData("text"),
+																			);
+																			if (!parsed) return;
+																			e.preventDefault();
+																			form.setFieldValue(
+																				"forwardHost",
+																				parsed.host,
+																			);
+																			form.setFieldValue(
+																				"forwardPort",
+																				parsed.port,
+																			);
+																			if (parsed.scheme) {
+																				form.setFieldValue(
+																					"forwardScheme",
+																					parsed.scheme,
+																				);
+																			}
+																		}}
 																	/>
 																	{form.errors.forwardHost ? (
 																		<div className="invalid-feedback">
