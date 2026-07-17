@@ -1,5 +1,5 @@
 import express from "express";
-import { isCI } from "../lib/config.js";
+import { isCI, isSecureDefaults } from "../lib/config.js";
 import errs from "../lib/error.js";
 import logRequest from "../lib/express/log-request.js";
 import pjson from "../package.json" with { type: "json" };
@@ -38,6 +38,7 @@ router.get("/", async (_, res /*, next*/) => {
 	res.status(200).send({
 		status: "OK",
 		setup,
+		secure_defaults: isSecureDefaults(),
 		version: {
 			major: Number.parseInt(version.shift(), 10),
 			minor: Number.parseInt(version.shift(), 10),

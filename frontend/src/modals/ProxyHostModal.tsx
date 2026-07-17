@@ -2,7 +2,7 @@ import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {
@@ -16,8 +16,9 @@ import {
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
-import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
+import { useCertificates, useHealth, useProxyHost, useSetProxyHost, useUser } from "src/hooks";
 import { T } from "src/locale";
+import { matchCertificate } from "src/modules/CertificateMatch";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
@@ -32,7 +33,13 @@ interface Props extends InnerModalProps {
 const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
 	const { data, isLoading, error } = useProxyHost(id);
+	const { data: certificates } = useCertificates();
+	const { data: health } = useHealth();
+	// NPM_SECURE_DEFAULTS only ever changes NEW hosts, never edits of existing ones
+	const secureDefaults = (health?.secureDefaults && id === "new") || false;
 	const { mutate: setProxyHost } = useSetProxyHost();
+	// certificateId set by domain auto-matching (as opposed to picked by the user)
+	const autoPickedCertId = useRef(0);
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -78,8 +85,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							forwardPort: data?.forwardPort || undefined,
 							accessListId: data?.accessListId || 0,
 							cachingEnabled: data?.cachingEnabled || false,
-							blockExploits: data?.blockExploits || false,
-							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
+							blockExploits: id === "new" ? secureDefaults : data?.blockExploits || false,
+							allowWebsocketUpgrade:
+								id === "new" ? secureDefaults : data?.allowWebsocketUpgrade || false,
 							// Locations tab
 							locations: data?.locations || [],
 							// SSL tab
@@ -96,7 +104,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
+					{({ values, setFieldValue, touched }: any) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -163,7 +171,31 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 									<div className="card-body">
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
-												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
+												<DomainNamesField
+													isWildcardPermitted
+													dnsProviderWildcardSupported
+													onChange={(domains) => {
+														// Auto-pick a certificate covering the typed domains — only
+														// on new hosts, and never override the user's own choice
+														// (touched covers an explicit "None", which is falsy 0)
+														if (id !== "new" || touched.certificateId) return;
+														const current = values.certificateId;
+														if (current && current !== autoPickedCertId.current)
+															return;
+														const match = matchCertificate(
+															certificates || [],
+															domains,
+														);
+														const nextId = match?.id || 0;
+														if (nextId === current) return;
+														setFieldValue("certificateId", nextId);
+														autoPickedCertId.current = nextId;
+														if (secureDefaults) {
+															setFieldValue("sslForced", !!match);
+															setFieldValue("http2Support", !!match);
+														}
+													}}
+												/>
 												<div className="row">
 													<div className="col-md-3">
 														<Field name="forwardScheme">
@@ -339,6 +371,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													name="certificateId"
 													label="ssl-certificate"
 													allowNew
+													secureDefaults={secureDefaults}
 												/>
 												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
 											</div>
