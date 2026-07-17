@@ -17,6 +17,18 @@ const covers = (certDomain: string, domain: string): "exact" | "wildcard" | null
 };
 
 /**
+ * The typed domains (original casing, for display) that the given certificate
+ * does not cover. No certificate means nothing to warn about: [].
+ */
+export function uncoveredDomains(cert: Certificate | undefined, domains: string[]): string[] {
+	if (!cert) {
+		return [];
+	}
+	const certDomains = (cert.domainNames || []).map((d) => d.toLowerCase());
+	return domains.filter((domain) => !certDomains.some((certDomain) => covers(certDomain, domain.toLowerCase())));
+}
+
+/**
  * Finds a certificate covering ALL of the given domains (a host serves every
  * domain with the one selected certificate). A cert covering every domain
  * exactly wins; otherwise the first cert covering all of them.

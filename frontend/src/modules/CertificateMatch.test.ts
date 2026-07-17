@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Certificate } from "src/api/backend";
-import { matchCertificate } from "./CertificateMatch";
+import { matchCertificate, uncoveredDomains } from "./CertificateMatch";
 
 const cert = (id: number, ...domainNames: string[]) => ({ id, domainNames }) as Certificate;
 
@@ -50,5 +50,31 @@ describe("matchCertificate", () => {
 		expect(matchCertificate([wildcard, exact, other], ["unrelated.net"])).toBeUndefined();
 		expect(matchCertificate([], ["whatever.grasfer.app"])).toBeUndefined();
 		expect(matchCertificate([wildcard], [])).toBeUndefined();
+	});
+});
+
+describe("uncoveredDomains", () => {
+	const wildcard = cert(1, "*.grasfer.app");
+	const other = cert(3, "example.com", "www.example.com");
+
+	it("returns nothing when every domain is covered", () => {
+		expect(uncoveredDomains(other, ["example.com", "www.example.com"])).toEqual([]);
+		expect(uncoveredDomains(wildcard, ["a.grasfer.app", "b.grasfer.app"])).toEqual([]);
+	});
+
+	it("returns only the uncovered domains, original casing preserved", () => {
+		expect(uncoveredDomains(other, ["Example.COM", "Nope.org"])).toEqual(["Nope.org"]);
+	});
+
+	it("applies one-label wildcard semantics", () => {
+		expect(uncoveredDomains(wildcard, ["a.grasfer.app", "a.b.grasfer.app", "grasfer.app"])).toEqual([
+			"a.b.grasfer.app",
+			"grasfer.app",
+		]);
+	});
+
+	it("returns nothing without a certificate or domains", () => {
+		expect(uncoveredDomains(undefined, ["example.com"])).toEqual([]);
+		expect(uncoveredDomains(other, [])).toEqual([]);
 	});
 });
