@@ -25,6 +25,7 @@ services:
       DEBUG: "true"
       DEVELOPMENT: "true"
       LE_STAGING: "true"
+      NPM_SECURE_DEFAULTS: "true"
       # db:
       # DB_MYSQL_HOST: 'db'
       # DB_MYSQL_PORT: '3306'

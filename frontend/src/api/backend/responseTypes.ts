@@ -4,6 +4,7 @@ export interface HealthResponse {
 	status: string;
 	version: AppVersion;
 	setup: boolean;
+	secureDefaults?: boolean;
 }
 
 export interface TokenResponse {

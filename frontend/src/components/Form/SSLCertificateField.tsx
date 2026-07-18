@@ -33,6 +33,7 @@ interface Props {
 	required?: boolean;
 	allowNew?: boolean;
 	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
+	secureDefaults?: boolean; // enable sslForced + http2Support when a cert is first selected
 }
 export function SSLCertificateField({
 	name = "certificateId",
@@ -41,14 +42,17 @@ export function SSLCertificateField({
 	required,
 	allowNew,
 	forHttp = true,
+	secureDefaults = false,
 }: Props) {
 	const { locale } = useLocaleState();
 	const { isLoading, isError, error, data } = useCertificates();
-	const { values, setFieldValue } = useFormikContext();
+	const { values, setFieldValue, setFieldTouched } = useFormikContext();
 	const v: any = values || {};
 
 	const handleChange = (newValue: any, _actionMeta: ActionMeta<CertOption>) => {
 		setFieldValue(name, newValue?.value);
+		// A manual selection (including "None") must never be overridden by auto-matching
+		setFieldTouched(name, true, false);
 		const {
 			sslForced,
 			http2Support,
@@ -64,6 +68,10 @@ export function SSLCertificateField({
 			http2Support && setFieldValue("http2Support", false);
 			hstsEnabled && setFieldValue("hstsEnabled", false);
 			hstsSubdomains && setFieldValue("hstsSubdomains", false);
+		}
+		if (forHttp && newValue?.value && !v[name] && secureDefaults) {
+			setFieldValue("sslForced", true);
+			setFieldValue("http2Support", true);
 		}
 		if (newValue?.value !== "new") {
 			dnsChallenge && setFieldValue("dnsChallenge", undefined);
@@ -116,7 +124,7 @@ export function SSLCertificateField({
 						<Select
 							className="react-select-container"
 							classNamePrefix="react-select"
-							defaultValue={options.find((o) => o.value === field.value) || options[0]}
+							value={options.find((o) => o.value === field.value) || options[0]}
 							options={options}
 							components={{ Option }}
 							styles={{

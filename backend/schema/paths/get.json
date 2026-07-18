@@ -12,6 +12,7 @@
 							"value": {
 								"status": "OK",
 								"setup": true,
+								"secure_defaults": false,
 								"version": {
 									"major": 2,
 									"minor": 1,
