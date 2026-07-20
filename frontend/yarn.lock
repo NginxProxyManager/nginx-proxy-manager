@@ -611,17 +611,17 @@
     "@popperjs/core" "^2.11.8"
     bootstrap "5.3.7"
 
-"@tabler/icons-react@^3.44.0":
-  version "3.44.0"
-  resolved "https://registry.yarnpkg.com/@tabler/icons-react/-/icons-react-3.44.0.tgz#26e84ee0ef756bfae5dcbd8265312ba3cd5a91d9"
-  integrity sha512-8+rvzBbVm/1Z3sG3x7GUNAaxIKxwgz8xaMhRs23nrCnMTKRFAhEC+82zAIFeAA0seXdrAGX5HFCkaLpGK2rVHg==
+"@tabler/icons-react@^3.45.0":
+  version "3.45.0"
+  resolved "https://registry.yarnpkg.com/@tabler/icons-react/-/icons-react-3.45.0.tgz#503963fc3f5b6c6cf3ef36ffe6640445e3ac780f"
+  integrity sha512-t/AuKs7ALMDDTY+B9IvfZnlO0mbLlP/lJxP/HnGC49QkM8mCsTN38kYyxjXxgrb1+TeK53ioVBJqIV7n/eysXQ==
   dependencies:
-    "@tabler/icons" "3.44.0"
+    "@tabler/icons" "3.45.0"
 
-"@tabler/icons@3.44.0":
-  version "3.44.0"
-  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-3.44.0.tgz#286b203aac98591e27360de03974762568bbb272"
-  integrity sha512-Wn0AOZG9sg0L+bjfMqq4eNhC6pQjIrk94LvvWYNYkY8KH8wC3YILRzQlrnVJc4FUeMxH/AK97QsYCX35H3LndA==
+"@tabler/icons@3.45.0":
+  version "3.45.0"
+  resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-3.45.0.tgz#0eae44189827b8426796a74afa8219c2e597b847"
+  integrity sha512-jiATwV8+zGYLTZ7gMLGivCic+KtsMZXcDmufIG8umlLxoHhI6902hGYIEt0Oa9Y9SXblNzUlrisHm5jOFMxOQA==
 
 "@tanstack/query-core@5.101.0":
   version "5.101.0"
@@ -2226,17 +2226,17 @@ react-markdown@^10.1.0:
     unist-util-visit "^5.0.0"
     vfile "^6.0.0"
 
-react-router-dom@^7.16.0:
-  version "7.16.0"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-7.16.0.tgz#284a7cd021052aa7d0a9240dca4a02eec24eceb5"
-  integrity sha512-kMUAbimWB5FVbF4Bce4bJsiKJWLIUHq/mEG8+CFDnCSgltptBiG5nguducmsJeGKytlCvQud9Qhzpn49iduTlA==
+react-router-dom@^7.18.1:
+  version "7.18.1"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-7.18.1.tgz#0d1b138e291393059ad481c3e10e366385a978a4"
+  integrity sha512-KaZh+X/6UtEp28x51AUYZDMg9NGoz2ja3dNHa+ta/tk40vCzKhQ/RypCWBMLbmDr6//E24Vv5uPsrqXFozdkAg==
   dependencies:
-    react-router "7.16.0"
+    react-router "7.18.1"
 
-react-router@7.16.0:
-  version "7.16.0"
-  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.16.0.tgz#fb41536aef2ccc2c7be12ea6be819a1e56eb6343"
-  integrity sha512-wArC8lVyJb3+jM9OpDyW6hLCizACWkvQR/sSGqSs+o5uEXEtGlqdZ4v8hENR3Jad6i+LRkK93q/+bQAcvl6V1A==
+react-router@7.18.1:
+  version "7.18.1"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.18.1.tgz#61259d1594b95c1ace299ee4c57453570f0c22f1"
+  integrity sha512-GDLgg3i3uM0aeJO3Fm+TCS+sDQ7gu12T6x0qdTEzcwqEfleci7JwugVNIF3U//0FWKnJT7ptG+20B2jfDqnZAg==
   dependencies:
     cookie "^1.0.1"
     set-cookie-parser "^2.6.0"

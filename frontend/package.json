@@ -17,7 +17,7 @@
 	},
 	"dependencies": {
 		"@tabler/core": "^1.4.0",
-		"@tabler/icons-react": "^3.44.0",
+		"@tabler/icons-react": "^3.45.0",
 		"@tanstack/react-query": "^5.101.0",
 		"@tanstack/react-table": "^8.21.3",
 		"@uiw/react-textarea-code-editor": "^3.1.1",
@@ -34,7 +34,7 @@
 		"react-dom": "^19.2.7",
 		"react-intl": "^10.1.11",
 		"react-markdown": "^10.1.0",
-		"react-router-dom": "^7.16.0",
+		"react-router-dom": "^7.18.1",
 		"react-select": "^5.10.2",
 		"react-toastify": "^11.1.0",
 		"rooks": "^9.8.0"
