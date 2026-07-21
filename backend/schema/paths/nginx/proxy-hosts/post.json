@@ -77,6 +77,12 @@
 						},
 						"locations": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/locations"
+						},
+						"lb_method": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/lb_method"
+						},
+						"upstream_servers": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/upstream_servers"
 						}
 					}
 				},
@@ -123,6 +129,8 @@
 								"hsts_enabled": false,
 								"hsts_subdomains": false,
 								"trust_forwarded_proto": false,
+								"lb_method": "round_robin",
+								"upstream_servers": [],
 								"certificate": null,
 								"owner": {
 									"id": 1,

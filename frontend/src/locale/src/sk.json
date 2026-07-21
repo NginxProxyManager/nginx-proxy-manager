@@ -716,6 +716,57 @@
 	"update-available": {
 		"defaultMessage": "Dostupná aktualizácia: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Pridať Upstream Server"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Označí server ako backup. Bude prijímať požiadavky iba vtedy, keď sú všetky primárne servery nedostupné. Nie je možné použiť s ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Pridajte upstream servery na povolenie vyrovnávania záťaže pre tento proxy host."
+	},
+	"upstream.down": {
+		"defaultMessage": "Nedostupný"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Trvalo označí server ako nedostupný. Užitočné pre plynulé odstraňovanie bez zmeny konfigurácie."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Časový limit zlyhania"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Časové obdobie, počas ktorého musí dôjsť k max_fails, aby bol server označený ako nedostupný, a tiež ako dlho nginx čaká pred ďalším pokusom o pripojenie k serveru (napr. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Vyrovnávanie záťaže"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Maximálny počet zlyhaní"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Počet neúspešných pokusov v rámci obdobia fail_timeout, ktorý spôsobí, že server bude označený ako nedostupný. Nastavte na 0 pre vypnutie kontroly dostupnosti."
+	},
+	"upstream.method": {
+		"defaultMessage": "Metóda vyrovnávania"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: požiadavky sú distribuované postupne (predvolené). Least Connections: odoslané na server s najmenším počtom aktívnych pripojení. IP Hash: rovnaká IP adresa klienta vždy smeruje na rovnaký server (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Relatívna váha pre distribúciu round-robin. Server s weight=2 prijíma dvakrát toľko požiadaviek ako server s weight=1."
+	},
 	"user": {
 		"defaultMessage": "používateľa"
 	},

@@ -632,6 +632,57 @@
 	"update-available": {
 		"defaultMessage": "Atualização Disponível: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Adicionar Servidor upstream"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Marca o servidor como backup. Só receberá pedidos quando todos os servidores primários estiverem indisponíveis. Não pode ser utilizado com ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Adicione servidores upstream para ativar o balanceamento de carga para este host de proxy."
+	},
+	"upstream.down": {
+		"defaultMessage": "Inativo"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Marca permanentemente o servidor como indisponível. Útil para remoção gradual sem alterar a configuração."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Tempo Limite de Falha"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "O período de tempo durante o qual max_fails deve ocorrer para marcar o servidor como indisponível, e também quanto tempo o nginx aguarda antes de voltar a tentar o servidor (ex.: 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Balanceamento de Carga"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Máximo de Falhas"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Número de tentativas falhadas dentro do período fail_timeout que faz com que o servidor seja marcado como indisponível. Defina como 0 para desativar a verificação de disponibilidade."
+	},
+	"upstream.method": {
+		"defaultMessage": "Método de Balanceamento"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: pedidos distribuídos sequencialmente (predefinição). Least Connections: enviado ao servidor com menos ligações ativas. IP Hash: o mesmo IP de cliente é sempre encaminhado para o mesmo servidor (sessões persistentes)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Porta"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Peso relativo para distribuição Round Robin. Um servidor com weight=2 recebe o dobro de pedidos em relação a um servidor com weight=1."
+	},
 	"user": {
 		"defaultMessage": "Utilizador"
 	},

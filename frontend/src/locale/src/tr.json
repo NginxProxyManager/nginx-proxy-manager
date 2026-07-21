@@ -632,6 +632,57 @@
 	"update-available": {
 		"defaultMessage": "Güncelleme Mevcut: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Upstream Sunucu Ekle"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Sunucuyu backup olarak işaretler. Yalnızca tüm birincil sunucular kullanılamaz olduğunda istek alır. ip_hash ile kullanılamaz."
+	},
+	"upstream.description": {
+		"defaultMessage": "Bu proxy host için yük dengelemeyi etkinleştirmek üzere upstream sunucular ekleyin."
+	},
+	"upstream.down": {
+		"defaultMessage": "Devre Dışı"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Sunucuyu kalıcı olarak kullanılamaz şeklinde işaretler. Yapılandırmayı değiştirmeden sunucuyu sorunsuz bir şekilde kaldırmak için kullanışlıdır."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Başarısızlık Zaman Aşımı"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "max_fails değerinin sunucuyu kullanılamaz olarak işaretlemesi için gerçekleşmesi gereken süre; aynı zamanda nginx'in sunucuyu tekrar denemeden önce beklediği süre (ör. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Yük Dengeleme"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Maksimum Başarısızlık"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "fail_timeout süresi içinde sunucunun kullanılamaz olarak işaretlenmesine neden olan başarısız deneme sayısı. Sağlık kontrolünü devre dışı bırakmak için 0 olarak ayarlayın."
+	},
+	"upstream.method": {
+		"defaultMessage": "Dengeleme Yöntemi"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: istekler sırayla dağıtılır (varsayılan). Least Connections: en az aktif bağlantıya sahip sunucuya gönderilir. IP Hash: aynı istemci IP'si her zaman aynı sunucuya yönlendirilir (yapışkan oturumlar)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Ağırlık"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Round-robin dağıtımı için göreli ağırlık. weight=2 olan bir sunucu, weight=1 olan bir sunucuya kıyasla iki kat daha fazla istek alır."
+	},
 	"user": {
 		"defaultMessage": "Kullanıcı"
 	},

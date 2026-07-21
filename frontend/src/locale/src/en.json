@@ -722,6 +722,57 @@
 	"update-available": {
 		"defaultMessage": "Update Available: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Add Upstream Server"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Marks the server as a backup. It will only receive requests when all primary servers are unavailable. Cannot be used with ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Add upstream servers to enable load balancing for this proxy host."
+	},
+	"upstream.down": {
+		"defaultMessage": "Down"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Permanently marks the server as unavailable. Useful for graceful removal without changing the configuration."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "The time period during which max_fails must occur to mark the server as unavailable, and also how long nginx waits before trying the server again (e.g. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Load Balancing"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Number of failed attempts within the fail_timeout period that causes the server to be marked as unavailable. Set to 0 to disable health checking."
+	},
+	"upstream.method": {
+		"defaultMessage": "Balancing Method"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: requests distributed sequentially (default). Least Connections: sent to the server with the fewest active connections. IP Hash: the same client IP always routes to the same server (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Relative weight for round-robin distribution. A server with weight=2 receives twice as many requests as a server with weight=1."
+	},
 	"user": {
 		"defaultMessage": "User"
 	},

@@ -722,6 +722,57 @@
 	"update-available": {
 		"defaultMessage": "Update Available: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Lisa upstream server"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Märgib serveri backup serveriks. See saab päringuid ainult siis, kui kõik primaarsed serverid on kättesaamatud. Ei saa kasutada koos ip_hash-iga."
+	},
+	"upstream.description": {
+		"defaultMessage": "Lisa upstream servereid, et lubada koormuse tasakaalustamine sellele proxy hostile."
+	},
+	"upstream.down": {
+		"defaultMessage": "Maas"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Märgib serveri püsivalt kättesaamatuks. Kasulik serveri sujuvaks eemaldamiseks ilma konfiguratsiooni muutmata."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Ajavahemik, mille jooksul peavad max_fails tõrked esinema, et märkida server kättesaamatuks, ning samuti aeg, mille nginx ootab enne serveri uuesti proovimist (nt 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Koormuse tasakaalustamine"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Ebaõnnestunud katsete arv fail_timeout perioodi jooksul, mis põhjustab serveri kättesaamatuks märkimise. Seadke 0-le, et keelata tervise kontroll."
+	},
+	"upstream.method": {
+		"defaultMessage": "Tasakaalustamise meetod"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: päringud jagatakse järjestikku (vaikimisi). Least Connections: päringud saadetakse serverile, millel on kõige vähem aktiivseid ühendusi. IP Hash: sama kliendi IP suunatakse alati samale serverile (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Suhteline weight round-robin jaotuse jaoks. Server, mille weight=2, saab kaks korda rohkem päringuid kui server, mille weight=1."
+	},
 	"user": {
 		"defaultMessage": "User"
 	},

@@ -632,6 +632,57 @@
 	"update-available": {
 		"defaultMessage": "Pembaruan Tersedia: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Tambah Server Upstream"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Menandai server sebagai backup. Server ini hanya akan menerima permintaan ketika semua server utama tidak tersedia. Tidak dapat digunakan dengan ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Tambahkan server upstream untuk mengaktifkan load balancing pada proxy host ini."
+	},
+	"upstream.down": {
+		"defaultMessage": "Down"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Menandai server sebagai tidak tersedia secara permanen. Berguna untuk penghapusan bertahap tanpa mengubah konfigurasi."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Periode waktu di mana max_fails harus terjadi untuk menandai server sebagai tidak tersedia, dan juga berapa lama nginx menunggu sebelum mencoba server kembali (misalnya 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Load Balancing"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Jumlah percobaan gagal dalam periode fail_timeout yang menyebabkan server ditandai sebagai tidak tersedia. Atur ke 0 untuk menonaktifkan pemeriksaan kesehatan."
+	},
+	"upstream.method": {
+		"defaultMessage": "Metode Penyeimbangan"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: permintaan didistribusikan secara berurutan (default). Least Connections: dikirim ke server dengan koneksi aktif paling sedikit. IP Hash: IP klien yang sama selalu diarahkan ke server yang sama (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Bobot relatif untuk distribusi round-robin. Server dengan weight=2 menerima dua kali lebih banyak permintaan dibandingkan server dengan weight=1."
+	},
 	"user": {
 		"defaultMessage": "Pengguna"
 	},

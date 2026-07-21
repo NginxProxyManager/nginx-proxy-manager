@@ -70,7 +70,7 @@ class ProxyHost extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["domain_names", "meta", "locations"];
+		return ["domain_names", "meta", "locations", "upstream_servers"];
 	}
 
 	static get defaultAllowGraph() {

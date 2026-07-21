@@ -68,6 +68,15 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				},
 				cell: (info: any) => {
 					const value = info.getValue();
+					if (value.upstreamServers && value.upstreamServers.length > 0) {
+						const methodLabels: Record<string, string> = {
+							round_robin: "round-robin",
+							least_conn: "least-conn",
+							ip_hash: "ip-hash",
+						};
+						const label = methodLabels[value.lbMethod || "round_robin"] ?? value.lbMethod;
+						return `${value.upstreamServers.length} upstream servers (${label})`;
+					}
 					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
 				},
 			}),

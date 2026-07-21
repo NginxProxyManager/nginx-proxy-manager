@@ -23,7 +23,9 @@
 		"locations",
 		"hsts_enabled",
 		"hsts_subdomains",
-		"trust_forwarded_proto"
+		"trust_forwarded_proto",
+		"lb_method",
+		"upstream_servers"
 	],
 	"properties": {
 		"id": {
@@ -146,6 +148,20 @@
 			"type": "boolean",
 			"description": "Trust the forwarded headers",
 			"example": false
+		},
+		"lb_method": {
+			"type": "string",
+			"enum": ["round_robin", "least_conn", "ip_hash"],
+			"default": "round_robin",
+			"example": "round_robin"
+		},
+		"upstream_servers": {
+			"type": "array",
+			"minItems": 0,
+			"items": {
+				"$ref": "./upstream-server-object.json"
+			},
+			"example": []
 		},
 		"certificate": {
 			"oneOf": [

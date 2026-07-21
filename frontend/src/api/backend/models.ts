@@ -105,6 +105,16 @@ export interface ProxyLocation {
 	forwardPort: number;
 }
 
+export interface UpstreamServer {
+	host: string;
+	port: number;
+	weight: number;
+	maxFails: number;
+	failTimeout: string;
+	backup: boolean;
+	down: boolean;
+}
+
 export interface ProxyHost {
 	id: number;
 	createdOn: string;
@@ -128,6 +138,8 @@ export interface ProxyHost {
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
 	trustForwardedProto: boolean;
+	lbMethod?: "round_robin" | "least_conn" | "ip_hash";
+	upstreamServers?: UpstreamServer[];
 	// Expansions:
 	owner?: User;
 	accessList?: AccessList;

@@ -722,6 +722,57 @@
 	"update-available": {
 		"defaultMessage": "Oppdatering tilgjengelig: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Legg til upstream-server"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Markerer serveren som en backup. Den vil kun motta forespørsler når alle primærservere er utilgjengelige. Kan ikke brukes med ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Legg til upstream-servere for å aktivere load balancing for denne proxy-verten."
+	},
+	"upstream.down": {
+		"defaultMessage": "Nede"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Markerer serveren som permanent utilgjengelig. Nyttig for å fjerne serveren på en kontrollert måte uten å endre konfigurasjonen."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Tidsperioden der max_fails må forekomme for å markere serveren som utilgjengelig, og også hvor lenge nginx venter før den prøver serveren igjen (f.eks. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Vert"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Load Balancing"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Antall mislykkede forsøk innenfor fail_timeout-perioden som fører til at serveren markeres som utilgjengelig. Sett til 0 for å deaktivere helsesjekk."
+	},
+	"upstream.method": {
+		"defaultMessage": "Balanseringsmetode"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: forespørsler distribueres sekvensielt (standard). Least Connections: sendes til serveren med færrest aktive tilkoblinger. IP Hash: samme klient-IP rutes alltid til samme server (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Relativ weight for round-robin-distribusjon. En server med weight=2 mottar dobbelt så mange forespørsler som en server med weight=1."
+	},
 	"user": {
 		"defaultMessage": "Bruker"
 	},

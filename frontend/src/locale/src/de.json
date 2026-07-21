@@ -605,6 +605,57 @@
 	"test": {
 		"defaultMessage": "Test"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Upstream-Server hinzufügen"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Markiert den Server als backup. Er empfängt nur Anfragen, wenn alle primären Server nicht verfügbar sind. Kann nicht zusammen mit ip_hash verwendet werden."
+	},
+	"upstream.description": {
+		"defaultMessage": "Fügen Sie upstream-Server hinzu, um Load Balancing für diesen Proxy-Host zu aktivieren."
+	},
+	"upstream.down": {
+		"defaultMessage": "Down"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Markiert den Server dauerhaft als nicht verfügbar. Nützlich zur sanften Entfernung ohne Änderung der Konfiguration."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Der Zeitraum, in dem max_fails auftreten müssen, um den Server als nicht verfügbar zu markieren, und auch wie lange nginx wartet, bevor er erneut versucht, den Server zu erreichen (z. B. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Load Balancing"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Anzahl der fehlgeschlagenen Versuche innerhalb des fail_timeout-Zeitraums, die dazu führen, dass der Server als nicht verfügbar markiert wird. Auf 0 setzen, um den Health-Check zu deaktivieren."
+	},
+	"upstream.method": {
+		"defaultMessage": "Balancing-Methode"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: Anfragen werden sequenziell verteilt (Standard). Least Connections: Anfragen werden an den Server mit den wenigsten aktiven Verbindungen gesendet. IP Hash: Dieselbe Client-IP wird immer zum selben Server weitergeleitet (Sticky Sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Relatives weight für die Round-Robin-Verteilung. Ein Server mit weight=2 erhält doppelt so viele Anfragen wie ein Server mit weight=1."
+	},
 	"user": {
 		"defaultMessage": "User"
 	},
