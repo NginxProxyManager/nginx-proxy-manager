@@ -39,7 +39,7 @@ function LocalePicker({ menuAlign = "start" }: Props) {
 						key={`locale-${item[0]}`}
 						onClick={(e) => {
 							e.preventDefault();
-							changeTo(item[0]);
+							changeTo(item[1]);
 						}}
 					>
 						<Flag countryCode={getFlagCodeForLocale(item[0])} /> <T id={`locale-${item[1]}`} />

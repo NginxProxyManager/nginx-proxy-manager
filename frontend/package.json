@@ -6,6 +6,7 @@
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite",
+		"prebuild": "yarn locale-compile",
 		"build": "tsc && vite build",
 		"lint": "biome lint",
 		"preview": "vite preview",
