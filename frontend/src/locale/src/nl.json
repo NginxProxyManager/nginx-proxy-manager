@@ -84,7 +84,7 @@
 		"defaultMessage": "192.168.1.100 of 192.168.1.0/24 of 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
-		"defaultMessage": "Voldoe aan elke"
+		"defaultMessage": "Een of meer vervullen"
 	},
 	"access-list.subtitle": {
 		"defaultMessage": "{users} {users, plural, one {Gebruiker} other {Gebruikers}}, {rules} {rules, plural, one {Regel} other {Regels}} - Aangemaakt: {date}"
@@ -300,7 +300,7 @@
 		"defaultMessage": "Alle"
 	},
 	"column.satisfy-any": {
-		"defaultMessage": "Elke"
+		"defaultMessage": "Een of meer"
 	},
 	"column.scheme": {
 		"defaultMessage": "Schema"
