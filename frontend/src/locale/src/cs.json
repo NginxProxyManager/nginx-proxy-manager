@@ -716,6 +716,57 @@
 	"update-available": {
 		"defaultMessage": "Dostupná aktualizace: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Přidat upstream server"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Označí server jako backup. Bude přijímat požadavky pouze tehdy, když jsou všechny primární servery nedostupné. Nelze použít s ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Přidejte upstream servery pro aktivaci load balancingu pro tento proxy host."
+	},
+	"upstream.down": {
+		"defaultMessage": "Nedostupný"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Trvale označí server jako nedostupný. Užitečné pro bezproblémové odebrání serveru bez změny konfigurace."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Časové období, během kterého musí dojít k max_fails pokusům, aby byl server označen jako nedostupný, a také doba, po kterou nginx čeká před opětovným pokusem o připojení k serveru (např. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Load Balancing"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Počet neúspěšných pokusů v rámci období fail_timeout, po jejichž dosažení je server označen jako nedostupný. Nastavte na 0 pro vypnutí kontroly dostupnosti."
+	},
+	"upstream.method": {
+		"defaultMessage": "Metoda vyvažování"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: požadavky jsou distribuovány postupně (výchozí). Least Connections: odesílá se na server s nejmenším počtem aktivních připojení. IP Hash: stejná IP adresa klienta vždy směřuje na stejný server (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Relativní weight pro distribuci round-robin. Server s weight=2 přijímá dvakrát více požadavků než server s weight=1."
+	},
 	"user": {
 		"defaultMessage": "uživatele"
 	},

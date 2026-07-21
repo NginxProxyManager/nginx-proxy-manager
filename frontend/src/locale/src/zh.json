@@ -611,6 +611,57 @@
 	"test": {
 		"defaultMessage": "测试"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "添加 upstream 服务器"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "将服务器标记为 backup。只有当所有主服务器不可用时，它才会接收请求。不能与 ip_hash 一起使用。"
+	},
+	"upstream.description": {
+		"defaultMessage": "添加 upstream 服务器以为此代理主机启用负载均衡。"
+	},
+	"upstream.down": {
+		"defaultMessage": "停用"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "永久将服务器标记为不可用。适用于在不更改配置的情况下优雅地移除服务器。"
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "fail_timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "在此时间段内发生 max_fails 次失败将导致服务器被标记为不可用，同时也是 nginx 在重试该服务器之前的等待时间（例如 30s、10s）。"
+	},
+	"upstream.host": {
+		"defaultMessage": "主机"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "负载均衡"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "max_fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "在 fail_timeout 时间段内导致服务器被标记为不可用的失败尝试次数。设置为 0 可禁用健康检查。"
+	},
+	"upstream.method": {
+		"defaultMessage": "均衡方式"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin：请求依次分配（默认）。Least Connections：发送到活跃连接数最少的服务器。IP Hash：相同的客户端 IP 始终路由到同一服务器（会话保持）。"
+	},
+	"upstream.port": {
+		"defaultMessage": "端口"
+	},
+	"upstream.weight": {
+		"defaultMessage": "weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "轮询分配的相对 weight。weight=2 的服务器接收的请求数量是 weight=1 的服务器的两倍。"
+	},
 	"user": {
 		"defaultMessage": "用户"
 	},

@@ -722,6 +722,57 @@
 	"update-available": {
 		"defaultMessage": "Доступно обновление: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Добавить upstream-сервер"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Помечает сервер как backup. Он будет получать запросы только тогда, когда все основные серверы недоступны. Нельзя использовать совместно с ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Добавьте upstream-серверы для включения балансировки нагрузки для этого прокси-хоста."
+	},
+	"upstream.down": {
+		"defaultMessage": "Недоступен"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Навсегда помечает сервер как недоступный. Полезно для плавного удаления без изменения конфигурации."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Период времени, в течение которого должно произойти max_fails событий для того, чтобы сервер был помечен как недоступный, а также время, которое nginx ожидает перед повторной попыткой обращения к серверу (например, 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Хост"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Балансировка нагрузки"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Количество неудачных попыток в течение периода fail_timeout, при достижении которого сервер помечается как недоступный. Установите 0, чтобы отключить проверку работоспособности."
+	},
+	"upstream.method": {
+		"defaultMessage": "Метод балансировки"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: запросы распределяются последовательно (по умолчанию). Least Connections: запросы отправляются на сервер с наименьшим числом активных соединений. IP Hash: один и тот же клиентский IP всегда маршрутизируется на один и тот же сервер (липкие сессии)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Порт"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Относительный weight для распределения Round Robin. Сервер с weight=2 получает вдвое больше запросов, чем сервер с weight=1."
+	},
 	"user": {
 		"defaultMessage": "Пользователь"
 	},
