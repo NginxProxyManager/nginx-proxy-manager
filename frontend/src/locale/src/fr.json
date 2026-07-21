@@ -722,6 +722,57 @@
 	"update-available": {
 		"defaultMessage": "Mise à jour disponible : {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Ajouter un serveur upstream"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Marque le serveur comme backup. Il ne recevra des requêtes que lorsque tous les serveurs principaux sont indisponibles. Ne peut pas être utilisé avec ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Ajoutez des serveurs upstream pour activer l'équilibrage de charge pour cet hôte proxy."
+	},
+	"upstream.down": {
+		"defaultMessage": "Indisponible"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Marque définitivement le serveur comme indisponible. Utile pour une suppression progressive sans modifier la configuration."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "La période pendant laquelle max_fails doit se produire pour marquer le serveur comme indisponible, et également le temps pendant lequel nginx attend avant de réessayer le serveur (ex. : 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Hôte"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Équilibrage de charge"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Nombre de tentatives échouées dans la période fail_timeout qui entraîne le marquage du serveur comme indisponible. Définir à 0 pour désactiver la vérification de l'état de santé."
+	},
+	"upstream.method": {
+		"defaultMessage": "Méthode d'équilibrage"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin : les requêtes sont distribuées séquentiellement (par défaut). Least Connections : envoyées au serveur ayant le moins de connexions actives. IP Hash : la même adresse IP client est toujours acheminée vers le même serveur (sessions persistantes)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Le weight relatif pour la distribution round-robin. Un serveur avec weight=2 reçoit deux fois plus de requêtes qu'un serveur avec weight=1."
+	},
 	"user": {
 		"defaultMessage": "Utilisateur"
 	},

@@ -644,6 +644,57 @@
 	"update-available": {
 		"defaultMessage": "업데이트 가능: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Upstream 서버 추가"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "서버를 backup으로 표시합니다. 모든 기본 서버를 사용할 수 없을 때만 요청을 받습니다. ip_hash와 함께 사용할 수 없습니다."
+	},
+	"upstream.description": {
+		"defaultMessage": "이 프록시 호스트에 대한 로드 밸런싱을 활성화하려면 upstream 서버를 추가하세요."
+	},
+	"upstream.down": {
+		"defaultMessage": "Down"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "서버를 영구적으로 사용 불가 상태로 표시합니다. 설정을 변경하지 않고 서버를 정상적으로 제거할 때 유용합니다."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "서버를 사용 불가 상태로 표시하기 위해 max_fails가 발생해야 하는 기간이며, nginx가 서버를 다시 시도하기 전에 대기하는 시간이기도 합니다 (예: 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Load Balancing"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "fail_timeout 기간 내에 서버를 사용 불가 상태로 표시하게 만드는 실패 시도 횟수입니다. 0으로 설정하면 상태 확인을 비활성화합니다."
+	},
+	"upstream.method": {
+		"defaultMessage": "밸런싱 방법"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: 요청이 순차적으로 분배됩니다 (기본값). Least Connections: 활성 연결이 가장 적은 서버로 전송됩니다. IP Hash: 동일한 클라이언트 IP는 항상 동일한 서버로 라우팅됩니다 (스티키 세션)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "라운드 로빈 분배에 대한 상대적 weight입니다. weight=2인 서버는 weight=1인 서버보다 두 배 많은 요청을 받습니다."
+	},
 	"user": {
 		"defaultMessage": "사용자"
 	},

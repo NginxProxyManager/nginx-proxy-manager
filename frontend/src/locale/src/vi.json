@@ -608,6 +608,57 @@
 	"update-available": {
 		"defaultMessage": "Cập nhật khả dụng: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Thêm Upstream Server"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Đánh dấu máy chủ là backup. Nó chỉ nhận yêu cầu khi tất cả các máy chủ chính không khả dụng. Không thể sử dụng với ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Thêm các upstream server để bật cân bằng tải cho proxy host này."
+	},
+	"upstream.down": {
+		"defaultMessage": "Down"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Đánh dấu vĩnh viễn máy chủ là không khả dụng. Hữu ích để loại bỏ máy chủ một cách an toàn mà không cần thay đổi cấu hình."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Khoảng thời gian mà max_fails phải xảy ra để đánh dấu máy chủ là không khả dụng, đồng thời là thời gian nginx chờ trước khi thử lại máy chủ (ví dụ: 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Cân Bằng Tải"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Số lần thử thất bại trong khoảng thời gian fail_timeout khiến máy chủ bị đánh dấu là không khả dụng. Đặt thành 0 để tắt kiểm tra sức khỏe."
+	},
+	"upstream.method": {
+		"defaultMessage": "Phương Thức Cân Bằng"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: các yêu cầu được phân phối tuần tự (mặc định). Least Connections: gửi đến máy chủ có ít kết nối đang hoạt động nhất. IP Hash: cùng một địa chỉ IP của máy khách luôn được định tuyến đến cùng một máy chủ (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Trọng số tương đối cho phân phối round-robin. Một máy chủ có weight=2 nhận gấp đôi số yêu cầu so với máy chủ có weight=1."
+	},
 	"user": {
 		"defaultMessage": "Người dùng"
 	},

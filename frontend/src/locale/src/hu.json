@@ -716,6 +716,57 @@
 	"update-available": {
 		"defaultMessage": "Frissítés elérhető: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Upstream szerver hozzáadása"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Backup-ként jelöli meg a szervert. Csak akkor kap kéréseket, ha az összes elsődleges szerver nem érhető el. Nem használható ip_hash-sel."
+	},
+	"upstream.description": {
+		"defaultMessage": "Adjon hozzá upstream szervereket a load balancing engedélyezéséhez ehhez a proxy hoszthoz."
+	},
+	"upstream.down": {
+		"defaultMessage": "Leállítva"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Véglegesen elérhetetlenként jelöli meg a szervert. Hasznos a kecses eltávolításhoz a konfiguráció módosítása nélkül."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Az az időtartam, amelyen belül a max_fails számú hibának kell bekövetkeznie a szerver elérhetetlenként való megjelöléséhez, és egyben az az idő is, amennyit az nginx vár, mielőtt újra megpróbálja elérni a szervert (pl. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Hoszt"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Terheléselosztás"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "A fail_timeout időszakon belüli sikertelen kísérletek száma, amelyek hatására a szerver elérhetetlenként lesz megjelölve. 0-ra állítva letiltja az állapotellenőrzést."
+	},
+	"upstream.method": {
+		"defaultMessage": "Elosztási módszer"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: a kérések szekvenciálisan kerülnek elosztásra (alapértelmezett). Least Connections: a kérés a legkevesebb aktív kapcsolattal rendelkező szerverre kerül küldésre. IP Hash: ugyanaz az ügyfél IP mindig ugyanahhoz a szerverhez irányít (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Relatív weight a round-robin elosztáshoz. Egy weight=2 értékű szerver kétszer annyi kérést kap, mint egy weight=1 értékű szerver."
+	},
 	"user": {
 		"defaultMessage": "Felhasználó"
 	},

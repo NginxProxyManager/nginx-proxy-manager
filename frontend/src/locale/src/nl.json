@@ -722,6 +722,57 @@
 	"update-available": {
 		"defaultMessage": "Update beschikbaar: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Upstream server toevoegen"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Markeert de server als backup. De server ontvangt alleen verzoeken wanneer alle primaire servers niet beschikbaar zijn. Kan niet worden gebruikt met ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Voeg upstream servers toe om load balancing in te schakelen voor deze proxy host."
+	},
+	"upstream.down": {
+		"defaultMessage": "Offline"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Markeert de server permanent als niet beschikbaar. Handig voor het geleidelijk verwijderen zonder de configuratie te wijzigen."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "De tijdsperiode waarbinnen max_fails moet voorkomen om de server als niet beschikbaar te markeren, en ook hoe lang nginx wacht voordat de server opnieuw wordt geprobeerd (bijv. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Load Balancing"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Aantal mislukte pogingen binnen de fail_timeout periode dat ervoor zorgt dat de server als niet beschikbaar wordt gemarkeerd. Stel in op 0 om gezondheidscontrole uit te schakelen."
+	},
+	"upstream.method": {
+		"defaultMessage": "Verdelingsmethode"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: verzoeken worden sequentieel verdeeld (standaard). Least Connections: verzonden naar de server met het minste aantal actieve verbindingen. IP Hash: hetzelfde client-IP wordt altijd doorgestuurd naar dezelfde server (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Poort"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Relatief weight voor round-robin verdeling. Een server met weight=2 ontvangt tweemaal zoveel verzoeken als een server met weight=1."
+	},
 	"user": {
 		"defaultMessage": "Gebruiker"
 	},

@@ -602,6 +602,57 @@
 	"test": {
 		"defaultMessage": "テスト"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "upstream サーバーを追加"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "サーバーを backup としてマークします。すべてのプライマリサーバーが利用不可の場合にのみリクエストを受け付けます。ip_hash と併用できません。"
+	},
+	"upstream.description": {
+		"defaultMessage": "このプロキシホストのロードバランシングを有効にするには、upstream サーバーを追加してください。"
+	},
+	"upstream.down": {
+		"defaultMessage": "停止"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "サーバーを恒久的に利用不可としてマークします。設定を変更せずに安全にサーバーを切り離す際に便利です。"
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "サーバーを利用不可とマークするために max_fails が発生する必要がある期間、および nginx が再度サーバーへの接続を試みるまでの待機時間です（例: 30s、10s）。"
+	},
+	"upstream.host": {
+		"defaultMessage": "ホスト"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "ロードバランシング"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "fail_timeout 期間内の失敗試行回数で、この値を超えるとサーバーが利用不可とマークされます。0 に設定するとヘルスチェックを無効にします。"
+	},
+	"upstream.method": {
+		"defaultMessage": "負荷分散方式"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: リクエストを順番に分散します（デフォルト）。Least Connections: アクティブな接続数が最も少ないサーバーにリクエストを送信します。IP Hash: 同じクライアント IP は常に同じサーバーにルーティングされます（スティッキーセッション）。"
+	},
+	"upstream.port": {
+		"defaultMessage": "ポート"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Round Robin 分散における相対的な weight です。weight=2 のサーバーは weight=1 のサーバーの2倍のリクエストを受け取ります。"
+	},
 	"user": {
 		"defaultMessage": "ユーザー"
 	},
