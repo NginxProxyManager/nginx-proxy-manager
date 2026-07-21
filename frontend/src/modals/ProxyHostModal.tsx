@@ -15,6 +15,7 @@ import {
 	NginxConfigField,
 	SSLCertificateField,
 	SSLOptionsFields,
+	UpstreamServersFields,
 } from "src/components";
 import { FormModal } from "src/components/Form";
 import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
@@ -102,6 +103,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
 							// Locations tab
 							locations: data?.locations || [],
+							// Load Balancing tab
+							upstreamServers: data?.upstreamServers || [],
+							lbMethod: data?.lbMethod || "round_robin",
 							// SSL tab
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
@@ -151,6 +155,18 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													role="tab"
 												>
 													<T id="column.custom-locations" />
+												</a>
+											</li>
+											<li className="nav-item" role="presentation">
+												<a
+													href="#tab-load-balancing"
+													className="nav-link"
+													data-bs-toggle="tab"
+													aria-selected="false"
+													tabIndex={-1}
+													role="tab"
+												>
+													<T id="upstream.load-balancing" />
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -363,6 +379,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												<LocationsFields
 													initialValues={data?.locations || []}
 													allowAdvanced={!!isAdmin}
+												/>
+											</div>
+											<div className="tab-pane" id="tab-load-balancing" role="tabpanel">
+												<UpstreamServersFields
+													initialServers={data?.upstreamServers || []}
+													initialMethod={data?.lbMethod || "round_robin"}
 												/>
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
