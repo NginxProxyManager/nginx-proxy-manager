@@ -47,6 +47,17 @@ const internalProxyHost = {
 				});
 			})
 			.then(() => {
+				if (
+					thisData.lb_method === "ip_hash" &&
+					Array.isArray(thisData.upstream_servers) &&
+					thisData.upstream_servers.some((s) => s.backup)
+				) {
+					throw new errs.ValidationError(
+						"The backup parameter cannot be used with the ip_hash load balancing method",
+					);
+				}
+			})
+			.then(() => {
 				// At this point the domains should have been checked
 				thisData.owner_user_id = access.token.getUserId(1);
 				thisData = internalHost.cleanSslHstsData(thisData);
@@ -172,6 +183,14 @@ const internalProxyHost = {
 				return row;
 			})
 			.then((row) => {
+				const mergedMethod = thisData.lb_method ?? row.lb_method;
+				const mergedServers = thisData.upstream_servers ?? row.upstream_servers ?? [];
+				if (mergedMethod === "ip_hash" && mergedServers.some((s) => s.backup)) {
+					throw new errs.ValidationError(
+						"The backup parameter cannot be used with the ip_hash load balancing method",
+					);
+				}
+
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
 				thisData = _.assign(
 					{},

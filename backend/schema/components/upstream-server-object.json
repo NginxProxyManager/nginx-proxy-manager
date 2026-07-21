@@ -1,0 +1,47 @@
+{
+	"type": "object",
+	"description": "Upstream server definition for load balancing",
+	"additionalProperties": false,
+	"required": ["host", "port"],
+	"properties": {
+		"host": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 255,
+			"example": "192.168.1.1"
+		},
+		"port": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 65535,
+			"example": 8080
+		},
+		"weight": {
+			"type": "integer",
+			"minimum": 1,
+			"default": 1,
+			"example": 1
+		},
+		"max_fails": {
+			"type": "integer",
+			"minimum": 0,
+			"default": 1,
+			"example": 1
+		},
+		"fail_timeout": {
+			"type": "string",
+			"default": "30s",
+			"example": "30s"
+		},
+		"backup": {
+			"type": "boolean",
+			"default": false,
+			"example": false
+		},
+		"down": {
+			"type": "boolean",
+			"default": false,
+			"example": false
+		}
+	}
+}
