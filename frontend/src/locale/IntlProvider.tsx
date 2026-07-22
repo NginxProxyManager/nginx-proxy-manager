@@ -105,7 +105,7 @@ let intl = createIntl({ locale: getLocale(), messages: initialMessages }, cache)
 const resolveLocale = (locale: string): string => {
   const short = locale.slice(0, 2);
   const match = localeOptions.find(([code]) => code === short);
-  return match ? match[1] : locale;
+  return match ? (match[1] as string) : locale;
 };
 
 const changeLocale = (locale: string): void => {
