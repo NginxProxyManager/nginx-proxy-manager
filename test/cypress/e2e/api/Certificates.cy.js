@@ -170,12 +170,6 @@ describe('Certificates endpoints', () => {
 		}).then((data) => {
 			expect(data.meta.nginx_online).to.equal(false);
 			expect(data.meta.nginx_err).to.equal('Certificate was deleted');
-
-			// Cleanup
-			return cy.task('backendApiDelete', {
-				token: token,
-				path:  `/api/nginx/proxy-hosts/${localHostId}`,
-			});
 		});
 	});
 });
