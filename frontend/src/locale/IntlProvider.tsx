@@ -49,7 +49,9 @@ const localeOptions = [
   ["tr", "tr-TR", langTr],
   ["hu", "hu-HU", langHu],
   ["no", "no-NO", langNo],
-];
+] as [string, string, Record<string, string>][];
+
+const localeCodeByShort = Object.fromEntries(localeOptions.map(([code, fullLocale]) => [code, fullLocale]));
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
   const thisLocale = (locale || "en").slice(0, 2);
@@ -73,6 +75,7 @@ const getFlagCodeForLocale = (locale?: string) => {
     ko: "kr", // Korea
     cs: "cz", // Czechia
     ga: "ie", // Ireland (Irish)
+    et: "ee", // Estonia (Estonian)
   };
 
   if (specialCases[thisLocale]) {
@@ -101,11 +104,16 @@ const cache = createIntlCache();
 const initialMessages = loadMessages(getLocale());
 let intl = createIntl({ locale: getLocale(), messages: initialMessages }, cache);
 
+const resolveLocale = (locale: string): string => {
+  return localeCodeByShort[locale.slice(0, 2)] ?? locale;
+};
+
 const changeLocale = (locale: string): void => {
-  const messages = loadMessages(locale);
-  intl = createIntl({ locale, messages }, cache);
-  window.localStorage.setItem("locale", locale);
-  document.documentElement.lang = locale;
+  const resolvedLocale = resolveLocale(locale);
+  const messages = loadMessages(resolvedLocale);
+  intl = createIntl({ locale: resolvedLocale, messages }, cache);
+  window.localStorage.setItem("locale", resolvedLocale);
+  document.documentElement.lang = resolvedLocale;
 };
 
 // This is a translation component that wraps the translation in a span with a data

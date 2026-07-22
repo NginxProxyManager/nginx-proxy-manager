@@ -92,6 +92,11 @@ describe("getFlagCodeForLocale", () => {
 		expect(getFlagCodeForLocale("ga-IE")).toBe("IE");
 	});
 
+	it("returns EE (Estonia) for Estonian locale, not ET (Ethiopia)", () => {
+		expect(getFlagCodeForLocale("et-EE")).toBe("EE");
+		expect(getFlagCodeForLocale("et")).toBe("EE");
+	});
+
 	it("falls back to EN when no locale is provided", () => {
 		expect(getFlagCodeForLocale()).toBe("EN");
 		expect(getFlagCodeForLocale(undefined)).toBe("EN");
