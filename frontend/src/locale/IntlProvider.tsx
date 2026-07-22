@@ -49,7 +49,9 @@ const localeOptions = [
   ["tr", "tr-TR", langTr],
   ["hu", "hu-HU", langHu],
   ["no", "no-NO", langNo],
-];
+] as [string, string, Record<string, string>][];
+
+const localeCodeByShort = Object.fromEntries(localeOptions.map(([code, fullLocale]) => [code, fullLocale]));
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
   const thisLocale = (locale || "en").slice(0, 2);
@@ -103,9 +105,7 @@ const initialMessages = loadMessages(getLocale());
 let intl = createIntl({ locale: getLocale(), messages: initialMessages }, cache);
 
 const resolveLocale = (locale: string): string => {
-  const short = locale.slice(0, 2);
-  const match = localeOptions.find(([code]) => code === short);
-  return match ? (match[1] as string) : locale;
+  return localeCodeByShort[locale.slice(0, 2)] ?? locale;
 };
 
 const changeLocale = (locale: string): void => {
