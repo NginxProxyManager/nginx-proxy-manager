@@ -13,6 +13,10 @@ import error from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { debug, ssl as logger } from "../logger.js";
 import certificateModel from "../models/certificate.js";
+import deadHostModel from "../models/dead_host.js";
+import proxyHostModel from "../models/proxy_host.js";
+import redirectionHostModel from "../models/redirection_host.js";
+import streamModel from "../models/stream.js";
 import tokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import internalAuditLog from "./audit-log.js";
@@ -416,9 +420,54 @@ const internalCertificate = {
 		});
 
 		if (row.provider === "letsencrypt") {
-			// Revoke the cert
+			// Revoke the cert (--delete-after-revoke removes cert files from disk)
 			await internalCertificate.revokeLetsEncryptSsl(row);
 		}
+
+		// Take offline all enabled hosts that were using this certificate.
+		// Their nginx configs are deleted (so they stop serving entirely rather than
+		// silently downgrading to HTTP) and their meta is updated so the UI shows
+		// them as offline with a clear reason.
+		const affectedHosts = await internalHost.getHostsWithCertificate(row.id);
+		if (affectedHosts.total_count) {
+			logger.warn(`Certificate #${row.id} deleted; taking ${affectedHosts.total_count} dependent host(s) offline`);
+			const offlineMeta = { nginx_online: false, nginx_err: "Certificate was deleted" };
+
+			if (affectedHosts.proxy_hosts.length) {
+				await internalNginx.bulkDeleteConfigs("proxy_host", affectedHosts.proxy_hosts);
+				await Promise.all(
+					affectedHosts.proxy_hosts.map((host) =>
+						proxyHostModel.query().where("id", host.id).patch({ meta: _.assign({}, host.meta, offlineMeta) }),
+					),
+				);
+			}
+			if (affectedHosts.redirection_hosts.length) {
+				await internalNginx.bulkDeleteConfigs("redirection_host", affectedHosts.redirection_hosts);
+				await Promise.all(
+					affectedHosts.redirection_hosts.map((host) =>
+						redirectionHostModel.query().where("id", host.id).patch({ meta: _.assign({}, host.meta, offlineMeta) }),
+					),
+				);
+			}
+			if (affectedHosts.dead_hosts.length) {
+				await internalNginx.bulkDeleteConfigs("dead_host", affectedHosts.dead_hosts);
+				await Promise.all(
+					affectedHosts.dead_hosts.map((host) =>
+						deadHostModel.query().where("id", host.id).patch({ meta: _.assign({}, host.meta, offlineMeta) }),
+					),
+				);
+			}
+			if (affectedHosts.streams.length) {
+				await internalNginx.bulkDeleteConfigs("stream", affectedHosts.streams);
+				await Promise.all(
+					affectedHosts.streams.map((host) =>
+						streamModel.query().where("id", host.id).patch({ meta: _.assign({}, host.meta, offlineMeta) }),
+					),
+				);
+			}
+			await internalNginx.reload();
+		}
+
 		return true;
 	},
 

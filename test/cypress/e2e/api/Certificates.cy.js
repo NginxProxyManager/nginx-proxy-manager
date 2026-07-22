@@ -104,4 +104,78 @@ describe('Certificates endpoints', () => {
 			expect(data.error.message).to.contain('data/domain_names/0 must match pattern');
 		});
 	});
+
+	it('Deleting a certificate takes dependent proxy hosts offline', () => {
+		let localCertId;
+		let localHostId;
+
+		// Create the cert
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/certificates',
+			data:  {
+				provider:  'other',
+				nice_name: 'Offline Test Certificate',
+			},
+		}).then((data) => {
+			localCertId = data.id;
+
+			// Upload the cert files
+			return cy.task('backendApiPostFiles', {
+				token: token,
+				path:  `/api/nginx/certificates/${localCertId}/upload`,
+				files: {
+					certificate:     certFile,
+					certificate_key: keyFile,
+				},
+			});
+		}).then(() => {
+			// Create a proxy host that uses the cert
+			return cy.task('backendApiPost', {
+				token: token,
+				path:  '/api/nginx/proxy-hosts',
+				data:  {
+					domain_names:            ['cert-offline-test.example.com'],
+					forward_scheme:          'http',
+					forward_host:            '1.1.1.1',
+					forward_port:            80,
+					access_list_id:          '0',
+					certificate_id:          localCertId,
+					meta:                    { dns_challenge: false },
+					advanced_config:         '',
+					locations:               [],
+					block_exploits:          false,
+					caching_enabled:         false,
+					allow_websocket_upgrade: false,
+					http2_support:           false,
+					hsts_enabled:            false,
+					hsts_subdomains:         false,
+					ssl_forced:              false,
+				},
+			});
+		}).then((data) => {
+			localHostId = data.id;
+
+			// Delete the certificate
+			return cy.task('backendApiDelete', {
+				token: token,
+				path:  `/api/nginx/certificates/${localCertId}`,
+			});
+		}).then(() => {
+			// Fetch the proxy host — it must be offline with a clear error
+			return cy.task('backendApiGet', {
+				token: token,
+				path:  `/api/nginx/proxy-hosts/${localHostId}`,
+			});
+		}).then((data) => {
+			expect(data.meta.nginx_online).to.equal(false);
+			expect(data.meta.nginx_err).to.equal('Certificate was deleted');
+
+			// Cleanup
+			return cy.task('backendApiDelete', {
+				token: token,
+				path:  `/api/nginx/proxy-hosts/${localHostId}`,
+			});
+		});
+	});
 });
