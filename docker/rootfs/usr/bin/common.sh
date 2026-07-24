@@ -70,3 +70,7 @@ is_true () {
 		echo '0'
 	fi
 }
+
+is_mounted() {
+	awk -v p="$1" '$5 == p { found=1 } END { exit !found }' /proc/self/mountinfo
+}
