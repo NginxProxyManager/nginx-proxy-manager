@@ -1,6 +1,12 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useMemo } from "react";
+import {
+	createColumnHelper,
+	getCoreRowModel,
+	getSortedRowModel,
+	type SortingState,
+	useReactTable,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
 import type { ProxyHost } from "src/api/backend";
 import {
 	AccessListFormatter,
@@ -30,6 +36,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
+				enableSorting: false,
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
@@ -41,6 +48,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row, {
 				id: "domainNames",
 				header: intl.formatMessage({ id: "column.source" }),
+				sortingFn: (a, b) => {
+					const aVal = a.original.domainNames?.[0] ?? "";
+					const bVal = b.original.domainNames?.[0] ?? "";
+					return aVal.localeCompare(bVal);
+				},
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
@@ -49,6 +61,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row, {
 				id: "forwardHost",
 				header: intl.formatMessage({ id: "column.destination" }),
+				sortingFn: (a, b) => {
+					const aVal = `${a.original.forwardHost}:${a.original.forwardPort}`;
+					const bVal = `${b.original.forwardHost}:${b.original.forwardPort}`;
+					return aVal.localeCompare(bVal);
+				},
 				cell: (info: any) => {
 					const value = info.getValue();
 					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
@@ -56,6 +73,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {
 				id: "certificate",
+				enableSorting: false,
 				header: intl.formatMessage({ id: "column.ssl" }),
 				cell: (info: any) => {
 					return <CertificateFormatter certificate={info.getValue()} />;
@@ -63,6 +81,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			}),
 			columnHelper.accessor((row: any) => row.accessList, {
 				id: "accessList",
+				enableSorting: false,
 				header: intl.formatMessage({ id: "column.access" }),
 				cell: (info: any) => {
 					return <AccessListFormatter access={info.getValue()} />;
@@ -144,10 +163,15 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 		[columnHelper, onEdit, onDisableToggle, onDelete],
 	);
 
+	const [sorting, setSorting] = useState<SortingState>([]);
+
 	const tableInstance = useReactTable<ProxyHost>({
 		columns,
 		data,
+		state: { sorting },
+		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
+		getSortedRowModel: getSortedRowModel(),
 		rowCount: data.length,
 		meta: {
 			isFetching,

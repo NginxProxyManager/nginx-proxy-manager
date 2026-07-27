@@ -39,7 +39,7 @@ services:
           - website3.example.com
 
   stepca:
-    image: jc21/testca
+    image: nginxproxymanager/testca
     volumes:
       - "./dev/resolv.conf:/etc/resolv.conf:ro"
       - "/etc/localtime:/etc/localtime:ro"
@@ -105,11 +105,12 @@ services:
     environment:
       HTTP_PROXY: "squid:3128"
       HTTPS_PROXY: "squid:3128"
+      NPM_ADMIN_PORT: 81
     volumes:
       - "cypress_logs:/test/results"
       - "./dev/resolv.conf:/etc/resolv.conf:ro"
       - "/etc/localtime:/etc/localtime:ro"
-    command: cypress run --browser chrome --config-file=cypress/config/ci.mjs
+    command: cypress run --browser chrome --config-file=cypress/config/ci.mjs --expose grepTags="-@isolated"
     networks:
       - fulltest
 

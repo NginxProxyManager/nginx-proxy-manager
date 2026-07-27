@@ -3,6 +3,7 @@ services:
   cypress:
     environment:
       CYPRESS_stack: "postgres"
+      NPM_ADMIN_PORT: 8000
 
   fullstack:
     environment:
@@ -11,11 +12,14 @@ services:
       DB_POSTGRES_USER: "npm"
       DB_POSTGRES_PASSWORD: "npmpass"
       DB_POSTGRES_NAME: "npm"
+      NPM_ADMIN_PORT: 8000
     depends_on:
       - db-postgres
       - authentik
       - authentik-worker
       - authentik-ldap
+    expose:
+      - "8000/tcp"
 
   db-postgres:
     image: postgres:17
