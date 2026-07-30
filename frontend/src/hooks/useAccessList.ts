@@ -17,6 +17,7 @@ const fetchAccessList = (id: number | "new", expand: AccessListExpansion[] = ["o
 			name: "",
 			satisfyAny: false,
 			passAuth: false,
+			defaultAllow: false,
 			meta: {},
 		} as AccessList);
 	}

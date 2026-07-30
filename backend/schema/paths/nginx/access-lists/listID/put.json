@@ -39,6 +39,9 @@
 						"pass_auth": {
 							"$ref": "../../../../components/access-list-object.json#/properties/pass_auth"
 						},
+						"default_allow": {
+							"$ref": "../../../../components/access-list-object.json#/properties/default_allow"
+						},
 						"items": {
 							"$ref": "../../../../common.json#/properties/access_items"
 						},
@@ -51,6 +54,7 @@
 					"name": "My Access List",
 					"satisfy_any": true,
 					"pass_auth": false,
+					"default_allow": false,
 					"items": [
 						{
 							"username": "admin2",
@@ -83,6 +87,7 @@
 								"meta": {},
 								"satisfy_any": true,
 								"pass_auth": false,
+								"default_allow": false,
 								"proxy_host_count": 0,
 								"owner": {
 									"id": 1,

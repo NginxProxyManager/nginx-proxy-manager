@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import app from "./app.js";
+import internalAsn from "./internal/asn.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
 import { global as logger } from "./logger.js";
@@ -27,6 +28,7 @@ async function appStart() {
 		.then(() => {
 			internalCertificate.initTimer();
 			internalIpRanges.initTimer();
+			internalAsn.initTimer();
 
 			const server = app.listen(3000, () => {
 				logger.info(`Backend PID ${process.pid} listening on port 3000 ...`);

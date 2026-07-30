@@ -65,8 +65,11 @@
 	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
+	"access-list.help-asn": {
+		"defaultMessage": "AS numbers (eg AS12345) are expanded to their announced IP prefixes when the list is saved and refreshed automatically every 6 hours."
+	},
 	"access-list.help-rules-last": {
-		"defaultMessage": "When at least 1 rule exists, this deny all rule will be added last"
+		"defaultMessage": "When at least 1 rule exists, this final rule will be added last and decides the fate of clients not matching any rule above"
 	},
 	"access-list.help.rules-order": {
 		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
@@ -81,7 +84,7 @@
 		"defaultMessage": "No basic auth required"
 	},
 	"access-list.rule-source.placeholder": {
-		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32"
+		"defaultMessage": "192.168.1.100 or 192.168.1.0/24 or 2001:0db8::/32 or AS12345"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Satisfy Any"

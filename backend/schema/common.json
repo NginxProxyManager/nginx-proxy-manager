@@ -152,6 +152,10 @@
 				{
 					"type": "string",
 					"pattern": "^all$"
+				},
+				{
+					"type": "string",
+					"pattern": "^[Aa][Ss][0-9]+$"
 				}
 			],
 			"example": "192.168.0.11"

@@ -11,7 +11,7 @@ interface Props {
 }
 export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 	const [values, setValues] = useState<AccessListClient[]>(initialValues || []);
-	const { setFieldValue } = useFormikContext();
+	const { setFieldValue, values: formValues } = useFormikContext<any>();
 
 	const blankClient: AccessListClient = { directive: "allow", address: "" };
 
@@ -49,6 +49,9 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 		<>
 			<p className="text-muted">
 				<T id="access-list.help.rules-order" />
+			</p>
+			<p className="text-muted">
+				<T id="access-list.help-asn" />
 			</p>
 			{values.map((client: AccessListClient, idx: number) => (
 				<div className="row mb-1" key={idx}>
@@ -107,11 +110,16 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 					<div className="input-group mb-2">
 						<span className="input-group-select">
 							<select
-								className="form-select m-0 bg-orange-lt"
-								name="clients[last].directive"
-								value="deny"
-								disabled
+								className={cn(
+									"form-select",
+									"m-0",
+									formValues?.defaultAllow ? "bg-lime-lt" : "bg-orange-lt",
+								)}
+								name="defaultAllow"
+								value={formValues?.defaultAllow ? "allow" : "deny"}
+								onChange={(e) => setFieldValue("defaultAllow", e.target.value === "allow")}
 							>
+								<option value="allow"><T id="action.allow" /></option>
 								<option value="deny"><T id="action.deny" /></option>
 							</select>
 						</span>

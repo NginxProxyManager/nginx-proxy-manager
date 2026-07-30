@@ -40,6 +40,7 @@
                                 "meta": {},
                                 "satisfy_any": false,
                                 "pass_auth": false,
+                                "default_allow": false,
                                 "proxy_host_count": 1
                             }
                         }

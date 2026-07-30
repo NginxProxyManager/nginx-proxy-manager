@@ -93,9 +93,16 @@ const getRenderEngine = () => {
 	 *
 	 * directive  string
 	 * address    string
+	 *
+	 * An AS number address (eg "AS12345") expands to one rule per announced
+	 * prefix, resolved at save time and cached in meta.asn_prefixes.
 	 */
 	renderEngine.registerFilter("nginxAccessRule", (v) => {
 		if (typeof v.directive !== "undefined" && typeof v.address !== "undefined" && v.directive && v.address) {
+			if (/^AS\d+$/i.test(v.address)) {
+				const prefixes = v.meta?.asn_prefixes || [];
+				return prefixes.map((prefix) => `${v.directive} ${prefix}; # ${v.address.toUpperCase()}`).join("\n    ");
+			}
 			return `${v.directive} ${v.address};`;
 		}
 		return "";

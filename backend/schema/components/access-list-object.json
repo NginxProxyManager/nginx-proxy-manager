@@ -1,7 +1,7 @@
 {
 	"type": "object",
 	"description": "Access List object",
-	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "meta", "satisfy_any", "pass_auth", "proxy_host_count"],
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "meta", "satisfy_any", "pass_auth", "default_allow", "proxy_host_count"],
 	"properties": {
 		"id": {
 			"$ref": "../common.json#/properties/id"
@@ -29,6 +29,11 @@
 			"example": true
 		},
 		"pass_auth": {
+			"type": "boolean",
+			"example": false
+		},
+		"default_allow": {
+			"description": "When true, clients not matching any rule are allowed instead of denied",
 			"type": "boolean",
 			"example": false
 		},
