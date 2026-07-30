@@ -100,6 +100,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							name: data?.name,
 							satisfyAny: data?.satisfyAny,
 							passAuth: data?.passAuth,
+							defaultAllow: data?.defaultAllow ?? false,
 							items: data?.items || [],
 							clients: data?.clients || [],
 						} as AccessList

@@ -39,6 +39,7 @@
 						"meta": {},
 						"satisfy_any": true,
 						"pass_auth": false,
+						"default_allow": false,
 						"proxy_host_count": 0
 					},
 					"schema": {

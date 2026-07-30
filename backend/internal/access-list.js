@@ -8,11 +8,42 @@ import accessListModel from "../models/access_list.js";
 import accessListAuthModel from "../models/access_list_auth.js";
 import accessListClientModel from "../models/access_list_client.js";
 import proxyHostModel from "../models/proxy_host.js";
+import internalAsn from "./asn.js";
 import internalAuditLog from "./audit-log.js";
 import internalNginx from "./nginx.js";
 
 const omissions = () => {
 	return ["is_deleted"];
+};
+
+/**
+ * Builds the insertable client rows, resolving ASN prefixes up front so a
+ * resolution failure aborts before anything is written to the database.
+ *
+ * @param   {Integer} accessListId
+ * @param   {Array}   clients
+ * @returns {Promise} resolving to an array of insertable rows
+ */
+const buildClientRows = async (accessListId, clients) => {
+	const rows = [];
+	for (const client of clients) {
+		if (!client.address) {
+			continue;
+		}
+		const row = {
+			access_list_id: accessListId,
+			address: client.address,
+			directive: client.directive,
+		};
+		if (internalAsn.regex.test(client.address)) {
+			row.meta = {
+				asn_prefixes: await internalAsn.resolvePrefixes(client.address),
+				asn_fetched_on: new Date().toISOString(),
+			};
+		}
+		rows.push(row);
+	}
+	return rows;
 };
 
 const internalAccessList = {
@@ -29,6 +60,7 @@ const internalAccessList = {
 				name: data.name,
 				satisfy_any: data.satisfy_any,
 				pass_auth: data.pass_auth,
+				default_allow: data.default_allow,
 				owner_user_id: access.token.getUserId(1),
 			})
 			.then(utils.omitRow(omissions()));
@@ -51,12 +83,8 @@ const internalAccessList = {
 		await Promise.all(promises);
 
 		// Clients
-		for (const client of data.clients ?? []) {
-			await accessListClientModel.query().insert({
-				access_list_id: row.id,
-				address: client.address,
-				directive: client.directive,
-			});
+		for (const clientRow of await buildClientRows(row.id, data.clients ?? [])) {
+			await accessListClientModel.query().insert(clientRow);
 		}
 
 		// re-fetch with expansions
@@ -112,6 +140,7 @@ const internalAccessList = {
 				name: data.name,
 				satisfy_any: data.satisfy_any,
 				pass_auth: data.pass_auth,
+				default_allow: data.default_allow,
 			});
 		}
 
@@ -151,17 +180,14 @@ const internalAccessList = {
 
 		// Check for clients and add/update/remove them
 		if (typeof data.clients !== "undefined" && data.clients) {
-			const query = accessListClientModel.query().delete().where("access_list_id", data.id);
-			await query;
+			// Resolve ASN prefixes before deleting anything so a failed
+			// resolution doesn't leave the list half-saved
+			const clientRows = await buildClientRows(data.id, data.clients);
 
-			for (const client of data.clients) {
-				if (client.address) {
-					await accessListClientModel.query().insert({
-						access_list_id: data.id,
-						address: client.address,
-						directive: client.directive,
-					});
-				}
+			await accessListClientModel.query().delete().where("access_list_id", data.id);
+
+			for (const clientRow of clientRows) {
+				await accessListClientModel.query().insert(clientRow);
 			}
 		}
 

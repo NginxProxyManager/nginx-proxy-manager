@@ -8,8 +8,11 @@
 	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
+	"access-list.help-asn": {
+		"defaultMessage": "AS-Nummern (z. B. AS12345) werden beim Speichern der Liste in die zugehörigen angekündigten IP-Präfixe aufgelöst und alle 6 Stunden automatisch aktualisiert."
+	},
 	"access-list.help-rules-last": {
-		"defaultMessage": "Wenn mindestens eine Regel vorhanden ist, wird diese Regel zum Ablehnen aller Anfragen als letzte hinzugefügt."
+		"defaultMessage": "Wenn mindestens eine Regel vorhanden ist, wird diese abschließende Regel als letzte hinzugefügt und bestimmt, was mit Anfragen geschieht, die keine der obigen Regeln erfüllen."
 	},
 	"access-list.help.rules-order": {
 		"defaultMessage": "Beachten Sie, dass die Anweisungen „Erlauben“ und „Verbieten“ in der Reihenfolge ihrer Definition angewendet werden."
