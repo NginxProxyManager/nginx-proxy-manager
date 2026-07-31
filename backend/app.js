@@ -62,7 +62,7 @@ app.use("/", mainRoutes);
 app.use((err, req, res, _) => {
 	const payload = {
 		error: {
-			code: err.status,
+			code: err.status || 500,
 			message: err.public ? err.message : "Internal Error",
 		},
 	};

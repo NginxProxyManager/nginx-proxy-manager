@@ -48,19 +48,16 @@ const internalAccessList = {
 			return true;
 		});
 
-		// Clients
-		data.clients?.map((client) => {
-			promises.push(
-				accessListClientModel.query().insert({
-					access_list_id: row.id,
-					address: client.address,
-					directive: client.directive,
-				}),
-			);
-			return true;
-		});
-
 		await Promise.all(promises);
+
+		// Clients
+		for (const client of data.clients ?? []) {
+			await accessListClientModel.query().insert({
+				access_list_id: row.id,
+				address: client.address,
+				directive: client.directive,
+			});
+		}
 
 		// re-fetch with expansions
 		const freshRow = await internalAccessList.get(
@@ -154,25 +151,17 @@ const internalAccessList = {
 
 		// Check for clients and add/update/remove them
 		if (typeof data.clients !== "undefined" && data.clients) {
-			const clientPromises = [];
-			data.clients.map((client) => {
-				if (client.address) {
-					clientPromises.push(
-						accessListClientModel.query().insert({
-							access_list_id: data.id,
-							address: client.address,
-							directive: client.directive,
-						}),
-					);
-				}
-				return true;
-			});
-
 			const query = accessListClientModel.query().delete().where("access_list_id", data.id);
 			await query;
-			// Add new clitens
-			if (clientPromises.length) {
-				await Promise.all(clientPromises);
+
+			for (const client of data.clients) {
+				if (client.address) {
+					await accessListClientModel.query().insert({
+						access_list_id: data.id,
+						address: client.address,
+						directive: client.directive,
+					});
+				}
 			}
 		}
 
@@ -241,7 +230,7 @@ const internalAccessList = {
 
 		let row = await query.then(utils.omitRow(omissions()));
 
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(thisData.id);
 		}
 		if (!skipMasking && typeof row.items !== "undefined" && row.items) {
@@ -268,7 +257,7 @@ const internalAccessList = {
 			expand: ["proxy_hosts", "items", "clients"],
 		});
 
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 
