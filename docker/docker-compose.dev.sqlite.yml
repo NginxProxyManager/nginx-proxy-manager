@@ -1,0 +1,27 @@
+# WARNING: This is a development-only Compose override for the SQLite single-instance stack.
+services:
+  fullstack:
+    build:
+      args:
+        # Set DEBIAN_MIRROR to another reachable mirror when needed.
+        DEBIAN_MIRROR: "${DEBIAN_MIRROR:-https://mirrors.aliyun.com}"
+    environment:
+      # The mounted development config/default.json selects MySQL. Point config.js at an
+      # empty directory so the SQLite environment settings below take precedence.
+      NODE_CONFIG_DIR: "/tmp/npm-config"
+      # The regular dev file selects Postgres. Clear those settings so config.js selects SQLite.
+      DB_MYSQL_HOST: ""
+      DB_MYSQL_PORT: ""
+      DB_MYSQL_USER: ""
+      DB_MYSQL_PASSWORD: ""
+      DB_MYSQL_NAME: ""
+      DB_POSTGRES_HOST: ""
+      DB_POSTGRES_PORT: ""
+      DB_POSTGRES_USER: ""
+      DB_POSTGRES_PASSWORD: ""
+      DB_POSTGRES_NAME: ""
+      DB_SQLITE_FILE: "/data/database.sqlite"
+    # The full start-dev stack rewrites resolv.conf to point at dnsrouter. Use Docker's
+    # embedded resolver because this variant deliberately does not start dnsrouter.
+    volumes:
+      - "./dev/resolv.sqlite.conf:/etc/resolv.conf:ro"

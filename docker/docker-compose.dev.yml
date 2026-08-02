@@ -47,7 +47,9 @@ services:
       - le_data:/etc/letsencrypt
       - "./dev/resolv.conf:/etc/resolv.conf:ro"
       - ../backend:/app
+      - backend_node_modules:/app/node_modules
       - ../frontend:/frontend
+      - frontend_node_modules:/frontend/node_modules
       - "/etc/localtime:/etc/localtime:ro"
     healthcheck:
       test: ["CMD", "/usr/bin/check-health"]
@@ -254,6 +256,10 @@ services:
       - authentik
 
 volumes:
+  backend_node_modules:
+    name: npm2dev_backend_node_modules
+  frontend_node_modules:
+    name: npm2dev_frontend_node_modules
   npm_data:
     name: npm2dev_core_data
   le_data:

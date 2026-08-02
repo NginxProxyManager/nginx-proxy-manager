@@ -86,6 +86,39 @@ const errs = {
 		this.status = 400;
 	},
 
+	ConflictError: function (message, errorCode = "CONFLICT", details = undefined, previous = undefined) {
+		Error.captureStackTrace(this, this.constructor);
+		this.name = this.constructor.name;
+		this.previous = previous;
+		this.message = message;
+		this.status = 409;
+		this.public = true;
+		this.error_code = errorCode;
+		this.details = details;
+	},
+
+	UnprocessableConfigError: function (message, details = undefined, previous = undefined) {
+		Error.captureStackTrace(this, this.constructor);
+		this.name = this.constructor.name;
+		this.previous = previous;
+		this.message = message;
+		this.status = 422;
+		this.public = true;
+		this.error_code = "UNPROCESSABLE_NGINX_CONFIG";
+		this.details = details;
+	},
+
+	ServiceUnavailableError: function (message, errorCode = "SERVICE_UNAVAILABLE", details = undefined, previous = undefined) {
+		Error.captureStackTrace(this, this.constructor);
+		this.name = this.constructor.name;
+		this.previous = previous;
+		this.message = message;
+		this.status = 503;
+		this.public = true;
+		this.error_code = errorCode;
+		this.details = details;
+	},
+
 	CommandError: function (stdErr, code, previous) {
 		Error.captureStackTrace(this, this.constructor);
 		this.name = this.constructor.name;

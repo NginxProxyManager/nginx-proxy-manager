@@ -1,7 +1,9 @@
 {
 	"operationId": "updateProxyHost",
 	"summary": "Update a Proxy Host",
-	"tags": ["proxy-hosts"],
+	"tags": [
+		"proxy-hosts"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -57,7 +59,7 @@
 							"$ref": "../../../../components/proxy-host-object.json#/properties/hsts_subdomains"
 						},
 						"trust_forwarded_proto": {
-    						"$ref": "../../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
+							"$ref": "../../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
 						},
 						"http2_support": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/http2_support"
@@ -85,6 +87,18 @@
 						},
 						"locations": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/locations"
+						},
+						"nginx_config": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/nginx_config"
+						},
+						"base_revision": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"preview_token": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 4096
 						}
 					}
 				}

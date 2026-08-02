@@ -3,6 +3,7 @@
 import app from "./app.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
+import nginxLogFollowHub from "./internal/nginx-log-follow-hub.js";
 import { global as logger } from "./logger.js";
 import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
@@ -33,6 +34,7 @@ async function appStart() {
 
 				process.on("SIGTERM", () => {
 					logger.info(`PID ${process.pid} received SIGTERM`);
+					nginxLogFollowHub.closeAll();
 					server.close(() => {
 						logger.info("Stopping.");
 						process.exit(0);

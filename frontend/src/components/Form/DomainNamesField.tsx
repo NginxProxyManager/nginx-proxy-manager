@@ -56,6 +56,9 @@ export function DomainNamesField({
 					<label className="form-label" htmlFor={id}>
 						<T id={label} />
 					</label>
+					<div className="form-hint mb-2">
+						<T id="domain-names.help" />
+					</div>
 					<CreatableSelect
 						className="react-select-container"
 						classNamePrefix="react-select"
@@ -71,12 +74,15 @@ export function DomainNamesField({
 					/>
 					{form.errors[field.name] && form.touched[field.name] ? (
 						<small className="text-danger">{form.errors[field.name]}</small>
-					) : helperTexts.length ? (
-						helperTexts.map((i, idx) => (
-							<small key={idx} className="text-info">
-								{i}
-							</small>
-						))
+					) : null}
+					{helperTexts.length ? (
+						<div className="form-hint text-info mt-1">
+							{helperTexts.map((i, idx) => (
+								<span key={idx} className="d-block">
+									{i}
+								</span>
+							))}
+						</div>
 					) : null}
 				</div>
 			)}

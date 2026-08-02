@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconEdit, IconFileText, IconPower, IconTrash } from "@tabler/icons-react";
 import {
 	createColumnHelper,
 	getCoreRowModel,
@@ -25,11 +25,21 @@ interface Props {
 	isFiltered?: boolean;
 	isFetching?: boolean;
 	onEdit?: (id: number) => void;
+	onLogs?: (id: number) => void;
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onDisableToggle, onNew }: Props) {
+export default function Table({
+	data,
+	isFetching,
+	isFiltered,
+	onEdit,
+	onLogs,
+	onDelete,
+	onDisableToggle,
+	onNew,
+}: Props) {
 	const columnHelper = createColumnHelper<Stream>();
 	const columns = useMemo(
 		() => [
@@ -107,7 +117,18 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				id: "id",
 				cell: (info: any) => {
 					return (
-						<span className="dropdown">
+						<div className="d-flex justify-content-end align-items-center gap-1">
+							{onLogs ? (
+								<button
+									type="button"
+									className="btn btn-sm btn-outline-secondary d-flex align-items-center"
+									onClick={() => onLogs(info.row.original.id)}
+								>
+									<IconFileText size={16} />
+									<span className="ms-1">Logs</span>
+								</button>
+							) : null}
+							<span className="dropdown">
 							<button
 								type="button"
 								className="btn dropdown-toggle btn-action btn-sm px-1"
@@ -162,14 +183,15 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 								</HasPermission>
 							</div>
 						</span>
+						</div>
 					);
 				},
 				meta: {
-					className: "text-end w-1",
+					className: "text-end text-nowrap",
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onLogs, onDisableToggle, onDelete],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);

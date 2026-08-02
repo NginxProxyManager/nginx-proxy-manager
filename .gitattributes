@@ -1,0 +1,5 @@
+# Files copied into the Linux image and scripts executed by the host must use LF endings.
+docker/rootfs/** text eol=lf
+*.sh text eol=lf
+scripts/** text eol=lf
+docker/scripts/** text eol=lf

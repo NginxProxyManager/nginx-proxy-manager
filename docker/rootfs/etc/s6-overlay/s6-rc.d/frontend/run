@@ -10,8 +10,8 @@ if [ "$DEVELOPMENT" = 'true' ]; then
 	cd /frontend || exit 1
 	HOME=$NPMHOME
 	export HOME
-	mkdir -p /frontend/dist
-	chown -R "$PUID:$PGID" /frontend/dist
+	mkdir -p /frontend/dist /frontend/node_modules
+	chown -R "$PUID:$PGID" /frontend/dist /frontend/node_modules
 
 	log_info 'Starting frontend ...'
 	s6-setuidgid "$PUID:$PGID" yarn install

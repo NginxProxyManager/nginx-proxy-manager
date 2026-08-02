@@ -10,7 +10,13 @@ interface Props {
 	requireDomainNames?: boolean; // used for streams
 	color?: string;
 }
-export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDNSForNew, requireDomainNames, color = "bg-cyan" }: Props) {
+export function SSLOptionsFields({
+	forHttp = true,
+	forProxyHost = false,
+	forceDNSForNew,
+	requireDomainNames,
+	color = "bg-cyan",
+}: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
 
@@ -50,7 +56,15 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 									disabled={!hasCertificate}
 								/>
 								<span className="form-check-label">
-									<T id="domains.force-ssl" />
+									<span className="d-block">
+										<T id="domains.force-ssl" />
+									</span>
+
+									{forProxyHost ? (
+										<span className="d-block small text-secondary">
+											<T id="domains.force-ssl.help" />
+										</span>
+									) : null}
 								</span>
 							</label>
 						)}
@@ -68,7 +82,15 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 									disabled={!hasCertificate}
 								/>
 								<span className="form-check-label">
-									<T id="domains.http2-support" />
+									<span className="d-block">
+										<T id="domains.http2-support" />
+									</span>
+
+									{forProxyHost ? (
+										<span className="d-block small text-secondary">
+											<T id="domains.http2-support.help" />
+										</span>
+									) : null}
 								</span>
 							</label>
 						)}
@@ -88,7 +110,15 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 									disabled={!hasCertificate || !sslForced}
 								/>
 								<span className="form-check-label">
-									<T id="domains.hsts-enabled" />
+									<span className="d-block">
+										<T id="domains.hsts-enabled" />
+									</span>
+
+									{forProxyHost ? (
+										<span className="d-block small text-secondary">
+											<T id="domains.hsts-enabled.help" />
+										</span>
+									) : null}
 								</span>
 							</label>
 						)}
@@ -106,7 +136,15 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 									disabled={!hasCertificate || !hstsEnabled}
 								/>
 								<span className="form-check-label">
-									<T id="domains.hsts-subdomains" />
+									<span className="d-block">
+										<T id="domains.hsts-subdomains" />
+									</span>
+
+									{forProxyHost ? (
+										<span className="d-block small text-secondary">
+											<T id="domains.hsts-subdomains.help" />
+										</span>
+									) : null}
 								</span>
 							</label>
 						)}
@@ -116,10 +154,12 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 		</div>
 	);
 
-	const getHttpAdvancedOptions = () =>(
+	const getHttpAdvancedOptions = () => (
 		<div>
 			<details>
-				<summary className="mb-1"><T id="domains.advanced" /></summary>
+				<summary className="mb-1">
+					<T id="domains.advanced" />
+				</summary>
 				<div className="row">
 					<div className="col-12">
 						<Field name="trustForwardedProto">
@@ -133,7 +173,15 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 										disabled={!hasCertificate || !sslForced}
 									/>
 									<span className="form-check-label">
-										<T id="domains.trust-forwarded-proto" />
+										<span className="d-block">
+											<T id="domains.trust-forwarded-proto" />
+										</span>
+
+										{forProxyHost ? (
+											<span className="d-block small text-secondary">
+												<T id="domains.trust-forwarded-proto.help" />
+											</span>
+										) : null}
 									</span>
 								</label>
 							)}
@@ -160,7 +208,15 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 									onChange={(e) => handleToggleChange(e, field.name)}
 								/>
 								<span className="form-check-label">
-									<T id="domains.use-dns" />
+									<span className="d-block">
+										<T id="domains.use-dns" />
+									</span>
+
+									{forProxyHost ? (
+										<span className="d-block small text-secondary">
+											<T id="domains.use-dns.help" />
+										</span>
+									) : null}
 								</span>
 							</label>
 						)}
