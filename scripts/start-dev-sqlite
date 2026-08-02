@@ -1,0 +1,71 @@
+#!/bin/bash -e
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$DIR/.common.sh"
+
+# Overlay the regular development Compose file with the SQLite configuration.
+# This keeps the same source mounts and ports as start-dev while the command below
+# deliberately starts only the fullstack service. Explicitly using ':' also makes
+# the script work when invoked through a Unix shell on Windows hosts.
+COMPOSE_PATH_SEPARATOR=":"
+COMPOSE_FILE="${COMPOSE_FILE}${COMPOSE_PATH_SEPARATOR}docker/docker-compose.dev.sqlite.yml"
+export COMPOSE_FILE COMPOSE_PATH_SEPARATOR
+
+FOLLOW_LOGS=false
+PULL_IMAGES=false
+
+for arg in "$@"; do
+	case "$arg" in
+		-f|--follow)
+			FOLLOW_LOGS=true
+			;;
+		--pull)
+			PULL_IMAGES=true
+			;;
+		-h|--help)
+			echo "Usage: $0 [-f|--follow] [--pull]"
+			exit 0
+			;;
+		*)
+			echo "Unknown option: $arg" >&2
+			exit 2
+			;;
+	esac
+done
+
+# Ensure docker exists
+if hash docker 2>/dev/null; then
+	cd "${DIR}/.."
+	echo -e "${BLUE}❯ ${CYAN}Starting SQLite Single-Instance Dev Stack ...${RESET}"
+	echo -e "${BLUE}❯ ${YELLOW}Only the fullstack container will be started; database and supporting services are not started.${RESET}"
+	docker compose config --quiet
+
+	# Build and run just one NPM instance. The default build intentionally does not pull
+	# remote base images, allowing Docker's local layer cache to be reused. Use --pull
+	# explicitly when a base image refresh is required.
+	if [ "$PULL_IMAGES" = true ]; then
+		docker compose build --pull --parallel fullstack
+	else
+		docker compose build --parallel fullstack
+	fi
+	docker compose up -d --no-deps --force-recreate fullstack
+
+	# Wait for the single fullstack container to be ready.
+	bash "$DIR/wait-healthy" "$(docker compose ps --all -q fullstack)" 120
+
+	echo ""
+	echo -e "${CYAN}Admin UI:     http://127.0.0.1:3081${RESET}"
+	echo -e "${CYAN}Nginx:        http://127.0.0.1:3080${RESET}"
+	echo -e "${CYAN}SQLite file:  /data/database.sqlite (inside npm2dev.core)${RESET}"
+	echo ""
+
+	if [ "$FOLLOW_LOGS" = true ]; then
+		echo -e "${BLUE}❯ ${YELLOW}Following Backend Container:${RESET}"
+		docker logs -f npm2dev.core
+	else
+		echo -e "${YELLOW}Hint:${RESET} You can follow the output with:"
+		echo "  docker logs -f npm2dev.core"
+	fi
+else
+	echo -e "${RED}❯ docker command is not available${RESET}"
+fi

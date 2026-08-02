@@ -1,6 +1,7 @@
 import express from "express";
 import internalDeadHost from "../../internal/dead-host.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
+import { registerHostLogRoutes } from "./logs.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
 import { debug, express as logger } from "../../logger.js";
@@ -75,6 +76,12 @@ router
  *
  * /api/nginx/dead-hosts/123
  */
+/**
+ * Read and follow this host's fixed Nginx access/error log files. These static
+ * routes must stay before the generic /:host_id resource route.
+ */
+registerHostLogRoutes(router, { scope: "dead_host", idParam: "host_id", internalHost: internalDeadHost });
+
 router
 	.route("/:host_id")
 	.options((_, res) => {

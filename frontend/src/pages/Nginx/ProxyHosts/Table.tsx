@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconEdit, IconFileText, IconPower, IconTrash } from "@tabler/icons-react";
 import {
 	createColumnHelper,
 	getCoreRowModel,
@@ -26,11 +26,21 @@ interface Props {
 	isFiltered?: boolean;
 	isFetching?: boolean;
 	onEdit?: (id: number) => void;
+	onLogs?: (id: number) => void;
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
+export default function Table({
+	data,
+	isFetching,
+	onEdit,
+	onLogs,
+	onDelete,
+	onDisableToggle,
+	onNew,
+	isFiltered,
+}: Props) {
 	const columnHelper = createColumnHelper<ProxyHost>();
 	const columns = useMemo(
 		() => [
@@ -52,13 +62,17 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 					const source = (host: ProxyHost) =>
 						host.nginxConfig?.listener?.mode === "port"
 							? `:${host.nginxConfig.listener.port ?? ""}`
-							: host.domainNames?.[0] ?? "";
+							: (host.domainNames?.[0] ?? "");
 					return source(a.original).localeCompare(source(b.original));
 				},
 				cell: (info: any) => {
 					const value = info.getValue() as ProxyHost;
 					if (value.nginxConfig?.listener?.mode === "port") {
-						return <span className="fw-semibold"><T id="proxy-host.wizard.listener.port-number" />: {value.nginxConfig.listener.port}</span>;
+						return (
+							<span className="fw-semibold">
+								<T id="proxy-host.wizard.listener.port-number" />: {value.nginxConfig.listener.port}
+							</span>
+						);
 					}
 					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
 				},
@@ -98,80 +112,91 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				cell: (info: any) => {
 					const host = info.row.original;
 					return (
-						<div>
-							<TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />
-							{host.nginxDeploymentStatus && <div className="small text-secondary"><T id="nginx-deployment.status" />: <T id={`nginx-deployment.status.${host.nginxDeploymentStatus}`} /></div>}
+						<div className="text-end">
+							<div className="d-flex justify-content-end align-items-center gap-0">
+								<TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />
+								{onLogs ? (
+									<button
+										type="button"
+										className="btn btn-action btn-sm p-1"
+										title="Logs"
+										aria-label="Logs"
+										onClick={() => onLogs(info.row.original.id)}
+									>
+										<IconFileText size={16} />
+									</button>
+								) : null}
+								<span className="dropdown ms-1">
+									<button
+										type="button"
+										className="btn dropdown-toggle btn-action btn-sm px-1"
+										data-bs-boundary="viewport"
+										data-bs-toggle="dropdown"
+									>
+										<IconDotsVertical />
+									</button>
+									<div className="dropdown-menu dropdown-menu-end">
+										<span className="dropdown-header">
+											<T
+												id="object.actions-title"
+												tData={{ object: "proxy-host" }}
+												data={{ id: host.id }}
+											/>
+										</span>
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onEdit?.(host.id);
+											}}
+										>
+											<IconEdit size={16} />
+											<T id="action.edit" />
+										</a>
+										<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
+											<a
+												className="dropdown-item"
+												href="#"
+												onClick={(e) => {
+													e.preventDefault();
+													onDisableToggle?.(host.id, !host.enabled);
+												}}
+											>
+												<IconPower size={16} />
+												<T id={host.enabled ? "action.disable" : "action.enable"} />
+											</a>
+											<div className="dropdown-divider" />
+											<a
+												className="dropdown-item"
+												href="#"
+												onClick={(e) => {
+													e.preventDefault();
+													onDelete?.(host.id);
+												}}
+											>
+												<IconTrash size={16} />
+												<T id="action.delete" />
+											</a>
+										</HasPermission>
+									</div>
+								</span>
+							</div>
+							{host.nginxDeploymentStatus && (
+								<div className="small text-secondary">
+									<T id="nginx-deployment.status" />:{" "}
+									<T id={`nginx-deployment.status.${host.nginxDeploymentStatus}`} />
+								</div>
+							)}
 						</div>
 					);
 				},
-			}),
-			columnHelper.display({
-				id: "id",
-				cell: (info: any) => {
-					return (
-						<span className="dropdown">
-							<button
-								type="button"
-								className="btn dropdown-toggle btn-action btn-sm px-1"
-								data-bs-boundary="viewport"
-								data-bs-toggle="dropdown"
-							>
-								<IconDotsVertical />
-							</button>
-							<div className="dropdown-menu dropdown-menu-end">
-								<span className="dropdown-header">
-									<T
-										id="object.actions-title"
-										tData={{ object: "proxy-host" }}
-										data={{ id: info.row.original.id }}
-									/>
-								</span>
-								<a
-									className="dropdown-item"
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										onEdit?.(info.row.original.id);
-									}}
-								>
-									<IconEdit size={16} />
-									<T id="action.edit" />
-								</a>
-								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
-									<a
-										className="dropdown-item"
-										href="#"
-										onClick={(e) => {
-											e.preventDefault();
-											onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
-										}}
-									>
-										<IconPower size={16} />
-										<T id={info.row.original.enabled ? "action.disable" : "action.enable"} />
-									</a>
-									<div className="dropdown-divider" />
-									<a
-										className="dropdown-item"
-										href="#"
-										onClick={(e) => {
-											e.preventDefault();
-											onDelete?.(info.row.original.id);
-										}}
-									>
-										<IconTrash size={16} />
-										<T id="action.delete" />
-									</a>
-								</HasPermission>
-							</div>
-						</span>
-					);
-				},
 				meta: {
-					className: "text-end w-1",
+					className: "text-end",
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onLogs, onDisableToggle, onDelete],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);

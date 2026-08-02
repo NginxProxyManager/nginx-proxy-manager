@@ -1,6 +1,7 @@
 import express from "express";
 import internalProxyHost from "../../internal/proxy-host.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
+import { registerHostLogRoutes } from "./logs.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
 import { debug, express as logger } from "../../logger.js";
@@ -111,6 +112,12 @@ router
  *
  * /api/nginx/proxy-hosts/123
  */
+/**
+ * Read and follow this host's fixed Nginx access/error log files. These static
+ * routes must stay before the generic /:host_id resource route.
+ */
+registerHostLogRoutes(router, { scope: "proxy_host", idParam: "host_id", internalHost: internalProxyHost });
+
 router
 	.route("/:host_id")
 	.options((_, res) => {

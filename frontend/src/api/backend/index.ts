@@ -25,6 +25,7 @@ export * from "./getCertificates";
 export * from "./getDeadHost";
 export * from "./getDeadHosts";
 export * from "./getHealth";
+export * from "./getNginxHostLog";
 export * from "./getHostsReport";
 export * from "./getProxyHost";
 export * from "./getProxyHostNginxConfig";

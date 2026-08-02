@@ -13,15 +13,32 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 	S6_VERBOSITY=2 \
 	NODE_OPTIONS="--openssl-legacy-provider"
 
-RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
-	&& apt-get update \
-	&& apt-get install -y jq python3-pip logrotate moreutils \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/*
+# Default to Debian's official mirror. The SQLite development Compose override supplies
+# a domestic mirror through this build arg, without changing the normal dev workflow.
+ARG DEBIAN_MIRROR="https://deb.debian.org"
 
-# Task
+RUN set -eux; \
+	for source_file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do \
+		[ -f "${source_file}" ] || continue; \
+		sed -i \
+			-e "s|http://deb.debian.org/debian-security|${DEBIAN_MIRROR}/debian-security|g" \
+			-e "s|https://deb.debian.org/debian-security|${DEBIAN_MIRROR}/debian-security|g" \
+			-e "s|http://deb.debian.org/debian|${DEBIAN_MIRROR}/debian|g" \
+			-e "s|https://deb.debian.org/debian|${DEBIAN_MIRROR}/debian|g" \
+			"${source_file}"; \
+	done; \
+	# Node is already included by the nginx-full:certbot-node base image. Avoid updating
+	# the external NodeSource index when this image only installs OS utilities.
+	rm -f /etc/apt/sources.list.d/*nodesource*; \
+	echo "fs.file-max = 65535" > /etc/sysctl.conf; \
+	apt-get update; \
+	apt-get install -y jq python3-pip logrotate moreutils; \
+	apt-get clean; \
+	rm -rf /var/lib/apt/lists/*
+
+# The dev image does not invoke Task. Do not fetch it from GitHub during image builds;
+# removing that network-only install keeps local rebuilds deterministic and cache-friendly.
 WORKDIR /usr
-RUN curl -sL 'https://taskfile.dev/install.sh' | sh
 
 # The S6 overlay is copied from a Docker Hub build-stage image rather than downloaded
 # from GitHub during every local Docker build. This keeps the development stack

@@ -1,3 +1,18 @@
+export type NginxLogKind = "access" | "error";
+export type NginxLogHostType = "proxy-hosts" | "redirection-hosts" | "dead-hosts" | "streams";
+
+export interface NginxLogSnapshot {
+	target: { scope: string; id: number | string; logKind: NginxLogKind };
+	content: string;
+	mode: "tail" | "incremental";
+	nextCursor: string;
+	file: { exists: boolean; modifiedAt: string | null; sizeBytes: number; generation: string | null };
+	linesReturned: number;
+	truncated: boolean;
+	reset: boolean;
+	resetReason?: "rotated" | "truncated";
+}
+
 export interface AppVersion {
 	major: number;
 	minor: number;

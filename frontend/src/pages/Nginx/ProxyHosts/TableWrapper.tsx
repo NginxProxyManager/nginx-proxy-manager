@@ -6,7 +6,7 @@ import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
 import { useProxyHosts } from "src/hooks";
 import { T } from "src/locale";
-import { showDeleteConfirmModal, showHelpModal, showProxyHostModal } from "src/modals";
+import { showDeleteConfirmModal, showHelpModal, showProxyHostModal, showNginxLogViewerModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
@@ -99,6 +99,14 @@ export default function TableWrapper() {
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}
+					onLogs={(id: number) => {
+						const host = data?.find((item) => item.id === id);
+						const label =
+							host?.nginxConfig?.listener?.mode === "port"
+								? `:${host.nginxConfig.listener.port ?? id}`
+								: host?.domainNames?.join(", ") || `#${id}`;
+						showNginxLogViewerModal("proxy-hosts", id, label);
+					}}
 					onDelete={(id: number) => {
 						const host = data?.find((h) => h.id === id);
 						showDeleteConfirmModal({
@@ -109,7 +117,10 @@ export default function TableWrapper() {
 								<>
 									<T id="object.delete.content" tData={{ object: "proxy-host" }} />
 									{host?.nginxConfig?.listener?.mode === "port" ? (
-										<div className="mt-2 fw-bold text-break"><T id="proxy-host.wizard.listener.port-number" />: {host.nginxConfig.listener.port}</div>
+										<div className="mt-2 fw-bold text-break">
+											<T id="proxy-host.wizard.listener.port-number" />:{" "}
+											{host.nginxConfig.listener.port}
+										</div>
 									) : host?.domainNames?.length ? (
 										<div className="mt-2 fw-bold text-break">{host.domainNames.join(", ")}</div>
 									) : null}
