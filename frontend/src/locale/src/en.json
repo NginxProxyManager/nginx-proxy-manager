@@ -65,6 +65,9 @@
 	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
+	"access-list.help": {
+		"defaultMessage": "Choose the access list applied before a request reaches this server. Public access applies no basic-auth or source restrictions."
+	},
 	"access-list.help-rules-last": {
 		"defaultMessage": "When at least 1 rule exists, this deny all rule will be added last"
 	},
@@ -335,6 +338,9 @@
 	"domain-names": {
 		"defaultMessage": "Domain Names"
 	},
+	"domain-names.help": {
+		"defaultMessage": "Enter one or more names that match this server. Each value is rendered as a server_name entry."
+	},
 	"domain-names.max": {
 		"defaultMessage": "{count} domain names maximum"
 	},
@@ -353,20 +359,38 @@
 	"domains.force-ssl": {
 		"defaultMessage": "Force SSL"
 	},
+	"domains.force-ssl.help": {
+		"defaultMessage": "Redirect HTTP requests so clients must use the HTTPS address covered by this certificate."
+	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS Enabled"
+	},
+	"domains.hsts-enabled.help": {
+		"defaultMessage": "Sends Strict-Transport-Security so browsers prefer HTTPS for its configured lifetime. Available only with Force SSL."
 	},
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS Sub-domains"
 	},
+	"domains.hsts-subdomains.help": {
+		"defaultMessage": "Applies the HSTS policy to every subdomain. Enable only when every subdomain supports HTTPS."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Support"
+	},
+	"domains.http2-support.help": {
+		"defaultMessage": "Enables HTTP/2 on the HTTPS listener. A selected SSL certificate is required."
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Trust Upstream Forwarded Proto Headers"
 	},
+	"domains.trust-forwarded-proto.help": {
+		"defaultMessage": "Trust X-Forwarded-Proto from an upstream proxy to avoid redirecting already-secure requests. Use only behind trusted proxies."
+	},
 	"domains.use-dns": {
 		"defaultMessage": "Use DNS Challenge"
+	},
+	"domains.use-dns.help": {
+		"defaultMessage": "Use DNS-01 validation to request the certificate, useful for wildcard names or when HTTP validation cannot be publicly reached."
 	},
 	"email-address": {
 		"defaultMessage": "Email address"
@@ -440,8 +464,14 @@
 	"host.forward-port": {
 		"defaultMessage": "Forward Port"
 	},
+	"host.forward-port.help": {
+		"defaultMessage": "The TCP port the upstream service listens on, from 1 through 65535."
+	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scheme"
+	},
+	"host.forward-scheme.help": {
+		"defaultMessage": "The protocol used to connect to the upstream service. Select https only when the upstream serves TLS itself."
 	},
 	"hosts": {
 		"defaultMessage": "Hosts"
@@ -479,11 +509,476 @@
 	"login.title": {
 		"defaultMessage": "Login to your account"
 	},
+	"nginx-config.help": {
+		"defaultMessage": "Use raw server-level Nginx directives only for settings not available in the form. Preview validates the result; protected or conflicting directives are rejected."
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Custom Nginx Configuration"
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Enter your custom Nginx configuration here at your own risk!"
+	},
+	"nginx-deployment.status": {
+		"defaultMessage": "Nginx"
+	},
+	"nginx-deployment.status.applied": {
+		"defaultMessage": "Applied"
+	},
+	"nginx-deployment.status.degraded": {
+		"defaultMessage": "Degraded"
+	},
+	"nginx-deployment.status.deleted": {
+		"defaultMessage": "Deleted"
+	},
+	"nginx-deployment.status.deploying": {
+		"defaultMessage": "Deploying"
+	},
+	"nginx-deployment.status.disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"nginx-deployment.status.diverged": {
+		"defaultMessage": "Diverged"
+	},
+	"nginx-deployment.status.error": {
+		"defaultMessage": "Error"
+	},
+	"nginx-deployment.status.failed": {
+		"defaultMessage": "Failed"
+	},
+	"nginx-deployment.status.online": {
+		"defaultMessage": "Online"
+	},
+	"nginx-deployment.status.pending": {
+		"defaultMessage": "Pending"
+	},
+	"nginx-deployment.status.recovering": {
+		"defaultMessage": "Recovering"
+	},
+	"nginx-options.client-max-body-size": {
+		"defaultMessage": "Max request body"
+	},
+	"nginx-options.client-max-body-size.help": {
+		"defaultMessage": "Limits the client request body, for example 50m. Nginx rejects requests that exceed the limit."
+	},
+	"nginx-options.cookie-from": {
+		"defaultMessage": "Source"
+	},
+	"nginx-options.cookie-from.help": {
+		"defaultMessage": "The cookie domain or path reported by the upstream that should be rewritten."
+	},
+	"nginx-options.cookie-rewrite": {
+		"defaultMessage": "Cookie rewriting"
+	},
+	"nginx-options.cookie-rewrite-help": {
+		"defaultMessage": "Add a source and replacement without spaces or semicolons."
+	},
+	"nginx-options.cookie-to": {
+		"defaultMessage": "Replacement"
+	},
+	"nginx-options.cookie-to.help": {
+		"defaultMessage": "The domain or path that should replace the source value in the Set-Cookie response."
+	},
+	"nginx-options.failover-429": {
+		"defaultMessage": "HTTP 429"
+	},
+	"nginx-options.failover-500": {
+		"defaultMessage": "HTTP 500"
+	},
+	"nginx-options.failover-502": {
+		"defaultMessage": "HTTP 502"
+	},
+	"nginx-options.failover-503": {
+		"defaultMessage": "HTTP 503"
+	},
+	"nginx-options.failover-504": {
+		"defaultMessage": "HTTP 504"
+	},
+	"nginx-options.failover-error": {
+		"defaultMessage": "connection error"
+	},
+	"nginx-options.failover-invalid-header": {
+		"defaultMessage": "invalid header"
+	},
+	"nginx-options.failover-non-idempotent": {
+		"defaultMessage": "non-idempotent requests"
+	},
+	"nginx-options.failover-timeout": {
+		"defaultMessage": "timeout"
+	},
+	"nginx-options.header-add": {
+		"defaultMessage": "Add"
+	},
+	"nginx-options.header-input-help": {
+		"defaultMessage": "Enter comma-separated response header names. Use the row editors above to set, add, or remove structured header rules."
+	},
+	"nginx-options.header-mode": {
+		"defaultMessage": "Value mode"
+	},
+	"nginx-options.header-mode.help": {
+		"defaultMessage": "Literal sends the value exactly as entered. Approved variable renders a supported Nginx variable at request time."
+	},
+	"nginx-options.header-name": {
+		"defaultMessage": "Header name"
+	},
+	"nginx-options.header-name.help": {
+		"defaultMessage": "The HTTP header name to set, add, or remove. Header names are case-insensitive."
+	},
+	"nginx-options.header-operation": {
+		"defaultMessage": "Operation"
+	},
+	"nginx-options.header-operation.help": {
+		"defaultMessage": "Set replaces the header value, Add appends an additional value, and Remove omits a request header."
+	},
+	"nginx-options.header-remove": {
+		"defaultMessage": "Remove"
+	},
+	"nginx-options.header-set": {
+		"defaultMessage": "Set"
+	},
+	"nginx-options.header-value": {
+		"defaultMessage": "Header value"
+	},
+	"nginx-options.header-value.help": {
+		"defaultMessage": "The header value sent to the upstream or client. Choose approved-variable mode to use a supported Nginx variable."
+	},
+	"nginx-options.http-1-0": {
+		"defaultMessage": "HTTP/1.0"
+	},
+	"nginx-options.http-1-1": {
+		"defaultMessage": "HTTP/1.1"
+	},
+	"nginx-options.inherit": {
+		"defaultMessage": "Use Nginx default / inherit"
+	},
+	"nginx-options.literal": {
+		"defaultMessage": "Literal"
+	},
+	"nginx-options.method-delete": {
+		"defaultMessage": "DELETE"
+	},
+	"nginx-options.method-get": {
+		"defaultMessage": "GET"
+	},
+	"nginx-options.method-head": {
+		"defaultMessage": "HEAD"
+	},
+	"nginx-options.method-options": {
+		"defaultMessage": "OPTIONS"
+	},
+	"nginx-options.method-patch": {
+		"defaultMessage": "PATCH"
+	},
+	"nginx-options.method-post": {
+		"defaultMessage": "POST"
+	},
+	"nginx-options.method-put": {
+		"defaultMessage": "PUT"
+	},
+	"nginx-options.preview": {
+		"defaultMessage": "Preview rendered configuration"
+	},
+	"nginx-options.protocol-request": {
+		"defaultMessage": "Protocol & request forwarding"
+	},
+	"nginx-options.proxy-bind": {
+		"defaultMessage": "proxy_bind source IP"
+	},
+	"nginx-options.proxy-bind.help": {
+		"defaultMessage": "Sets the local source IP used for upstream connections. Leave empty to let system routing choose it."
+	},
+	"nginx-options.proxy-buffer-size": {
+		"defaultMessage": "proxy_buffer_size"
+	},
+	"nginx-options.proxy-buffer-size.help": {
+		"defaultMessage": "Buffer size used for upstream response headers and the first response body chunk."
+	},
+	"nginx-options.proxy-buffering": {
+		"defaultMessage": "Proxy buffering"
+	},
+	"nginx-options.proxy-buffers-count": {
+		"defaultMessage": "proxy_buffers count"
+	},
+	"nginx-options.proxy-buffers-count.help": {
+		"defaultMessage": "Number of buffers allocated for the response body; configure together with the individual buffer size."
+	},
+	"nginx-options.proxy-buffers-size": {
+		"defaultMessage": "proxy_buffers size"
+	},
+	"nginx-options.proxy-buffers-size.help": {
+		"defaultMessage": "Size of each proxy response-body buffer, for example 8k."
+	},
+	"nginx-options.proxy-busy-buffers-size": {
+		"defaultMessage": "proxy_busy_buffers_size"
+	},
+	"nginx-options.proxy-busy-buffers-size.help": {
+		"defaultMessage": "Total size of proxy buffers that may stay busy while the client receives the response."
+	},
+	"nginx-options.proxy-connect-timeout": {
+		"defaultMessage": "Connect timeout"
+	},
+	"nginx-options.proxy-connect-timeout.help": {
+		"defaultMessage": "Maximum time allowed to establish the TCP/TLS connection to the upstream."
+	},
+	"nginx-options.proxy-cookie-domain": {
+		"defaultMessage": "proxy_cookie_domain"
+	},
+	"nginx-options.proxy-cookie-path": {
+		"defaultMessage": "proxy_cookie_path"
+	},
+	"nginx-options.proxy-force-ranges": {
+		"defaultMessage": "proxy_force_ranges"
+	},
+	"nginx-options.proxy-force-ranges.help": {
+		"defaultMessage": "Allows Nginx to process Range requests for cached responses even if the upstream omits Accept-Ranges."
+	},
+	"nginx-options.proxy-headers-hash-bucket-size": {
+		"defaultMessage": "proxy_headers_hash_bucket_size"
+	},
+	"nginx-options.proxy-headers-hash-bucket-size.help": {
+		"defaultMessage": "Hash bucket size for proxy request-header names. Change only when Nginx reports an insufficient header hash."
+	},
+	"nginx-options.proxy-headers-hash-max-size": {
+		"defaultMessage": "proxy_headers_hash_max_size"
+	},
+	"nginx-options.proxy-headers-hash-max-size.help": {
+		"defaultMessage": "Maximum size of the proxy request-header hash table. Change only when Nginx reports an insufficient header hash."
+	},
+	"nginx-options.proxy-hide-header": {
+		"defaultMessage": "proxy_hide_header"
+	},
+	"nginx-options.proxy-hide-header.help": {
+		"defaultMessage": "Hide one or more headers from the upstream response; separate names with commas."
+	},
+	"nginx-options.proxy-http-version": {
+		"defaultMessage": "proxy_http_version"
+	},
+	"nginx-options.proxy-http-version.help": {
+		"defaultMessage": "Sets the HTTP version used between Nginx and the upstream. HTTP/1.1 is commonly needed for WebSockets and chunked transfer."
+	},
+	"nginx-options.proxy-ignore-client-abort": {
+		"defaultMessage": "proxy_ignore_client_abort"
+	},
+	"nginx-options.proxy-ignore-client-abort.help": {
+		"defaultMessage": "Continue receiving the upstream response after the client disconnects. Keep off unless there is a specific need."
+	},
+	"nginx-options.proxy-ignore-headers": {
+		"defaultMessage": "proxy_ignore_headers"
+	},
+	"nginx-options.proxy-ignore-headers.help": {
+		"defaultMessage": "Ignores internal control information sent by the upstream in these response headers, such as cache or internal-redirect directives."
+	},
+	"nginx-options.proxy-intercept-errors": {
+		"defaultMessage": "proxy_intercept_errors"
+	},
+	"nginx-options.proxy-intercept-errors.help": {
+		"defaultMessage": "Lets Nginx handle selected error statuses instead of returning the upstream error response directly."
+	},
+	"nginx-options.proxy-limit-rate": {
+		"defaultMessage": "proxy_limit_rate"
+	},
+	"nginx-options.proxy-limit-rate.help": {
+		"defaultMessage": "Limits Nginx reads from the upstream in bytes per second. 0 means unlimited."
+	},
+	"nginx-options.proxy-max-temp-file-size": {
+		"defaultMessage": "proxy_max_temp_file_size"
+	},
+	"nginx-options.proxy-max-temp-file-size.help": {
+		"defaultMessage": "Maximum size of one temporary file used for a large upstream response. Set 0 to forbid temporary-file writes."
+	},
+	"nginx-options.proxy-method": {
+		"defaultMessage": "proxy_method"
+	},
+	"nginx-options.proxy-method.help": {
+		"defaultMessage": "Replaces the client request method with a fixed method. Leave it unset to preserve the original request method."
+	},
+	"nginx-options.proxy-next-upstream": {
+		"defaultMessage": "proxy_next_upstream"
+	},
+	"nginx-options.proxy-next-upstream-timeout": {
+		"defaultMessage": "proxy_next_upstream_timeout"
+	},
+	"nginx-options.proxy-next-upstream-timeout.help": {
+		"defaultMessage": "Total time limit for trying another upstream after retryable failures."
+	},
+	"nginx-options.proxy-next-upstream-tries": {
+		"defaultMessage": "proxy_next_upstream_tries"
+	},
+	"nginx-options.proxy-next-upstream-tries.help": {
+		"defaultMessage": "Maximum number of upstream attempts after a retryable failure. Leave empty for the Nginx default."
+	},
+	"nginx-options.proxy-next-upstream.help": {
+		"defaultMessage": "Select the failures that should make Nginx try the next upstream. Leaving all unchecked uses Nginx defaults."
+	},
+	"nginx-options.proxy-pass-header": {
+		"defaultMessage": "proxy_pass_header"
+	},
+	"nginx-options.proxy-pass-header.help": {
+		"defaultMessage": "Explicitly pass upstream response headers that Nginx would otherwise not pass; separate names with commas."
+	},
+	"nginx-options.proxy-pass-request-body": {
+		"defaultMessage": "proxy_pass_request_body"
+	},
+	"nginx-options.proxy-pass-request-body.help": {
+		"defaultMessage": "Controls whether the client request body is sent upstream. This should normally remain enabled."
+	},
+	"nginx-options.proxy-pass-request-headers": {
+		"defaultMessage": "proxy_pass_request_headers"
+	},
+	"nginx-options.proxy-pass-request-headers.help": {
+		"defaultMessage": "Controls whether client request headers are sent upstream. When off, only explicitly configured proxy headers are sent."
+	},
+	"nginx-options.proxy-pass-trailers": {
+		"defaultMessage": "proxy_pass_trailers"
+	},
+	"nginx-options.proxy-pass-trailers.help": {
+		"defaultMessage": "Controls forwarding HTTP chunked-response trailer headers. It requires a compatible HTTP/1.1 upstream."
+	},
+	"nginx-options.proxy-read-timeout": {
+		"defaultMessage": "Read timeout"
+	},
+	"nginx-options.proxy-read-timeout.help": {
+		"defaultMessage": "Maximum interval between reads from the upstream. SSE and other streaming responses usually need a longer value."
+	},
+	"nginx-options.proxy-redirect": {
+		"defaultMessage": "proxy_redirect"
+	},
+	"nginx-options.proxy-redirect.help": {
+		"defaultMessage": "Rewrites Location and Refresh redirects in upstream responses. Inherit emits no additional directive."
+	},
+	"nginx-options.proxy-request-buffering": {
+		"defaultMessage": "Request buffering"
+	},
+	"nginx-options.proxy-send-timeout": {
+		"defaultMessage": "Send timeout"
+	},
+	"nginx-options.proxy-send-timeout.help": {
+		"defaultMessage": "Maximum interval between writes while sending request data to the upstream."
+	},
+	"nginx-options.proxy-socket-keepalive": {
+		"defaultMessage": "proxy_socket_keepalive"
+	},
+	"nginx-options.proxy-socket-keepalive.help": {
+		"defaultMessage": "Enables operating-system TCP keepalive on connections to the upstream."
+	},
+	"nginx-options.proxy-ssl-ciphers": {
+		"defaultMessage": "proxy_ssl_ciphers"
+	},
+	"nginx-options.proxy-ssl-ciphers.help": {
+		"defaultMessage": "TLS cipher-suite string allowed when connecting to an HTTPS upstream."
+	},
+	"nginx-options.proxy-ssl-name": {
+		"defaultMessage": "proxy_ssl_name"
+	},
+	"nginx-options.proxy-ssl-name.help": {
+		"defaultMessage": "Server name used in the TLS handshake with an HTTPS upstream. When unset, the upstream hostname is normally used."
+	},
+	"nginx-options.proxy-ssl-protocols": {
+		"defaultMessage": "proxy_ssl_protocols"
+	},
+	"nginx-options.proxy-ssl-protocols.help": {
+		"defaultMessage": "Limits the TLS protocol versions negotiated with an HTTPS upstream."
+	},
+	"nginx-options.proxy-ssl-server-name": {
+		"defaultMessage": "Upstream TLS SNI"
+	},
+	"nginx-options.proxy-ssl-session-reuse": {
+		"defaultMessage": "proxy_ssl_session_reuse"
+	},
+	"nginx-options.proxy-ssl-session-reuse.help": {
+		"defaultMessage": "Reuses TLS sessions to HTTPS upstreams to reduce handshake overhead; disable it if the upstream has compatibility issues."
+	},
+	"nginx-options.proxy-ssl-verify": {
+		"defaultMessage": "proxy_ssl_verify"
+	},
+	"nginx-options.proxy-ssl-verify-depth": {
+		"defaultMessage": "proxy_ssl_verify_depth"
+	},
+	"nginx-options.proxy-ssl-verify-depth.help": {
+		"defaultMessage": "Maximum certificate-chain depth accepted when verifying the HTTPS upstream certificate."
+	},
+	"nginx-options.proxy-ssl-verify.help": {
+		"defaultMessage": "When enabled, the container system CA bundle is used as proxy_ssl_trusted_certificate."
+	},
+	"nginx-options.proxy-temp-file-write-size": {
+		"defaultMessage": "proxy_temp_file_write_size"
+	},
+	"nginx-options.proxy-temp-file-write-size.help": {
+		"defaultMessage": "Size of each write to a proxy temporary file."
+	},
+	"nginx-options.redirect-default": {
+		"defaultMessage": "default"
+	},
+	"nginx-options.redirect-off": {
+		"defaultMessage": "off"
+	},
+	"nginx-options.rendering": {
+		"defaultMessage": "Rendering…"
+	},
+	"nginx-options.request-headers": {
+		"defaultMessage": "Request headers (proxy_set_header)"
+	},
+	"nginx-options.request-headers.help": {
+		"defaultMessage": "Set, add, or remove request headers sent upstream. Setting Host replaces the system default Host header."
+	},
+	"nginx-options.response-buffering": {
+		"defaultMessage": "Response buffering & disk I/O"
+	},
+	"nginx-options.response-handling": {
+		"defaultMessage": "Response headers & redirects"
+	},
+	"nginx-options.response-headers": {
+		"defaultMessage": "Response headers (add_header)"
+	},
+	"nginx-options.response-headers.help": {
+		"defaultMessage": "Set or add headers on the response returned to the client."
+	},
+	"nginx-options.set-cookie": {
+		"defaultMessage": "Set-Cookie"
+	},
+	"nginx-options.structured-help": {
+		"defaultMessage": "Structured options are rendered deterministically and take precedence over conflicting raw directives."
+	},
+	"nginx-options.timeout-format-help": {
+		"defaultMessage": "Timeout fields accept whole seconds or whole Nginx durations: 60 (seconds), 500ms, 60s, 2m, 1h, or 1d. Decimal values such as 1.5s are not supported; use 1500ms instead."
+	},
+	"nginx-options.timeouts-failover": {
+		"defaultMessage": "Timeouts, connection & failover"
+	},
+	"nginx-options.tlsv1": {
+		"defaultMessage": "TLSv1"
+	},
+	"nginx-options.tlsv1-1": {
+		"defaultMessage": "TLSv1.1"
+	},
+	"nginx-options.tlsv1-2": {
+		"defaultMessage": "TLSv1.2"
+	},
+	"nginx-options.tlsv1-3": {
+		"defaultMessage": "TLSv1.3"
+	},
+	"nginx-options.unavailable-help": {
+		"defaultMessage": "Cache zones and policies, filesystem paths, upstream client certificate files, transparent bind, proxy_socket_rcvbuf/proxy_socket_sndbuf (not available in this Nginx build), commercial-only directives, and other unavailable directives are intentionally excluded from this Proxy Host form. Configure those through controlled global Nginx configuration instead."
+	},
+	"nginx-options.upstream-tls": {
+		"defaultMessage": "Upstream TLS"
+	},
+	"nginx-options.variable": {
+		"defaultMessage": "Approved variable"
+	},
+	"nginx-options.vary": {
+		"defaultMessage": "Vary"
+	},
+	"nginx-options.x-accel-buffering": {
+		"defaultMessage": "X-Accel-Buffering"
+	},
+	"nginx-options.x-accel-expires": {
+		"defaultMessage": "X-Accel-Expires"
+	},
+	"nginx-options.x-accel-limit-rate": {
+		"defaultMessage": "X-Accel-Limit-Rate"
+	},
+	"nginx-options.x-accel-redirect": {
+		"defaultMessage": "X-Accel-Redirect"
 	},
 	"no-permission-error": {
 		"defaultMessage": "You do not have access to view this."
@@ -599,6 +1094,264 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Forward Hostname / IP"
 	},
+	"proxy-host.forward-host.help": {
+		"defaultMessage": "The upstream hostname, IPv4/IPv6 address, or a service name resolvable on the Docker network."
+	},
+	"proxy-host.location.advanced": {
+		"defaultMessage": "Location-level advanced directives"
+	},
+	"proxy-host.location.advanced.help": {
+		"defaultMessage": "These raw directives are rendered inside this location block before the managed proxy directives. Use them only for directives not available above."
+	},
+	"proxy-host.location.block": {
+		"defaultMessage": "Location block {number}"
+	},
+	"proxy-host.location.empty": {
+		"defaultMessage": "No custom location blocks"
+	},
+	"proxy-host.location.empty.help": {
+		"defaultMessage": "The default location / will proxy all requests. Add a location only when a path needs different matching or upstream behavior."
+	},
+	"proxy-host.location.empty.help.no-default": {
+		"defaultMessage": "The default location is disabled. Add at least one Location to proxy requests; otherwise this server will have no proxy route."
+	},
+	"proxy-host.location.forward-path": {
+		"defaultMessage": "Replacement upstream path"
+	},
+	"proxy-host.location.forward-path.help": {
+		"defaultMessage": "When URI mapping replaces the prefix, this path replaces the matched prefix. It normally ends in /."
+	},
+	"proxy-host.location.match-type": {
+		"defaultMessage": "Location match"
+	},
+	"proxy-host.location.match-type.help": {
+		"defaultMessage": "Determines how Nginx compares the request URI with the path. Prefix is appropriate for most routes; use regex only when pattern matching is needed."
+	},
+	"proxy-host.location.match.exact": {
+		"defaultMessage": "Exact — location = /path"
+	},
+	"proxy-host.location.match.prefix": {
+		"defaultMessage": "Prefix — location /path/"
+	},
+	"proxy-host.location.match.priority-prefix": {
+		"defaultMessage": "Priority prefix — location ^~ /path/"
+	},
+	"proxy-host.location.match.regex": {
+		"defaultMessage": "Regular expression — location ~ pattern"
+	},
+	"proxy-host.location.match.regex-i": {
+		"defaultMessage": "Case-insensitive regex — location ~* pattern"
+	},
+	"proxy-host.location.path": {
+		"defaultMessage": "Match path or expression"
+	},
+	"proxy-host.location.path-mode": {
+		"defaultMessage": "URI forwarding"
+	},
+	"proxy-host.location.path-mode.help": {
+		"defaultMessage": "Strip and replace modes require a non-root, slash-terminated prefix path such as /api/."
+	},
+	"proxy-host.location.path-mode.locked": {
+		"defaultMessage": "Exact and regular-expression locations preserve the request URI."
+	},
+	"proxy-host.location.path-mode.preserve": {
+		"defaultMessage": "Preserve request URI"
+	},
+	"proxy-host.location.path-mode.replace": {
+		"defaultMessage": "Replace matched prefix"
+	},
+	"proxy-host.location.path-mode.strip": {
+		"defaultMessage": "Strip matched prefix"
+	},
+	"proxy-host.location.path.help": {
+		"defaultMessage": "The URI path or regular expression matched by this location. Ordinary prefix paths usually begin with /."
+	},
+	"proxy-host.location.proxy-directives": {
+		"defaultMessage": "Location proxy directives"
+	},
+	"proxy-host.location.proxy-directives.help": {
+		"defaultMessage": "Override the inherited server proxy directives for this location only."
+	},
+	"proxy-host.location.proxy-directives.inherit.help": {
+		"defaultMessage": "This location inherits the server proxy directives. Enable an override to begin with a copy of the current server configuration."
+	},
+	"proxy-host.location.proxy-directives.override": {
+		"defaultMessage": "Override server directives"
+	},
+	"proxy-host.location.proxy-directives.override.help": {
+		"defaultMessage": "This location has its own proxy directive set. Later server directive changes do not alter this override."
+	},
+	"proxy-host.location.proxy-directives.reset": {
+		"defaultMessage": "Reset to server directives"
+	},
+	"proxy-host.wizard.access": {
+		"defaultMessage": "Request access"
+	},
+	"proxy-host.wizard.advanced": {
+		"defaultMessage": "Advanced directives"
+	},
+	"proxy-host.wizard.advanced.help": {
+		"defaultMessage": "Raw directives are appended after managed directives. Managed blocks and protected directives are rejected during preview."
+	},
+	"proxy-host.wizard.block-exploits.help": {
+		"defaultMessage": "Includes the managed exploit-blocking rules in this server block."
+	},
+	"proxy-host.wizard.cache.help": {
+		"defaultMessage": "Enables the managed static-asset caching include for this host."
+	},
+	"proxy-host.wizard.default-location.disabled": {
+		"defaultMessage": "Not configured"
+	},
+	"proxy-host.wizard.default-location.disabled.help": {
+		"defaultMessage": "No managed location / will be generated. Configure explicit Locations in the next step; unmatched requests will not be proxied."
+	},
+	"proxy-host.wizard.default-location.enabled": {
+		"defaultMessage": "Enable default location /"
+	},
+	"proxy-host.wizard.default-location.enabled.help": {
+		"defaultMessage": "When enabled, requests not matched by another Location are proxied through location /. Disable it when routing only through explicit Locations."
+	},
+	"proxy-host.wizard.default-location.help": {
+		"defaultMessage": "This is the fallback upstream used when no custom location block matches the request."
+	},
+	"proxy-host.wizard.directives": {
+		"defaultMessage": "Proxy directives"
+	},
+	"proxy-host.wizard.directives.help": {
+		"defaultMessage": "Tune server-level proxy directives, then add raw directives only when the structured controls are not sufficient."
+	},
+	"proxy-host.wizard.listener": {
+		"defaultMessage": "Listener"
+	},
+	"proxy-host.wizard.listener.domain": {
+		"defaultMessage": "Domain names"
+	},
+	"proxy-host.wizard.listener.domain.help": {
+		"defaultMessage": "Matches this server by the request Host and server_name on the standard HTTP/HTTPS listener ports."
+	},
+	"proxy-host.wizard.listener.help": {
+		"defaultMessage": "Choose whether this server is selected by domain names on the standard HTTP/HTTPS ports or is the default server for one HTTP port."
+	},
+	"proxy-host.wizard.listener.port": {
+		"defaultMessage": "Port only"
+	},
+	"proxy-host.wizard.listener.port-mode.help": {
+		"defaultMessage": "Does not match a domain name. This proxy becomes the default server for one specified HTTP port."
+	},
+	"proxy-host.wizard.listener.port-number": {
+		"defaultMessage": "Listen port"
+	},
+	"proxy-host.wizard.listener.port.help": {
+		"defaultMessage": "Nginx listens on all interfaces at this port and makes this proxy host the default server for it. The port must be unique among port-only proxy hosts and exposed by your container or firewall."
+	},
+	"proxy-host.wizard.listener.port.tls-help": {
+		"defaultMessage": "Port-only listener mode currently deploys HTTP only. Domain names, certificates, HTTPS redirects, HTTP/2, and HSTS are unavailable in this mode."
+	},
+	"proxy-host.wizard.locations": {
+		"defaultMessage": "Locations"
+	},
+	"proxy-host.wizard.locations.help": {
+		"defaultMessage": "Add more specific Nginx location blocks, their match modifiers, URI mapping, and upstream targets."
+	},
+	"proxy-host.wizard.next": {
+		"defaultMessage": "Continue"
+	},
+	"proxy-host.wizard.preview": {
+		"defaultMessage": "Preview & deploy"
+	},
+	"proxy-host.wizard.preview-again": {
+		"defaultMessage": "Render again"
+	},
+	"proxy-host.wizard.preview.help": {
+		"defaultMessage": "Review the effective server block, run nginx -t validation, and deploy only the validated candidate."
+	},
+	"proxy-host.wizard.preview.invalid": {
+		"defaultMessage": "The candidate configuration contains blocking errors and cannot be deployed."
+	},
+	"proxy-host.wizard.preview.valid": {
+		"defaultMessage": "The candidate configuration passed validation and is ready to deploy."
+	},
+	"proxy-host.wizard.previous": {
+		"defaultMessage": "Previous"
+	},
+	"proxy-host.wizard.proxy-buffering.help": {
+		"defaultMessage": "Controls whether Nginx buffers responses received from the upstream."
+	},
+	"proxy-host.wizard.rendered-config": {
+		"defaultMessage": "Rendered Nginx configuration"
+	},
+	"proxy-host.wizard.request-buffering.help": {
+		"defaultMessage": "Controls whether Nginx reads the complete client request body before proxying it."
+	},
+	"proxy-host.wizard.save-deploy": {
+		"defaultMessage": "Save & deploy"
+	},
+	"proxy-host.wizard.server": {
+		"defaultMessage": "Server block"
+	},
+	"proxy-host.wizard.server-name.help": {
+		"defaultMessage": "These domains are rendered as server_name values and determine which requests select this server block."
+	},
+	"proxy-host.wizard.server.help": {
+		"defaultMessage": "Define the server_name values and the access controls applied before requests reach the upstream."
+	},
+	"proxy-host.wizard.sni.help": {
+		"defaultMessage": "Sends the upstream host name during the TLS handshake for HTTPS upstreams."
+	},
+	"proxy-host.wizard.structured-options": {
+		"defaultMessage": "Structured server directives"
+	},
+	"proxy-host.wizard.subtitle": {
+		"defaultMessage": "Configure the Nginx server block in order, then validate the rendered configuration before deployment."
+	},
+	"proxy-host.wizard.summary": {
+		"defaultMessage": "Effective shape"
+	},
+	"proxy-host.wizard.summary-value": {
+		"defaultMessage": "{locations} custom locations · TLS {tls}"
+	},
+	"proxy-host.wizard.tls": {
+		"defaultMessage": "TLS & listener"
+	},
+	"proxy-host.wizard.tls-disabled": {
+		"defaultMessage": "disabled"
+	},
+	"proxy-host.wizard.tls-enabled": {
+		"defaultMessage": "enabled"
+	},
+	"proxy-host.wizard.tls.help": {
+		"defaultMessage": "Choose the certificate and HTTPS behavior for this server block."
+	},
+	"proxy-host.wizard.upstream": {
+		"defaultMessage": "Default upstream"
+	},
+	"proxy-host.wizard.upstream-behaviour": {
+		"defaultMessage": "Upstream behavior"
+	},
+	"proxy-host.wizard.upstream.help": {
+		"defaultMessage": "Optionally configure the fallback location / and the proxy connection behavior shared by managed Locations."
+	},
+	"proxy-host.wizard.validation-scope": {
+		"defaultMessage": "Validation scope"
+	},
+	"proxy-host.wizard.validation.domain": {
+		"defaultMessage": "Add at least one domain before continuing."
+	},
+	"proxy-host.wizard.validation.listener-port": {
+		"defaultMessage": "Enter a listen port from 1 to 65535 before continuing."
+	},
+	"proxy-host.wizard.validation.listener-port-reserved": {
+		"defaultMessage": "Reserved ports 80, 81, and 443 cannot be used for a port-only listener."
+	},
+	"proxy-host.wizard.validation.locations": {
+		"defaultMessage": "Complete the match path, upstream host, and port for every custom location before continuing."
+	},
+	"proxy-host.wizard.validation.upstream": {
+		"defaultMessage": "Enter a valid upstream host and port before continuing."
+	},
+	"proxy-host.wizard.websocket.help": {
+		"defaultMessage": "Forwards Upgrade and Connection headers for WebSocket-compatible upstreams."
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy Hosts"
 	},
@@ -691,6 +1444,9 @@
 	},
 	"ssl-certificate": {
 		"defaultMessage": "SSL Certificate"
+	},
+	"ssl-certificate.help": {
+		"defaultMessage": "Choose the certificate served by this server. Without a certificate, only HTTP is available and the HTTPS options below are disabled."
 	},
 	"stream": {
 		"defaultMessage": "Stream"

@@ -49,12 +49,17 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				id: "domainNames",
 				header: intl.formatMessage({ id: "column.source" }),
 				sortingFn: (a, b) => {
-					const aVal = a.original.domainNames?.[0] ?? "";
-					const bVal = b.original.domainNames?.[0] ?? "";
-					return aVal.localeCompare(bVal);
+					const source = (host: ProxyHost) =>
+						host.nginxConfig?.listener?.mode === "port"
+							? `:${host.nginxConfig.listener.port ?? ""}`
+							: host.domainNames?.[0] ?? "";
+					return source(a.original).localeCompare(source(b.original));
 				},
 				cell: (info: any) => {
-					const value = info.getValue();
+					const value = info.getValue() as ProxyHost;
+					if (value.nginxConfig?.listener?.mode === "port") {
+						return <span className="fw-semibold"><T id="proxy-host.wizard.listener.port-number" />: {value.nginxConfig.listener.port}</span>;
+					}
 					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
 				},
 			}),
@@ -91,7 +96,13 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
+					const host = info.row.original;
+					return (
+						<div>
+							<TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />
+							{host.nginxDeploymentStatus && <div className="small text-secondary"><T id="nginx-deployment.status" />: <T id={`nginx-deployment.status.${host.nginxDeploymentStatus}`} /></div>}
+						</div>
+					);
 				},
 			}),
 			columnHelper.display({

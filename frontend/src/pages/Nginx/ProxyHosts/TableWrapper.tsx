@@ -108,7 +108,9 @@ export default function TableWrapper() {
 							children: (
 								<>
 									<T id="object.delete.content" tData={{ object: "proxy-host" }} />
-									{host?.domainNames?.length ? (
+									{host?.nginxConfig?.listener?.mode === "port" ? (
+										<div className="mt-2 fw-bold text-break"><T id="proxy-host.wizard.listener.port-number" />: {host.nginxConfig.listener.port}</div>
+									) : host?.domainNames?.length ? (
 										<div className="mt-2 fw-bold text-break">{host.domainNames.join(", ")}</div>
 									) : null}
 									{host?.forwardHost ? (

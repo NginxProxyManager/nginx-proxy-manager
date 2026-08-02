@@ -7,6 +7,7 @@ import { castJsonIfNeed, convertBoolFieldsToInt, convertIntFieldsToBool } from "
 import AccessList from "./access_list.js";
 import Certificate from "./certificate.js";
 import now from "./now_helper.js";
+import { normalizeNginxConfig } from "../internal/nginx-config-normalizer.js";
 import User from "./user.js";
 
 Model.knex(db());
@@ -22,6 +23,7 @@ const boolFields = [
 	"hsts_enabled",
 	"hsts_subdomains",
 	"trust_forwarded_proto",
+	"nginx_applied_enabled",
 ];
 
 class ProxyHost extends Model {
@@ -39,11 +41,18 @@ class ProxyHost extends Model {
 			this.meta = {};
 		}
 
+		this.nginx_config = normalizeNginxConfig(this.nginx_config);
+		this.nginx_config_revision ??= 1;
+
 		this.domain_names.sort();
 	}
 
 	$beforeUpdate() {
 		this.modified_on = now();
+
+		if (typeof this.nginx_config !== "undefined") {
+			this.nginx_config = normalizeNginxConfig(this.nginx_config);
+		}
 
 		// Sort domain_names
 		if (typeof this.domain_names !== "undefined") {
@@ -53,6 +62,7 @@ class ProxyHost extends Model {
 
 	$parseDatabaseJson(json) {
 		const thisJson = super.$parseDatabaseJson(json);
+		thisJson.nginx_config = normalizeNginxConfig(thisJson.nginx_config);
 		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
@@ -70,7 +80,7 @@ class ProxyHost extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["domain_names", "meta", "locations"];
+		return ["domain_names", "meta", "locations", "nginx_config", "nginx_last_error", "nginx_applied_snapshot"];
 	}
 
 	static get defaultAllowGraph() {

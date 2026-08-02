@@ -1,4 +1,5 @@
 FROM nginxproxymanager/testca AS testca
+FROM shinsenter/s6-overlay:v3.2.3.0 AS s6-overlay
 FROM nginxproxymanager/nginx-full:certbot-node
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
@@ -22,13 +23,18 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 WORKDIR /usr
 RUN curl -sL 'https://taskfile.dev/install.sh' | sh
 
+# The S6 overlay is copied from a Docker Hub build-stage image rather than downloaded
+# from GitHub during every local Docker build. This keeps the development stack
+# buildable when Docker Desktop cannot reach GitHub directly.
+COPY --from=s6-overlay /init /init
+COPY --from=s6-overlay /command /command
+COPY --from=s6-overlay /package /package
+COPY --from=s6-overlay /etc/s6-overlay /etc/s6-overlay
+
 COPY rootfs /
 
-COPY scripts/install-s6 /tmp/install-s6
 RUN rm -f /etc/nginx/conf.d/production.conf.template \
 	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager \
-	&& /tmp/install-s6 "${TARGETPLATFORM}" \
-	&& rm -f /tmp/install-s6 \
 	&& chmod 644 -R /root/.cache
 
 # Copy test CA cert for use in container and add to trusted certs from a self-signed CA

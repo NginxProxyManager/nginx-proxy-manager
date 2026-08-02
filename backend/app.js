@@ -7,6 +7,7 @@ import cors from "./lib/express/cors.js";
 import jwt from "./lib/express/jwt.js";
 import { debug, express as logger } from "./logger.js";
 import mainRoutes from "./routes/main.js";
+import nginxDeploymentCoordinator from "./internal/nginx-deployment-coordinator.js";
 
 /**
  * App
@@ -55,6 +56,18 @@ app.use((_, res, next) => {
 });
 
 app.use(jwt());
+
+// Reconcile any interrupted atomic deployment before API routes can trigger a
+// new configuration change. Recovery only touches journals left by the
+// coordinator; an empty deployment directory is a no-op.
+try {
+	const recoveredDeployments = await nginxDeploymentCoordinator.recover();
+	if (recoveredDeployments.length) logger.warn(`Recovered ${recoveredDeployments.length} interrupted nginx deployment(s)`);
+} catch (error) {
+	logger.error(`Unable to recover nginx deployments: ${error.message}`);
+	throw error;
+}
+
 app.use("/", mainRoutes);
 
 // production error handler
@@ -66,6 +79,14 @@ app.use((err, req, res, _) => {
 			message: err.public ? err.message : "Internal Error",
 		},
 	};
+
+	if (typeof err.error_code !== "undefined") {
+		payload.error.error_code = err.error_code;
+	}
+
+	if (typeof err.details !== "undefined") {
+		payload.error.details = err.details;
+	}
 
 	if (typeof err.message_i18n !== "undefined") {
 		payload.error.message_i18n = err.message_i18n;

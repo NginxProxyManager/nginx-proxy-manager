@@ -39,7 +39,16 @@
 			"$ref": "../common.json#/properties/user_id"
 		},
 		"domain_names": {
-			"$ref": "../common.json#/properties/domain_names"
+			"description": "Domain Names separated by a comma. May be empty when nginx_config.listener.mode is port.",
+			"type": "array",
+			"minItems": 0,
+			"maxItems": 100,
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"pattern": "^[^&| @!#%^();:/\\}{=+?<>,~`'\"]+$"
+			},
+			"example": ["example.com", "www.example.com"]
 		},
 		"forward_host": {
 			"type": "string",
@@ -89,7 +98,10 @@
 		},
 		"forward_scheme": {
 			"type": "string",
-			"enum": ["http", "https"],
+			"enum": [
+				"http",
+				"https"
+			],
 			"example": "http"
 		},
 		"enabled": {
@@ -100,11 +112,19 @@
 			"minItems": 0,
 			"items": {
 				"type": "object",
-				"required": ["forward_scheme", "forward_host", "forward_port", "path"],
+				"required": [
+					"forward_scheme",
+					"forward_host",
+					"forward_port",
+					"path"
+				],
 				"additionalProperties": false,
 				"properties": {
 					"id": {
-						"type": ["integer", "null"]
+						"type": [
+							"integer",
+							"null"
+						]
 					},
 					"path": {
 						"type": "string",
@@ -142,7 +162,7 @@
 		"hsts_subdomains": {
 			"$ref": "../common.json#/properties/hsts_subdomains"
 		},
-		"trust_forwarded_proto":{
+		"trust_forwarded_proto": {
 			"type": "boolean",
 			"description": "Trust the forwarded headers",
 			"example": false
@@ -173,6 +193,57 @@
 				}
 			],
 			"example": null
+		},
+		"nginx_config": {
+			"type": "object",
+			"additionalProperties": true,
+			"description": "Structured Nginx configuration schema v1",
+			"example": {
+				"schema_version": 1,
+				"server": {}
+			}
+		},
+		"nginx_config_revision": {
+			"type": "integer",
+			"minimum": 1,
+			"example": 1
+		},
+		"nginx_applied_revision": {
+			"type": [
+				"integer",
+				"null"
+			],
+			"minimum": 1,
+			"example": 1
+		},
+		"nginx_applied_enabled": {
+			"type": "boolean",
+			"example": true
+		},
+		"nginx_applied_hash": {
+			"type": [
+				"string",
+				"null"
+			],
+			"pattern": "^sha256:[a-f0-9]{64}$"
+		},
+		"nginx_deployment_status": {
+			"type": "string",
+			"enum": [
+				"pending",
+				"online",
+				"disabled",
+				"degraded",
+				"error",
+				"recovering"
+			]
+		},
+		"nginx_checked_at": {
+			"type": [
+				"string",
+				"null"
+			],
+			"format": "date-time"
 		}
 	}
 }
