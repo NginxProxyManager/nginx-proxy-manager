@@ -141,4 +141,3 @@ class NginxLogFollowHub {
 
 export { MAX_STREAMS_PER_USER, NginxLogFollowHub };
 export default new NginxLogFollowHub();
-
