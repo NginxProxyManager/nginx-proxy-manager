@@ -1,4 +1,5 @@
 const BLOCKING_DIRECTIVES = new Set([
+	"access_log",
 	"proxy_pass",
 	"listen",
 	"ssl_certificate",
@@ -81,7 +82,10 @@ export const scanAdvancedConfig = (config) => {
 			if (directive === "server" || directive === "location") {
 				result.push(diagnostic("error", "ADVANCED_MANAGED_BLOCK", tokenLine, `Advanced config may not define ${directive} blocks`));
 			} else if (BLOCKING_DIRECTIVES.has(directive)) {
-				result.push(diagnostic("error", "ADVANCED_MANAGED_DIRECTIVE", tokenLine, `Advanced config may not define ${directive}`));
+				const message = directive === "access_log"
+					? "Advanced config may not define access_log; it would disable required proxy monitoring logs"
+					: `Advanced config may not define ${directive}`;
+				result.push(diagnostic("error", "ADVANCED_MANAGED_DIRECTIVE", tokenLine, message));
 			} else if (directive === "include" && /(?:proxy\.conf|_access\.conf|_certificates\.conf)/i.test(token)) {
 				result.push(diagnostic("error", "ADVANCED_MANAGED_INCLUDE", tokenLine, "Advanced config may not replace managed includes"));
 			} else if (WARNING_DIRECTIVES.has(directive)) {

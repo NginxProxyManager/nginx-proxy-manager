@@ -2,6 +2,7 @@ import express from "express";
 import internalProxyHost from "../../internal/proxy-host.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import { registerHostLogRoutes } from "./logs.js";
+import proxyHostMonitoringRoutes from "./proxy_host_monitoring.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
 import { debug, express as logger } from "../../logger.js";
@@ -117,6 +118,7 @@ router
  * routes must stay before the generic /:host_id resource route.
  */
 registerHostLogRoutes(router, { scope: "proxy_host", idParam: "host_id", internalHost: internalProxyHost });
+router.use("/", proxyHostMonitoringRoutes);
 
 router
 	.route("/:host_id")

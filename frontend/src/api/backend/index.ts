@@ -30,6 +30,7 @@ export * from "./getHostsReport";
 export * from "./getProxyHost";
 export * from "./getProxyHostNginxConfig";
 export * from "./previewProxyHostNginxConfig";
+export * from "./proxyHostMonitoring";
 export * from "./getProxyHosts";
 export * from "./getRedirectionHost";
 export * from "./getRedirectionHosts";

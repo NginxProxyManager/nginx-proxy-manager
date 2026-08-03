@@ -15,7 +15,7 @@ const PROTECTED_HEADERS = new Set(["host", "x-forwarded-scheme", "x-forwarded-pr
 
 const quote = (value) => `"${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\$/g, "\\$")}"`;
 const directiveBoolean = (value) => (value ? "on" : "off");
-const asLf = (value) => `${String(value).replace(/\r\n?/g, "\n").replace(/\n*$/, "")}\n`;
+const asLf = (value) => `${String(value).replace(/\r\n?/g, "\n").replace(/[\t ]+\n/g, "\n").replace(/\n*$/, "")}\n`;
 
 const renderPortOnlyListener = (config, listener, ipv6) => {
 	const start = config.indexOf("  listen 80;");
@@ -201,6 +201,9 @@ const renderLocation = (location, host) => {
 	const proxyPass = `proxy_pass ${location.forward_scheme}://${authority}${uri};`;
 	const lines = [
 		`  location ${match} {`,
+		"    # Keep the human log and the structured monitoring log at location scope.",
+		`    access_log /data/logs/proxy-host-${host.id}_access.log proxy;`,
+		"    access_log /data/logs/npm-monitor-http.log npm_proxy_metrics_v1 buffer=128k flush=1s;",
 		location.advanced_config ? `    ${location.advanced_config.replace(/\n/g, "\n    ")}` : "",
 		renderOptions(options, host.allow_websocket_upgrade, true)
 			.split("\n")

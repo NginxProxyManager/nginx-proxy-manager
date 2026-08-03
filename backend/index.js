@@ -4,6 +4,7 @@ import app from "./app.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
 import nginxLogFollowHub from "./internal/nginx-log-follow-hub.js";
+import proxyHostMonitor from "./internal/proxy-host-monitor.js";
 import { global as logger } from "./logger.js";
 import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
@@ -25,9 +26,10 @@ async function appStart() {
 				logger.error("IP Ranges fetch failed, continuing anyway:", err.message);
 			});
 		})
-		.then(() => {
+		.then(async () => {
 			internalCertificate.initTimer();
 			internalIpRanges.initTimer();
+			await proxyHostMonitor.start();
 
 			const server = app.listen(3000, () => {
 				logger.info(`Backend PID ${process.pid} listening on port 3000 ...`);
@@ -35,6 +37,7 @@ async function appStart() {
 				process.on("SIGTERM", () => {
 					logger.info(`PID ${process.pid} received SIGTERM`);
 					nginxLogFollowHub.closeAll();
+					proxyHostMonitor.stop();
 					server.close(() => {
 						logger.info("Stopping.");
 						process.exit(0);

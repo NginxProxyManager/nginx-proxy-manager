@@ -1097,6 +1097,261 @@
 	"proxy-host.location.proxy-directives.reset": {
 		"defaultMessage": "恢复继承 Server 指令"
 	},
+	"proxy-host.monitoring.action": {
+		"defaultMessage": "监控"
+	},
+	"proxy-host.monitoring.active-check-description": {
+		"defaultMessage": "按计划运行探测并更新服务健康状态。"
+	},
+	"proxy-host.monitoring.active-probe": {
+		"defaultMessage": "主动探测"
+	},
+	"proxy-host.monitoring.auto-refresh": {
+		"defaultMessage": "自动刷新"
+	},
+	"proxy-host.monitoring.back-to-dashboard": {
+		"defaultMessage": "返回监控看板"
+	},
+	"proxy-host.monitoring.check-now": {
+		"defaultMessage": "立即检查"
+	},
+	"proxy-host.monitoring.checking": {
+		"defaultMessage": "检查中…"
+	},
+	"proxy-host.monitoring.collect-request-metrics": {
+		"defaultMessage": "采集请求指标"
+	},
+	"proxy-host.monitoring.collection": {
+		"defaultMessage": "数据采集"
+	},
+	"proxy-host.monitoring.custom-range": {
+		"defaultMessage": "自定义时间范围"
+	},
+	"proxy-host.monitoring.dashboard": {
+		"defaultMessage": "监控看板"
+	},
+	"proxy-host.monitoring.enable": {
+		"defaultMessage": "启用监控"
+	},
+	"proxy-host.monitoring.enable-description": {
+		"defaultMessage": "开启或关闭服务监控与健康状态评估。"
+	},
+	"proxy-host.monitoring.interval": {
+		"defaultMessage": "间隔（秒）"
+	},
+	"proxy-host.monitoring.invalid-range": {
+		"defaultMessage": "开始时间必须早于结束时间。"
+	},
+	"proxy-host.monitoring.loading": {
+		"defaultMessage": "正在加载监控数据…"
+	},
+	"proxy-host.monitoring.metric.5xx-ratio": {
+		"defaultMessage": "5xx 比例"
+	},
+	"proxy-host.monitoring.metric.body-traffic": {
+		"defaultMessage": "响应正文流量"
+	},
+	"proxy-host.monitoring.metric.client-errors": {
+		"defaultMessage": "4xx 错误"
+	},
+	"proxy-host.monitoring.metric.consecutive-failures": {
+		"defaultMessage": "连续失败次数"
+	},
+	"proxy-host.monitoring.metric.consecutive-successes": {
+		"defaultMessage": "连续成功次数"
+	},
+	"proxy-host.monitoring.metric.gateway-errors": {
+		"defaultMessage": "网关错误"
+	},
+	"proxy-host.monitoring.metric.http-status": {
+		"defaultMessage": "HTTP 状态码"
+	},
+	"proxy-host.monitoring.metric.last-checked": {
+		"defaultMessage": "最后检查时间"
+	},
+	"proxy-host.monitoring.metric.last-event": {
+		"defaultMessage": "最近请求时间"
+	},
+	"proxy-host.monitoring.metric.last-failure": {
+		"defaultMessage": "最近失败时间"
+	},
+	"proxy-host.monitoring.metric.last-probe": {
+		"defaultMessage": "最近探测"
+	},
+	"proxy-host.monitoring.metric.last-success": {
+		"defaultMessage": "最近成功时间"
+	},
+	"proxy-host.monitoring.metric.p95-latency": {
+		"defaultMessage": "p95 延迟"
+	},
+	"proxy-host.monitoring.metric.requests": {
+		"defaultMessage": "请求数"
+	},
+	"proxy-host.monitoring.metric.server-errors": {
+		"defaultMessage": "5xx 错误"
+	},
+	"proxy-host.monitoring.metric.synthetic-requests": {
+		"defaultMessage": "主动探测请求数"
+	},
+	"proxy-host.monitoring.metric.traffic": {
+		"defaultMessage": "流量"
+	},
+	"proxy-host.monitoring.metric.worker-seen": {
+		"defaultMessage": "监控进程最近在线"
+	},
+	"proxy-host.monitoring.no-data": {
+		"defaultMessage": "该时间范围内没有监控数据。"
+	},
+	"proxy-host.monitoring.no-probe-result": {
+		"defaultMessage": "尚无探测结果"
+	},
+	"proxy-host.monitoring.passive-not-applied": {
+		"defaultMessage": "已部署的 Nginx 配置尚未确认被动指标采集。"
+	},
+	"proxy-host.monitoring.performance": {
+		"defaultMessage": "延迟与流量"
+	},
+	"proxy-host.monitoring.performance.latency": {
+		"defaultMessage": "p95 延迟（毫秒）"
+	},
+	"proxy-host.monitoring.performance.traffic": {
+		"defaultMessage": "流量"
+	},
+	"proxy-host.monitoring.probe-health": {
+		"defaultMessage": "探测健康度"
+	},
+	"proxy-host.monitoring.probe-mode": {
+		"defaultMessage": "探测模式"
+	},
+	"proxy-host.monitoring.probe-mode.both": {
+		"defaultMessage": "两者"
+	},
+	"proxy-host.monitoring.probe-mode.end-to-end": {
+		"defaultMessage": "端到端"
+	},
+	"proxy-host.monitoring.probe-mode.help": {
+		"defaultMessage": "查看各探测模式的说明"
+	},
+	"proxy-host.monitoring.probe-mode.help.both": {
+		"defaultMessage": "同时运行 HTTP 上游与端到端检查；两项均成功才算成功。"
+	},
+	"proxy-host.monitoring.probe-mode.help.end-to-end": {
+		"defaultMessage": "使用配置的域名和 SNI 访问本机 Nginx，验证 TLS、路由及上游响应。"
+	},
+	"proxy-host.monitoring.probe-mode.help.http": {
+		"defaultMessage": "直接向上游发送 HTTP 请求并检查响应；不检查 Nginx 路由和证书。"
+	},
+	"proxy-host.monitoring.probe-mode.help.tcp": {
+		"defaultMessage": "检查能否与上游主机和端口建立 TCP 连接。"
+	},
+	"proxy-host.monitoring.probe-mode.help.tls": {
+		"defaultMessage": "检查与上游的直接 TLS 握手；证书校验遵循 TLS 验证设置。"
+	},
+	"proxy-host.monitoring.probe-mode.http": {
+		"defaultMessage": "HTTP 上游"
+	},
+	"proxy-host.monitoring.range.15m": {
+		"defaultMessage": "15 分钟"
+	},
+	"proxy-host.monitoring.range.1h": {
+		"defaultMessage": "1 小时"
+	},
+	"proxy-host.monitoring.range.24h": {
+		"defaultMessage": "24 小时"
+	},
+	"proxy-host.monitoring.range.6h": {
+		"defaultMessage": "6 小时"
+	},
+	"proxy-host.monitoring.range.7d": {
+		"defaultMessage": "7 天"
+	},
+	"proxy-host.monitoring.recent-activity": {
+		"defaultMessage": "最近活动"
+	},
+	"proxy-host.monitoring.refresh": {
+		"defaultMessage": "刷新"
+	},
+	"proxy-host.monitoring.refresh-off": {
+		"defaultMessage": "关闭"
+	},
+	"proxy-host.monitoring.request-breakdown": {
+		"defaultMessage": "请求明细"
+	},
+	"proxy-host.monitoring.request-metrics-description": {
+		"defaultMessage": "从 Nginx 日志读取请求、错误、延迟与流量指标。"
+	},
+	"proxy-host.monitoring.request-volume": {
+		"defaultMessage": "请求量与错误"
+	},
+	"proxy-host.monitoring.request-volume.client-errors": {
+		"defaultMessage": "4xx 错误"
+	},
+	"proxy-host.monitoring.request-volume.requests": {
+		"defaultMessage": "请求量"
+	},
+	"proxy-host.monitoring.request-volume.server-errors": {
+		"defaultMessage": "5xx 错误"
+	},
+	"proxy-host.monitoring.run-active-checks": {
+		"defaultMessage": "运行主动检查"
+	},
+	"proxy-host.monitoring.save-settings": {
+		"defaultMessage": "保存设置"
+	},
+	"proxy-host.monitoring.saving": {
+		"defaultMessage": "保存中…"
+	},
+	"proxy-host.monitoring.settings": {
+		"defaultMessage": "监控设置"
+	},
+	"proxy-host.monitoring.settings-description": {
+		"defaultMessage": "在不离开监控看板的情况下，配置指标采集与主动检查行为。"
+	},
+	"proxy-host.monitoring.status-label": {
+		"defaultMessage": "状态"
+	},
+	"proxy-host.monitoring.status.config-error": {
+		"defaultMessage": "配置错误"
+	},
+	"proxy-host.monitoring.status.degraded": {
+		"defaultMessage": "降级"
+	},
+	"proxy-host.monitoring.status.disabled": {
+		"defaultMessage": "已禁用"
+	},
+	"proxy-host.monitoring.status.offline": {
+		"defaultMessage": "离线"
+	},
+	"proxy-host.monitoring.status.online": {
+		"defaultMessage": "在线"
+	},
+	"proxy-host.monitoring.status.unknown": {
+		"defaultMessage": "未知"
+	},
+	"proxy-host.monitoring.time-end": {
+		"defaultMessage": "结束时间"
+	},
+	"proxy-host.monitoring.time-range": {
+		"defaultMessage": "时间范围"
+	},
+	"proxy-host.monitoring.time-range.apply": {
+		"defaultMessage": "应用"
+	},
+	"proxy-host.monitoring.time-range.summary": {
+		"defaultMessage": "所选时间范围内的指标"
+	},
+	"proxy-host.monitoring.time-start": {
+		"defaultMessage": "开始时间"
+	},
+	"proxy-host.monitoring.timeout": {
+		"defaultMessage": "超时（毫秒）"
+	},
+	"proxy-host.monitoring.timeseries-tooltip": {
+		"defaultMessage": "{time}：{requests} 个请求，{ratio}% 为 5xx"
+	},
+	"proxy-host.monitoring.title": {
+		"defaultMessage": "代理服务监控"
+	},
 	"proxy-host.wizard.access": {
 		"defaultMessage": "请求访问控制"
 	},
@@ -1270,6 +1525,9 @@
 	},
 	"proxy-hosts.count": {
 		"defaultMessage": "{count} 个代理服务"
+	},
+	"proxy-hosts.refresh": {
+		"defaultMessage": "刷新列表"
 	},
 	"public": {
 		"defaultMessage": "公开"

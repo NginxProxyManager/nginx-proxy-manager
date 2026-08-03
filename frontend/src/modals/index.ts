@@ -10,6 +10,7 @@ export * from "./HTTPCertificateModal";
 export * from "./NginxLogViewerModal";
 export * from "./PermissionsModal";
 export * from "./ProxyHostModal";
+export * from "./ProxyHostMonitoringModal";
 export * from "./RedirectionHostModal";
 export * from "./RenewCertificateModal";
 export * from "./SetPasswordModal";

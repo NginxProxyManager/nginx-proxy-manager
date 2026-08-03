@@ -7,6 +7,7 @@ import utils from "../lib/utils.js";
 import nginxDeploymentModel from "../models/nginx_deployment.js";
 import databaseNow from "../models/now_helper.js";
 import proxyHostModel from "../models/proxy_host.js";
+import proxyHostMonitor from "./proxy-host-monitor.js";
 import internalAccessList from "./access-list.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
@@ -877,12 +878,18 @@ const internalProxyHost = {
 			});
 		}
 
-		if (typeof expand !== "undefined" && expand !== null) {
-			query.withGraphFetched(`[${expand.join(", ")}]`);
+		const includeMonitoring = Array.isArray(expand) && expand.includes("monitoring");
+		const graphExpand = Array.isArray(expand) ? expand.filter((item) => item !== "monitoring") : null;
+		if (graphExpand?.length) {
+			query.withGraphFetched(`[${graphExpand.join(", ")}]`);
 		}
 
 		const rows = await query.then(utils.omitRows(omissions()));
-		if (typeof expand !== "undefined" && expand !== null && expand.indexOf("certificate") !== -1) {
+		if (includeMonitoring) {
+			const statuses = await proxyHostMonitor.listStatuses(rows);
+			for (const row of rows) row.monitoring_status = statuses.get(row.id);
+		}
+		if (graphExpand?.includes("certificate")) {
 			return internalHost.cleanAllRowsCertificateMeta(rows);
 		}
 		return rows;
