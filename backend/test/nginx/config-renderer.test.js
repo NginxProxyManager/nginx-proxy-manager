@@ -375,6 +375,9 @@ test("ADV lexer ignores comments and strings but diagnoses managed directives", 
 		0,
 	);
 	assert.equal(scanAdvancedConfig("proxy_pass http://example.com;").at(0).code, "ADVANCED_MANAGED_DIRECTIVE");
+	const accessLogDiagnostic = scanAdvancedConfig("access_log off;").at(0);
+	assert.equal(accessLogDiagnostic.code, "ADVANCED_MANAGED_DIRECTIVE");
+	assert.match(accessLogDiagnostic.message, /monitoring logs/);
 	for (const directive of [
 		"proxy_http_version 1.1;",
 		"proxy_pass_request_body off;",

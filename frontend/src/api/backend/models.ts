@@ -191,6 +191,11 @@ export interface NginxListener {
 	port?: number;
 }
 
+export type ProxyHostMonitoringListStatus = Pick<
+	ProxyHostMonitoringState,
+	"status" | "statusReason" | "lastCheckedOn" | "statusChangedOn"
+>;
+
 export interface ProxyHost {
 	id: number;
 	createdOn: string;
@@ -210,6 +215,7 @@ export interface ProxyHost {
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
 	enabled: boolean;
+	monitoringStatus?: ProxyHostMonitoringListStatus;
 	locations?: ProxyLocation[];
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
@@ -336,4 +342,72 @@ export interface ProxyHostPreview {
 		field?: string;
 		locationId?: string;
 	}>;
+}
+export interface ProxyHostMonitoringConfig {
+	id?: number;
+	proxyHostId?: number;
+	enabled: boolean;
+	passiveDesiredEnabled: boolean;
+	passiveAppliedEnabled: boolean;
+	passiveCheckedOn?: string | null;
+	passiveLastError?: { code?: string; message?: string } | null;
+	activeEnabled: boolean;
+	probeMode: "tcp" | "tls" | "http" | "end_to_end" | "both";
+	intervalSeconds: number;
+	timeoutMs: number;
+	httpMethod: "GET" | "HEAD";
+	path: string;
+	expectedStatuses: string[];
+	followRedirects: boolean;
+	tlsVerify: boolean;
+	bodyMatchType?: "contains" | "regex" | null;
+	bodyMatchValue?: string | null;
+	failureThreshold: number;
+	successThreshold: number;
+	degraded5xxRatio: number;
+	degradedGatewayErrorCount: number;
+	degradedMinRequests: number;
+	degradedP95Ms?: number | null;
+}
+
+export interface ProxyHostMonitoringState {
+	proxyHostId: number;
+	status: "disabled" | "unknown" | "online" | "degraded" | "offline" | "config_error";
+	statusReason?: string | null;
+	statusChangedOn?: string | null;
+	lastCheckedOn?: string | null;
+	lastSuccessOn?: string | null;
+	lastFailureOn?: string | null;
+	consecutiveSuccesses: number;
+	consecutiveFailures: number;
+	lastProbeDurationMs?: number | null;
+	lastHttpStatus?: number | null;
+	lastFailureCode?: string | null;
+	lastFailureSummary?: string | null;
+	workerSeenOn?: string | null;
+}
+
+export interface ProxyHostMonitoringSummary {
+	requests: number;
+	syntheticRequests: number;
+	clientErrors: number;
+	serverErrors: number;
+	gatewayErrors: number;
+	bytesSent: number;
+	bodyBytesSent: number;
+	errorRatio: number;
+	p95RequestTimeMs?: number | null;
+	lastStatus?: number | null;
+	lastEventAt?: string | null;
+}
+
+export interface ProxyHostMonitoringSnapshot {
+	config: ProxyHostMonitoringConfig;
+	state: ProxyHostMonitoringState | null;
+	summary: ProxyHostMonitoringSummary;
+	worker: { enabled: boolean; passiveEnabled: boolean; activeEnabled: boolean; logPath: string };
+}
+
+export interface ProxyHostMonitoringTimePoint extends ProxyHostMonitoringSummary {
+	bucketStart: string;
 }

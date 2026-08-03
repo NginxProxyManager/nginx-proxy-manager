@@ -336,7 +336,9 @@ const NginxLogViewerModal = EasyModal.create(({ hostType, hostId, label, visible
 								: "No matches"}
 						</span>
 					) : null}
-					<span className={`badge ${isFollowing ? "bg-success" : "bg-secondary"}`}>
+					<span
+						className={`nginx-log-follow-status ${isFollowing ? "nginx-log-follow-status-live" : "nginx-log-follow-status-paused"}`}
+					>
 						{isFollowing ? "Live" : "Paused"}
 					</span>
 					<button

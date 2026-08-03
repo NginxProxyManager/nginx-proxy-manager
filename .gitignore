@@ -11,3 +11,4 @@ docker/dev/resolv.conf
 .claude
 .tmp-s6-overlay-root/
 .tmp-s6-overlay.tar
+/plans/

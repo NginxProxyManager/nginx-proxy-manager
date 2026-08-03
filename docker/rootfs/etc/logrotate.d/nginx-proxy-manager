@@ -25,3 +25,17 @@
     kill -USR1 `cat /run/nginx/nginx.pid 2>/dev/null` 2>/dev/null || true
     endscript
 }
+
+/data/logs/npm-monitor-http.log {
+    su npm npm
+    create 0644
+    weekly
+    rotate 4
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+    kill -USR1 `cat /run/nginx/nginx.pid 2>/dev/null` 2>/dev/null || true
+    endscript
+}

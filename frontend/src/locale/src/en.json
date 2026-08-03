@@ -1184,6 +1184,261 @@
 	"proxy-host.location.proxy-directives.reset": {
 		"defaultMessage": "Reset to server directives"
 	},
+	"proxy-host.monitoring.action": {
+		"defaultMessage": "Monitoring"
+	},
+	"proxy-host.monitoring.active-check-description": {
+		"defaultMessage": "Run scheduled probes and update the service health state."
+	},
+	"proxy-host.monitoring.active-probe": {
+		"defaultMessage": "Active probe"
+	},
+	"proxy-host.monitoring.auto-refresh": {
+		"defaultMessage": "Auto refresh"
+	},
+	"proxy-host.monitoring.back-to-dashboard": {
+		"defaultMessage": "Back to dashboard"
+	},
+	"proxy-host.monitoring.check-now": {
+		"defaultMessage": "Check now"
+	},
+	"proxy-host.monitoring.checking": {
+		"defaultMessage": "Checking…"
+	},
+	"proxy-host.monitoring.collect-request-metrics": {
+		"defaultMessage": "Collect request metrics"
+	},
+	"proxy-host.monitoring.collection": {
+		"defaultMessage": "Data collection"
+	},
+	"proxy-host.monitoring.custom-range": {
+		"defaultMessage": "Custom range"
+	},
+	"proxy-host.monitoring.dashboard": {
+		"defaultMessage": "Monitoring dashboard"
+	},
+	"proxy-host.monitoring.enable": {
+		"defaultMessage": "Enable monitoring"
+	},
+	"proxy-host.monitoring.enable-description": {
+		"defaultMessage": "Turn service monitoring and health evaluation on or off."
+	},
+	"proxy-host.monitoring.interval": {
+		"defaultMessage": "Interval (seconds)"
+	},
+	"proxy-host.monitoring.invalid-range": {
+		"defaultMessage": "The start time must be before the end time."
+	},
+	"proxy-host.monitoring.loading": {
+		"defaultMessage": "Loading monitoring data…"
+	},
+	"proxy-host.monitoring.metric.5xx-ratio": {
+		"defaultMessage": "5xx ratio"
+	},
+	"proxy-host.monitoring.metric.body-traffic": {
+		"defaultMessage": "Response body"
+	},
+	"proxy-host.monitoring.metric.client-errors": {
+		"defaultMessage": "4xx errors"
+	},
+	"proxy-host.monitoring.metric.consecutive-failures": {
+		"defaultMessage": "Consecutive failures"
+	},
+	"proxy-host.monitoring.metric.consecutive-successes": {
+		"defaultMessage": "Consecutive successes"
+	},
+	"proxy-host.monitoring.metric.gateway-errors": {
+		"defaultMessage": "Gateway errors"
+	},
+	"proxy-host.monitoring.metric.http-status": {
+		"defaultMessage": "HTTP status"
+	},
+	"proxy-host.monitoring.metric.last-checked": {
+		"defaultMessage": "Last checked"
+	},
+	"proxy-host.monitoring.metric.last-event": {
+		"defaultMessage": "Last request"
+	},
+	"proxy-host.monitoring.metric.last-failure": {
+		"defaultMessage": "Last failure"
+	},
+	"proxy-host.monitoring.metric.last-probe": {
+		"defaultMessage": "Last probe"
+	},
+	"proxy-host.monitoring.metric.last-success": {
+		"defaultMessage": "Last success"
+	},
+	"proxy-host.monitoring.metric.p95-latency": {
+		"defaultMessage": "p95 latency"
+	},
+	"proxy-host.monitoring.metric.requests": {
+		"defaultMessage": "Requests"
+	},
+	"proxy-host.monitoring.metric.server-errors": {
+		"defaultMessage": "5xx errors"
+	},
+	"proxy-host.monitoring.metric.synthetic-requests": {
+		"defaultMessage": "Synthetic requests"
+	},
+	"proxy-host.monitoring.metric.traffic": {
+		"defaultMessage": "Traffic"
+	},
+	"proxy-host.monitoring.metric.worker-seen": {
+		"defaultMessage": "Worker last seen"
+	},
+	"proxy-host.monitoring.no-data": {
+		"defaultMessage": "No monitoring data for this time range."
+	},
+	"proxy-host.monitoring.no-probe-result": {
+		"defaultMessage": "No probe result yet"
+	},
+	"proxy-host.monitoring.passive-not-applied": {
+		"defaultMessage": "The deployed Nginx configuration has not confirmed passive metrics yet."
+	},
+	"proxy-host.monitoring.performance": {
+		"defaultMessage": "Latency and traffic"
+	},
+	"proxy-host.monitoring.performance.latency": {
+		"defaultMessage": "p95 latency (ms)"
+	},
+	"proxy-host.monitoring.performance.traffic": {
+		"defaultMessage": "Traffic"
+	},
+	"proxy-host.monitoring.probe-health": {
+		"defaultMessage": "Probe health"
+	},
+	"proxy-host.monitoring.probe-mode": {
+		"defaultMessage": "Probe mode"
+	},
+	"proxy-host.monitoring.probe-mode.both": {
+		"defaultMessage": "Both"
+	},
+	"proxy-host.monitoring.probe-mode.end-to-end": {
+		"defaultMessage": "End-to-end"
+	},
+	"proxy-host.monitoring.probe-mode.help": {
+		"defaultMessage": "Probe mode descriptions"
+	},
+	"proxy-host.monitoring.probe-mode.help.both": {
+		"defaultMessage": "Runs HTTP upstream and end-to-end checks. Both must succeed."
+	},
+	"proxy-host.monitoring.probe-mode.help.end-to-end": {
+		"defaultMessage": "Requests local Nginx with the configured hostname and SNI to validate TLS, routing, and the upstream response."
+	},
+	"proxy-host.monitoring.probe-mode.help.http": {
+		"defaultMessage": "Sends an HTTP request directly to the upstream and checks its response; Nginx routing and certificates are not tested."
+	},
+	"proxy-host.monitoring.probe-mode.help.tcp": {
+		"defaultMessage": "Checks whether a TCP connection to the upstream host and port can be established."
+	},
+	"proxy-host.monitoring.probe-mode.help.tls": {
+		"defaultMessage": "Checks a direct TLS handshake with the upstream; certificate validation follows the TLS verification setting."
+	},
+	"proxy-host.monitoring.probe-mode.http": {
+		"defaultMessage": "HTTP upstream"
+	},
+	"proxy-host.monitoring.range.15m": {
+		"defaultMessage": "15 min"
+	},
+	"proxy-host.monitoring.range.1h": {
+		"defaultMessage": "1 hour"
+	},
+	"proxy-host.monitoring.range.24h": {
+		"defaultMessage": "24 hours"
+	},
+	"proxy-host.monitoring.range.6h": {
+		"defaultMessage": "6 hours"
+	},
+	"proxy-host.monitoring.range.7d": {
+		"defaultMessage": "7 days"
+	},
+	"proxy-host.monitoring.recent-activity": {
+		"defaultMessage": "Recent activity"
+	},
+	"proxy-host.monitoring.refresh": {
+		"defaultMessage": "Refresh"
+	},
+	"proxy-host.monitoring.refresh-off": {
+		"defaultMessage": "Off"
+	},
+	"proxy-host.monitoring.request-breakdown": {
+		"defaultMessage": "Request breakdown"
+	},
+	"proxy-host.monitoring.request-metrics-description": {
+		"defaultMessage": "Read request, error, latency, and traffic metrics from Nginx logs."
+	},
+	"proxy-host.monitoring.request-volume": {
+		"defaultMessage": "Request volume and errors"
+	},
+	"proxy-host.monitoring.request-volume.client-errors": {
+		"defaultMessage": "4xx errors"
+	},
+	"proxy-host.monitoring.request-volume.requests": {
+		"defaultMessage": "Requests"
+	},
+	"proxy-host.monitoring.request-volume.server-errors": {
+		"defaultMessage": "5xx errors"
+	},
+	"proxy-host.monitoring.run-active-checks": {
+		"defaultMessage": "Run active checks"
+	},
+	"proxy-host.monitoring.save-settings": {
+		"defaultMessage": "Save settings"
+	},
+	"proxy-host.monitoring.saving": {
+		"defaultMessage": "Saving…"
+	},
+	"proxy-host.monitoring.settings": {
+		"defaultMessage": "Monitoring settings"
+	},
+	"proxy-host.monitoring.settings-description": {
+		"defaultMessage": "Configure collection and active-check behavior without leaving the monitoring dashboard."
+	},
+	"proxy-host.monitoring.status-label": {
+		"defaultMessage": "Status"
+	},
+	"proxy-host.monitoring.status.config-error": {
+		"defaultMessage": "Configuration error"
+	},
+	"proxy-host.monitoring.status.degraded": {
+		"defaultMessage": "Degraded"
+	},
+	"proxy-host.monitoring.status.disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"proxy-host.monitoring.status.offline": {
+		"defaultMessage": "Offline"
+	},
+	"proxy-host.monitoring.status.online": {
+		"defaultMessage": "Online"
+	},
+	"proxy-host.monitoring.status.unknown": {
+		"defaultMessage": "Unknown"
+	},
+	"proxy-host.monitoring.time-end": {
+		"defaultMessage": "End time"
+	},
+	"proxy-host.monitoring.time-range": {
+		"defaultMessage": "Time range"
+	},
+	"proxy-host.monitoring.time-range.apply": {
+		"defaultMessage": "Apply"
+	},
+	"proxy-host.monitoring.time-range.summary": {
+		"defaultMessage": "Metrics for the selected time range"
+	},
+	"proxy-host.monitoring.time-start": {
+		"defaultMessage": "Start time"
+	},
+	"proxy-host.monitoring.timeout": {
+		"defaultMessage": "Timeout (ms)"
+	},
+	"proxy-host.monitoring.timeseries-tooltip": {
+		"defaultMessage": "{time}: {requests} requests, {ratio}% 5xx"
+	},
+	"proxy-host.monitoring.title": {
+		"defaultMessage": "Proxy Monitoring"
+	},
 	"proxy-host.wizard.access": {
 		"defaultMessage": "Request access"
 	},
@@ -1357,6 +1612,9 @@
 	},
 	"proxy-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Hosts}}"
+	},
+	"proxy-hosts.refresh": {
+		"defaultMessage": "Refresh list"
 	},
 	"public": {
 		"defaultMessage": "Public"

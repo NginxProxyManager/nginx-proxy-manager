@@ -1,12 +1,12 @@
-import { IconHelp, IconSearch } from "@tabler/icons-react";
+import { IconHelp, IconRefresh, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
 import { useProxyHosts } from "src/hooks";
-import { T } from "src/locale";
-import { showDeleteConfirmModal, showHelpModal, showProxyHostModal, showNginxLogViewerModal } from "src/modals";
+import { intl, T } from "src/locale";
+import { showDeleteConfirmModal, showHelpModal, showProxyHostModal, showNginxLogViewerModal, showProxyHostMonitoringModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
@@ -14,7 +14,7 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
+	const { isFetching, isLoading, isError, error, data, refetch } = useProxyHosts(["owner", "access_list", "certificate", "monitoring"]);
 
 	if (isLoading) {
 		return <LoadingPage />;
@@ -76,6 +76,16 @@ export default function TableWrapper() {
 										/>
 									</div>
 								) : null}
+								<button
+									type="button"
+									className="btn btn-action btn-sm"
+									onClick={() => refetch()}
+									disabled={isFetching}
+									title={intl.formatMessage({ id: "proxy-hosts.refresh", defaultMessage: "Refresh list" })}
+									aria-label={intl.formatMessage({ id: "proxy-hosts.refresh", defaultMessage: "Refresh list" })}
+								>
+									<IconRefresh size={20} />
+								</button>
 								<Button size="sm" onClick={() => showHelpModal("ProxyHosts", "lime")}>
 									<IconHelp size={20} />
 								</Button>
@@ -99,6 +109,11 @@ export default function TableWrapper() {
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}
+					onMonitoring={(id: number) => {
+						const host = data?.find((item) => item.id === id);
+						const label = host?.domainNames?.join(", ") || `${host?.forwardHost || "Proxy Host"}#${id}`;
+						showProxyHostMonitoringModal(id, label);
+					}}
 					onLogs={(id: number) => {
 						const host = data?.find((item) => item.id === id);
 						const label =

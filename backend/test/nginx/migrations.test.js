@@ -6,6 +6,7 @@ import knex from "knex";
 import test from "node:test";
 import { down as downDeployment, up as upDeployment } from "../../migrations/20260731120100_nginx_deployment.js";
 import { down as downProxyHost, up as upProxyHost } from "../../migrations/20260731120000_proxy_host_nginx_desired_applied.js";
+import { down as downMonitoring, up as upMonitoring } from "../../migrations/20260803110000_proxy_host_monitoring.js";
 
 const externalClient = process.env.NPM_MIGRATION_TEST_CLIENT;
 const connection = externalClient === "mysql2"
@@ -55,6 +56,23 @@ test(`MIG-001 desired/applied schema migrates and rolls back on ${client}`, { sk
 		assert.equal(await database.schema.hasTable("nginx_deployment"), false);
 		const rolledBack = await database("proxy_host").columnInfo();
 		assert.equal(rolledBack.nginx_config, undefined);
+	} finally {
+		await database.destroy();
+		if (directory) await rm(directory, { recursive: true, force: true });
+	}
+});
+
+
+test(`MIG-002 proxy host monitoring schema migrates and rolls back on ${client}`, { skip: !sqliteBindingAvailable && !externalClient ? "better-sqlite3 native binding is unavailable in this host runtime" : false }, async () => {
+	const { database, directory } = await setupDatabase();
+	try {
+		await upMonitoring(database);
+		for (const name of ["proxy_host_monitor_config", "proxy_host_monitor_state", "proxy_host_metric_minute", "proxy_host_metric_hour", "proxy_host_monitor_event", "monitor_ingestion_cursor"]) assert.equal(await database.schema.hasTable(name), true, `${name} exists`);
+		const configColumns = await database("proxy_host_monitor_config").columnInfo();
+		for (const name of ["proxy_host_id", "passive_desired_enabled", "passive_applied_enabled", "probe_mode", "expected_statuses", "degraded_p95_ms"]) assert.ok(configColumns[name], `${name} exists`);
+		await downMonitoring(database);
+		assert.equal(await database.schema.hasTable("proxy_host_monitor_config"), false);
+		assert.equal(await database.schema.hasTable("proxy_host_metric_hour"), false);
 	} finally {
 		await database.destroy();
 		if (directory) await rm(directory, { recursive: true, force: true });

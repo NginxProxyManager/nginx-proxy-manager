@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconEdit, IconFileText, IconPower, IconTrash } from "@tabler/icons-react";
+import { IconActivity, IconDotsVertical, IconEdit, IconFileText, IconPower, IconTrash } from "@tabler/icons-react";
 import {
 	createColumnHelper,
 	getCoreRowModel,
@@ -15,11 +15,22 @@ import {
 	EmptyData,
 	GravatarFormatter,
 	HasPermission,
-	TrueFalseFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
+
+type MonitoringStatus = "disabled" | "unknown" | "online" | "degraded" | "offline" | "config_error";
+
+const monitoringStatus = (host: ProxyHost): MonitoringStatus => {
+	const status = host.monitoringStatus?.status;
+	if (["disabled", "unknown", "online", "degraded", "offline", "config_error"].includes(status || "")) {
+		return status as MonitoringStatus;
+	}
+	return host.enabled ? "unknown" : "disabled";
+};
+
+const monitoringStatusMessageId = (status: MonitoringStatus) => `proxy-host.monitoring.status.${status}`;
 
 interface Props {
 	data: ProxyHost[];
@@ -27,6 +38,7 @@ interface Props {
 	isFetching?: boolean;
 	onEdit?: (id: number) => void;
 	onLogs?: (id: number) => void;
+	onMonitoring?: (id: number) => void;
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
@@ -36,6 +48,7 @@ export default function Table({
 	isFetching,
 	onEdit,
 	onLogs,
+	onMonitoring,
 	onDelete,
 	onDisableToggle,
 	onNew,
@@ -110,11 +123,26 @@ export default function Table({
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					const host = info.row.original;
+					const host = info.row.original as ProxyHost;
+					const status = monitoringStatus(host);
 					return (
 						<div className="text-end">
 							<div className="d-flex justify-content-end align-items-center gap-0">
-								<TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />
+								<span className={`status monitoring-status-indicator monitoring-status-indicator-${status}`}>
+									<span className="status-dot status-dot-animated" />
+									<T id={monitoringStatusMessageId(status)} />
+								</span>
+								{onMonitoring ? (
+									<button
+										type="button"
+										className="btn btn-action btn-sm p-1"
+										title={intl.formatMessage({ id: "proxy-host.monitoring.action", defaultMessage: "Monitoring" })}
+										aria-label={intl.formatMessage({ id: "proxy-host.monitoring.action", defaultMessage: "Monitoring" })}
+										onClick={() => onMonitoring(info.row.original.id)}
+									>
+										<IconActivity size={16} />
+									</button>
+								) : null}
 								{onLogs ? (
 									<button
 										type="button"
@@ -196,7 +224,7 @@ export default function Table({
 				},
 			}),
 		],
-		[columnHelper, onEdit, onLogs, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onLogs, onMonitoring, onDisableToggle, onDelete],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);

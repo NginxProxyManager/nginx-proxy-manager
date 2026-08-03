@@ -116,3 +116,209 @@ label.row {
     margin-left: 0;
   }
 }
+
+/* Monitoring uses solid, WCAG-friendly status colours in both themes. */
+.monitoring-status-badge {
+	display: inline-flex;
+	align-items: center;
+	min-height: 1.5rem;
+	padding: 0.25rem 0.5rem;
+	border: 1px solid transparent;
+	border-radius: var(--tblr-border-radius);
+	color: #fff;
+	font-size: 0.75rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.monitoring-status-online {
+	background-color: #146c43;
+	border-color: #0f5132;
+}
+
+.monitoring-status-degraded {
+	background-color: #8a5700;
+	border-color: #664100;
+}
+
+.monitoring-status-offline,
+.monitoring-status-config_error {
+	background-color: #b02a37;
+	border-color: #842029;
+}
+
+.monitoring-status-disabled,
+.monitoring-status-unknown {
+	background-color: #495057;
+	border-color: #343a40;
+}
+
+.monitoring-status-indicator {
+	font-weight: 700;
+}
+
+.monitoring-status-indicator .status-dot {
+	background-color: currentColor;
+}
+
+.monitoring-status-indicator-online { color: #146c43; }
+.monitoring-status-indicator-degraded { color: #8a5700; }
+.monitoring-status-indicator-offline,
+.monitoring-status-indicator-config_error { color: #b02a37; }
+.monitoring-status-indicator-disabled,
+.monitoring-status-indicator-unknown { color: #495057; }
+
+[data-bs-theme="dark"] .monitoring-status-indicator-online { color: #75d69c; }
+[data-bs-theme="dark"] .monitoring-status-indicator-degraded { color: #ffd166; }
+[data-bs-theme="dark"] .monitoring-status-indicator-offline,
+[data-bs-theme="dark"] .monitoring-status-indicator-config_error { color: #ff9aa2; }
+[data-bs-theme="dark"] .monitoring-status-indicator-disabled,
+[data-bs-theme="dark"] .monitoring-status-indicator-unknown { color: #adb5bd; }
+
+/* The proxy-host table uses Tabler's status element rather than the modal badge. */
+.status.status-lime,
+.status.status-red {
+	font-weight: 700;
+}
+
+.status.status-lime {
+	color: #146c43;
+}
+
+.status.status-lime .status-dot {
+	background-color: #146c43;
+}
+
+.status.status-red {
+	color: #b02a37;
+}
+
+.status.status-red .status-dot {
+	background-color: #b02a37;
+}
+
+[data-bs-theme="dark"] .status.status-lime {
+	color: #75d69c;
+}
+
+[data-bs-theme="dark"] .status.status-lime .status-dot {
+	background-color: #75d69c;
+}
+
+[data-bs-theme="dark"] .status.status-red {
+	color: #ff9aa2;
+}
+
+[data-bs-theme="dark"] .status.status-red .status-dot {
+	background-color: #ff9aa2;
+}
+
+/* Keep the log viewer follow state readable in light and dark themes. */
+.nginx-log-follow-status {
+	display: inline-flex;
+	align-items: center;
+	min-height: 1.5rem;
+	padding: 0.25rem 0.5rem;
+	border: 1px solid transparent;
+	border-radius: var(--tblr-border-radius);
+	color: #fff;
+	font-size: 0.75rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.nginx-log-follow-status-live {
+	background-color: #146c43;
+	border-color: #0f5132;
+}
+
+.nginx-log-follow-status-paused {
+	background-color: #495057;
+	border-color: #343a40;
+}
+
+/* Monitoring dashboard */
+.monitoring-dashboard,
+.monitoring-settings-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.monitoring-loading-state {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	min-height: 12rem;
+}
+
+.monitoring-range-value {
+	word-break: break-word;
+}
+
+.monitoring-custom-range {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: end;
+	gap: 0.75rem;
+}
+
+.monitoring-custom-range-field {
+	flex: 1 1 15rem;
+}
+
+.monitoring-custom-range-field .form-label {
+	margin-bottom: 0.25rem;
+}
+
+.monitoring-refresh-picker .dropdown-toggle {
+	min-width: 3.75rem;
+}
+
+.monitoring-request-chart {
+	position: relative;
+	height: 17rem;
+}
+
+.monitoring-chart-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	height: 100%;
+}
+
+.monitoring-spin {
+	animation: monitoring-spin 0.9s linear infinite;
+}
+
+@keyframes monitoring-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (max-width: 575.98px) {
+	.monitoring-dashboard .monitoring-range-presets {
+		max-width: 100%;
+		overflow-x: auto;
+	}
+
+	.monitoring-custom-range-field,
+	.monitoring-custom-range .btn {
+		width: 100%;
+		flex-basis: 100%;
+	}
+
+	.monitoring-request-chart {
+		height: 15rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.monitoring-spin {
+		animation: none;
+	}
+}
