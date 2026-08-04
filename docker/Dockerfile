@@ -1,9 +1,27 @@
 # This is a Dockerfile intended to be built using `docker buildx`
 # for multi-arch support. Building with `docker build` may have unexpected results.
 
-# This file assumes that the frontend has been built using ./scripts/frontend-build
+# Frontend assets are built in the frontend-build stage below.
 
 ARG BASE_IMAGE=nginxproxymanager/nginx-full:certbot-node
+ARG BUILDPLATFORM
+
+# Build frontend assets in Docker so image builds do not depend on an ignored,
+# pre-existing frontend/dist directory in the host build context.
+FROM --platform=$BUILDPLATFORM $BASE_IMAGE AS frontend-build
+
+ENV CI=true \
+	NODE_OPTIONS="--openssl-legacy-provider"
+
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/yarn.lock frontend/.npmrc ./
+RUN yarn install --frozen-lockfile --network-timeout 600000
+COPY frontend ./
+RUN yarn lint \
+	&& yarn locale-compile \
+	&& yarn vitest run --no-color \
+	&& yarn build
+
 FROM nginxproxymanager/testca AS testca
 FROM $BASE_IMAGE
 
@@ -38,7 +56,7 @@ RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
 EXPOSE 80 81 443
 
 COPY backend       /app
-COPY frontend/dist /app/frontend
+COPY --from=frontend-build /app/frontend/dist /app/frontend
 COPY docker/rootfs /
 
 # Copy test CA cert for use in container and add to trusted certs from a self-signed CA
