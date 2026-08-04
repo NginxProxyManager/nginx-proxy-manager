@@ -37,7 +37,12 @@ const blankItem = (): ProxyLocation => ({
 
 export function LocationsFields({ initialValues, name = "locations", defaultLocationEnabled = true }: Props) {
 	const { data: upstreams } = useUpstreams();
-	const availableUpstreams = (upstreams || []).filter((upstream) => !upstream.isDisabled && upstream.nginxAppliedEnabled && ["online", "degraded"].includes(upstream.nginxDeploymentStatus || ""));
+	const availableUpstreams = (upstreams || []).filter(
+		(upstream) =>
+			!upstream.isDisabled &&
+			upstream.nginxAppliedEnabled &&
+			["online", "degraded"].includes(upstream.nginxDeploymentStatus || ""),
+	);
 	const { values: formValues, setFieldValue } = useFormikContext<any>();
 	const [values, setValues] = useState<ProxyLocation[]>(() => getIn(formValues, name) || initialValues || []);
 	const [advancedVisible, setAdvancedVisible] = useState<number[]>([]);
@@ -132,7 +137,12 @@ export function LocationsFields({ initialValues, name = "locations", defaultLoca
 				const matchType = item.matchType || "prefix";
 				const pathMode = item.pathMode || "preserve_uri";
 				const pathModeLocked = ["exact", "regex", "regex_i"].includes(matchType);
-				const target = item.target || { type: "direct" as const, scheme: item.forwardScheme || "http", host: item.forwardHost || "", port: item.forwardPort || 80 };
+				const target = item.target || {
+					type: "direct" as const,
+					scheme: item.forwardScheme || "http",
+					host: item.forwardHost || "",
+					port: item.forwardPort || 80,
+				};
 				const usingUpstream = target.type === "upstream";
 				const locationSyntax = `location ${matchOperators[matchType]} ${item.path || "/path"}`.replace(
 					"  ",
@@ -213,9 +223,134 @@ export function LocationsFields({ initialValues, name = "locations", defaultLoca
 
 							<hr className="my-4" />
 							<div className="row g-3">
-								<div className="col-md-3"><label className="form-label"><T id="upstreams.target.type" /></label><select className="form-select" value={target.type} onChange={(event) => { const type = event.target.value; handleChange(index, "target", type === "upstream" ? { type, scheme: target.scheme || "http", upstreamId: availableUpstreams[0]?.id || 0 } : { type, scheme: target.scheme || "http", host: item.forwardHost || "", port: item.forwardPort || 80 }); }}><option value="direct"><T id="upstreams.target.direct-server" /></option><option value="upstream" disabled={!availableUpstreams.length}><T id="upstreams.target.group" />{!availableUpstreams.length && <> <T id="upstreams.target.none-published" /></>}</option></select></div>
-								<div className="col-md-3"><label className="form-label" htmlFor={`location-scheme-${index}`}><T id="host.forward-scheme" /></label><select id={`location-scheme-${index}`} className="form-select" value={target.scheme || "http"} onChange={(event) => handleChange(index, "target", { ...target, scheme: event.target.value })}><option value="http">http</option><option value="https">https</option></select></div>
-								{usingUpstream ? <div className="col-md-6"><label className="form-label"><T id="upstreams.target.group" /></label><select className="form-select" required value={target.upstreamId || ""} onChange={(event) => handleChange(index, "target", { ...target, upstreamId: Number(event.target.value) })}><option value="" disabled><T id="upstreams.target.select" /></option>{availableUpstreams.map((upstream) => <option key={upstream.id} value={upstream.id}>{upstream.name} ({upstream.nginxKey})</option>)}</select></div> : <><div className="col-md-4"><label className="form-label" htmlFor={`location-host-${index}`}><T id="proxy-host.forward-host" /></label><input id={`location-host-${index}`} type="text" className="form-control" required placeholder="10.0.0.20" value={target.host || ""} onChange={(event) => handleChange(index, "target", { ...target, host: event.target.value })} /></div><div className="col-md-2"><label className="form-label" htmlFor={`location-port-${index}`}><T id="host.forward-port" /></label><input id={`location-port-${index}`} type="number" min={1} max={65535} className="form-control" required value={target.port || ""} onChange={(event) => handleChange(index, "target", { ...target, port: Number(event.target.value) })} /></div></>}
+								<div className="col-md-3">
+									<label className="form-label" htmlFor={`location-target-type-${index}`}>
+										<T id="upstreams.target.type" />
+									</label>
+									<select
+										id={`location-target-type-${index}`}
+										className="form-select"
+										value={target.type}
+										onChange={(event) => {
+											const type = event.target.value;
+											handleChange(
+												index,
+												"target",
+												type === "upstream"
+													? {
+															type,
+															scheme: target.scheme || "http",
+															upstreamId: availableUpstreams[0]?.id || 0,
+														}
+													: {
+															type,
+															scheme: target.scheme || "http",
+															host: item.forwardHost || "",
+															port: item.forwardPort || 80,
+														},
+											);
+										}}
+									>
+										<option value="direct">
+											<T id="upstreams.target.direct-server" />
+										</option>
+										<option value="upstream" disabled={!availableUpstreams.length}>
+											<T id="upstreams.target.group" />
+											{!availableUpstreams.length && (
+												<>
+													{" "}
+													<T id="upstreams.target.none-published" />
+												</>
+											)}
+										</option>
+									</select>
+								</div>
+								<div className="col-md-3">
+									<label className="form-label" htmlFor={`location-scheme-${index}`}>
+										<T id="host.forward-scheme" />
+									</label>
+									<select
+										id={`location-scheme-${index}`}
+										className="form-select"
+										value={target.scheme || "http"}
+										onChange={(event) =>
+											handleChange(index, "target", { ...target, scheme: event.target.value })
+										}
+									>
+										<option value="http">http</option>
+										<option value="https">https</option>
+									</select>
+								</div>
+								{usingUpstream ? (
+									<div className="col-md-6">
+										<label className="form-label" htmlFor={`location-upstream-${index}`}>
+											<T id="upstreams.target.group" />
+										</label>
+										<select
+											id={`location-upstream-${index}`}
+											className="form-select"
+											required
+											value={target.upstreamId || ""}
+											onChange={(event) =>
+												handleChange(index, "target", {
+													...target,
+													upstreamId: Number(event.target.value),
+												})
+											}
+										>
+											<option value="" disabled>
+												<T id="upstreams.target.select" />
+											</option>
+											{availableUpstreams.map((upstream) => (
+												<option key={upstream.id} value={upstream.id}>
+													{upstream.name} ({upstream.nginxKey})
+												</option>
+											))}
+										</select>
+									</div>
+								) : (
+									<>
+										<div className="col-md-4">
+											<label className="form-label" htmlFor={`location-host-${index}`}>
+												<T id="proxy-host.forward-host" />
+											</label>
+											<input
+												id={`location-host-${index}`}
+												type="text"
+												className="form-control"
+												required
+												placeholder="10.0.0.20"
+												value={target.host || ""}
+												onChange={(event) =>
+													handleChange(index, "target", {
+														...target,
+														host: event.target.value,
+													})
+												}
+											/>
+										</div>
+										<div className="col-md-2">
+											<label className="form-label" htmlFor={`location-port-${index}`}>
+												<T id="host.forward-port" />
+											</label>
+											<input
+												id={`location-port-${index}`}
+												type="number"
+												min={1}
+												max={65535}
+												className="form-control"
+												required
+												value={target.port || ""}
+												onChange={(event) =>
+													handleChange(index, "target", {
+														...target,
+														port: Number(event.target.value),
+													})
+												}
+											/>
+										</div>
+									</>
+								)}
 							</div>
 
 							<div className="row mt-3">

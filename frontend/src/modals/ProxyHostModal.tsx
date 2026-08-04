@@ -329,8 +329,10 @@ function DefaultTargetFields() {
 				return (
 					<>
 						<div className="mb-3">
-							<label className="form-label"><T id="upstreams.target.type" /></label>
-							<select className="form-select" value={target.type} onChange={(event) => setType(event.target.value as "direct" | "upstream")}>
+							<label className="form-label" htmlFor="default-target-type">
+								<T id="upstreams.target.type" />
+							</label>
+							<select id="default-target-type" className="form-select" value={target.type} onChange={(event) => setType(event.target.value as "direct" | "upstream")}>
 								<option value="direct"><T id="upstreams.target.direct" /></option>
 								<option value="upstream" disabled={!available.length}>
 									<T id="upstreams.target.group" />
@@ -348,8 +350,10 @@ function DefaultTargetFields() {
 							</div>
 							{isUpstream ? (
 								<div className="col-md-9">
-									<label className="form-label"><T id="upstreams.target.group" /></label>
-									<select className="form-select" required value={target.upstreamId || ""} onChange={(event) => form.setFieldValue(field.name, { ...target, upstreamId: Number(event.target.value) })}>
+									<label className="form-label" htmlFor="default-target-upstream">
+										<T id="upstreams.target.group" />
+									</label>
+									<select id="default-target-upstream" className="form-select" required value={target.upstreamId || ""} onChange={(event) => form.setFieldValue(field.name, { ...target, upstreamId: Number(event.target.value) })}>
 										<option value="" disabled><T id="upstreams.target.select" /></option>
 										{available.map((upstream) => <option key={upstream.id} value={upstream.id}>{upstream.name} ({upstream.nginxKey})</option>)}
 									</select>
