@@ -80,7 +80,7 @@ class ProxyHost extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["domain_names", "meta", "locations", "nginx_config", "nginx_last_error", "nginx_applied_snapshot"];
+		return ["domain_names", "meta", "locations", "default_target", "nginx_config", "nginx_last_error", "nginx_applied_snapshot"];
 	}
 
 	static get defaultAllowGraph() {

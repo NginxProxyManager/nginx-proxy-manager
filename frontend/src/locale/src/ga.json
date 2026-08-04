@@ -509,6 +509,15 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "Ainm Óstach / IP Ar Aghaidh"
 	},
+	"proxy-host.target.direct": {
+		"defaultMessage": "Direct"
+	},
+	"proxy-host.target.upstream": {
+		"defaultMessage": "Upstream group"
+	},
+	"proxy-host.target.upstream-id": {
+		"defaultMessage": "Upstream group #{id}"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "Óstaigh Seachfhreastalaí"
 	},
@@ -631,6 +640,159 @@
 	},
 	"update-available": {
 		"defaultMessage": "Nuashonrú ar Fáil: {latestVersion}"
+	},
+	"upstream": {
+		"defaultMessage": "Upstream"
+	},
+	"upstreams": {
+		"defaultMessage": "Upstreams"
+	},
+	"upstreams.add": {
+		"defaultMessage": "Add Upstream"
+	},
+	"upstreams.count": {
+		"defaultMessage": "{count} {count, plural, one {Upstream Group} other {Upstream Groups}}"
+	},
+	"upstreams.delete.content": {
+		"defaultMessage": "Delete {name}? It cannot be deleted while Proxy Hosts reference it."
+	},
+	"upstreams.description": {
+		"defaultMessage": "Global Nginx upstream groups. Member failures use Nginx passive health checks and automatically recover after fail_timeout."
+	},
+	"upstreams.disabled.help": {
+		"defaultMessage": "Keep the configuration but stop publishing this upstream group."
+	},
+	"upstreams.display-name": {
+		"defaultMessage": "Display name"
+	},
+	"upstreams.error.save": {
+		"defaultMessage": "Unable to save upstream"
+	},
+	"upstreams.error.unknown": {
+		"defaultMessage": "Unknown error"
+	},
+	"upstreams.load-balancing-method": {
+		"defaultMessage": "Load-balancing method"
+	},
+	"upstreams.method.ip_hash": {
+		"defaultMessage": "IP hash"
+	},
+	"upstreams.method.least_conn": {
+		"defaultMessage": "Least connections"
+	},
+	"upstreams.method.random": {
+		"defaultMessage": "Random"
+	},
+	"upstreams.method.round_robin": {
+		"defaultMessage": "Round robin"
+	},
+	"upstreams.modal.add": {
+		"defaultMessage": "Add Upstream"
+	},
+	"upstreams.modal.edit": {
+		"defaultMessage": "Edit Upstream: {name}"
+	},
+	"upstreams.nginx-key": {
+		"defaultMessage": "Nginx key"
+	},
+	"upstreams.nginx-key.help": {
+		"defaultMessage": "Lowercase letters, digits and underscores; globally unique and immutable after creation."
+	},
+	"upstreams.nginx-status.help": {
+		"defaultMessage": "Shows the Nginx configuration publishing state for this upstream group, not the real-time reachability of its members. Online means the current configuration is active; member failures are evaluated during proxying by passive health checks."
+	},
+	"upstreams.none": {
+		"defaultMessage": "No upstreams configured."
+	},
+	"upstreams.passive-health-checks": {
+		"defaultMessage": "Nginx uses passive failure detection. A server is temporarily marked unavailable after the configured failures within the configured timeout, then automatically receives traffic again."
+	},
+	"upstreams.publish": {
+		"defaultMessage": "Publish"
+	},
+	"upstreams.refresh": {
+		"defaultMessage": "Refresh upstreams"
+	},
+	"upstreams.republish": {
+		"defaultMessage": "Retry publish"
+	},
+	"upstreams.save-publish": {
+		"defaultMessage": "Save & publish"
+	},
+	"upstreams.saving": {
+		"defaultMessage": "Saving…"
+	},
+	"upstreams.server.add": {
+		"defaultMessage": "Add server"
+	},
+	"upstreams.server.backup": {
+		"defaultMessage": "Backup server"
+	},
+	"upstreams.server.backup.help": {
+		"defaultMessage": "Receive traffic only when the primary servers are unavailable."
+	},
+	"upstreams.server.down": {
+		"defaultMessage": "Temporarily disabled"
+	},
+	"upstreams.server.down.help": {
+		"defaultMessage": "Exclude this server from traffic without removing its configuration."
+	},
+	"upstreams.server.fail-timeout": {
+		"defaultMessage": "Fail timeout"
+	},
+	"upstreams.server.host": {
+		"defaultMessage": "Host / IP"
+	},
+	"upstreams.server.max-conns": {
+		"defaultMessage": "Max conns"
+	},
+	"upstreams.server.max-fails": {
+		"defaultMessage": "Max fails"
+	},
+	"upstreams.server.port": {
+		"defaultMessage": "Port"
+	},
+	"upstreams.server.remove": {
+		"defaultMessage": "Remove"
+	},
+	"upstreams.server.title": {
+		"defaultMessage": "Server {number}"
+	},
+	"upstreams.server.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstreams.servers": {
+		"defaultMessage": "Servers"
+	},
+	"upstreams.servers.help": {
+		"defaultMessage": "Configure upstream members and their passive failure-detection settings."
+	},
+	"upstreams.settings": {
+		"defaultMessage": "Group settings"
+	},
+	"upstreams.shared-zone-size": {
+		"defaultMessage": "Shared zone size"
+	},
+	"upstreams.target.direct": {
+		"defaultMessage": "Single IP / hostname and port"
+	},
+	"upstreams.target.direct-server": {
+		"defaultMessage": "Direct server"
+	},
+	"upstreams.target.group": {
+		"defaultMessage": "Upstream group"
+	},
+	"upstreams.target.none-published": {
+		"defaultMessage": "(no published upstream available)"
+	},
+	"upstreams.target.publish-hint": {
+		"defaultMessage": "The selected group must be independently published before this Proxy Host can deploy."
+	},
+	"upstreams.target.select": {
+		"defaultMessage": "Select an upstream"
+	},
+	"upstreams.target.type": {
+		"defaultMessage": "Target type"
 	},
 	"user": {
 		"defaultMessage": "Úsáideoir"

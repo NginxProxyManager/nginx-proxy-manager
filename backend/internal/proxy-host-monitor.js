@@ -7,6 +7,7 @@ import db from "../db.js";
 import { global as logger } from "../logger.js";
 import now from "../models/now_helper.js";
 import ProxyHost from "../models/proxy_host.js";
+import Upstream from "../models/upstream.js";
 import ProxyHostMonitorConfig from "../models/proxy_host_monitor_config.js";
 import ProxyHostMonitorState from "../models/proxy_host_monitor_state.js";
 import { databaseJson, databaseMetric } from "./proxy-host-monitor-storage.js";
@@ -713,11 +714,52 @@ const bodyMatches = (body, config) => {
 	return config.body_match_type === "contains" ? body.includes(config.body_match_value) : new RegExp(config.body_match_value).test(body);
 };
 
+const directProbe = (target, scheme, config) => {
+	const connection = { host: target.host, port: target.port, timeout: config.timeout_ms };
+	if (config.probe_mode === "tcp") return tcpConnect(connection);
+	if (config.probe_mode === "tls") return tlsConnect({ ...connection, verify: config.tls_verify });
+	return httpRequest({ protocol: scheme === "https" ? "https:" : "http:", host: connection.host, port: connection.port, servername: connection.host, headers: { Host: connection.host }, config });
+};
+
+const unavailableUpstream = (summary) => ({ success: false, code: "unavailable", summary, duration_ms: 0 });
+
+const probeTargets = async (targets, scheme, config) => {
+	const results = await Promise.all(targets.map((target) => directProbe(target, scheme, config)));
+	const successful = results.find((result) => result.success);
+	if (successful) return { ...successful, duration_ms: Math.max(...results.map((result) => result.duration_ms || 0)) };
+	const firstFailure = results[0] || unavailableUpstream("Upstream group has no enabled servers");
+	if (results.length <= 1) return firstFailure;
+	return {
+		...firstFailure,
+		code: "all_failed",
+		summary: `All ${targets.length} upstream servers failed: ${firstFailure.summary || firstFailure.code || "unknown error"}`,
+		duration_ms: Math.max(0, ...results.map((result) => result.duration_ms || 0)),
+	};
+};
+
+const resolveUpstreamTargets = async (host) => {
+	const target = host.default_target;
+	if (target?.type !== "upstream") return { scheme: host.forward_scheme, primary: [{ host: host.forward_host, port: host.forward_port }], backup: [] };
+	const upstream = await Upstream.query().findById(target.upstream_id).withGraphFetched("servers");
+	if (!upstream || upstream.is_deleted) return { error: unavailableUpstream("Referenced upstream group no longer exists") };
+	if (upstream.is_disabled) return { error: unavailableUpstream("Referenced upstream group is disabled") };
+	const servers = (upstream.servers || []).filter((server) => !server.down);
+	const primary = servers.filter((server) => !server.backup);
+	const backup = servers.filter((server) => server.backup);
+	if (!primary.length && !backup.length) return { error: unavailableUpstream("Upstream group has no enabled servers") };
+	return { scheme: target.scheme, primary, backup };
+};
+
+const runDirectProbe = async (host, config) => {
+	const targets = await resolveUpstreamTargets(host);
+	if (targets.error) return targets.error;
+	const primaryResult = await probeTargets(targets.primary, targets.scheme, config);
+	if (primaryResult.success || !targets.backup.length) return primaryResult;
+	return probeTargets(targets.backup, targets.scheme, config);
+};
+
 const runProbe = async (host, config) => {
-	const direct = { host: host.forward_host, port: host.forward_port, timeout: config.timeout_ms };
-	if (config.probe_mode === "tcp") return tcpConnect(direct);
-	if (config.probe_mode === "tls") return tlsConnect({ ...direct, verify: config.tls_verify });
-	if (config.probe_mode === "http") return httpRequest({ protocol: host.forward_scheme === "https" ? "https:" : "http:", host: direct.host, port: direct.port, servername: direct.host, headers: { Host: direct.host }, config });
+	if (config.probe_mode === "tcp" || config.probe_mode === "tls" || config.probe_mode === "http") return runDirectProbe(host, config);
 	const domain = host.domain_names?.[0] || host.forward_host;
 	const e2e = () => httpRequest({
 		protocol: host.ssl_forced || host.certificate_id > 0 ? "https:" : "http:",
@@ -728,10 +770,7 @@ const runProbe = async (host, config) => {
 		config,
 	});
 	if (config.probe_mode === "end_to_end") return e2e();
-	const [directResult, e2eResult] = await Promise.all([
-		httpRequest({ protocol: host.forward_scheme === "https" ? "https:" : "http:", host: direct.host, port: direct.port, servername: direct.host, headers: { Host: direct.host }, config }),
-		e2e(),
-	]);
+	const [directResult, e2eResult] = await Promise.all([runDirectProbe(host, config), e2e()]);
 	return {
 		success: directResult.success && e2eResult.success,
 		http_status: e2eResult.http_status || directResult.http_status,

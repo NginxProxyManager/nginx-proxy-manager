@@ -1,9 +1,9 @@
-import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc } from "@tabler/icons-react";
+import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLoadBalancer } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { HasPermission } from "src/components";
 import { useHostReport } from "src/hooks";
 import { T } from "src/locale";
-import { DEAD_HOSTS, PROXY_HOSTS, REDIRECTION_HOSTS, STREAMS, VIEW } from "src/modules/Permissions";
+import { DEAD_HOSTS, PROXY_HOSTS, REDIRECTION_HOSTS, STREAMS, UPSTREAMS, VIEW } from "src/modules/Permissions";
 
 const Dashboard = () => {
 	const { data: hostReport } = useHostReport();
@@ -91,6 +91,31 @@ const Dashboard = () => {
 											</div>
 											<div className="col">
 												<T id="streams.count" data={{ count: hostReport?.stream }} />
+											</div>
+										</div>
+									</div>
+								</a>
+							</div>
+						</HasPermission>
+						<HasPermission section={UPSTREAMS} permission={VIEW} hideError>
+							<div className="col-sm-6 col-lg-3">
+								<a
+									href="/nginx/upstreams"
+									className="card card-sm card-link card-link-pop"
+									onClick={(e) => {
+										e.preventDefault();
+										navigate("/nginx/upstreams");
+									}}
+								>
+									<div className="card-body">
+										<div className="row align-items-center">
+											<div className="col-auto">
+												<span className="bg-purple text-white avatar">
+													<IconLoadBalancer />
+												</span>
+											</div>
+											<div className="col">
+												<T id="upstreams.count" data={{ count: hostReport?.upstream }} />
 											</div>
 										</div>
 									</div>

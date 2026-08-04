@@ -1,0 +1,41 @@
+{
+	"type": "object",
+	"required": ["id", "name", "nginx_key", "owner_user_id", "is_disabled", "load_balancing_method", "zone_size", "servers", "nginx_config_revision", "nginx_deployment_status"],
+	"properties": {
+		"id": { "$ref": "../common.json#/properties/id" },
+		"created_on": { "$ref": "../common.json#/properties/created_on" },
+		"modified_on": { "$ref": "../common.json#/properties/modified_on" },
+		"owner_user_id": { "$ref": "../common.json#/properties/user_id" },
+		"name": { "type": "string", "minLength": 1, "maxLength": 255 },
+		"nginx_key": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,62}$" },
+		"is_disabled": { "type": "boolean" },
+		"load_balancing_method": { "type": "string", "enum": ["round_robin", "least_conn", "ip_hash", "random"] },
+		"zone_size": { "type": "string", "pattern": "^[1-9][0-9]*[kKmMgG]?$", "example": "64k" },
+		"nginx_config_revision": { "type": "integer", "minimum": 1 },
+		"nginx_applied_revision": { "type": ["integer", "null"], "minimum": 1 },
+		"nginx_applied_enabled": { "type": "boolean" },
+		"nginx_deployment_status": { "type": "string", "enum": ["pending", "online", "degraded", "error", "disabled", "deleted", "recovering"] },
+		"nginx_last_error": { "type": ["object", "null"] },
+		"servers": {
+			"type": "array",
+			"minItems": 1,
+			"items": {
+				"type": "object",
+				"required": ["host", "port"],
+				"additionalProperties": false,
+				"properties": {
+					"id": { "type": "integer", "minimum": 1 },
+					"host": { "type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[a-zA-Z0-9._:-]+$" },
+					"port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+					"weight": { "type": "integer", "minimum": 0, "maximum": 65535, "default": 1 },
+					"max_fails": { "type": "integer", "minimum": 0, "maximum": 65535, "default": 1 },
+					"fail_timeout": { "type": "string", "pattern": "^(?:0|[1-9][0-9]*)(?:ms|s|m|h|d|w|M|y)?$", "default": "10s" },
+					"max_conns": { "type": ["integer", "null"], "minimum": 1, "maximum": 65535 },
+					"backup": { "type": "boolean", "default": false },
+					"down": { "type": "boolean", "default": false },
+					"sort_order": { "type": "integer", "minimum": 0 }
+				}
+			}
+		}
+	}
+}

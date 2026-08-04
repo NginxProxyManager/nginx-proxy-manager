@@ -35,7 +35,8 @@
 					"dead_hosts": "hidden",
 					"proxy_hosts": "manage",
 					"redirection_hosts": "hidden",
-					"streams": "hidden"
+					"streams": "hidden",
+					"upstreams": "view"
 				}
 			}
 		}

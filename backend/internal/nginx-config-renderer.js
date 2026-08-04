@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { isIP } from "node:net";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import errs from "../lib/error.js";
@@ -182,7 +183,15 @@ const renderOptions = (options = {}, websocket = false, useProxyIncludeDefaults 
 	return lines.join("\n");
 };
 
-const renderLocation = (location, host) => {
+const proxyTargetAuthority = (target, dependencies = {}) => {
+	if (target.type === "direct") return `${target.host}:${target.port}`;
+	const upstream = dependencies[String(target.upstream_id)] ?? dependencies[target.upstream_id];
+	if (!upstream?.nginx_key)
+		throw new errs.UnprocessableConfigError(`Referenced upstream ${target.upstream_id} is unavailable`);
+	return upstream.nginx_key;
+};
+
+const renderLocation = (location, host, upstreams = {}) => {
 	const options = { ...host.nginx_options, ...location.nginx_config };
 	const match = {
 		prefix: location.path,
@@ -191,14 +200,20 @@ const renderLocation = (location, host) => {
 		regex: `~ ${quote(location.path)}`,
 		regex_i: `~* ${quote(location.path)}`,
 	}[location.match_type];
-	const authority = `${location.forward_host}:${location.forward_port}`;
+	const target = location.target ?? {
+		type: "direct",
+		scheme: location.forward_scheme,
+		host: location.forward_host,
+		port: location.forward_port,
+	};
+	const authority = proxyTargetAuthority(target, upstreams);
 	const uri =
 		location.path_mode === "preserve_uri"
 			? ""
 			: location.path_mode === "strip_prefix"
 				? "/"
 				: location.forward_path;
-	const proxyPass = `proxy_pass ${location.forward_scheme}://${authority}${uri};`;
+	const proxyPass = `proxy_pass ${target.scheme}://${authority}${uri};`;
 	const lines = [
 		`  location ${match} {`,
 		"    # Keep the human log and the structured monitoring log at location scope.",
@@ -214,6 +229,104 @@ const renderLocation = (location, host) => {
 		"  }",
 	];
 	return lines.filter(Boolean).join("\n");
+};
+
+
+const UPSTREAM_KEY = /^[a-z][a-z0-9_-]{0,62}$/;
+const UPSTREAM_DURATION = /^(?:0|[1-9]\d*)(?:ms|s|m|h|d|w|M|y)?$/;
+const UPSTREAM_METHODS = new Set(["round_robin", "least_conn", "ip_hash", "random"]);
+const UPSTREAM_ZONE_SIZE = /^[1-9]\d*(?:[kKmMgG])?$/;
+
+export const normalizeUpstreamServerHost = (value) => {
+	const rawHost = String(value ?? "").trim();
+	const host = /^\[([^\]]+)\]$/.exec(rawHost)?.[1] ?? rawHost;
+	if (isIP(host)) return host;
+	const labels = host.split(".");
+	const validHostname =
+		host.length <= 253 &&
+		labels.length > 0 &&
+		labels.every((label) => /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/.test(label));
+	if (!validHostname) throw new errs.UnprocessableConfigError("Invalid upstream server host");
+	return host.toLowerCase();
+};
+
+const formatUpstreamAddress = (host, port) => {
+	const normalizedHost = normalizeUpstreamServerHost(host);
+	const numericPort = Number(port);
+	if (!Number.isInteger(numericPort) || numericPort < 1 || numericPort > 65535)
+		throw new errs.UnprocessableConfigError("Invalid upstream server port");
+	const authority = isIP(normalizedHost) === 6 ? `[${normalizedHost}]` : normalizedHost;
+	return `${authority}:${numericPort}`;
+};
+
+const renderUpstreamServer = (server) => {
+	const address = formatUpstreamAddress(server.host, server.port);
+	const weight = Number(server.weight ?? 1);
+	const maxFails = Number(server.max_fails ?? 1);
+	const maxConns = server.max_conns === null || typeof server.max_conns === "undefined" ? null : Number(server.max_conns);
+	const failTimeout = String(server.fail_timeout ?? "10s");
+	if (!Number.isInteger(weight) || weight < 0 || weight > 65535)
+		throw new errs.UnprocessableConfigError("Invalid upstream server weight");
+	if (!Number.isInteger(maxFails) || maxFails < 0 || maxFails > 65535)
+		throw new errs.UnprocessableConfigError("Invalid upstream server max_fails");
+	if (!UPSTREAM_DURATION.test(failTimeout)) throw new errs.UnprocessableConfigError("Invalid upstream server fail_timeout");
+	if (maxConns !== null && (!Number.isInteger(maxConns) || maxConns < 1 || maxConns > 65535))
+		throw new errs.UnprocessableConfigError("Invalid upstream server max_conns");
+	const parameters = [`weight=${weight}`, `max_fails=${maxFails}`, `fail_timeout=${failTimeout}`];
+	if (maxConns !== null) parameters.push(`max_conns=${maxConns}`);
+	if (server.backup) parameters.push("backup");
+	if (server.down) parameters.push("down");
+	return `  server ${address} ${parameters.join(" ")};`;
+};
+
+/** Render a global http-context upstream block. User controlled values are
+ * validated before being added to a directive, so the result cannot inject
+ * arbitrary nginx configuration. */
+export const buildUpstreamCandidate = async ({ upstream }) => {
+	const value = structuredClone(upstream ?? {});
+	const nginxKey = String(value.nginx_key ?? "").trim().toLowerCase();
+	const method = String(value.load_balancing_method ?? "round_robin");
+	const zoneSize = String(value.zone_size ?? "64k").toLowerCase();
+	if (!UPSTREAM_KEY.test(nginxKey)) throw new errs.UnprocessableConfigError("Invalid upstream nginx_key");
+	if (!UPSTREAM_METHODS.has(method)) throw new errs.UnprocessableConfigError("Invalid upstream load balancing method");
+	if (!UPSTREAM_ZONE_SIZE.test(zoneSize)) throw new errs.UnprocessableConfigError("Invalid upstream zone_size");
+	if (!Array.isArray(value.servers) || !value.servers.length)
+		throw new errs.UnprocessableConfigError("An upstream requires at least one server");
+	const servers = [...value.servers]
+		.sort((left, right) => Number(left.sort_order ?? 0) - Number(right.sort_order ?? 0) || Number(left.id ?? 0) - Number(right.id ?? 0))
+		.map(renderUpstreamServer);
+	const config = asLf([
+		"# Managed by Nginx Proxy Manager. Do not edit this file manually.",
+		`upstream ${nginxKey} {`,
+		`  zone ${nginxKey} ${zoneSize};`,
+		...(method === "round_robin" ? [] : [`  ${method};`]),
+		"",
+		...servers,
+		"}",
+	].join("\n"));
+	const templateHash = await readTemplateManifest("upstream.conf");
+	const payload = {
+		id: value.id ?? null,
+		nginx_key: nginxKey,
+		load_balancing_method: method,
+		zone_size: zoneSize,
+		servers: value.servers.map(({ id, host, port, weight, max_fails, fail_timeout, max_conns, backup, down, sort_order }) => ({
+			id: id ?? null, host, port: Number(port), weight: Number(weight ?? 1), max_fails: Number(max_fails ?? 1),
+			fail_timeout: String(fail_timeout ?? "10s"), max_conns: max_conns ?? null, backup: Boolean(backup), down: Boolean(down), sort_order: Number(sort_order ?? 0),
+		})),
+	};
+	const partial = {
+		config,
+		configHash: sha256(Buffer.from(config, "utf8")),
+		payloadHash: hashCanonical(payload),
+		dependencyHash: hashCanonical({}),
+		templateVersion: TEMPLATE_VERSION,
+		templateHash,
+		capabilityHash: hashCanonical({}),
+		diagnostics: [],
+		sourceMap: [],
+	};
+	return Object.freeze({ ...partial, snapshot: buildSnapshot("upstream", value, partial) });
 };
 
 // API validation may coerce an optional foreign key such as certificate_id
@@ -242,6 +355,14 @@ const buildDependencyManifest = (host, dependencies) => ({
 			}
 		: { id: canonicalDependencyId(host.access_list_id) },
 	includes: dependencies.includes ?? [],
+	upstreams: Object.values(dependencies.upstreams ?? {})
+		.map((upstream) => ({
+			id: canonicalDependencyId(upstream.id),
+			nginx_key: upstream.nginx_key,
+			applied_revision: upstream.nginx_applied_revision ?? null,
+			applied_hash: upstream.nginx_applied_hash ?? null,
+		}))
+		.sort((left, right) => Number(left.id) - Number(right.id)),
 });
 
 /**
@@ -276,6 +397,7 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 		forward_scheme: normalized.forward_scheme,
 		forward_host: normalized.forward_host,
 		forward_port: normalized.forward_port,
+		default_target: normalized.default_target,
 		locations: normalized.locations.map(({ _normalization_warnings, ...location }) => location),
 		advanced_config: normalized.advanced_config ?? "",
 		nginx_config: normalized.nginx_config,
@@ -303,7 +425,12 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 		access_list: dependencies.access_list ?? normalized.access_list,
 		ipv6: typeof capability.ipv6 === "boolean" ? capability.ipv6 : true,
 		use_default_location: useDefaultLocation,
-		locations: normalized.locations.map((location) => renderLocation(location, normalized)).join("\n\n"),
+		locations: normalized.locations.map((location) => renderLocation(location, normalized, dependencies.upstreams ?? {})).join("\n\n"),
+		default_target_type: normalized.default_target.type,
+		default_proxy_pass:
+			normalized.default_target.type === "upstream"
+				? `${normalized.default_target.scheme}://${proxyTargetAuthority(normalized.default_target, dependencies.upstreams ?? {})}$request_uri`
+				: null,
 		nginx_options: renderOptions(normalized.nginx_options, normalized.allow_websocket_upgrade),
 		managed_nginx_location_options: renderOptions(
 			normalized.nginx_options,
@@ -339,6 +466,7 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 export const buildCandidate = async ({ hostType, host, ...input }) => {
 	const adapter = getHostAdapter(hostType);
 	if (hostType === "proxy_host") return buildProxyHostCandidate({ host, ...input });
+	if (hostType === "upstream") return buildUpstreamCandidate({ upstream: host });
 	const template = await fs.readFile(join(templatesDir, adapter.template), "utf8");
 	const engine = utils.getRenderEngine();
 	const config = asLf(await engine.parseAndRender(template, structuredClone(host)));
@@ -356,4 +484,4 @@ export const buildCandidate = async ({ hostType, host, ...input }) => {
 	return Object.freeze({ ...partial, snapshot: buildSnapshot(hostType, host, partial) });
 };
 
-export default { buildCandidate, buildProxyHostCandidate };
+export default { buildCandidate, buildProxyHostCandidate, buildUpstreamCandidate };

@@ -1,0 +1,5 @@
+{
+	"operationId": "deleteUpstream", "summary": "Delete an Upstream", "tags": ["upstreams"], "security": [{ "bearerAuth": ["upstreams.manage"] }],
+	"parameters": [{ "in": "path", "name": "upstreamID", "required": true, "schema": { "type": "integer", "minimum": 1 } }],
+	"responses": { "200": { "description": "Deleted", "content": { "application/json": { "schema": { "type": "boolean" } } } } }
+}

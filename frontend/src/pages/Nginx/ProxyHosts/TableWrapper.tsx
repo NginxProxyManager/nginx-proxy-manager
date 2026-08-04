@@ -4,9 +4,15 @@ import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
-import { useProxyHosts } from "src/hooks";
+import { useProxyHosts, useUpstreams } from "src/hooks";
 import { intl, T } from "src/locale";
-import { showDeleteConfirmModal, showHelpModal, showProxyHostModal, showNginxLogViewerModal, showProxyHostMonitoringModal } from "src/modals";
+import {
+	showDeleteConfirmModal,
+	showHelpModal,
+	showProxyHostModal,
+	showNginxLogViewerModal,
+	showProxyHostMonitoringModal,
+} from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
@@ -14,7 +20,14 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const { isFetching, isLoading, isError, error, data, refetch } = useProxyHosts(["owner", "access_list", "certificate", "monitoring"]);
+	const { isFetching, isLoading, isError, error, data, refetch } = useProxyHosts([
+		"owner",
+		"access_list",
+		"certificate",
+		"monitoring",
+	]);
+	const { data: upstreams } = useUpstreams({ retry: false });
+	const upstreamById = new Map((upstreams || []).map((upstream) => [upstream.id, upstream] as const));
 
 	if (isLoading) {
 		return <LoadingPage />;
@@ -38,12 +51,19 @@ export default function TableWrapper() {
 
 	let filtered = null;
 	if (search && data) {
-		filtered = data?.filter(
-			(item) =>
+		filtered = data.filter((item) => {
+			const target = item.defaultTarget;
+			const upstream = target?.type === "upstream" ? upstreamById.get(target.upstreamId) : undefined;
+			const targetTerms =
+				target?.type === "upstream"
+					? [upstream?.name, upstream?.nginxKey, `${target.upstreamId}`, "upstream"]
+					: [item.forwardHost, `${item.forwardPort}`];
+
+			return (
 				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
-				item.forwardHost.toLowerCase().includes(search) ||
-				`${item.forwardPort}`.includes(search),
-		);
+				targetTerms.some((term) => term?.toLowerCase().includes(search))
+			);
+		});
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching
 		setSearch("");
@@ -81,8 +101,14 @@ export default function TableWrapper() {
 									className="btn btn-action btn-sm"
 									onClick={() => refetch()}
 									disabled={isFetching}
-									title={intl.formatMessage({ id: "proxy-hosts.refresh", defaultMessage: "Refresh list" })}
-									aria-label={intl.formatMessage({ id: "proxy-hosts.refresh", defaultMessage: "Refresh list" })}
+									title={intl.formatMessage({
+										id: "proxy-hosts.refresh",
+										defaultMessage: "Refresh list",
+									})}
+									aria-label={intl.formatMessage({
+										id: "proxy-hosts.refresh",
+										defaultMessage: "Refresh list",
+									})}
 								>
 									<IconRefresh size={20} />
 								</button>
@@ -106,6 +132,7 @@ export default function TableWrapper() {
 				</div>
 				<Table
 					data={filtered ?? data ?? []}
+					upstreams={upstreams}
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}

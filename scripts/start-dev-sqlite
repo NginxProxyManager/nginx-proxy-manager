@@ -24,7 +24,7 @@ for arg in "$@"; do
 			;;
 		-h|--help)
 			echo "Usage: $0 [-f|--follow] [--pull]"
-			echo "  -f, --follow  Follow fullstack logs after startup; source watching is always enabled in dev mode."
+			echo "  -f, --follow  Follow fullstack logs after startup; source watching is always enabled in dev mode (native filesystem events by default)."
 			echo "  --pull         Refresh base images before building."
 			exit 0
 			;;
@@ -64,7 +64,7 @@ if hash docker 2>/dev/null; then
 			echo -e "${CYAN}Hot reload:   frontend HMR + backend restart (native filesystem events)${RESET}"
 			;;
 		*)
-			echo -e "${CYAN}Hot reload:   frontend HMR + backend restart (polling every ${FILE_WATCH_INTERVAL:-500}ms)${RESET}"
+			echo -e "${CYAN}Hot reload:   frontend HMR + backend restart (polling every ${FILE_WATCH_INTERVAL:-2000}ms)${RESET}"
 			;;
 	esac
 	echo ""

@@ -1352,6 +1352,15 @@
 	"proxy-host.monitoring.title": {
 		"defaultMessage": "代理服务监控"
 	},
+	"proxy-host.target.direct": {
+		"defaultMessage": "直连"
+	},
+	"proxy-host.target.upstream": {
+		"defaultMessage": "上游服务组"
+	},
+	"proxy-host.target.upstream-id": {
+		"defaultMessage": "上游服务组 #{id}"
+	},
 	"proxy-host.wizard.access": {
 		"defaultMessage": "请求访问控制"
 	},
@@ -1624,6 +1633,159 @@
 	},
 	"test": {
 		"defaultMessage": "测试"
+	},
+	"upstream": {
+		"defaultMessage": "上游服务"
+	},
+	"upstreams": {
+		"defaultMessage": "上游服务组"
+	},
+	"upstreams.add": {
+		"defaultMessage": "添加上游服务组"
+	},
+	"upstreams.count": {
+		"defaultMessage": "{count} 个上游服务组"
+	},
+	"upstreams.delete.content": {
+		"defaultMessage": "删除 {name}？当 Proxy Host 正在引用它时无法删除。"
+	},
+	"upstreams.description": {
+		"defaultMessage": "全局 Nginx 上游服务组。成员失败时使用 Nginx 被动健康检查，并会在 fail_timeout 后自动恢复。"
+	},
+	"upstreams.disabled.help": {
+		"defaultMessage": "保留配置，但停止发布此上游服务组。"
+	},
+	"upstreams.display-name": {
+		"defaultMessage": "显示名称"
+	},
+	"upstreams.error.save": {
+		"defaultMessage": "无法保存上游服务组"
+	},
+	"upstreams.error.unknown": {
+		"defaultMessage": "未知错误"
+	},
+	"upstreams.load-balancing-method": {
+		"defaultMessage": "负载均衡方法"
+	},
+	"upstreams.method.ip_hash": {
+		"defaultMessage": "IP 哈希"
+	},
+	"upstreams.method.least_conn": {
+		"defaultMessage": "最少连接"
+	},
+	"upstreams.method.random": {
+		"defaultMessage": "随机"
+	},
+	"upstreams.method.round_robin": {
+		"defaultMessage": "轮询"
+	},
+	"upstreams.modal.add": {
+		"defaultMessage": "添加上游服务组"
+	},
+	"upstreams.modal.edit": {
+		"defaultMessage": "编辑上游服务组：{name}"
+	},
+	"upstreams.nginx-key": {
+		"defaultMessage": "Nginx 键"
+	},
+	"upstreams.nginx-key.help": {
+		"defaultMessage": "仅允许小写字母、数字和下划线；全局唯一，创建后不可修改。"
+	},
+	"upstreams.nginx-status.help": {
+		"defaultMessage": "显示该上游服务组的 Nginx 配置发布状态，而不是各成员服务器的实时可达性。在线表示当前配置已经生效；成员故障由被动健康检查在实际转发期间判断。"
+	},
+	"upstreams.none": {
+		"defaultMessage": "尚未配置上游服务组。"
+	},
+	"upstreams.passive-health-checks": {
+		"defaultMessage": "Nginx 使用被动故障检测。服务器在配置的超时时间内达到配置的失败次数后会被临时标记为不可用，随后会自动恢复接收流量。"
+	},
+	"upstreams.publish": {
+		"defaultMessage": "发布"
+	},
+	"upstreams.refresh": {
+		"defaultMessage": "刷新上游服务组"
+	},
+	"upstreams.republish": {
+		"defaultMessage": "重新发布"
+	},
+	"upstreams.save-publish": {
+		"defaultMessage": "保存并发布"
+	},
+	"upstreams.saving": {
+		"defaultMessage": "正在保存…"
+	},
+	"upstreams.server.add": {
+		"defaultMessage": "添加服务器"
+	},
+	"upstreams.server.backup": {
+		"defaultMessage": "备用服务器"
+	},
+	"upstreams.server.backup.help": {
+		"defaultMessage": "仅在主服务器不可用时接收流量。"
+	},
+	"upstreams.server.down": {
+		"defaultMessage": "暂停服务"
+	},
+	"upstreams.server.down.help": {
+		"defaultMessage": "暂时从流量中排除此服务器，但保留其配置。"
+	},
+	"upstreams.server.fail-timeout": {
+		"defaultMessage": "失败超时"
+	},
+	"upstreams.server.host": {
+		"defaultMessage": "主机 / IP"
+	},
+	"upstreams.server.max-conns": {
+		"defaultMessage": "最大连接数"
+	},
+	"upstreams.server.max-fails": {
+		"defaultMessage": "最大失败次数"
+	},
+	"upstreams.server.port": {
+		"defaultMessage": "端口"
+	},
+	"upstreams.server.remove": {
+		"defaultMessage": "移除"
+	},
+	"upstreams.server.title": {
+		"defaultMessage": "服务器 {number}"
+	},
+	"upstreams.server.weight": {
+		"defaultMessage": "权重"
+	},
+	"upstreams.servers": {
+		"defaultMessage": "服务器"
+	},
+	"upstreams.servers.help": {
+		"defaultMessage": "配置上游成员及其被动故障检测参数。"
+	},
+	"upstreams.settings": {
+		"defaultMessage": "服务组设置"
+	},
+	"upstreams.shared-zone-size": {
+		"defaultMessage": "共享区域大小"
+	},
+	"upstreams.target.direct": {
+		"defaultMessage": "单个 IP / 主机名和端口"
+	},
+	"upstreams.target.direct-server": {
+		"defaultMessage": "直接服务器"
+	},
+	"upstreams.target.group": {
+		"defaultMessage": "上游服务组"
+	},
+	"upstreams.target.none-published": {
+		"defaultMessage": "（没有可用的已发布上游服务组）"
+	},
+	"upstreams.target.publish-hint": {
+		"defaultMessage": "所选服务组必须先独立发布，才能部署此 Proxy Host。"
+	},
+	"upstreams.target.select": {
+		"defaultMessage": "选择上游服务组"
+	},
+	"upstreams.target.type": {
+		"defaultMessage": "目标类型"
 	},
 	"user": {
 		"defaultMessage": "用户"

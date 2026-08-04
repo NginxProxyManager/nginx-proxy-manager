@@ -1,0 +1,6 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createUpstream, getUpstream, getUpstreams, updateUpstream, type Upstream } from "src/api/backend";
+
+export const useUpstreams = (options = {}) => useQuery<Upstream[], Error>({ queryKey: ["upstreams"], queryFn: () => getUpstreams(), staleTime: 60_000, ...options });
+export const useUpstream = (id: number | "new") => useQuery<Upstream, Error>({ queryKey: ["upstream", id], queryFn: () => id === "new" ? Promise.resolve({ id: 0, createdOn: "", modifiedOn: "", ownerUserId: 0, name: "", nginxKey: "", isDisabled: false, loadBalancingMethod: "round_robin", zoneSize: "64k", servers: [{ host: "", port: 80, weight: 1, maxFails: 1, failTimeout: "10s" }], nginxConfigRevision: 1 } as Upstream) : getUpstream(id), staleTime: 60_000 });
+export const useSetUpstream = () => { const client = useQueryClient(); return useMutation({ mutationFn: (value: Partial<Upstream> & { id?: number }) => value.id ? updateUpstream(value as Upstream & { id: number }) : createUpstream(value), onSuccess: () => { client.invalidateQueries({ queryKey: ["upstreams"] }); client.invalidateQueries({ queryKey: ["upstream"] }); client.invalidateQueries({ queryKey: ["audit-logs"] }); } }); };

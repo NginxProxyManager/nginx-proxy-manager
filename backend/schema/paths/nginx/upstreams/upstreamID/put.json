@@ -1,0 +1,69 @@
+{
+	"operationId": "updateUpstream",
+	"summary": "Update an Upstream",
+	"tags": [
+		"upstreams"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"upstreams.manage"
+			]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "upstreamID",
+			"required": true,
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			}
+		}
+	],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"minProperties": 1,
+					"properties": {
+						"name": {
+							"$ref": "../../../../components/upstream-object.json#/properties/name"
+						},
+						"nginx_key": {
+							"$ref": "../../../../components/upstream-object.json#/properties/nginx_key"
+						},
+						"load_balancing_method": {
+							"$ref": "../../../../components/upstream-object.json#/properties/load_balancing_method"
+						},
+						"zone_size": {
+							"$ref": "../../../../components/upstream-object.json#/properties/zone_size"
+						},
+						"is_disabled": {
+							"$ref": "../../../../components/upstream-object.json#/properties/is_disabled"
+						},
+						"servers": {
+							"$ref": "../../../../components/upstream-object.json#/properties/servers"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../../components/upstream-object.json"
+					}
+				}
+			}
+		}
+	}
+}

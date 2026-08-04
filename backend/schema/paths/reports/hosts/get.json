@@ -18,7 +18,8 @@
 								"proxy": 20,
 								"redirection": 1,
 								"stream": 0,
-								"dead": 1
+								"dead": 1,
+								"upstream": 2
 							}
 						}
 					},
@@ -44,6 +45,11 @@
 								"type": "integer",
 								"description": "404 Hosts Count",
 								"example": 3
+							},
+							"upstream": {
+								"type": "integer",
+								"description": "Upstream Groups Count",
+								"example": 2
 							}
 						}
 					}

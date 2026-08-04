@@ -21,6 +21,7 @@ import {
 	REDIRECTION_HOSTS,
 	type Section,
 	STREAMS,
+	UPSTREAMS,
 	VIEW,
 } from "src/modules/Permissions";
 
@@ -59,6 +60,12 @@ const menuItems: MenuItem[] = [
 				to: "/nginx/stream",
 				label: "streams",
 				permissionSection: STREAMS,
+				permission: VIEW,
+			},
+			{
+				to: "/nginx/upstreams",
+				label: "upstreams",
+				permissionSection: UPSTREAMS,
 				permission: VIEW,
 			},
 			{

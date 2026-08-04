@@ -319,10 +319,42 @@ const normalizeOptions = (options, field) => {
 	return result;
 };
 
+export const normalizeProxyTarget = (target, legacy = {}, label = "target") => {
+	const value = target ?? {
+		type: "direct",
+		scheme: legacy.forward_scheme,
+		host: legacy.forward_host,
+		port: legacy.forward_port,
+	};
+	if (!value || typeof value !== "object" || Array.isArray(value))
+		invalid("INVALID_PROXY_TARGET", `${label} must be an object`);
+	const type = value.type || "direct";
+	if (type === "direct") {
+		if (typeof value.scheme !== "string" || !["http", "https"].includes(value.scheme))
+			invalid("INVALID_FORWARD_SCHEME", `${label}.scheme must be http or https`);
+		return {
+			type,
+			scheme: value.scheme,
+			host: normalizeUpstreamHost(value.host),
+			port: normalizePort(value.port, `${label}.port`),
+		};
+	}
+	if (type === "upstream") {
+		if (typeof value.scheme !== "string" || !["http", "https"].includes(value.scheme))
+			invalid("INVALID_FORWARD_SCHEME", `${label}.scheme must be http or https`);
+		const upstreamId = Number(value.upstream_id);
+		if (!Number.isInteger(upstreamId) || upstreamId < 1)
+			invalid("INVALID_UPSTREAM_TARGET", `${label}.upstream_id must be a positive integer`);
+		return { type, scheme: value.scheme, upstream_id: upstreamId };
+	}
+	invalid("INVALID_PROXY_TARGET", `${label}.type must be direct or upstream`);
+};
+
 export const normalizeLocation = (location, index = 0) => {
 	if (!location || typeof location !== "object" || Array.isArray(location))
 		invalid("INVALID_LOCATION", `Location ${index} must be an object`);
 	const value = clone(location);
+	const target = normalizeProxyTarget(value.target, value, `locations[${index}].target`);
 	const legacyHostWithPath = typeof value.forward_host === "string" && value.forward_host.includes("/");
 	const match_type = value.match_type || "prefix";
 	if (!MATCH_TYPES.has(match_type))
@@ -349,10 +381,17 @@ export const normalizeLocation = (location, index = 0) => {
 		}
 	}
 	const path = normalizePath(value.path, match_type);
-	if (!warnings.length) forward_host = normalizeUpstreamHost(forward_host);
-	normalizePort(value.forward_port, "forward_port");
-	if (typeof value.forward_scheme !== "string" || !["http", "https"].includes(value.forward_scheme))
-		invalid("INVALID_FORWARD_SCHEME", "forward_scheme must be http or https");
+	if (target.type === "direct") {
+		forward_host = target.host;
+		value.forward_port = target.port;
+		value.forward_scheme = target.scheme;
+	} else {
+		// Legacy fields remain as a storage compatibility mirror. Rendering uses target.
+		forward_host = value.forward_host || "upstream";
+		value.forward_port = value.forward_port || 80;
+		value.forward_scheme = target.scheme;
+	}
+	if (!warnings.length && target.type === "direct") forward_host = normalizeUpstreamHost(forward_host);
 	if (["exact", "regex", "regex_i"].includes(match_type) && path_mode !== "preserve_uri")
 		invalid("INVALID_LOCATION_PATH_MODE", `${match_type} locations only support preserve_uri`);
 	if (
@@ -375,6 +414,7 @@ export const normalizeLocation = (location, index = 0) => {
 	}
 	return {
 		...value,
+		target,
 		forward_host,
 		forward_port: value.forward_port,
 		match_type,
@@ -426,6 +466,16 @@ export const normalizeProxyHost = (host) => {
 		value.nginx_config.server || value.nginx_config.options,
 		"nginx_config.server",
 	);
+	value.default_target = normalizeProxyTarget(value.default_target, value, "default_target");
+	if (value.default_target.type === "direct") {
+		value.forward_scheme = value.default_target.scheme;
+		value.forward_host = value.default_target.host;
+		value.forward_port = value.default_target.port;
+	} else {
+		value.forward_scheme = value.default_target.scheme;
+		value.forward_host ||= "upstream";
+		value.forward_port ||= 80;
+	}
 	value.locations = (value.locations || []).map(normalizeLocation);
 	return value;
 };
@@ -434,6 +484,7 @@ export default {
 	normalizeNginxConfig,
 	normalizeProxyHost,
 	normalizeLocation,
+	normalizeProxyTarget,
 	normalizeUpstreamHost,
 	normalizeDuration,
 	normalizeSize,

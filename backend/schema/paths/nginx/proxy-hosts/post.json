@@ -20,10 +20,7 @@
 					"type": "object",
 					"additionalProperties": false,
 					"required": [
-						"domain_names",
-						"forward_scheme",
-						"forward_host",
-						"forward_port"
+						"domain_names"
 					],
 					"properties": {
 						"domain_names": {
@@ -91,6 +88,9 @@
 							"type": "string",
 							"minLength": 1,
 							"maxLength": 4096
+						},
+						"default_target": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/default_target"
 						}
 					}
 				},

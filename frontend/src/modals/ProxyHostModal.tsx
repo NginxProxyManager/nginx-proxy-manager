@@ -17,10 +17,10 @@ import {
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
-import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
+import { useProxyHost, useSetProxyHost, useUpstreams, useUser } from "src/hooks";
 import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
-import { validateNumber, validateString } from "src/modules/Validations";
+import { validateNumber } from "src/modules/Validations";
 import { showError, showObjectSuccess } from "src/notifications";
 
 const wizardSteps = [
@@ -86,45 +86,32 @@ const normalizeProxyOptionsForApi = (options: any = {}) => {
 	return result;
 };
 
+const directTarget = (value: any = {}) => ({
+	type: "direct" as const,
+	scheme: value.forwardScheme || "http",
+	host: String(value.forwardHost || "").trim(),
+	port: Number(value.forwardPort) || 80,
+});
+
 const prepareProxyHostValues = (values: any) => {
 	const portListener = isPortListener(values);
-	const nginxConfig = {
-		...values.nginxConfig,
-		server: normalizeProxyOptionsForApi(values.nginxConfig?.server),
-	};
-	if (portListener) {
-		nginxConfig.listener = { mode: "port", port: Number(values.nginxConfig?.listener?.port) };
-	} else {
-		delete nginxConfig.listener;
-	}
-	const prepared = {
-		...values,
-		...(portListener
-			? {
-					domainNames: [],
-					certificateId: 0,
-					sslForced: false,
-					http2Support: false,
-					hstsEnabled: false,
-					hstsSubdomains: false,
-				}
-			: {}),
-		nginxConfig,
-		locations: (values.locations || []).map((location: any) => ({
-			...location,
-			nginxConfig: normalizeProxyOptionsForApi(location.nginxConfig),
-		})),
-	};
+	const nginxConfig = { ...values.nginxConfig, server: normalizeProxyOptionsForApi(values.nginxConfig?.server) };
+	if (portListener) nginxConfig.listener = { mode: "port", port: Number(values.nginxConfig?.listener?.port) };
+	else delete nginxConfig.listener;
+	const defaultTarget = values.defaultTarget || directTarget(values);
+	const defaultLegacy = defaultTarget.type === "upstream"
+		? { forwardScheme: defaultTarget.scheme, forwardHost: "upstream", forwardPort: 80 }
+		: { forwardScheme: defaultTarget.scheme, forwardHost: defaultTarget.host, forwardPort: Number(defaultTarget.port) };
+	const locations = (values.locations || []).map((location: any) => {
+		const target = location.target || directTarget(location);
+		const legacy = target.type === "upstream"
+			? { forwardScheme: target.scheme, forwardHost: "upstream", forwardPort: 80 }
+			: { forwardScheme: target.scheme, forwardHost: target.host, forwardPort: Number(target.port) };
+		return { ...location, ...legacy, target, nginxConfig: normalizeProxyOptionsForApi(location.nginxConfig) };
+	});
+	const prepared = { ...values, ...defaultLegacy, defaultTarget, ...(portListener ? { domainNames: [], certificateId: 0, sslForced: false, http2Support: false, hstsEnabled: false, hstsSubdomains: false } : {}), nginxConfig, locations };
 	if (isDefaultLocationEnabled(prepared)) return prepared;
-
-	return {
-		...prepared,
-		// The legacy API/database columns remain non-nullable. These values are
-		// intentionally inert because the renderer omits the managed location /.
-		forwardScheme: prepared.forwardScheme || "http",
-		forwardHost: String(prepared.forwardHost || "").trim() || "127.0.0.1",
-		forwardPort: Number(prepared.forwardPort) || 80,
-	};
+	return { ...prepared, forwardScheme: prepared.forwardScheme || "http", forwardHost: String(prepared.forwardHost || "").trim() || "127.0.0.1", forwardPort: Number(prepared.forwardPort) || 80 };
 };
 
 const showProxyHostModal = (id: number | "new") => {
@@ -314,6 +301,74 @@ function StepHeading({ title, description }: { title: string; description: strin
 	);
 }
 
+
+function DefaultTargetFields() {
+	const { data: upstreams } = useUpstreams();
+	const available = (upstreams || []).filter(
+		(upstream) =>
+			!upstream.isDisabled &&
+			upstream.nginxAppliedEnabled &&
+			["online", "degraded"].includes(upstream.nginxDeploymentStatus || ""),
+	);
+	return (
+		<Field name="defaultTarget">
+			{({ field, form }: any) => {
+				const target = field.value || directTarget(form.values);
+				const isUpstream = target.type === "upstream";
+				const setType = (type: "direct" | "upstream") => {
+					if (type === "upstream") {
+						form.setFieldValue(field.name, {
+							type,
+							scheme: target.scheme || "http",
+							upstreamId: available[0]?.id || 0,
+						});
+					} else {
+						form.setFieldValue(field.name, directTarget(form.values));
+					}
+				};
+				return (
+					<>
+						<div className="mb-3">
+							<label className="form-label"><T id="upstreams.target.type" /></label>
+							<select className="form-select" value={target.type} onChange={(event) => setType(event.target.value as "direct" | "upstream")}>
+								<option value="direct"><T id="upstreams.target.direct" /></option>
+								<option value="upstream" disabled={!available.length}>
+									<T id="upstreams.target.group" />
+									{!available.length && <> <T id="upstreams.target.none-published" /></>}
+								</option>
+							</select>
+						</div>
+						<div className="row">
+							<div className="col-md-3">
+								<FieldLabelWithHelp htmlFor="forwardScheme" label="host.forward-scheme" help="host.forward-scheme.help" />
+								<select id="forwardScheme" className="form-select" value={target.scheme || "http"} onChange={(event) => form.setFieldValue(field.name, { ...target, scheme: event.target.value })}>
+									<option value="http">http</option>
+									<option value="https">https</option>
+								</select>
+							</div>
+							{isUpstream ? (
+								<div className="col-md-9">
+									<label className="form-label"><T id="upstreams.target.group" /></label>
+									<select className="form-select" required value={target.upstreamId || ""} onChange={(event) => form.setFieldValue(field.name, { ...target, upstreamId: Number(event.target.value) })}>
+										<option value="" disabled><T id="upstreams.target.select" /></option>
+										{available.map((upstream) => <option key={upstream.id} value={upstream.id}>{upstream.name} ({upstream.nginxKey})</option>)}
+									</select>
+									<div className="form-hint"><T id="upstreams.target.publish-hint" /></div>
+								</div>
+							) : (
+								<>
+									<div className="col-md-6"><FieldLabelWithHelp htmlFor="forwardHost" label="proxy-host.forward-host" help="proxy-host.forward-host.help" /><input id="forwardHost" className="form-control" required placeholder="10.0.0.10" value={target.host || ""} onChange={(event) => form.setFieldValue(field.name, { ...target, host: event.target.value })} /></div>
+									<div className="col-md-3"><FieldLabelWithHelp htmlFor="forwardPort" label="host.forward-port" help="host.forward-port.help" /><input id="forwardPort" type="number" min={1} max={65535} className="form-control" required value={target.port || ""} onChange={(event) => form.setFieldValue(field.name, { ...target, port: Number(event.target.value) })} /></div>
+								</>
+							)}
+						</div>
+					</>
+				);
+			}}
+		</Field>
+	);
+}
+
 const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
 	const { data, isLoading, error } = useProxyHost(id);
@@ -381,22 +436,18 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			}
 		}
 		if (step === 2 && isDefaultLocationEnabled(values)) {
-			const port = Number(values.forwardPort);
-			if (!String(values.forwardHost || "").trim() || !Number.isInteger(port) || port < 1 || port > 65535) {
+			const target = values.defaultTarget || directTarget(values);
+			const port = Number(target.port);
+			if (target.type === "upstream" ? !Number(target.upstreamId) : (!String(target.host || "").trim() || !Number.isInteger(port) || port < 1 || port > 65535)) {
 				setErrorMsg(<T id="proxy-host.wizard.validation.upstream" />);
 				return false;
 			}
 		}
 		if (step === 3) {
 			const invalidLocation = (values.locations || []).some((location: any) => {
-				const port = Number(location.forwardPort);
-				return (
-					!String(location.path || "").trim() ||
-					!String(location.forwardHost || "").trim() ||
-					!Number.isInteger(port) ||
-					port < 1 ||
-					port > 65535
-				);
+				const target = location.target || directTarget(location);
+				const port = Number(target.port);
+				return !String(location.path || "").trim() || (target.type === "upstream" ? !Number(target.upstreamId) : (!String(target.host || "").trim() || !Number.isInteger(port) || port < 1 || port > 65535));
 			});
 			if (invalidLocation) {
 				setErrorMsg(<T id="proxy-host.wizard.validation.locations" />);
@@ -444,6 +495,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							forwardScheme: data?.forwardScheme || "http",
 							forwardHost: data?.forwardHost || "",
 							forwardPort: data?.forwardPort || undefined,
+							defaultTarget: data?.defaultTarget || directTarget(data),
 							accessListId: data?.accessListId || 0,
 							cachingEnabled: data?.cachingEnabled || false,
 							blockExploits: data?.blockExploits || false,
@@ -683,114 +735,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																<p className="small text-secondary">
 																	<T id="proxy-host.wizard.default-location.help" />
 																</p>
-																<div className="row">
-																	<div className="col-md-3">
-																		<Field name="forwardScheme">
-																			{({ field, form }: any) => (
-																				<div className="mb-3">
-																					<FieldLabelWithHelp
-																						htmlFor="forwardScheme"
-																						label="host.forward-scheme"
-																						help="host.forward-scheme.help"
-																					/>
-																					<select
-																						id="forwardScheme"
-																						className={cn("form-control", {
-																							"is-invalid":
-																								form.errors
-																									.forwardScheme &&
-																								form.touched
-																									.forwardScheme,
-																						})}
-																						required
-																						{...field}
-																					>
-																						<option value="http">
-																							http
-																						</option>
-																						<option value="https">
-																							https
-																						</option>
-																					</select>
-																				</div>
-																			)}
-																		</Field>
-																	</div>
-																	<div className="col-md-6">
-																		<Field
-																			name="forwardHost"
-																			validate={validateString(1, 255)}
-																		>
-																			{({ field, form }: any) => (
-																				<div className="mb-3">
-																					<FieldLabelWithHelp
-																						htmlFor="forwardHost"
-																						label="proxy-host.forward-host"
-																						help="proxy-host.forward-host.help"
-																					/>
-																					<input
-																						id="forwardHost"
-																						type="text"
-																						className={cn("form-control", {
-																							"is-invalid":
-																								form.errors
-																									.forwardHost &&
-																								form.touched
-																									.forwardHost,
-																						})}
-																						required
-																						placeholder="10.0.0.10"
-																						{...field}
-																					/>
-																					{form.errors.forwardHost &&
-																					form.touched.forwardHost ? (
-																						<div className="invalid-feedback">
-																							{form.errors.forwardHost}
-																						</div>
-																					) : null}
-																				</div>
-																			)}
-																		</Field>
-																	</div>
-																	<div className="col-md-3">
-																		<Field
-																			name="forwardPort"
-																			validate={validateNumber(1, 65535)}
-																		>
-																			{({ field, form }: any) => (
-																				<div className="mb-3">
-																					<FieldLabelWithHelp
-																						htmlFor="forwardPort"
-																						label="host.forward-port"
-																						help="host.forward-port.help"
-																					/>
-																					<input
-																						id="forwardPort"
-																						type="number"
-																						min={1}
-																						max={65535}
-																						className={cn("form-control", {
-																							"is-invalid":
-																								form.errors
-																									.forwardPort &&
-																								form.touched
-																									.forwardPort,
-																						})}
-																						required
-																						placeholder="8080"
-																						{...field}
-																					/>
-																					{form.errors.forwardPort &&
-																					form.touched.forwardPort ? (
-																						<div className="invalid-feedback">
-																							{form.errors.forwardPort}
-																						</div>
-																					) : null}
-																				</div>
-																			)}
-																		</Field>
-																	</div>
-																</div>
+																<DefaultTargetFields />
 															</>
 														) : (
 															<Alert variant="info" className="mt-3 mb-0">

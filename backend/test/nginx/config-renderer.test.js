@@ -3,7 +3,7 @@ import test from "node:test";
 import { scanAdvancedConfig } from "../../internal/nginx-config-diagnostics.js";
 import { canonicalize, hashCanonical } from "../../internal/nginx-config-hash.js";
 import { normalizeLocation, normalizeProxyHost } from "../../internal/nginx-config-normalizer.js";
-import { buildProxyHostCandidate } from "../../internal/nginx-config-renderer.js";
+import { buildProxyHostCandidate, buildUpstreamCandidate } from "../../internal/nginx-config-renderer.js";
 
 test("HASH-001 canonical JSON sorts object keys but retains array order", () => {
 	assert.equal(canonicalize({ z: [2, 1], a: { y: true, x: null } }), '{"a":{"x":null,"y":true},"z":[2,1]}');
@@ -536,4 +536,59 @@ test("port-only listener renders a standalone HTTP default server", async () => 
 	assert.match(candidate.config, /set \$forward_scheme http;/);
 	assert.match(candidate.config, /set \$server {9}"127\.0\.0\.1";/);
 	assert.match(candidate.config, /set \$port {11}9000;/);
+});
+
+
+test("UPSTREAM-001 renderer emits Nginx passive-failure members in deterministic order", async () => {
+	const candidate = await buildUpstreamCandidate({
+		upstream: {
+			id: 17,
+			nginx_key: "orders_backend",
+			load_balancing_method: "least_conn",
+			zone_size: "128k",
+			servers: [
+				{ id: 2, host: "2001:db8::20", port: 8443, weight: 2, max_fails: 3, fail_timeout: "30s", max_conns: 100, sort_order: 2 },
+				{ id: 1, host: "10.0.0.20", port: 8080, weight: 1, max_fails: 1, fail_timeout: "10s", backup: true, sort_order: 1 },
+			],
+		},
+	});
+	assert.match(candidate.config, /upstream orders_backend \{/);
+	assert.match(candidate.config, /zone orders_backend 128k;/);
+	assert.match(candidate.config, /least_conn;/);
+	assert.match(candidate.config, /server 10\.0\.0\.20:8080 weight=1 max_fails=1 fail_timeout=10s backup;/);
+	assert.match(candidate.config, /server \[2001:db8::20\]:8443 weight=2 max_fails=3 fail_timeout=30s max_conns=100;/);
+	assert.ok(candidate.config.indexOf("10.0.0.20") < candidate.config.indexOf("2001:db8"));
+});
+
+test("UPSTREAM-002 Proxy Host uses a published upstream for default and location targets", async () => {
+	const candidate = await buildProxyHostCandidate({
+		host: {
+			id: 88,
+			enabled: true,
+			domain_names: ["upstream.example.com"],
+			forward_scheme: "http", forward_host: "upstream", forward_port: 80,
+			default_target: { type: "upstream", scheme: "http", upstream_id: 17 },
+			access_list_id: 0, certificate_id: 0, locations: [
+				{ path: "/api/", target: { type: "upstream", scheme: "https", upstream_id: 17 }, forward_scheme: "https", forward_host: "upstream", forward_port: 80, match_type: "prefix", path_mode: "preserve_uri" },
+			],
+			nginx_config: { schema_version: 1, server: {} },
+		},
+		dependencies: { upstreams: { 17: { id: 17, nginx_key: "orders_backend", nginx_applied_revision: 2, nginx_applied_hash: "sha256:test" } } },
+	});
+	assert.match(candidate.config, /proxy_pass http:\/\/orders_backend\$request_uri;/);
+	assert.match(candidate.config, /proxy_pass https:\/\/orders_backend;/);
+	assert.match(candidate.dependencyHash, /.+/);
+});
+
+
+test("UPSTREAM-003 renderer rejects malformed member hosts", async () => {
+	await assert.rejects(
+		() => buildUpstreamCandidate({
+			upstream: {
+				nginx_key: "invalid_member",
+				servers: [{ host: "api:blue", port: 8080 }],
+			},
+		}),
+		/Invalid upstream server host/,
+	);
 });

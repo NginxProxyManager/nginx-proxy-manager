@@ -29,6 +29,7 @@ export interface UserPermissions {
 	redirectionHosts: string;
 	deadHosts: string;
 	streams: string;
+	upstreams: string;
 	accessLists: string;
 	certificates: string;
 }
@@ -174,8 +175,45 @@ export interface NginxOptions {
 	proxyIgnoreHeaders?: string[];
 }
 
+
+export type ProxyTarget =
+	| { type: "direct"; scheme: "http" | "https"; host: string; port: number }
+	| { type: "upstream"; scheme: "http" | "https"; upstreamId: number };
+
+export interface UpstreamServer {
+	id?: number;
+	host: string;
+	port: number;
+	weight?: number;
+	maxFails?: number;
+	failTimeout?: string;
+	maxConns?: number | null;
+	backup?: boolean;
+	down?: boolean;
+	sortOrder?: number;
+}
+
+export interface Upstream {
+	id: number;
+	createdOn: string;
+	modifiedOn: string;
+	ownerUserId: number;
+	name: string;
+	nginxKey: string;
+	isDisabled: boolean;
+	loadBalancingMethod: "round_robin" | "least_conn" | "ip_hash" | "random";
+	zoneSize: string;
+	servers: UpstreamServer[];
+	nginxConfigRevision: number;
+	nginxAppliedRevision?: number | null;
+	nginxAppliedEnabled?: boolean;
+	nginxDeploymentStatus?: NginxDeploymentStatus;
+}
+
 export interface ProxyLocation {
 	path: string;
+	target?: ProxyTarget;
+	locationId?: string;
 	advancedConfig: string;
 	forwardScheme: string;
 	forwardHost: string;
@@ -205,6 +243,7 @@ export interface ProxyHost {
 	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
+	defaultTarget?: ProxyTarget;
 	accessListId: number;
 	certificateId: number;
 	sslForced: boolean;

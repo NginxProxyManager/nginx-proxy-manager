@@ -1,0 +1,10 @@
+{
+  "operationId": "publishUpstream",
+  "summary": "Publish an Upstream configuration",
+  "tags": ["upstreams"],
+  "security": [{ "bearerAuth": ["upstreams.manage"] }],
+  "parameters": [{ "in": "path", "name": "upstreamID", "required": true, "schema": { "type": "integer", "minimum": 1 } }],
+  "responses": {
+    "200": { "description": "Current desired/applied upstream state", "content": { "application/json": { "schema": { "$ref": "../../../../../components/upstream-object.json" } } } }
+  }
+}

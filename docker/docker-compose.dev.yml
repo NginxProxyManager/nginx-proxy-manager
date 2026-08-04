@@ -25,11 +25,10 @@ services:
       DEBUG: "true"
       DEVELOPMENT: "true"
       LE_STAGING: "true"
-      # Docker Desktop bind mounts may not propagate filesystem events reliably.
-      # Polling is enabled by default for dependable frontend HMR and backend reloads;
-      # native filesystem events can be restored on Linux with FILE_WATCH_POLLING=false.
-      FILE_WATCH_POLLING: "${FILE_WATCH_POLLING:-true}"
-      FILE_WATCH_INTERVAL: "${FILE_WATCH_INTERVAL:-500}"
+      # Prefer native filesystem events. Enable polling only when Docker Desktop
+      # bind mounts do not propagate changes reliably.
+      FILE_WATCH_POLLING: "${FILE_WATCH_POLLING:-false}"
+      FILE_WATCH_INTERVAL: "${FILE_WATCH_INTERVAL:-2000}"
       # db:
       # DB_MYSQL_HOST: 'db'
       # DB_MYSQL_PORT: '3306'
