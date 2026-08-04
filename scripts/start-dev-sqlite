@@ -24,6 +24,8 @@ for arg in "$@"; do
 			;;
 		-h|--help)
 			echo "Usage: $0 [-f|--follow] [--pull]"
+			echo "  -f, --follow  Follow fullstack logs after startup; source watching is always enabled in dev mode."
+			echo "  --pull         Refresh base images before building."
 			exit 0
 			;;
 		*)
@@ -57,6 +59,14 @@ if hash docker 2>/dev/null; then
 	echo -e "${CYAN}Admin UI:     http://127.0.0.1:3081${RESET}"
 	echo -e "${CYAN}Nginx:        http://127.0.0.1:3080${RESET}"
 	echo -e "${CYAN}SQLite file:  /data/database.sqlite (inside npm2dev.core)${RESET}"
+	case "${FILE_WATCH_POLLING:-true}" in
+		false|FALSE|0|off|OFF|no|NO)
+			echo -e "${CYAN}Hot reload:   frontend HMR + backend restart (native filesystem events)${RESET}"
+			;;
+		*)
+			echo -e "${CYAN}Hot reload:   frontend HMR + backend restart (polling every ${FILE_WATCH_INTERVAL:-500}ms)${RESET}"
+			;;
+	esac
 	echo ""
 
 	if [ "$FOLLOW_LOGS" = true ]; then
