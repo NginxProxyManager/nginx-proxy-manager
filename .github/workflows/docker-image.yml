@@ -58,9 +58,6 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build frontend assets
-        run: bash scripts/ci/frontend-build
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
