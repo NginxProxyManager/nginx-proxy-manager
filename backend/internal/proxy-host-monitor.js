@@ -10,6 +10,7 @@ import ProxyHost from "../models/proxy_host.js";
 import ProxyHostMonitorConfig from "../models/proxy_host_monitor_config.js";
 import ProxyHostMonitorState from "../models/proxy_host_monitor_state.js";
 import { databaseJson, databaseMetric } from "./proxy-host-monitor-storage.js";
+import { normalizeEventTimestamp } from "./proxy-host-monitor-timestamp.js";
 
 const SOURCE_ID = "npm-monitor-http-v1";
 const LOG_PATH = process.env.PROXY_HOST_MONITOR_LOG_PATH || "/data/logs/npm-monitor-http.log";
@@ -474,13 +475,14 @@ class ProxyHostMonitor {
 
 	async recordLogEvent(event) {
 		if (!(await this.passiveCollectionEnabled(event.host_id))) return;
-		const timestamp = Number.isFinite(Number(event.ts)) ? new Date(Number(event.ts) * 1000) : new Date();
+		const timestamp = normalizeEventTimestamp(event.ts);
+		const normalizedEvent = { ...event, ts: timestamp.toISOString() };
 		const bucketStart = minuteBucket(timestamp);
 		await db().transaction(async (trx) => {
 			const existing = await trx("proxy_host_metric_minute")
 				.where({ proxy_host_id: event.host_id, bucket_start: bucketStart })
 				.first();
-			const values = mergeMetric(existing, event);
+			const values = mergeMetric(existing, normalizedEvent);
 			const record = databaseMetric({ ...values, schema_version: 1, modified_on: databaseTimestamp() });
 			if (existing) await trx("proxy_host_metric_minute").where("id", existing.id).update(record);
 			else await trx("proxy_host_metric_minute").insert({ proxy_host_id: event.host_id, bucket_start: bucketStart, ...record, created_on: databaseTimestamp() });

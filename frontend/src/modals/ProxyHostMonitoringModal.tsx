@@ -254,7 +254,16 @@ const formatBytes = (value = 0) => {
 	const index = Math.min(units.length - 1, Math.floor(Math.log(value) / Math.log(1024)));
 	return `${(value / 1024 ** index).toFixed(index ? 1 : 0)} ${units[index]}`;
 };
-const formatDateTime = (value?: string | null) => (value ? new Date(value).toLocaleString() : "—");
+const parseDateTime = (value?: string | null) => {
+	if (!value) return null;
+	const numericValue = Number(value);
+	const isNumericTimestamp = value.trim() !== "" && Number.isFinite(numericValue);
+	const date = isNumericTimestamp
+		? new Date(Math.abs(numericValue) >= 100_000_000_000 ? numericValue : numericValue * 1000)
+		: new Date(value);
+	return Number.isNaN(date.getTime()) ? null : date;
+};
+const formatDateTime = (value?: string | null) => parseDateTime(value)?.toLocaleString() ?? "—";
 const formatDuration = (value?: number | null) => (value === null || value === undefined ? "—" : `${value} ms`);
 const statusKey = (status?: string | null) =>
 	status && Object.keys(statusMessages).includes(status) ? (status as keyof typeof statusMessages) : "unknown";
