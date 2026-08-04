@@ -2,6 +2,7 @@ import { join } from "node:path";
 import errs from "../lib/error.js";
 
 const definitions = {
+	upstream: { directory: "upstream", template: "upstream.conf", expand: ["owner", "servers"] },
 	proxy_host: {
 		directory: "proxy_host",
 		template: "proxy_host.conf",

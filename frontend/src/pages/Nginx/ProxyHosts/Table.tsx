@@ -1,4 +1,13 @@
-import { IconActivity, IconDotsVertical, IconEdit, IconFileText, IconPower, IconTrash } from "@tabler/icons-react";
+import {
+	IconActivity,
+	IconDotsVertical,
+	IconEdit,
+	IconFileText,
+	IconLoadBalancer,
+	IconPower,
+	IconServer,
+	IconTrash,
+} from "@tabler/icons-react";
 import {
 	createColumnHelper,
 	getCoreRowModel,
@@ -7,7 +16,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import type { ProxyHost } from "src/api/backend";
+import type { ProxyHost, ProxyTarget, Upstream } from "src/api/backend";
 import {
 	AccessListFormatter,
 	CertificateFormatter,
@@ -32,8 +41,17 @@ const monitoringStatus = (host: ProxyHost): MonitoringStatus => {
 
 const monitoringStatusMessageId = (status: MonitoringStatus) => `proxy-host.monitoring.status.${status}`;
 
+const defaultTarget = (host: ProxyHost): ProxyTarget =>
+	host.defaultTarget || {
+		type: "direct",
+		scheme: host.forwardScheme as "http" | "https",
+		host: host.forwardHost,
+		port: host.forwardPort,
+	};
+
 interface Props {
 	data: ProxyHost[];
+	upstreams?: Upstream[];
 	isFiltered?: boolean;
 	isFetching?: boolean;
 	onEdit?: (id: number) => void;
@@ -45,6 +63,7 @@ interface Props {
 }
 export default function Table({
 	data,
+	upstreams,
 	isFetching,
 	onEdit,
 	onLogs,
@@ -55,6 +74,10 @@ export default function Table({
 	isFiltered,
 }: Props) {
 	const columnHelper = createColumnHelper<ProxyHost>();
+	const upstreamById = useMemo(
+		() => new Map((upstreams || []).map((upstream) => [upstream.id, upstream] as const)),
+		[upstreams],
+	);
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
@@ -94,13 +117,51 @@ export default function Table({
 				id: "forwardHost",
 				header: intl.formatMessage({ id: "column.destination" }),
 				sortingFn: (a, b) => {
-					const aVal = `${a.original.forwardHost}:${a.original.forwardPort}`;
-					const bVal = `${b.original.forwardHost}:${b.original.forwardPort}`;
-					return aVal.localeCompare(bVal);
+					const targetSortValue = (host: ProxyHost) => {
+						const target = defaultTarget(host);
+						if (target.type === "upstream") {
+							const upstream = upstreamById.get(target.upstreamId);
+							return `upstream:${upstream?.name || upstream?.nginxKey || target.upstreamId}`;
+						}
+						return `direct:${target.scheme}://${target.host}:${target.port}`;
+					};
+					return targetSortValue(a.original).localeCompare(targetSortValue(b.original));
 				},
 				cell: (info: any) => {
-					const value = info.getValue();
-					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
+					const host = info.getValue() as ProxyHost;
+					const target = defaultTarget(host);
+					if (target.type === "upstream") {
+						const upstream = upstreamById.get(target.upstreamId);
+						return (
+							<div className="d-flex align-items-center gap-2 text-break">
+								<span className="badge bg-blue-lt text-blue d-inline-flex align-items-center gap-1 flex-shrink-0">
+									<IconLoadBalancer size={14} aria-hidden="true" />
+									<T id="proxy-host.target.upstream" />
+								</span>
+								<div className="lh-sm">
+									<div className="fw-semibold">
+										{upstream?.name || (
+											<T id="proxy-host.target.upstream-id" data={{ id: target.upstreamId }} />
+										)}
+									</div>
+									<div className="text-secondary small font-monospace">
+										{upstream?.nginxKey || `#${target.upstreamId}`} · {target.scheme.toUpperCase()}
+									</div>
+								</div>
+							</div>
+						);
+					}
+					return (
+						<div className="d-flex align-items-center gap-2 text-break">
+							<span className="badge bg-azure-lt text-azure d-inline-flex align-items-center gap-1 flex-shrink-0">
+								<IconServer size={14} aria-hidden="true" />
+								<T id="proxy-host.target.direct" />
+							</span>
+							<code>
+								{target.scheme}://{target.host}:{target.port}
+							</code>
+						</div>
+					);
 				},
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {
@@ -128,7 +189,9 @@ export default function Table({
 					return (
 						<div className="text-end">
 							<div className="d-flex justify-content-end align-items-center gap-0">
-								<span className={`status monitoring-status-indicator monitoring-status-indicator-${status}`}>
+								<span
+									className={`status monitoring-status-indicator monitoring-status-indicator-${status}`}
+								>
 									<span className="status-dot status-dot-animated" />
 									<T id={monitoringStatusMessageId(status)} />
 								</span>
@@ -136,8 +199,14 @@ export default function Table({
 									<button
 										type="button"
 										className="btn btn-action btn-sm p-1"
-										title={intl.formatMessage({ id: "proxy-host.monitoring.action", defaultMessage: "Monitoring" })}
-										aria-label={intl.formatMessage({ id: "proxy-host.monitoring.action", defaultMessage: "Monitoring" })}
+										title={intl.formatMessage({
+											id: "proxy-host.monitoring.action",
+											defaultMessage: "Monitoring",
+										})}
+										aria-label={intl.formatMessage({
+											id: "proxy-host.monitoring.action",
+											defaultMessage: "Monitoring",
+										})}
 										onClick={() => onMonitoring(info.row.original.id)}
 									>
 										<IconActivity size={16} />
@@ -224,7 +293,7 @@ export default function Table({
 				},
 			}),
 		],
-		[columnHelper, onEdit, onLogs, onMonitoring, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onLogs, onMonitoring, onDisableToggle, onDelete, upstreamById],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);

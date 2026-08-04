@@ -99,6 +99,9 @@
 							"type": "string",
 							"minLength": 1,
 							"maxLength": 4096
+						},
+						"default_target": {
+							"$ref": "../../../../components/proxy-host-object.json#/properties/default_target"
 						}
 					}
 				}

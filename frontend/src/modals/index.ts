@@ -17,3 +17,4 @@ export * from "./SetPasswordModal";
 export * from "./StreamModal";
 export * from "./TwoFactorModal";
 export * from "./UserModal";
+export * from "./UpstreamModal";

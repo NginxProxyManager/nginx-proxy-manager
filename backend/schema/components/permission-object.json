@@ -43,6 +43,12 @@
 			"description": "Certificates Permissions",
 			"enum": ["hidden", "view", "manage"],
 			"example": "hidden"
+		},
+		"upstreams": {
+			"type": "string",
+			"description": "Upstreams Permissions",
+			"enum": ["hidden", "view", "manage"],
+			"example": "view"
 		}
 	}
 }

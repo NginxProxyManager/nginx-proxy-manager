@@ -48,7 +48,10 @@
 				"type": "string",
 				"pattern": "^[^&| @!#%^();:/\\}{=+?<>,~`'\"]+$"
 			},
-			"example": ["example.com", "www.example.com"]
+			"example": [
+				"example.com",
+				"www.example.com"
+			]
 		},
 		"forward_host": {
 			"type": "string",
@@ -113,9 +116,6 @@
 			"items": {
 				"type": "object",
 				"required": [
-					"forward_scheme",
-					"forward_host",
-					"forward_port",
 					"path"
 				],
 				"additionalProperties": false,
@@ -144,6 +144,80 @@
 					},
 					"advanced_config": {
 						"type": "string"
+					},
+					"target": {
+						"oneOf": [
+							{
+								"type": "object",
+								"additionalProperties": false,
+								"required": [
+									"type",
+									"scheme",
+									"host",
+									"port"
+								],
+								"properties": {
+									"type": {
+										"const": "direct"
+									},
+									"scheme": {
+										"$ref": "#/properties/forward_scheme"
+									},
+									"host": {
+										"$ref": "#/properties/forward_host"
+									},
+									"port": {
+										"$ref": "#/properties/forward_port"
+									}
+								}
+							},
+							{
+								"type": "object",
+								"additionalProperties": false,
+								"required": [
+									"type",
+									"scheme",
+									"upstream_id"
+								],
+								"properties": {
+									"type": {
+										"const": "upstream"
+									},
+									"scheme": {
+										"$ref": "#/properties/forward_scheme"
+									},
+									"upstream_id": {
+										"$ref": "../common.json#/properties/id"
+									}
+								}
+							}
+						]
+					},
+					"location_id": {
+						"type": "string",
+						"format": "uuid"
+					},
+					"match_type": {
+						"type": "string",
+						"enum": [
+							"prefix",
+							"priority_prefix",
+							"exact",
+							"regex",
+							"regex_i"
+						]
+					},
+					"path_mode": {
+						"type": "string",
+						"enum": [
+							"preserve_uri",
+							"strip_prefix",
+							"replace_prefix"
+						]
+					},
+					"nginx_config": {
+						"type": "object",
+						"additionalProperties": true
 					}
 				}
 			},
@@ -244,6 +318,54 @@
 				"null"
 			],
 			"format": "date-time"
+		},
+		"default_target": {
+			"oneOf": [
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"type",
+						"scheme",
+						"host",
+						"port"
+					],
+					"properties": {
+						"type": {
+							"const": "direct"
+						},
+						"scheme": {
+							"$ref": "#/properties/forward_scheme"
+						},
+						"host": {
+							"$ref": "#/properties/forward_host"
+						},
+						"port": {
+							"$ref": "#/properties/forward_port"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"type",
+						"scheme",
+						"upstream_id"
+					],
+					"properties": {
+						"type": {
+							"const": "upstream"
+						},
+						"scheme": {
+							"$ref": "#/properties/forward_scheme"
+						},
+						"upstream_id": {
+							"$ref": "../common.json#/properties/id"
+						}
+					}
+				}
+			]
 		}
 	}
 }

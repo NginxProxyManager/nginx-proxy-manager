@@ -1,0 +1,10 @@
+{
+  "operationId": "getUpstreamReferences",
+  "summary": "List Proxy Host references to an Upstream",
+  "tags": ["upstreams"],
+  "security": [{ "bearerAuth": ["upstreams.view", "proxy_hosts.view"] }],
+  "parameters": [{ "in": "path", "name": "upstreamID", "required": true, "schema": { "type": "integer", "minimum": 1 } }],
+  "responses": {
+    "200": { "description": "Active Proxy Host references", "content": { "application/json": { "schema": { "type": "object", "required": ["upstream_id", "references"], "properties": { "upstream_id": { "type": "integer" }, "references": { "type": "array", "items": { "type": "object" } } } } } } }
+  }
+}

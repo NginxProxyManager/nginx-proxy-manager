@@ -6,6 +6,7 @@ export const PROXY_HOSTS = "proxyHosts";
 export const REDIRECTION_HOSTS = "redirectionHosts";
 export const DEAD_HOSTS = "deadHosts";
 export const STREAMS = "streams";
+export const UPSTREAMS = "upstreams";
 export const CERTIFICATES = "certificates";
 export const ACCESS_LISTS = "accessLists";
 
@@ -23,6 +24,7 @@ export type Section =
 	| typeof REDIRECTION_HOSTS
 	| typeof DEAD_HOSTS
 	| typeof STREAMS
+	| typeof UPSTREAMS
 	| typeof CERTIFICATES
 	| typeof ACCESS_LISTS;
 

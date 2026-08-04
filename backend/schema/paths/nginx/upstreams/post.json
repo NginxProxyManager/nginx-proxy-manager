@@ -1,0 +1,62 @@
+{
+	"operationId": "createUpstream",
+	"summary": "Create an Upstream",
+	"tags": [
+		"upstreams"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"upstreams.manage"
+			]
+		}
+	],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name",
+						"nginx_key",
+						"servers"
+					],
+					"properties": {
+						"name": {
+							"$ref": "../../../components/upstream-object.json#/properties/name"
+						},
+						"nginx_key": {
+							"$ref": "../../../components/upstream-object.json#/properties/nginx_key"
+						},
+						"load_balancing_method": {
+							"$ref": "../../../components/upstream-object.json#/properties/load_balancing_method"
+						},
+						"zone_size": {
+							"$ref": "../../../components/upstream-object.json#/properties/zone_size"
+						},
+						"is_disabled": {
+							"$ref": "../../../components/upstream-object.json#/properties/is_disabled"
+						},
+						"servers": {
+							"$ref": "../../../components/upstream-object.json#/properties/servers"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "Created",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/upstream-object.json"
+					}
+				}
+			}
+		}
+	}
+}
