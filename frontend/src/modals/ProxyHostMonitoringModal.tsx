@@ -254,17 +254,26 @@ const formatBytes = (value = 0) => {
 	const index = Math.min(units.length - 1, Math.floor(Math.log(value) / Math.log(1024)));
 	return `${(value / 1024 ** index).toFixed(index ? 1 : 0)} ${units[index]}`;
 };
+const UTC_DATABASE_TIMESTAMP = /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/;
 const parseDateTime = (value?: string | null) => {
 	if (!value) return null;
 	const numericValue = Number(value);
 	const isNumericTimestamp = value.trim() !== "" && Number.isFinite(numericValue);
+	const normalizedValue = UTC_DATABASE_TIMESTAMP.test(value) ? `${value.replace(" ", "T")}Z` : value;
 	const date = isNumericTimestamp
 		? new Date(Math.abs(numericValue) >= 100_000_000_000 ? numericValue : numericValue * 1000)
-		: new Date(value);
+		: new Date(normalizedValue);
 	return Number.isNaN(date.getTime()) ? null : date;
 };
 const formatDateTime = (value?: string | null) => parseDateTime(value)?.toLocaleString() ?? "—";
-const formatDuration = (value?: number | null) => (value === null || value === undefined ? "—" : `${value} ms`);
+const formatDuration = (value?: number | null) => {
+	if (value === null || value === undefined || !Number.isFinite(value)) return "—";
+	const milliseconds = Math.max(0, Math.round(value));
+	if (milliseconds < 1000) return `${milliseconds}ms`;
+	const seconds = Math.floor(milliseconds / 1000);
+	const remainingMilliseconds = milliseconds % 1000;
+	return remainingMilliseconds ? `${seconds}s${remainingMilliseconds}ms` : `${seconds}s`;
+};
 const statusKey = (status?: string | null) =>
 	status && Object.keys(statusMessages).includes(status) ? (status as keyof typeof statusMessages) : "unknown";
 const statusLabel = (status?: string | null) => intl.formatMessage(statusMessages[statusKey(status)]);
@@ -490,12 +499,12 @@ const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, rem
 		if (interval !== null) refreshMonitoring();
 	};
 	const formatChartTime = (value: string) =>
-		new Date(value).toLocaleString([], {
+		parseDateTime(value)?.toLocaleString([], {
 			month: range.preset === "7d" ? "numeric" : undefined,
 			day: range.preset === "7d" ? "numeric" : undefined,
 			hour: "2-digit",
 			minute: "2-digit",
-		});
+		}) ?? "—";
 	const selectPreset = (preset: Exclude<TimeRangePreset, "custom">) => {
 		const nextRange = createRange(preset);
 		setRange(nextRange);
@@ -913,7 +922,8 @@ const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, rem
 															orientation="right"
 															axisLine={false}
 															tickLine={false}
-															width={34}
+															tickFormatter={(value) => formatDuration(Number(value))}
+															width={62}
 															tick={{
 																fill: "var(--tblr-secondary, #6c7a91)",
 																fontSize: 11,
@@ -924,7 +934,7 @@ const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, rem
 															formatter={(value, name) => [
 																name === message("performanceTraffic")
 																	? formatBytes(Number(value))
-																	: `${value ?? 0} ms`,
+																	: formatDuration(Number(value)),
 																name,
 															]}
 															contentStyle={tooltipStyle}

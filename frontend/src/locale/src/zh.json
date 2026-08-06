@@ -1212,7 +1212,7 @@
 		"defaultMessage": "延迟与流量"
 	},
 	"proxy-host.monitoring.performance.latency": {
-		"defaultMessage": "p95 延迟（毫秒）"
+		"defaultMessage": "p95 延迟"
 	},
 	"proxy-host.monitoring.performance.traffic": {
 		"defaultMessage": "流量"

@@ -1299,7 +1299,7 @@
 		"defaultMessage": "Latency and traffic"
 	},
 	"proxy-host.monitoring.performance.latency": {
-		"defaultMessage": "p95 latency (ms)"
+		"defaultMessage": "p95 latency"
 	},
 	"proxy-host.monitoring.performance.traffic": {
 		"defaultMessage": "Traffic"
