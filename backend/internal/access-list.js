@@ -28,17 +28,17 @@ const getProxyHostsUsingAccessListInLocations = async (accessListId) => {
 	if (isMysql()) {
 		const searchObj = JSON.stringify([{ access_list_id: accessListId }]);
 		result = await db().raw(
-			`SELECT id FROM proxy_host WHERE is_deleted = 0 AND JSON_CONTAINS(locations, ?, ?)`,
+			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND JSON_CONTAINS(locations, ?, ?)",
 			[searchObj, "$"],
 		);
 	} else if (isPostgres()) {
 		result = await db().raw(
-			`SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations::jsonb @> ?::jsonb`,
+			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations::jsonb @> ?::jsonb",
 			[JSON.stringify([{ access_list_id: accessListId }])],
 		);
 	} else {
 		result = await db().raw(
-			`SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations LIKE ?`,
+			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations LIKE ?",
 			[`%"access_list_id":${accessListId}%`],
 		);
 	}
@@ -222,10 +222,10 @@ const internalAccessList = {
 
 		// Also regenerate configs for proxy hosts that reference this access list in their locations
 		const locationHostRows = await getProxyHostsUsingAccessListInLocations(data.id);
-		if (locationHostRows && locationHostRows.length) {
+		if (locationHostRows?.length) {
 			const locationHostIds = locationHostRows.map((r) => r.id).filter((id) => {
 				// Exclude hosts already regenerated above
-				return !freshRow.proxy_hosts || !freshRow.proxy_hosts.find((h) => h.id === id);
+				return !freshRow.proxy_hosts?.find((h) => h.id === id);
 			});
 			if (locationHostIds.length) {
 				const locationHosts = await proxyHostModel.query()
@@ -235,7 +235,7 @@ const internalAccessList = {
 					.withGraphFetched("[owner, certificate, access_list.[clients,items]]");
 				for (const host of locationHosts) {
 					// Fetch access lists for locations
-					if (host.locations && host.locations.length) {
+					if (host.locations?.length) {
 						for (let i = 0; i < host.locations.length; i++) {
 							const loc = host.locations[i];
 							if (loc.access_list_id && loc.access_list_id > 0) {
@@ -363,15 +363,15 @@ const internalAccessList = {
 
 		// Also handle proxy hosts that reference this access list in their locations JSON
 		const locationHostRows = await getProxyHostsUsingAccessListInLocations(row.id);
-		if (locationHostRows && locationHostRows.length) {
+		if (locationHostRows?.length) {
 			const locationHostIds = locationHostRows.map((r) => r.id).filter((id) => {
-				return !row.proxy_hosts || !row.proxy_hosts.find((h) => h.id === id);
+				return !row.proxy_hosts?.find((h) => h.id === id);
 			});
 			if (locationHostIds.length) {
 				// Clear the access_list_id in locations JSON for these hosts
 				for (const hostId of locationHostIds) {
 					const host = await proxyHostModel.query().where("id", hostId).first();
-					if (host && host.locations) {
+					if (host?.locations) {
 						const updatedLocations = host.locations.map((loc) => {
 							if (loc.access_list_id === row.id) {
 								return { ...loc, access_list_id: 0 };

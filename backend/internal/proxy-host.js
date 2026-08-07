@@ -21,7 +21,7 @@ const omissions = () => {
  * @returns {Promise}
  */
 const fetchLocationAccessLists = async (host) => {
-	if (!host.locations || !host.locations.length) {
+	if (!host.locations?.length) {
 		return;
 	}
 	for (let i = 0; i < host.locations.length; i++) {
