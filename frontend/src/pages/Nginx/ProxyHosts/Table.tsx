@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconEdit, IconFileText, IconPower, IconTrash } from "@tabler/icons-react";
 import {
 	createColumnHelper,
 	getCoreRowModel,
@@ -28,9 +28,10 @@ interface Props {
 	onEdit?: (id: number) => void;
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
+	onLogs?: (id: number) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
+export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onLogs, onNew, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<ProxyHost>();
 	const columns = useMemo(
 		() => [
@@ -115,19 +116,30 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 										data={{ id: info.row.original.id }}
 									/>
 								</span>
+							<a
+								className="dropdown-item"
+								href="#"
+								onClick={(e) => {
+									e.preventDefault();
+									onEdit?.(info.row.original.id);
+								}}
+							>
+								<IconEdit size={16} />
+								<T id="action.edit" />
+							</a>
+							<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
 								<a
 									className="dropdown-item"
 									href="#"
 									onClick={(e) => {
 										e.preventDefault();
-										onEdit?.(info.row.original.id);
+										onLogs?.(info.row.original.id);
 									}}
 								>
-									<IconEdit size={16} />
-									<T id="action.edit" />
+									<IconFileText size={16} />
+									<T id="action.logs" />
 								</a>
-								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
-									<a
+								<a
 										className="dropdown-item"
 										href="#"
 										onClick={(e) => {
@@ -160,7 +172,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onDisableToggle, onDelete, onLogs],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);
