@@ -122,6 +122,9 @@
 	"action.enable": {
 		"defaultMessage": "Enable"
 	},
+	"action.logs": {
+		"defaultMessage": "Logs"
+	},
 	"action.permissions": {
 		"defaultMessage": "Permissions"
 	},
@@ -247,6 +250,9 @@
 	},
 	"column.access": {
 		"defaultMessage": "Access"
+	},
+	"column.error": {
+		"defaultMessage": "Error"
 	},
 	"column.authorization": {
 		"defaultMessage": "Authorization"

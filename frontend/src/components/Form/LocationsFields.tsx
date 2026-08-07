@@ -5,6 +5,7 @@ import { useFormikContext } from "formik";
 import { useState } from "react";
 import type { ProxyLocation } from "src/api/backend";
 import { intl, T } from "src/locale";
+import { AccessField } from "./AccessField";
 import styles from "./LocationsFields.module.css";
 
 interface Props {
@@ -22,6 +23,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		forwardScheme: "http",
 		forwardHost: "",
 		forwardPort: 80,
+		accessListId: 0,
 	};
 
 	const toggleAdvVisible = (idx: number) => {
@@ -40,6 +42,12 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 
 	const handleChange = (idx: number, field: string, fieldValue: string) => {
 		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, [field]: fieldValue } : v));
+		setValues(newValues);
+		setFormField(newValues);
+	};
+
+	const handleAccessListChange = (idx: number, accessListId: number) => {
+		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, accessListId } : v));
 		setValues(newValues);
 		setFormField(newValues);
 	};
@@ -141,6 +149,12 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 								</div>
 							</div>
 						</div>
+						<AccessField
+							name={`locations[${idx}].accessListId`}
+							label="access-list"
+							id={`locations-access-list-${idx}`}
+							onFormChange={(value) => handleAccessListChange(idx, value)}
+						/>
 						{advVisible.includes(idx) && (
 							<div className="">
 								<CodeEditor
