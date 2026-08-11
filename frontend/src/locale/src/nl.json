@@ -594,13 +594,13 @@
 		"defaultMessage": "Alleen aangemaakte items"
 	},
 	"proxy-host": {
-		"defaultMessage": "Proxyhost"
+		"defaultMessage": "Proxy Host"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Hostname / IP Doorsturen"
 	},
 	"proxy-hosts": {
-		"defaultMessage": "Proxyhosts"
+		"defaultMessage": "Proxy Hosts"
 	},
 	"proxy-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Hosts}}"
