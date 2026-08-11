@@ -51,6 +51,9 @@
 						"trust_forwarded_proto": {
     						"$ref": "../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
 						},
+						"dynamic_upstream_resolve": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/dynamic_upstream_resolve"
+						},
 						"http2_support": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/http2_support"
 						},
@@ -116,6 +119,7 @@
 								"advanced_config": "",
 								"meta": {},
 								"allow_websocket_upgrade": false,
+								"dynamic_upstream_resolve": false,								
 								"http2_support": false,
 								"forward_scheme": "http",
 								"enabled": true,

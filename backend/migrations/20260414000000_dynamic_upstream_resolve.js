@@ -1,6 +1,6 @@
 import { migrate as logger } from "../logger.js";
 
-const migrateName = "trust_forwarded_proto";
+const migrateName = "dynamic_upstream_resolve";
 
 /**
  * Migrate
@@ -10,12 +10,12 @@ const migrateName = "trust_forwarded_proto";
  * @param   {Object} knex
  * @returns {Promise}
  */
-const up = function (knex) {
+const up = (knex) => {
     logger.info(`[${migrateName}] Migrating Up...`);
 
     return knex.schema
         .alterTable('proxy_host', (table) => {
-            table.tinyint('trust_forwarded_proto').notNullable().defaultTo(0);
+            table.tinyint('dynamic_upstream_resolve').notNullable().defaultTo(0);
         })
         .then(() => {
             logger.info(`[${migrateName}] proxy_host Table altered`);
@@ -28,12 +28,12 @@ const up = function (knex) {
  * @param   {Object} knex
  * @returns {Promise}
  */
-const down = function (knex) {
+const down = (knex) => {
     logger.info(`[${migrateName}] Migrating Down...`);
 
     return knex.schema
         .alterTable('proxy_host', (table) => {
-            table.dropColumn('trust_forwarded_proto');
+            table.dropColumn('dynamic_upstream_resolve');
         })
         .then(() => {
             logger.info(`[${migrateName}] proxy_host Table altered`);

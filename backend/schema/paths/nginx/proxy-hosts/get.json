@@ -53,6 +53,7 @@
 										"nginx_err": null
 									},
 									"allow_websocket_upgrade": false,
+									"dynamic_upstream_resolve": false,
 									"http2_support": false,
 									"forward_scheme": "http",
 									"enabled": true,
