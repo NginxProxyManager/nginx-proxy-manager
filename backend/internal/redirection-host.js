@@ -251,7 +251,7 @@ const internalRedirectionHost = {
 			})
 			.then((row) => {
 				let thisRow = row;
-				if (!thisRow || !thisRow.id) {
+				if (!thisRow?.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
 				thisRow = internalHost.cleanRowCertificateMeta(thisRow);
@@ -277,7 +277,7 @@ const internalRedirectionHost = {
 				return internalRedirectionHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 
@@ -325,7 +325,7 @@ const internalRedirectionHost = {
 				});
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (row.enabled) {
@@ -373,7 +373,7 @@ const internalRedirectionHost = {
 				return internalRedirectionHost.get(access, { id: data.id });
 			})
 			.then((row) => {
-				if (!row || !row.id) {
+				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 				if (!row.enabled) {
