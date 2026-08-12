@@ -150,14 +150,20 @@ export async function put({ url, params, data }: PutArgs, abortController?: Abor
 interface DeleteArgs {
 	url: string;
 	params?: queryString.StringifiableRecord;
+	data?: Record<string, any>;
 }
-export async function del({ url, params }: DeleteArgs, abortController?: AbortController) {
+export async function del({ url, params, data }: DeleteArgs, abortController?: AbortController) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "DELETE";
-	const headers = {
+	const headers: Record<string, string> = {
 		...buildAuthHeader(),
 	};
 	const signal = abortController?.signal;
-	const response = await fetch(apiUrl, { method, headers, signal });
+	let body: string | undefined;
+	if (data) {
+		headers[contentTypeHeader] = "application/json";
+		body = buildBody(data);
+	}
+	const response = await fetch(apiUrl, { method, headers, body, signal });
 	return processResponse(response);
 }

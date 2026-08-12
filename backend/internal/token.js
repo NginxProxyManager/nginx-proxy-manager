@@ -5,6 +5,7 @@ import authModel from "../models/auth.js";
 import TokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import twoFactor from "./2fa.js";
+import webauthn from "./webauthn.js";
 
 const ERROR_MESSAGE_INVALID_AUTH = "Invalid email or password";
 const ERROR_MESSAGE_INVALID_AUTH_I18N = "error.invalid-auth";
@@ -190,6 +191,39 @@ export default {
 		}
 
 		// Create full token
+		const expiryDate = parseDatePeriod(tokenExpiry);
+		if (expiryDate === null) {
+			throw new errs.AuthError(`Invalid expiry time: ${tokenExpiry}`);
+		}
+
+		const signed = await Token.create({
+			iss: "api",
+			attrs: {
+				id: userId,
+			},
+			scope: ["user"],
+			expiresIn: tokenExpiry,
+		});
+
+		return {
+			token: signed.token,
+			expires: expiryDate.toISOString(),
+		};
+	},
+
+	/**
+	 * Verify passkey authentication and return full token
+	 * @param {string} challengeToken
+	 * @param {Object} credential
+	 * @param {string} [expiry]
+	 * @returns {Promise}
+	 */
+	getTokenFromPasskey: async (challengeToken, credential, expiry, req) => {
+		const Token = TokenModel();
+		const tokenExpiry = expiry || "1d";
+
+		const userId = await webauthn.verifyAuthentication(challengeToken, credential, req);
+
 		const expiryDate = parseDatePeriod(tokenExpiry);
 		if (expiryDate === null) {
 			throw new errs.AuthError(`Invalid expiry time: ${tokenExpiry}`);

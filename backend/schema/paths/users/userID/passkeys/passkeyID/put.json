@@ -1,0 +1,79 @@
+{
+	"operationId": "renamePasskey",
+	"summary": "Rename a passkey",
+	"tags": ["users"],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "userID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true,
+			"description": "User ID",
+			"example": 1
+		},
+		{
+			"in": "path",
+			"name": "passkeyID",
+			"schema": { "type": "integer", "minimum": 1 },
+			"required": true,
+			"description": "Passkey ID",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Passkey rename payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"friendly_name": {
+							"minLength": 1,
+							"maxLength": 255,
+							"type": "string",
+							"example": "My Security Key"
+						}
+					},
+					"required": ["friendly_name"],
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 1,
+								"friendly_name": "My Security Key",
+								"created_on": "2024-01-15T10:30:00.000Z",
+								"device_type": "multi_device",
+								"backed_up": true
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"properties": {
+							"id": { "type": "integer", "example": 1 },
+							"friendly_name": { "type": "string", "example": "My Security Key" },
+							"created_on": { "type": "string", "example": "2024-01-15T10:30:00.000Z" },
+							"device_type": { "type": "string", "example": "multi_device" },
+							"backed_up": { "type": "boolean", "example": true }
+						}
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}
