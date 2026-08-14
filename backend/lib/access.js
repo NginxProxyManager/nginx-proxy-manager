@@ -13,6 +13,7 @@ import Ajv from "ajv/dist/2020.js";
 import _ from "lodash";
 import { access as logger } from "../logger.js";
 import proxyHostModel from "../models/proxy_host.js";
+import upstreamModel from "../models/upstream.js";
 import TokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import permsSchema from "./access/permissions.json" with { type: "json" };
@@ -140,6 +141,16 @@ export default function (tokenString) {
 						}
 						break;
 					}
+
+					// Upstreams
+					case "upstreams": {
+						const query = upstreamModel.query().select("id").andWhere("is_deleted", 0);
+						if (permissions.visibility === "user") query.andWhere("owner_user_id", tokenUserId);
+						const rows = await query;
+						objects = rows.map((row) => row.id);
+						if (!objects.length) objects.push(0);
+						break;
+					}
 				}
 				objectCache[objectType] = objects;
 			}
@@ -241,6 +252,7 @@ export default function (tokenString) {
 						permission_streams: permissions.streams,
 						permission_access_lists: permissions.access_lists,
 						permission_certificates: permissions.certificates,
+						permission_upstreams: permissions.upstreams,
 					},
 				};
 

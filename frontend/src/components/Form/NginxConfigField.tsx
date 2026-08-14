@@ -19,6 +19,9 @@ export function NginxConfigField({
 					<label htmlFor={id} className="form-label">
 						<T id={label} />
 					</label>
+					<div className="form-hint mb-2">
+						<T id="nginx-config.help" />
+					</div>
 					<CodeEditor
 						language="nginx"
 						placeholder={intl.formatMessage({ id: "nginx-config.placeholder" })}

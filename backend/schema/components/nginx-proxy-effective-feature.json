@@ -1,0 +1,41 @@
+{
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"field",
+		"frontend_field",
+		"enabled",
+		"source",
+		"expanded_directives"
+	],
+	"properties": {
+		"field": {
+			"type": "string",
+			"minLength": 1
+		},
+		"frontend_field": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"enabled": {
+			"type": "boolean"
+		},
+		"source": {
+			"type": "string",
+			"enum": [
+				"user",
+				"system"
+			]
+		},
+		"expanded_directives": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		},
+		"value": {}
+	}
+}

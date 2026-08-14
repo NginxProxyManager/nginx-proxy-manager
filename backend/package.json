@@ -10,7 +10,11 @@
 		"lint": "biome lint",
 		"prettier": "biome format --write .",
 		"validate-schema": "node validate-schema.js",
-		"regenerate-config": "node scripts/regenerate-config"
+		"regenerate-config": "node scripts/regenerate-config",
+		"test": "node --test",
+		"generate:proxy-directives": "node scripts/generate-proxy-directive-artifacts.js",
+		"check:proxy-directives": "node scripts/generate-proxy-directive-artifacts.js --check",
+		"validate:proxy-runtime": "node scripts/validate-proxy-runtime.js"
 	},
 	"dependencies": {
 		"@apidevtools/json-schema-ref-parser": "^15.3.5",

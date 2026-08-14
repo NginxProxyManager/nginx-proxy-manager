@@ -67,6 +67,7 @@ const setupDefaultUser = async () => {
 			streams: "manage",
 			access_lists: "manage",
 			certificates: "manage",
+			upstreams: "manage",
 		});
 		logger.info("Initial admin setup completed");
 	}

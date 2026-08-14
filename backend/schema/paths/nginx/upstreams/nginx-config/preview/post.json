@@ -1,0 +1,32 @@
+{
+  "operationId": "previewUpstreamNginxConfig",
+  "summary": "Preview an Upstream Nginx configuration",
+  "tags": ["upstreams"],
+  "security": [{ "bearerAuth": ["upstreams.manage"] }],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "nginx_key", "servers"],
+          "properties": {
+            "upstream_id": { "type": "integer", "minimum": 1 },
+            "name": { "type": "string", "minLength": 1, "maxLength": 255 },
+            "nginx_key": { "type": "string", "pattern": "^[a-z][a-z0-9_-]{0,62}$" },
+            "load_balancing_method": { "type": "string", "enum": ["round_robin", "least_conn", "ip_hash", "random"] },
+            "zone_size": { "type": "string" },
+            "servers": { "type": "array", "minItems": 1 }
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "description": "Static render preview; full nginx validation occurs during publish.",
+      "content": { "application/json": { "schema": { "type": "object", "required": ["valid", "config", "hash", "diagnostics"], "properties": { "valid": { "type": "boolean" }, "config": { "type": "string" }, "hash": { "type": "string" }, "diagnostics": { "type": "array" } } } } }
+    }
+  }
+}

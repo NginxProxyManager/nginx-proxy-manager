@@ -71,6 +71,9 @@ export function AccessField({ name = "accessListId", label = "access-list", id =
 					<label className="form-label" htmlFor={id}>
 						<T id={label} />
 					</label>
+					<div className="form-hint mb-2">
+						<T id="access-list.help" />
+					</div>
 					{isLoading ? <div className="placeholder placeholder-lg col-12 my-3 placeholder-glow" /> : null}
 					{isError ? <div className="invalid-feedback">{`${error}`}</div> : null}
 					{!isLoading && !isError ? (

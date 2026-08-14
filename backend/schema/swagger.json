@@ -41,6 +41,10 @@
 			"description": "Endpoints related to Proxy Hosts"
 		},
 		{
+			"name": "upstreams",
+			"description": "Endpoints related to global upstream groups"
+		},
+		{
 			"name": "redirection-hosts",
 			"description": "Endpoints related to Redirection Hosts"
 		},
@@ -174,6 +178,33 @@
 			"post": {
 				"$ref": "./paths/nginx/proxy-hosts/hostID/disable/post.json"
 			}
+		},
+		"/nginx/proxy-hosts/nginx-config/preview": {
+			"post": { "$ref": "./paths/nginx/proxy-hosts/nginx-config/preview/post.json" }
+		},
+		"/nginx/proxy-hosts/{hostID}/nginx-config": {
+			"get": { "$ref": "./paths/nginx/proxy-hosts/hostID/nginx-config/get.json" }
+		},
+		"/nginx/upstreams": {
+			"get": { "$ref": "./paths/nginx/upstreams/get.json" },
+			"post": { "$ref": "./paths/nginx/upstreams/post.json" }
+		},
+		"/nginx/upstreams/{upstreamID}": {
+			"get": { "$ref": "./paths/nginx/upstreams/upstreamID/get.json" },
+			"put": { "$ref": "./paths/nginx/upstreams/upstreamID/put.json" },
+			"delete": { "$ref": "./paths/nginx/upstreams/upstreamID/delete.json" }
+		},
+		"/nginx/upstreams/nginx-config/preview": {
+			"post": { "$ref": "./paths/nginx/upstreams/nginx-config/preview/post.json" }
+		},
+		"/nginx/upstreams/{upstreamID}/nginx-config": {
+			"get": { "$ref": "./paths/nginx/upstreams/upstreamID/nginx-config/get.json" }
+		},
+		"/nginx/upstreams/{upstreamID}/publish": {
+			"post": { "$ref": "./paths/nginx/upstreams/upstreamID/publish/post.json" }
+		},
+		"/nginx/upstreams/{upstreamID}/references": {
+			"get": { "$ref": "./paths/nginx/upstreams/upstreamID/references/get.json" }
 		},
 		"/nginx/redirection-hosts": {
 			"get": {

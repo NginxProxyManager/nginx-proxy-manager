@@ -1,0 +1,113 @@
+name: Build and push Docker image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Docker image version tag (1.0 or later)
+        required: true
+        default: '1.0'
+        type: string
+
+concurrency:
+  group: dockerhub-nginx-proxy-manager-${{ inputs.version }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_NAME: docker.io/moailaozi/nginx-proxy-manager
+
+jobs:
+  quality:
+    name: Semantic config quality gate
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: yarn
+          cache-dependency-path: |
+            backend/yarn.lock
+            frontend/yarn.lock
+
+      - name: Install Yarn
+        run: npm install --global yarn@1.22.22
+
+      - name: Validate backend schemas, catalog, lint, and tests
+        working-directory: backend
+        run: |
+          yarn install --frozen-lockfile --network-timeout 600000
+          yarn validate-schema
+          yarn check:proxy-directives
+          yarn lint
+          yarn test
+
+      - name: Validate frontend catalog coverage, types, locales, tests, and build
+        working-directory: frontend
+        run: |
+          yarn install --frozen-lockfile --network-timeout 600000
+          yarn lint
+          yarn locale-compile
+          yarn vitest run --no-color
+          yarn build
+
+  build-and-push:
+    needs: quality
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate image version
+        env:
+          VERSION: ${{ inputs.version }}
+        shell: bash
+        run: |
+          if [[ ! "$VERSION" =~ ^[1-9][0-9]*\.[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "Version must be numeric and at least 1.0 (for example: 1.0 or 1.0.1)."
+            exit 1
+          fi
+
+      - name: Set build metadata
+        id: metadata
+        shell: bash
+        run: |
+          echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "date=$(date --utc '+%Y-%m-%d %H:%M:%S UTC')" >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build, runtime-validate, and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:${{ inputs.version }}
+          build-args: |
+            BUILD_VERSION=${{ inputs.version }}
+            BUILD_COMMIT=${{ steps.metadata.outputs.commit }}
+            BUILD_DATE=${{ steps.metadata.outputs.date }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

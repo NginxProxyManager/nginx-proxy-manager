@@ -10,8 +10,30 @@ cd /app || exit 1
 log_info 'Starting backend ...'
 
 if [ "${DEVELOPMENT:-}" = 'true' ]; then
+	# Keep container dependencies isolated from host node_modules. This is
+	# especially important when the host is Windows and the container is Linux.
+	mkdir -p /app/node_modules
+	chown -R "$PUID:$PGID" /app/node_modules
 	s6-setuidgid "$PUID:$PGID" yarn install
-	exec s6-setuidgid "$PUID:$PGID" bash -c "export HOME=$NPMHOME;export CERTBOT_VERSION=$CERTBOT_VERSION;node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js"
+
+	# Docker Desktop bind mounts do not always forward inotify events to Linux
+	# containers. Use nodemon's polling mode when requested by the dev Compose file.
+	WATCH_INTERVAL="${FILE_WATCH_INTERVAL:-500}"
+	if ! [[ "$WATCH_INTERVAL" =~ ^[1-9][0-9]*$ ]]; then
+		log_error "FILE_WATCH_INTERVAL must be a positive integer; using 500ms"
+		WATCH_INTERVAL=500
+	fi
+
+	NODEMON_ARGS=()
+	if [ "$(is_true "${FILE_WATCH_POLLING:-false}")" = '1' ]; then
+		NODEMON_ARGS=(--legacy-watch --polling-interval "$WATCH_INTERVAL")
+		log_info "Watching backend files with polling (${WATCH_INTERVAL}ms) ..."
+	else
+		log_info 'Watching backend files with native filesystem events ...'
+	fi
+
+	export HOME="$NPMHOME"
+	exec s6-setuidgid "$PUID:$PGID" node --max_old_space_size=250 --abort_on_uncaught_exception node_modules/nodemon/bin/nodemon.js "${NODEMON_ARGS[@]}"
 else
 	while :
 	do

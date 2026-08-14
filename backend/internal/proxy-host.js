@@ -1,15 +1,454 @@
+import { randomUUID } from "node:crypto";
+import fs from "node:fs/promises";
 import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import utils from "../lib/utils.js";
+import nginxDeploymentModel from "../models/nginx_deployment.js";
+import databaseNow from "../models/now_helper.js";
 import proxyHostModel from "../models/proxy_host.js";
+import proxyHostUpstreamModel from "../models/proxy_host_upstream.js";
+import upstreamModel from "../models/upstream.js";
+import proxyHostMonitor from "./proxy-host-monitor.js";
+import internalAccessList from "./access-list.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
 import internalHost from "./host.js";
-import internalNginx from "./nginx.js";
+import {
+	activeArtifactPath,
+	atomicWrite,
+	candidateArtifactPath,
+	readArtifact,
+	removeArtifact,
+	toLogicalPath,
+} from "./nginx-config-artifacts.js";
+import { buildDesiredNginxArtifact } from "./nginx-config-artifact-view.js";
+import { sha256 } from "./nginx-config-hash.js";
+import { collectCustomIncludeManifest } from "./nginx-custom-includes.js";
+import { buildProxyHostCandidate } from "./nginx-config-renderer.js";
+import { validateInMirror } from "./nginx-config-validator.js";
+import nginxDeploymentCoordinator, { deriveDeploymentStatus } from "./nginx-deployment-coordinator.js";
+import { createDeploymentStore } from "./nginx-deployment-store.js";
+import { issuePreviewToken, verifyPreviewToken } from "./nginx-preview-token.js";
+import { normalizeProxyHost } from "./nginx-config-normalizer.js";
 
 const omissions = () => {
 	return ["is_deleted", "owner.is_deleted"];
+};
+
+const deploymentOccurredAt = () => new Date().toISOString();
+
+const getPortListenerPort = (host) =>
+	host?.nginx_config?.listener?.mode === "port" ? Number(host.nginx_config.listener.port) : null;
+
+const assertPortListenerAvailable = async (host, excludedId) => {
+	const port = getPortListenerPort(host);
+	if (!Number.isInteger(port)) return;
+	const query = proxyHostModel.query().where("is_deleted", 0).select("id", "nginx_config");
+	if (excludedId) query.whereNot("id", excludedId);
+	const rows = await query;
+	if (rows.some((row) => getPortListenerPort(row) === port))
+		throw new errs.ValidationError(`Port ${port} is already in use by another port listener`);
+};
+
+const prepareProxyTargets = (data, persisted = {}) => {
+	const source = {
+		...persisted,
+		...data,
+		nginx_config: data.nginx_config ?? persisted.nginx_config,
+		locations: typeof data.locations === "undefined" ? (persisted.locations ?? []) : data.locations,
+		default_target: typeof data.default_target === "undefined" ? persisted.default_target : data.default_target,
+	};
+	const normalized = normalizeProxyHost(source);
+	const result = { ...data };
+	result.default_target = normalized.default_target;
+	result.forward_scheme = normalized.forward_scheme;
+	result.forward_host = normalized.forward_host;
+	result.forward_port = normalized.forward_port;
+	if (typeof data.locations !== "undefined") {
+		result.locations = normalized.locations.map(({ _normalization_warnings, ...location }) => ({
+			...location,
+			...(location.target.type === "upstream" ? { location_id: location.location_id || randomUUID() } : {}),
+		}));
+	}
+	const locations = result.locations ?? persisted.locations ?? [];
+	const targetForLocation = (location) =>
+		location.target ?? {
+			type: "direct",
+			scheme: location.forward_scheme,
+			host: location.forward_host,
+			port: location.forward_port,
+		};
+	const references = [];
+	const defaultLocationEnabled = normalized.nginx_options.default_location_enabled !== false;
+	if (defaultLocationEnabled && normalized.default_target.type === "upstream")
+		references.push({
+			upstream_id: normalized.default_target.upstream_id,
+			target_type: "default",
+			location_id: "",
+		});
+	for (const location of locations) {
+		const target = targetForLocation(location);
+		if (target.type === "upstream") {
+			const locationId = location.location_id || randomUUID();
+			location.location_id = locationId;
+			references.push({
+				upstream_id: Number(target.upstream_id),
+				target_type: "location",
+				location_id: locationId,
+			});
+		}
+	}
+	return { data: result, references };
+};
+
+const assertReferencedUpstreamsAvailable = async (access, references, trx) => {
+	const ids = [...new Set(references.map((reference) => Number(reference.upstream_id)))].sort(
+		(left, right) => left - right,
+	);
+	if (!ids.length) return new Map();
+	for (const id of ids) await access.can("upstreams:get", id);
+	const rows = await upstreamModel.query(trx).whereIn("id", ids).where("is_deleted", 0).forUpdate();
+	if (rows.length !== ids.length) throw new errs.ValidationError("One or more referenced Upstreams do not exist");
+	for (const row of rows) {
+		if (
+			row.is_disabled ||
+			!row.nginx_applied_enabled ||
+			!["online", "degraded"].includes(row.nginx_deployment_status)
+		)
+			throw new errs.ValidationError(
+				`Upstream ${row.id} must be published and available before it can be referenced`,
+			);
+	}
+	return new Map(rows.map((row) => [row.id, row]));
+};
+
+const syncUpstreamReferences = async (trx, hostId, references) => {
+	await proxyHostUpstreamModel.query(trx).where("proxy_host_id", hostId).delete();
+	if (references.length)
+		await proxyHostUpstreamModel
+			.query(trx)
+			.insert(references.map((reference) => ({ ...reference, proxy_host_id: hostId })));
+};
+
+const resolveUpstreamDependencies = async (host) => {
+	const normalized = normalizeProxyHost(host);
+	const defaultLocationEnabled = normalized.nginx_options.default_location_enabled !== false;
+	const ids = [
+		...(defaultLocationEnabled && normalized.default_target.type === "upstream"
+			? [normalized.default_target.upstream_id]
+			: []),
+		...normalized.locations
+			.filter((location) => location.target.type === "upstream")
+			.map((location) => location.target.upstream_id),
+	];
+	if (!ids.length) return {};
+	const upstreams = await upstreamModel
+		.query()
+		.whereIn("id", [...new Set(ids)])
+		.where("is_deleted", 0);
+	if (upstreams.length !== new Set(ids).size)
+		throw new errs.UnprocessableConfigError("A referenced upstream no longer exists");
+	return Object.fromEntries(upstreams.map((upstream) => [upstream.id, upstream]));
+};
+
+const previewFields = (payload) =>
+	_.omit(payload, [
+		"host_id",
+		"base_revision",
+		"preview_token",
+		"id",
+		"created_on",
+		"modified_on",
+		"owner",
+		"certificate",
+		"access_list",
+	]);
+
+/**
+ * Resolve the same persisted dependencies the deploy path will use.  A preview
+ * must not sign a rendering that was produced with a different certificate or
+ * access list than the one being saved.
+ */
+const resolvePreviewCandidate = async (access, payload) => {
+	let persisted = null;
+	if (payload.host_id) {
+		persisted = await internalProxyHost.get(access, {
+			id: payload.host_id,
+			expand: ["certificate", "access_list.[clients,items]"],
+		});
+	}
+
+	const host = {
+		...(persisted || {}),
+		...previewFields(payload),
+		id: persisted?.id ?? payload.host_id ?? payload.id ?? null,
+	};
+	const unresolved = [];
+	let certificate = persisted?.certificate ?? null;
+	let accessList = persisted?.access_list ?? null;
+
+	if (host.certificate_id === "new") {
+		unresolved.push({
+			code: "CERTIFICATE_PENDING_CREATE",
+			message: "A new certificate must be created before this preview can be fully validated.",
+		});
+		certificate = null;
+	} else if (
+		Number.isInteger(host.certificate_id) &&
+		host.certificate_id > 0 &&
+		certificate?.id !== host.certificate_id
+	) {
+		certificate = await internalCertificate.get(access, { id: host.certificate_id });
+	}
+
+	if (Number.isInteger(host.access_list_id) && host.access_list_id > 0 && accessList?.id !== host.access_list_id) {
+		accessList = await internalAccessList.get(access, { id: host.access_list_id, expand: ["clients", "items"] });
+	}
+
+	const targets = prepareProxyTargets(previewFields(payload), persisted || {}).references;
+	const upstreams = await assertReferencedUpstreamsAvailable(access, targets, null);
+	const includes = await collectCustomIncludeManifest();
+	return {
+		host,
+		dependencies: { certificate, access_list: accessList, upstreams: Object.fromEntries(upstreams), includes },
+		unresolved,
+	};
+};
+
+const validatePreviewInMirror = async ({ host, config }) => {
+	if (!host.id)
+		return {
+			validation_scope: "partial",
+			diagnostics: [
+				{
+					severity: "info",
+					code: "PREVIEW_NEW_HOST",
+					message: "A new host has no active artifact path yet, so only static validation was performed.",
+				},
+			],
+		};
+	try {
+		await fs.access("/usr/sbin/nginx");
+	} catch {
+		return {
+			validation_scope: "partial",
+			diagnostics: [
+				{
+					severity: "warning",
+					code: "NGINX_BINARY_UNAVAILABLE",
+					message: "The nginx binary is unavailable in this runtime; only static validation was performed.",
+				},
+			],
+		};
+	}
+
+	const operationId = `preview-${randomUUID()}`;
+	const candidatePath = candidateArtifactPath(
+		"proxy_host",
+		host.id,
+		operationId,
+		nginxDeploymentCoordinator.nginxRoot,
+	);
+	const targetPath = activeArtifactPath("proxy_host", host.id, nginxDeploymentCoordinator.nginxRoot);
+	try {
+		await atomicWrite(candidatePath, config);
+		const result = await validateInMirror({
+			nginxRoot: nginxDeploymentCoordinator.nginxRoot,
+			nginxConfigPath: nginxDeploymentCoordinator.nginxConfigPath,
+			nginxPrefix: nginxDeploymentCoordinator.nginxPrefix,
+			operationId,
+			candidatePath,
+			targetPath,
+			commandRunner: nginxDeploymentCoordinator.commandRunner,
+		});
+		return {
+			validation_scope: result.validation_scope,
+			diagnostics: result.valid
+				? []
+				: [
+						{
+							severity: "error",
+							code: "NGINX_TEST_FAILED",
+							message: result.stderr || "nginx configuration test failed",
+						},
+					],
+		};
+	} finally {
+		await removeArtifact(candidatePath).catch(() => undefined);
+	}
+};
+
+const assertPreviewMatchesSave = async (access, row, payload, baseRevision, previewToken, createCertificate) => {
+	if (!previewToken) return;
+	const verified = verifyPreviewToken(previewToken, {
+		host_id: row.id,
+		base_revision: baseRevision ?? row.nginx_config_revision,
+	});
+	if (!verified.valid)
+		throw new errs.ConflictError("Nginx preview is no longer valid", "PREVIEW_TOKEN_INVALID", {
+			reason: verified.reason,
+			current_revision: row.nginx_config_revision,
+		});
+	if (createCertificate)
+		throw new errs.ConflictError("Nginx preview is no longer valid", "PREVIEW_TOKEN_INVALID", {
+			reason: "certificate_pending_create",
+			current_revision: row.nginx_config_revision,
+		});
+	const candidate = await resolvePreviewCandidate(access, { ...payload, host_id: row.id });
+	const rendered = await buildProxyHostCandidate(candidate);
+	for (const field of ["payload_hash", "dependency_hash", "template_hash", "capability_hash"]) {
+		const expected = verified.data[field];
+		const actual =
+			field === "payload_hash"
+				? rendered.payloadHash
+				: field === "dependency_hash"
+					? rendered.dependencyHash
+					: field === "template_hash"
+						? rendered.templateHash
+						: rendered.capabilityHash;
+		if (expected !== actual)
+			throw new errs.ConflictError(
+				"Nginx preview does not match the current save request",
+				"PREVIEW_TOKEN_INVALID",
+				{
+					reason: field,
+					current_revision: row.nginx_config_revision,
+					expected_hash: expected,
+					actual_hash: actual,
+				},
+			);
+	}
+};
+
+const deploymentIdFor = async (operationId) => {
+	const deployment = await nginxDeploymentModel.query().findOne("operation_id", operationId);
+	return deployment?.id ?? null;
+};
+
+const deploymentError = (operationId, error, journal) => ({
+	operation_id: operationId,
+	code: error.code || "DEPLOYMENT_FAILED",
+	message: error.message,
+	diagnostics: error.diagnostics ?? null,
+	journal_phase: journal.phase,
+	occurred_at: deploymentOccurredAt(),
+});
+
+/** Persist Applied only after the coordinator has swapped, reloaded, and
+ * successfully committed. This keeps Desired durable even when a deployment
+ * fails and makes an old active artifact explicitly visible as degraded. */
+const deployProxyHost = async (host) => {
+	const deploymentStore = createDeploymentStore({ ownerUserId: host.owner_user_id });
+	const upstreams = await resolveUpstreamDependencies(host);
+	const includes = await collectCustomIncludeManifest();
+	return nginxDeploymentCoordinator.deploy({
+		hostType: "proxy_host",
+		host,
+		dependencies: { certificate: host.certificate, access_list: host.access_list, upstreams, includes },
+		operation: "proxy_host_deploy",
+		deploymentStore,
+		beforeCommit: async ({ operationId }) => {
+			await proxyHostModel
+				.query()
+				.where("id", host.id)
+				.patch({
+					nginx_deployment_status: "pending",
+					nginx_last_error: null,
+					nginx_checked_at: databaseNow(),
+					nginx_last_deployment_id: await deploymentIdFor(operationId),
+				});
+		},
+		commitApplied: async ({ operationId, rendered }) => {
+			const meta = _.assign({}, host.meta, { nginx_online: true, nginx_err: null });
+			await proxyHostModel
+				.query()
+				.where("id", host.id)
+				.patch({
+					meta,
+					nginx_applied_revision: host.nginx_config_revision,
+					nginx_applied_enabled: 1,
+					nginx_applied_hash: rendered.configHash,
+					nginx_applied_snapshot: rendered.snapshot,
+					nginx_deployment_status: "online",
+					nginx_checked_at: databaseNow(),
+					nginx_last_error: null,
+					nginx_last_deployment_id: await deploymentIdFor(operationId),
+				});
+		},
+		commitFailure: async ({ operationId, error, journal }) => {
+			const previous = await proxyHostModel.query().findById(host.id);
+			const status = deriveDeploymentStatus({
+				...previous,
+				active_hash: previous?.nginx_applied_hash,
+				deployment_state: "failed",
+			});
+			const meta = _.assign({}, previous?.meta, { nginx_online: false, nginx_err: error.message });
+			await proxyHostModel
+				.query()
+				.where("id", host.id)
+				.patch({
+					meta,
+					nginx_deployment_status: status,
+					nginx_checked_at: databaseNow(),
+					nginx_last_error: deploymentError(operationId, error, journal),
+					nginx_last_deployment_id: await deploymentIdFor(operationId),
+				});
+		},
+	});
+};
+
+const removeProxyHostArtifact = async (host, statusWhenApplied = "disabled") => {
+	const deploymentStore = createDeploymentStore({ ownerUserId: host.owner_user_id });
+	return nginxDeploymentCoordinator.remove({
+		hostType: "proxy_host",
+		host,
+		operation: "proxy_host_remove",
+		deploymentStore,
+		beforeCommit: async ({ operationId }) => {
+			await proxyHostModel
+				.query()
+				.where("id", host.id)
+				.patch({
+					nginx_deployment_status: "pending",
+					nginx_checked_at: databaseNow(),
+					nginx_last_deployment_id: await deploymentIdFor(operationId),
+				});
+		},
+		commitApplied: async ({ operationId }) => {
+			const meta = _.assign({}, host.meta, { nginx_online: false, nginx_err: null });
+			await proxyHostModel
+				.query()
+				.where("id", host.id)
+				.patch({
+					meta,
+					nginx_applied_revision: host.nginx_config_revision,
+					nginx_applied_enabled: 0,
+					nginx_applied_hash: null,
+					nginx_deployment_status: statusWhenApplied,
+					nginx_checked_at: databaseNow(),
+					nginx_last_error: null,
+					nginx_last_deployment_id: await deploymentIdFor(operationId),
+				});
+		},
+		commitFailure: async ({ operationId, error, journal }) => {
+			const previous = await proxyHostModel.query().findById(host.id);
+			const meta = _.assign({}, previous?.meta, {
+				nginx_online: Boolean(previous?.nginx_applied_enabled),
+				nginx_err: error.message,
+			});
+			await proxyHostModel
+				.query()
+				.where("id", host.id)
+				.patch({
+					meta,
+					nginx_deployment_status: previous?.nginx_applied_enabled ? "degraded" : "error",
+					nginx_checked_at: databaseNow(),
+					nginx_last_error: deploymentError(operationId, error, journal),
+					nginx_last_deployment_id: await deploymentIdFor(operationId),
+				});
+		},
+	});
 };
 
 const internalProxyHost = {
@@ -46,7 +485,11 @@ const internalProxyHost = {
 					});
 				});
 			})
-			.then(() => {
+			.then(async () => {
+				const prepared = prepareProxyTargets(thisData);
+				thisData = prepared.data;
+				thisData._upstream_references = prepared.references;
+				await assertPortListenerAvailable(thisData);
 				// At this point the domains should have been checked
 				thisData.owner_user_id = access.token.getUserId(1);
 				thisData = internalHost.cleanSslHstsData(thisData);
@@ -57,7 +500,14 @@ const internalProxyHost = {
 					thisData.advanced_config = "";
 				}
 
-				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
+				return proxyHostModel.transaction(async (trx) => {
+					await assertReferencedUpstreamsAvailable(access, thisData._upstream_references, trx);
+					const saved = await proxyHostModel
+						.query(trx)
+						.insertAndFetch(_.omit(thisData, ["_upstream_references"]));
+					await syncUpstreamReferences(trx, saved.id, thisData._upstream_references);
+					return _.omit(saved, omissions());
+				});
 			})
 			.then((row) => {
 				if (createCertificate) {
@@ -83,27 +533,23 @@ const internalProxyHost = {
 					expand: ["certificate", "owner", "access_list.[clients,items]"],
 				});
 			})
-			.then((row) => {
-				// Configure nginx
-				return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
-					return row;
-				});
-			})
-			.then((row) => {
-				// Audit log
+			.then(async (row) => {
+				// Desired is already durable at this point, so audit it before the
+				// deployment attempt. A deployment failure must not turn a successful
+				// create into an ambiguous HTTP 500 that encourages a duplicate retry.
 				thisData.meta = _.assign({}, thisData.meta || {}, row.meta);
+				await internalAuditLog.add(access, {
+					action: "created",
+					object_type: "proxy-host",
+					object_id: row.id,
+					meta: thisData,
+				});
 
-				// Add to audit log
-				return internalAuditLog
-					.add(access, {
-						action: "created",
-						object_type: "proxy-host",
-						object_id: row.id,
-						meta: thisData,
-					})
-					.then(() => {
-						return row;
-					});
+				await deployProxyHost(row).catch(() => undefined);
+				return internalProxyHost.get(access, {
+					id: row.id,
+					expand: ["certificate", "owner", "access_list.[clients,items]"],
+				});
 			});
 	},
 
@@ -120,6 +566,10 @@ const internalProxyHost = {
 		if (createCertificate) {
 			delete thisData.certificate_id;
 		}
+		const baseRevision = thisData.base_revision;
+		const previewToken = thisData.preview_token;
+		delete thisData.base_revision;
+		delete thisData.preview_token;
 
 		return access
 			.can("proxy_hosts:update", thisData.id)
@@ -145,9 +595,25 @@ const internalProxyHost = {
 				}
 			})
 			.then(() => {
-				return internalProxyHost.get(access, { id: thisData.id });
+				return internalProxyHost.get(access, {
+					id: thisData.id,
+					expand: ["certificate", "access_list.[clients,items]"],
+				});
 			})
-			.then((row) => {
+			.then(async (row) => {
+				const prepared = prepareProxyTargets(thisData, row);
+				thisData = { ...prepared.data, _upstream_references: prepared.references };
+				await assertPortListenerAvailable(
+					{ ...row, ...thisData, nginx_config: thisData.nginx_config ?? row.nginx_config },
+					row.id,
+				);
+				if (typeof baseRevision !== "undefined" && baseRevision !== row.nginx_config_revision) {
+					throw new errs.ConflictError("Proxy Host has changed", "REVISION_CONFLICT", {
+						current_revision: row.nginx_config_revision,
+					});
+				}
+				await assertPreviewMatchesSave(access, row, thisData, baseRevision, previewToken, createCertificate);
+
 				if (row.id !== thisData.id) {
 					// Sanity check that something crazy hasn't happened
 					throw new errs.InternalValidationError(
@@ -173,20 +639,25 @@ const internalProxyHost = {
 			})
 			.then((row) => {
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				thisData = _.assign(
-					{},
-					{
-						domain_names: row.domain_names,
-					},
-					data,
-				);
+				thisData = _.assign({}, { domain_names: row.domain_names }, thisData);
 
 				thisData = internalHost.cleanSslHstsData(thisData, row);
 
 				return proxyHostModel
-					.query()
-					.where({ id: thisData.id })
-					.patch(thisData)
+					.transaction(async (trx) => {
+						await assertReferencedUpstreamsAvailable(access, thisData._upstream_references, trx);
+						const count = await proxyHostModel
+							.query(trx)
+							.where({ id: thisData.id, nginx_config_revision: row.nginx_config_revision })
+							.patch({
+								..._.omit(thisData, ["_upstream_references"]),
+								nginx_config_revision: (row.nginx_config_revision || 1) + 1,
+								nginx_deployment_status: row.enabled || thisData.enabled ? "pending" : "disabled",
+							});
+						if (!count) throw new errs.ConflictError("Proxy Host has changed", "REVISION_CONFLICT");
+						await syncUpstreamReferences(trx, row.id, thisData._upstream_references);
+						return proxyHostModel.query(trx).findById(row.id);
+					})
 					.then(utils.omitRow(omissions()))
 					.then((saved_row) => {
 						// Add to audit log
@@ -214,10 +685,15 @@ const internalProxyHost = {
 							return row;
 						}
 						// Configure nginx
-						return internalNginx.configure(proxyHostModel, "proxy_host", row).then((new_meta) => {
-							row.meta = new_meta;
-							return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
-						});
+						return deployProxyHost(row)
+							.catch(() => undefined)
+							.then(() =>
+								internalProxyHost.get(access, {
+									id: row.id,
+									expand: ["owner", "certificate", "access_list.[clients,items]"],
+								}),
+							)
+							.then((updated) => _.omit(internalHost.cleanRowCertificateMeta(updated), omissions()));
 					});
 			});
 	},
@@ -272,42 +748,27 @@ const internalProxyHost = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	delete: (access, data) => {
-		return access
-			.can("proxy_hosts:delete", data.id)
-			.then(() => {
-				return internalProxyHost.get(access, { id: data.id });
-			})
-			.then((row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(data.id);
-				}
-
-				return proxyHostModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						is_deleted: 1,
-					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("proxy_host", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "deleted",
-							object_type: "proxy-host",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
-				return true;
+	delete: async (access, data) => {
+		await access.can("proxy_hosts:delete", data.id);
+		const row = await internalProxyHost.get(access, { id: data.id });
+		if (!row?.id) throw new errs.ItemNotFoundError(data.id);
+		const revision = (row.nginx_config_revision || 1) + 1;
+		await proxyHostModel.transaction(async (trx) => {
+			await proxyHostModel.query(trx).where("id", row.id).patch({
+				is_deleted: 1,
+				nginx_config_revision: revision,
+				nginx_deployment_status: "pending",
 			});
+			await proxyHostUpstreamModel.query(trx).where("proxy_host_id", row.id).delete();
+		});
+		await removeProxyHostArtifact({ ...row, is_deleted: true, nginx_config_revision: revision }, "deleted");
+		await internalAuditLog.add(access, {
+			action: "deleted",
+			object_type: "proxy-host",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+		return true;
 	},
 
 	/**
@@ -341,11 +802,16 @@ const internalProxyHost = {
 					.where("id", row.id)
 					.patch({
 						enabled: 1,
+						nginx_config_revision: (row.nginx_config_revision || 1) + 1,
+						nginx_deployment_status: "pending",
 					})
-					.then(() => {
-						// Configure nginx
-						return internalNginx.configure(proxyHostModel, "proxy_host", row);
-					})
+					.then(() =>
+						deployProxyHost({
+							...row,
+							enabled: true,
+							nginx_config_revision: (row.nginx_config_revision || 1) + 1,
+						}),
+					)
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
@@ -389,13 +855,15 @@ const internalProxyHost = {
 					.where("id", row.id)
 					.patch({
 						enabled: 0,
+						nginx_config_revision: (row.nginx_config_revision || 1) + 1,
+						nginx_deployment_status: "pending",
 					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("proxy_host", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
+					.then(() =>
+						removeProxyHostArtifact(
+							{ ...row, enabled: false, nginx_config_revision: (row.nginx_config_revision || 1) + 1 },
+							"disabled",
+						),
+					)
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
@@ -409,6 +877,97 @@ const internalProxyHost = {
 			.then(() => {
 				return true;
 			});
+	},
+
+	/**
+	 * Returns the actual active artifact and the last failed candidate without
+	 * accepting caller-controlled filesystem paths.
+	 */
+	getNginxArtifacts: async (access, id, includeContent = []) => {
+		const row = await internalProxyHost.get(access, { id });
+		const deployedPath = activeArtifactPath("proxy_host", row.id);
+		const deployedContent = await readArtifact(deployedPath);
+		let candidate = null;
+		if (row.nginx_last_deployment_id && row.nginx_last_error?.operation_id) {
+			const candidatePath = candidateArtifactPath("proxy_host", row.id, row.nginx_last_error.operation_id);
+			const content = await readArtifact(candidatePath);
+			if (content !== null)
+				candidate = {
+					logical_path: toLogicalPath(candidatePath),
+					hash: sha256(Buffer.from(content)),
+					...(includeContent.includes("candidate") ? { config: content } : {}),
+				};
+		}
+		const activeHash = deployedContent === null ? null : sha256(Buffer.from(deployedContent));
+		const status = row.nginx_deployment_status || (row.enabled ? "pending" : "disabled");
+		return {
+			host_id: row.id,
+			status,
+			desired_revision: row.nginx_config_revision ?? 1,
+			applied_revision: row.nginx_applied_revision ?? null,
+			deployed:
+				deployedContent === null
+					? null
+					: {
+							logical_path: toLogicalPath(deployedPath),
+							hash: activeHash,
+							...(includeContent.includes("deployed") ? { config: deployedContent } : {}),
+						},
+			candidate,
+			desired: buildDesiredNginxArtifact(row),
+			applied_snapshot: row.nginx_applied_snapshot ?? null,
+			migration: {
+				status: row.nginx_config_migration_status ?? "unknown",
+				migrated_on: row.nginx_config_migrated_on ?? null,
+				diagnostics: row.nginx_config_migration_diagnostics ?? [],
+			},
+			last_error: row.nginx_last_error ?? null,
+			last_checked_at: row.nginx_checked_at ?? null,
+		};
+	},
+
+	previewNginxConfig: async (access, payload) => {
+		if (payload.host_id) await access.can("proxy_hosts:update", payload.host_id);
+		else await access.can("proxy_hosts:create", payload);
+		const candidate = await resolvePreviewCandidate(access, payload);
+		const result = await buildProxyHostCandidate(candidate);
+		const mirror = candidate.unresolved.length
+			? { validation_scope: "partial", diagnostics: [] }
+			: await validatePreviewInMirror({ host: candidate.host, config: result.config });
+		const diagnostics = [
+			...result.diagnostics,
+			...candidate.unresolved.map((item) => ({ severity: "warning", ...item })),
+			...mirror.diagnostics,
+		];
+		const valid = !diagnostics.some((item) => item.severity === "error");
+		return {
+			valid,
+			config: result.config,
+			payload_hash: result.payloadHash,
+			hash: result.configHash,
+			dependency_hash: result.dependencyHash,
+			capability_hash: result.capabilityHash,
+			template_version: result.templateVersion,
+			template_hash: result.templateHash,
+			base_revision: payload.base_revision ?? null,
+			preview_token:
+				valid && !candidate.unresolved.length && mirror.validation_scope === "full"
+					? issuePreviewToken({
+							hostId: candidate.host.id,
+							baseRevision: payload.base_revision ?? null,
+							payloadHash: result.payloadHash,
+							dependencyHash: result.dependencyHash,
+							templateHash: result.templateHash,
+							capabilityHash: result.capabilityHash,
+						})
+					: null,
+			validation_scope: mirror.validation_scope,
+			unresolved_dependencies: candidate.unresolved,
+			diagnostics,
+			effective_config: result.effectiveConfig,
+			source_map: result.sourceMap,
+			capability: result.capability,
+		};
 	},
 
 	/**
@@ -440,12 +999,18 @@ const internalProxyHost = {
 			});
 		}
 
-		if (typeof expand !== "undefined" && expand !== null) {
-			query.withGraphFetched(`[${expand.join(", ")}]`);
+		const includeMonitoring = Array.isArray(expand) && expand.includes("monitoring");
+		const graphExpand = Array.isArray(expand) ? expand.filter((item) => item !== "monitoring") : null;
+		if (graphExpand?.length) {
+			query.withGraphFetched(`[${graphExpand.join(", ")}]`);
 		}
 
 		const rows = await query.then(utils.omitRows(omissions()));
-		if (typeof expand !== "undefined" && expand !== null && expand.indexOf("certificate") !== -1) {
+		if (includeMonitoring) {
+			const statuses = await proxyHostMonitor.listStatuses(rows);
+			for (const row of rows) row.monitoring_status = statuses.get(row.id);
+		}
+		if (graphExpand?.includes("certificate")) {
 			return internalHost.cleanAllRowsCertificateMeta(rows);
 		}
 		return rows;

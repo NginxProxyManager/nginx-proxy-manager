@@ -1,0 +1,51 @@
+{
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"field",
+		"frontend_field",
+		"value",
+		"source",
+		"scope",
+		"path"
+	],
+	"properties": {
+		"field": {
+			"type": "string",
+			"minLength": 1
+		},
+		"frontend_field": {
+			"type": "string",
+			"minLength": 1
+		},
+		"value": {},
+		"source": {
+			"type": "string",
+			"enum": [
+				"user",
+				"profile",
+				"inherited"
+			]
+		},
+		"scope": {
+			"type": "string",
+			"enum": [
+				"default_policy",
+				"location"
+			]
+		},
+		"location_id": {
+			"type": [
+				"string",
+				"integer",
+				"null"
+			]
+		},
+		"path": {
+			"type": "string"
+		},
+		"inherited_from": {
+			"type": "string"
+		}
+	}
+}

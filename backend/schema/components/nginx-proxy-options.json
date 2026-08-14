@@ -1,0 +1,1790 @@
+{
+	"location": {
+		"type": "object",
+		"additionalProperties": false,
+		"required": [
+			"mode",
+			"overrides"
+		],
+		"properties": {
+			"mode": {
+				"const": "inherit"
+			},
+			"overrides": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"directives": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"client_max_body_size": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+							},
+							"proxy_http_version": {
+								"type": "string",
+								"enum": [
+									"1.0",
+									"1.1"
+								]
+							},
+							"proxy_method": {
+								"type": "string",
+								"pattern": "^(\\$request_method|[A-Z][A-Z0-9_-]{0,31})$"
+							},
+							"proxy_connect_timeout": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+							},
+							"proxy_send_timeout": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+							},
+							"proxy_read_timeout": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+							},
+							"proxy_next_upstream": {
+								"type": "array",
+								"minItems": 1,
+								"uniqueItems": true,
+								"items": {
+									"type": "string",
+									"enum": [
+										"error",
+										"timeout",
+										"invalid_header",
+										"http_500",
+										"http_502",
+										"http_503",
+										"http_504",
+										"http_403",
+										"http_404",
+										"http_429",
+										"non_idempotent",
+										"off"
+									]
+								}
+							},
+							"proxy_next_upstream_timeout": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+							},
+							"proxy_next_upstream_tries": {
+								"type": "integer",
+								"minimum": 0,
+								"maximum": 2147483647
+							},
+							"proxy_ignore_client_abort": {
+								"type": "boolean"
+							},
+							"proxy_socket_keepalive": {
+								"type": "boolean"
+							},
+							"proxy_bind": {
+								"type": "string",
+								"minLength": 1
+							},
+							"proxy_pass_request_headers": {
+								"type": "boolean"
+							},
+							"proxy_pass_request_body": {
+								"type": "boolean"
+							},
+							"proxy_pass_trailers": {
+								"type": "boolean"
+							},
+							"proxy_request_buffering": {
+								"type": "boolean"
+							},
+							"proxy_buffering": {
+								"type": "boolean"
+							},
+							"proxy_buffer_size": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+							},
+							"proxy_buffers": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"prefixItems": [
+									{
+										"type": "integer",
+										"minimum": 1,
+										"maximum": 2147483647
+									},
+									{
+										"type": "string",
+										"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+									}
+								],
+								"items": false
+							},
+							"proxy_busy_buffers_size": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+							},
+							"proxy_max_temp_file_size": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+							},
+							"proxy_temp_file_write_size": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+							},
+							"proxy_limit_rate": {
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+							},
+							"proxy_headers_hash_bucket_size": {
+								"type": "integer",
+								"minimum": 1,
+								"maximum": 2147483647
+							},
+							"proxy_headers_hash_max_size": {
+								"type": "integer",
+								"minimum": 1,
+								"maximum": 2147483647
+							},
+							"proxy_intercept_errors": {
+								"type": "boolean"
+							},
+							"proxy_force_ranges": {
+								"type": "boolean"
+							},
+							"proxy_redirect": {
+								"type": "string",
+								"enum": [
+									"default",
+									"off"
+								]
+							},
+							"proxy_cookie_domain": {
+								"type": "array",
+								"maxItems": 32,
+								"items": {
+									"type": "object",
+									"additionalProperties": false,
+									"required": [
+										"from",
+										"to"
+									],
+									"properties": {
+										"from": {
+											"type": "string",
+											"minLength": 1
+										},
+										"to": {
+											"type": "string",
+											"minLength": 1
+										}
+									}
+								}
+							},
+							"proxy_cookie_path": {
+								"type": "array",
+								"maxItems": 32,
+								"items": {
+									"type": "object",
+									"additionalProperties": false,
+									"required": [
+										"from",
+										"to"
+									],
+									"properties": {
+										"from": {
+											"type": "string",
+											"minLength": 1
+										},
+										"to": {
+											"type": "string",
+											"minLength": 1
+										}
+									}
+								}
+							},
+							"proxy_ssl_server_name": {
+								"type": "boolean"
+							},
+							"proxy_ssl_name": {
+								"type": "string",
+								"minLength": 1
+							},
+							"proxy_ssl_verify": {
+								"type": "boolean"
+							},
+							"proxy_ssl_verify_depth": {
+								"type": "integer",
+								"minimum": 0,
+								"maximum": 2147483647
+							},
+							"proxy_ssl_session_reuse": {
+								"type": "boolean"
+							},
+							"proxy_ssl_protocols": {
+								"type": "array",
+								"minItems": 1,
+								"uniqueItems": true,
+								"items": {
+									"type": "string",
+									"enum": [
+										"TLSv1",
+										"TLSv1.1",
+										"TLSv1.2",
+										"TLSv1.3"
+									]
+								}
+							},
+							"proxy_ssl_ciphers": {
+								"type": "string",
+								"minLength": 1
+							}
+						}
+					},
+					"headers": {
+						"type": "object",
+						"additionalProperties": false,
+						"properties": {
+							"request": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"additionalProperties": false,
+									"required": [
+										"name"
+									],
+									"properties": {
+										"name": {
+											"type": "string",
+											"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+										},
+										"operation": {
+											"type": "string",
+											"enum": [
+												"set",
+												"remove"
+											],
+											"default": "set"
+										},
+										"value": {
+											"type": "string",
+											"maxLength": 8192
+										},
+										"value_mode": {
+											"type": "string",
+											"enum": [
+												"literal",
+												"variable"
+											],
+											"default": "literal"
+										}
+									}
+								},
+								"description": "Request header rules map to proxy_set_header. Add is intentionally unsupported because proxy_set_header cannot safely append an arbitrary incoming header value."
+							},
+							"response": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"additionalProperties": false,
+									"required": [
+										"name"
+									],
+									"properties": {
+										"name": {
+											"type": "string",
+											"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+										},
+										"operation": {
+											"type": "string",
+											"enum": [
+												"set",
+												"add",
+												"remove"
+											],
+											"default": "set"
+										},
+										"value": {
+											"type": "string",
+											"maxLength": 8192
+										},
+										"value_mode": {
+											"type": "string",
+											"enum": [
+												"literal",
+												"variable"
+											],
+											"default": "literal"
+										}
+									}
+								},
+								"description": "Response set maps to proxy_hide_header plus add_header; add maps to add_header; remove maps to proxy_hide_header."
+							},
+							"hide_response": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "string"
+								}
+							},
+							"pass_response": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "string"
+								}
+							},
+							"ignore_upstream": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "string",
+									"enum": [
+										"X-Accel-Expires",
+										"X-Accel-Redirect",
+										"X-Accel-Limit-Rate",
+										"X-Accel-Buffering",
+										"X-Accel-Charset",
+										"Expires",
+										"Cache-Control",
+										"Set-Cookie",
+										"Vary"
+									]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"server": {
+		"type": "object",
+		"additionalProperties": false,
+		"required": [
+			"directives",
+			"headers"
+		],
+		"properties": {
+			"directives": {
+				"type": "object",
+				"additionalProperties": false,
+				"required": [
+					"client_max_body_size",
+					"proxy_http_version",
+					"proxy_method",
+					"proxy_connect_timeout",
+					"proxy_send_timeout",
+					"proxy_read_timeout",
+					"proxy_next_upstream",
+					"proxy_next_upstream_timeout",
+					"proxy_next_upstream_tries",
+					"proxy_ignore_client_abort",
+					"proxy_socket_keepalive",
+					"proxy_bind",
+					"proxy_pass_request_headers",
+					"proxy_pass_request_body",
+					"proxy_pass_trailers",
+					"proxy_request_buffering",
+					"proxy_buffering",
+					"proxy_buffer_size",
+					"proxy_buffers",
+					"proxy_busy_buffers_size",
+					"proxy_max_temp_file_size",
+					"proxy_temp_file_write_size",
+					"proxy_limit_rate",
+					"proxy_headers_hash_bucket_size",
+					"proxy_headers_hash_max_size",
+					"proxy_intercept_errors",
+					"proxy_force_ranges",
+					"proxy_redirect",
+					"proxy_cookie_domain",
+					"proxy_cookie_path",
+					"proxy_ssl_server_name",
+					"proxy_ssl_name",
+					"proxy_ssl_verify",
+					"proxy_ssl_verify_depth",
+					"proxy_ssl_session_reuse",
+					"proxy_ssl_protocols",
+					"proxy_ssl_ciphers",
+					"default_location_enabled"
+				],
+				"properties": {
+					"client_max_body_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_http_version": {
+						"type": "string",
+						"enum": [
+							"1.0",
+							"1.1"
+						]
+					},
+					"proxy_method": {
+						"type": "string",
+						"pattern": "^(\\$request_method|[A-Z][A-Z0-9_-]{0,31})$"
+					},
+					"proxy_connect_timeout": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+					},
+					"proxy_send_timeout": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+					},
+					"proxy_read_timeout": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+					},
+					"proxy_next_upstream": {
+						"type": "array",
+						"minItems": 1,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"enum": [
+								"error",
+								"timeout",
+								"invalid_header",
+								"http_500",
+								"http_502",
+								"http_503",
+								"http_504",
+								"http_403",
+								"http_404",
+								"http_429",
+								"non_idempotent",
+								"off"
+							]
+						}
+					},
+					"proxy_next_upstream_timeout": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+					},
+					"proxy_next_upstream_tries": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 2147483647
+					},
+					"proxy_ignore_client_abort": {
+						"type": "boolean"
+					},
+					"proxy_socket_keepalive": {
+						"type": "boolean"
+					},
+					"proxy_bind": {
+						"type": "string",
+						"minLength": 1
+					},
+					"proxy_pass_request_headers": {
+						"type": "boolean"
+					},
+					"proxy_pass_request_body": {
+						"type": "boolean"
+					},
+					"proxy_pass_trailers": {
+						"type": "boolean"
+					},
+					"proxy_request_buffering": {
+						"type": "boolean"
+					},
+					"proxy_buffering": {
+						"type": "boolean"
+					},
+					"proxy_buffer_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_buffers": {
+						"type": "array",
+						"minItems": 2,
+						"maxItems": 2,
+						"prefixItems": [
+							{
+								"type": "integer",
+								"minimum": 1,
+								"maximum": 2147483647
+							},
+							{
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+							}
+						],
+						"items": false
+					},
+					"proxy_busy_buffers_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_max_temp_file_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_temp_file_write_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_limit_rate": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_headers_hash_bucket_size": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 2147483647
+					},
+					"proxy_headers_hash_max_size": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 2147483647
+					},
+					"proxy_intercept_errors": {
+						"type": "boolean"
+					},
+					"proxy_force_ranges": {
+						"type": "boolean"
+					},
+					"proxy_redirect": {
+						"type": "string",
+						"enum": [
+							"default",
+							"off"
+						]
+					},
+					"proxy_cookie_domain": {
+						"type": "array",
+						"maxItems": 32,
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"from",
+								"to"
+							],
+							"properties": {
+								"from": {
+									"type": "string",
+									"minLength": 1
+								},
+								"to": {
+									"type": "string",
+									"minLength": 1
+								}
+							}
+						}
+					},
+					"proxy_cookie_path": {
+						"type": "array",
+						"maxItems": 32,
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"from",
+								"to"
+							],
+							"properties": {
+								"from": {
+									"type": "string",
+									"minLength": 1
+								},
+								"to": {
+									"type": "string",
+									"minLength": 1
+								}
+							}
+						}
+					},
+					"proxy_ssl_server_name": {
+						"type": "boolean"
+					},
+					"proxy_ssl_name": {
+						"type": "string",
+						"minLength": 1
+					},
+					"proxy_ssl_verify": {
+						"type": "boolean"
+					},
+					"proxy_ssl_verify_depth": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 2147483647
+					},
+					"proxy_ssl_session_reuse": {
+						"type": "boolean"
+					},
+					"proxy_ssl_protocols": {
+						"type": "array",
+						"minItems": 1,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"enum": [
+								"TLSv1",
+								"TLSv1.1",
+								"TLSv1.2",
+								"TLSv1.3"
+							]
+						}
+					},
+					"proxy_ssl_ciphers": {
+						"type": "string",
+						"minLength": 1
+					},
+					"default_location_enabled": {
+						"type": "boolean"
+					}
+				}
+			},
+			"headers": {
+				"type": "object",
+				"additionalProperties": false,
+				"required": [
+					"request",
+					"response",
+					"hide_response",
+					"pass_response",
+					"ignore_upstream"
+				],
+				"properties": {
+					"request": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"name"
+							],
+							"properties": {
+								"name": {
+									"type": "string",
+									"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+								},
+								"operation": {
+									"type": "string",
+									"enum": [
+										"set",
+										"remove"
+									],
+									"default": "set"
+								},
+								"value": {
+									"type": "string",
+									"maxLength": 8192
+								},
+								"value_mode": {
+									"type": "string",
+									"enum": [
+										"literal",
+										"variable"
+									],
+									"default": "literal"
+								}
+							}
+						},
+						"description": "Request header rules map to proxy_set_header. Add is intentionally unsupported because proxy_set_header cannot safely append an arbitrary incoming header value."
+					},
+					"response": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"name"
+							],
+							"properties": {
+								"name": {
+									"type": "string",
+									"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+								},
+								"operation": {
+									"type": "string",
+									"enum": [
+										"set",
+										"add",
+										"remove"
+									],
+									"default": "set"
+								},
+								"value": {
+									"type": "string",
+									"maxLength": 8192
+								},
+								"value_mode": {
+									"type": "string",
+									"enum": [
+										"literal",
+										"variable"
+									],
+									"default": "literal"
+								}
+							}
+						},
+						"description": "Response set maps to proxy_hide_header plus add_header; add maps to add_header; remove maps to proxy_hide_header."
+					},
+					"hide_response": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "string"
+						}
+					},
+					"pass_response": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "string"
+						}
+					},
+					"ignore_upstream": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"enum": [
+								"X-Accel-Expires",
+								"X-Accel-Redirect",
+								"X-Accel-Limit-Rate",
+								"X-Accel-Buffering",
+								"X-Accel-Charset",
+								"Expires",
+								"Cache-Control",
+								"Set-Cookie",
+								"Vary"
+							]
+						}
+					}
+				}
+			}
+		}
+	},
+	"overrides": {
+		"type": "object",
+		"additionalProperties": false,
+		"properties": {
+			"directives": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"client_max_body_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_http_version": {
+						"type": "string",
+						"enum": [
+							"1.0",
+							"1.1"
+						]
+					},
+					"proxy_method": {
+						"type": "string",
+						"pattern": "^(\\$request_method|[A-Z][A-Z0-9_-]{0,31})$"
+					},
+					"proxy_connect_timeout": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+					},
+					"proxy_send_timeout": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+					},
+					"proxy_read_timeout": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+					},
+					"proxy_next_upstream": {
+						"type": "array",
+						"minItems": 1,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"enum": [
+								"error",
+								"timeout",
+								"invalid_header",
+								"http_500",
+								"http_502",
+								"http_503",
+								"http_504",
+								"http_403",
+								"http_404",
+								"http_429",
+								"non_idempotent",
+								"off"
+							]
+						}
+					},
+					"proxy_next_upstream_timeout": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+					},
+					"proxy_next_upstream_tries": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 2147483647
+					},
+					"proxy_ignore_client_abort": {
+						"type": "boolean"
+					},
+					"proxy_socket_keepalive": {
+						"type": "boolean"
+					},
+					"proxy_bind": {
+						"type": "string",
+						"minLength": 1
+					},
+					"proxy_pass_request_headers": {
+						"type": "boolean"
+					},
+					"proxy_pass_request_body": {
+						"type": "boolean"
+					},
+					"proxy_pass_trailers": {
+						"type": "boolean"
+					},
+					"proxy_request_buffering": {
+						"type": "boolean"
+					},
+					"proxy_buffering": {
+						"type": "boolean"
+					},
+					"proxy_buffer_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_buffers": {
+						"type": "array",
+						"minItems": 2,
+						"maxItems": 2,
+						"prefixItems": [
+							{
+								"type": "integer",
+								"minimum": 1,
+								"maximum": 2147483647
+							},
+							{
+								"type": "string",
+								"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+							}
+						],
+						"items": false
+					},
+					"proxy_busy_buffers_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_max_temp_file_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_temp_file_write_size": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_limit_rate": {
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					},
+					"proxy_headers_hash_bucket_size": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 2147483647
+					},
+					"proxy_headers_hash_max_size": {
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 2147483647
+					},
+					"proxy_intercept_errors": {
+						"type": "boolean"
+					},
+					"proxy_force_ranges": {
+						"type": "boolean"
+					},
+					"proxy_redirect": {
+						"type": "string",
+						"enum": [
+							"default",
+							"off"
+						]
+					},
+					"proxy_cookie_domain": {
+						"type": "array",
+						"maxItems": 32,
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"from",
+								"to"
+							],
+							"properties": {
+								"from": {
+									"type": "string",
+									"minLength": 1
+								},
+								"to": {
+									"type": "string",
+									"minLength": 1
+								}
+							}
+						}
+					},
+					"proxy_cookie_path": {
+						"type": "array",
+						"maxItems": 32,
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"from",
+								"to"
+							],
+							"properties": {
+								"from": {
+									"type": "string",
+									"minLength": 1
+								},
+								"to": {
+									"type": "string",
+									"minLength": 1
+								}
+							}
+						}
+					},
+					"proxy_ssl_server_name": {
+						"type": "boolean"
+					},
+					"proxy_ssl_name": {
+						"type": "string",
+						"minLength": 1
+					},
+					"proxy_ssl_verify": {
+						"type": "boolean"
+					},
+					"proxy_ssl_verify_depth": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 2147483647
+					},
+					"proxy_ssl_session_reuse": {
+						"type": "boolean"
+					},
+					"proxy_ssl_protocols": {
+						"type": "array",
+						"minItems": 1,
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"enum": [
+								"TLSv1",
+								"TLSv1.1",
+								"TLSv1.2",
+								"TLSv1.3"
+							]
+						}
+					},
+					"proxy_ssl_ciphers": {
+						"type": "string",
+						"minLength": 1
+					}
+				}
+			},
+			"headers": {
+				"type": "object",
+				"additionalProperties": false,
+				"properties": {
+					"request": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"name"
+							],
+							"properties": {
+								"name": {
+									"type": "string",
+									"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+								},
+								"operation": {
+									"type": "string",
+									"enum": [
+										"set",
+										"remove"
+									],
+									"default": "set"
+								},
+								"value": {
+									"type": "string",
+									"maxLength": 8192
+								},
+								"value_mode": {
+									"type": "string",
+									"enum": [
+										"literal",
+										"variable"
+									],
+									"default": "literal"
+								}
+							}
+						},
+						"description": "Request header rules map to proxy_set_header. Add is intentionally unsupported because proxy_set_header cannot safely append an arbitrary incoming header value."
+					},
+					"response": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"additionalProperties": false,
+							"required": [
+								"name"
+							],
+							"properties": {
+								"name": {
+									"type": "string",
+									"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+								},
+								"operation": {
+									"type": "string",
+									"enum": [
+										"set",
+										"add",
+										"remove"
+									],
+									"default": "set"
+								},
+								"value": {
+									"type": "string",
+									"maxLength": 8192
+								},
+								"value_mode": {
+									"type": "string",
+									"enum": [
+										"literal",
+										"variable"
+									],
+									"default": "literal"
+								}
+							}
+						},
+						"description": "Response set maps to proxy_hide_header plus add_header; add maps to add_header; remove maps to proxy_hide_header."
+					},
+					"hide_response": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "string"
+						}
+					},
+					"pass_response": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "string"
+						}
+					},
+					"ignore_upstream": {
+						"type": "array",
+						"uniqueItems": true,
+						"items": {
+							"type": "string",
+							"enum": [
+								"X-Accel-Expires",
+								"X-Accel-Redirect",
+								"X-Accel-Limit-Rate",
+								"X-Accel-Buffering",
+								"X-Accel-Charset",
+								"Expires",
+								"Cache-Control",
+								"Set-Cookie",
+								"Vary"
+							]
+						}
+					}
+				}
+			}
+		}
+	},
+	"legacy_location": {
+		"type": "object",
+		"description": "Sparse Location overrides. An empty object inherits the server policy; the renderer still emits a complete effective policy.",
+		"additionalProperties": false,
+		"properties": {
+			"client_max_body_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_http_version": {
+				"type": "string",
+				"enum": [
+					"1.0",
+					"1.1"
+				]
+			},
+			"proxy_method": {
+				"type": "string",
+				"pattern": "^(\\$request_method|[A-Z][A-Z0-9_-]{0,31})$"
+			},
+			"proxy_connect_timeout": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+			},
+			"proxy_send_timeout": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+			},
+			"proxy_read_timeout": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+			},
+			"proxy_next_upstream": {
+				"type": "array",
+				"minItems": 1,
+				"uniqueItems": true,
+				"items": {
+					"type": "string",
+					"enum": [
+						"error",
+						"timeout",
+						"invalid_header",
+						"http_500",
+						"http_502",
+						"http_503",
+						"http_504",
+						"http_403",
+						"http_404",
+						"http_429",
+						"non_idempotent",
+						"off"
+					]
+				}
+			},
+			"proxy_next_upstream_timeout": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+			},
+			"proxy_next_upstream_tries": {
+				"type": "integer",
+				"minimum": 0,
+				"maximum": 2147483647
+			},
+			"proxy_ignore_client_abort": {
+				"type": "boolean"
+			},
+			"proxy_socket_keepalive": {
+				"type": "boolean"
+			},
+			"proxy_bind": {
+				"type": "string",
+				"minLength": 1
+			},
+			"proxy_pass_request_headers": {
+				"type": "boolean"
+			},
+			"proxy_pass_request_body": {
+				"type": "boolean"
+			},
+			"proxy_pass_trailers": {
+				"type": "boolean"
+			},
+			"proxy_request_buffering": {
+				"type": "boolean"
+			},
+			"proxy_buffering": {
+				"type": "boolean"
+			},
+			"proxy_buffer_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_buffers": {
+				"type": "array",
+				"minItems": 2,
+				"maxItems": 2,
+				"prefixItems": [
+					{
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 2147483647
+					},
+					{
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					}
+				],
+				"items": false
+			},
+			"proxy_busy_buffers_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_max_temp_file_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_temp_file_write_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_limit_rate": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_headers_hash_bucket_size": {
+				"type": "integer",
+				"minimum": 1,
+				"maximum": 2147483647
+			},
+			"proxy_headers_hash_max_size": {
+				"type": "integer",
+				"minimum": 1,
+				"maximum": 2147483647
+			},
+			"proxy_intercept_errors": {
+				"type": "boolean"
+			},
+			"proxy_force_ranges": {
+				"type": "boolean"
+			},
+			"proxy_redirect": {
+				"type": "string",
+				"enum": [
+					"default",
+					"off"
+				]
+			},
+			"proxy_cookie_domain": {
+				"type": "array",
+				"maxItems": 32,
+				"items": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"from",
+						"to"
+					],
+					"properties": {
+						"from": {
+							"type": "string",
+							"minLength": 1
+						},
+						"to": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				}
+			},
+			"proxy_cookie_path": {
+				"type": "array",
+				"maxItems": 32,
+				"items": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"from",
+						"to"
+					],
+					"properties": {
+						"from": {
+							"type": "string",
+							"minLength": 1
+						},
+						"to": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				}
+			},
+			"proxy_ssl_server_name": {
+				"type": "boolean"
+			},
+			"proxy_ssl_name": {
+				"type": "string",
+				"minLength": 1
+			},
+			"proxy_ssl_verify": {
+				"type": "boolean"
+			},
+			"proxy_ssl_verify_depth": {
+				"type": "integer",
+				"minimum": 0,
+				"maximum": 2147483647
+			},
+			"proxy_ssl_session_reuse": {
+				"type": "boolean"
+			},
+			"proxy_ssl_protocols": {
+				"type": "array",
+				"minItems": 1,
+				"uniqueItems": true,
+				"items": {
+					"type": "string",
+					"enum": [
+						"TLSv1",
+						"TLSv1.1",
+						"TLSv1.2",
+						"TLSv1.3"
+					]
+				}
+			},
+			"proxy_ssl_ciphers": {
+				"type": "string",
+				"minLength": 1
+			},
+			"request_headers": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name"
+					],
+					"properties": {
+						"name": {
+							"type": "string",
+							"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+						},
+						"operation": {
+							"type": "string",
+							"enum": [
+								"set",
+								"remove"
+							],
+							"default": "set"
+						},
+						"value": {
+							"type": "string",
+							"maxLength": 8192
+						},
+						"value_mode": {
+							"type": "string",
+							"enum": [
+								"literal",
+								"variable"
+							],
+							"default": "literal"
+						}
+					}
+				},
+				"description": "Request header rules map to proxy_set_header. Add is intentionally unsupported because proxy_set_header cannot safely append an arbitrary incoming header value."
+			},
+			"response_headers": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name"
+					],
+					"properties": {
+						"name": {
+							"type": "string",
+							"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+						},
+						"operation": {
+							"type": "string",
+							"enum": [
+								"set",
+								"add",
+								"remove"
+							],
+							"default": "set"
+						},
+						"value": {
+							"type": "string",
+							"maxLength": 8192
+						},
+						"value_mode": {
+							"type": "string",
+							"enum": [
+								"literal",
+								"variable"
+							],
+							"default": "literal"
+						}
+					}
+				},
+				"description": "Response set maps to proxy_hide_header plus add_header; add maps to add_header; remove maps to proxy_hide_header."
+			},
+			"hide_response_headers": {
+				"type": "array",
+				"uniqueItems": true,
+				"items": {
+					"type": "string"
+				}
+			},
+			"proxy_pass_headers": {
+				"type": "array",
+				"uniqueItems": true,
+				"items": {
+					"type": "string"
+				}
+			},
+			"proxy_ignore_headers": {
+				"type": "array",
+				"uniqueItems": true,
+				"items": {
+					"type": "string",
+					"enum": [
+						"X-Accel-Expires",
+						"X-Accel-Redirect",
+						"X-Accel-Limit-Rate",
+						"X-Accel-Buffering",
+						"X-Accel-Charset",
+						"Expires",
+						"Cache-Control",
+						"Set-Cookie",
+						"Vary"
+					]
+				}
+			}
+		}
+	},
+	"legacy_server": {
+		"type": "object",
+		"description": "Product-owned explicit proxy policy for the default Location and inherited custom Locations.",
+		"additionalProperties": false,
+		"properties": {
+			"default_location_enabled": {
+				"type": "boolean"
+			},
+			"client_max_body_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_http_version": {
+				"type": "string",
+				"enum": [
+					"1.0",
+					"1.1"
+				]
+			},
+			"proxy_method": {
+				"type": "string",
+				"pattern": "^(\\$request_method|[A-Z][A-Z0-9_-]{0,31})$"
+			},
+			"proxy_connect_timeout": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+			},
+			"proxy_send_timeout": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+			},
+			"proxy_read_timeout": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+			},
+			"proxy_next_upstream": {
+				"type": "array",
+				"minItems": 1,
+				"uniqueItems": true,
+				"items": {
+					"type": "string",
+					"enum": [
+						"error",
+						"timeout",
+						"invalid_header",
+						"http_500",
+						"http_502",
+						"http_503",
+						"http_504",
+						"http_403",
+						"http_404",
+						"http_429",
+						"non_idempotent",
+						"off"
+					]
+				}
+			},
+			"proxy_next_upstream_timeout": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)(ms|s|m|h|d)?$"
+			},
+			"proxy_next_upstream_tries": {
+				"type": "integer",
+				"minimum": 0,
+				"maximum": 2147483647
+			},
+			"proxy_ignore_client_abort": {
+				"type": "boolean"
+			},
+			"proxy_socket_keepalive": {
+				"type": "boolean"
+			},
+			"proxy_bind": {
+				"type": "string",
+				"minLength": 1
+			},
+			"proxy_pass_request_headers": {
+				"type": "boolean"
+			},
+			"proxy_pass_request_body": {
+				"type": "boolean"
+			},
+			"proxy_pass_trailers": {
+				"type": "boolean"
+			},
+			"proxy_request_buffering": {
+				"type": "boolean"
+			},
+			"proxy_buffering": {
+				"type": "boolean"
+			},
+			"proxy_buffer_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_buffers": {
+				"type": "array",
+				"minItems": 2,
+				"maxItems": 2,
+				"prefixItems": [
+					{
+						"type": "integer",
+						"minimum": 1,
+						"maximum": 2147483647
+					},
+					{
+						"type": "string",
+						"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+					}
+				],
+				"items": false
+			},
+			"proxy_busy_buffers_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_max_temp_file_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_temp_file_write_size": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_limit_rate": {
+				"type": "string",
+				"pattern": "^(0|[1-9][0-9]*)([kKmMgG])?$"
+			},
+			"proxy_headers_hash_bucket_size": {
+				"type": "integer",
+				"minimum": 1,
+				"maximum": 2147483647
+			},
+			"proxy_headers_hash_max_size": {
+				"type": "integer",
+				"minimum": 1,
+				"maximum": 2147483647
+			},
+			"proxy_intercept_errors": {
+				"type": "boolean"
+			},
+			"proxy_force_ranges": {
+				"type": "boolean"
+			},
+			"proxy_redirect": {
+				"type": "string",
+				"enum": [
+					"default",
+					"off"
+				]
+			},
+			"proxy_cookie_domain": {
+				"type": "array",
+				"maxItems": 32,
+				"items": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"from",
+						"to"
+					],
+					"properties": {
+						"from": {
+							"type": "string",
+							"minLength": 1
+						},
+						"to": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				}
+			},
+			"proxy_cookie_path": {
+				"type": "array",
+				"maxItems": 32,
+				"items": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"from",
+						"to"
+					],
+					"properties": {
+						"from": {
+							"type": "string",
+							"minLength": 1
+						},
+						"to": {
+							"type": "string",
+							"minLength": 1
+						}
+					}
+				}
+			},
+			"proxy_ssl_server_name": {
+				"type": "boolean"
+			},
+			"proxy_ssl_name": {
+				"type": "string",
+				"minLength": 1
+			},
+			"proxy_ssl_verify": {
+				"type": "boolean"
+			},
+			"proxy_ssl_verify_depth": {
+				"type": "integer",
+				"minimum": 0,
+				"maximum": 2147483647
+			},
+			"proxy_ssl_session_reuse": {
+				"type": "boolean"
+			},
+			"proxy_ssl_protocols": {
+				"type": "array",
+				"minItems": 1,
+				"uniqueItems": true,
+				"items": {
+					"type": "string",
+					"enum": [
+						"TLSv1",
+						"TLSv1.1",
+						"TLSv1.2",
+						"TLSv1.3"
+					]
+				}
+			},
+			"proxy_ssl_ciphers": {
+				"type": "string",
+				"minLength": 1
+			},
+			"request_headers": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name"
+					],
+					"properties": {
+						"name": {
+							"type": "string",
+							"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+						},
+						"operation": {
+							"type": "string",
+							"enum": [
+								"set",
+								"remove"
+							],
+							"default": "set"
+						},
+						"value": {
+							"type": "string",
+							"maxLength": 8192
+						},
+						"value_mode": {
+							"type": "string",
+							"enum": [
+								"literal",
+								"variable"
+							],
+							"default": "literal"
+						}
+					}
+				},
+				"description": "Request header rules map to proxy_set_header. Add is intentionally unsupported because proxy_set_header cannot safely append an arbitrary incoming header value."
+			},
+			"response_headers": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name"
+					],
+					"properties": {
+						"name": {
+							"type": "string",
+							"pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+						},
+						"operation": {
+							"type": "string",
+							"enum": [
+								"set",
+								"add",
+								"remove"
+							],
+							"default": "set"
+						},
+						"value": {
+							"type": "string",
+							"maxLength": 8192
+						},
+						"value_mode": {
+							"type": "string",
+							"enum": [
+								"literal",
+								"variable"
+							],
+							"default": "literal"
+						}
+					}
+				},
+				"description": "Response set maps to proxy_hide_header plus add_header; add maps to add_header; remove maps to proxy_hide_header."
+			},
+			"hide_response_headers": {
+				"type": "array",
+				"uniqueItems": true,
+				"items": {
+					"type": "string"
+				}
+			},
+			"proxy_pass_headers": {
+				"type": "array",
+				"uniqueItems": true,
+				"items": {
+					"type": "string"
+				}
+			},
+			"proxy_ignore_headers": {
+				"type": "array",
+				"uniqueItems": true,
+				"items": {
+					"type": "string",
+					"enum": [
+						"X-Accel-Expires",
+						"X-Accel-Redirect",
+						"X-Accel-Limit-Rate",
+						"X-Accel-Buffering",
+						"X-Accel-Charset",
+						"Expires",
+						"Cache-Control",
+						"Set-Cookie",
+						"Vary"
+					]
+				}
+			}
+		}
+	}
+}

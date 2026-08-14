@@ -6,7 +6,7 @@ import { deleteRedirectionHost, toggleRedirectionHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
 import { useRedirectionHosts } from "src/hooks";
 import { T } from "src/locale";
-import { showDeleteConfirmModal, showHelpModal, showRedirectionHostModal } from "src/modals";
+import { showDeleteConfirmModal, showHelpModal, showRedirectionHostModal, showNginxLogViewerModal } from "src/modals";
 import { MANAGE, REDIRECTION_HOSTS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
@@ -99,6 +99,11 @@ export default function TableWrapper() {
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showRedirectionHostModal(id)}
+					onLogs={(id: number) => {
+						const host = data?.find((item) => item.id === id);
+						const label = host?.domainNames?.join(", ") || `#${id}`;
+						showNginxLogViewerModal("redirection-hosts", id, label);
+					}}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "redirection-host" }} />,

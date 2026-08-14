@@ -1,0 +1,224 @@
+{
+	"operationId": "getProxyHostNginxArtifacts",
+	"summary": "Read Proxy Host Desired/Applied state and deployment artifacts",
+	"tags": [
+		"proxy-hosts"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"proxy_hosts.view"
+			]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "hostID",
+			"required": true,
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			}
+		},
+		{
+			"in": "query",
+			"name": "include_content",
+			"schema": {
+				"type": "string",
+				"example": "deployed,candidate"
+			}
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "Desired configuration, Applied snapshot, migration state, and optionally artifact content",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": [
+							"host_id",
+							"status",
+							"desired_revision",
+							"applied_revision",
+							"deployed",
+							"candidate",
+							"desired",
+							"applied_snapshot",
+							"migration",
+							"last_error",
+							"last_checked_at"
+						],
+						"properties": {
+							"host_id": {
+								"type": "integer",
+								"minimum": 1
+							},
+							"status": {
+								"type": "string",
+								"enum": [
+									"pending",
+									"online",
+									"disabled",
+									"degraded",
+									"error",
+									"recovering"
+								]
+							},
+							"desired_revision": {
+								"type": "integer",
+								"minimum": 1
+							},
+							"applied_revision": {
+								"type": [
+									"integer",
+									"null"
+								],
+								"minimum": 1
+							},
+							"deployed": {
+								"oneOf": [
+									{
+										"type": "object",
+										"additionalProperties": false,
+										"required": [
+											"logical_path",
+											"hash"
+										],
+										"properties": {
+											"logical_path": {
+												"type": "string"
+											},
+											"hash": {
+												"type": "string",
+												"pattern": "^[a-f0-9]{64}$"
+											},
+											"config": {
+												"type": "string"
+											}
+										}
+									},
+									{
+										"type": "null"
+									}
+								]
+							},
+							"candidate": {
+								"oneOf": [
+									{
+										"type": "object",
+										"additionalProperties": false,
+										"required": [
+											"logical_path",
+											"hash"
+										],
+										"properties": {
+											"logical_path": {
+												"type": "string"
+											},
+											"hash": {
+												"type": "string",
+												"pattern": "^[a-f0-9]{64}$"
+											},
+											"config": {
+												"type": "string"
+											}
+										}
+									},
+									{
+										"type": "null"
+									}
+								]
+							},
+							"desired": {
+								"type": "object",
+								"additionalProperties": false,
+								"required": [
+									"schema_version",
+									"revision",
+									"nginx_config"
+								],
+								"properties": {
+									"schema_version": {
+										"type": "integer",
+										"enum": [
+											1,
+											2
+										]
+									},
+									"revision": {
+										"type": [
+											"integer",
+											"null"
+										],
+										"minimum": 1
+									},
+									"nginx_config": {
+										"$ref": "../../../../../components/proxy-host-object.json#/properties/nginx_config"
+									}
+								}
+							},
+							"applied_snapshot": {
+								"type": [
+									"object",
+									"null"
+								]
+							},
+							"migration": {
+								"type": "object",
+								"additionalProperties": false,
+								"required": [
+									"status",
+									"migrated_on",
+									"diagnostics"
+								],
+								"properties": {
+									"status": {
+										"type": "string",
+										"enum": [
+											"pending",
+											"migrated",
+											"review_required",
+											"failed",
+											"native_v2",
+											"resolved",
+											"unknown"
+										]
+									},
+									"migrated_on": {
+										"type": [
+											"string",
+											"null"
+										],
+										"format": "date-time"
+									},
+									"diagnostics": {
+										"type": "array",
+										"items": {
+											"type": "object"
+										}
+									}
+								}
+							},
+							"last_error": {
+								"type": [
+									"object",
+									"null"
+								]
+							},
+							"last_checked_at": {
+								"type": [
+									"string",
+									"null"
+								],
+								"format": "date-time"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

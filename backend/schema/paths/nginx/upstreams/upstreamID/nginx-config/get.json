@@ -1,0 +1,13 @@
+{
+  "operationId": "getUpstreamNginxArtifacts",
+  "summary": "Read Upstream deployment artifacts",
+  "tags": ["upstreams"],
+  "security": [{ "bearerAuth": ["upstreams.view"] }],
+  "parameters": [
+    { "in": "path", "name": "upstreamID", "required": true, "schema": { "type": "integer", "minimum": 1 } },
+    { "in": "query", "name": "include_content", "schema": { "type": "string", "example": "deployed,candidate" } }
+  ],
+  "responses": {
+    "200": { "description": "Deployment artifact metadata and optionally content", "content": { "application/json": { "schema": { "type": "object" } } } }
+  }
+}

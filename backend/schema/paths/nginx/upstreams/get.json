@@ -1,0 +1,5 @@
+{
+	"operationId": "getUpstreams", "summary": "Get all Upstreams", "tags": ["upstreams"],
+	"security": [{ "bearerAuth": ["upstreams.view"] }],
+	"responses": { "200": { "description": "200 response", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "../../../components/upstream-object.json" } } } } } }
+}

@@ -1,0 +1,141 @@
+{
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"schema_version",
+		"profile_version",
+		"server",
+		"locations",
+		"features"
+	],
+	"properties": {
+		"schema_version": {
+			"type": "integer",
+			"const": 2
+		},
+		"profile_version": {
+			"type": "string"
+		},
+		"server": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"effective",
+				"effective_flat",
+				"sources"
+			],
+			"properties": {
+				"effective": {
+					"$ref": "./nginx-proxy-options.json#/server"
+				},
+				"effective_flat": {
+					"$ref": "./nginx-proxy-options.json#/legacy_server"
+				},
+				"sources": {
+					"type": "object",
+					"additionalProperties": {
+						"$ref": "./nginx-proxy-effective-source-record.json"
+					}
+				}
+			}
+		},
+		"locations": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"required": [
+					"location_id",
+					"path",
+					"match_type",
+					"mode",
+					"overrides",
+					"effective",
+					"effective_flat",
+					"sources"
+				],
+				"properties": {
+					"location_id": {
+						"type": [
+							"string",
+							"integer",
+							"null"
+						]
+					},
+					"path": {
+						"type": "string"
+					},
+					"match_type": {
+						"type": "string",
+						"enum": [
+							"prefix",
+							"priority_prefix",
+							"exact",
+							"regex",
+							"regex_i"
+						]
+					},
+					"mode": {
+						"type": "string",
+						"const": "inherit"
+					},
+					"overrides": {
+						"$ref": "./nginx-proxy-options.json#/location/properties/overrides"
+					},
+					"effective": {
+						"$ref": "./nginx-proxy-options.json#/server"
+					},
+					"effective_flat": {
+						"$ref": "./nginx-proxy-options.json#/legacy_server"
+					},
+					"sources": {
+						"type": "object",
+						"additionalProperties": {
+							"$ref": "./nginx-proxy-effective-source-record.json"
+						}
+					}
+				}
+			}
+		},
+		"features": {
+			"type": "object",
+			"additionalProperties": false,
+			"required": [
+				"caching_enabled",
+				"allow_websocket_upgrade",
+				"block_exploits",
+				"certificate_id",
+				"ssl_forced",
+				"hsts_enabled",
+				"access_list_id",
+				"monitoring_logs"
+			],
+			"properties": {
+				"caching_enabled": {
+					"$ref": "./nginx-proxy-effective-feature.json"
+				},
+				"allow_websocket_upgrade": {
+					"$ref": "./nginx-proxy-effective-feature.json"
+				},
+				"block_exploits": {
+					"$ref": "./nginx-proxy-effective-feature.json"
+				},
+				"certificate_id": {
+					"$ref": "./nginx-proxy-effective-feature.json"
+				},
+				"ssl_forced": {
+					"$ref": "./nginx-proxy-effective-feature.json"
+				},
+				"hsts_enabled": {
+					"$ref": "./nginx-proxy-effective-feature.json"
+				},
+				"access_list_id": {
+					"$ref": "./nginx-proxy-effective-feature.json"
+				},
+				"monitoring_logs": {
+					"$ref": "./nginx-proxy-effective-feature.json"
+				}
+			}
+		}
+	}
+}

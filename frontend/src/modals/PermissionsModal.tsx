@@ -151,6 +151,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							proxyHosts: data.permissions?.proxyHosts,
 							redirectionHosts: data.permissions?.redirectionHosts,
 							streams: data.permissions?.streams,
+							upstreams: data.permissions?.upstreams,
 						} as any
 					}
 					onSubmit={onSubmit}

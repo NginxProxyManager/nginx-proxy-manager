@@ -1,0 +1,20 @@
+{
+	"schema_version": 1,
+	"profile_version": "npm-nginx-runtime-v1",
+	"runtime_family": "openresty",
+	"nginx_version": "1.29.2.5",
+	"architectures": [
+		"amd64",
+		"arm64"
+	],
+	"ipv6": true,
+	"modules": [
+		"http_core",
+		"http_headers",
+		"http_proxy"
+	],
+	"image": "nginxproxymanager/nginx-full:certbot-node",
+	"image_digest": "sha256:367def9b117c31c7c8f126feda930f6cd0068cf2511b86e54c2b5433799065c2",
+	"notes": "The recorded digest is the validated amd64 image identity. Multi-architecture release builds use the upstream tag and must pass exact OpenResty version, module, architecture, and generated-config validation on each target before publication.",
+	"validated_on": "2026-08-14"
+}

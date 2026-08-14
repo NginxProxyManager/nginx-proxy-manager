@@ -39,7 +39,19 @@
 			"$ref": "../common.json#/properties/user_id"
 		},
 		"domain_names": {
-			"$ref": "../common.json#/properties/domain_names"
+			"description": "Domain Names separated by a comma. May be empty when nginx_config.listener.mode is port.",
+			"type": "array",
+			"minItems": 0,
+			"maxItems": 100,
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"pattern": "^[^&| @!#%^();:/\\}{=+?<>,~`'\"]+$"
+			},
+			"example": [
+				"example.com",
+				"www.example.com"
+			]
 		},
 		"forward_host": {
 			"type": "string",
@@ -89,7 +101,10 @@
 		},
 		"forward_scheme": {
 			"type": "string",
-			"enum": ["http", "https"],
+			"enum": [
+				"http",
+				"https"
+			],
 			"example": "http"
 		},
 		"enabled": {
@@ -100,11 +115,16 @@
 			"minItems": 0,
 			"items": {
 				"type": "object",
-				"required": ["forward_scheme", "forward_host", "forward_port", "path"],
+				"required": [
+					"path"
+				],
 				"additionalProperties": false,
 				"properties": {
 					"id": {
-						"type": ["integer", "null"]
+						"type": [
+							"integer",
+							"null"
+						]
 					},
 					"path": {
 						"type": "string",
@@ -124,6 +144,86 @@
 					},
 					"advanced_config": {
 						"type": "string"
+					},
+					"target": {
+						"oneOf": [
+							{
+								"type": "object",
+								"additionalProperties": false,
+								"required": [
+									"type",
+									"scheme",
+									"host",
+									"port"
+								],
+								"properties": {
+									"type": {
+										"const": "direct"
+									},
+									"scheme": {
+										"$ref": "#/properties/forward_scheme"
+									},
+									"host": {
+										"$ref": "#/properties/forward_host"
+									},
+									"port": {
+										"$ref": "#/properties/forward_port"
+									}
+								}
+							},
+							{
+								"type": "object",
+								"additionalProperties": false,
+								"required": [
+									"type",
+									"scheme",
+									"upstream_id"
+								],
+								"properties": {
+									"type": {
+										"const": "upstream"
+									},
+									"scheme": {
+										"$ref": "#/properties/forward_scheme"
+									},
+									"upstream_id": {
+										"$ref": "../common.json#/properties/id"
+									}
+								}
+							}
+						]
+					},
+					"location_id": {
+						"type": "string",
+						"format": "uuid"
+					},
+					"match_type": {
+						"type": "string",
+						"enum": [
+							"prefix",
+							"priority_prefix",
+							"exact",
+							"regex",
+							"regex_i"
+						]
+					},
+					"path_mode": {
+						"type": "string",
+						"enum": [
+							"preserve_uri",
+							"strip_prefix",
+							"replace_prefix"
+						]
+					},
+					"nginx_config": {
+						"oneOf": [
+							{
+								"$ref": "./nginx-proxy-options.json#/location"
+							},
+							{
+								"$ref": "./nginx-proxy-options.json#/legacy_location"
+							}
+						]
 					}
 				}
 			},
@@ -142,7 +242,7 @@
 		"hsts_subdomains": {
 			"$ref": "../common.json#/properties/hsts_subdomains"
 		},
-		"trust_forwarded_proto":{
+		"trust_forwarded_proto": {
 			"type": "boolean",
 			"description": "Trust the forwarded headers",
 			"example": false
@@ -173,6 +273,214 @@
 				}
 			],
 			"example": null
+		},
+		"nginx_config": {
+			"description": "Canonical explicit Nginx semantic configuration schema v2. Schema v1 remains accepted only for migration and is normalized to v2 before persistence.",
+			"oneOf": [
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"schema_version",
+						"profile_version",
+						"listener",
+						"server"
+					],
+					"properties": {
+						"schema_version": {
+							"const": 2
+						},
+						"profile_version": {
+							"const": "npm-explicit-proxy-v1"
+						},
+						"server": {
+							"$ref": "./nginx-proxy-options.json#/server"
+						},
+						"listener": {
+							"oneOf": [
+								{
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"mode": {
+											"const": "domain"
+										}
+									}
+								},
+								{
+									"type": "object",
+									"additionalProperties": false,
+									"required": [
+										"mode",
+										"port"
+									],
+									"properties": {
+										"mode": {
+											"const": "port"
+										},
+										"port": {
+											"type": "integer",
+											"minimum": 1,
+											"maximum": 65535
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"schema_version": {
+							"const": 1
+						},
+						"profile_version": {
+							"const": "npm-explicit-proxy-v1"
+						},
+						"server": {
+							"$ref": "./nginx-proxy-options.json#/legacy_server"
+						},
+						"options": {
+							"$ref": "./nginx-proxy-options.json#/legacy_server",
+							"deprecated": true
+						},
+						"listener": {
+							"oneOf": [
+								{
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"mode": {
+											"const": "domain"
+										}
+									}
+								},
+								{
+									"type": "object",
+									"additionalProperties": false,
+									"required": [
+										"mode",
+										"port"
+									],
+									"properties": {
+										"mode": {
+											"const": "port"
+										},
+										"port": {
+											"type": "integer",
+											"minimum": 1,
+											"maximum": 65535
+										}
+									}
+								}
+							]
+						}
+					}
+				}
+			],
+			"example": {
+				"schema_version": 2,
+				"profile_version": "npm-explicit-proxy-v1",
+				"listener": {
+					"mode": "domain"
+				},
+				"server": {
+					"directives": {},
+					"headers": {}
+				}
+			}
+		},
+		"nginx_config_revision": {
+			"type": "integer",
+			"minimum": 1,
+			"example": 1
+		},
+		"nginx_applied_revision": {
+			"type": [
+				"integer",
+				"null"
+			],
+			"minimum": 1,
+			"example": 1
+		},
+		"nginx_applied_enabled": {
+			"type": "boolean",
+			"example": true
+		},
+		"nginx_applied_hash": {
+			"type": [
+				"string",
+				"null"
+			],
+			"pattern": "^sha256:[a-f0-9]{64}$"
+		},
+		"nginx_deployment_status": {
+			"type": "string",
+			"enum": [
+				"pending",
+				"online",
+				"disabled",
+				"degraded",
+				"error",
+				"recovering"
+			]
+		},
+		"nginx_checked_at": {
+			"type": [
+				"string",
+				"null"
+			],
+			"format": "date-time"
+		},
+		"default_target": {
+			"oneOf": [
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"type",
+						"scheme",
+						"host",
+						"port"
+					],
+					"properties": {
+						"type": {
+							"const": "direct"
+						},
+						"scheme": {
+							"$ref": "#/properties/forward_scheme"
+						},
+						"host": {
+							"$ref": "#/properties/forward_host"
+						},
+						"port": {
+							"$ref": "#/properties/forward_port"
+						}
+					}
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"type",
+						"scheme",
+						"upstream_id"
+					],
+					"properties": {
+						"type": {
+							"const": "upstream"
+						},
+						"scheme": {
+							"$ref": "#/properties/forward_scheme"
+						},
+						"upstream_id": {
+							"$ref": "../common.json#/properties/id"
+						}
+					}
+				}
+			]
 		}
 	}
 }

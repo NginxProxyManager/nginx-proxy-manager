@@ -62,6 +62,31 @@ const omitRow = (omissions) => {
 };
 
 /**
+ * Executes a file command and returns both output streams. This is deliberately
+ * separate from execFile() to preserve the historical stdout-only contract.
+ *
+ * @param {String} cmd
+ * @param {Array} args
+ * @param {Object|undefined} options
+ * @returns {Promise<{stdout: string, stderr: string}>}
+ */
+const execFileResult = (cmd, args, options) => {
+	const opts = options || {};
+	return new Promise((resolve, reject) => {
+		nodeExecFile(cmd, args, opts, (err, stdout, stderr) => {
+			if (err && typeof err === "object") {
+				const commandError = new errs.CommandError(stderr, err.code || 1, err);
+				commandError.stdout = stdout || "";
+				commandError.stderr = stderr || "";
+				reject(commandError);
+				return;
+			}
+			resolve({ stdout: (stdout || "").trim(), stderr: (stderr || "").trim() });
+		});
+	});
+};
+
+/**
  * Used in objection query builder
  *
  * @param   {Array}  omissions
@@ -104,4 +129,4 @@ const getRenderEngine = () => {
 	return renderEngine;
 };
 
-export default { exec, execFile, omitRow, omitRows, getRenderEngine };
+export default { exec, execFile, execFileResult, omitRow, omitRows, getRenderEngine };

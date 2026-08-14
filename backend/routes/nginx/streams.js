@@ -1,6 +1,7 @@
 import express from "express";
 import internalStream from "../../internal/stream.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
+import { registerHostLogRoutes } from "./logs.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
 import { debug, express as logger } from "../../logger.js";
@@ -75,6 +76,12 @@ router
  *
  * /api/nginx/streams/123
  */
+/**
+ * Read and follow this host's fixed Nginx access/error log files. These static
+ * routes must stay before the generic /:stream_id resource route.
+ */
+registerHostLogRoutes(router, { scope: "stream", idParam: "stream_id", internalHost: internalStream });
+
 router
 	.route("/:stream_id")
 	.options((_, res) => {

@@ -1,0 +1,21 @@
+{
+  "id": 101,
+  "enabled": true,
+  "domain_names": ["legacy.example.test"],
+  "forward_scheme": "http",
+  "forward_host": "127.0.0.1",
+  "forward_port": 8080,
+  "access_list_id": 0,
+  "certificate_id": 0,
+  "ssl_forced": false,
+  "caching_enabled": false,
+  "block_exploits": true,
+  "allow_websocket_upgrade": false,
+  "http2_support": false,
+  "hsts_enabled": false,
+  "hsts_subdomains": false,
+  "trust_forwarded_proto": false,
+  "advanced_config": "",
+  "locations": [],
+  "nginx_config": { "schema_version": 1 }
+}

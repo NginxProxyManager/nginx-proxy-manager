@@ -8,6 +8,9 @@
 	"access-list.auth-count": {
 		"defaultMessage": "{count} 个用户"
 	},
+	"access-list.help": {
+		"defaultMessage": "选择在请求进入当前 server 前应用的访问列表；选择“公开可访问”则不启用基本认证或来源限制。"
+	},
 	"access-list.help-rules-last": {
 		"defaultMessage": "当至少存在1条规则时，此拒绝所有规则将被添加到最后"
 	},
@@ -263,6 +266,9 @@
 	"domain-names": {
 		"defaultMessage": "域名"
 	},
+	"domain-names.help": {
+		"defaultMessage": "输入一个或多个用于匹配此 server 的域名；每个域名会渲染为 server_name 的一个值。"
+	},
 	"domain-names.max": {
 		"defaultMessage": "{count} 个最多域名数量"
 	},
@@ -281,20 +287,38 @@
 	"domains.force-ssl": {
 		"defaultMessage": "强制 SSL"
 	},
+	"domains.force-ssl.help": {
+		"defaultMessage": "对 HTTP 请求返回重定向，要求客户端使用当前证书对应的 HTTPS 地址。"
+	},
 	"domains.hsts-enabled": {
 		"defaultMessage": "HSTS 已启用"
+	},
+	"domains.hsts-enabled.help": {
+		"defaultMessage": "通过 Strict-Transport-Security 响应头让浏览器在有效期内优先使用 HTTPS。仅在强制 SSL 后可用。"
 	},
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS 子域名"
 	},
+	"domains.hsts-subdomains.help": {
+		"defaultMessage": "将 HSTS 策略同时应用到所有子域名；请仅在所有子域名均支持 HTTPS 时启用。"
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 支持"
+	},
+	"domains.http2-support.help": {
+		"defaultMessage": "在 HTTPS 监听器上启用 HTTP/2。需要已选择 SSL 证书。"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "信任上游代理传递的协议类型头"
 	},
+	"domains.trust-forwarded-proto.help": {
+		"defaultMessage": "信任前置代理传入的 X-Forwarded-Proto，以避免 HTTPS 请求被错误重定向。仅在可信代理链后使用。"
+	},
 	"domains.use-dns": {
 		"defaultMessage": "使用DNS验证"
+	},
+	"domains.use-dns.help": {
+		"defaultMessage": "使用 DNS-01 验证申请证书，适用于通配符域名或无法从公网访问 HTTP 验证路径的场景。"
 	},
 	"email-address": {
 		"defaultMessage": "邮箱地址"
@@ -368,8 +392,14 @@
 	"host.forward-port": {
 		"defaultMessage": "转发端口"
 	},
+	"host.forward-port.help": {
+		"defaultMessage": "上游服务监听的 TCP 端口，范围为 1 到 65535。"
+	},
 	"host.forward-scheme": {
 		"defaultMessage": "协议"
+	},
+	"host.forward-scheme.help": {
+		"defaultMessage": "连接上游服务所使用的协议。仅当上游自身提供 TLS 时选择 https。"
 	},
 	"hosts": {
 		"defaultMessage": "主机列表"
@@ -392,11 +422,491 @@
 	"login.title": {
 		"defaultMessage": "登录您的账户"
 	},
+	"nginx-config.help": {
+		"defaultMessage": "仅填写界面未覆盖的原始 server 级 Nginx 指令。保存前会在预览中校验，受保护或与结构化配置冲突的指令会被拒绝。"
+	},
 	"nginx-config.label": {
 		"defaultMessage": "自定义 Nginx 配置"
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# 在此输入您的自定义 Nginx 配置，风险自负！"
+	},
+	"nginx-deployment.status": {
+		"defaultMessage": "Nginx"
+	},
+	"nginx-deployment.status.applied": {
+		"defaultMessage": "已应用"
+	},
+	"nginx-deployment.status.degraded": {
+		"defaultMessage": "降级"
+	},
+	"nginx-deployment.status.deleted": {
+		"defaultMessage": "已删除"
+	},
+	"nginx-deployment.status.deploying": {
+		"defaultMessage": "部署中"
+	},
+	"nginx-deployment.status.disabled": {
+		"defaultMessage": "已禁用"
+	},
+	"nginx-deployment.status.diverged": {
+		"defaultMessage": "配置不一致"
+	},
+	"nginx-deployment.status.error": {
+		"defaultMessage": "错误"
+	},
+	"nginx-deployment.status.failed": {
+		"defaultMessage": "失败"
+	},
+	"nginx-deployment.status.online": {
+		"defaultMessage": "在线"
+	},
+	"nginx-deployment.status.pending": {
+		"defaultMessage": "待部署"
+	},
+	"nginx-deployment.status.recovering": {
+		"defaultMessage": "恢复中"
+	},
+	"nginx-options.cache-control": {
+		"defaultMessage": "Cache-Control"
+	},
+	"nginx-options.client-max-body-size": {
+		"defaultMessage": "最大请求体"
+	},
+	"nginx-options.client-max-body-size.help": {
+		"defaultMessage": "限制客户端请求体大小，例如 50m。超过限制的请求会由 Nginx 拒绝。"
+	},
+	"nginx-options.cookie-from": {
+		"defaultMessage": "源值"
+	},
+	"nginx-options.cookie-from.help": {
+		"defaultMessage": "上游返回的、需要被改写的 Cookie 域名或路径。"
+	},
+	"nginx-options.cookie-rewrite": {
+		"defaultMessage": "Cookie 重写"
+	},
+	"nginx-options.cookie-rewrite-help": {
+		"defaultMessage": "填写来源和替换值；不允许空格或分号。"
+	},
+	"nginx-options.cookie-to": {
+		"defaultMessage": "替换为"
+	},
+	"nginx-options.cookie-to.help": {
+		"defaultMessage": "在 Set-Cookie 响应中用于替换源值的域名或路径。"
+	},
+	"nginx-options.expires": {
+		"defaultMessage": "Expires"
+	},
+	"nginx-options.failover-429": {
+		"defaultMessage": "HTTP 429"
+	},
+	"nginx-options.failover-500": {
+		"defaultMessage": "HTTP 500"
+	},
+	"nginx-options.failover-502": {
+		"defaultMessage": "HTTP 502"
+	},
+	"nginx-options.failover-503": {
+		"defaultMessage": "HTTP 503"
+	},
+	"nginx-options.failover-504": {
+		"defaultMessage": "HTTP 504"
+	},
+	"nginx-options.failover-error": {
+		"defaultMessage": "连接错误"
+	},
+	"nginx-options.failover-invalid-header": {
+		"defaultMessage": "无效响应头"
+	},
+	"nginx-options.failover-non-idempotent": {
+		"defaultMessage": "非幂等请求"
+	},
+	"nginx-options.failover-timeout": {
+		"defaultMessage": "超时"
+	},
+	"nginx-options.header-add": {
+		"defaultMessage": "追加"
+	},
+	"nginx-options.header-input-help": {
+		"defaultMessage": "以英文逗号分隔响应头名称。使用上方的行编辑器可添加、设置或移除结构化头规则。"
+	},
+	"nginx-options.header-mode": {
+		"defaultMessage": "值类型"
+	},
+	"nginx-options.header-mode.help": {
+		"defaultMessage": "“固定文本”按原样发送值；“允许的变量”会在请求时渲染受支持的 Nginx 变量。"
+	},
+	"nginx-options.header-name": {
+		"defaultMessage": "头名称"
+	},
+	"nginx-options.header-name.help": {
+		"defaultMessage": "要管理的 HTTP 头名称；名称不区分大小写。"
+	},
+	"nginx-options.header-operation": {
+		"defaultMessage": "操作"
+	},
+	"nginx-options.header-operation.help": {
+		"defaultMessage": "可用操作取决于规则作用于上游请求头还是客户端响应头。"
+	},
+	"nginx-options.header-operation.request.help": {
+		"defaultMessage": "“设置”对应 proxy_set_header；“移除”对应值为空的 proxy_set_header，从而不向上游传递该请求头。"
+	},
+	"nginx-options.header-operation.response.help": {
+		"defaultMessage": "“设置”会先隐藏上游响应头再输出一个受管值；“追加”会输出额外响应头值；“移除”会隐藏上游响应头。"
+	},
+	"nginx-options.header-remove": {
+		"defaultMessage": "移除"
+	},
+	"nginx-options.header-set": {
+		"defaultMessage": "设置"
+	},
+	"nginx-options.header-value": {
+		"defaultMessage": "头值"
+	},
+	"nginx-options.header-value.help": {
+		"defaultMessage": "发送给上游或客户端的头值；选择“允许的变量”可使用受支持的 Nginx 变量。"
+	},
+	"nginx-options.http-1-0": {
+		"defaultMessage": "HTTP/1.0"
+	},
+	"nginx-options.http-1-1": {
+		"defaultMessage": "HTTP/1.1"
+	},
+	"nginx-options.inherit": {
+		"defaultMessage": "使用 Nginx 默认值 / 继承"
+	},
+	"nginx-options.literal": {
+		"defaultMessage": "文本"
+	},
+	"nginx-options.method-delete": {
+		"defaultMessage": "DELETE"
+	},
+	"nginx-options.method-get": {
+		"defaultMessage": "GET"
+	},
+	"nginx-options.method-head": {
+		"defaultMessage": "HEAD"
+	},
+	"nginx-options.method-options": {
+		"defaultMessage": "OPTIONS"
+	},
+	"nginx-options.method-patch": {
+		"defaultMessage": "PATCH"
+	},
+	"nginx-options.method-post": {
+		"defaultMessage": "POST"
+	},
+	"nginx-options.method-put": {
+		"defaultMessage": "PUT"
+	},
+	"nginx-options.preview": {
+		"defaultMessage": "预览渲染后的配置"
+	},
+	"nginx-options.protocol-request": {
+		"defaultMessage": "协议与请求转发"
+	},
+	"nginx-options.proxy-bind": {
+		"defaultMessage": "proxy_bind 源 IP"
+	},
+	"nginx-options.proxy-bind.help": {
+		"defaultMessage": "指定连接上游时使用的本地源 IP 地址；留空则由系统路由决定。"
+	},
+	"nginx-options.proxy-buffer-size": {
+		"defaultMessage": "proxy_buffer_size"
+	},
+	"nginx-options.proxy-buffer-size.help": {
+		"defaultMessage": "读取上游响应头及首块响应体所用缓冲区大小。"
+	},
+	"nginx-options.proxy-buffering": {
+		"defaultMessage": "代理缓冲"
+	},
+	"nginx-options.proxy-buffers-count": {
+		"defaultMessage": "proxy_buffers 数量"
+	},
+	"nginx-options.proxy-buffers-count.help": {
+		"defaultMessage": "为响应体分配的缓冲区数量，应与单个缓冲区大小配合设置。"
+	},
+	"nginx-options.proxy-buffers-size": {
+		"defaultMessage": "proxy_buffers 单个大小"
+	},
+	"nginx-options.proxy-buffers-size.help": {
+		"defaultMessage": "每个响应体代理缓冲区的大小，例如 8k。"
+	},
+	"nginx-options.proxy-busy-buffers-size": {
+		"defaultMessage": "proxy_busy_buffers_size"
+	},
+	"nginx-options.proxy-busy-buffers-size.help": {
+		"defaultMessage": "客户端正在接收响应时，允许处于忙碌状态的代理缓冲区总大小。"
+	},
+	"nginx-options.proxy-connect-timeout": {
+		"defaultMessage": "连接超时"
+	},
+	"nginx-options.proxy-connect-timeout.help": {
+		"defaultMessage": "建立到上游 TCP/TLS 连接允许的最长时间。"
+	},
+	"nginx-options.proxy-cookie-domain": {
+		"defaultMessage": "proxy_cookie_domain"
+	},
+	"nginx-options.proxy-cookie-path": {
+		"defaultMessage": "proxy_cookie_path"
+	},
+	"nginx-options.proxy-force-ranges": {
+		"defaultMessage": "proxy_force_ranges"
+	},
+	"nginx-options.proxy-force-ranges.help": {
+		"defaultMessage": "即使上游未提供 Accept-Ranges，也允许 Nginx 为缓存响应处理 Range 请求。"
+	},
+	"nginx-options.proxy-headers-hash-bucket-size": {
+		"defaultMessage": "proxy_headers_hash_bucket_size"
+	},
+	"nginx-options.proxy-headers-hash-bucket-size.help": {
+		"defaultMessage": "存放代理请求头名称的哈希桶大小。仅在 Nginx 报告头哈希不足时调整。"
+	},
+	"nginx-options.proxy-headers-hash-max-size": {
+		"defaultMessage": "proxy_headers_hash_max_size"
+	},
+	"nginx-options.proxy-headers-hash-max-size.help": {
+		"defaultMessage": "代理请求头哈希表的最大大小。仅在 Nginx 报告头哈希不足时调整。"
+	},
+	"nginx-options.proxy-hide-header": {
+		"defaultMessage": "proxy_hide_header"
+	},
+	"nginx-options.proxy-hide-header.help": {
+		"defaultMessage": "从上游响应中隐藏一个或多个头名称，多个名称用英文逗号分隔。"
+	},
+	"nginx-options.proxy-http-version": {
+		"defaultMessage": "proxy_http_version"
+	},
+	"nginx-options.proxy-http-version.help": {
+		"defaultMessage": "设置 Nginx 与上游通信使用的 HTTP 版本。使用 WebSocket 或分块传输时通常选择 HTTP/1.1。"
+	},
+	"nginx-options.proxy-ignore-client-abort": {
+		"defaultMessage": "proxy_ignore_client_abort"
+	},
+	"nginx-options.proxy-ignore-client-abort.help": {
+		"defaultMessage": "客户端提前断开后仍继续读取上游响应。通常应保持关闭以节省资源。"
+	},
+	"nginx-options.proxy-ignore-headers": {
+		"defaultMessage": "proxy_ignore_headers"
+	},
+	"nginx-options.proxy-ignore-headers.help": {
+		"defaultMessage": "忽略上游通过这些响应头传递的内部控制信息，例如缓存或内部重定向指令。"
+	},
+	"nginx-options.proxy-intercept-errors": {
+		"defaultMessage": "proxy_intercept_errors"
+	},
+	"nginx-options.proxy-intercept-errors.help": {
+		"defaultMessage": "由 Nginx 接管指定错误状态码，而不是直接将上游错误响应返回给客户端。"
+	},
+	"nginx-options.proxy-limit-rate": {
+		"defaultMessage": "proxy_limit_rate"
+	},
+	"nginx-options.proxy-limit-rate.help": {
+		"defaultMessage": "限制 Nginx 从上游读取响应的速率，单位为字节/秒；0 表示不限速。"
+	},
+	"nginx-options.proxy-max-temp-file-size": {
+		"defaultMessage": "proxy_max_temp_file_size"
+	},
+	"nginx-options.proxy-max-temp-file-size.help": {
+		"defaultMessage": "响应过大而需要写入临时文件时，单个临时文件允许的最大大小。设为 0 可禁止写临时文件。"
+	},
+	"nginx-options.proxy-method": {
+		"defaultMessage": "proxy_method"
+	},
+	"nginx-options.proxy-method.help": {
+		"defaultMessage": "用固定方法替换客户端的请求方法。留空时保留原请求方法。"
+	},
+	"nginx-options.proxy-next-upstream": {
+		"defaultMessage": "proxy_next_upstream"
+	},
+	"nginx-options.proxy-next-upstream-timeout": {
+		"defaultMessage": "proxy_next_upstream_timeout"
+	},
+	"nginx-options.proxy-next-upstream-timeout.help": {
+		"defaultMessage": "发生可重试失败后，尝试其他上游的总时限。"
+	},
+	"nginx-options.proxy-next-upstream-tries": {
+		"defaultMessage": "proxy_next_upstream_tries"
+	},
+	"nginx-options.proxy-next-upstream-tries.help": {
+		"defaultMessage": "发生可重试失败时，最多尝试的上游次数。留空时使用 Nginx 默认值。"
+	},
+	"nginx-options.proxy-next-upstream.help": {
+		"defaultMessage": "选择需要尝试下一个上游的失败条件。全部不选时将使用 Nginx 默认值。"
+	},
+	"nginx-options.proxy-pass-header": {
+		"defaultMessage": "proxy_pass_header"
+	},
+	"nginx-options.proxy-pass-header.help": {
+		"defaultMessage": "显式允许传递 Nginx 默认不会传递的上游响应头，多个名称用英文逗号分隔。"
+	},
+	"nginx-options.proxy-pass-request-body": {
+		"defaultMessage": "proxy_pass_request_body"
+	},
+	"nginx-options.proxy-pass-request-body.help": {
+		"defaultMessage": "决定是否把客户端请求体转发给上游。通常应保持开启。"
+	},
+	"nginx-options.proxy-pass-request-headers": {
+		"defaultMessage": "proxy_pass_request_headers"
+	},
+	"nginx-options.proxy-pass-request-headers.help": {
+		"defaultMessage": "决定是否把客户端请求头转发给上游。关闭后仅发送明确配置的代理请求头。"
+	},
+	"nginx-options.proxy-pass-trailers": {
+		"defaultMessage": "proxy_pass_trailers"
+	},
+	"nginx-options.proxy-pass-trailers.help": {
+		"defaultMessage": "决定是否把 HTTP 分块响应的 trailer 头转发给客户端；需要兼容的 HTTP/1.1 上游。"
+	},
+	"nginx-options.proxy-read-timeout": {
+		"defaultMessage": "读取超时"
+	},
+	"nginx-options.proxy-read-timeout.help": {
+		"defaultMessage": "从上游读取响应时，两次读操作之间允许的最长间隔；SSE/流式响应通常需要设得更长。"
+	},
+	"nginx-options.proxy-redirect": {
+		"defaultMessage": "proxy_redirect"
+	},
+	"nginx-options.proxy-redirect.help": {
+		"defaultMessage": "重写上游响应中的 Location 和 Refresh 重定向地址。选择继承时不额外生成该指令。"
+	},
+	"nginx-options.proxy-request-buffering": {
+		"defaultMessage": "请求缓冲"
+	},
+	"nginx-options.proxy-send-timeout": {
+		"defaultMessage": "发送超时"
+	},
+	"nginx-options.proxy-send-timeout.help": {
+		"defaultMessage": "向上游发送请求数据时，两次写操作之间允许的最长间隔。"
+	},
+	"nginx-options.proxy-socket-keepalive": {
+		"defaultMessage": "proxy_socket_keepalive"
+	},
+	"nginx-options.proxy-socket-keepalive.help": {
+		"defaultMessage": "为到上游的连接启用操作系统 TCP keepalive。"
+	},
+	"nginx-options.proxy-ssl-ciphers": {
+		"defaultMessage": "proxy_ssl_ciphers"
+	},
+	"nginx-options.proxy-ssl-ciphers.help": {
+		"defaultMessage": "连接 HTTPS 上游时允许使用的 TLS 加密套件字符串。"
+	},
+	"nginx-options.proxy-ssl-name": {
+		"defaultMessage": "proxy_ssl_name"
+	},
+	"nginx-options.proxy-ssl-name.help": {
+		"defaultMessage": "HTTPS 上游 TLS 握手中使用的服务器名称。留空时通常使用上游主机名。"
+	},
+	"nginx-options.proxy-ssl-protocols": {
+		"defaultMessage": "proxy_ssl_protocols"
+	},
+	"nginx-options.proxy-ssl-protocols.help": {
+		"defaultMessage": "限制连接 HTTPS 上游时允许协商的 TLS 协议版本。"
+	},
+	"nginx-options.proxy-ssl-server-name": {
+		"defaultMessage": "上游 TLS SNI"
+	},
+	"nginx-options.proxy-ssl-session-reuse": {
+		"defaultMessage": "proxy_ssl_session_reuse"
+	},
+	"nginx-options.proxy-ssl-session-reuse.help": {
+		"defaultMessage": "复用到 HTTPS 上游的 TLS 会话以减少握手开销；上游兼容性异常时可关闭。"
+	},
+	"nginx-options.proxy-ssl-verify": {
+		"defaultMessage": "proxy_ssl_verify"
+	},
+	"nginx-options.proxy-ssl-verify-depth": {
+		"defaultMessage": "proxy_ssl_verify_depth"
+	},
+	"nginx-options.proxy-ssl-verify-depth.help": {
+		"defaultMessage": "校验 HTTPS 上游证书链时允许的最大证书深度。"
+	},
+	"nginx-options.proxy-ssl-verify.help": {
+		"defaultMessage": "启用后将容器系统 CA 证书包作为 proxy_ssl_trusted_certificate 使用。"
+	},
+	"nginx-options.proxy-temp-file-write-size": {
+		"defaultMessage": "proxy_temp_file_write_size"
+	},
+	"nginx-options.proxy-temp-file-write-size.help": {
+		"defaultMessage": "向代理临时文件写入响应时的单次写入大小。"
+	},
+	"nginx-options.redirect-default": {
+		"defaultMessage": "默认行为"
+	},
+	"nginx-options.redirect-off": {
+		"defaultMessage": "关闭"
+	},
+	"nginx-options.rendering": {
+		"defaultMessage": "正在渲染…"
+	},
+	"nginx-options.request-headers": {
+		"defaultMessage": "请求头（proxy_set_header）"
+	},
+	"nginx-options.request-headers.help": {
+		"defaultMessage": "按规则设置或移除发送给上游的请求头。设置 Host 时会取代系统默认 Host 头。"
+	},
+	"nginx-options.response-buffering": {
+		"defaultMessage": "响应缓冲与磁盘 I/O"
+	},
+	"nginx-options.response-handling": {
+		"defaultMessage": "响应头与重定向"
+	},
+	"nginx-options.response-headers": {
+		"defaultMessage": "响应头（add_header）"
+	},
+	"nginx-options.response-headers.help": {
+		"defaultMessage": "按规则设置、追加或移除返回给客户端的响应头。"
+	},
+	"nginx-options.set-cookie": {
+		"defaultMessage": "Set-Cookie"
+	},
+	"nginx-options.structured-help": {
+		"defaultMessage": "结构化选项会以确定性方式渲染，并优先于冲突的原始指令。"
+	},
+	"nginx-options.timeout-format-help": {
+		"defaultMessage": "超时字段支持整数秒或 Nginx 整数时长：60（秒）、500ms、60s、2m、1h、1d。不支持小数，例如 1.5s；请改用 1500ms。"
+	},
+	"nginx-options.timeouts-failover": {
+		"defaultMessage": "超时、连接与故障转移"
+	},
+	"nginx-options.tlsv1": {
+		"defaultMessage": "TLSv1"
+	},
+	"nginx-options.tlsv1-1": {
+		"defaultMessage": "TLSv1.1"
+	},
+	"nginx-options.tlsv1-2": {
+		"defaultMessage": "TLSv1.2"
+	},
+	"nginx-options.tlsv1-3": {
+		"defaultMessage": "TLSv1.3"
+	},
+	"nginx-options.unavailable-help": {
+		"defaultMessage": "缓存区与缓存策略、文件系统路径、上游客户端证书文件、transparent 绑定、当前 Nginx 构建不支持的 proxy_socket_rcvbuf/proxy_socket_sndbuf、商业版指令及其他不可用指令，均不会放入此 Proxy Host 表单。请通过受控的全局 Nginx 配置管理这些项目。"
+	},
+	"nginx-options.upstream-tls": {
+		"defaultMessage": "上游 TLS"
+	},
+	"nginx-options.variable": {
+		"defaultMessage": "允许的变量"
+	},
+	"nginx-options.vary": {
+		"defaultMessage": "Vary"
+	},
+	"nginx-options.x-accel-buffering": {
+		"defaultMessage": "X-Accel-Buffering"
+	},
+	"nginx-options.x-accel-charset": {
+		"defaultMessage": "X-Accel-Charset"
+	},
+	"nginx-options.x-accel-expires": {
+		"defaultMessage": "X-Accel-Expires"
+	},
+	"nginx-options.x-accel-limit-rate": {
+		"defaultMessage": "X-Accel-Limit-Rate"
+	},
+	"nginx-options.x-accel-redirect": {
+		"defaultMessage": "X-Accel-Redirect"
 	},
 	"no-permission-error": {
 		"defaultMessage": "您无权查看此内容。"
@@ -512,11 +1022,548 @@
 	"proxy-host.forward-host": {
 		"defaultMessage": "转发主机名 / IP"
 	},
+	"proxy-host.forward-host.help": {
+		"defaultMessage": "上游服务的主机名、IPv4/IPv6 地址，或 Docker 网络中可解析的服务名。"
+	},
+	"proxy-host.location.advanced": {
+		"defaultMessage": "Location 级高级指令"
+	},
+	"proxy-host.location.advanced.help": {
+		"defaultMessage": "这些原始指令会在系统管理的代理指令之前渲染到当前 location 块中；仅用于上方界面尚未提供的指令。"
+	},
+	"proxy-host.location.block": {
+		"defaultMessage": "Location 块 {number}"
+	},
+	"proxy-host.location.empty": {
+		"defaultMessage": "没有自定义 Location"
+	},
+	"proxy-host.location.empty.help": {
+		"defaultMessage": "默认 location / 会代理所有请求。仅当某个路径需要不同的匹配或上游行为时才添加 Location。"
+	},
+	"proxy-host.location.empty.help.no-default": {
+		"defaultMessage": "默认 location 已关闭。请至少添加一个 Location 来代理请求；否则此 server 将没有代理路由。"
+	},
+	"proxy-host.location.forward-path": {
+		"defaultMessage": "替换后的上游路径"
+	},
+	"proxy-host.location.forward-path.help": {
+		"defaultMessage": "当 URI 映射选择“替换前缀”时，用此路径替换匹配到的前缀；通常以 / 结尾。"
+	},
+	"proxy-host.location.match-type": {
+		"defaultMessage": "Location 匹配方式"
+	},
+	"proxy-host.location.match-type.help": {
+		"defaultMessage": "决定 Nginx 如何比较请求 URI 与路径。前缀适用于大多数路由；正则表达式仅在需要模式匹配时使用。"
+	},
+	"proxy-host.location.match.exact": {
+		"defaultMessage": "精确匹配 — location = /path"
+	},
+	"proxy-host.location.match.prefix": {
+		"defaultMessage": "前缀匹配 — location /path/"
+	},
+	"proxy-host.location.match.priority-prefix": {
+		"defaultMessage": "优先前缀 — location ^~ /path/"
+	},
+	"proxy-host.location.match.regex": {
+		"defaultMessage": "正则匹配 — location ~ pattern"
+	},
+	"proxy-host.location.match.regex-i": {
+		"defaultMessage": "忽略大小写正则 — location ~* pattern"
+	},
+	"proxy-host.location.path": {
+		"defaultMessage": "匹配路径或表达式"
+	},
+	"proxy-host.location.path-mode": {
+		"defaultMessage": "URI 转发方式"
+	},
+	"proxy-host.location.path-mode.help": {
+		"defaultMessage": "移除或替换前缀要求使用非根路径并以斜杠结尾，例如 /api/。"
+	},
+	"proxy-host.location.path-mode.locked": {
+		"defaultMessage": "精确匹配和正则匹配只能保留原始请求 URI。"
+	},
+	"proxy-host.location.path-mode.preserve": {
+		"defaultMessage": "保留请求 URI"
+	},
+	"proxy-host.location.path-mode.replace": {
+		"defaultMessage": "替换已匹配前缀"
+	},
+	"proxy-host.location.path-mode.strip": {
+		"defaultMessage": "移除已匹配前缀"
+	},
+	"proxy-host.location.path.help": {
+		"defaultMessage": "此 location 要匹配的 URI 路径或正则表达式。普通前缀路径通常以 / 开头。"
+	},
+	"proxy-host.location.proxy-directives": {
+		"defaultMessage": "Location 代理指令"
+	},
+	"proxy-host.location.proxy-directives.help": {
+		"defaultMessage": "仅覆盖当前 Location 继承自 Server 的代理指令。"
+	},
+	"proxy-host.location.proxy-directives.inherit.help": {
+		"defaultMessage": "当前 Location 正在继承 Server 的代理指令。启用覆盖后，会从当前 Server 配置复制一份作为起点。"
+	},
+	"proxy-host.location.proxy-directives.override": {
+		"defaultMessage": "覆盖 Server 指令"
+	},
+	"proxy-host.location.proxy-directives.override.help": {
+		"defaultMessage": "当前 Location 使用独立的代理指令集；之后修改 Server 指令不会改变这里的覆盖值。"
+	},
+	"proxy-host.location.proxy-directives.reset": {
+		"defaultMessage": "恢复继承 Server 指令"
+	},
+	"proxy-host.monitoring.action": {
+		"defaultMessage": "监控"
+	},
+	"proxy-host.monitoring.active-check-description": {
+		"defaultMessage": "按计划运行探测并更新服务健康状态。"
+	},
+	"proxy-host.monitoring.active-probe": {
+		"defaultMessage": "主动探测"
+	},
+	"proxy-host.monitoring.auto-refresh": {
+		"defaultMessage": "自动刷新"
+	},
+	"proxy-host.monitoring.back-to-dashboard": {
+		"defaultMessage": "返回监控看板"
+	},
+	"proxy-host.monitoring.check-now": {
+		"defaultMessage": "立即检查"
+	},
+	"proxy-host.monitoring.checking": {
+		"defaultMessage": "检查中…"
+	},
+	"proxy-host.monitoring.collect-request-metrics": {
+		"defaultMessage": "采集请求指标"
+	},
+	"proxy-host.monitoring.collection": {
+		"defaultMessage": "数据采集"
+	},
+	"proxy-host.monitoring.custom-range": {
+		"defaultMessage": "自定义时间范围"
+	},
+	"proxy-host.monitoring.dashboard": {
+		"defaultMessage": "监控看板"
+	},
+	"proxy-host.monitoring.enable": {
+		"defaultMessage": "启用监控"
+	},
+	"proxy-host.monitoring.enable-description": {
+		"defaultMessage": "开启或关闭服务监控与健康状态评估。"
+	},
+	"proxy-host.monitoring.interval": {
+		"defaultMessage": "间隔（秒）"
+	},
+	"proxy-host.monitoring.invalid-range": {
+		"defaultMessage": "开始时间必须早于结束时间。"
+	},
+	"proxy-host.monitoring.loading": {
+		"defaultMessage": "正在加载监控数据…"
+	},
+	"proxy-host.monitoring.metric.5xx-ratio": {
+		"defaultMessage": "5xx 比例"
+	},
+	"proxy-host.monitoring.metric.body-traffic": {
+		"defaultMessage": "响应正文流量"
+	},
+	"proxy-host.monitoring.metric.client-errors": {
+		"defaultMessage": "4xx 错误"
+	},
+	"proxy-host.monitoring.metric.consecutive-failures": {
+		"defaultMessage": "连续失败次数"
+	},
+	"proxy-host.monitoring.metric.consecutive-successes": {
+		"defaultMessage": "连续成功次数"
+	},
+	"proxy-host.monitoring.metric.gateway-errors": {
+		"defaultMessage": "网关错误"
+	},
+	"proxy-host.monitoring.metric.http-status": {
+		"defaultMessage": "HTTP 状态码"
+	},
+	"proxy-host.monitoring.metric.last-checked": {
+		"defaultMessage": "最后检查时间"
+	},
+	"proxy-host.monitoring.metric.last-event": {
+		"defaultMessage": "最近请求时间"
+	},
+	"proxy-host.monitoring.metric.last-failure": {
+		"defaultMessage": "最近失败时间"
+	},
+	"proxy-host.monitoring.metric.last-probe": {
+		"defaultMessage": "最近探测"
+	},
+	"proxy-host.monitoring.metric.last-success": {
+		"defaultMessage": "最近成功时间"
+	},
+	"proxy-host.monitoring.metric.p95-latency": {
+		"defaultMessage": "p95 延迟"
+	},
+	"proxy-host.monitoring.metric.requests": {
+		"defaultMessage": "请求数"
+	},
+	"proxy-host.monitoring.metric.server-errors": {
+		"defaultMessage": "5xx 错误"
+	},
+	"proxy-host.monitoring.metric.synthetic-requests": {
+		"defaultMessage": "主动探测请求数"
+	},
+	"proxy-host.monitoring.metric.traffic": {
+		"defaultMessage": "流量"
+	},
+	"proxy-host.monitoring.metric.worker-seen": {
+		"defaultMessage": "监控进程最近在线"
+	},
+	"proxy-host.monitoring.no-data": {
+		"defaultMessage": "该时间范围内没有监控数据。"
+	},
+	"proxy-host.monitoring.no-probe-result": {
+		"defaultMessage": "尚无探测结果"
+	},
+	"proxy-host.monitoring.passive-not-applied": {
+		"defaultMessage": "已部署的 Nginx 配置尚未确认被动指标采集。"
+	},
+	"proxy-host.monitoring.performance": {
+		"defaultMessage": "延迟与流量"
+	},
+	"proxy-host.monitoring.performance.latency": {
+		"defaultMessage": "p95 延迟"
+	},
+	"proxy-host.monitoring.performance.traffic": {
+		"defaultMessage": "流量"
+	},
+	"proxy-host.monitoring.probe-health": {
+		"defaultMessage": "探测健康度"
+	},
+	"proxy-host.monitoring.probe-mode": {
+		"defaultMessage": "探测模式"
+	},
+	"proxy-host.monitoring.probe-mode.both": {
+		"defaultMessage": "两者"
+	},
+	"proxy-host.monitoring.probe-mode.end-to-end": {
+		"defaultMessage": "端到端"
+	},
+	"proxy-host.monitoring.probe-mode.help": {
+		"defaultMessage": "查看各探测模式的说明"
+	},
+	"proxy-host.monitoring.probe-mode.help.both": {
+		"defaultMessage": "同时运行 HTTP 上游与端到端检查；两项均成功才算成功。"
+	},
+	"proxy-host.monitoring.probe-mode.help.end-to-end": {
+		"defaultMessage": "使用配置的域名和 SNI 访问本机 Nginx，验证 TLS、路由及上游响应。"
+	},
+	"proxy-host.monitoring.probe-mode.help.http": {
+		"defaultMessage": "直接向上游发送 HTTP 请求并检查响应；不检查 Nginx 路由和证书。"
+	},
+	"proxy-host.monitoring.probe-mode.help.tcp": {
+		"defaultMessage": "检查能否与上游主机和端口建立 TCP 连接。"
+	},
+	"proxy-host.monitoring.probe-mode.help.tls": {
+		"defaultMessage": "检查与上游的直接 TLS 握手；证书校验遵循 TLS 验证设置。"
+	},
+	"proxy-host.monitoring.probe-mode.http": {
+		"defaultMessage": "HTTP 上游"
+	},
+	"proxy-host.monitoring.range.15m": {
+		"defaultMessage": "15 分钟"
+	},
+	"proxy-host.monitoring.range.1h": {
+		"defaultMessage": "1 小时"
+	},
+	"proxy-host.monitoring.range.24h": {
+		"defaultMessage": "24 小时"
+	},
+	"proxy-host.monitoring.range.6h": {
+		"defaultMessage": "6 小时"
+	},
+	"proxy-host.monitoring.range.7d": {
+		"defaultMessage": "7 天"
+	},
+	"proxy-host.monitoring.recent-activity": {
+		"defaultMessage": "最近活动"
+	},
+	"proxy-host.monitoring.refresh": {
+		"defaultMessage": "刷新"
+	},
+	"proxy-host.monitoring.refresh-off": {
+		"defaultMessage": "关闭"
+	},
+	"proxy-host.monitoring.request-breakdown": {
+		"defaultMessage": "请求明细"
+	},
+	"proxy-host.monitoring.request-metrics-description": {
+		"defaultMessage": "从 Nginx 日志读取请求、错误、延迟与流量指标。"
+	},
+	"proxy-host.monitoring.request-volume": {
+		"defaultMessage": "请求量与错误"
+	},
+	"proxy-host.monitoring.request-volume.client-errors": {
+		"defaultMessage": "4xx 错误"
+	},
+	"proxy-host.monitoring.request-volume.requests": {
+		"defaultMessage": "请求量"
+	},
+	"proxy-host.monitoring.request-volume.server-errors": {
+		"defaultMessage": "5xx 错误"
+	},
+	"proxy-host.monitoring.run-active-checks": {
+		"defaultMessage": "运行主动检查"
+	},
+	"proxy-host.monitoring.save-settings": {
+		"defaultMessage": "保存设置"
+	},
+	"proxy-host.monitoring.saving": {
+		"defaultMessage": "保存中…"
+	},
+	"proxy-host.monitoring.settings": {
+		"defaultMessage": "监控设置"
+	},
+	"proxy-host.monitoring.settings-description": {
+		"defaultMessage": "在不离开监控看板的情况下，配置指标采集与主动检查行为。"
+	},
+	"proxy-host.monitoring.status-label": {
+		"defaultMessage": "状态"
+	},
+	"proxy-host.monitoring.status.config-error": {
+		"defaultMessage": "配置错误"
+	},
+	"proxy-host.monitoring.status.degraded": {
+		"defaultMessage": "降级"
+	},
+	"proxy-host.monitoring.status.disabled": {
+		"defaultMessage": "已禁用"
+	},
+	"proxy-host.monitoring.status.offline": {
+		"defaultMessage": "离线"
+	},
+	"proxy-host.monitoring.status.online": {
+		"defaultMessage": "在线"
+	},
+	"proxy-host.monitoring.status.unknown": {
+		"defaultMessage": "未知"
+	},
+	"proxy-host.monitoring.time-end": {
+		"defaultMessage": "结束时间"
+	},
+	"proxy-host.monitoring.time-range": {
+		"defaultMessage": "时间范围"
+	},
+	"proxy-host.monitoring.time-range.apply": {
+		"defaultMessage": "应用"
+	},
+	"proxy-host.monitoring.time-range.summary": {
+		"defaultMessage": "所选时间范围内的指标"
+	},
+	"proxy-host.monitoring.time-start": {
+		"defaultMessage": "开始时间"
+	},
+	"proxy-host.monitoring.timeout": {
+		"defaultMessage": "超时（毫秒）"
+	},
+	"proxy-host.monitoring.timeseries-tooltip": {
+		"defaultMessage": "{time}：{requests} 个请求，{ratio}% 为 5xx"
+	},
+	"proxy-host.monitoring.title": {
+		"defaultMessage": "代理服务监控"
+	},
+	"proxy-host.target.direct": {
+		"defaultMessage": "直连"
+	},
+	"proxy-host.target.upstream": {
+		"defaultMessage": "上游服务组"
+	},
+	"proxy-host.target.upstream-id": {
+		"defaultMessage": "上游服务组 #{id}"
+	},
+	"proxy-host.wizard.access": {
+		"defaultMessage": "请求访问控制"
+	},
+	"proxy-host.wizard.advanced": {
+		"defaultMessage": "高级原始指令"
+	},
+	"proxy-host.wizard.advanced.help": {
+		"defaultMessage": "原始指令会追加在系统管理的指令之后；受保护的块和指令会在预览时被拒绝。"
+	},
+	"proxy-host.wizard.block-exploits.help": {
+		"defaultMessage": "在当前 server 块中引入系统管理的常见漏洞拦截规则。"
+	},
+	"proxy-host.wizard.cache.help": {
+		"defaultMessage": "为当前代理主机启用系统管理的静态资源缓存规则。"
+	},
+	"proxy-host.wizard.capability": {
+		"defaultMessage": "Nginx 运行时能力配置"
+	},
+	"proxy-host.wizard.default-location.disabled": {
+		"defaultMessage": "未配置"
+	},
+	"proxy-host.wizard.default-location.disabled.help": {
+		"defaultMessage": "不会生成托管的 location /。请在下一步配置明确的 Location；未匹配的请求不会被代理。"
+	},
+	"proxy-host.wizard.default-location.enabled": {
+		"defaultMessage": "启用默认 location /"
+	},
+	"proxy-host.wizard.default-location.enabled.help": {
+		"defaultMessage": "启用后，未被其他 Location 匹配的请求将通过 location / 转发。仅使用明确的 Location 路由时可以关闭。"
+	},
+	"proxy-host.wizard.default-location.help": {
+		"defaultMessage": "当请求没有命中自定义 location 时，将使用这里配置的默认上游。"
+	},
+	"proxy-host.wizard.directives": {
+		"defaultMessage": "代理指令"
+	},
+	"proxy-host.wizard.directives.help": {
+		"defaultMessage": "调整 server 级代理指令；只有结构化配置无法满足时，再使用原始高级指令。"
+	},
+	"proxy-host.wizard.effective-config": {
+		"defaultMessage": "生效配置与字段来源"
+	},
+	"proxy-host.wizard.listener": {
+		"defaultMessage": "监听方式"
+	},
+	"proxy-host.wizard.listener.domain": {
+		"defaultMessage": "按域名"
+	},
+	"proxy-host.wizard.listener.domain.help": {
+		"defaultMessage": "按请求 Host 与此 server_name 匹配，并使用标准 HTTP/HTTPS 监听端口。"
+	},
+	"proxy-host.wizard.listener.help": {
+		"defaultMessage": "选择按标准 HTTP/HTTPS 端口上的域名匹配 server，或将当前代理作为指定 HTTP 端口的默认 server。"
+	},
+	"proxy-host.wizard.listener.port": {
+		"defaultMessage": "仅监听端口"
+	},
+	"proxy-host.wizard.listener.port-mode.help": {
+		"defaultMessage": "不匹配域名；将当前代理作为指定 HTTP 端口的默认 server 使用。"
+	},
+	"proxy-host.wizard.listener.port-number": {
+		"defaultMessage": "监听端口"
+	},
+	"proxy-host.wizard.listener.port.help": {
+		"defaultMessage": "Nginx 会在该端口的所有网卡上监听，并将当前代理设为该端口的默认 server。端口不得与其他仅端口代理重复，且需要在容器或防火墙中暴露。"
+	},
+	"proxy-host.wizard.listener.port.tls-help": {
+		"defaultMessage": "仅监听端口模式当前仅部署 HTTP；域名、证书、HTTPS 强制跳转、HTTP/2 和 HSTS 在此模式下不可用。"
+	},
+	"proxy-host.wizard.locations": {
+		"defaultMessage": "Location 路由"
+	},
+	"proxy-host.wizard.locations.help": {
+		"defaultMessage": "添加更具体的 Nginx location 块，并配置匹配修饰符、URI 映射和上游目标。"
+	},
+	"proxy-host.wizard.next": {
+		"defaultMessage": "继续"
+	},
+	"proxy-host.wizard.preview": {
+		"defaultMessage": "预览与部署"
+	},
+	"proxy-host.wizard.preview-again": {
+		"defaultMessage": "重新渲染"
+	},
+	"proxy-host.wizard.preview.help": {
+		"defaultMessage": "检查最终 server 块，执行 nginx -t 校验，仅部署通过校验的候选配置。"
+	},
+	"proxy-host.wizard.preview.invalid": {
+		"defaultMessage": "候选配置存在阻断错误，当前不能部署。"
+	},
+	"proxy-host.wizard.preview.valid": {
+		"defaultMessage": "候选配置已通过校验，可以部署。"
+	},
+	"proxy-host.wizard.previous": {
+		"defaultMessage": "上一步"
+	},
+	"proxy-host.wizard.proxy-buffering.help": {
+		"defaultMessage": "控制 Nginx 是否缓冲从上游接收到的响应。"
+	},
+	"proxy-host.wizard.rendered-config": {
+		"defaultMessage": "渲染后的 Nginx 配置"
+	},
+	"proxy-host.wizard.request-buffering.help": {
+		"defaultMessage": "控制 Nginx 是否在转发前完整读取客户端请求体。"
+	},
+	"proxy-host.wizard.save-deploy": {
+		"defaultMessage": "保存并部署"
+	},
+	"proxy-host.wizard.server": {
+		"defaultMessage": "Server 块"
+	},
+	"proxy-host.wizard.server-name.help": {
+		"defaultMessage": "这些域名会被渲染为 server_name，用于决定请求命中哪个 server 块。"
+	},
+	"proxy-host.wizard.server.help": {
+		"defaultMessage": "配置 server_name，以及请求进入上游之前应用的访问控制。"
+	},
+	"proxy-host.wizard.sni.help": {
+		"defaultMessage": "访问 HTTPS 上游时，在 TLS 握手中发送上游主机名。"
+	},
+	"proxy-host.wizard.source-map": {
+		"defaultMessage": "渲染指令来源映射"
+	},
+	"proxy-host.wizard.structured-options": {
+		"defaultMessage": "结构化 Server 指令"
+	},
+	"proxy-host.wizard.subtitle": {
+		"defaultMessage": "按照 Nginx server 块的语义顺序完成配置，最后校验渲染结果并部署。"
+	},
+	"proxy-host.wizard.summary": {
+		"defaultMessage": "最终结构"
+	},
+	"proxy-host.wizard.summary-value": {
+		"defaultMessage": "{locations} 个自定义 Location · TLS {tls}"
+	},
+	"proxy-host.wizard.tls": {
+		"defaultMessage": "TLS 与监听"
+	},
+	"proxy-host.wizard.tls-disabled": {
+		"defaultMessage": "未启用"
+	},
+	"proxy-host.wizard.tls-enabled": {
+		"defaultMessage": "已启用"
+	},
+	"proxy-host.wizard.tls.help": {
+		"defaultMessage": "选择证书并配置该 server 块的 HTTPS 行为。"
+	},
+	"proxy-host.wizard.upstream": {
+		"defaultMessage": "默认上游"
+	},
+	"proxy-host.wizard.upstream-behaviour": {
+		"defaultMessage": "上游行为"
+	},
+	"proxy-host.wizard.upstream.help": {
+		"defaultMessage": "可选配置兜底 location /，并设置所有托管 Location 共用的代理连接行为。"
+	},
+	"proxy-host.wizard.validation-scope": {
+		"defaultMessage": "校验范围"
+	},
+	"proxy-host.wizard.validation.domain": {
+		"defaultMessage": "请至少添加一个域名后再继续。"
+	},
+	"proxy-host.wizard.validation.listener-port": {
+		"defaultMessage": "请填写 1 到 65535 之间的监听端口后再继续。"
+	},
+	"proxy-host.wizard.validation.listener-port-reserved": {
+		"defaultMessage": "80、81 和 443 是系统保留端口，不能用于仅监听端口模式。"
+	},
+	"proxy-host.wizard.validation.locations": {
+		"defaultMessage": "请补全每个自定义 Location 的匹配路径、上游主机和端口后再继续。"
+	},
+	"proxy-host.wizard.validation.proxy-redirect-default": {
+		"defaultMessage": "托管根 Location 的 proxy_pass 使用变量，不能选择 proxy_redirect default。请选择 off，或提供使用字面量目标的自定义根 Location。"
+	},
+	"proxy-host.wizard.validation.upstream": {
+		"defaultMessage": "请填写有效的上游主机和端口后再继续。"
+	},
+	"proxy-host.wizard.websocket.help": {
+		"defaultMessage": "为支持 WebSocket 的上游转发 Upgrade 和 Connection 请求头。"
+	},
 	"proxy-hosts": {
 		"defaultMessage": "代理服务列表"
 	},
 	"proxy-hosts.count": {
 		"defaultMessage": "{count} 个代理服务"
+	},
+	"proxy-hosts.refresh": {
+		"defaultMessage": "刷新列表"
 	},
 	"public": {
 		"defaultMessage": "公开"
@@ -587,6 +1634,9 @@
 	"ssl-certificate": {
 		"defaultMessage": "SSL 证书"
 	},
+	"ssl-certificate.help": {
+		"defaultMessage": "选择由此 server 使用的证书；不选择证书时仅提供 HTTP，下面的 HTTPS 选项不可用。"
+	},
 	"stream": {
 		"defaultMessage": "端口转发"
 	},
@@ -610,6 +1660,159 @@
 	},
 	"test": {
 		"defaultMessage": "测试"
+	},
+	"upstream": {
+		"defaultMessage": "上游服务"
+	},
+	"upstreams": {
+		"defaultMessage": "上游服务组"
+	},
+	"upstreams.add": {
+		"defaultMessage": "添加上游服务组"
+	},
+	"upstreams.count": {
+		"defaultMessage": "{count} 个上游服务组"
+	},
+	"upstreams.delete.content": {
+		"defaultMessage": "删除 {name}？当 Proxy Host 正在引用它时无法删除。"
+	},
+	"upstreams.description": {
+		"defaultMessage": "全局 Nginx 上游服务组。成员失败时使用 Nginx 被动健康检查，并会在 fail_timeout 后自动恢复。"
+	},
+	"upstreams.disabled.help": {
+		"defaultMessage": "保留配置，但停止发布此上游服务组。"
+	},
+	"upstreams.display-name": {
+		"defaultMessage": "显示名称"
+	},
+	"upstreams.error.save": {
+		"defaultMessage": "无法保存上游服务组"
+	},
+	"upstreams.error.unknown": {
+		"defaultMessage": "未知错误"
+	},
+	"upstreams.load-balancing-method": {
+		"defaultMessage": "负载均衡方法"
+	},
+	"upstreams.method.ip_hash": {
+		"defaultMessage": "IP 哈希"
+	},
+	"upstreams.method.least_conn": {
+		"defaultMessage": "最少连接"
+	},
+	"upstreams.method.random": {
+		"defaultMessage": "随机"
+	},
+	"upstreams.method.round_robin": {
+		"defaultMessage": "轮询"
+	},
+	"upstreams.modal.add": {
+		"defaultMessage": "添加上游服务组"
+	},
+	"upstreams.modal.edit": {
+		"defaultMessage": "编辑上游服务组：{name}"
+	},
+	"upstreams.nginx-key": {
+		"defaultMessage": "Nginx 键"
+	},
+	"upstreams.nginx-key.help": {
+		"defaultMessage": "仅允许小写字母、数字和下划线；全局唯一，创建后不可修改。"
+	},
+	"upstreams.nginx-status.help": {
+		"defaultMessage": "显示该上游服务组的 Nginx 配置发布状态，而不是各成员服务器的实时可达性。在线表示当前配置已经生效；成员故障由被动健康检查在实际转发期间判断。"
+	},
+	"upstreams.none": {
+		"defaultMessage": "尚未配置上游服务组。"
+	},
+	"upstreams.passive-health-checks": {
+		"defaultMessage": "Nginx 使用被动故障检测。服务器在配置的超时时间内达到配置的失败次数后会被临时标记为不可用，随后会自动恢复接收流量。"
+	},
+	"upstreams.publish": {
+		"defaultMessage": "发布"
+	},
+	"upstreams.refresh": {
+		"defaultMessage": "刷新上游服务组"
+	},
+	"upstreams.republish": {
+		"defaultMessage": "重新发布"
+	},
+	"upstreams.save-publish": {
+		"defaultMessage": "保存并发布"
+	},
+	"upstreams.saving": {
+		"defaultMessage": "正在保存…"
+	},
+	"upstreams.server.add": {
+		"defaultMessage": "添加服务器"
+	},
+	"upstreams.server.backup": {
+		"defaultMessage": "备用服务器"
+	},
+	"upstreams.server.backup.help": {
+		"defaultMessage": "仅在主服务器不可用时接收流量。"
+	},
+	"upstreams.server.down": {
+		"defaultMessage": "暂停服务"
+	},
+	"upstreams.server.down.help": {
+		"defaultMessage": "暂时从流量中排除此服务器，但保留其配置。"
+	},
+	"upstreams.server.fail-timeout": {
+		"defaultMessage": "失败超时"
+	},
+	"upstreams.server.host": {
+		"defaultMessage": "主机 / IP"
+	},
+	"upstreams.server.max-conns": {
+		"defaultMessage": "最大连接数"
+	},
+	"upstreams.server.max-fails": {
+		"defaultMessage": "最大失败次数"
+	},
+	"upstreams.server.port": {
+		"defaultMessage": "端口"
+	},
+	"upstreams.server.remove": {
+		"defaultMessage": "移除"
+	},
+	"upstreams.server.title": {
+		"defaultMessage": "服务器 {number}"
+	},
+	"upstreams.server.weight": {
+		"defaultMessage": "权重"
+	},
+	"upstreams.servers": {
+		"defaultMessage": "服务器"
+	},
+	"upstreams.servers.help": {
+		"defaultMessage": "配置上游成员及其被动故障检测参数。"
+	},
+	"upstreams.settings": {
+		"defaultMessage": "服务组设置"
+	},
+	"upstreams.shared-zone-size": {
+		"defaultMessage": "共享区域大小"
+	},
+	"upstreams.target.direct": {
+		"defaultMessage": "单个 IP / 主机名和端口"
+	},
+	"upstreams.target.direct-server": {
+		"defaultMessage": "直接服务器"
+	},
+	"upstreams.target.group": {
+		"defaultMessage": "上游服务组"
+	},
+	"upstreams.target.none-published": {
+		"defaultMessage": "（没有可用的已发布上游服务组）"
+	},
+	"upstreams.target.publish-hint": {
+		"defaultMessage": "所选服务组必须先独立发布，才能部署此 Proxy Host。"
+	},
+	"upstreams.target.select": {
+		"defaultMessage": "选择上游服务组"
+	},
+	"upstreams.target.type": {
+		"defaultMessage": "目标类型"
 	},
 	"user": {
 		"defaultMessage": "用户"

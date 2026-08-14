@@ -1,0 +1,12 @@
+.git
+.github
+.idea
+
+**/node_modules
+**/.pnpm-store
+**/.cache
+**/dist
+**/dist-ssr
+
+.tmp-s6-overlay-root
+.tmp-s6-overlay.tar

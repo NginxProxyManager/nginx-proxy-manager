@@ -1,12 +1,18 @@
-import { IconHelp, IconSearch } from "@tabler/icons-react";
+import { IconHelp, IconRefresh, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
-import { useProxyHosts } from "src/hooks";
-import { T } from "src/locale";
-import { showDeleteConfirmModal, showHelpModal, showProxyHostModal } from "src/modals";
+import { useProxyHosts, useUpstreams } from "src/hooks";
+import { intl, T } from "src/locale";
+import {
+	showDeleteConfirmModal,
+	showHelpModal,
+	showProxyHostModal,
+	showNginxLogViewerModal,
+	showProxyHostMonitoringModal,
+} from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
@@ -14,7 +20,14 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
+	const { isFetching, isLoading, isError, error, data, refetch } = useProxyHosts([
+		"owner",
+		"access_list",
+		"certificate",
+		"monitoring",
+	]);
+	const { data: upstreams } = useUpstreams({ retry: false });
+	const upstreamById = new Map((upstreams || []).map((upstream) => [upstream.id, upstream] as const));
 
 	if (isLoading) {
 		return <LoadingPage />;
@@ -38,12 +51,19 @@ export default function TableWrapper() {
 
 	let filtered = null;
 	if (search && data) {
-		filtered = data?.filter(
-			(item) =>
+		filtered = data.filter((item) => {
+			const target = item.defaultTarget;
+			const upstream = target?.type === "upstream" ? upstreamById.get(target.upstreamId) : undefined;
+			const targetTerms =
+				target?.type === "upstream"
+					? [upstream?.name, upstream?.nginxKey, `${target.upstreamId}`, "upstream"]
+					: [item.forwardHost, `${item.forwardPort}`];
+
+			return (
 				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
-				item.forwardHost.toLowerCase().includes(search) ||
-				`${item.forwardPort}`.includes(search),
-		);
+				targetTerms.some((term) => term?.toLowerCase().includes(search))
+			);
+		});
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching
 		setSearch("");
@@ -76,6 +96,22 @@ export default function TableWrapper() {
 										/>
 									</div>
 								) : null}
+								<button
+									type="button"
+									className="btn btn-action btn-sm"
+									onClick={() => refetch()}
+									disabled={isFetching}
+									title={intl.formatMessage({
+										id: "proxy-hosts.refresh",
+										defaultMessage: "Refresh list",
+									})}
+									aria-label={intl.formatMessage({
+										id: "proxy-hosts.refresh",
+										defaultMessage: "Refresh list",
+									})}
+								>
+									<IconRefresh size={20} />
+								</button>
 								<Button size="sm" onClick={() => showHelpModal("ProxyHosts", "lime")}>
 									<IconHelp size={20} />
 								</Button>
@@ -96,9 +132,23 @@ export default function TableWrapper() {
 				</div>
 				<Table
 					data={filtered ?? data ?? []}
+					upstreams={upstreams}
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}
+					onMonitoring={(id: number) => {
+						const host = data?.find((item) => item.id === id);
+						const label = host?.domainNames?.join(", ") || `${host?.forwardHost || "Proxy Host"}#${id}`;
+						showProxyHostMonitoringModal(id, label);
+					}}
+					onLogs={(id: number) => {
+						const host = data?.find((item) => item.id === id);
+						const label =
+							host?.nginxConfig?.listener?.mode === "port"
+								? `:${host.nginxConfig.listener.port ?? id}`
+								: host?.domainNames?.join(", ") || `#${id}`;
+						showNginxLogViewerModal("proxy-hosts", id, label);
+					}}
 					onDelete={(id: number) => {
 						const host = data?.find((h) => h.id === id);
 						showDeleteConfirmModal({
@@ -108,7 +158,12 @@ export default function TableWrapper() {
 							children: (
 								<>
 									<T id="object.delete.content" tData={{ object: "proxy-host" }} />
-									{host?.domainNames?.length ? (
+									{host?.nginxConfig?.listener?.mode === "port" ? (
+										<div className="mt-2 fw-bold text-break">
+											<T id="proxy-host.wizard.listener.port-number" />:{" "}
+											{host.nginxConfig.listener.port}
+										</div>
+									) : host?.domainNames?.length ? (
 										<div className="mt-2 fw-bold text-break">{host.domainNames.join(", ")}</div>
 									) : null}
 									{host?.forwardHost ? (
