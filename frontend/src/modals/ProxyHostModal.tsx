@@ -19,6 +19,15 @@ import {
 } from "src/components";
 import { useProxyHost, useSetProxyHost, useUpstreams, useUser } from "src/hooks";
 import { intl, T } from "src/locale";
+import {
+	diffProxyOptions,
+	flattenProxyOptionSections,
+	groupProxyOptions,
+	materializeProxyLocationOptions,
+	materializeProxyServerOptions,
+	normalizeProxyOptionsForApi,
+	PROXY_OPTION_PROFILE_VERSION,
+} from "src/modules/NginxProxyOptions";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber } from "src/modules/Validations";
 import { showError, showObjectSuccess } from "src/notifications";
@@ -34,6 +43,12 @@ const wizardSteps = [
 const previewStepIndex = wizardSteps.length - 1;
 
 const isDefaultLocationEnabled = (values: any) => values.nginxConfig?.server?.defaultLocationEnabled !== false;
+export const usesManagedDefaultLocation = (values: any) =>
+	isDefaultLocationEnabled(values) &&
+	!(values.locations || []).some(
+		(location: any) => location.path === "/" && (location.matchType || "prefix") === "prefix",
+	) &&
+	!/^(?:.*;)?\s*?location\s*?\/\s*?\{/im.test(values.advancedConfig || "");
 const isPortListener = (values: any) => values.nginxConfig?.listener?.mode === "port";
 const reservedListenerPorts = new Set([80, 81, 443]);
 const validateListenerPort = (value: string) => {
@@ -45,47 +60,6 @@ const validateListenerPort = (value: string) => {
 		return intl.formatMessage({ id: "proxy-host.wizard.validation.listener-port-reserved" });
 };
 
-const optionalIntegerFields = [
-	"proxyHeadersHashBucketSize",
-	"proxyHeadersHashMaxSize",
-	"proxyNextUpstreamTries",
-	"proxySslVerifyDepth",
-];
-
-const normalizeProxyOptionsForApi = (options: any = {}) => {
-	const result = { ...options };
-	for (const key of optionalIntegerFields) {
-		if (result[key] === "" || typeof result[key] === "undefined") {
-			delete result[key];
-		} else {
-			result[key] = Number(result[key]);
-		}
-	}
-	if (Array.isArray(result.proxyBuffers)) {
-		const [count, size] = result.proxyBuffers;
-		if (count === "" || typeof count === "undefined" || !size) delete result.proxyBuffers;
-		else result.proxyBuffers = [Number(count), size];
-	}
-	for (const [inputKey, targetKey] of [
-		["hideResponseHeadersInput", "hideResponseHeaders"],
-		["proxyPassHeadersInput", "proxyPassHeaders"],
-	] as const) {
-		if (typeof result[inputKey] === "string") {
-			const values = result[inputKey]
-				.split(",")
-				.map((value: string) => value.trim())
-				.filter(Boolean);
-			if (values.length) result[targetKey] = values;
-			else delete result[targetKey];
-		}
-		delete result[inputKey];
-	}
-	for (const key of Object.keys(result)) {
-		if (result[key] === "") delete result[key];
-	}
-	return result;
-};
-
 const directTarget = (value: any = {}) => ({
 	type: "direct" as const,
 	scheme: value.forwardScheme || "http",
@@ -93,25 +67,81 @@ const directTarget = (value: any = {}) => ({
 	port: Number(value.forwardPort) || 80,
 });
 
-const prepareProxyHostValues = (values: any) => {
+export const prepareProxyHostValues = (values: any) => {
 	const portListener = isPortListener(values);
-	const nginxConfig = { ...values.nginxConfig, server: normalizeProxyOptionsForApi(values.nginxConfig?.server) };
-	if (portListener) nginxConfig.listener = { mode: "port", port: Number(values.nginxConfig?.listener?.port) };
-	else delete nginxConfig.listener;
+	const serverOptions = materializeProxyServerOptions(normalizeProxyOptionsForApi(values.nginxConfig?.server));
+	const nginxConfig = {
+		schemaVersion: 2,
+		profileVersion: PROXY_OPTION_PROFILE_VERSION,
+		listener: portListener
+			? { mode: "port", port: Number(values.nginxConfig?.listener?.port) }
+			: { mode: "domain" },
+		server: groupProxyOptions(serverOptions),
+	};
 	const defaultTarget = values.defaultTarget || directTarget(values);
-	const defaultLegacy = defaultTarget.type === "upstream"
-		? { forwardScheme: defaultTarget.scheme, forwardHost: "upstream", forwardPort: 80 }
-		: { forwardScheme: defaultTarget.scheme, forwardHost: defaultTarget.host, forwardPort: Number(defaultTarget.port) };
+	const defaultLegacy =
+		defaultTarget.type === "upstream"
+			? { forwardScheme: defaultTarget.scheme, forwardHost: "upstream", forwardPort: 80 }
+			: {
+					forwardScheme: defaultTarget.scheme,
+					forwardHost: defaultTarget.host,
+					forwardPort: Number(defaultTarget.port),
+				};
 	const locations = (values.locations || []).map((location: any) => {
 		const target = location.target || directTarget(location);
-		const legacy = target.type === "upstream"
-			? { forwardScheme: target.scheme, forwardHost: "upstream", forwardPort: 80 }
-			: { forwardScheme: target.scheme, forwardHost: target.host, forwardPort: Number(target.port) };
-		return { ...location, ...legacy, target, nginxConfig: normalizeProxyOptionsForApi(location.nginxConfig) };
+		const legacy =
+			target.type === "upstream"
+				? { forwardScheme: target.scheme, forwardHost: "upstream", forwardPort: 80 }
+				: { forwardScheme: target.scheme, forwardHost: target.host, forwardPort: Number(target.port) };
+		const effectiveOptions = normalizeProxyOptionsForApi(location.nginxConfig);
+		const changedOverrides = Object.keys(effectiveOptions).length
+			? diffProxyOptions(effectiveOptions, serverOptions)
+			: {};
+		const explicitKeys = new Set<string>([...(location.nginxOverrideKeys || []), ...Object.keys(changedOverrides)]);
+		const overrides = Object.fromEntries(
+			[...explicitKeys]
+				.filter((key) => Object.keys(effectiveOptions).includes(key))
+				.map((key) => [key, (effectiveOptions as Record<string, any>)[key]]),
+		);
+		const { nginxOverrideKeys: _nginxOverrideKeys, ...persistedLocation } = location;
+		return {
+			...persistedLocation,
+			...legacy,
+			target,
+			nginxConfig: { mode: "inherit", overrides: groupProxyOptions(overrides) },
+		};
 	});
-	const prepared = { ...values, ...defaultLegacy, defaultTarget, ...(portListener ? { domainNames: [], certificateId: 0, sslForced: false, http2Support: false, hstsEnabled: false, hstsSubdomains: false } : {}), nginxConfig, locations };
-	if (isDefaultLocationEnabled(prepared)) return prepared;
-	return { ...prepared, forwardScheme: prepared.forwardScheme || "http", forwardHost: String(prepared.forwardHost || "").trim() || "127.0.0.1", forwardPort: Number(prepared.forwardPort) || 80 };
+	const prepared = {
+		...values,
+		...defaultLegacy,
+		defaultTarget,
+		...(portListener
+			? {
+					domainNames: [],
+					certificateId: 0,
+					sslForced: false,
+					http2Support: false,
+					hstsEnabled: false,
+					hstsSubdomains: false,
+				}
+			: {}),
+		nginxConfig,
+		locations,
+	};
+	if (serverOptions.defaultLocationEnabled !== false) return prepared;
+	const fallbackTarget = {
+		type: "direct" as const,
+		scheme: prepared.forwardScheme || "http",
+		host: String(prepared.forwardHost || "").trim() || "127.0.0.1",
+		port: Number(prepared.forwardPort) || 80,
+	};
+	return {
+		...prepared,
+		forwardScheme: fallbackTarget.scheme,
+		forwardHost: fallbackTarget.host,
+		forwardPort: fallbackTarget.port,
+		defaultTarget: fallbackTarget,
+	};
 };
 
 const showProxyHostModal = (id: number | "new") => {
@@ -301,7 +331,6 @@ function StepHeading({ title, description }: { title: string; description: strin
 	);
 }
 
-
 function DefaultTargetFields() {
 	const { data: upstreams } = useUpstreams();
 	const available = (upstreams || []).filter(
@@ -332,18 +361,41 @@ function DefaultTargetFields() {
 							<label className="form-label" htmlFor="default-target-type">
 								<T id="upstreams.target.type" />
 							</label>
-							<select id="default-target-type" className="form-select" value={target.type} onChange={(event) => setType(event.target.value as "direct" | "upstream")}>
-								<option value="direct"><T id="upstreams.target.direct" /></option>
+							<select
+								id="default-target-type"
+								className="form-select"
+								value={target.type}
+								onChange={(event) => setType(event.target.value as "direct" | "upstream")}
+							>
+								<option value="direct">
+									<T id="upstreams.target.direct" />
+								</option>
 								<option value="upstream" disabled={!available.length}>
 									<T id="upstreams.target.group" />
-									{!available.length && <> <T id="upstreams.target.none-published" /></>}
+									{!available.length && (
+										<>
+											{" "}
+											<T id="upstreams.target.none-published" />
+										</>
+									)}
 								</option>
 							</select>
 						</div>
 						<div className="row">
 							<div className="col-md-3">
-								<FieldLabelWithHelp htmlFor="forwardScheme" label="host.forward-scheme" help="host.forward-scheme.help" />
-								<select id="forwardScheme" className="form-select" value={target.scheme || "http"} onChange={(event) => form.setFieldValue(field.name, { ...target, scheme: event.target.value })}>
+								<FieldLabelWithHelp
+									htmlFor="forwardScheme"
+									label="host.forward-scheme"
+									help="host.forward-scheme.help"
+								/>
+								<select
+									id="forwardScheme"
+									className="form-select"
+									value={target.scheme || "http"}
+									onChange={(event) =>
+										form.setFieldValue(field.name, { ...target, scheme: event.target.value })
+									}
+								>
 									<option value="http">http</option>
 									<option value="https">https</option>
 								</select>
@@ -353,16 +405,72 @@ function DefaultTargetFields() {
 									<label className="form-label" htmlFor="default-target-upstream">
 										<T id="upstreams.target.group" />
 									</label>
-									<select id="default-target-upstream" className="form-select" required value={target.upstreamId || ""} onChange={(event) => form.setFieldValue(field.name, { ...target, upstreamId: Number(event.target.value) })}>
-										<option value="" disabled><T id="upstreams.target.select" /></option>
-										{available.map((upstream) => <option key={upstream.id} value={upstream.id}>{upstream.name} ({upstream.nginxKey})</option>)}
+									<select
+										id="default-target-upstream"
+										className="form-select"
+										required
+										value={target.upstreamId || ""}
+										onChange={(event) =>
+											form.setFieldValue(field.name, {
+												...target,
+												upstreamId: Number(event.target.value),
+											})
+										}
+									>
+										<option value="" disabled>
+											<T id="upstreams.target.select" />
+										</option>
+										{available.map((upstream) => (
+											<option key={upstream.id} value={upstream.id}>
+												{upstream.name} ({upstream.nginxKey})
+											</option>
+										))}
 									</select>
-									<div className="form-hint"><T id="upstreams.target.publish-hint" /></div>
+									<div className="form-hint">
+										<T id="upstreams.target.publish-hint" />
+									</div>
 								</div>
 							) : (
 								<>
-									<div className="col-md-6"><FieldLabelWithHelp htmlFor="forwardHost" label="proxy-host.forward-host" help="proxy-host.forward-host.help" /><input id="forwardHost" className="form-control" required placeholder="10.0.0.10" value={target.host || ""} onChange={(event) => form.setFieldValue(field.name, { ...target, host: event.target.value })} /></div>
-									<div className="col-md-3"><FieldLabelWithHelp htmlFor="forwardPort" label="host.forward-port" help="host.forward-port.help" /><input id="forwardPort" type="number" min={1} max={65535} className="form-control" required value={target.port || ""} onChange={(event) => form.setFieldValue(field.name, { ...target, port: Number(event.target.value) })} /></div>
+									<div className="col-md-6">
+										<FieldLabelWithHelp
+											htmlFor="forwardHost"
+											label="proxy-host.forward-host"
+											help="proxy-host.forward-host.help"
+										/>
+										<input
+											id="forwardHost"
+											className="form-control"
+											required
+											placeholder="10.0.0.10"
+											value={target.host || ""}
+											onChange={(event) =>
+												form.setFieldValue(field.name, { ...target, host: event.target.value })
+											}
+										/>
+									</div>
+									<div className="col-md-3">
+										<FieldLabelWithHelp
+											htmlFor="forwardPort"
+											label="host.forward-port"
+											help="host.forward-port.help"
+										/>
+										<input
+											id="forwardPort"
+											type="number"
+											min={1}
+											max={65535}
+											className="form-control"
+											required
+											value={target.port || ""}
+											onChange={(event) =>
+												form.setFieldValue(field.name, {
+													...target,
+													port: Number(event.target.value),
+												})
+											}
+										/>
+									</div>
 								</>
 							)}
 						</div>
@@ -423,6 +531,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	};
 
 	const validateRequiredStep = (step: number, values: any) => {
+		if (usesManagedDefaultLocation(values) && values.nginxConfig?.server?.proxyRedirect === "default") {
+			setErrorMsg(<T id="proxy-host.wizard.validation.proxy-redirect-default" />);
+			return false;
+		}
 		if (step === 0) {
 			if (isPortListener(values)) {
 				const port = Number(values.nginxConfig?.listener?.port);
@@ -442,7 +554,11 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		if (step === 2 && isDefaultLocationEnabled(values)) {
 			const target = values.defaultTarget || directTarget(values);
 			const port = Number(target.port);
-			if (target.type === "upstream" ? !Number(target.upstreamId) : (!String(target.host || "").trim() || !Number.isInteger(port) || port < 1 || port > 65535)) {
+			if (
+				target.type === "upstream"
+					? !Number(target.upstreamId)
+					: !String(target.host || "").trim() || !Number.isInteger(port) || port < 1 || port > 65535
+			) {
 				setErrorMsg(<T id="proxy-host.wizard.validation.upstream" />);
 				return false;
 			}
@@ -451,7 +567,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			const invalidLocation = (values.locations || []).some((location: any) => {
 				const target = location.target || directTarget(location);
 				const port = Number(target.port);
-				return !String(location.path || "").trim() || (target.type === "upstream" ? !Number(target.upstreamId) : (!String(target.host || "").trim() || !Number.isInteger(port) || port < 1 || port > 65535));
+				return (
+					!String(location.path || "").trim() ||
+					(target.type === "upstream"
+						? !Number(target.upstreamId)
+						: !String(target.host || "").trim() || !Number.isInteger(port) || port < 1 || port > 65535)
+				);
 			});
 			if (invalidLocation) {
 				setErrorMsg(<T id="proxy-host.wizard.validation.locations" />);
@@ -504,36 +625,51 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							cachingEnabled: data?.cachingEnabled || false,
 							blockExploits: data?.blockExploits || false,
 							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
-							locations: (data?.locations || []).map((location: any) => ({
-								...location,
-								nginxConfig: {
-									...(location.nginxConfig || {}),
-									hideResponseHeadersInput:
-										location.nginxConfig?.hideResponseHeaders?.join(", ") || "",
-									proxyPassHeadersInput: location.nginxConfig?.proxyPassHeaders?.join(", ") || "",
-								},
-							})),
+							locations: (data?.locations || []).map((location: any) => {
+								const serverOptions = flattenProxyOptionSections(data?.nginxConfig?.server);
+								const locationOptions = location.nginxConfig?.overrides
+									? flattenProxyOptionSections(location.nginxConfig.overrides)
+									: location.nginxConfig || {};
+								const hasOverrides = Object.keys(locationOptions).length > 0;
+								const effectiveOptions = hasOverrides
+									? materializeProxyLocationOptions({ ...serverOptions, ...locationOptions })
+									: {};
+								delete effectiveOptions.defaultLocationEnabled;
+								return {
+									...location,
+									nginxOverrideKeys: Object.keys(locationOptions),
+									nginxConfig: hasOverrides
+										? {
+												...effectiveOptions,
+												hideResponseHeadersInput:
+													effectiveOptions.hideResponseHeaders?.join(", ") || "",
+												proxyPassHeadersInput:
+													effectiveOptions.proxyPassHeaders?.join(", ") || "",
+											}
+										: {},
+								};
+							}),
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
 							http2Support: data?.http2Support || false,
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
 							trustForwardedProto: data?.trustForwardedProto || false,
-							nginxConfig: {
-								...(data?.nginxConfig || { schemaVersion: 1 }),
-								schemaVersion: data?.nginxConfig?.schemaVersion || 1,
-								server: {
-									...(data?.nginxConfig?.server || {}),
-									defaultLocationEnabled: data?.nginxConfig?.server?.defaultLocationEnabled ?? true,
-									proxyBuffering: data?.nginxConfig?.server?.proxyBuffering ?? true,
-									proxyRequestBuffering: data?.nginxConfig?.server?.proxyRequestBuffering ?? true,
-									proxySslServerName: data?.nginxConfig?.server?.proxySslServerName ?? false,
-									hideResponseHeadersInput:
-										data?.nginxConfig?.server?.hideResponseHeaders?.join(", ") || "",
-									proxyPassHeadersInput:
-										data?.nginxConfig?.server?.proxyPassHeaders?.join(", ") || "",
-								},
-							},
+							nginxConfig: (() => {
+								const server = materializeProxyServerOptions(
+									flattenProxyOptionSections(data?.nginxConfig?.server),
+								);
+								return {
+									schemaVersion: 2,
+									profileVersion: PROXY_OPTION_PROFILE_VERSION,
+									listener: data?.nginxConfig?.listener || { mode: "domain" },
+									server: {
+										...server,
+										hideResponseHeadersInput: server.hideResponseHeaders?.join(", ") || "",
+										proxyPassHeadersInput: server.proxyPassHeaders?.join(", ") || "",
+									},
+								};
+							})(),
 							baseRevision: data?.nginxConfigRevision,
 							advancedConfig: data?.advancedConfig || "",
 							meta: data?.meta || {},
@@ -673,6 +809,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														<ProxyDirectivesFields
 															name="nginxConfig.server"
 															scope="server"
+															allowProxyRedirectDefault={
+																!usesManagedDefaultLocation(values)
+															}
 														/>
 													</div>
 												</div>
@@ -906,6 +1045,97 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																</ul>
 															</Alert>
 														) : null}
+														<div className="row g-3 mb-3">
+															<div className="col-12">
+																<details className="card">
+																	<summary className="card-header fw-semibold">
+																		<T id="proxy-host.wizard.effective-config" />
+																	</summary>
+																	<pre
+																		className="card-body small overflow-auto mb-0"
+																		style={{ maxHeight: 300 }}
+																	>
+																		{JSON.stringify(
+																			previewResult.effectiveConfig || {},
+																			null,
+																			2,
+																		)}
+																	</pre>
+																</details>
+															</div>
+															<div className="col-12">
+																<details className="card">
+																	<summary className="card-header fw-semibold d-flex justify-content-between">
+																		<span>
+																			<T id="proxy-host.wizard.source-map" />
+																		</span>
+																		<span className="badge bg-secondary-lt">
+																			{previewResult.sourceMap?.length || 0}
+																		</span>
+																	</summary>
+																	<div
+																		className="table-responsive"
+																		style={{ maxHeight: 360 }}
+																	>
+																		<table className="table table-sm table-vcenter mb-0">
+																			<thead>
+																				<tr>
+																					<th>Line</th>
+																					<th>Directive</th>
+																					<th>Field</th>
+																					<th>Source</th>
+																					<th>Location</th>
+																				</tr>
+																			</thead>
+																			<tbody>
+																				{(previewResult.sourceMap || []).map(
+																					(entry, index) => (
+																						<tr
+																							key={`${entry.lineStart}-${entry.directive || "marker"}-${index}`}
+																						>
+																							<td>{entry.lineStart}</td>
+																							<td>
+																								<code>
+																									{entry.directive ||
+																										"# marker"}
+																								</code>
+																							</td>
+																							<td>
+																								<code>
+																									{entry.field}
+																								</code>
+																							</td>
+																							<td>{entry.source}</td>
+																							<td>
+																								{entry.path ||
+																									entry.scope}
+																							</td>
+																						</tr>
+																					),
+																				)}
+																			</tbody>
+																		</table>
+																	</div>
+																</details>
+															</div>
+															<div className="col-12">
+																<details className="card">
+																	<summary className="card-header fw-semibold">
+																		<T id="proxy-host.wizard.capability" />
+																	</summary>
+																	<pre
+																		className="card-body small overflow-auto mb-0"
+																		style={{ maxHeight: 240 }}
+																	>
+																		{JSON.stringify(
+																			previewResult.capability || {},
+																			null,
+																			2,
+																		)}
+																	</pre>
+																</details>
+															</div>
+														</div>
 														<div className="d-flex justify-content-between align-items-center mb-2">
 															<h4 className="mb-0">
 																<T id="proxy-host.wizard.rendered-config" />

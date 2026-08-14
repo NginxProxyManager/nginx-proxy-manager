@@ -1,0 +1,197 @@
+{
+	"operationId": "previewProxyHostNginxConfig",
+	"summary": "Preview the exact Proxy Host Nginx candidate and semantic mapping",
+	"tags": [
+		"proxy-hosts"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"proxy_hosts.manage"
+			]
+		}
+	],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"minProperties": 1,
+					"properties": {
+						"host_id": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"domain_names": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/domain_names"
+						},
+						"forward_scheme": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/forward_scheme"
+						},
+						"forward_host": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/forward_host"
+						},
+						"forward_port": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/forward_port"
+						},
+						"default_target": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/default_target"
+						},
+						"certificate_id": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/certificate_id"
+						},
+						"ssl_forced": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/ssl_forced"
+						},
+						"hsts_enabled": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/hsts_enabled"
+						},
+						"hsts_subdomains": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/hsts_subdomains"
+						},
+						"trust_forwarded_proto": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
+						},
+						"http2_support": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/http2_support"
+						},
+						"block_exploits": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/block_exploits"
+						},
+						"caching_enabled": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/caching_enabled"
+						},
+						"allow_websocket_upgrade": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/allow_websocket_upgrade"
+						},
+						"access_list_id": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/access_list_id"
+						},
+						"advanced_config": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/advanced_config"
+						},
+						"enabled": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/enabled"
+						},
+						"meta": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/meta"
+						},
+						"locations": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/locations"
+						},
+						"nginx_config": {
+							"$ref": "../../../../../components/proxy-host-object.json#/properties/nginx_config"
+						},
+						"base_revision": {
+							"type": "integer",
+							"minimum": 1
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "Deterministic candidate, effective semantic configuration, line source map, and capability profile",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": [
+							"valid",
+							"config",
+							"payload_hash",
+							"hash",
+							"dependency_hash",
+							"capability_hash",
+							"template_version",
+							"template_hash",
+							"base_revision",
+							"preview_token",
+							"validation_scope",
+							"unresolved_dependencies",
+							"diagnostics",
+							"effective_config",
+							"source_map",
+							"capability"
+						],
+						"properties": {
+							"valid": {
+								"type": "boolean"
+							},
+							"config": {
+								"type": "string"
+							},
+							"payload_hash": {
+								"type": "string"
+							},
+							"hash": {
+								"type": "string"
+							},
+							"dependency_hash": {
+								"type": "string"
+							},
+							"capability_hash": {
+								"type": "string"
+							},
+							"template_version": {
+								"type": "string"
+							},
+							"template_hash": {
+								"type": "string"
+							},
+							"base_revision": {
+								"type": [
+									"integer",
+									"null"
+								]
+							},
+							"preview_token": {
+								"type": [
+									"string",
+									"null"
+								]
+							},
+							"validation_scope": {
+								"type": "string",
+								"enum": [
+									"full",
+									"partial",
+									"not_applicable"
+								]
+							},
+							"unresolved_dependencies": {
+								"type": "array",
+								"items": {
+									"type": "object"
+								}
+							},
+							"diagnostics": {
+								"type": "array",
+								"items": {
+									"type": "object"
+								}
+							},
+							"effective_config": {
+								"$ref": "../../../../../components/nginx-proxy-effective-config.json"
+							},
+							"source_map": {
+								"type": "array",
+								"items": {
+									"$ref": "../../../../../components/nginx-proxy-source-map-record.json"
+								}
+							},
+							"capability": {
+								"$ref": "../../../../../components/nginx-runtime-capability.json"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

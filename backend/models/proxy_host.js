@@ -42,6 +42,8 @@ class ProxyHost extends Model {
 		}
 
 		this.nginx_config = normalizeNginxConfig(this.nginx_config);
+		this.nginx_config_schema_version = 2;
+		this.nginx_config_migration_status ??= "native_v2";
 		this.nginx_config_revision ??= 1;
 
 		this.domain_names.sort();
@@ -52,6 +54,8 @@ class ProxyHost extends Model {
 
 		if (typeof this.nginx_config !== "undefined") {
 			this.nginx_config = normalizeNginxConfig(this.nginx_config);
+			this.nginx_config_schema_version = 2;
+			if (this.nginx_config_migration_status === "review_required") this.nginx_config_migration_status = "resolved";
 		}
 
 		// Sort domain_names
@@ -80,7 +84,7 @@ class ProxyHost extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["domain_names", "meta", "locations", "default_target", "nginx_config", "nginx_last_error", "nginx_applied_snapshot"];
+		return ["domain_names", "meta", "locations", "default_target", "nginx_config", "nginx_last_error", "nginx_applied_snapshot", "nginx_config_migration_backup", "nginx_config_migration_diagnostics"];
 	}
 
 	static get defaultAllowGraph() {

@@ -22,7 +22,9 @@ import {
 	removeArtifact,
 	toLogicalPath,
 } from "./nginx-config-artifacts.js";
+import { buildDesiredNginxArtifact } from "./nginx-config-artifact-view.js";
 import { sha256 } from "./nginx-config-hash.js";
+import { collectCustomIncludeManifest } from "./nginx-custom-includes.js";
 import { buildProxyHostCandidate } from "./nginx-config-renderer.js";
 import { validateInMirror } from "./nginx-config-validator.js";
 import nginxDeploymentCoordinator, { deriveDeploymentStatus } from "./nginx-deployment-coordinator.js";
@@ -54,7 +56,7 @@ const prepareProxyTargets = (data, persisted = {}) => {
 		...persisted,
 		...data,
 		nginx_config: data.nginx_config ?? persisted.nginx_config,
-		locations: typeof data.locations === "undefined" ? persisted.locations ?? [] : data.locations,
+		locations: typeof data.locations === "undefined" ? (persisted.locations ?? []) : data.locations,
 		default_target: typeof data.default_target === "undefined" ? persisted.default_target : data.default_target,
 	};
 	const normalized = normalizeProxyHost(source);
@@ -70,37 +72,53 @@ const prepareProxyTargets = (data, persisted = {}) => {
 		}));
 	}
 	const locations = result.locations ?? persisted.locations ?? [];
-	const targetForLocation = (location) => location.target ?? {
-		type: "direct", scheme: location.forward_scheme, host: location.forward_host, port: location.forward_port,
-	};
+	const targetForLocation = (location) =>
+		location.target ?? {
+			type: "direct",
+			scheme: location.forward_scheme,
+			host: location.forward_host,
+			port: location.forward_port,
+		};
 	const references = [];
-	const defaultLocationEnabled = normalized.nginx_config?.server?.default_location_enabled !== false;
+	const defaultLocationEnabled = normalized.nginx_options.default_location_enabled !== false;
 	if (defaultLocationEnabled && normalized.default_target.type === "upstream")
-		references.push({ upstream_id: normalized.default_target.upstream_id, target_type: "default", location_id: "" });
+		references.push({
+			upstream_id: normalized.default_target.upstream_id,
+			target_type: "default",
+			location_id: "",
+		});
 	for (const location of locations) {
 		const target = targetForLocation(location);
 		if (target.type === "upstream") {
 			const locationId = location.location_id || randomUUID();
 			location.location_id = locationId;
-			references.push({ upstream_id: Number(target.upstream_id), target_type: "location", location_id: locationId });
+			references.push({
+				upstream_id: Number(target.upstream_id),
+				target_type: "location",
+				location_id: locationId,
+			});
 		}
 	}
 	return { data: result, references };
 };
 
 const assertReferencedUpstreamsAvailable = async (access, references, trx) => {
-	const ids = [...new Set(references.map((reference) => Number(reference.upstream_id)))].sort((left, right) => left - right);
+	const ids = [...new Set(references.map((reference) => Number(reference.upstream_id)))].sort(
+		(left, right) => left - right,
+	);
 	if (!ids.length) return new Map();
 	for (const id of ids) await access.can("upstreams:get", id);
-	const rows = await upstreamModel
-		.query(trx)
-		.whereIn("id", ids)
-		.where("is_deleted", 0)
-		.forUpdate();
+	const rows = await upstreamModel.query(trx).whereIn("id", ids).where("is_deleted", 0).forUpdate();
 	if (rows.length !== ids.length) throw new errs.ValidationError("One or more referenced Upstreams do not exist");
 	for (const row of rows) {
-		if (row.is_disabled || !row.nginx_applied_enabled || !["online", "degraded"].includes(row.nginx_deployment_status))
-			throw new errs.ValidationError(`Upstream ${row.id} must be published and available before it can be referenced`);
+		if (
+			row.is_disabled ||
+			!row.nginx_applied_enabled ||
+			!["online", "degraded"].includes(row.nginx_deployment_status)
+		)
+			throw new errs.ValidationError(
+				`Upstream ${row.id} must be published and available before it can be referenced`,
+			);
 	}
 	return new Map(rows.map((row) => [row.id, row]));
 };
@@ -108,19 +126,29 @@ const assertReferencedUpstreamsAvailable = async (access, references, trx) => {
 const syncUpstreamReferences = async (trx, hostId, references) => {
 	await proxyHostUpstreamModel.query(trx).where("proxy_host_id", hostId).delete();
 	if (references.length)
-		await proxyHostUpstreamModel.query(trx).insert(references.map((reference) => ({ ...reference, proxy_host_id: hostId })));
+		await proxyHostUpstreamModel
+			.query(trx)
+			.insert(references.map((reference) => ({ ...reference, proxy_host_id: hostId })));
 };
 
 const resolveUpstreamDependencies = async (host) => {
 	const normalized = normalizeProxyHost(host);
-	const defaultLocationEnabled = normalized.nginx_config?.server?.default_location_enabled !== false;
+	const defaultLocationEnabled = normalized.nginx_options.default_location_enabled !== false;
 	const ids = [
-		...(defaultLocationEnabled && normalized.default_target.type === "upstream" ? [normalized.default_target.upstream_id] : []),
-		...normalized.locations.filter((location) => location.target.type === "upstream").map((location) => location.target.upstream_id),
+		...(defaultLocationEnabled && normalized.default_target.type === "upstream"
+			? [normalized.default_target.upstream_id]
+			: []),
+		...normalized.locations
+			.filter((location) => location.target.type === "upstream")
+			.map((location) => location.target.upstream_id),
 	];
 	if (!ids.length) return {};
-	const upstreams = await upstreamModel.query().whereIn("id", [...new Set(ids)]).where("is_deleted", 0);
-	if (upstreams.length !== new Set(ids).size) throw new errs.UnprocessableConfigError("A referenced upstream no longer exists");
+	const upstreams = await upstreamModel
+		.query()
+		.whereIn("id", [...new Set(ids)])
+		.where("is_deleted", 0);
+	if (upstreams.length !== new Set(ids).size)
+		throw new errs.UnprocessableConfigError("A referenced upstream no longer exists");
 	return Object.fromEntries(upstreams.map((upstream) => [upstream.id, upstream]));
 };
 
@@ -180,7 +208,12 @@ const resolvePreviewCandidate = async (access, payload) => {
 
 	const targets = prepareProxyTargets(previewFields(payload), persisted || {}).references;
 	const upstreams = await assertReferencedUpstreamsAvailable(access, targets, null);
-	return { host, dependencies: { certificate, access_list: accessList, upstreams: Object.fromEntries(upstreams) }, unresolved };
+	const includes = await collectCustomIncludeManifest();
+	return {
+		host,
+		dependencies: { certificate, access_list: accessList, upstreams: Object.fromEntries(upstreams), includes },
+		unresolved,
+	};
 };
 
 const validatePreviewInMirror = async ({ host, config }) => {
@@ -308,10 +341,11 @@ const deploymentError = (operationId, error, journal) => ({
 const deployProxyHost = async (host) => {
 	const deploymentStore = createDeploymentStore({ ownerUserId: host.owner_user_id });
 	const upstreams = await resolveUpstreamDependencies(host);
+	const includes = await collectCustomIncludeManifest();
 	return nginxDeploymentCoordinator.deploy({
 		hostType: "proxy_host",
 		host,
-		dependencies: { certificate: host.certificate, access_list: host.access_list, upstreams },
+		dependencies: { certificate: host.certificate, access_list: host.access_list, upstreams, includes },
 		operation: "proxy_host_deploy",
 		deploymentStore,
 		beforeCommit: async ({ operationId }) => {
@@ -468,7 +502,9 @@ const internalProxyHost = {
 
 				return proxyHostModel.transaction(async (trx) => {
 					await assertReferencedUpstreamsAvailable(access, thisData._upstream_references, trx);
-					const saved = await proxyHostModel.query(trx).insertAndFetch(_.omit(thisData, ["_upstream_references"]));
+					const saved = await proxyHostModel
+						.query(trx)
+						.insertAndFetch(_.omit(thisData, ["_upstream_references"]));
 					await syncUpstreamReferences(trx, saved.id, thisData._upstream_references);
 					return _.omit(saved, omissions());
 				});
@@ -603,11 +639,7 @@ const internalProxyHost = {
 			})
 			.then((row) => {
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				thisData = _.assign(
-					{},
-					{ domain_names: row.domain_names },
-					thisData,
-				);
+				thisData = _.assign({}, { domain_names: row.domain_names }, thisData);
 
 				thisData = internalHost.cleanSslHstsData(thisData, row);
 
@@ -730,7 +762,12 @@ const internalProxyHost = {
 			await proxyHostUpstreamModel.query(trx).where("proxy_host_id", row.id).delete();
 		});
 		await removeProxyHostArtifact({ ...row, is_deleted: true, nginx_config_revision: revision }, "deleted");
-		await internalAuditLog.add(access, { action: "deleted", object_type: "proxy-host", object_id: row.id, meta: _.omit(row, omissions()) });
+		await internalAuditLog.add(access, {
+			action: "deleted",
+			object_type: "proxy-host",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
 		return true;
 	},
 
@@ -877,6 +914,13 @@ const internalProxyHost = {
 							...(includeContent.includes("deployed") ? { config: deployedContent } : {}),
 						},
 			candidate,
+			desired: buildDesiredNginxArtifact(row),
+			applied_snapshot: row.nginx_applied_snapshot ?? null,
+			migration: {
+				status: row.nginx_config_migration_status ?? "unknown",
+				migrated_on: row.nginx_config_migrated_on ?? null,
+				diagnostics: row.nginx_config_migration_diagnostics ?? [],
+			},
 			last_error: row.nginx_last_error ?? null,
 			last_checked_at: row.nginx_checked_at ?? null,
 		};
@@ -920,6 +964,9 @@ const internalProxyHost = {
 			validation_scope: mirror.validation_scope,
 			unresolved_dependencies: candidate.unresolved,
 			diagnostics,
+			effective_config: result.effectiveConfig,
+			source_map: result.sourceMap,
+			capability: result.capability,
 		};
 	},
 

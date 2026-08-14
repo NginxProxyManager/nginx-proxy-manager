@@ -467,6 +467,9 @@
 	"nginx-deployment.status.recovering": {
 		"defaultMessage": "恢复中"
 	},
+	"nginx-options.cache-control": {
+		"defaultMessage": "Cache-Control"
+	},
 	"nginx-options.client-max-body-size": {
 		"defaultMessage": "最大请求体"
 	},
@@ -490,6 +493,9 @@
 	},
 	"nginx-options.cookie-to.help": {
 		"defaultMessage": "在 Set-Cookie 响应中用于替换源值的域名或路径。"
+	},
+	"nginx-options.expires": {
+		"defaultMessage": "Expires"
 	},
 	"nginx-options.failover-429": {
 		"defaultMessage": "HTTP 429"
@@ -534,13 +540,19 @@
 		"defaultMessage": "头名称"
 	},
 	"nginx-options.header-name.help": {
-		"defaultMessage": "要设置、追加或移除的 HTTP 请求头名称；名称不区分大小写。"
+		"defaultMessage": "要管理的 HTTP 头名称；名称不区分大小写。"
 	},
 	"nginx-options.header-operation": {
 		"defaultMessage": "操作"
 	},
 	"nginx-options.header-operation.help": {
-		"defaultMessage": "“设置”会替换请求头值，“追加”会添加额外值，“移除”会省略该请求头。"
+		"defaultMessage": "可用操作取决于规则作用于上游请求头还是客户端响应头。"
+	},
+	"nginx-options.header-operation.request.help": {
+		"defaultMessage": "“设置”对应 proxy_set_header；“移除”对应值为空的 proxy_set_header，从而不向上游传递该请求头。"
+	},
+	"nginx-options.header-operation.response.help": {
+		"defaultMessage": "“设置”会先隐藏上游响应头再输出一个受管值；“追加”会输出额外响应头值；“移除”会隐藏上游响应头。"
 	},
 	"nginx-options.header-remove": {
 		"defaultMessage": "移除"
@@ -552,7 +564,7 @@
 		"defaultMessage": "头值"
 	},
 	"nginx-options.header-value.help": {
-		"defaultMessage": "发送给上游或客户端的请求头值；选择“允许的变量”可使用受支持的 Nginx 变量。"
+		"defaultMessage": "发送给上游或客户端的头值；选择“允许的变量”可使用受支持的 Nginx 变量。"
 	},
 	"nginx-options.http-1-0": {
 		"defaultMessage": "HTTP/1.0"
@@ -831,7 +843,7 @@
 		"defaultMessage": "请求头（proxy_set_header）"
 	},
 	"nginx-options.request-headers.help": {
-		"defaultMessage": "按规则设置、追加或移除发送给上游的请求头。设置 Host 时会取代系统默认 Host 头。"
+		"defaultMessage": "按规则设置或移除发送给上游的请求头。设置 Host 时会取代系统默认 Host 头。"
 	},
 	"nginx-options.response-buffering": {
 		"defaultMessage": "响应缓冲与磁盘 I/O"
@@ -843,7 +855,7 @@
 		"defaultMessage": "响应头（add_header）"
 	},
 	"nginx-options.response-headers.help": {
-		"defaultMessage": "按规则向返回客户端的响应头中设置或追加值。"
+		"defaultMessage": "按规则设置、追加或移除返回给客户端的响应头。"
 	},
 	"nginx-options.set-cookie": {
 		"defaultMessage": "Set-Cookie"
@@ -883,6 +895,9 @@
 	},
 	"nginx-options.x-accel-buffering": {
 		"defaultMessage": "X-Accel-Buffering"
+	},
+	"nginx-options.x-accel-charset": {
+		"defaultMessage": "X-Accel-Charset"
 	},
 	"nginx-options.x-accel-expires": {
 		"defaultMessage": "X-Accel-Expires"
@@ -1376,6 +1391,9 @@
 	"proxy-host.wizard.cache.help": {
 		"defaultMessage": "为当前代理主机启用系统管理的静态资源缓存规则。"
 	},
+	"proxy-host.wizard.capability": {
+		"defaultMessage": "Nginx 运行时能力配置"
+	},
 	"proxy-host.wizard.default-location.disabled": {
 		"defaultMessage": "未配置"
 	},
@@ -1396,6 +1414,9 @@
 	},
 	"proxy-host.wizard.directives.help": {
 		"defaultMessage": "调整 server 级代理指令；只有结构化配置无法满足时，再使用原始高级指令。"
+	},
+	"proxy-host.wizard.effective-config": {
+		"defaultMessage": "生效配置与字段来源"
 	},
 	"proxy-host.wizard.listener": {
 		"defaultMessage": "监听方式"
@@ -1475,6 +1496,9 @@
 	"proxy-host.wizard.sni.help": {
 		"defaultMessage": "访问 HTTPS 上游时，在 TLS 握手中发送上游主机名。"
 	},
+	"proxy-host.wizard.source-map": {
+		"defaultMessage": "渲染指令来源映射"
+	},
 	"proxy-host.wizard.structured-options": {
 		"defaultMessage": "结构化 Server 指令"
 	},
@@ -1522,6 +1546,9 @@
 	},
 	"proxy-host.wizard.validation.locations": {
 		"defaultMessage": "请补全每个自定义 Location 的匹配路径、上游主机和端口后再继续。"
+	},
+	"proxy-host.wizard.validation.proxy-redirect-default": {
+		"defaultMessage": "托管根 Location 的 proxy_pass 使用变量，不能选择 proxy_redirect default。请选择 off，或提供使用字面量目标的自定义根 Location。"
 	},
 	"proxy-host.wizard.validation.upstream": {
 		"defaultMessage": "请填写有效的上游主机和端口后再继续。"

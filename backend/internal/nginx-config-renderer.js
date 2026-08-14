@@ -5,13 +5,17 @@ import { fileURLToPath } from "node:url";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { hasDiagnosticErrors, scanAdvancedConfig } from "./nginx-config-diagnostics.js";
+import { resolveEffectiveProxyConfig } from "./nginx-proxy-effective-resolver.js";
+import { buildProxySourceMap } from "./nginx-proxy-source-map.js";
+import { validateNginxCapability } from "./nginx-runtime-capability.js";
 import { hashCanonical, hashFileManifest, sha256 } from "./nginx-config-hash.js";
 import { normalizeProxyHost } from "./nginx-config-normalizer.js";
 import { buildSnapshot, getHostAdapter } from "./nginx-host-adapters.js";
+import { PROXY_OPTION_PROFILE_VERSION } from "./nginx-proxy-option-profile.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const templatesDir = join(__dirname, "../templates");
-const TEMPLATE_VERSION = "nginx-config-renderer-v2";
+const TEMPLATE_VERSION = "nginx-config-renderer-v4";
 const PROTECTED_HEADERS = new Set(["host", "x-forwarded-scheme", "x-forwarded-proto", "x-forwarded-for", "x-real-ip"]);
 
 const quote = (value) => `"${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\$/g, "\\$")}"`;
@@ -37,6 +41,8 @@ const renderPortOnlyListener = (config, listener, ipv6) => {
 const readTemplateManifest = async (template) => {
 	const files = [
 		template,
+		"_header_comment.conf",
+		"_hsts_map.conf",
 		"_location.conf",
 		"_access.conf",
 		"_assets.conf",
@@ -120,7 +126,7 @@ const renderRequestHeaders = (options, websocket, useProxyIncludeDefaults = fals
 };
 
 const renderOptions = (options = {}, websocket = false, useProxyIncludeDefaults = false) => {
-	const lines = [];
+	const lines = [`# npm:managed proxy-option-profile=${PROXY_OPTION_PROFILE_VERSION}`];
 	for (const field of [
 		"client_max_body_size",
 		"proxy_connect_timeout",
@@ -160,28 +166,45 @@ const renderOptions = (options = {}, websocket = false, useProxyIncludeDefaults 
 	if (options.proxy_method) lines.push(`proxy_method ${options.proxy_method};`);
 	if (options.proxy_bind) lines.push(`proxy_bind ${options.proxy_bind};`);
 	if (options.proxy_next_upstream) lines.push(`proxy_next_upstream ${options.proxy_next_upstream.join(" ")};`);
-	if (options.proxy_redirect) lines.push(`proxy_redirect ${options.proxy_redirect};`);
 	if (options.proxy_ssl_name) lines.push(`proxy_ssl_name ${options.proxy_ssl_name};`);
 	if (options.proxy_ssl_protocols) lines.push(`proxy_ssl_protocols ${options.proxy_ssl_protocols.join(" ")};`);
 	if (options.proxy_ssl_ciphers) lines.push(`proxy_ssl_ciphers ${options.proxy_ssl_ciphers};`);
 	if (options.proxy_ssl_verify) lines.push("proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;");
-	for (const item of options.proxy_cookie_domain || []) lines.push(`proxy_cookie_domain ${item.from} ${item.to};`);
-	for (const item of options.proxy_cookie_path || []) lines.push(`proxy_cookie_path ${item.from} ${item.to};`);
+	if (options.proxy_cookie_domain?.length) {
+		for (const item of options.proxy_cookie_domain) lines.push(`proxy_cookie_domain ${item.from} ${item.to};`);
+	} else {
+		lines.push("proxy_cookie_domain off;");
+	}
+	if (options.proxy_cookie_path?.length) {
+		for (const item of options.proxy_cookie_path) lines.push(`proxy_cookie_path ${item.from} ${item.to};`);
+	} else {
+		lines.push("proxy_cookie_path off;");
+	}
 	const requestHeaders = renderRequestHeaders(options, websocket, useProxyIncludeDefaults);
 	if (requestHeaders) lines.push(requestHeaders);
+	const hiddenResponseHeaders = new Set();
 	for (const item of options.response_headers || []) {
-		if (item.operation === "remove") continue;
-		if (item.operation === "add" || item.operation === "set")
+		const key = item.name.toLowerCase();
+		if (item.operation === "set" || item.operation === "remove") {
+			lines.push(`proxy_hide_header ${item.name};`);
+			hiddenResponseHeaders.add(key);
+		}
+		if (item.operation === "set" || item.operation === "add")
 			lines.push(
 				`add_header ${item.name} ${item.value_mode === "variable" ? item.value : quote(item.value)} always;`,
 			);
 	}
-	for (const header of options.hide_response_headers || []) lines.push(`proxy_hide_header ${header};`);
+	for (const header of options.hide_response_headers || []) {
+		if (!hiddenResponseHeaders.has(header.toLowerCase())) lines.push(`proxy_hide_header ${header};`);
+	}
 	for (const header of options.proxy_pass_headers || []) lines.push(`proxy_pass_header ${header};`);
 	if (options.proxy_ignore_headers?.length)
 		lines.push(`proxy_ignore_headers ${options.proxy_ignore_headers.join(" ")};`);
 	return lines.join("\n");
 };
+
+const renderPostPassOptions = (options = {}) =>
+	options.proxy_redirect ? `proxy_redirect ${options.proxy_redirect};` : "";
 
 const proxyTargetAuthority = (target, dependencies = {}) => {
 	if (target.type === "direct") return `${target.host}:${target.port}`;
@@ -191,8 +214,42 @@ const proxyTargetAuthority = (target, dependencies = {}) => {
 	return upstream.nginx_key;
 };
 
-const renderLocation = (location, host, upstreams = {}) => {
-	const options = { ...host.nginx_options, ...location.nginx_config };
+const indentBlock = (lines, indent = "    ") => lines.map((line) => `${indent}${line}`).join("\n");
+
+const renderAccessPolicy = (host) => {
+	const accessListId = Number(host.access_list_id || 0);
+	const accessList = host.access_list ?? {};
+	if (accessListId <= 0) return "# npm:feature field=access_list_id source=user value=off";
+	const items = Array.isArray(accessList.items) ? accessList.items : [];
+	const clients = Array.isArray(accessList.clients) ? accessList.clients : [];
+	const lines = ["# npm:feature field=access_list_id source=user begin"];
+	if (items.length > 0) {
+		lines.push('auth_basic "Authorization required";', `auth_basic_user_file /data/access/${accessListId};`);
+		if (accessList.pass_auth === 0 || accessList.pass_auth === false)
+			lines.push('proxy_set_header Authorization "";');
+	}
+	for (const client of clients) {
+		if (client?.directive && client?.address) lines.push(`${client.directive} ${client.address};`);
+	}
+	if (clients.length > 0) lines.push("deny all;");
+	lines.push(accessList.satisfy_any === 1 || accessList.satisfy_any === true ? "satisfy any;" : "satisfy all;");
+	lines.push("# npm:feature field=access_list_id source=user end");
+	return lines.join("\n");
+};
+
+const renderHstsPolicy = (host) => {
+	if (host.certificate && Number(host.certificate_id || 0) > 0 && host.ssl_forced && host.hsts_enabled) {
+		return [
+			"# npm:feature field=hsts_enabled source=user begin",
+			"add_header Strict-Transport-Security $hsts_header always;",
+			"# npm:feature field=hsts_enabled source=user end",
+		].join("\n");
+	}
+	return "# npm:feature field=hsts_enabled source=user value=off";
+};
+
+const renderLocation = (location, host, upstreams = {}, effectiveOptions = host.nginx_options) => {
+	const options = effectiveOptions;
 	const match = {
 		prefix: location.path,
 		priority_prefix: `^~ ${location.path}`,
@@ -219,17 +276,70 @@ const renderLocation = (location, host, upstreams = {}) => {
 		"    # Keep the human log and the structured monitoring log at location scope.",
 		`    access_log /data/logs/proxy-host-${host.id}_access.log proxy;`,
 		"    access_log /data/logs/npm-monitor-http.log npm_proxy_metrics_v1 buffer=128k flush=1s;",
+		indentBlock(renderAccessPolicy(host).split("\n")),
+		indentBlock(renderHstsPolicy(host).split("\n")),
 		location.advanced_config ? `    ${location.advanced_config.replace(/\n/g, "\n    ")}` : "",
 		renderOptions(options, host.allow_websocket_upgrade, true)
 			.split("\n")
 			.map((line) => `    ${line}`)
 			.join("\n"),
+		"    # npm:feature field=caching_enabled source=derived begin",
+		"    proxy_cache off;",
+		"    proxy_cache_bypass 0;",
+		"    proxy_no_cache 0;",
+		"    # npm:feature field=caching_enabled source=derived end",
 		"    add_header X-Served-By $host;",
 		`    ${proxyPass}`,
+		renderPostPassOptions(options) ? `    ${renderPostPassOptions(options)}` : "",
 		"  }",
 	];
 	return lines.filter(Boolean).join("\n");
 };
+
+
+const renderAssetsLocation = (host, options, upstreams = {}) => {
+	const assetOptions = {
+		...options,
+		proxy_connect_timeout: "5s",
+		proxy_read_timeout: "45s",
+		proxy_ignore_headers: ["Set-Cookie", "Cache-Control", "Expires", "X-Accel-Expires"],
+		hide_response_headers: [...new Set([...(options.hide_response_headers || []), "last-modified", "cache-control", "vary"])],
+	};
+	const target = host.default_target;
+	const authority = proxyTargetAuthority(target, upstreams);
+	const proxyPass =
+		target.type === "upstream"
+			? `${target.scheme}://${authority}$request_uri`
+			: "$forward_scheme://$server:$port$request_uri";
+	return [
+		"  # npm:feature field=caching_enabled source=user begin",
+		"  location ~* ^.*\\.(css|js|jpe?g|gif|png|webp|woff|woff2|eot|ttf|svg|ico|css\\.map|js\\.map)$ {",
+		"    if_modified_since off;",
+		"    proxy_cache public-cache;",
+		"    proxy_cache_key $host$request_uri;",
+		"    proxy_cache_valid any 30m;",
+		"    proxy_cache_valid 404 1m;",
+		"    proxy_cache_bypass 0;",
+		"    proxy_no_cache 0;",
+		"    proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504 http_404;",
+		"    expires @30m;",
+		"    # Keep cache hits visible in both the human and structured monitoring logs.",
+		`    access_log /data/logs/proxy-host-${host.id}_access.log proxy;`,
+		"    access_log /data/logs/npm-monitor-http.log npm_proxy_metrics_v1 buffer=128k flush=1s;",
+		indentBlock(renderAccessPolicy(host).split("\n")),
+		indentBlock(renderHstsPolicy(host).split("\n")),
+		renderOptions(assetOptions, host.allow_websocket_upgrade, true)
+			.split("\n")
+			.map((line) => `    ${line}`)
+			.join("\n"),
+		"    add_header X-Served-By $host;",
+		`    proxy_pass ${proxyPass};`,
+		renderPostPassOptions(assetOptions) ? `    ${renderPostPassOptions(assetOptions)}` : "",
+		"  }",
+		"  # npm:feature field=caching_enabled source=user end",
+	].filter(Boolean).join("\n");
+};
+
 
 
 const UPSTREAM_KEY = /^[a-z][a-z0-9_-]{0,62}$/;
@@ -343,6 +453,7 @@ const buildDependencyManifest = (host, dependencies) => ({
 	certificate: dependencies.certificate
 		? {
 				id: canonicalDependencyId(dependencies.certificate.id ?? host.certificate_id),
+				provider: dependencies.certificate.provider ?? null,
 				fullchain_hash: dependencies.certificate.fullchain_hash ?? null,
 				key_hash: dependencies.certificate.key_hash ?? null,
 			}
@@ -352,6 +463,8 @@ const buildDependencyManifest = (host, dependencies) => ({
 				id: canonicalDependencyId(dependencies.access_list.id ?? host.access_list_id),
 				clients: dependencies.access_list.clients ?? [],
 				items: dependencies.access_list.items ?? [],
+				pass_auth: Boolean(dependencies.access_list.pass_auth ?? true),
+				satisfy_any: Boolean(dependencies.access_list.satisfy_any ?? false),
 			}
 		: { id: canonicalDependencyId(host.access_list_id) },
 	includes: dependencies.includes ?? [],
@@ -371,7 +484,11 @@ const buildDependencyManifest = (host, dependencies) => ({
  */
 export const buildProxyHostCandidate = async ({ host, dependencies = {}, capability = {} }) => {
 	const normalized = normalizeProxyHost(host);
+	const { capability: effectiveCapability, diagnostics: capabilityDiagnostics } = validateNginxCapability(capability);
+	const effectiveConfig = resolveEffectiveProxyConfig(normalized);
 	const diagnostics = [
+		...capabilityDiagnostics,
+		...(dependencies.includes ?? []).flatMap((entry) => entry.diagnostics ?? []),
 		...scanAdvancedConfig(normalized.advanced_config),
 		...normalized.locations.flatMap((location) => [
 			...location._normalization_warnings,
@@ -389,7 +506,7 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 	const templateHash = await readTemplateManifest("proxy_host.conf");
 	const dependencyManifest = buildDependencyManifest(normalized, dependencies);
 	const dependencyHash = hashCanonical(dependencyManifest);
-	const capabilityHash = hashCanonical(capability);
+	const capabilityHash = hashCanonical(effectiveCapability);
 	const payload = {
 		id: normalized.id ?? null,
 		enabled: Boolean(normalized.enabled),
@@ -401,6 +518,7 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 		locations: normalized.locations.map(({ _normalization_warnings, ...location }) => location),
 		advanced_config: normalized.advanced_config ?? "",
 		nginx_config: normalized.nginx_config,
+		proxy_option_profile_version: PROXY_OPTION_PROFILE_VERSION,
 		ssl_forced: Boolean(normalized.ssl_forced),
 		caching_enabled: Boolean(normalized.caching_enabled),
 		block_exploits: Boolean(normalized.block_exploits),
@@ -419,28 +537,37 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 		defaultLocationEnabled &&
 		!normalized.locations.some((location) => location.path === "/" && location.match_type === "prefix") &&
 		!/^(?:.*;)?\s*?location\s*?\/\s*?{/im.test(normalized.advanced_config || "");
-	const renderContext = {
+	if (useDefaultLocation && normalized.nginx_options.proxy_redirect === "default")
+		throw new errs.UnprocessableConfigError(
+			"proxy_redirect default cannot be used in the managed default Location because proxy_pass contains variables; choose off or define a literal custom root Location",
+			{
+				code: "PROXY_REDIRECT_DEFAULT_WITH_VARIABLE_PROXY_PASS",
+				field: "nginx_config.server.proxy_redirect",
+			},
+		);
+	const renderHost = {
 		...normalized,
 		certificate: dependencies.certificate ?? normalized.certificate,
 		access_list: dependencies.access_list ?? normalized.access_list,
-		ipv6: typeof capability.ipv6 === "boolean" ? capability.ipv6 : true,
+	};
+	const renderContext = {
+		...renderHost,
+		ipv6: effectiveCapability.ipv6,
 		use_default_location: useDefaultLocation,
-		locations: normalized.locations.map((location) => renderLocation(location, normalized, dependencies.upstreams ?? {})).join("\n\n"),
-		default_target_type: normalized.default_target.type,
+		locations: normalized.locations.map((location, index) => renderLocation(location, renderHost, dependencies.upstreams ?? {}, effectiveConfig.locations[index].effective_flat)).join("\n\n"),
+		managed_assets_location: normalized.caching_enabled
+			? renderAssetsLocation(renderHost, effectiveConfig.server.effective_flat, dependencies.upstreams ?? {})
+			: "  # npm:feature field=caching_enabled source=user value=off",
 		default_proxy_pass:
 			normalized.default_target.type === "upstream"
 				? `${normalized.default_target.scheme}://${proxyTargetAuthority(normalized.default_target, dependencies.upstreams ?? {})}$request_uri`
-				: null,
-		nginx_options: renderOptions(normalized.nginx_options, normalized.allow_websocket_upgrade),
+				: "$forward_scheme://$server:$port$request_uri",
 		managed_nginx_location_options: renderOptions(
 			normalized.nginx_options,
 			normalized.allow_websocket_upgrade,
 			true,
 		),
-		// proxy.conf carries its own proxy_set_header defaults. When a user manages
-		// request headers, render proxy_pass directly so the upstream receives one
-		// authoritative value per header rather than duplicate Host headers.
-		use_managed_request_headers: Boolean(normalized.nginx_options.request_headers?.length),
+		managed_nginx_location_post_pass_options: renderPostPassOptions(normalized.nginx_options),
 	};
 	const rendered = await renderEngine.parseAndRender(template, renderContext);
 	const config = asLf(
@@ -449,6 +576,7 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 			: rendered,
 	);
 	const configHash = sha256(Buffer.from(config, "utf8"));
+	const sourceMap = buildProxySourceMap(config, effectiveConfig);
 	const partial = {
 		config,
 		configHash,
@@ -457,8 +585,10 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 		templateVersion: TEMPLATE_VERSION,
 		templateHash,
 		capabilityHash,
+		capability: effectiveCapability,
 		diagnostics,
-		sourceMap: [],
+		effectiveConfig,
+		sourceMap,
 	};
 	return Object.freeze({ ...partial, snapshot: buildSnapshot("proxy_host", normalized, partial) });
 };

@@ -20,7 +20,46 @@ env:
   IMAGE_NAME: docker.io/moailaozi/nginx-proxy-manager
 
 jobs:
+  quality:
+    name: Semantic config quality gate
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: yarn
+          cache-dependency-path: |
+            backend/yarn.lock
+            frontend/yarn.lock
+
+      - name: Install Yarn
+        run: npm install --global yarn@1.22.22
+
+      - name: Validate backend schemas, catalog, lint, and tests
+        working-directory: backend
+        run: |
+          yarn install --frozen-lockfile --network-timeout 600000
+          yarn validate-schema
+          yarn check:proxy-directives
+          yarn lint
+          yarn test
+
+      - name: Validate frontend catalog coverage, types, locales, tests, and build
+        working-directory: frontend
+        run: |
+          yarn install --frozen-lockfile --network-timeout 600000
+          yarn lint
+          yarn locale-compile
+          yarn vitest run --no-color
+          yarn build
+
   build-and-push:
+    needs: quality
     runs-on: ubuntu-24.04
 
     steps:
@@ -58,7 +97,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build, runtime-validate, and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .

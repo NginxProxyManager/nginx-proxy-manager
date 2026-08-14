@@ -28,7 +28,7 @@ export const getActivePath = (hostType, hostId, root = "/data/nginx") => {
 };
 
 export const buildSnapshot = (hostType, host, renderResult) => ({
-	schema_version: 1,
+	schema_version: 2,
 	host_type: hostType,
 	host_id: host.id ?? null,
 	desired: structuredClone(host),
@@ -38,6 +38,10 @@ export const buildSnapshot = (hostType, host, renderResult) => ({
 	template_hash: renderResult.templateHash,
 	capability_hash: renderResult.capabilityHash,
 	config_hash: renderResult.configHash,
+	effective_config: renderResult.effectiveConfig ?? null,
+	source_map: renderResult.sourceMap ?? [],
+	capability: renderResult.capability ?? null,
+	diagnostics: renderResult.diagnostics ?? [],
 });
 
 export const hostAdapters = Object.freeze(definitions);

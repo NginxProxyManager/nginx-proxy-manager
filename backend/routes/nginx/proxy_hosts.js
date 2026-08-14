@@ -79,7 +79,11 @@ router
 router.options("/nginx-config/preview", (_, res) => res.sendStatus(204));
 router.post("/nginx-config/preview", jwtdecode(), async (req, res, next) => {
 	try {
-		const result = await internalProxyHost.previewNginxConfig(res.locals.access, req.body);
+		const payload = await apiValidator(
+			getValidationSchema("/nginx/proxy-hosts/nginx-config/preview", "post"),
+			req.body,
+		);
+		const result = await internalProxyHost.previewNginxConfig(res.locals.access, payload);
 		res.set({ "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" }).status(200).send(result);
 	} catch (err) {
 		debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);

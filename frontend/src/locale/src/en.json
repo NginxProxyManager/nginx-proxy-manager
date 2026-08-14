@@ -554,6 +554,9 @@
 	"nginx-deployment.status.recovering": {
 		"defaultMessage": "Recovering"
 	},
+	"nginx-options.cache-control": {
+		"defaultMessage": "Cache-Control"
+	},
 	"nginx-options.client-max-body-size": {
 		"defaultMessage": "Max request body"
 	},
@@ -577,6 +580,9 @@
 	},
 	"nginx-options.cookie-to.help": {
 		"defaultMessage": "The domain or path that should replace the source value in the Set-Cookie response."
+	},
+	"nginx-options.expires": {
+		"defaultMessage": "Expires"
 	},
 	"nginx-options.failover-429": {
 		"defaultMessage": "HTTP 429"
@@ -621,13 +627,19 @@
 		"defaultMessage": "Header name"
 	},
 	"nginx-options.header-name.help": {
-		"defaultMessage": "The HTTP header name to set, add, or remove. Header names are case-insensitive."
+		"defaultMessage": "The HTTP header name to manage. Header names are case-insensitive."
 	},
 	"nginx-options.header-operation": {
 		"defaultMessage": "Operation"
 	},
 	"nginx-options.header-operation.help": {
-		"defaultMessage": "Set replaces the header value, Add appends an additional value, and Remove omits a request header."
+		"defaultMessage": "The available operations depend on whether the rule targets an upstream request or a client response."
+	},
+	"nginx-options.header-operation.request.help": {
+		"defaultMessage": "Set maps to proxy_set_header. Remove maps to proxy_set_header with an empty value, which suppresses the upstream request header."
+	},
+	"nginx-options.header-operation.response.help": {
+		"defaultMessage": "Set hides the upstream header and emits one managed value. Add emits an additional response value. Remove hides the upstream header."
 	},
 	"nginx-options.header-remove": {
 		"defaultMessage": "Remove"
@@ -918,7 +930,7 @@
 		"defaultMessage": "Request headers (proxy_set_header)"
 	},
 	"nginx-options.request-headers.help": {
-		"defaultMessage": "Set, add, or remove request headers sent upstream. Setting Host replaces the system default Host header."
+		"defaultMessage": "Set or remove request headers sent upstream. Setting Host replaces the system default Host header."
 	},
 	"nginx-options.response-buffering": {
 		"defaultMessage": "Response buffering & disk I/O"
@@ -930,7 +942,7 @@
 		"defaultMessage": "Response headers (add_header)"
 	},
 	"nginx-options.response-headers.help": {
-		"defaultMessage": "Set or add headers on the response returned to the client."
+		"defaultMessage": "Set, add, or remove headers on the response returned to the client."
 	},
 	"nginx-options.set-cookie": {
 		"defaultMessage": "Set-Cookie"
@@ -970,6 +982,9 @@
 	},
 	"nginx-options.x-accel-buffering": {
 		"defaultMessage": "X-Accel-Buffering"
+	},
+	"nginx-options.x-accel-charset": {
+		"defaultMessage": "X-Accel-Charset"
 	},
 	"nginx-options.x-accel-expires": {
 		"defaultMessage": "X-Accel-Expires"
@@ -1463,6 +1478,9 @@
 	"proxy-host.wizard.cache.help": {
 		"defaultMessage": "Enables the managed static-asset caching include for this host."
 	},
+	"proxy-host.wizard.capability": {
+		"defaultMessage": "Nginx runtime capability profile"
+	},
 	"proxy-host.wizard.default-location.disabled": {
 		"defaultMessage": "Not configured"
 	},
@@ -1483,6 +1501,9 @@
 	},
 	"proxy-host.wizard.directives.help": {
 		"defaultMessage": "Tune server-level proxy directives, then add raw directives only when the structured controls are not sufficient."
+	},
+	"proxy-host.wizard.effective-config": {
+		"defaultMessage": "Effective configuration and field sources"
 	},
 	"proxy-host.wizard.listener": {
 		"defaultMessage": "Listener"
@@ -1562,6 +1583,9 @@
 	"proxy-host.wizard.sni.help": {
 		"defaultMessage": "Sends the upstream host name during the TLS handshake for HTTPS upstreams."
 	},
+	"proxy-host.wizard.source-map": {
+		"defaultMessage": "Rendered directive source map"
+	},
 	"proxy-host.wizard.structured-options": {
 		"defaultMessage": "Structured server directives"
 	},
@@ -1609,6 +1633,9 @@
 	},
 	"proxy-host.wizard.validation.locations": {
 		"defaultMessage": "Complete the match path, upstream host, and port for every custom location before continuing."
+	},
+	"proxy-host.wizard.validation.proxy-redirect-default": {
+		"defaultMessage": "proxy_redirect default is not valid for the managed root Location because its proxy_pass uses variables. Choose off or provide a literal custom root Location."
 	},
 	"proxy-host.wizard.validation.upstream": {
 		"defaultMessage": "Enter a valid upstream host and port before continuing."

@@ -7,6 +7,7 @@ import test from "node:test";
 import { down as downDeployment, up as upDeployment } from "../../migrations/20260731120100_nginx_deployment.js";
 import { down as downProxyHost, up as upProxyHost } from "../../migrations/20260731120000_proxy_host_nginx_desired_applied.js";
 import { down as downMonitoring, up as upMonitoring } from "../../migrations/20260803110000_proxy_host_monitoring.js";
+import { down as downConfigV2, up as upConfigV2 } from "../../migrations/20260814120000_proxy_host_nginx_config_v2.js";
 
 const externalClient = process.env.NPM_MIGRATION_TEST_CLIENT;
 const connection = externalClient === "mysql2"
@@ -73,6 +74,54 @@ test(`MIG-002 proxy host monitoring schema migrates and rolls back on ${client}`
 		await downMonitoring(database);
 		assert.equal(await database.schema.hasTable("proxy_host_monitor_config"), false);
 		assert.equal(await database.schema.hasTable("proxy_host_metric_hour"), false);
+	} finally {
+		await database.destroy();
+		if (directory) await rm(directory, { recursive: true, force: true });
+	}
+});
+
+
+test(`MIG-003 proxy host semantic config v2 migrates, gates conflicts, and restores backups on ${client}`, { skip: !sqliteBindingAvailable && !externalClient ? "better-sqlite3 native binding is unavailable in this host runtime" : false }, async () => {
+	const { database, directory } = await setupDatabase();
+	const decode = (value) => typeof value === "string" ? JSON.parse(value) : value;
+	try {
+		await database.schema.alterTable("proxy_host", (table) => {
+			table.json("locations").nullable();
+			table.text("advanced_config").nullable();
+		});
+		await upProxyHost(database);
+		await database("proxy_host").where({ id: 1 }).update({
+			nginx_config: JSON.stringify({ schema_version: 1, server: { proxy_read_timeout: "45s" } }),
+			locations: JSON.stringify([{ path: "/api/", nginx_config: { proxy_connect_timeout: "5s" }, advanced_config: "" }]),
+			advanced_config: "",
+		});
+		await database("proxy_host").insert({
+			enabled: true,
+			nginx_config: JSON.stringify({ schema_version: 1, server: {} }),
+			locations: JSON.stringify([]),
+			advanced_config: "proxy_pass http://unmanaged.example;",
+		});
+
+		await upConfigV2(database);
+		const safe = await database("proxy_host").where({ id: 1 }).first();
+		assert.equal(safe.nginx_config_schema_version, 2);
+		assert.equal(safe.nginx_config_migration_status, "migrated");
+		assert.equal(decode(safe.nginx_config).schema_version, 2);
+		assert.equal(decode(safe.nginx_config).server.directives.proxy_pass_trailers, false);
+		assert.equal(decode(safe.locations)[0].nginx_config.overrides.directives.proxy_connect_timeout, "5s");
+		assert.equal(decode(safe.nginx_config_migration_backup).nginx_config.schema_version, 1);
+
+		const review = await database("proxy_host").where({ id: 2 }).first();
+		assert.equal(review.nginx_config_schema_version, 1);
+		assert.equal(review.nginx_config_migration_status, "review_required");
+		assert.equal(decode(review.nginx_config).schema_version, 1);
+		assert.ok(decode(review.nginx_config_migration_diagnostics).some((item) => item.severity === "error"));
+
+		await downConfigV2(database);
+		const restored = await database("proxy_host").where({ id: 1 }).first();
+		assert.equal(decode(restored.nginx_config).schema_version, 1);
+		assert.equal((await database("proxy_host").columnInfo()).nginx_config_migration_status, undefined);
+		await downProxyHost(database);
 	} finally {
 		await database.destroy();
 		if (directory) await rm(directory, { recursive: true, force: true });

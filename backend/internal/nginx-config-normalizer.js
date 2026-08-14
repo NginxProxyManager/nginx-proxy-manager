@@ -1,7 +1,15 @@
 import { isIP } from "node:net";
 import errs from "../lib/error.js";
+import { PROXY_DIRECTIVE_ENTRIES } from "./nginx-proxy-directive-catalog.js";
+import {
+	materializeProxyServerOptions,
+	PROXY_LOCATION_OPTION_KEYS,
+	PROXY_OPTION_PROFILE_VERSION,
+	PROXY_SERVER_OPTION_KEYS,
+} from "./nginx-proxy-option-profile.js";
 
-export const NGINX_CONFIG_SCHEMA_VERSION = 1;
+export const LEGACY_NGINX_CONFIG_SCHEMA_VERSION = 1;
+export const NGINX_CONFIG_SCHEMA_VERSION = 2;
 export const MATCH_TYPES = new Set(["prefix", "priority_prefix", "exact", "regex", "regex_i"]);
 export const PATH_MODES = new Set(["preserve_uri", "strip_prefix", "replace_prefix"]);
 const HEADER_TOKEN = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
@@ -19,6 +27,11 @@ const PROTECTED_REQUEST_HEADERS = new Set([
 const clone = (value) => structuredClone(value ?? {});
 const invalid = (code, message, details = {}) => {
 	throw new errs.UnprocessableConfigError(message, { code, ...details });
+};
+const assertKnownKeys = (value, allowedKeys, field) => {
+	for (const key of Object.keys(value ?? {})) {
+		if (!allowedKeys.has(key)) invalid("UNKNOWN_NGINX_FIELD", `${field}.${key} is not supported`, { field, key });
+	}
 };
 const assertNoControl = (value, field) => {
 	if (typeof value !== "string" || /[\r\n\0]/.test(value))
@@ -54,17 +67,111 @@ export const normalizeHeaderValue = (value, mode = "literal") => {
 	return value;
 };
 
-/** @param {unknown} value */
-export const normalizeNginxConfig = (value) => {
-	if (value === null || typeof value === "undefined") return { schema_version: NGINX_CONFIG_SCHEMA_VERSION };
+const OPTION_STORAGE = Object.freeze(
+	Object.fromEntries(PROXY_DIRECTIVE_ENTRIES.map((entry) => [entry.key, entry.storage])),
+);
+const HEADER_STORAGE_KEYS = Object.freeze(
+	Object.fromEntries(
+		PROXY_DIRECTIVE_ENTRIES.filter((entry) => entry.storage.section === "headers").map((entry) => [
+			entry.storage.key,
+			entry.key,
+		]),
+	),
+);
+const V2_SECTION_KEYS = new Set(["directives", "headers"]);
+const V2_HEADER_KEYS = new Set(Object.keys(HEADER_STORAGE_KEYS));
+
+export const flattenProxyOptionSections = (sections = {}, field = "nginx_config.server") => {
+	if (!sections || typeof sections !== "object" || Array.isArray(sections))
+		invalid("INVALID_NGINX_OPTIONS", `${field} must be an object`);
+	assertKnownKeys(sections, V2_SECTION_KEYS, field);
+	const directives = sections.directives ?? {};
+	const headers = sections.headers ?? {};
+	if (!directives || typeof directives !== "object" || Array.isArray(directives))
+		invalid("INVALID_NGINX_OPTIONS", `${field}.directives must be an object`);
+	if (!headers || typeof headers !== "object" || Array.isArray(headers))
+		invalid("INVALID_NGINX_OPTIONS", `${field}.headers must be an object`);
+	assertKnownKeys(headers, V2_HEADER_KEYS, `${field}.headers`);
+	const result = { ...directives };
+	for (const [storageKey, optionKey] of Object.entries(HEADER_STORAGE_KEYS)) {
+		if (Object.hasOwn(headers, storageKey)) result[optionKey] = headers[storageKey];
+	}
+	return result;
+};
+
+export const groupProxyOptions = (options = {}) => {
+	const result = { directives: {}, headers: {} };
+	for (const [key, value] of Object.entries(options || {})) {
+		const storage = OPTION_STORAGE[key];
+		if (!storage || storage.section === "directives") result.directives[storage?.key ?? key] = structuredClone(value);
+		else result.headers[storage.key] = structuredClone(value);
+	}
+	return result;
+};
+
+const canonicalServerConfig = (input = {}) =>
+	groupProxyOptions(normalizeOptions(input, "nginx_config.server", { materializeDefaults: true, allowDefaultLocation: true }));
+const canonicalLocationOverrides = (input = {}, field = "location.nginx_config.overrides") =>
+	groupProxyOptions(normalizeOptions(input, field));
+
+export const migrateNginxConfigToV2 = (value) => {
+	if (value === null || typeof value === "undefined") {
+		return {
+			schema_version: NGINX_CONFIG_SCHEMA_VERSION,
+			profile_version: PROXY_OPTION_PROFILE_VERSION,
+			listener: { mode: "domain" },
+			server: canonicalServerConfig(),
+		};
+	}
 	if (typeof value !== "object" || Array.isArray(value))
 		invalid("INVALID_NGINX_CONFIG", "nginx_config must be an object");
 	const config = clone(value);
-	if (typeof config.schema_version === "undefined") config.schema_version = NGINX_CONFIG_SCHEMA_VERSION;
-	if (config.schema_version !== NGINX_CONFIG_SCHEMA_VERSION) {
-		invalid("UNSUPPORTED_NGINX_CONFIG_SCHEMA", `nginx_config schema ${config.schema_version} is not supported`);
+	const schemaVersion = config.schema_version ?? LEGACY_NGINX_CONFIG_SCHEMA_VERSION;
+	if (schemaVersion === NGINX_CONFIG_SCHEMA_VERSION) {
+		assertKnownKeys(config, new Set(["schema_version", "profile_version", "server", "listener"]), "nginx_config");
+		if (config.profile_version && config.profile_version !== PROXY_OPTION_PROFILE_VERSION)
+			invalid("UNSUPPORTED_PROXY_OPTION_PROFILE", `nginx_config profile ${config.profile_version} is not supported`);
+		return {
+			schema_version: NGINX_CONFIG_SCHEMA_VERSION,
+			profile_version: PROXY_OPTION_PROFILE_VERSION,
+			listener: normalizeListener(config.listener),
+			server: canonicalServerConfig(flattenProxyOptionSections(config.server ?? {}, "nginx_config.server")),
+		};
 	}
-	return config;
+	if (schemaVersion !== LEGACY_NGINX_CONFIG_SCHEMA_VERSION)
+		invalid("UNSUPPORTED_NGINX_CONFIG_SCHEMA", `nginx_config schema ${schemaVersion} is not supported`);
+	assertKnownKeys(config, new Set(["schema_version", "profile_version", "server", "options", "listener"]), "nginx_config");
+	if (config.profile_version && config.profile_version !== PROXY_OPTION_PROFILE_VERSION)
+		invalid("UNSUPPORTED_PROXY_OPTION_PROFILE", `nginx_config profile ${config.profile_version} is not supported`);
+	if (typeof config.server !== "undefined" && typeof config.options !== "undefined")
+		invalid("AMBIGUOUS_NGINX_OPTIONS", "nginx_config cannot contain both server and legacy options");
+	return {
+		schema_version: NGINX_CONFIG_SCHEMA_VERSION,
+		profile_version: PROXY_OPTION_PROFILE_VERSION,
+		listener: normalizeListener(config.listener),
+		server: canonicalServerConfig(config.server ?? config.options ?? {}),
+	};
+};
+
+/** @param {unknown} value */
+export const normalizeNginxConfig = (value) => migrateNginxConfigToV2(value);
+
+export const migrateLocationNginxConfigToV2 = (value, field = "location.nginx_config") => {
+	if (value === null || typeof value === "undefined" || (typeof value === "object" && !Array.isArray(value) && !Object.keys(value).length))
+		return { mode: "inherit", overrides: { directives: {}, headers: {} } };
+	if (typeof value !== "object" || Array.isArray(value)) invalid("INVALID_NGINX_OPTIONS", `${field} must be an object`);
+	if (Object.hasOwn(value, "mode") || Object.hasOwn(value, "overrides")) {
+		assertKnownKeys(value, new Set(["mode", "overrides"]), field);
+		if ((value.mode ?? "inherit") !== "inherit") invalid("INVALID_LOCATION_INHERIT_MODE", `${field}.mode must be inherit`);
+		return {
+			mode: "inherit",
+			overrides: canonicalLocationOverrides(
+				flattenProxyOptionSections(value.overrides ?? {}, `${field}.overrides`),
+				`${field}.overrides`,
+			),
+		};
+	}
+	return { mode: "inherit", overrides: canonicalLocationOverrides(value, field) };
 };
 
 const normalizePath = (path, matchType) => {
@@ -91,17 +198,25 @@ export const normalizeUpstreamHost = (host) => {
 const normalizeHeaderOperations = (items, field) => {
 	if (typeof items === "undefined") return undefined;
 	if (!Array.isArray(items)) invalid("INVALID_HEADERS", `${field} must be an array`);
+	const allowedOperations =
+		field === "request_headers" ? new Set(["set", "remove"]) : new Set(["set", "add", "remove"]);
 	const seen = new Set();
 	return items.map((item, index) => {
 		if (!item || typeof item !== "object" || Array.isArray(item))
 			invalid("INVALID_HEADERS", `${field}[${index}] must be an object`);
+		assertKnownKeys(item, new Set(["name", "operation", "value", "value_mode"]), `${field}[${index}]`);
 		const name = normalizeHeaderName(item.name);
 		const key = name.toLowerCase();
 		if (seen.has(key)) invalid("DUPLICATE_HEADER", `${field} contains duplicate header ${name}`);
 		seen.add(key);
 		const operation = item.operation || "set";
-		if (operation !== "set" && operation !== "remove" && operation !== "add")
-			invalid("INVALID_HEADER_OPERATION", "Header operation is invalid");
+		if (!allowedOperations.has(operation))
+			invalid(
+				"INVALID_HEADER_OPERATION",
+				`${field}[${index}].operation ${operation} is not supported; allowed operations: ${[
+					...allowedOperations,
+				].join(", ")}`,
+			);
 		if (operation === "remove") {
 			if (field === "request_headers" && PROTECTED_REQUEST_HEADERS.has(key))
 				invalid("PROTECTED_HEADER_REMOVE", `Header ${name} is managed by the system`);
@@ -174,7 +289,7 @@ const IGNORE_HEADER_VALUES = new Set([
 	"Vary",
 ]);
 const SSL_PROTOCOL_VALUES = new Set(["TLSv1", "TLSv1.1", "TLSv1.2", "TLSv1.3"]);
-const METHOD = /^[A-Z][A-Z0-9_-]{0,31}$/;
+const METHOD = /^(?:\$request_method|[A-Z][A-Z0-9_-]{0,31})$/;
 const CIPHER_LIST = /^[A-Za-z0-9_!+\-:@.]+$/;
 const COOKIE_VALUE = /^[^\s;{}"'\\]+$/;
 
@@ -203,6 +318,7 @@ const normalizeCookieRewrites = (items, field) => {
 	return items.map((item, index) => {
 		if (!item || typeof item !== "object" || Array.isArray(item))
 			invalid("INVALID_COOKIE_REWRITES", `${field}[${index}] must be an object`);
+		assertKnownKeys(item, new Set(["from", "to"]), `${field}[${index}]`);
 		const from = optionalText(item.from, `${field}[${index}].from`, COOKIE_VALUE);
 		const to = optionalText(item.to, `${field}[${index}].to`, COOKIE_VALUE);
 		if (!from || !to) invalid("INVALID_COOKIE_REWRITES", `${field}[${index}] requires from and to values`);
@@ -210,110 +326,120 @@ const normalizeCookieRewrites = (items, field) => {
 	});
 };
 
-const normalizeOptions = (options, field) => {
-	if (typeof options === "undefined" || options === null) return {};
-	if (typeof options !== "object" || Array.isArray(options))
+const normalizeOptions = (options, field, { materializeDefaults = false, allowDefaultLocation = false } = {}) => {
+	if (typeof options !== "undefined" && options !== null && (typeof options !== "object" || Array.isArray(options)))
 		invalid("INVALID_NGINX_OPTIONS", `${field} must be an object`);
+	const input = options ?? {};
+	assertKnownKeys(
+		input,
+		new Set(allowDefaultLocation ? PROXY_SERVER_OPTION_KEYS : PROXY_LOCATION_OPTION_KEYS),
+		field,
+	);
+	const source = materializeDefaults ? materializeProxyServerOptions(input) : input;
 	const result = {};
 	for (const key of DURATION_FIELDS) {
-		if (typeof options[key] !== "undefined" && options[key] !== "")
-			result[key] = normalizeDuration(options[key], key);
+		if (typeof source[key] !== "undefined" && source[key] !== "") result[key] = normalizeDuration(source[key], key);
 	}
 	for (const key of SIZE_FIELDS) {
-		if (typeof options[key] !== "undefined" && options[key] !== "") result[key] = normalizeSize(options[key], key);
+		if (typeof source[key] !== "undefined" && source[key] !== "") result[key] = normalizeSize(source[key], key);
 	}
 	for (const key of INTEGER_FIELDS) {
-		if (typeof options[key] !== "undefined" && options[key] !== "") {
+		if (typeof source[key] !== "undefined" && source[key] !== "") {
 			const minimum = ["proxy_headers_hash_bucket_size", "proxy_headers_hash_max_size"].includes(key) ? 1 : 0;
-			if (!Number.isInteger(options[key]) || options[key] < minimum || options[key] > 2147483647)
+			if (!Number.isInteger(source[key]) || source[key] < minimum || source[key] > 2147483647)
 				invalid("INVALID_NGINX_INTEGER", `${key} must be a whole integer of at least ${minimum}`);
-			result[key] = options[key];
+			result[key] = source[key];
 		}
 	}
 	for (const key of DEFAULTABLE_BOOLEAN_FIELDS) {
-		if (typeof options[key] !== "undefined") {
-			if (typeof options[key] !== "boolean") invalid("INVALID_NGINX_BOOLEAN", `${key} must be boolean`);
-			result[key] = options[key];
+		if (typeof source[key] !== "undefined") {
+			if (typeof source[key] !== "boolean") invalid("INVALID_NGINX_BOOLEAN", `${key} must be boolean`);
+			result[key] = source[key];
 		}
 	}
-	if (typeof options.proxy_buffers !== "undefined") {
+	if (typeof source.proxy_buffers !== "undefined") {
 		if (
-			!Array.isArray(options.proxy_buffers) ||
-			options.proxy_buffers.length !== 2 ||
-			!Number.isInteger(options.proxy_buffers[0]) ||
-			options.proxy_buffers[0] < 1
+			!Array.isArray(source.proxy_buffers) ||
+			source.proxy_buffers.length !== 2 ||
+			!Number.isInteger(source.proxy_buffers[0]) ||
+			source.proxy_buffers[0] < 1
 		) {
 			invalid("INVALID_PROXY_BUFFERS", "proxy_buffers must be [count, size]");
 		}
-		result.proxy_buffers = [
-			options.proxy_buffers[0],
-			normalizeSize(options.proxy_buffers[1], "proxy_buffers size"),
-		];
+		result.proxy_buffers = [source.proxy_buffers[0], normalizeSize(source.proxy_buffers[1], "proxy_buffers size")];
 	}
-	if (typeof options.proxy_http_version !== "undefined" && options.proxy_http_version !== "") {
-		if (!HTTP_VERSIONS.has(options.proxy_http_version))
+	if (typeof source.proxy_http_version !== "undefined" && source.proxy_http_version !== "") {
+		if (!HTTP_VERSIONS.has(source.proxy_http_version))
 			invalid("INVALID_PROXY_HTTP_VERSION", "proxy_http_version must be 1.0 or 1.1");
-		result.proxy_http_version = options.proxy_http_version;
+		result.proxy_http_version = source.proxy_http_version;
 	}
-	if (typeof options.proxy_method !== "undefined" && options.proxy_method !== "")
-		result.proxy_method = optionalText(options.proxy_method, "proxy_method", METHOD, "proxy_method is invalid");
-	if (typeof options.proxy_ssl_name !== "undefined" && options.proxy_ssl_name !== "")
-		result.proxy_ssl_name = normalizeUpstreamHost(options.proxy_ssl_name);
-	if (typeof options.proxy_ssl_ciphers !== "undefined" && options.proxy_ssl_ciphers !== "")
+	if (typeof source.proxy_method !== "undefined" && source.proxy_method !== "")
+		result.proxy_method = optionalText(source.proxy_method, "proxy_method", METHOD, "proxy_method is invalid");
+	if (typeof source.proxy_ssl_name !== "undefined" && source.proxy_ssl_name !== "") {
+		result.proxy_ssl_name =
+			source.proxy_ssl_name === "$proxy_host"
+				? source.proxy_ssl_name
+				: normalizeUpstreamHost(source.proxy_ssl_name);
+	}
+	if (typeof source.proxy_ssl_ciphers !== "undefined" && source.proxy_ssl_ciphers !== "")
 		result.proxy_ssl_ciphers = optionalText(
-			options.proxy_ssl_ciphers,
+			source.proxy_ssl_ciphers,
 			"proxy_ssl_ciphers",
 			CIPHER_LIST,
 			"proxy_ssl_ciphers is invalid",
 		);
-	if (typeof options.proxy_ssl_protocols !== "undefined") {
-		const protocols = normalizeStringArray(options.proxy_ssl_protocols, "proxy_ssl_protocols", SSL_PROTOCOL_VALUES);
+	if (typeof source.proxy_ssl_protocols !== "undefined") {
+		const protocols = normalizeStringArray(source.proxy_ssl_protocols, "proxy_ssl_protocols", SSL_PROTOCOL_VALUES);
 		if (!protocols.length) invalid("INVALID_SSL_PROTOCOLS", "proxy_ssl_protocols may not be empty");
 		result.proxy_ssl_protocols = protocols;
 	}
-	if (typeof options.proxy_next_upstream !== "undefined") {
-		const next = normalizeStringArray(options.proxy_next_upstream, "proxy_next_upstream", NEXT_UPSTREAM_VALUES);
+	if (typeof source.proxy_next_upstream !== "undefined") {
+		const next = normalizeStringArray(source.proxy_next_upstream, "proxy_next_upstream", NEXT_UPSTREAM_VALUES);
 		if (!next.length || (next.includes("off") && next.length !== 1))
 			invalid("INVALID_PROXY_NEXT_UPSTREAM", "proxy_next_upstream must contain conditions, or only off");
 		result.proxy_next_upstream = next;
 	}
-	if (typeof options.proxy_ignore_headers !== "undefined")
+	if (typeof source.proxy_ignore_headers !== "undefined")
 		result.proxy_ignore_headers = normalizeStringArray(
-			options.proxy_ignore_headers,
+			source.proxy_ignore_headers,
 			"proxy_ignore_headers",
 			IGNORE_HEADER_VALUES,
 		);
-	if (typeof options.proxy_pass_headers !== "undefined")
-		result.proxy_pass_headers = normalizeStringArray(options.proxy_pass_headers, "proxy_pass_headers");
-	if (typeof options.proxy_cookie_domain !== "undefined")
-		result.proxy_cookie_domain = normalizeCookieRewrites(options.proxy_cookie_domain, "proxy_cookie_domain");
-	if (typeof options.proxy_cookie_path !== "undefined")
-		result.proxy_cookie_path = normalizeCookieRewrites(options.proxy_cookie_path, "proxy_cookie_path");
-	if (typeof options.proxy_redirect !== "undefined" && options.proxy_redirect !== "") {
-		if (!["default", "off"].includes(options.proxy_redirect))
+	if (typeof source.proxy_pass_headers !== "undefined")
+		result.proxy_pass_headers = normalizeStringArray(source.proxy_pass_headers, "proxy_pass_headers");
+	if (typeof source.proxy_cookie_domain !== "undefined")
+		result.proxy_cookie_domain = normalizeCookieRewrites(source.proxy_cookie_domain, "proxy_cookie_domain");
+	if (typeof source.proxy_cookie_path !== "undefined")
+		result.proxy_cookie_path = normalizeCookieRewrites(source.proxy_cookie_path, "proxy_cookie_path");
+	if (typeof source.proxy_redirect !== "undefined" && source.proxy_redirect !== "") {
+		if (!["default", "off"].includes(source.proxy_redirect))
 			invalid("INVALID_PROXY_REDIRECT", "proxy_redirect must be default or off");
-		result.proxy_redirect = options.proxy_redirect;
+		result.proxy_redirect = source.proxy_redirect;
 	}
-	if (typeof options.proxy_bind !== "undefined" && options.proxy_bind !== "") {
-		const bind = optionalText(
-			options.proxy_bind,
-			"proxy_bind",
-			/^[0-9A-Fa-f:.]+$/,
-			"proxy_bind must be an IP address",
-		);
-		if (!bind || !isIP(bind.replace(/^\[|\]$/g, "")))
-			invalid("INVALID_PROXY_BIND", "proxy_bind must be an IP address");
-		result.proxy_bind = bind;
+	if (typeof source.proxy_bind !== "undefined" && source.proxy_bind !== "") {
+		if (source.proxy_bind === "off") {
+			result.proxy_bind = "off";
+		} else {
+			const bind = optionalText(
+				source.proxy_bind,
+				"proxy_bind",
+				/^[0-9A-Fa-f:.]+$/,
+				"proxy_bind must be an IP address or off",
+			);
+			if (!bind || !isIP(bind.replace(/^\[|\]$/g, "")))
+				invalid("INVALID_PROXY_BIND", "proxy_bind must be an IP address or off");
+			result.proxy_bind = bind;
+		}
 	}
-	const requestHeaders = normalizeHeaderOperations(options.request_headers, "request_headers");
+	const requestHeaders = normalizeHeaderOperations(source.request_headers, "request_headers");
 	if (requestHeaders) result.request_headers = requestHeaders;
-	const responseHeaders = normalizeHeaderOperations(options.response_headers, "response_headers");
+	const responseHeaders = normalizeHeaderOperations(source.response_headers, "response_headers");
 	if (responseHeaders) result.response_headers = responseHeaders;
-	if (typeof options.hide_response_headers !== "undefined") {
-		if (!Array.isArray(options.hide_response_headers))
+	if (typeof source.hide_response_headers !== "undefined") {
+		if (!Array.isArray(source.hide_response_headers))
 			invalid("INVALID_HEADERS", "hide_response_headers must be an array");
 		result.hide_response_headers = [
-			...new Set(options.hide_response_headers.map(normalizeHeaderName).map((name) => name.toLowerCase())),
+			...new Set(source.hide_response_headers.map(normalizeHeaderName).map((name) => name.toLowerCase())),
 		].sort();
 	}
 	return result;
@@ -329,6 +455,11 @@ export const normalizeProxyTarget = (target, legacy = {}, label = "target") => {
 	if (!value || typeof value !== "object" || Array.isArray(value))
 		invalid("INVALID_PROXY_TARGET", `${label} must be an object`);
 	const type = value.type || "direct";
+	assertKnownKeys(
+		value,
+		new Set(type === "upstream" ? ["type", "scheme", "upstream_id"] : ["type", "scheme", "host", "port"]),
+		label,
+	);
 	if (type === "direct") {
 		if (typeof value.scheme !== "string" || !["http", "https"].includes(value.scheme))
 			invalid("INVALID_FORWARD_SCHEME", `${label}.scheme must be http or https`);
@@ -420,7 +551,7 @@ export const normalizeLocation = (location, index = 0) => {
 		match_type,
 		path_mode,
 		...(typeof forward_path === "string" ? { forward_path } : {}),
-		nginx_config: normalizeOptions(value.nginx_config, `locations[${index}].nginx_config`),
+		nginx_config: migrateLocationNginxConfigToV2(value.nginx_config, `locations[${index}].nginx_config`),
 		_normalization_warnings: warnings,
 	};
 };
@@ -432,6 +563,7 @@ const normalizeListener = (listener) => {
 	if (typeof listener !== "object" || Array.isArray(listener))
 		invalid("INVALID_LISTENER", "nginx_config.listener must be an object");
 	const mode = listener.mode || "domain";
+	assertKnownKeys(listener, new Set(mode === "port" ? ["mode", "port"] : ["mode"]), "nginx_config.listener");
 	if (mode === "domain") return { mode };
 	if (mode !== "port") invalid("INVALID_LISTENER_MODE", "nginx_config.listener.mode must be domain or port");
 	const port = normalizePort(listener.port, "nginx_config.listener.port");
@@ -463,8 +595,9 @@ export const normalizeProxyHost = (host) => {
 			);
 	}
 	value.nginx_options = normalizeOptions(
-		value.nginx_config.server || value.nginx_config.options,
+		flattenProxyOptionSections(value.nginx_config.server, "nginx_config.server"),
 		"nginx_config.server",
+		{ materializeDefaults: true, allowDefaultLocation: true },
 	);
 	value.default_target = normalizeProxyTarget(value.default_target, value, "default_target");
 	if (value.default_target.type === "direct") {
@@ -482,6 +615,10 @@ export const normalizeProxyHost = (host) => {
 
 export default {
 	normalizeNginxConfig,
+	migrateNginxConfigToV2,
+	migrateLocationNginxConfigToV2,
+	flattenProxyOptionSections,
+	groupProxyOptions,
 	normalizeProxyHost,
 	normalizeLocation,
 	normalizeProxyTarget,

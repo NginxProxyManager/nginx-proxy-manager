@@ -179,6 +179,12 @@
 				"$ref": "./paths/nginx/proxy-hosts/hostID/disable/post.json"
 			}
 		},
+		"/nginx/proxy-hosts/nginx-config/preview": {
+			"post": { "$ref": "./paths/nginx/proxy-hosts/nginx-config/preview/post.json" }
+		},
+		"/nginx/proxy-hosts/{hostID}/nginx-config": {
+			"get": { "$ref": "./paths/nginx/proxy-hosts/hostID/nginx-config/get.json" }
+		},
 		"/nginx/upstreams": {
 			"get": { "$ref": "./paths/nginx/upstreams/get.json" },
 			"post": { "$ref": "./paths/nginx/upstreams/post.json" }

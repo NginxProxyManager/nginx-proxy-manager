@@ -96,14 +96,26 @@ export function LocationsFields({ initialValues, name = "locations", defaultLoca
 		const visible = proxyDirectivesVisible.includes(index);
 		const configured = Object.keys(currentValues()[index]?.nginxConfig || {}).length > 0;
 		if (visible || configured) {
-			handleChange(index, "nginxConfig", {});
+			const resetValues = currentValues().map((value: ProxyLocation, itemIndex: number) =>
+				itemIndex === index ? { ...value, nginxConfig: {}, nginxOverrideKeys: [] } : value,
+			);
+			updateValues(resetValues);
 			setProxyDirectivesVisible((current) => current.filter((itemIndex) => itemIndex !== index));
 			return;
 		}
 
 		const serverOptions = { ...(getIn(formValues, "nginxConfig.server") || {}) };
 		delete serverOptions.defaultLocationEnabled;
-		handleChange(index, "nginxConfig", JSON.parse(JSON.stringify(serverOptions)));
+		const overrideValues = currentValues().map((value: ProxyLocation, itemIndex: number) =>
+			itemIndex === index
+				? {
+						...value,
+						nginxConfig: JSON.parse(JSON.stringify(serverOptions)),
+						nginxOverrideKeys: [],
+					}
+				: value,
+		);
+		updateValues(overrideValues);
 		setProxyDirectivesVisible((current) => [...current, index]);
 	};
 
@@ -445,6 +457,7 @@ export function LocationsFields({ initialValues, name = "locations", defaultLoca
 										{isProxyOverride ? (
 											<ProxyDirectivesFields
 												name={`${name}.${index}.nginxConfig`}
+												overrideKeysName={`${name}.${index}.nginxOverrideKeys`}
 												scope="location"
 											/>
 										) : null}

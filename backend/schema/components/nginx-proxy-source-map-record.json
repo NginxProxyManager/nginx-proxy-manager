@@ -1,0 +1,72 @@
+{
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"line_start",
+		"line_end",
+		"directive",
+		"field",
+		"frontend_field",
+		"source",
+		"scope",
+		"location_id",
+		"path"
+	],
+	"properties": {
+		"line_start": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"line_end": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"directive": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"field": {
+			"type": "string",
+			"minLength": 1
+		},
+		"frontend_field": {
+			"type": [
+				"string",
+				"null"
+			]
+		},
+		"source": {
+			"type": "string",
+			"enum": [
+				"user",
+				"profile",
+				"inherited",
+				"derived",
+				"system",
+				"unmanaged"
+			]
+		},
+		"scope": {
+			"type": "string",
+			"enum": [
+				"server",
+				"location"
+			]
+		},
+		"location_id": {
+			"type": [
+				"string",
+				"integer",
+				"null"
+			]
+		},
+		"path": {
+			"type": [
+				"string",
+				"null"
+			]
+		}
+	}
+}

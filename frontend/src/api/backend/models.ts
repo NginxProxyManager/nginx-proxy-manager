@@ -117,11 +117,18 @@ export type NginxMatchType = "prefix" | "priority_prefix" | "exact" | "regex" | 
 export type NginxPathMode = "preserve_uri" | "strip_prefix" | "replace_prefix";
 export type NginxDeploymentStatus = "pending" | "online" | "disabled" | "degraded" | "error" | "recovering";
 
-export interface NginxHeaderOperation {
+interface NginxHeaderOperationBase {
 	name: string;
-	operation?: "set" | "add" | "remove";
 	value?: string;
 	valueMode?: "literal" | "variable";
+}
+
+export interface NginxRequestHeaderOperation extends NginxHeaderOperationBase {
+	operation?: "set" | "remove";
+}
+
+export interface NginxResponseHeaderOperation extends NginxHeaderOperationBase {
+	operation?: "set" | "add" | "remove";
 }
 
 export interface NginxCookieRewrite {
@@ -168,13 +175,30 @@ export interface NginxOptions {
 	proxySslSessionReuse?: boolean;
 	proxySslProtocols?: string[];
 	proxySslCiphers?: string;
-	requestHeaders?: NginxHeaderOperation[];
-	responseHeaders?: NginxHeaderOperation[];
+	requestHeaders?: NginxRequestHeaderOperation[];
+	responseHeaders?: NginxResponseHeaderOperation[];
 	hideResponseHeaders?: string[];
 	proxyPassHeaders?: string[];
 	proxyIgnoreHeaders?: string[];
 }
 
+export interface NginxOptionHeaders {
+	request?: NginxRequestHeaderOperation[];
+	response?: NginxResponseHeaderOperation[];
+	hideResponse?: string[];
+	passResponse?: string[];
+	ignoreUpstream?: string[];
+}
+
+export interface NginxOptionSections {
+	directives?: NginxOptions;
+	headers?: NginxOptionHeaders;
+}
+
+export interface NginxLocationConfigV2 {
+	mode: "inherit";
+	overrides: NginxOptionSections;
+}
 
 export type ProxyTarget =
 	| { type: "direct"; scheme: "http" | "https"; host: string; port: number }
@@ -221,12 +245,21 @@ export interface ProxyLocation {
 	forwardPath?: string;
 	matchType?: NginxMatchType;
 	pathMode?: NginxPathMode;
-	nginxConfig?: NginxOptions;
+	nginxConfig?: NginxLocationConfigV2 | NginxOptions;
+	/** UI-only keys retained to preserve explicit overrides that equal inherited values. */
+	nginxOverrideKeys?: string[];
 }
 
 export interface NginxListener {
 	mode: "domain" | "port";
 	port?: number;
+}
+
+export interface ProxyHostNginxConfig {
+	schemaVersion: 2;
+	profileVersion: "npm-explicit-proxy-v1";
+	server: NginxOptionSections;
+	listener: NginxListener;
 }
 
 export type ProxyHostMonitoringListStatus = Pick<
@@ -259,7 +292,7 @@ export interface ProxyHost {
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
 	trustForwardedProto: boolean;
-	nginxConfig?: { schemaVersion: 1; server?: NginxOptions; listener?: NginxListener };
+	nginxConfig?: ProxyHostNginxConfig;
 	nginxConfigRevision?: number;
 	nginxAppliedRevision?: number | null;
 	nginxAppliedEnabled?: boolean;
@@ -360,8 +393,75 @@ export interface NginxConfigArtifactResponse {
 	appliedRevision: number | null;
 	deployed: { logicalPath: string; hash: string; config?: string } | null;
 	candidate: { logicalPath: string; hash: string; config?: string } | null;
+	desired?: {
+		schemaVersion: 1 | 2;
+		revision?: number | null;
+		nginxConfig: ProxyHostNginxConfig | Record<string, unknown>;
+	};
+	appliedSnapshot?: Record<string, unknown> | null;
+	migration?: {
+		status: "pending" | "migrated" | "review_required" | "resolved" | "failed" | "native_v2" | "unknown";
+		migratedOn?: string | null;
+		diagnostics: Array<Record<string, unknown>>;
+	};
 	lastError: Record<string, unknown> | null;
 	lastCheckedAt: string | null;
+}
+
+export interface NginxEffectiveSourceRecord {
+	field: string;
+	frontendField: string;
+	value: unknown;
+	source: "user" | "profile" | "inherited";
+	scope: "default_policy" | "location";
+	locationId?: string | number | null;
+	path: string;
+	inheritedFrom?: string;
+}
+
+export interface NginxEffectiveFeature {
+	field: string;
+	frontendField: string | null;
+	enabled: boolean;
+	source: "user" | "system";
+	expandedDirectives: string[];
+	value?: unknown;
+}
+
+export interface NginxEffectiveConfig {
+	schemaVersion: 2;
+	profileVersion: string;
+	server: {
+		effective: NginxOptionSections;
+		effectiveFlat: NginxOptions;
+		sources: Record<string, NginxEffectiveSourceRecord>;
+	};
+	locations: Array<{
+		locationId: string | number | null;
+		path: string;
+		matchType: NginxMatchType;
+		mode: "inherit";
+		overrides: NginxOptionSections;
+		effective: NginxOptionSections;
+		effectiveFlat: NginxOptions;
+		sources: Record<string, NginxEffectiveSourceRecord>;
+	}>;
+	features: Record<string, NginxEffectiveFeature>;
+}
+
+export interface NginxRuntimeCapability {
+	schemaVersion: 1;
+	profileVersion: string;
+	runtimeFamily: string;
+	nginxVersion: string;
+	architectures: string[];
+	ipv6: boolean;
+	modules: string[];
+	image: string;
+	imageDigest: string;
+	notes: string;
+	validatedOn: string;
+	profileHash: string;
 }
 
 export interface ProxyHostPreview {
@@ -369,10 +469,27 @@ export interface ProxyHostPreview {
 	config: string;
 	payloadHash: string;
 	hash: string;
-	previewToken?: string | null;
-	baseRevision?: number | null;
-	validationScope?: "full" | "partial" | "not_applicable";
-	unresolvedDependencies?: Array<{ code: string; message: string }>;
+	dependencyHash: string;
+	capabilityHash: string;
+	templateVersion: string;
+	templateHash: string;
+	previewToken: string | null;
+	baseRevision: number | null;
+	validationScope: "full" | "partial" | "not_applicable";
+	unresolvedDependencies: Array<{ code: string; message: string }>;
+	effectiveConfig: NginxEffectiveConfig;
+	sourceMap: Array<{
+		lineStart: number;
+		lineEnd: number;
+		directive: string | null;
+		field: string;
+		frontendField: string | null;
+		source: "user" | "profile" | "inherited" | "derived" | "system" | "unmanaged";
+		scope: "server" | "location";
+		locationId: string | number | null;
+		path: string | null;
+	}>;
+	capability: NginxRuntimeCapability;
 	diagnostics: Array<{
 		severity: "error" | "warning" | "info";
 		code: string;

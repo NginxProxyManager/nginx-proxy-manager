@@ -216,8 +216,14 @@
 						]
 					},
 					"nginx_config": {
-						"type": "object",
-						"additionalProperties": true
+						"oneOf": [
+							{
+								"$ref": "./nginx-proxy-options.json#/location"
+							},
+							{
+								"$ref": "./nginx-proxy-options.json#/legacy_location"
+							}
+						]
 					}
 				}
 			},
@@ -269,12 +275,121 @@
 			"example": null
 		},
 		"nginx_config": {
-			"type": "object",
-			"additionalProperties": true,
-			"description": "Structured Nginx configuration schema v1",
+			"description": "Canonical explicit Nginx semantic configuration schema v2. Schema v1 remains accepted only for migration and is normalized to v2 before persistence.",
+			"oneOf": [
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"schema_version",
+						"profile_version",
+						"listener",
+						"server"
+					],
+					"properties": {
+						"schema_version": {
+							"const": 2
+						},
+						"profile_version": {
+							"const": "npm-explicit-proxy-v1"
+						},
+						"server": {
+							"$ref": "./nginx-proxy-options.json#/server"
+						},
+						"listener": {
+							"oneOf": [
+								{
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"mode": {
+											"const": "domain"
+										}
+									}
+								},
+								{
+									"type": "object",
+									"additionalProperties": false,
+									"required": [
+										"mode",
+										"port"
+									],
+									"properties": {
+										"mode": {
+											"const": "port"
+										},
+										"port": {
+											"type": "integer",
+											"minimum": 1,
+											"maximum": 65535
+										}
+									}
+								}
+							]
+						}
+					}
+				},
+				{
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"schema_version": {
+							"const": 1
+						},
+						"profile_version": {
+							"const": "npm-explicit-proxy-v1"
+						},
+						"server": {
+							"$ref": "./nginx-proxy-options.json#/legacy_server"
+						},
+						"options": {
+							"$ref": "./nginx-proxy-options.json#/legacy_server",
+							"deprecated": true
+						},
+						"listener": {
+							"oneOf": [
+								{
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"mode": {
+											"const": "domain"
+										}
+									}
+								},
+								{
+									"type": "object",
+									"additionalProperties": false,
+									"required": [
+										"mode",
+										"port"
+									],
+									"properties": {
+										"mode": {
+											"const": "port"
+										},
+										"port": {
+											"type": "integer",
+											"minimum": 1,
+											"maximum": 65535
+										}
+									}
+								}
+							]
+						}
+					}
+				}
+			],
 			"example": {
-				"schema_version": 1,
-				"server": {}
+				"schema_version": 2,
+				"profile_version": "npm-explicit-proxy-v1",
+				"listener": {
+					"mode": "domain"
+				},
+				"server": {
+					"directives": {},
+					"headers": {}
+				}
 			}
 		},
 		"nginx_config_revision": {

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { scanAdvancedConfig } from "../../internal/nginx-config-diagnostics.js";
 import { canonicalize, hashCanonical } from "../../internal/nginx-config-hash.js";
-import { normalizeLocation, normalizeProxyHost } from "../../internal/nginx-config-normalizer.js";
+import { normalizeLocation, normalizeNginxConfig, normalizeProxyHost } from "../../internal/nginx-config-normalizer.js";
 import { buildProxyHostCandidate, buildUpstreamCandidate } from "../../internal/nginx-config-renderer.js";
 
 test("HASH-001 canonical JSON sorts object keys but retains array order", () => {
@@ -10,6 +10,45 @@ test("HASH-001 canonical JSON sorts object keys but retains array order", () => 
 	assert.equal(hashCanonical({ b: 1, a: 2 }), hashCanonical({ a: 2, b: 1 }));
 	assert.notEqual(hashCanonical([1, 2]), hashCanonical([2, 1]));
 	assert.throws(() => canonicalize({ value: undefined }), /undefined/);
+});
+
+test("SCHEMA-001 legacy options migrate to the explicit profile and unknown fields are rejected", () => {
+	const migrated = normalizeNginxConfig({ schema_version: 1, options: { proxy_pass_trailers: false } });
+	assert.equal(migrated.schema_version, 2);
+	assert.equal(migrated.profile_version, "npm-explicit-proxy-v1");
+	assert.deepEqual(migrated.listener, { mode: "domain" });
+	assert.equal(migrated.server.directives.proxy_pass_trailers, false);
+	assert.equal(migrated.server.directives.proxy_buffering, true);
+	assert.deepEqual(migrated.server.headers.request, []);
+	assert.throws(
+		() => normalizeNginxConfig({ schema_version: 1, server: {}, proxy_pass_trailer: false }),
+		(error) => error?.details?.code === "UNKNOWN_NGINX_FIELD",
+	);
+	assert.throws(
+		() => normalizeProxyHost({
+			id: 1,
+			enabled: true,
+			domain_names: ["strict.example.com"],
+			forward_scheme: "http",
+			forward_host: "127.0.0.1",
+			forward_port: 8080,
+			nginx_config: { schema_version: 1, server: { proxy_pass_trailer: false } },
+		}),
+		(error) => error?.details?.code === "UNKNOWN_NGINX_FIELD",
+	);
+});
+
+test("SCHEMA-002 Location-only server controls cannot be silently ignored", () => {
+	assert.throws(
+		() => normalizeLocation({
+			path: "/api/",
+			forward_scheme: "http",
+			forward_host: "127.0.0.1",
+			forward_port: 8080,
+			nginx_config: { default_location_enabled: false },
+		}),
+		(error) => error?.details?.code === "UNKNOWN_NGINX_FIELD",
+	);
 });
 
 test("PREVIEW-003 dependency hashing is stable across API foreign-key coercion", async () => {
@@ -109,6 +148,17 @@ test("HDR duplicate and protected headers are rejected", () => {
 			}),
 		/managed by the system/,
 	);
+	assert.throws(
+		() =>
+			normalizeProxyHost({
+				domain_names: ["headers.example.com"],
+				nginx_config: {
+					schema_version: 1,
+					server: { request_headers: [{ name: "X-Debug", operation: "add", value: "1" }] },
+				},
+			}),
+		/request_headers.*add is not supported/,
+	);
 });
 
 test("HDR-001 managed Host override emits a single upstream Host header", async () => {
@@ -189,12 +239,13 @@ test("OPT-001 all structured proxy options normalize and render with nginx-compa
 				proxy_ssl_server_name: true,
 				request_headers: [
 					{ name: "X-Request-Id", operation: "set", value_mode: "variable", value: "$request_id" },
-					{ name: "X-Debug", operation: "add", value: "enabled" },
+					{ name: "X-Debug", operation: "set", value: "enabled" },
 					{ name: "X-Remove-Me", operation: "remove" },
 				],
 				response_headers: [
 					{ name: "X-Frame-Options", operation: "set", value: "DENY" },
 					{ name: "X-Trace", operation: "add", value_mode: "variable", value: "$request_id" },
+					{ name: "X-Remove-Response", operation: "remove" },
 				],
 				hide_response_headers: ["X-Powered-By", "X-AspNet-Version"],
 			},
@@ -203,7 +254,7 @@ test("OPT-001 all structured proxy options normalize and render with nginx-compa
 
 	const normalized = normalizeProxyHost(host);
 	assert.equal(normalized.nginx_options.proxy_connect_timeout, "60");
-	assert.equal(normalized.locations[0].nginx_config.proxy_connect_timeout, "10s");
+	assert.equal(normalized.locations[0].nginx_config.overrides.directives.proxy_connect_timeout, "10s");
 	assert.throws(
 		() =>
 			normalizeProxyHost({
@@ -239,8 +290,10 @@ test("OPT-001 all structured proxy options normalize and render with nginx-compa
 		'proxy_set_header X-Debug "enabled";',
 		"proxy_set_header X-Request-Id $request_id;",
 		'proxy_set_header X-Remove-Me "";',
+		"proxy_hide_header X-Frame-Options;",
 		'add_header X-Frame-Options "DENY" always;',
 		"add_header X-Trace $request_id always;",
+		"proxy_hide_header X-Remove-Response;",
 		"proxy_hide_header x-aspnet-version;",
 		"proxy_hide_header x-powered-by;",
 		"proxy_connect_timeout 10s;",
@@ -388,7 +441,7 @@ test("ADV lexer ignores comments and strings but diagnoses managed directives", 
 	]) {
 		const diagnostic = scanAdvancedConfig(directive).at(0);
 		assert.equal(diagnostic.code, "ADVANCED_STRUCTURED_CONFLICT", directive);
-		assert.equal(diagnostic.severity, "warning", directive);
+		assert.equal(diagnostic.severity, "error", directive);
 	}
 });
 
@@ -591,4 +644,136 @@ test("UPSTREAM-003 renderer rejects malformed member hosts", async () => {
 		}),
 		/Invalid upstream server host/,
 	);
+});
+
+test("EXPLICIT-001 managed locations materialize the complete proxy policy without proxy.conf", async () => {
+	const candidate = await buildProxyHostCandidate({
+		host: {
+			id: 101,
+			enabled: true,
+			domain_names: ["explicit.example.com"],
+			forward_scheme: "http",
+			forward_host: "127.0.0.1",
+			forward_port: 3000,
+			access_list_id: 0,
+			certificate_id: 0,
+			locations: [],
+			nginx_config: { schema_version: 1, server: {} },
+		},
+		dependencies: {},
+	});
+
+	assert.doesNotMatch(candidate.config, /include conf\.d\/include\/proxy\.conf/);
+	assert.equal(candidate.config.split("# npm:managed proxy-option-profile=npm-explicit-proxy-v1").length - 1, 1);
+	for (const directive of [
+		"proxy_pass_trailers off;",
+		"proxy_pass_request_headers on;",
+		"proxy_pass_request_body on;",
+		"proxy_request_buffering on;",
+		"proxy_buffering on;",
+		"proxy_ignore_client_abort off;",
+		"proxy_socket_keepalive off;",
+		"proxy_intercept_errors off;",
+		"proxy_force_ranges off;",
+		"proxy_ssl_server_name off;",
+		"proxy_ssl_verify off;",
+		"proxy_ssl_session_reuse on;",
+		"proxy_method $request_method;",
+		"proxy_bind off;",
+		"proxy_redirect off;",
+		"proxy_cookie_domain off;",
+		"proxy_cookie_path off;",
+	]) {
+		assert.equal(candidate.config.split(directive).length - 1, 1, directive);
+	}
+	assert.equal(candidate.config.split("proxy_set_header Host $host;").length - 1, 1);
+	assert.equal(candidate.config.split("proxy_pass $forward_scheme://$server:$port$request_uri;").length - 1, 1);
+});
+
+test("EXPLICIT-002 location inheritance renders a full effective policy and explicit overrides", async () => {
+	const candidate = await buildProxyHostCandidate({
+		host: {
+			id: 102,
+			enabled: true,
+			domain_names: ["locations.example.com"],
+			forward_scheme: "http",
+			forward_host: "127.0.0.1",
+			forward_port: 3000,
+			access_list_id: 0,
+			certificate_id: 0,
+			nginx_config: { schema_version: 1, server: { proxy_pass_trailers: false } },
+			locations: [
+				{
+					path: "/inherited/",
+					forward_scheme: "http",
+					forward_host: "127.0.0.1",
+					forward_port: 3001,
+					match_type: "prefix",
+					path_mode: "preserve_uri",
+					nginx_config: {},
+				},
+				{
+					path: "/overridden/",
+					forward_scheme: "http",
+					forward_host: "127.0.0.1",
+					forward_port: 3002,
+					match_type: "prefix",
+					path_mode: "preserve_uri",
+					nginx_config: { proxy_pass_trailers: true, proxy_read_timeout: "15s" },
+				},
+			],
+		},
+		dependencies: {},
+	});
+
+	assert.equal(candidate.config.split("proxy_pass_trailers off;").length - 1, 2);
+	assert.equal(candidate.config.split("proxy_pass_trailers on;").length - 1, 1);
+	assert.equal(candidate.config.split("proxy_read_timeout 90s;").length - 1, 2);
+	assert.equal(candidate.config.split("proxy_read_timeout 15s;").length - 1, 1);
+	assert.equal(candidate.config.split("proxy_set_header Host $host;").length - 1, 3);
+	assert.equal(candidate.config.split("# npm:managed proxy-option-profile=npm-explicit-proxy-v1").length - 1, 3);
+});
+
+
+test("OPT-004 proxy_redirect default is rejected for the variable managed default proxy_pass", async () => {
+	await assert.rejects(
+		() =>
+			buildProxyHostCandidate({
+				host: {
+					id: 103,
+					enabled: true,
+					domain_names: ["redirect-default.example.com"],
+					forward_scheme: "http",
+					forward_host: "127.0.0.1",
+					forward_port: 3000,
+					locations: [],
+					nginx_config: { schema_version: 1, server: { proxy_redirect: "default" } },
+				},
+			}),
+		/proxy_redirect default cannot be used in the managed default Location/,
+	);
+
+	const candidate = await buildProxyHostCandidate({
+		host: {
+			id: 104,
+			enabled: true,
+			domain_names: ["redirect-custom-root.example.com"],
+			forward_scheme: "http",
+			forward_host: "127.0.0.1",
+			forward_port: 3000,
+			nginx_config: { schema_version: 1, server: {} },
+			locations: [
+				{
+					path: "/",
+					forward_scheme: "http",
+					forward_host: "127.0.0.1",
+					forward_port: 3001,
+					match_type: "prefix",
+					path_mode: "preserve_uri",
+					nginx_config: { proxy_redirect: "default" },
+				},
+			],
+		},
+	});
+	assert.match(candidate.config, /proxy_pass http:\/\/127\.0\.0\.1:3001;\n\s+proxy_redirect default;/);
 });
