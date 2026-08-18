@@ -661,7 +661,7 @@
 		"full_plugin_name": "dns-websupport",
 		"name": "Websupport.sk",
 		"package_name": "certbot-dns-websupport",
-		"version": "~=2.0.1"
+		"version": "~=5.0.0"
 	},
 	"wedos": {
 		"credentials": "dns_wedos_user = <wedos_registration>\ndns_wedos_auth = <wapi_password>",
