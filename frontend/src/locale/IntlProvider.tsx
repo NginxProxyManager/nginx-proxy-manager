@@ -73,6 +73,7 @@ const getFlagCodeForLocale = (locale?: string) => {
     ko: "kr", // Korea
     cs: "cz", // Czechia
     ga: "ie", // Ireland (Irish)
+    et: "ee", // Estonia
   };
 
   if (specialCases[thisLocale]) {
