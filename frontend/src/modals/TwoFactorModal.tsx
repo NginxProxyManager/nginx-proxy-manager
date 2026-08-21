@@ -1,5 +1,6 @@
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
+import QRCode from "qrcode";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
@@ -30,6 +31,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [isEnabled, setIsEnabled] = useState(false);
 	const [backupCodesRemaining, setBackupCodesRemaining] = useState(0);
 	const [setupData, setSetupData] = useState<{ secret: string; otpauthUrl: string } | null>(null);
+	const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 	const [backupCodes, setBackupCodes] = useState<string[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -55,6 +57,8 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		try {
 			const data = await start2FASetup(id);
 			setSetupData(data);
+			// Generate the QR code locally so the TOTP secret never leaves the browser
+			setQrDataUrl(await QRCode.toDataURL(data.otpauthUrl, { width: 200, margin: 1 }));
 			setStep("setup");
 		} catch (err: any) {
 			setError(err.message || "Failed to start 2FA setup");
@@ -166,12 +170,16 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<T id="2fa.setup-instructions" />
 					</p>
 					<div className="text-center mb-3">
-						<img
-							src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupData.otpauthUrl)}`}
-							alt="QR Code"
-							className="img-fluid"
-							style={{ maxWidth: "200px" }}
-						/>
+						{qrDataUrl ? (
+							<img
+								src={qrDataUrl}
+								alt="QR Code"
+								className="img-fluid"
+								style={{ maxWidth: "200px" }}
+							/>
+						) : (
+							<div className="spinner-border text-muted" role="status" />
+						)}
 					</div>
 					<label className="mb-3 d-block">
 						<span className="form-label small text-muted">
