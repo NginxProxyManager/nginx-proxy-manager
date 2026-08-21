@@ -82,18 +82,8 @@ const getFlagCodeForLocale = (locale?: string) => {
 };
 
 const getLocale = (short = false) => {
-  let loc = window.localStorage.getItem("locale");
-  if (!loc) {
-    loc = document.documentElement.lang;
-  }
-  if (short) {
-    return loc.slice(0, 2);
-  }
-  // finally, fallback
-  if (!loc) {
-    loc = "en";
-  }
-  return loc;
+  const loc = window.localStorage.getItem("locale") || "zh";
+  return short ? loc.slice(0, 2) : loc;
 };
 
 const cache = createIntlCache();
