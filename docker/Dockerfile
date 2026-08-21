@@ -4,6 +4,19 @@
 # This file assumes that the frontend has been built using ./scripts/frontend-build
 
 ARG BASE_IMAGE=nginxproxymanager/nginx-full:certbot-node
+
+# --- LOCAL SOURCE BUILD: build the frontend inside Docker so that
+#     `docker build` works directly from the source tree without a
+#     pre-built frontend/dist on the host. ---
+FROM node:22-alpine AS frontend-builder
+WORKDIR /src/frontend
+COPY frontend/package.json frontend/yarn.lock ./
+RUN corepack enable && corepack prepare yarn@1.22.22 --activate \
+    && yarn install --frozen-lockfile
+COPY frontend/ ./
+# Generate locale files (src/locale/lang is gitignored) before building
+RUN yarn locale-compile && yarn build
+
 FROM nginxproxymanager/testca AS testca
 FROM $BASE_IMAGE
 
@@ -38,7 +51,7 @@ RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -f /tmp/install-s6
 EXPOSE 80 81 443
 
 COPY backend       /app
-COPY frontend/dist /app/frontend
+COPY --from=frontend-builder /src/frontend/dist /app/frontend
 COPY docker/rootfs /
 
 # Copy test CA cert for use in container and add to trusted certs from a self-signed CA
