@@ -79,7 +79,7 @@ export default function Setup() {
 					<Formik
 						initialValues={
 							{
-								name: "",
+								name: "Administrator",
 								email: "",
 								password: "",
 							} as any
