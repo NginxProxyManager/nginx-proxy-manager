@@ -1,0 +1,91 @@
+name: Docker Image CI
+
+on:
+  workflow_dispatch:  # 手动触发
+  create:             # 自动触发：新分支或标签
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    environment: Docker
+
+    steps:
+    # 1️⃣ 拉取仓库代码
+    - uses: actions/checkout@v3
+
+    # 2️⃣ 登录 Docker Hub（使用 Secrets）
+    - name: Docker Login
+      run: |
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+    # 从上游同步语言源文件
+    - name: Sync locale source files from upstream
+      run: |
+        git remote add upstream https://github.com/NginxProxyManager/nginx-proxy-manager.git
+        git fetch upstream
+        git checkout upstream/master -- frontend/src/locale/src/
+
+    # 编译语言文件
+    - name: Compile locale files
+      run: |
+        cd frontend
+        yarn install
+        yarn locale-compile
+
+    # 3️⃣ 读取版本号并设置为环境变量
+    - name: Read version
+      id: version
+      run: |
+        BUILD_VERSION=$(cat .version)
+        echo "BUILD_VERSION=$BUILD_VERSION" >> $GITHUB_ENV
+        echo "version=$BUILD_VERSION" >> $GITHUB_OUTPUT
+
+    # 4️⃣ 在构建前端之前修改版本号
+    - name: Update version in package.json before build
+      run: |
+        sed -i "s/\"version\": \".*\"/\"version\": \"${{ env.BUILD_VERSION }}\"/" frontend/package.json
+        sed -i "s/\"version\": \".*\"/\"version\": \"${{ env.BUILD_VERSION }}\"/" backend/package.json
+        echo "Updated frontend/package.json to version ${{ env.BUILD_VERSION }}"
+        cat frontend/package.json | grep version
+
+    # 5️⃣ 安装 Node.js 环境（用于构建前端）
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'yarn'
+        cache-dependency-path: frontend/yarn.lock
+
+    # 6️⃣ 安装依赖并构建前端
+    - name: Build frontend
+      run: |
+        cd frontend
+        yarn install --frozen-lockfile
+        yarn build
+
+    # 7️⃣ 构建并推送 Docker 镜像（多架构）
+    - name: Build and Push the Docker image
+      run: |
+        sudo apt-get update && sudo apt-get install -y qemu-user-static
+
+        docker buildx create --name multiarch --use || docker buildx use multiarch
+
+        if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+          IMAGE_TAG="${GITHUB_REF##*/}"
+        else
+          IMAGE_TAG="latest"
+        fi
+
+        echo "Building and pushing image with tag: $IMAGE_TAG"
+        echo "Using BUILD_VERSION: ${{ env.BUILD_VERSION }}"
+
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --build-arg BUILD_VERSION=${{ env.BUILD_VERSION }} \
+          -t ${{ secrets.DOCKER_USERNAME }}/nginx-proxy-manager:$IMAGE_TAG \
+          -f docker/Dockerfile \
+          --push .
+
+    # 8️⃣ 登出 Docker Hub
+    - name: Docker Logout
+      run: docker logout
