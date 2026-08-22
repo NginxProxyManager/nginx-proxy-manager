@@ -194,11 +194,23 @@
 	"auth-provider.ldap.group-filter-help": {
 		"defaultMessage": "Used when the user entry has no group attribute. '{{dn}}' and '{{username}}' are substituted before searching."
 	},
+	"auth-provider.ldap.login-attributes": {
+		"defaultMessage": "Login attributes"
+	},
+	"auth-provider.ldap.login-attributes-help": {
+		"defaultMessage": "Comma separated attributes accepted at the login prompt, for example uid, mail, sAMAccountName. Ignored when a user filter is set."
+	},
 	"auth-provider.ldap.name-attribute": {
 		"defaultMessage": "Name attribute"
 	},
 	"auth-provider.ldap.nickname-attribute": {
 		"defaultMessage": "Nickname attribute"
+	},
+	"auth-provider.ldap.page-size": {
+		"defaultMessage": "Page size"
+	},
+	"auth-provider.ldap.page-size-help": {
+		"defaultMessage": "Directories cap how many entries one search returns, 1000 in Active Directory by default. Paging walks past that limit."
 	},
 	"auth-provider.ldap.start-tls": {
 		"defaultMessage": "Upgrade the connection with StartTLS"
@@ -323,6 +335,51 @@
 	"auth-provider.secret-stored": {
 		"defaultMessage": "A value is stored. Leave blank to keep it."
 	},
+	"auth-provider.sync": {
+		"defaultMessage": "Directory sync"
+	},
+	"auth-provider.sync-disable-missing": {
+		"defaultMessage": "Disable accounts that leave the directory"
+	},
+	"auth-provider.sync-disable-missing-help": {
+		"defaultMessage": "The last remaining administrator is never disabled this way, and nothing is disabled if a run returns no entries at all."
+	},
+	"auth-provider.sync-enabled": {
+		"defaultMessage": "Sync this directory on a schedule"
+	},
+	"auth-provider.sync-enabled-help": {
+		"defaultMessage": "Sync creates a local account for everyone it finds, whether or not they have ever signed in."
+	},
+	"auth-provider.sync-every": {
+		"defaultMessage": "Syncs every {minutes}m"
+	},
+	"auth-provider.sync-filter": {
+		"defaultMessage": "Sync filter"
+	},
+	"auth-provider.sync-filter-help": {
+		"defaultMessage": "Restricts which directory entries are considered."
+	},
+	"auth-provider.sync-group": {
+		"defaultMessage": "Limit to group"
+	},
+	"auth-provider.sync-group-help": {
+		"defaultMessage": "Only sync members of this group. Leave blank to sync everyone the filter matches."
+	},
+	"auth-provider.sync-interval": {
+		"defaultMessage": "Run every (minutes)"
+	},
+	"auth-provider.sync-interval-help": {
+		"defaultMessage": "Five minutes is the shortest interval allowed."
+	},
+	"auth-provider.sync-intro": {
+		"defaultMessage": "Walks the directory on a schedule so accounts exist before anyone signs in, and so group changes are picked up without waiting for a login."
+	},
+	"auth-provider.sync-now": {
+		"defaultMessage": "Sync"
+	},
+	"auth-provider.sync-result": {
+		"defaultMessage": "Sync finished: {created} created, {updated} updated, {disabled} disabled"
+	},
 	"auth-provider.test": {
 		"defaultMessage": "Test"
 	},
@@ -340,6 +397,15 @@
 	},
 	"auth-providers": {
 		"defaultMessage": "Authentication Providers"
+	},
+	"auth-source.external-title": {
+		"defaultMessage": "Signs in through {name}"
+	},
+	"auth-source.local": {
+		"defaultMessage": "Local"
+	},
+	"auth-source.local-title": {
+		"defaultMessage": "Signs in with an email address and password"
 	},
 	"auto": {
 		"defaultMessage": "Auto"
@@ -457,6 +523,9 @@
 	},
 	"column.access": {
 		"defaultMessage": "Access"
+	},
+	"column.auth-source": {
+		"defaultMessage": "Auth"
 	},
 	"column.authorization": {
 		"defaultMessage": "Authorization"

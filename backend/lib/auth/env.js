@@ -59,9 +59,16 @@ const buildMeta = (type) => {
 				group_base_dn: env("AUTH_LDAP_GROUP_BASE_DN"),
 				group_filter: env("AUTH_LDAP_GROUP_FILTER"),
 				group_name_attribute: env("AUTH_LDAP_GROUP_NAME_ATTRIBUTE"),
+				login_attributes: env("AUTH_LDAP_LOGIN_ATTRIBUTES"),
 				start_tls: toBool(env("AUTH_LDAP_START_TLS"), false),
 				tls_reject_unauthorized: toBool(env("AUTH_LDAP_TLS_REJECT_UNAUTHORIZED"), true),
 				timeout: toInt(env("AUTH_LDAP_TIMEOUT"), 10000),
+				page_size: toInt(env("AUTH_LDAP_PAGE_SIZE"), 500),
+				sync_enabled: toBool(env("AUTH_LDAP_SYNC_ENABLED"), false),
+				sync_interval: toInt(env("AUTH_LDAP_SYNC_INTERVAL"), 60),
+				sync_filter: env("AUTH_LDAP_SYNC_FILTER"),
+				sync_group: env("AUTH_LDAP_SYNC_GROUP"),
+				sync_disable_missing: toBool(env("AUTH_LDAP_SYNC_DISABLE_MISSING"), false),
 			});
 
 		case SAML:

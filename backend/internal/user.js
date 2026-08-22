@@ -3,6 +3,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import authModel from "../models/auth.js";
+import authProviderModel from "../models/auth_provider.js";
 import userModel from "../models/user.js";
 import userPermissionModel from "../models/user_permission.js";
 import internalAuditLog from "./audit-log.js";
@@ -13,6 +14,61 @@ const omissions = () => {
 };
 
 const DEFAULT_AVATAR = gravatar.url("admin@example.com", { default: "mm" });
+
+/**
+ * Works out where each of the given users can sign in from, so the Users list
+ * can show it. A user is "local" when they hold a password, and additionally
+ * lists every external provider their account is linked to.
+ *
+ * Done in two queries for the whole set rather than per user, so listing stays
+ * a fixed cost no matter how many people there are.
+ *
+ * @param   {[Object]} users
+ * @returns {Promise<[Object]>} the same users, with auth_sources attached
+ */
+const attachAuthSources = async (users) => {
+	const rows = Array.isArray(users) ? users : [users];
+	const ids = rows.map((u) => u?.id).filter(Boolean);
+
+	if (!ids.length) {
+		return users;
+	}
+
+	const links = await authModel.query().whereIn("user_id", ids).andWhere("is_deleted", 0);
+
+	const providerIds = [...new Set(links.map((l) => l.provider_id).filter(Boolean))];
+	const providers = providerIds.length
+		? await authProviderModel.query().whereIn("id", providerIds)
+		: [];
+	const providersById = new Map(providers.map((p) => [p.id, p]));
+
+	const byUser = new Map();
+	for (const link of links) {
+		const list = byUser.get(link.user_id) || [];
+
+		if (link.type === "password") {
+			list.push({ type: "local", provider_id: null, name: null });
+		} else {
+			const provider = providersById.get(link.provider_id);
+			list.push({
+				type: link.type,
+				provider_id: link.provider_id || null,
+				// A provider that has since been deleted leaves the link behind
+				name: provider ? provider.name : null,
+			});
+		}
+
+		byUser.set(link.user_id, list);
+	}
+
+	rows.forEach((user) => {
+		if (user) {
+			user.auth_sources = byUser.get(user.id) || [];
+		}
+	});
+
+	return users;
+};
 
 const internalUser = {
 	/**
@@ -322,7 +378,7 @@ const internalUser = {
 		}
 
 		const res = await query;
-		return utils.omitRows(omissions())(res);
+		return await attachAuthSources(utils.omitRows(omissions())(res));
 	},
 
 	/**

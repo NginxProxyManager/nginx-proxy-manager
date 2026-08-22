@@ -1,4 +1,4 @@
-import { IconEdit, IconLock, IconPlugConnected, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconLock, IconPlugConnected, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
@@ -7,15 +7,16 @@ import {
 	type AuthProvider,
 	type AuthProviderType,
 	deleteAuthProvider,
+	runAuthProviderSync,
 	setLocalAuth,
 	testAuthProvider,
 } from "src/api/backend";
 import { Button, Loading } from "src/components";
 import { useLocaleState } from "src/context";
 import { useAuthProviders, useLocalAuth } from "src/hooks";
-import { formatDateTime, T } from "src/locale";
+import { formatDateTime, intl, T } from "src/locale";
 import { showAuthProviderModal, showDeleteConfirmModal } from "src/modals";
-import { showError, showObjectSuccess } from "src/notifications";
+import { showError, showObjectSuccess, showSuccess } from "src/notifications";
 
 const TYPES: AuthProviderType[] = ["ldap", "saml", "oauth"];
 
@@ -69,8 +70,13 @@ function LocalAuthToggle({ providerCount }: { providerCount: number }) {
 }
 
 function ProviderRow({ provider }: { provider: AuthProvider }) {
+	const queryClient = useQueryClient();
 	const { locale } = useLocaleState();
 	const [testing, setTesting] = useState(false);
+	const [syncing, setSyncing] = useState(false);
+
+	// Only LDAP directories can be enumerated
+	const canSync = provider.type === "ldap" && provider.isEnabled;
 
 	const onTest = async () => {
 		setTesting(true);
@@ -86,6 +92,27 @@ function ProviderRow({ provider }: { provider: AuthProvider }) {
 	const onDelete = async () => {
 		await deleteAuthProvider(provider.id);
 		showObjectSuccess("auth-provider", "deleted");
+	};
+
+	const onSync = async () => {
+		setSyncing(true);
+		try {
+			const result = await runAuthProviderSync(provider.id);
+			queryClient.invalidateQueries({ queryKey: ["users"] });
+			showSuccess(
+				intl.formatMessage(
+					{ id: "auth-provider.sync-result" },
+					{
+						created: result.created ?? 0,
+						updated: result.updated ?? 0,
+						disabled: result.disabled ?? 0,
+					},
+				),
+			);
+		} catch (err: any) {
+			showError(err.message);
+		}
+		setSyncing(false);
 	};
 
 	return (
@@ -116,11 +143,18 @@ function ProviderRow({ provider }: { provider: AuthProvider }) {
 				) : null}
 			</td>
 			<td>
-				{provider.meta?.autoCreateUser ? (
-					<span className="badge bg-yellow-lt">
-						<T id="auth-provider.auto-create-user" />
-					</span>
-				) : null}
+				<div className="d-flex flex-wrap gap-1">
+					{provider.meta?.autoCreateUser ? (
+						<span className="badge bg-yellow-lt">
+							<T id="auth-provider.auto-create-user" />
+						</span>
+					) : null}
+					{provider.meta?.syncEnabled ? (
+						<span className="badge bg-cyan-lt">
+							<T id="auth-provider.sync-every" data={{ minutes: provider.meta.syncInterval ?? 60 }} />
+						</span>
+					) : null}
+				</div>
 			</td>
 			<td className="text-end">
 				<div className="btn-list justify-content-end">
@@ -128,6 +162,12 @@ function ProviderRow({ provider }: { provider: AuthProvider }) {
 						<IconPlugConnected size={16} className="me-1" />
 						<T id="auth-provider.test" />
 					</Button>
+					{canSync ? (
+						<Button size="sm" onClick={onSync} isLoading={syncing}>
+							<IconRefresh size={16} className="me-1" />
+							<T id="auth-provider.sync-now" />
+						</Button>
+					) : null}
 					<Button size="sm" onClick={() => showAuthProviderModal(provider)}>
 						{provider.isEnvManaged ? (
 							<IconLock size={16} className="me-1" />

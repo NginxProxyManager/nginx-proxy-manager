@@ -4,6 +4,7 @@ import * as ldap from "../lib/auth/ldap.js";
 import * as oauth from "../lib/auth/oauth.js";
 import { resolveUser } from "../lib/auth/provision.js";
 import * as saml from "../lib/auth/saml.js";
+import * as sync from "../lib/auth/sync.js";
 import errs from "../lib/error.js";
 import { auth as logger } from "../logger.js";
 import authProviderModel from "../models/auth_provider.js";
@@ -44,6 +45,17 @@ const generateSlug = async (name, ignoreId) => {
 
 const internalAuthProvider = {
 	/**
+	 * Reconciles the directory sync timers with what is currently configured.
+	 * Called after any change so the schedule never drifts from the database.
+	 *
+	 * @returns {Promise<Integer>} how many providers are scheduled
+	 */
+	refreshSchedules: async () => {
+		const providers = await internalAuthProvider.getEnabled();
+		return sync.reschedule(providers);
+	},
+
+	/**
 	 * @param   {Access} access
 	 * @param   {Object} data
 	 * @returns {Promise}
@@ -72,6 +84,7 @@ const internalAuthProvider = {
 			meta: redactProvider(row),
 		});
 
+		await internalAuthProvider.refreshSchedules();
 		return redactProvider(row);
 	},
 
@@ -119,6 +132,7 @@ const internalAuthProvider = {
 			meta: redactProvider(updated),
 		});
 
+		await internalAuthProvider.refreshSchedules();
 		return redactProvider(updated);
 	},
 
@@ -203,6 +217,8 @@ const internalAuthProvider = {
 			meta: redactProvider(row),
 		});
 
+		sync.unschedule(row.id);
+		await internalAuthProvider.refreshSchedules();
 		return true;
 	},
 
@@ -233,6 +249,75 @@ const internalAuthProvider = {
 		}
 
 		return { valid: true };
+	},
+
+	/**
+	 * Verifies a real username and password against a provider, without issuing
+	 * a token. Lets an administrator confirm a directory works before turning it
+	 * on, and shows exactly which attributes came back.
+	 *
+	 * @param   {Access}  access
+	 * @param   {Integer} id
+	 * @param   {String}  username
+	 * @param   {String}  password
+	 * @returns {Promise}
+	 */
+	testCredentials: async (access, id, username, password) => {
+		await access.can("auth_providers:update", id);
+		const row = await internalAuthProvider.getRaw(id);
+
+		if (row.type !== "ldap") {
+			throw new errs.ValidationError("Only LDAP providers can be tested with a username and password");
+		}
+
+		return await ldap.testAuthentication(row, username, password);
+	},
+
+	/**
+	 * Runs a directory sync now, rather than waiting for the schedule.
+	 *
+	 * @param   {Access}  access
+	 * @param   {Integer} id
+	 * @returns {Promise}
+	 */
+	sync: async (access, id) => {
+		await access.can("auth_providers:update", id);
+		const row = await internalAuthProvider.getRaw(id);
+
+		if (row.type !== "ldap") {
+			throw new errs.ValidationError("Directory sync is only available for LDAP providers");
+		}
+		if (!row.is_enabled) {
+			throw new errs.ValidationError("Enable the provider before syncing it");
+		}
+
+		const result = await sync.runSync(row);
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "auth-provider",
+			object_id: row.id,
+			meta: { name: row.name, sync: result },
+		});
+
+		return result;
+	},
+
+	/**
+	 * @param   {Access}  access
+	 * @param   {Integer} id
+	 * @returns {Promise}
+	 */
+	getSyncStatus: async (access, id) => {
+		await access.can("auth_providers:get", id);
+		const row = await internalAuthProvider.getRaw(id);
+
+		return {
+			supported: row.type === "ldap",
+			enabled: !!row.meta?.sync_enabled,
+			running: sync.isRunning(row.id),
+			last_result: sync.getLastResult(row.id),
+		};
 	},
 
 	/**

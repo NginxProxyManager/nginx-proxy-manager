@@ -188,6 +188,20 @@ function LdapFields({ provider, disabled }: FieldsProps) {
 				help={<T id="auth-provider.ldap.group-filter-help" />}
 				disabled={disabled}
 			/>
+			<TextField
+				name="meta.loginAttributes"
+				label="auth-provider.ldap.login-attributes"
+				placeholder="uid, mail, sAMAccountName"
+				help={<T id="auth-provider.ldap.login-attributes-help" />}
+				disabled={disabled}
+			/>
+			<TextField
+				name="meta.pageSize"
+				label="auth-provider.ldap.page-size"
+				type="number"
+				help={<T id="auth-provider.ldap.page-size-help" />}
+				disabled={disabled}
+			/>
 			<CheckField name="meta.startTls" label="auth-provider.ldap.start-tls" disabled={disabled} />
 			<CheckField
 				name="meta.tlsRejectUnauthorized"
@@ -372,6 +386,62 @@ function OauthFields({ provider, disabled }: FieldsProps) {
 	);
 }
 
+/**
+ * Directory sync settings. Only LDAP can be enumerated, so this is not offered
+ * for the redirect based providers.
+ */
+function SyncFields({ disabled }: FieldsProps) {
+	return (
+		<>
+			<hr />
+			<h4>
+				<T id="auth-provider.sync" />
+			</h4>
+			<p className="text-secondary">
+				<T id="auth-provider.sync-intro" />
+			</p>
+			<CheckField
+				name="meta.syncEnabled"
+				label="auth-provider.sync-enabled"
+				help={<T id="auth-provider.sync-enabled-help" />}
+				disabled={disabled}
+			/>
+			<div className="row">
+				<div className="col-md-6">
+					<TextField
+						name="meta.syncInterval"
+						label="auth-provider.sync-interval"
+						type="number"
+						help={<T id="auth-provider.sync-interval-help" />}
+						disabled={disabled}
+					/>
+				</div>
+				<div className="col-md-6">
+					<TextField
+						name="meta.syncGroup"
+						label="auth-provider.sync-group"
+						help={<T id="auth-provider.sync-group-help" />}
+						disabled={disabled}
+					/>
+				</div>
+			</div>
+			<TextField
+				name="meta.syncFilter"
+				label="auth-provider.sync-filter"
+				placeholder="(objectClass=person)"
+				help={<T id="auth-provider.sync-filter-help" />}
+				disabled={disabled}
+			/>
+			<CheckField
+				name="meta.syncDisableMissing"
+				label="auth-provider.sync-disable-missing"
+				help={<T id="auth-provider.sync-disable-missing-help" />}
+				disabled={disabled}
+			/>
+		</>
+	);
+}
+
 const TYPE_DEFAULTS: Record<AuthProviderType, Record<string, any>> = {
 	ldap: {
 		url: "",
@@ -384,8 +454,15 @@ const TYPE_DEFAULTS: Record<AuthProviderType, Record<string, any>> = {
 		nicknameAttribute: "givenName",
 		groupAttribute: "memberOf",
 		groupFilter: "",
+		loginAttributes: "",
+		pageSize: 500,
 		startTls: false,
 		tlsRejectUnauthorized: true,
+		syncEnabled: false,
+		syncInterval: 60,
+		syncFilter: "(objectClass=person)",
+		syncGroup: "",
+		syncDisableMissing: false,
 	},
 	saml: {
 		entryPoint: "",
@@ -437,6 +514,13 @@ const AuthProviderModal = EasyModal.create(({ provider, visible, remove }: Props
 		for (const key of ["bindPassword", "spPrivateKey", "clientSecret"]) {
 			if (meta[key] === "") {
 				delete meta[key];
+			}
+		}
+
+		// Number inputs hand back strings
+		for (const key of ["pageSize", "syncInterval", "timeout"]) {
+			if (typeof meta[key] !== "undefined" && meta[key] !== "") {
+				meta[key] = Number(meta[key]);
 			}
 		}
 
@@ -519,6 +603,7 @@ const AuthProviderModal = EasyModal.create(({ provider, visible, remove }: Props
 							{type === "ldap" ? <LdapFields provider={existing} disabled={readOnly} /> : null}
 							{type === "saml" ? <SamlFields provider={existing} disabled={readOnly} /> : null}
 							{type === "oauth" ? <OauthFields provider={existing} disabled={readOnly} /> : null}
+							{type === "ldap" ? <SyncFields disabled={readOnly} /> : null}
 
 							<hr />
 							<CheckField

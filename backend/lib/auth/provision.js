@@ -62,16 +62,20 @@ const createPermissions = (userId, isAdmin) =>
  * Turns a verified external identity into a local user row, creating or linking
  * one as the provider's configuration allows.
  *
- * @param   {Object} provider
- * @param   {Object} identity
- * @param   {String} identity.identifier  Stable id at the provider (DN, sub, nameID)
- * @param   {String} identity.email
- * @param   {String} [identity.name]
- * @param   {String} [identity.nickname]
+ * @param   {Object}  provider
+ * @param   {Object}  identity
+ * @param   {String}  identity.identifier  Stable id at the provider (GUID, sub, nameID, or DN)
+ * @param   {String}  identity.email
+ * @param   {String}  [identity.name]
+ * @param   {String}  [identity.nickname]
  * @param   {[String]} [identity.groups]
+ * @param   {Object}  [options]
+ * @param   {Boolean} [options.forceCreate]  Create even when auto_create_user is off.
+ *                                           Directory sync sets this: creating accounts
+ *                                           ahead of first login is the point of it.
  * @returns {Promise<Object>} the user row
  */
-const resolveUser = async (provider, identity) => {
+const resolveUser = async (provider, identity, options = {}) => {
 	const email = String(identity.email || "")
 		.toLowerCase()
 		.trim();
@@ -101,7 +105,7 @@ const resolveUser = async (provider, identity) => {
 
 	// 3. Otherwise create one, if the provider is allowed to
 	if (!user) {
-		if (!provider.meta?.auto_create_user) {
+		if (!options.forceCreate && !provider.meta?.auto_create_user) {
 			logger.info(`Rejected login for unknown user ${email} from provider ${provider.name}`);
 			throw new errs.AuthError("No account exists for this user", "error.no-account-for-external-user");
 		}
@@ -171,6 +175,11 @@ const linkIdentity = async (provider, user, identity) => {
 		name: identity.name || null,
 		groups: identity.groups || [],
 		provider_slug: provider.slug,
+		// Kept for troubleshooting: the identifier is normally an opaque GUID,
+		// so the DN is the only human readable pointer back to the directory
+		dn: identity.dn || null,
+		identifier_source: identity.identifier_source || null,
+		seen_on: new Date().toISOString(),
 	};
 
 	const existing = await authModel

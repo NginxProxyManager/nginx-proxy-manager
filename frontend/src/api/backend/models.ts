@@ -29,6 +29,8 @@ export interface User {
 	avatar: string;
 	roles: string[];
 	permissions?: UserPermissions;
+	/** Only returned when listing users */
+	authSources?: AuthSource[];
 }
 
 export interface AuditLog {
@@ -209,6 +211,14 @@ export interface DNSProvider {
 	credentials: string;
 }
 
+/** Where a user is able to sign in from, shown in the Users list */
+export interface AuthSource {
+	type: "local" | "ldap" | "saml" | "oauth";
+	providerId?: number | null;
+	/** Provider display name; null for local, or if the provider was removed */
+	name?: string | null;
+}
+
 export type AuthProviderType = "ldap" | "saml" | "oauth";
 
 /**
@@ -236,6 +246,13 @@ export interface AuthProviderMeta {
 	groupBaseDn?: string;
 	groupFilter?: string;
 	groupNameAttribute?: string;
+	loginAttributes?: string;
+	pageSize?: number;
+	syncEnabled?: boolean;
+	syncInterval?: number;
+	syncFilter?: string;
+	syncGroup?: string;
+	syncDisableMissing?: boolean;
 	startTls?: boolean;
 	tlsRejectUnauthorized?: boolean;
 	timeout?: number;
@@ -296,6 +313,36 @@ export interface LoginProvider {
 	id: number;
 	name: string;
 	type: "saml" | "oauth";
+}
+
+export interface AuthSyncResult {
+	providerId: number;
+	startedOn?: string;
+	finishedOn?: string;
+	ok: boolean;
+	error?: string;
+	entries?: number;
+	created?: number;
+	updated?: number;
+	disabled?: number;
+	skipped?: number;
+	failed?: number;
+}
+
+export interface AuthSyncStatus {
+	supported: boolean;
+	enabled: boolean;
+	running: boolean;
+	lastResult?: AuthSyncResult | null;
+}
+
+export interface AuthCredentialTest {
+	valid: boolean;
+	dn?: string;
+	email?: string;
+	name?: string;
+	identifierSource?: string;
+	groups?: string[];
 }
 
 export interface LoginOptions {

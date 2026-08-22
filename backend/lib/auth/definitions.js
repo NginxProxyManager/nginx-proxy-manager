@@ -49,9 +49,28 @@ const DEFAULTS = {
 		group_base_dn: "",
 		group_filter: "",
 		group_name_attribute: "dn",
+		// Comma separated attributes accepted at the login prompt. When set this
+		// builds the search filter, which is friendlier than writing one by hand;
+		// user_filter still wins if both are present.
+		login_attributes: "",
 		start_tls: false,
 		tls_reject_unauthorized: true,
 		timeout: 10000,
+		// Directories cap how many entries one search may return (1000 in Active
+		// Directory by default). Paging walks past that limit.
+		page_size: 500,
+
+		// --- directory sync ------------------------------------------------
+		// Walks the directory on a schedule so accounts exist before anyone
+		// signs in, and so group changes are picked up without a login.
+		sync_enabled: false,
+		sync_interval: 60,
+		// Restricts which entries sync considers; defaults to every person
+		sync_filter: "(objectClass=person)",
+		// Only sync members of this group, when set
+		sync_group: "",
+		// Disable local accounts whose directory entry has gone away
+		sync_disable_missing: false,
 	},
 	[SAML]: {
 		...COMMON_DEFAULTS,

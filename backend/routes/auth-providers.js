@@ -161,4 +161,66 @@ router
 		}
 	});
 
+/**
+ * POST /api/auth-providers/123/test-credentials
+ *
+ * Verify a real username and password against a directory, without signing in.
+ */
+router
+	.route("/:providerID/test-credentials")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.post(async (req, res, next) => {
+		try {
+			const payload = await apiValidator(
+				getValidationSchema("/auth-providers/{providerID}/test-credentials", "post"),
+				req.body,
+			);
+			const result = await internalAuthProvider.testCredentials(
+				res.locals.access,
+				req.params.providerID,
+				payload.username,
+				payload.password,
+			);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * /api/auth-providers/123/sync
+ *
+ * GET reports the last directory sync, POST starts one now.
+ */
+router
+	.route("/:providerID/sync")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	.get(async (req, res, next) => {
+		try {
+			const result = await internalAuthProvider.getSyncStatus(res.locals.access, req.params.providerID);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	.post(async (req, res, next) => {
+		try {
+			const result = await internalAuthProvider.sync(res.locals.access, req.params.providerID);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
 export default router;

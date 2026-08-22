@@ -55,6 +55,11 @@ services:
       AUTH_LDAP_GROUP_FILTER: "(&(objectClass=groupOfNames)(member={{dn}}))"
       AUTH_LDAP_ADMIN_GROUP: "cn=npm-admins,ou=groups,dc=example,dc=org"
       AUTH_LDAP_AUTO_CREATE_USER: "true"
+      # Directory sync: pre-creates accounts and keeps roles current without a login
+      AUTH_LDAP_SYNC_ENABLED: "true"
+      AUTH_LDAP_SYNC_INTERVAL: "60"
+      AUTH_LDAP_SYNC_FILTER: "(objectClass=inetOrgPerson)"
+      AUTH_LDAP_SYNC_DISABLE_MISSING: "true"
 
       # --- provider 2: SAML ---------------------------------------------
       AUTH_SAML_ENABLED: "true"

@@ -1,3 +1,4 @@
+import internalAuthProvider from "./internal/auth-provider.js";
 import { syncEnvProviders } from "./lib/auth/env.js";
 import { installPlugins } from "./lib/certbot.js";
 import utils from "./lib/utils.js";
@@ -179,6 +180,15 @@ const setupAuthProviders = async () => {
 		// A bad provider config must not stop the app from booting, otherwise a
 		// typo in an env var locks the admin out of fixing it.
 		logger.error(`Could not sync authentication providers from the environment: ${err.message}`);
+	}
+
+	try {
+		const scheduled = await internalAuthProvider.refreshSchedules();
+		if (scheduled) {
+			logger.info(`Directory sync scheduled for ${scheduled} provider(s)`);
+		}
+	} catch (err) {
+		logger.error(`Could not schedule directory sync: ${err.message}`);
 	}
 };
 

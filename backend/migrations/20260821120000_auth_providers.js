@@ -36,9 +36,18 @@ const up = (knex) => {
 
 			// Records which provider an external identity came from, so that
 			// a user can be linked back to their upstream account.
+			//
+			// identifier holds the directory's immutable id where it publishes
+			// one (objectGUID / entryUUID / OIDC sub / SAML NameID), otherwise
+			// the DN. It stays NULL for local password rows: every engine we
+			// support treats NULLs as distinct in a unique index, so the index
+			// below constrains external identities without affecting them.
 			return knex.schema.alterTable("auth", (table) => {
 				table.integer("provider_id").notNull().unsigned().defaultTo(0);
-				table.string("identifier", 255).notNull().defaultTo("");
+				table.string("identifier", 255).nullable();
+				table.unique(["provider_id", "identifier"], {
+					indexName: "auth_provider_identifier_unique",
+				});
 			});
 		})
 		.then(() => {
@@ -71,6 +80,7 @@ const down = (knex) => {
 		.del()
 		.then(() => {
 			return knex.schema.alterTable("auth", (table) => {
+				table.dropUnique(["provider_id", "identifier"], "auth_provider_identifier_unique");
 				table.dropColumn("provider_id");
 				table.dropColumn("identifier");
 			});

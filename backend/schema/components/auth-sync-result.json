@@ -1,0 +1,58 @@
+{
+	"type": "object",
+	"description": "The outcome of a directory sync run",
+	"required": ["provider_id", "ok"],
+	"additionalProperties": false,
+	"properties": {
+		"provider_id": {
+			"type": "integer",
+			"minimum": 1,
+			"example": 1
+		},
+		"started_on": {
+			"type": "string",
+			"format": "date-time"
+		},
+		"finished_on": {
+			"type": "string",
+			"format": "date-time"
+		},
+		"ok": {
+			"type": "boolean",
+			"example": true
+		},
+		"error": {
+			"type": "string",
+			"description": "Present when the run failed"
+		},
+		"entries": {
+			"type": "integer",
+			"description": "Directory entries matched by the sync filter",
+			"example": 128
+		},
+		"created": {
+			"type": "integer",
+			"description": "Local accounts created",
+			"example": 3
+		},
+		"updated": {
+			"type": "integer",
+			"description": "Existing accounts refreshed",
+			"example": 125
+		},
+		"disabled": {
+			"type": "integer",
+			"description": "Accounts disabled because they are no longer in the directory",
+			"example": 1
+		},
+		"skipped": {
+			"type": "integer",
+			"description": "Entries ignored, usually for having no email address",
+			"example": 2
+		},
+		"failed": {
+			"type": "integer",
+			"example": 0
+		}
+	}
+}

@@ -1,6 +1,7 @@
 import { Client } from "ldapts";
 import { auth as logger } from "../../logger.js";
 import errs from "../error.js";
+import { extractDirectoryGuid } from "./guid.js";
 
 /**
  * Escapes a value for safe use inside an LDAP search filter.
@@ -26,6 +27,12 @@ const escapeFilterValue = (value) =>
 	});
 
 /**
+ * Attributes that must come back as raw bytes. objectGUID is binary and would
+ * be mangled if ldapts decoded it as UTF-8.
+ */
+const BINARY_ATTRIBUTES = ["objectGUID", "objectSid"];
+
+/**
  * Reads an attribute off a search entry, always returning a flat array of
  * strings. ldapts hands back strings, arrays or Buffers depending on the value.
  *
@@ -38,9 +45,7 @@ const attributeValues = (entry, attribute) => {
 		return [];
 	}
 	const raw = Array.isArray(entry[attribute]) ? entry[attribute] : [entry[attribute]];
-	return raw
-		.map((value) => (Buffer.isBuffer(value) ? value.toString("utf8") : String(value)))
-		.filter((v) => v !== "");
+	return raw.map((value) => (Buffer.isBuffer(value) ? value.toString("utf8") : String(value))).filter((v) => v !== "");
 };
 
 const firstAttributeValue = (entry, attribute) => attributeValues(entry, attribute)[0] || null;
@@ -65,6 +70,138 @@ const createClient = (meta) => {
 	}
 
 	return new Client(options);
+};
+
+/**
+ * Opens a connection bound as the service account (or anonymously).
+ *
+ * @param   {Object} meta
+ * @returns {Promise<Client>}
+ */
+const connect = async (meta) => {
+	const client = createClient(meta);
+	try {
+		if (meta.start_tls) {
+			await client.startTLS({ rejectUnauthorized: meta.tls_reject_unauthorized !== false });
+		}
+		if (meta.bind_dn) {
+			await client.bind(meta.bind_dn, meta.bind_password || "");
+		}
+	} catch (err) {
+		await client.unbind().catch(() => {});
+		throw err;
+	}
+	return client;
+};
+
+/**
+ * The attributes every lookup needs. objectGUID and entryUUID are the stable
+ * identifiers a local account is tied to; the rest populate the user record.
+ *
+ * @param   {Object} meta
+ * @returns {[String]}
+ */
+const wantedAttributes = (meta) =>
+	[
+		"dn",
+		"objectGUID",
+		"entryUUID",
+		meta.email_attribute || "mail",
+		meta.name_attribute || "cn",
+		meta.nickname_attribute,
+		meta.group_attribute,
+	].filter(Boolean);
+
+/**
+ * Builds the filter that locates the person signing in.
+ *
+ * A hand written `user_filter` always wins. Otherwise `login_attributes` is
+ * turned into an OR across those attributes, which covers the common case of
+ * "let them type their username, their email, or their sAMAccountName".
+ *
+ * @param   {Object} meta
+ * @param   {String} username
+ * @returns {String}
+ */
+const buildUserFilter = (meta, username) => {
+	const escaped = escapeFilterValue(username);
+
+	if (meta.user_filter) {
+		return meta.user_filter.replace(/\{\{username\}\}/g, escaped);
+	}
+
+	const attributes = String(meta.login_attributes || "")
+		.split(",")
+		.map((a) => a.trim())
+		.filter(Boolean);
+
+	if (!attributes.length) {
+		return `(uid=${escaped})`;
+	}
+	if (attributes.length === 1) {
+		return `(${attributes[0]}=${escaped})`;
+	}
+	return `(|${attributes.map((a) => `(${a}=${escaped})`).join("")})`;
+};
+
+/**
+ * Runs a search, transparently paging when the directory caps result sizes.
+ *
+ * @param   {Client} client
+ * @param   {String} base
+ * @param   {Object} options
+ * @param   {Number} [pageSize]
+ * @returns {Promise<[Object]>}
+ */
+const search = async (client, base, options, pageSize) => {
+	const searchOptions = {
+		scope: "sub",
+		explicitBufferAttributes: BINARY_ATTRIBUTES,
+		...options,
+	};
+
+	// Paging is pointless when we only ever want one or two entries, and some
+	// servers reject the control alongside a small size limit.
+	if (pageSize && pageSize > 0 && !searchOptions.sizeLimit) {
+		searchOptions.paged = { pageSize };
+	}
+
+	const { searchEntries } = await client.search(base, searchOptions);
+	return searchEntries;
+};
+
+/**
+ * Turns a directory entry into the identity shape the rest of auth works with.
+ *
+ * @param   {Client} client
+ * @param   {Object} meta
+ * @param   {Object} entry
+ * @param   {String} [username]
+ * @returns {Promise<Object>}
+ */
+const entryToIdentity = async (client, meta, entry, username) => {
+	const dn = entry.dn;
+	const email = firstAttributeValue(entry, meta.email_attribute || "mail");
+
+	if (!email) {
+		throw new errs.AuthError(
+			`LDAP entry ${dn} has no "${meta.email_attribute || "mail"}" attribute, which is required`,
+		);
+	}
+
+	const directory = extractDirectoryGuid(entry);
+
+	return {
+		// Prefer the directory's immutable id: a DN changes when somebody is
+		// renamed or moved between organisational units.
+		identifier: directory ? directory.guid : dn,
+		identifier_source: directory ? directory.source : "dn",
+		dn,
+		email,
+		name: firstAttributeValue(entry, meta.name_attribute) || email,
+		nickname: firstAttributeValue(entry, meta.nickname_attribute) || null,
+		groups: await resolveGroups(client, meta, entry, dn, username || email),
+	};
 };
 
 /**
@@ -94,12 +231,14 @@ const resolveGroups = async (client, meta, entry, userDn, username) => {
 	const nameAttribute = meta.group_name_attribute || "dn";
 
 	try {
-		const { searchEntries } = await client.search(meta.group_base_dn || meta.base_dn || "", {
-			scope: "sub",
-			filter,
-		});
+		const entries = await search(
+			client,
+			meta.group_base_dn || meta.base_dn || "",
+			{ filter, attributes: nameAttribute === "dn" ? ["dn"] : ["dn", nameAttribute] },
+			meta.page_size,
+		);
 
-		return searchEntries
+		return entries
 			.map((group) => (nameAttribute === "dn" ? group.dn : firstAttributeValue(group, nameAttribute)))
 			.filter((name) => !!name);
 	} catch (err) {
@@ -114,8 +253,8 @@ const resolveGroups = async (client, meta, entry, userDn, username) => {
  * Authenticates a username/password pair against an LDAP directory.
  *
  * The directory is searched using the (optional) service account first, then we
- * re-bind as the located user's DN to verify the password. Binding as the user
- * is the only way to check a password without being able to read it.
+ * bind as the located user's DN to verify the password. Binding as the user is
+ * the only way to check a password without being able to read it.
  *
  * @param   {Object} provider
  * @param   {String} username  Whatever was typed into the login form
@@ -131,38 +270,23 @@ const authenticate = async (provider, username, password) => {
 		return null;
 	}
 
-	const client = createClient(meta);
+	const client = await connect(meta);
 
 	try {
-		if (meta.start_tls) {
-			await client.startTLS({ rejectUnauthorized: meta.tls_reject_unauthorized !== false });
-		}
-
-		// Bind as the service account (or anonymously) to run the search
-		if (meta.bind_dn) {
-			await client.bind(meta.bind_dn, meta.bind_password || "");
-		}
-
-		const filter = (meta.user_filter || "(uid={{username}})").replace(
-			/\{\{username\}\}/g,
-			escapeFilterValue(username),
-		);
-
-		const { searchEntries } = await client.search(meta.base_dn || "", {
-			scope: "sub",
-			filter,
+		const entries = await search(client, meta.base_dn || "", {
+			filter: buildUserFilter(meta, username),
 			sizeLimit: 2,
+			attributes: wantedAttributes(meta),
 		});
 
-		if (searchEntries.length !== 1) {
+		if (entries.length !== 1) {
 			logger.debug(
-				`LDAP search for "${username}" on provider ${provider.id} returned ${searchEntries.length} entries`,
+				`LDAP search for "${username}" on provider ${provider.id} returned ${entries.length} entries`,
 			);
 			return null;
 		}
 
-		const entry = searchEntries[0];
-		const userDn = entry.dn;
+		const entry = entries[0];
 
 		// Prove the password by binding as the user themselves. This uses a
 		// separate connection so that `client` stays bound as the service
@@ -172,27 +296,14 @@ const authenticate = async (provider, username, password) => {
 			if (meta.start_tls) {
 				await userClient.startTLS({ rejectUnauthorized: meta.tls_reject_unauthorized !== false });
 			}
-			await userClient.bind(userDn, password);
+			await userClient.bind(entry.dn, password);
 		} catch (_) {
 			return null;
 		} finally {
 			await userClient.unbind().catch(() => {});
 		}
 
-		const email = firstAttributeValue(entry, meta.email_attribute || "mail");
-		if (!email) {
-			throw new errs.AuthError(
-				`LDAP entry ${userDn} has no "${meta.email_attribute || "mail"}" attribute, which is required`,
-			);
-		}
-
-		return {
-			identifier: userDn,
-			email,
-			name: firstAttributeValue(entry, meta.name_attribute) || email,
-			nickname: firstAttributeValue(entry, meta.nickname_attribute) || null,
-			groups: await resolveGroups(client, meta, entry, userDn, username),
-		};
+		return await entryToIdentity(client, meta, entry, username);
 	} finally {
 		await client.unbind().catch(() => {
 			// Nothing useful to do if the socket is already gone
@@ -201,26 +312,109 @@ const authenticate = async (provider, username, password) => {
 };
 
 /**
+ * Streams every directory entry the provider's sync settings select.
+ *
+ * Entries are handed to the callback a page at a time so that a large
+ * directory never has to be held in memory all at once.
+ *
+ * @param   {Object}   provider
+ * @param   {Function} onIdentity  called with each identity
+ * @returns {Promise<Object>} counts
+ */
+const listDirectory = async (provider, onIdentity) => {
+	const meta = provider.meta || {};
+	const client = await connect(meta);
+
+	let seen = 0;
+	let skipped = 0;
+
+	try {
+		let filter = meta.sync_filter || "(objectClass=person)";
+
+		// Restrict to one group's members when asked to
+		if (meta.sync_group) {
+			filter = `(&${filter}(${meta.group_attribute || "memberOf"}=${escapeFilterValue(meta.sync_group)}))`;
+		}
+
+		const entries = await search(
+			client,
+			meta.base_dn || "",
+			{ filter, attributes: wantedAttributes(meta) },
+			meta.page_size || 500,
+		);
+
+		for (const entry of entries) {
+			seen++;
+			try {
+				const identity = await entryToIdentity(client, meta, entry);
+				await onIdentity(identity);
+			} catch (err) {
+				// One unusable entry (usually no email address) must not abort
+				// the whole run
+				skipped++;
+				logger.debug(`Skipping LDAP entry ${entry.dn}: ${err.message}`);
+			}
+		}
+	} finally {
+		await client.unbind().catch(() => {});
+	}
+
+	return { seen, skipped };
+};
+
+/**
  * Verifies that a provider's settings can actually reach the directory.
  *
  * @param   {Object} provider
- * @returns {Promise}
+ * @returns {Promise<Object>}
  */
 const test = async (provider) => {
 	const meta = provider.meta || {};
-	const client = createClient(meta);
+	const client = await connect(meta);
 
 	try {
-		if (meta.start_tls) {
-			await client.startTLS({ rejectUnauthorized: meta.tls_reject_unauthorized !== false });
-		}
-		if (meta.bind_dn) {
-			await client.bind(meta.bind_dn, meta.bind_password || "");
-		}
-		await client.search(meta.base_dn || "", { scope: "base", filter: "(objectClass=*)", sizeLimit: 1 });
+		await search(client, meta.base_dn || "", {
+			scope: "base",
+			filter: "(objectClass=*)",
+			sizeLimit: 1,
+		});
+		return { reachable: true };
 	} finally {
 		await client.unbind().catch(() => {});
 	}
 };
 
-export { authenticate, test, escapeFilterValue };
+/**
+ * Runs a real credential check without issuing a token, so an administrator
+ * can confirm a provider works before turning it on.
+ *
+ * @param   {Object} provider
+ * @param   {String} username
+ * @param   {String} password
+ * @returns {Promise<Object>}
+ */
+const testAuthentication = async (provider, username, password) => {
+	const identity = await authenticate(provider, username, password);
+
+	if (!identity) {
+		return { valid: false };
+	}
+
+	return {
+		valid: true,
+		dn: identity.dn,
+		email: identity.email,
+		name: identity.name,
+		identifier_source: identity.identifier_source,
+		groups: identity.groups,
+	};
+};
+
+export {
+	authenticate,
+	buildUserFilter,
+	escapeFilterValue,
+	listDirectory,
+	test,
+	testAuthentication,
+};

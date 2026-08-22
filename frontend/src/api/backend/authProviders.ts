@@ -1,5 +1,12 @@
 import * as api from "./base";
-import type { AuthProvider, LoginOptions, NewAuthProvider } from "./models";
+import type {
+	AuthCredentialTest,
+	AuthProvider,
+	AuthSyncResult,
+	AuthSyncStatus,
+	LoginOptions,
+	NewAuthProvider,
+} from "./models";
 import type { TokenResponse, TwoFactorChallengeResponse } from "./responseTypes";
 
 /**
@@ -52,6 +59,26 @@ export async function deleteAuthProvider(id: number): Promise<boolean> {
 
 export async function testAuthProvider(id: number): Promise<{ valid: boolean }> {
 	return await api.post({ url: `/auth-providers/${id}/test` });
+}
+
+/** Verify a real username and password against a directory, without signing in. */
+export async function testAuthProviderCredentials(
+	id: number,
+	username: string,
+	password: string,
+): Promise<AuthCredentialTest> {
+	return await api.post({
+		url: `/auth-providers/${id}/test-credentials`,
+		data: { username, password },
+	});
+}
+
+export async function getAuthProviderSync(id: number): Promise<AuthSyncStatus> {
+	return await api.get({ url: `/auth-providers/${id}/sync` });
+}
+
+export async function runAuthProviderSync(id: number): Promise<AuthSyncResult> {
+	return await api.post({ url: `/auth-providers/${id}/sync` });
 }
 
 export async function getLocalAuth(): Promise<{ localEnabled: boolean }> {

@@ -1,0 +1,62 @@
+{
+	"operationId": "getAuthProviderSync",
+	"summary": "Get the directory sync status for a provider",
+	"tags": ["auth-providers"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Authentication Provider ID",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"required": ["supported", "enabled", "running"],
+						"additionalProperties": false,
+						"properties": {
+							"supported": {
+								"type": "boolean",
+								"description": "Only LDAP providers can be enumerated",
+								"example": true
+							},
+							"enabled": {
+								"type": "boolean",
+								"example": true
+							},
+							"running": {
+								"type": "boolean",
+								"example": false
+							},
+							"last_result": {
+								"oneOf": [
+									{
+										"$ref": "../../../../components/auth-sync-result.json"
+									},
+									{
+										"type": "null"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
