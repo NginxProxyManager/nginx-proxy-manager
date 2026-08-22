@@ -33,7 +33,10 @@ const internal2fa = {
 	 * @returns {Promise<boolean>}
 	 */
 	isEnabled: async (userId) => {
-		const auth = await internal2fa.getUserPasswordAuth(userId);
+		// Users who only sign in through an external provider have no password
+		// auth row, and therefore no TOTP secret to check against.
+		const auth = await authModel.query().where("user_id", userId).andWhere("type", "password").first();
+
 		return auth?.meta?.totp_enabled === true;
 	},
 
@@ -161,12 +164,12 @@ const internal2fa = {
 		}
 
 		const result = await verify({
-            token: code,
-            secret: auth.meta.totp_secret,
-            guardrails: createGuardrails({
-                MIN_SECRET_BYTES: 10,
-            }),
-        });
+			token: code,
+			secret: auth.meta.totp_secret,
+			guardrails: createGuardrails({
+				MIN_SECRET_BYTES: 10,
+			}),
+		});
 
 		if (!result.valid) {
 			throw new errs.AuthError("Invalid verification code");
@@ -288,11 +291,7 @@ const internal2fa = {
 	},
 
 	getUserPasswordAuth: async (userId) => {
-		const auth = await authModel
-			.query()
-			.where("user_id", userId)
-			.andWhere("type", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", userId).andWhere("type", "password").first();
 
 		if (!auth) {
 			throw new errs.ItemNotFoundError("Auth not found");

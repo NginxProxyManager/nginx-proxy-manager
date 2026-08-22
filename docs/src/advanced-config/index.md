@@ -237,6 +237,19 @@ Setting these environment variables will create the default user on startup, ski
       INITIAL_ADMIN_PASSWORD: mypassword1
 ```
 
+## External Authentication
+
+LDAP, SAML and OAuth/OpenID Connect providers can be configured in the admin
+interface or entirely through environment variables. See
+[Authentication Providers](/authentication/) for the full list.
+
+```yml
+    environment:
+      AUTH_LDAP_ENABLED: "true"
+      AUTH_LDAP_URL: "ldaps://ldap.example.com:636"
+      AUTH_LDAP_BASE_DN: "dc=example,dc=com"
+```
+
 ## Disable Nginx Resolver
 
 On startup, we generate a resolvers directive for Nginx unless this is defined:

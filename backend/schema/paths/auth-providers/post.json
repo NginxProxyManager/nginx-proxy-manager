@@ -1,0 +1,65 @@
+{
+	"operationId": "createAuthProvider",
+	"summary": "Create an authentication provider",
+	"tags": ["auth-providers"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"requestBody": {
+		"description": "Authentication Provider Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["name", "type"],
+					"properties": {
+						"name": {
+							"$ref": "../../components/auth-provider-object.json#/properties/name"
+						},
+						"type": {
+							"$ref": "../../components/auth-provider-object.json#/properties/type"
+						},
+						"is_enabled": {
+							"$ref": "../../components/auth-provider-object.json#/properties/is_enabled"
+						},
+						"sort_order": {
+							"$ref": "../../components/auth-provider-object.json#/properties/sort_order"
+						},
+						"meta": {
+							"$ref": "../../components/auth-provider-object.json#/properties/meta"
+						}
+					}
+				},
+				"example": {
+					"name": "Company LDAP",
+					"type": "ldap",
+					"is_enabled": true,
+					"meta": {
+						"url": "ldap://ldap.example.com:389",
+						"bind_dn": "cn=readonly,dc=example,dc=com",
+						"bind_password": "secret",
+						"base_dn": "dc=example,dc=com",
+						"user_filter": "(|(uid={{username}})(mail={{username}}))",
+						"auto_create_user": true
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../components/auth-provider-object.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -208,3 +208,98 @@ export interface DNSProvider {
 	name: string;
 	credentials: string;
 }
+
+export type AuthProviderType = "ldap" | "saml" | "oauth";
+
+/**
+ * Provider configuration. The shape depends on the provider type; secrets are
+ * never returned by the API, instead a `<field>Set` boolean says whether one is
+ * stored.
+ */
+export interface AuthProviderMeta {
+	// Common
+	autoCreateUser?: boolean;
+	defaultRoles?: string[];
+	adminGroup?: string;
+
+	// LDAP
+	url?: string;
+	bindDn?: string;
+	bindPassword?: string;
+	bindPasswordSet?: boolean;
+	baseDn?: string;
+	userFilter?: string;
+	emailAttribute?: string;
+	nameAttribute?: string;
+	nicknameAttribute?: string;
+	groupAttribute?: string;
+	groupBaseDn?: string;
+	groupFilter?: string;
+	groupNameAttribute?: string;
+	startTls?: boolean;
+	tlsRejectUnauthorized?: boolean;
+	timeout?: number;
+
+	// SAML
+	entryPoint?: string;
+	issuer?: string;
+	idpCert?: string;
+	spPrivateKey?: string;
+	spPrivateKeySet?: boolean;
+	signatureAlgorithm?: string;
+	wantAssertionsSigned?: boolean;
+	wantAuthnResponseSigned?: boolean;
+
+	// OAuth
+	issuerUrl?: string;
+	authorizationUrl?: string;
+	tokenUrl?: string;
+	userinfoUrl?: string;
+	jwksUrl?: string;
+	clientId?: string;
+	clientSecret?: string;
+	clientSecretSet?: boolean;
+	scopes?: string;
+	emailClaim?: string;
+	nameClaim?: string;
+	nicknameClaim?: string;
+	groupClaim?: string;
+	useBasicAuth?: boolean;
+
+	[key: string]: any;
+}
+
+export interface AuthProvider {
+	id: number;
+	createdOn: string;
+	modifiedOn: string;
+	isDeleted?: boolean;
+	isEnabled: boolean;
+	isEnvManaged: boolean;
+	slug: string;
+	name: string;
+	type: AuthProviderType;
+	sortOrder: number;
+	meta: AuthProviderMeta;
+}
+
+export interface NewAuthProvider {
+	name: string;
+	type: AuthProviderType;
+	isEnabled?: boolean;
+	sortOrder?: number;
+	meta?: AuthProviderMeta;
+}
+
+/** A provider as advertised on the (unauthenticated) login screen */
+export interface LoginProvider {
+	id: number;
+	name: string;
+	type: "saml" | "oauth";
+}
+
+export interface LoginOptions {
+	localEnabled: boolean;
+	ldapEnabled: boolean;
+	providers: LoginProvider[];
+}

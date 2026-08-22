@@ -21,6 +21,14 @@
 			"description": "Endpoints that do not require authentication"
 		},
 		{
+			"name": "auth",
+			"description": "Endpoints for signing in with an external authentication provider"
+		},
+		{
+			"name": "auth-providers",
+			"description": "Endpoints for managing external authentication providers"
+		},
+		{
 			"name": "audit-log",
 			"description": "Endpoints related to Audit Logs"
 		},
@@ -79,6 +87,66 @@
 		"/audit-log/{id}": {
 			"get": {
 				"$ref": "./paths/audit-log/id/get.json"
+			}
+		},
+		"/auth/providers": {
+			"get": {
+				"$ref": "./paths/auth/providers/get.json"
+			}
+		},
+		"/auth/exchange": {
+			"post": {
+				"$ref": "./paths/auth/exchange/post.json"
+			}
+		},
+		"/auth/{providerID}/login": {
+			"get": {
+				"$ref": "./paths/auth/providerID/login/get.json"
+			}
+		},
+		"/auth/{providerID}/callback": {
+			"get": {
+				"$ref": "./paths/auth/providerID/callback/get.json"
+			},
+			"post": {
+				"$ref": "./paths/auth/providerID/callback/post.json"
+			}
+		},
+		"/auth/{providerID}/metadata": {
+			"get": {
+				"$ref": "./paths/auth/providerID/metadata/get.json"
+			}
+		},
+		"/auth-providers": {
+			"get": {
+				"$ref": "./paths/auth-providers/get.json"
+			},
+			"post": {
+				"$ref": "./paths/auth-providers/post.json"
+			}
+		},
+		"/auth-providers/local": {
+			"get": {
+				"$ref": "./paths/auth-providers/local/get.json"
+			},
+			"put": {
+				"$ref": "./paths/auth-providers/local/put.json"
+			}
+		},
+		"/auth-providers/{providerID}": {
+			"get": {
+				"$ref": "./paths/auth-providers/providerID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/auth-providers/providerID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/auth-providers/providerID/delete.json"
+			}
+		},
+		"/auth-providers/{providerID}/test": {
+			"post": {
+				"$ref": "./paths/auth-providers/providerID/test/post.json"
 			}
 		},
 		"/nginx/access-lists": {

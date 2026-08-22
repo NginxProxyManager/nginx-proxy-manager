@@ -1,0 +1,63 @@
+import * as api from "./base";
+import type { AuthProvider, LoginOptions, NewAuthProvider } from "./models";
+import type { TokenResponse, TwoFactorChallengeResponse } from "./responseTypes";
+
+/**
+ * The sign in methods offered on the login screen. Unauthenticated.
+ */
+export async function getLoginOptions(): Promise<LoginOptions> {
+	return await api.get({ url: "/auth/providers" });
+}
+
+/**
+ * Swaps the single use code handed back by a SAML or OAuth login for a token.
+ */
+export async function exchangeSsoCode(code: string): Promise<TokenResponse | TwoFactorChallengeResponse> {
+	return await api.post({
+		url: "/auth/exchange",
+		data: { code },
+		noAuth: true,
+	});
+}
+
+/**
+ * Where to send the browser to begin a redirect based login.
+ */
+export function providerLoginUrl(providerId: number): string {
+	return `/api/auth/${providerId}/login`;
+}
+
+/**
+ * Where the identity provider can fetch this instance's SAML metadata.
+ */
+export function providerMetadataUrl(providerId: number): string {
+	return `/api/auth/${providerId}/metadata`;
+}
+
+export async function getAuthProviders(): Promise<AuthProvider[]> {
+	return await api.get({ url: "/auth-providers" });
+}
+
+export async function createAuthProvider(item: NewAuthProvider): Promise<AuthProvider> {
+	return await api.post({ url: "/auth-providers", data: item });
+}
+
+export async function updateAuthProvider(id: number, item: Partial<NewAuthProvider>): Promise<AuthProvider> {
+	return await api.put({ url: `/auth-providers/${id}`, data: item });
+}
+
+export async function deleteAuthProvider(id: number): Promise<boolean> {
+	return await api.del({ url: `/auth-providers/${id}` });
+}
+
+export async function testAuthProvider(id: number): Promise<{ valid: boolean }> {
+	return await api.post({ url: `/auth-providers/${id}/test` });
+}
+
+export async function getLocalAuth(): Promise<{ localEnabled: boolean }> {
+	return await api.get({ url: "/auth-providers/local" });
+}
+
+export async function setLocalAuth(localEnabled: boolean): Promise<{ localEnabled: boolean }> {
+	return await api.put({ url: "/auth-providers/local", data: { localEnabled } });
+}

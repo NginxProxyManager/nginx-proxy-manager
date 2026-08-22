@@ -1,0 +1,45 @@
+{
+	"operationId": "getAuthProviders",
+	"summary": "Get all authentication providers",
+	"tags": ["auth-providers"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": [
+								{
+									"id": 1,
+									"created_on": "2026-08-21T09:41:04.000Z",
+									"modified_on": "2026-08-21T09:41:04.000Z",
+									"is_deleted": false,
+									"is_enabled": true,
+									"is_env_managed": false,
+									"slug": "company-ldap",
+									"name": "Company LDAP",
+									"type": "ldap",
+									"sort_order": 0,
+									"meta": {
+										"url": "ldap://ldap.example.com:389",
+										"base_dn": "dc=example,dc=com",
+										"bind_password_set": true
+									}
+								}
+							]
+						}
+					},
+					"schema": {
+						"$ref": "../../components/auth-provider-list.json"
+					}
+				}
+			}
+		}
+	}
+}

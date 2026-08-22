@@ -1,0 +1,145 @@
+# WARNING: This is a DEVELOPMENT compose file, it should not be used for production.
+#
+# A standalone stack for trying out the authentication providers, with one
+# identity provider of each kind already wired up. Unlike docker-compose.dev.yml
+# it runs the backend straight from the repo and serves a pre-built frontend, so
+# it starts in well under a minute.
+#
+#   cd backend  && yarn install
+#   cd frontend && yarn install && yarn locale-compile && yarn build
+#   cd docker   && docker compose -f docker-compose.auth-dev.yml up -d
+#
+# Then open http://localhost:8080 and sign in with any of:
+#
+#   local   admin@example.com / changeme123
+#   LDAP    alice / alicepass   (in npm-admins, so becomes an admin)
+#           bob   / bobpass     (standard user)
+#   SAML    user1 / user1pass   (in group1, so becomes an admin)
+#   OAuth   no prompt; signs in as alice.sso@example.org
+#
+# OAuth additionally needs this line in your hosts file, because the browser and
+# the backend both have to reach the issuer under the same name:
+#
+#   127.0.0.1 oidc.local
+services:
+  npmbackend:
+    image: docker.io/library/node:22
+    container_name: authtest.backend
+    working_dir: /app
+    command: sh -c "node index.js"
+    volumes:
+      - ../backend:/app
+      - npmdata:/data
+    networks:
+      default:
+    environment:
+      NODE_CONFIG_DIR: "/nonexistent"
+      DB_SQLITE_FILE: "/data/database.sqlite"
+      DEBUG: "true"
+      IP_RANGES_FETCH_ENABLED: "false"
+      INITIAL_ADMIN_EMAIL: "admin@example.com"
+      INITIAL_ADMIN_PASSWORD: "changeme123"
+
+      # The URL your browser uses. Redirect URIs are built from this.
+      AUTH_PUBLIC_URL: "http://localhost:8080"
+
+      # --- provider 1: LDAP ---------------------------------------------
+      AUTH_LDAP_ENABLED: "true"
+      AUTH_LDAP_NAME: "Example Directory"
+      AUTH_LDAP_URL: "ldap://authldap:1389"
+      AUTH_LDAP_BIND_DN: "cn=admin,dc=example,dc=org"
+      AUTH_LDAP_BIND_PASSWORD: "adminpassword"
+      AUTH_LDAP_BASE_DN: "dc=example,dc=org"
+      AUTH_LDAP_USER_FILTER: "(|(uid={{username}})(mail={{username}}))"
+      # This OpenLDAP has no memberOf overlay, so search groups the other way round
+      AUTH_LDAP_GROUP_FILTER: "(&(objectClass=groupOfNames)(member={{dn}}))"
+      AUTH_LDAP_ADMIN_GROUP: "cn=npm-admins,ou=groups,dc=example,dc=org"
+      AUTH_LDAP_AUTO_CREATE_USER: "true"
+
+      # --- provider 2: SAML ---------------------------------------------
+      AUTH_SAML_ENABLED: "true"
+      AUTH_SAML_NAME: "Test SAML IdP"
+      AUTH_SAML_ENTRY_POINT: "http://localhost:8090/simplesaml/saml2/idp/SSOService.php"
+      AUTH_SAML_ISSUER: "nginx-proxy-manager"
+      AUTH_SAML_EMAIL_ATTRIBUTE: "email"
+      AUTH_SAML_GROUP_ATTRIBUTE: "eduPersonAffiliation"
+      AUTH_SAML_ADMIN_GROUP: "group1"
+      AUTH_SAML_AUTO_CREATE_USER: "true"
+      AUTH_SAML_IDP_CERT: "MIIDXTCCAkWgAwIBAgIJALmVVuDWu4NYMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwHhcNMTYxMjMxMTQzNDQ3WhcNNDgwNjI1MTQzNDQ3WjBFMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzUCFozgNb1h1M0jzNRSCjhOBnR+uVbVpaWfXYIR+AhWDdEe5ryY+CgavOg8bfLybyzFdehlYdDRgkedEB/GjG8aJw06l0qF4jDOAw0kEygWCu2mcH7XOxRt+YAH3TVHa/Hu1W3WjzkobqqqLQ8gkKWWM27fOgAZ6GieaJBN6VBSMMcPey3HWLBmc+TYJmv1dbaO2jHhKh8pfKw0W12VM8P1PIO8gv4Phu/uuJYieBWKixBEyy0lHjyixYFCR12xdh4CA47q958ZRGnnDUGFVE1QhgRacJCOZ9bd5t9mr8KLaVBYTCJo5ERE8jymab5dPqe5qKfJsCZiqWglbjUo9twIDAQABo1AwTjAdBgNVHQ4EFgQUxpuwcs/CYQOyui+r1G+3KxBNhxkwHwYDVR0jBBgwFoAUxpuwcs/CYQOyui+r1G+3KxBNhxkwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAAiWUKs/2x/viNCKi3Y6blEuCtAGhzOOZ9EjrvJ8+COH3Rag3tVBWrcBZ3/uhhPq5gy9lqw4OkvEws99/5jFsX1FJ6MKBgqfuy7yh5s1YfM0ANHYczMmYpZeAcQf2CGAaVfwTTfSlzNLsF2lW/ly7yapFzlYSJLGoVE+OHEu8g5SlNACUEfkXw+5Eghh+KzlIN7R6Q7r2ixWNFBC/jWf7NKUfJyX8qIG5md1YUeT6GBW9Bm2/1/RiO24JTaYlfLdKK9TYb8sG5B+OLab2DImG99CJ25RkAcSobWNF5zD0O6lgOo3cEdB/ksCq3hmtlC/DlLZ/D8CJ+7VuZnS1rR2naQ=="
+
+      # --- provider 3: OAuth / OIDC -------------------------------------
+      # Needs "127.0.0.1 oidc.local" in your hosts file, because the browser
+      # and the backend must both reach the issuer under the same name.
+      AUTH_OAUTH_ENABLED: "true"
+      AUTH_OAUTH_NAME: "Mock SSO"
+      AUTH_OAUTH_ISSUER_URL: "http://oidc.local:9090/default"
+      AUTH_OAUTH_CLIENT_ID: "npm"
+      AUTH_OAUTH_CLIENT_SECRET: "npmsecret"
+      AUTH_OAUTH_GROUP_CLAIM: "groups"
+      AUTH_OAUTH_ADMIN_GROUP: "npm-admins"
+      AUTH_OAUTH_AUTO_CREATE_USER: "true"
+
+  npmui:
+    image: docker.io/library/nginx:alpine
+    container_name: authtest.ui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../frontend/dist:/usr/share/nginx/html:ro
+      - ./auth-dev/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      default:
+    depends_on:
+      - npmbackend
+
+  authldap:
+    image: docker.io/bitnamilegacy/openldap:latest
+    container_name: authtest.ldap
+    user: "0"
+    networks:
+      default:
+    environment:
+      LDAP_ROOT: "dc=example,dc=org"
+      LDAP_ADMIN_USERNAME: "admin"
+      LDAP_ADMIN_PASSWORD: "adminpassword"
+      # The seeded users need a mail attribute, which the built in seeding
+      # doesn't provide, so load a tree of our own instead.
+      LDAP_CUSTOM_LDIF_DIR: "/ldifs"
+    volumes:
+      - ./auth-dev/ldifs:/ldifs:ro
+
+  authsaml:
+    image: docker.io/kristophjunge/test-saml-idp:1.15
+    container_name: authtest.saml
+    ports:
+      - "8090:8080"
+    networks:
+      default:
+    environment:
+      SIMPLESAMLPHP_SP_ENTITY_ID: "nginx-proxy-manager"
+      SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE: "http://localhost:8080/api/auth/2/callback"
+
+  authoidc:
+    image: ghcr.io/navikt/mock-oauth2-server:2.1.10
+    container_name: authtest.oidc
+    # Same port inside and out, so the issuer string matches either way
+    ports:
+      - "9090:9090"
+    networks:
+      default:
+        aliases:
+          - oidc.local
+    environment:
+      SERVER_PORT: "9090"
+      JSON_CONFIG: >-
+        {"interactiveLogin":false,"tokenCallbacks":[{"issuerId":"default","tokenExpiry":600,
+        "requestMappings":[{"requestParam":"client_id","match":"npm","claims":{
+        "sub":"alice-sso","email":"alice.sso@example.org","name":"Alice From SSO",
+        "preferred_username":"alicesso","groups":["npm-admins","staff"]}}]}]}
+
+volumes:
+  npmdata:
+
+networks:
+  default:
+    name: authtest

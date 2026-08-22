@@ -257,11 +257,9 @@ const internalUser = {
 	},
 
 	deleteAll: async () => {
-		await userModel
-			.query()
-			.patch({
-				is_deleted: 1,
-			});
+		await userModel.query().patch({
+			is_deleted: 1,
+		});
 	},
 
 	/**
@@ -365,19 +363,19 @@ const internalUser = {
 				}
 
 				if (user.id === access.token.getUserId(0)) {
-					// they're setting their own password. Make sure their current password is correct
+					// they're setting their own password. Make sure their current password is correct.
+					// This deliberately checks the local password only: external providers own
+					// their own credentials and can't be changed from here.
 					if (typeof data.current === "undefined" || !data.current) {
 						throw new errs.ValidationError("Current password was not supplied");
 					}
 
-					return internalToken
-						.getTokenFromEmail({
-							identity: user.email,
-							secret: data.current,
-						})
-						.then(() => {
-							return user;
-						});
+					return internalToken.verifyLocalPassword(user.email, data.current).then((verified) => {
+						if (!verified) {
+							throw new errs.AuthError("Invalid email or password", "error.invalid-auth");
+						}
+						return user;
+					});
 				}
 
 				return user;
