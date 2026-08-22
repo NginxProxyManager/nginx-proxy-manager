@@ -1,4 +1,5 @@
 import { SAML } from "@node-saml/node-saml";
+import { auth as logger } from "../../logger.js";
 import errs from "../error.js";
 
 /**
@@ -62,7 +63,63 @@ const NICKNAME_FALLBACKS = [
 	"urn:oid:2.5.4.42",
 ];
 
+/**
+ * A transient NameID is a per-session pseudonym: the IdP issues a different one
+ * every time. It says nothing about who somebody is, so it cannot be what we
+ * remember them by — a directory of them would grow a new entry per login.
+ */
+const TRANSIENT_NAMEID = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient";
+
 const GROUP_FALLBACKS = ["groups", "memberOf", "Role", "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+/**
+ * Outstanding SAML request ids, so an assertion can be tied back to the request
+ * that asked for it.
+ *
+ * A fresh SAML instance is built per request, and node-saml's own default cache
+ * lives on the instance, so the id saved when the login started would be gone by
+ * the time the response arrived. This one is shared across them all.
+ *
+ * The backend is a single process, so a Map is enough. It empties on restart,
+ * which at worst asks somebody mid-login to press the button again.
+ */
+const REQUEST_TTL_MS = 10 * 60 * 1000;
+
+const requestCache = {
+	entries: new Map(),
+
+	prune() {
+		const now = Date.now();
+		this.entries.forEach((entry, key) => {
+			if (entry.createdAt + REQUEST_TTL_MS <= now) {
+				this.entries.delete(key);
+			}
+		});
+	},
+
+	async saveAsync(key, value) {
+		this.prune();
+		if (this.entries.has(key)) {
+			return null;
+		}
+		const item = { value, createdAt: Date.now() };
+		this.entries.set(key, item);
+		return item;
+	},
+
+	async getAsync(key) {
+		this.prune();
+		return this.entries.get(key)?.value ?? null;
+	},
+
+	async removeAsync(key) {
+		if (key === null || !this.entries.has(key)) {
+			return null;
+		}
+		this.entries.delete(key);
+		return key;
+	},
+};
 
 /**
  * Builds a configured node-saml instance for a provider.
@@ -90,9 +147,13 @@ const createSaml = (provider, callbackUrl) => {
 		signatureAlgorithm: meta.signature_algorithm || "sha256",
 		wantAssertionsSigned: meta.want_assertions_signed !== false,
 		wantAuthnResponseSigned: meta.want_authn_response_signed === true,
-		// We tie the response back to the login request with our own single use
-		// RelayState value, so node-saml does not need an InResponseTo cache.
-		validateInResponseTo: "never",
+		// Every assertion must name the request it answers, and each request is
+		// only answerable once. Without this a captured assertion could be
+		// replayed until it expired, since a signature stays valid whoever
+		// presents it. This rules out IdP initiated sign in, which is the point:
+		// a login has to start here.
+		validateInResponseTo: "always",
+		cacheProvider: requestCache,
 		audience: meta.issuer || "nginx-proxy-manager",
 		disableRequestedAuthnContext: true,
 	});
@@ -133,13 +194,56 @@ const completeAuthorization = async (provider, callbackUrl, body) => {
 		);
 	}
 
+	const { identifier, source } = stableIdentifier(provider, profile, email);
+
 	return {
-		identifier: String(profile.nameID || email),
+		identifier,
+		identifier_source: source,
 		email,
 		name: readClaim(profile, meta.name_attribute, NAME_FALLBACKS) || email,
 		nickname: readClaim(profile, meta.nickname_attribute, NICKNAME_FALLBACKS),
 		groups: readClaimList(profile, meta.group_attribute, GROUP_FALLBACKS),
 	};
+};
+
+/**
+ * Picks something to remember a person by that will still be the same tomorrow.
+ *
+ * The NameID is the natural choice, but only when the IdP issues a lasting one.
+ * simpleSAMLphp and several hosted IdPs default to a transient format, and
+ * keying off that would mean nobody is ever recognised twice. When that is what
+ * comes back, the email address in the assertion is used instead — it is
+ * scoped to this provider either way, so it only ever matches the account this
+ * same provider created.
+ *
+ * @param   {Object} provider
+ * @param   {Object} profile
+ * @param   {String} email
+ * @returns {Object} { identifier, source }
+ */
+const stableIdentifier = (provider, profile, email) => {
+	const attribute = (provider.meta?.identifier_attribute || "").trim();
+	if (attribute) {
+		const value = readClaim(profile, attribute, []);
+		if (value) {
+			return { identifier: String(value), source: attribute };
+		}
+		logger.warn(
+			`SAML provider "${provider.name}" is set to identify people by "${attribute}", which the assertion did not contain`,
+		);
+	}
+
+	if (profile.nameID && profile.nameIDFormat !== TRANSIENT_NAMEID) {
+		return { identifier: String(profile.nameID), source: "nameID" };
+	}
+
+	if (profile.nameID) {
+		logger.debug(
+			`SAML provider "${provider.name}" returned a transient NameID, so ${email} is identified by email address instead`,
+		);
+	}
+
+	return { identifier: email, source: "email" };
 };
 
 /**
@@ -164,4 +268,4 @@ const test = async (provider, callbackUrl) => {
 	createSaml(provider, callbackUrl);
 };
 
-export { buildAuthorizationRequest, completeAuthorization, generateMetadata, test };
+export { buildAuthorizationRequest, completeAuthorization, generateMetadata, requestCache, test };

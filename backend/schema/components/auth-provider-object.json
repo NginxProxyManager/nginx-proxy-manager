@@ -69,7 +69,8 @@
 				"url": "ldap://ldap.example.com:389",
 				"base_dn": "dc=example,dc=com",
 				"bind_password_set": true,
-				"auto_create_user": true
+				"auto_create_user": true,
+				"link_by_email": false
 			}
 		}
 	}

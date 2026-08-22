@@ -16,7 +16,7 @@ import { auth as logger } from "../../logger.js";
 import authModel from "../../models/auth.js";
 import userModel from "../../models/user.js";
 import * as ldap from "./ldap.js";
-import { resolveUser } from "./provision.js";
+import { anotherAdminCanSignIn, resolveUser } from "./provision.js";
 
 /** Runs in progress, keyed by provider id, so two never overlap */
 const running = new Map();
@@ -74,18 +74,13 @@ const disableMissing = async (provider, seenIdentifiers) => {
 			continue;
 		}
 
-		// Never lock out the last administrator over a directory hiccup
+		// Never lock out the last administrator over a directory hiccup. The
+		// provider itself is still standing here, so other administrators who
+		// use it do count.
 		if ((user.roles || []).includes("admin")) {
-			const otherAdmins = await userModel
-				.query()
-				.where("is_deleted", 0)
-				.andWhere("is_disabled", 0)
-				.andWhere("id", "!=", user.id);
-
-			const anotherAdminExists = otherAdmins.some((u) => (u.roles || []).includes("admin"));
-			if (!anotherAdminExists) {
+			if (!(await anotherAdminCanSignIn(user.id))) {
 				logger.warn(
-					`Not disabling ${user.email}: they are the only administrator left, despite being absent from "${provider.name}"`,
+					`Not disabling ${user.email}: no other administrator could still sign in, despite them being absent from "${provider.name}"`,
 				);
 				continue;
 			}

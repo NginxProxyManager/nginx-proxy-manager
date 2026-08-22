@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  * these fakes model just enough of the query builder to exercise the decisions,
  * which is where the risk actually is: who gets deleted and who is spared.
  */
-const db = { auths: [], users: [] };
+const db = { auths: [], users: [], localAuthEnabled: true };
 
 const makeQuery = (rows, onPatch) => {
 	const state = { filters: [], negations: [] };
@@ -66,6 +66,13 @@ vi.mock("../models/user.js", () => ({
 	default: { query: () => makeQuery(() => db.users, applyPatch) },
 }));
 vi.mock("../models/user_permission.js", () => ({ default: {} }));
+// The lockout guard asks whether local sign in is still available, since an
+// administrator holding only a password is no fallback once it is switched off
+vi.mock("../lib/auth/local-auth.js", () => ({
+	isLocalAuthEnabled: async () => db.localAuthEnabled,
+	LOCAL_AUTH_SETTING: "auth-local",
+	localAuthDisabledByEnv: () => null,
+}));
 
 const { detachProviderUsers } = await import("../lib/auth/provision.js");
 
@@ -74,6 +81,7 @@ const provider = { id: 1, name: "Company LDAP" };
 beforeEach(() => {
 	db.auths = [];
 	db.users = [];
+	db.localAuthEnabled = true;
 });
 
 const addUser = (id, email, roles = [], opts = {}) => {
@@ -163,19 +171,19 @@ describe("detachProviderUsers, deleting", () => {
 		expect(db.users[0].is_deleted).toBe(false);
 	});
 
-	it("removes one of two administrators but stops at the last", async () => {
+	it("removes an administrator while another can still sign in elsewhere", async () => {
 		addUser(1, "admin-a@example.com", ["admin"]);
 		addUser(2, "admin-b@example.com", ["admin"]);
 		addLink(10, 1, 1);
 		addLink(11, 2, 1);
+		// admin-b also signs in through a provider that is staying
+		addLink(12, 2, 2);
 
 		const result = await detachProviderUsers(provider, "delete");
 
 		expect(result.deleted).toBe(1);
-		expect(result.kept).toHaveLength(1);
-		// Whichever survived, exactly one administrator is still standing
-		const remaining = db.users.filter((u) => !u.is_deleted && u.roles.includes("admin"));
-		expect(remaining).toHaveLength(1);
+		expect(db.users.find((u) => u.id === 1).is_deleted).toBe(true);
+		expect(db.users.find((u) => u.id === 2).is_deleted).toBe(false);
 	});
 
 	it("ignores an account that was already deleted", async () => {
@@ -185,6 +193,48 @@ describe("detachProviderUsers, deleting", () => {
 		const result = await detachProviderUsers(provider, "delete");
 
 		expect(result).toMatchObject({ converted: 0, deleted: 0 });
+	});
+
+	it("spares an admin whose only fallback cannot sign in either", async () => {
+		// Local sign in is off, so the other administrator's password is no
+		// longer a way in and they do not count as a fallback
+		db.localAuthEnabled = false;
+		addUser(1, "admin-a@example.com", ["admin"]);
+		addUser(2, "admin-b@example.com", ["admin"]);
+		addLink(10, 1, 1);
+		addLink(11, 2, 0, "password");
+
+		const result = await detachProviderUsers(provider, "delete");
+
+		expect(result.deleted).toBe(0);
+		expect(result.kept[0].reason).toMatch(/only administrator/);
+		expect(db.users.find((u) => u.id === 1).is_deleted).toBe(false);
+	});
+
+	it("counts a password holding admin as a fallback while local sign in is on", async () => {
+		db.localAuthEnabled = true;
+		addUser(1, "admin-a@example.com", ["admin"]);
+		addUser(2, "admin-b@example.com", ["admin"]);
+		addLink(10, 1, 1);
+		addLink(11, 2, 0, "password");
+
+		const result = await detachProviderUsers(provider, "delete");
+
+		expect(result.deleted).toBe(1);
+		expect(db.users.find((u) => u.id === 1).is_deleted).toBe(true);
+	});
+
+	it("does not count an admin who only uses the provider being removed", async () => {
+		addUser(1, "admin-a@example.com", ["admin"]);
+		addUser(2, "admin-b@example.com", ["admin"]);
+		addLink(10, 1, 1);
+		addLink(11, 2, 1);
+		// Both are ours, so removing the provider takes the second one's only
+		// way in with it; whoever is considered first has no real fallback
+		const result = await detachProviderUsers(provider, "delete");
+
+		expect(result.deleted).toBe(0);
+		expect(result.kept).toHaveLength(2);
 	});
 
 	it("does nothing at all when the provider owns no accounts", async () => {

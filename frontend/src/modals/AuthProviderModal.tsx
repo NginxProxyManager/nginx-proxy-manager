@@ -346,6 +346,12 @@ function SamlFields({ provider, disabled }: FieldsProps) {
 					/>
 				</div>
 			</div>
+			<TextField
+				name="meta.identifierAttribute"
+				label="auth-provider.saml.identifier-attribute"
+				help={<T id="auth-provider.saml.identifier-attribute-help" />}
+				disabled={disabled}
+			/>
 			<CheckField
 				name="meta.wantAssertionsSigned"
 				label="auth-provider.saml.want-assertions-signed"
@@ -602,6 +608,7 @@ const AuthProviderModal = EasyModal.create(({ provider, visible, remove }: Props
 				...meta,
 				autoCreateUser: values.meta.autoCreateUser,
 				adminGroup: values.meta.adminGroup,
+				linkByEmail: values.meta.linkByEmail,
 			},
 		};
 
@@ -630,6 +637,7 @@ const AuthProviderModal = EasyModal.create(({ provider, visible, remove }: Props
 			...(existing?.meta ?? {}),
 			autoCreateUser: existing?.meta?.autoCreateUser ?? false,
 			adminGroup: existing?.meta?.adminGroup ?? "",
+			linkByEmail: existing?.meta?.linkByEmail ?? false,
 			// Secrets are never returned, so always start blank
 			bindPassword: "",
 			spPrivateKey: "",
@@ -681,6 +689,20 @@ const AuthProviderModal = EasyModal.create(({ provider, visible, remove }: Props
 								name="meta.autoCreateUser"
 								label="auth-provider.auto-create-user"
 								help={<T id="auth-provider.auto-create-user-help" />}
+								disabled={readOnly}
+							/>
+							<CheckField
+								name="meta.linkByEmail"
+								label="auth-provider.link-by-email"
+								help={
+									<T
+										id={
+											type === "oauth"
+												? "auth-provider.link-by-email-help-oauth"
+												: "auth-provider.link-by-email-help"
+										}
+									/>
+								}
 								disabled={readOnly}
 							/>
 							<TextField

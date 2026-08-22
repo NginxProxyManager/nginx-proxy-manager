@@ -273,7 +273,7 @@ const entryToIdentity = async (client, meta, entry, username) => {
  * @param   {Object} entry     the user's search entry
  * @param   {String} userDn
  * @param   {String} username
- * @returns {Promise<[String]>}
+ * @returns {Promise<[String]|null>} null when membership could not be read at all
  */
 const resolveGroups = async (client, meta, entry, userDn, username) => {
 	const fromEntry = attributeValues(entry, meta.group_attribute);
@@ -300,9 +300,11 @@ const resolveGroups = async (client, meta, entry, userDn, username) => {
 			.filter((name) => !!name);
 	} catch (err) {
 		// Group membership only affects role mapping, so a failure here should
-		// not stop an otherwise valid login.
+		// not stop an otherwise valid login. Say we don't know rather than that
+		// there are none: the caller leaves roles alone when membership is
+		// unknown, where an empty list would revoke them.
 		logger.warn(`LDAP group search failed for ${userDn}: ${err.message}`);
-		return [];
+		return null;
 	}
 };
 
@@ -463,7 +465,8 @@ const testAuthentication = async (provider, username, password) => {
 		email: identity.email,
 		name: identity.name,
 		identifier_source: identity.identifier_source,
-		groups: identity.groups,
+		groups: identity.groups ?? [],
+		groups_unavailable: identity.groups === null,
 	};
 };
 

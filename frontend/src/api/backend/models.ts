@@ -237,6 +237,8 @@ export interface AuthProviderMeta {
 	autoCreateUser?: boolean;
 	defaultRoles?: string[];
 	adminGroup?: string;
+	linkByEmail?: boolean;
+	identifierAttribute?: string;
 
 	// LDAP
 	url?: string;

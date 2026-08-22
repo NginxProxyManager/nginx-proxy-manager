@@ -8,6 +8,8 @@ vi.mock("../models/auth_provider.js", () => ({ default: {} }));
 vi.mock("../models/auth.js", () => ({ default: {} }));
 vi.mock("../models/user.js", () => ({ default: {} }));
 vi.mock("../models/user_permission.js", () => ({ default: {} }));
+// env.js also reaches local-auth.js, which reads the setting behind AUTH_DISABLE_LOCAL
+vi.mock("../models/setting.js", () => ({ default: {} }));
 
 const { getEnvProviders, localAuthDisabledByEnv } = await import("../lib/auth/env.js");
 

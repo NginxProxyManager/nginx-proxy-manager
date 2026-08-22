@@ -251,6 +251,9 @@ const completeAuthorization = async (provider, flow, code) => {
 	return {
 		identifier: String(claims.sub || email),
 		email: String(email),
+		// Whether the provider vouches for the address, which decides if it may
+		// be used to adopt an existing account. Some send it as a string.
+		email_verified: claims.email_verified === true || claims.email_verified === "true",
 		name: claims[meta.name_claim || "name"] || String(email),
 		nickname: claims[meta.nickname_claim] || null,
 		groups: toArray(claims[meta.group_claim || "groups"]),

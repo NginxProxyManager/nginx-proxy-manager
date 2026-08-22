@@ -88,6 +88,9 @@ const groupsAllow = (allowedGroups, userGroups) => {
 		return true;
 	}
 
+	// Unknown membership (null) denies here, which is the opposite of how role
+	// mapping treats it. Guarding a resource should fail closed; revoking
+	// somebody's admin role over a failed lookup should not.
 	const held = (userGroups || []).map((g) => String(g).toLowerCase());
 	return allowedGroups.some((group) => held.includes(String(group).trim().toLowerCase()));
 };

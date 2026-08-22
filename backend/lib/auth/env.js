@@ -1,6 +1,7 @@
 import { auth as logger } from "../../logger.js";
 import authProviderModel from "../../models/auth_provider.js";
 import { LDAP, normalizeMeta, OAUTH, PROVIDER_TYPES, SAML } from "./definitions.js";
+import { ensureAWayBackIn, localAuthDisabledByEnv } from "./local-auth.js";
 import { detachProviderUsers } from "./provision.js";
 
 const toBool = (value, fallback) => {
@@ -42,6 +43,7 @@ const buildMeta = (type) => {
 		auto_create_user: toBool(env(`AUTH_${type.toUpperCase()}_AUTO_CREATE_USER`), false),
 		default_roles: toList(env(`AUTH_${type.toUpperCase()}_DEFAULT_ROLES`)),
 		admin_group: env(`AUTH_${type.toUpperCase()}_ADMIN_GROUP`) || "",
+		link_by_email: toBool(env(`AUTH_${type.toUpperCase()}_LINK_BY_EMAIL`), false),
 	};
 
 	switch (type) {
@@ -86,6 +88,7 @@ const buildMeta = (type) => {
 				name_attribute: env("AUTH_SAML_NAME_ATTRIBUTE"),
 				nickname_attribute: env("AUTH_SAML_NICKNAME_ATTRIBUTE"),
 				group_attribute: env("AUTH_SAML_GROUP_ATTRIBUTE"),
+				identifier_attribute: env("AUTH_SAML_IDENTIFIER_ATTRIBUTE"),
 			});
 
 		case OAUTH:
@@ -178,20 +181,16 @@ const syncEnvProviders = async () => {
 		}
 	}
 
+	if (stale.length) {
+		// Checked once the wanted providers are in place, so swapping one for
+		// another doesn't briefly look like having none. Variables disappearing
+		// from a compose file must not leave an instance nobody can sign in to.
+		await ensureAWayBackIn();
+	}
+
 	return wanted.length;
 };
 
-/**
- * Whether local email/password sign in has been switched off by environment.
- * When unset, the database setting decides.
- *
- * @returns {Boolean|null}
- */
-const localAuthDisabledByEnv = () => {
-	if (typeof process.env.AUTH_DISABLE_LOCAL === "undefined" || process.env.AUTH_DISABLE_LOCAL === "") {
-		return null;
-	}
-	return toBool(process.env.AUTH_DISABLE_LOCAL, false);
-};
-
+// Re-exported so callers reading environment configured auth have one place to
+// look; the implementation lives with the setting it overrides.
 export { getEnvProviders, localAuthDisabledByEnv, syncEnvProviders };

@@ -44,7 +44,8 @@
 						"bind_password": "secret",
 						"base_dn": "dc=example,dc=com",
 						"user_filter": "(|(uid={{username}})(mail={{username}}))",
-						"auto_create_user": true
+						"auto_create_user": true,
+						"link_by_email": false
 					}
 				}
 			}

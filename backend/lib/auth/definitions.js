@@ -29,6 +29,11 @@ const COMMON_DEFAULTS = {
 	default_roles: [],
 	// Optional: identities in this group/claim value become admins
 	admin_group: "",
+	// Adopt an existing local account when its email address matches the one
+	// the provider supplies. Off by default: any provider that lets somebody
+	// claim an arbitrary address could otherwise be used to take over an
+	// account, including an administrator's.
+	link_by_email: false,
 };
 
 const DEFAULTS = {
@@ -86,6 +91,10 @@ const DEFAULTS = {
 		name_attribute: "",
 		nickname_attribute: "",
 		group_attribute: "",
+		// Attribute holding a lasting id for the person. Left empty the NameID
+		// is used, unless the IdP issues a transient one, in which case the
+		// email address is.
+		identifier_attribute: "",
 	},
 	[OAUTH]: {
 		...COMMON_DEFAULTS,

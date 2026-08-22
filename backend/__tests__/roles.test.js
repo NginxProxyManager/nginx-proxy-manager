@@ -5,10 +5,12 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("../models/auth.js", () => ({ default: {} }));
 vi.mock("../models/user.js", () => ({ default: {} }));
 vi.mock("../models/user_permission.js", () => ({ default: {} }));
+vi.mock("../models/setting.js", () => ({ default: {} }));
+vi.mock("../models/auth_provider.js", () => ({ default: {} }));
 
 const { resolveRoles } = await import("../lib/auth/provision.js");
 
-const provider = (adminGroup) => ({ meta: { admin_group: adminGroup } });
+const provider = (adminGroup, name = "Company LDAP") => ({ name, meta: { admin_group: adminGroup } });
 
 describe("resolveRoles", () => {
 	it("leaves roles alone when no admin group is configured", () => {
@@ -18,6 +20,17 @@ describe("resolveRoles", () => {
 
 	it("treats a whitespace-only group as not configured", () => {
 		expect(resolveRoles(provider("   "), { groups: ["x"] }, [])).toBeNull();
+	});
+
+	it("leaves roles alone when membership could not be read", () => {
+		// null means the group lookup failed, which must not be read as "in no
+		// groups": that would strip admin from everyone during an outage
+		expect(resolveRoles(provider("npm-admins"), { groups: null, email: "a@b.c" }, ["admin"])).toBeNull();
+		expect(resolveRoles(provider("npm-admins"), { email: "a@b.c" }, ["admin"])).toBeNull();
+	});
+
+	it("still revokes admin when the directory genuinely reports no groups", () => {
+		expect(resolveRoles(provider("npm-admins"), { groups: [], email: "a@b.c" }, ["admin"])).toEqual([]);
 	});
 
 	it("grants admin to a member of the group", () => {
@@ -48,10 +61,6 @@ describe("resolveRoles", () => {
 
 	it("does not duplicate admin for someone who already has it", () => {
 		expect(resolveRoles(provider("npm-admins"), { groups: ["npm-admins"] }, ["admin"])).toEqual(["admin"]);
-	});
-
-	it("handles a missing group list as no groups", () => {
-		expect(resolveRoles(provider("npm-admins"), {}, ["admin"])).toEqual([]);
 	});
 
 	it("copes with non-string group values", () => {

@@ -76,9 +76,14 @@ const internalAuth = {
 		if (provider.type === OAUTH) {
 			const params = { ...req.query, ...req.body };
 			if (params.error) {
-				throw new errs.AuthError(
-					`The identity provider rejected the sign in: ${params.error_description || params.error}`,
+				// The provider's own wording is logged but not shown: it arrives
+				// before anything has been validated, so anyone able to aim a
+				// browser at this callback could choose the message the login
+				// page displays.
+				logger.warn(
+					`Provider "${provider.name}" rejected a sign in: ${params.error_description || params.error}`,
 				);
+				throw new errs.AuthError("The identity provider rejected the sign in");
 			}
 
 			const flow = loginFlows.take(params.state);

@@ -1,6 +1,11 @@
 import { normalizeMeta, PROVIDER_TYPES, redactProvider, SECRET_FIELDS } from "../lib/auth/definitions.js";
-import { localAuthDisabledByEnv } from "../lib/auth/env.js";
 import * as ldap from "../lib/auth/ldap.js";
+import {
+	ensureAWayBackIn,
+	isLocalAuthEnabled,
+	LOCAL_AUTH_SETTING,
+	localAuthDisabledByEnv,
+} from "../lib/auth/local-auth.js";
 import * as oauth from "../lib/auth/oauth.js";
 import { detachProviderUsers, resolveUser } from "../lib/auth/provision.js";
 import * as saml from "../lib/auth/saml.js";
@@ -12,8 +17,6 @@ import authProviderModel from "../models/auth_provider.js";
 import settingModel from "../models/setting.js";
 import userModel from "../models/user.js";
 import internalAuditLog from "./audit-log.js";
-
-const LOCAL_AUTH_SETTING = "auth-local";
 
 /**
  * Turns a display name into a slug that's unique among providers.
@@ -231,7 +234,12 @@ const internalAuthProvider = {
 
 		sync.unschedule(row.id);
 		await internalAuthProvider.refreshSchedules();
-		return { ...users, deleted_provider: true };
+
+		// Removing the last provider while the password form is off would leave
+		// nobody able to sign in
+		const localRestored = await ensureAWayBackIn();
+
+		return { ...users, deleted_provider: true, local_auth_restored: localRestored };
 	},
 
 	/**
@@ -509,17 +517,7 @@ const internalAuthProvider = {
 	/**
 	 * @returns {Promise<Boolean>}
 	 */
-	isLocalAuthEnabled: async () => {
-		const fromEnv = localAuthDisabledByEnv();
-		if (fromEnv !== null) {
-			return !fromEnv;
-		}
-
-		const row = await settingModel.query().where("id", LOCAL_AUTH_SETTING).first();
-		// Missing row means the migration hasn't been seen yet; fail open so
-		// nobody gets locked out of their own instance.
-		return row?.value !== "disabled";
-	},
+	isLocalAuthEnabled,
 
 	/**
 	 * @param   {Access}  access
@@ -541,6 +539,30 @@ const internalAuthProvider = {
 			if (!providers.length) {
 				throw new errs.ValidationError(
 					"Enable at least one authentication provider before turning off local sign in",
+				);
+			}
+
+			// Having a provider is not the same as being able to use it. If no
+			// administrator has actually signed in through one yet, turning the
+			// password form off locks everybody out of their own instance, with
+			// no way back in short of editing the database.
+			const enabledIds = providers.map((p) => p.id);
+			const admins = await userModel.query().where("is_deleted", 0).andWhere("is_disabled", 0);
+
+			const linked = await authModel
+				.query()
+				.whereIn(
+					"user_id",
+					admins.filter((u) => (u.roles || []).includes("admin")).map((u) => u.id),
+				)
+				.andWhere("is_deleted", 0)
+				.andWhere("type", "!=", "password")
+				.whereIn("provider_id", enabledIds);
+
+			if (!linked.length) {
+				throw new errs.ValidationError(
+					"No administrator can sign in through a provider yet. Sign in once with an administrator account " +
+						"through one of them before turning off local sign in.",
 				);
 			}
 		}

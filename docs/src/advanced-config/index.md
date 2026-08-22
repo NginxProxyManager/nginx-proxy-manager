@@ -283,7 +283,8 @@ Any secret below can instead be supplied as a docker secret by appending
 | -------- | ------- | ----------- |
 | `AUTH_<TYPE>_ENABLED` | `false` | Whether to configure this provider at all |
 | `AUTH_<TYPE>_NAME` | the type | Display name shown on the login screen |
-| `AUTH_<TYPE>_AUTO_CREATE_USER` | `false` | Create a local account on first sign in. With this off, an administrator must create the account first and it is matched by email address. |
+| `AUTH_<TYPE>_AUTO_CREATE_USER` | `false` | Create a local account on first sign in. With this off, only people already linked to the provider can sign in. |
+| `AUTH_<TYPE>_LINK_BY_EMAIL` | `false` | Attach a first-time sign in to an existing account holding the same email address. Only enable this for a provider you trust to prove the address belongs to whoever signed in; for OAuth the provider must also return `email_verified: true`. |
 | `AUTH_<TYPE>_ADMIN_GROUP` | | Group or claim value that grants the admin role. Applied on every sign in, and revoked when somebody leaves the group. |
 | `AUTH_<TYPE>_DEFAULT_ROLES` | | Comma separated roles given to newly created accounts |
 
@@ -329,6 +330,7 @@ Any secret below can instead be supplied as a docker secret by appending
 | `AUTH_SAML_NAME_ATTRIBUTE` | auto-detected | |
 | `AUTH_SAML_NICKNAME_ATTRIBUTE` | auto-detected | |
 | `AUTH_SAML_GROUP_ATTRIBUTE` | auto-detected | |
+| `AUTH_SAML_IDENTIFIER_ATTRIBUTE` | | Attribute holding a lasting id for each person. Left blank the `NameID` is used, or the email address when the IdP issues a transient `NameID`. |
 
 ### OAuth and OpenID Connect
 

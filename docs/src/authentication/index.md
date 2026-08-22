@@ -37,20 +37,30 @@ matched to that record in this order:
 
 1. An account already linked to that identity at that provider (by LDAP DN,
    OIDC `sub`, or SAML `NameID`)
-2. An existing account with the same email address, which then becomes linked
+2. An existing account with the same email address — but only if the provider
+   has **Adopt existing accounts by email address** switched on
 3. A brand new account — but only if the provider has **Create users on first
    sign in** switched on
 
 If none of those apply the sign in is refused, and an administrator has to
-create the user first. Leaving auto-creation off is the safer default: it means
-having an account in your directory is not by itself enough to get into Nginx
-Proxy Manager.
+create the user first. Both switches are off by default: having an account in
+your directory is not by itself enough to get into Nginx Proxy Manager.
 
-::: warning
-Step 2 links accounts by email address, which means a provider that lets people
-choose their own unverified email could be used to take over an existing
-account. Only connect providers whose email addresses you trust, which is the
-normal case for a company directory or a self-hosted identity provider.
+::: warning Adopting accounts by email address
+Matching on an email address means trusting the provider to have proved the
+address belongs to whoever just signed in. A company directory does. A public
+OAuth provider that lets anyone type their own address does not, and turning
+this on for one would let somebody claim any account here, administrators
+included, by signing up with the matching address.
+
+Leave it off unless you trust the provider that far. For OAuth it is not enough
+on its own: the provider must also return `email_verified: true`, and a sign in
+is refused if it does not.
+
+When it is off and somebody signs in whose address already belongs to an
+account here, the sign in is refused rather than silently creating a duplicate.
+Link the two deliberately instead: have that person sign in once with the
+address changed, or remove the stale local account first.
 :::
 
 ### Roles
@@ -63,15 +73,36 @@ If you would rather drive administrator access from your directory, set an
 contain that value is given the `admin` role, and anyone who no longer has it
 loses the role again. Leave the field blank to manage roles here instead.
 
+Roles are only recalculated when the group membership could actually be read.
+If the directory is reachable enough to check a password but the group lookup
+itself fails, existing roles are left exactly as they are and a warning is
+logged — an outage never silently demotes your administrators.
+
 ### Turning off password sign in
 
 Once at least one provider is enabled you can switch off **Allow email and
 password sign in**, which hides the password form entirely.
 
-Be careful with this. Make sure you have signed in successfully through a
-provider *before* turning it off. If you do lock yourself out, set
-`AUTH_DISABLE_LOCAL=false` on the container and restart — the environment
-variable overrides the stored setting.
+Two things have to be true before this is allowed: at least one provider is
+enabled, and at least one administrator has actually signed in through one. A
+provider that nobody has used yet is not a way in, so the setting is refused
+until it is proven.
+
+Three more guards apply afterwards:
+
+- Removing the last provider turns password sign in back on, rather than
+  leaving an instance nobody can reach.
+- An administrator whose only credential is a password does not count as a
+  fallback while password sign in is off, so the guards that protect "the last
+  administrator" will not delete or disable the one who can still get in.
+- If it is `AUTH_DISABLE_LOCAL` holding the door shut rather than the stored
+  setting, that cannot be overridden from inside — set
+  `AUTH_DISABLE_LOCAL=false` on the container and restart. The container log
+  says so explicitly when it happens.
+
+If your identity provider goes down while password sign in is off, nobody can
+sign in until it comes back or you restart with `AUTH_DISABLE_LOCAL=false`.
+That is the trade being made by turning the password form off at all.
 
 ### Two-factor authentication
 
@@ -81,6 +112,14 @@ enforce MFA themselves, in which case you probably do not want to enable it
 here as well.
 
 ### Directory sync
+
+Sync is off by default and configured per provider, so on a small or
+memory-constrained box you can leave it off entirely and rely on sign-in time
+provisioning alone. Nothing is scheduled and no timer runs when it is off, and
+the directory is never mirrored locally: the only rows written are a user and a
+link for the people who actually sign in. Group-to-role mapping is applied at
+that moment either way, so **Administrator group** works exactly the same with
+sync off.
 
 Signing in provisions one account at a time. That is usually enough, but it
 means an administrator cannot grant permissions to somebody who has never
@@ -96,9 +135,10 @@ if that is not what you want.
 
 **Disable accounts that leave the directory** is off by default. With it on, an
 account whose entry has disappeared is disabled on the next run. Two guards
-apply: the last remaining administrator is never disabled this way, and a run
-that returns no entries at all disables nobody, so a broken filter or an
-unreachable server cannot switch off an entire organisation.
+apply: an administrator is never disabled this way while nobody else could
+still sign in, and a run that returns no entries at all disables nobody, so a
+broken filter or an unreachable server cannot switch off an entire
+organisation.
 
 Use the **Sync** button on the providers list to run one immediately rather than
 waiting for the schedule.
@@ -117,7 +157,8 @@ Deleting a provider **in the interface** asks which you want:
 - **Delete them.** The accounts go too. The dialog says up front how many would
   actually be removed, because two kinds are always kept regardless: anyone who
   can still sign in another way, such as with a password or through a second
-  provider, and the last remaining administrator.
+  provider, and any administrator whose removal would leave nobody able to sign
+  in and administer the instance.
 
 Removing a provider's **environment variables** converts its accounts to local
 automatically. Nobody confirmed anything in that case, and a variable
@@ -226,6 +267,18 @@ IdP does that.
 Attribute names vary a lot between identity providers, so the common claim URIs
 and short names are tried automatically. Set the attribute fields explicitly if
 your IdP uses something unusual.
+
+People are remembered by the assertion's `NameID`, unless your IdP issues a
+transient one — a per-session pseudonym that would make everybody look like a
+new person on every sign in. In that case the email address is used instead, or
+whatever you name in **Identifier attribute** if you have something better, such
+as an employee number.
+
+Sign in has to start here: every assertion must name the request it answers, and
+each request can only be answered once. That rules out IdP-initiated sign in
+(starting from a tile in your IdP's portal) — send people to the Nginx Proxy
+Manager login page instead — and it means a captured assertion cannot be
+replayed, since a signature stays valid for whoever presents it.
 
 ### Example
 
