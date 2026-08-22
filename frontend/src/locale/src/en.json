@@ -383,6 +383,15 @@
 	"auth-provider.test": {
 		"defaultMessage": "Test"
 	},
+	"auth-provider.test-connection": {
+		"defaultMessage": "Test connection"
+	},
+	"auth-provider.test-connection-help": {
+		"defaultMessage": "Checks the settings above without saving them, so you can confirm them before filling in the rest."
+	},
+	"auth-provider.test-connection-ok": {
+		"defaultMessage": "Connected successfully ({detail})"
+	},
 	"auth-provider.type.ldap": {
 		"defaultMessage": "LDAP"
 	},

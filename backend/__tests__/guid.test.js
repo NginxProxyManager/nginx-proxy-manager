@@ -64,9 +64,7 @@ describe("guidToLdapFilter", () => {
 
 describe("normalizeEntryUuid", () => {
 	it("lowercases a valid UUID", () => {
-		expect(normalizeEntryUuid("550E8400-E29B-41D4-A716-446655440000")).toBe(
-			"550e8400-e29b-41d4-a716-446655440000",
-		);
+		expect(normalizeEntryUuid("550E8400-E29B-41D4-A716-446655440000")).toBe("550e8400-e29b-41d4-a716-446655440000");
 	});
 
 	it("returns null for anything that is not a UUID", () => {

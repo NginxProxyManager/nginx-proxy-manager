@@ -45,10 +45,67 @@ const attributeValues = (entry, attribute) => {
 		return [];
 	}
 	const raw = Array.isArray(entry[attribute]) ? entry[attribute] : [entry[attribute]];
-	return raw.map((value) => (Buffer.isBuffer(value) ? value.toString("utf8") : String(value))).filter((v) => v !== "");
+	return raw
+		.map((value) => (Buffer.isBuffer(value) ? value.toString("utf8") : String(value)))
+		.filter((v) => v !== "");
 };
 
 const firstAttributeValue = (entry, attribute) => attributeValues(entry, attribute)[0] || null;
+
+/**
+ * Turns a driver error into something an administrator can act on.
+ *
+ * ldapts reports protocol failures as a bare result code, so "Code: 0x31" is
+ * all you get for a wrong bind password unless it is translated.
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc4511#appendix-A
+ * @param   {Error} err
+ * @returns {String}
+ */
+const describeLdapError = (err) => {
+	if (!err) {
+		return "Unknown LDAP error";
+	}
+
+	// Connection level problems never reach a result code
+	switch (err.code) {
+		case "ECONNREFUSED":
+			return "Connection refused — check the server URL and port";
+		case "ENOTFOUND":
+		case "EAI_AGAIN":
+			return "Server not found — check the host name";
+		case "ETIMEDOUT":
+			return "Connection timed out — check the server URL, port and any firewall";
+		case "DEPTH_ZERO_SELF_SIGNED_CERT":
+		case "SELF_SIGNED_CERT_IN_CHAIN":
+		case "UNABLE_TO_VERIFY_LEAF_SIGNATURE":
+			return "The server's TLS certificate could not be verified. Use a trusted certificate, or turn off certificate verification if you trust this server.";
+		default:
+			break;
+	}
+
+	// ldapts exposes the protocol result as a numeric code
+	const RESULTS = {
+		1: "The server reported an internal error",
+		7: "Authentication method not supported by the server",
+		8: "The server requires a stronger connection — try LDAPS or StartTLS",
+		32: "No such object — check the base DN",
+		34: "Malformed DN",
+		48: "The server refused to authenticate — inappropriate authentication",
+		49: "Invalid credentials — check the bind DN and password",
+		50: "The bind account does not have permission for this operation",
+		51: "The server is busy — try again shortly",
+		52: "The server is unavailable",
+		53: "The server was unwilling to perform this operation",
+	};
+
+	if (typeof err.code === "number" && RESULTS[err.code]) {
+		return RESULTS[err.code];
+	}
+
+	const message = String(err.message || "").trim();
+	return message || `LDAP error (code ${err.code})`;
+};
 
 const createClient = (meta) => {
 	if (!meta.url) {
@@ -89,7 +146,7 @@ const connect = async (meta) => {
 		}
 	} catch (err) {
 		await client.unbind().catch(() => {});
-		throw err;
+		throw new errs.AuthError(describeLdapError(err));
 	}
 	return client;
 };
@@ -280,9 +337,7 @@ const authenticate = async (provider, username, password) => {
 		});
 
 		if (entries.length !== 1) {
-			logger.debug(
-				`LDAP search for "${username}" on provider ${provider.id} returned ${entries.length} entries`,
-			);
+			logger.debug(`LDAP search for "${username}" on provider ${provider.id} returned ${entries.length} entries`);
 			return null;
 		}
 
@@ -379,6 +434,8 @@ const test = async (provider) => {
 			sizeLimit: 1,
 		});
 		return { reachable: true };
+	} catch (err) {
+		throw new errs.AuthError(describeLdapError(err));
 	} finally {
 		await client.unbind().catch(() => {});
 	}
@@ -410,11 +467,4 @@ const testAuthentication = async (provider, username, password) => {
 	};
 };
 
-export {
-	authenticate,
-	buildUserFilter,
-	escapeFilterValue,
-	listDirectory,
-	test,
-	testAuthentication,
-};
+export { authenticate, buildUserFilter, describeLdapError, escapeFilterValue, listDirectory, test, testAuthentication };

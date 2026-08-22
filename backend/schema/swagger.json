@@ -133,6 +133,11 @@
 				"$ref": "./paths/auth-providers/local/put.json"
 			}
 		},
+		"/auth-providers/test": {
+			"post": {
+				"$ref": "./paths/auth-providers/test/post.json"
+			}
+		},
 		"/auth-providers/{providerID}": {
 			"get": {
 				"$ref": "./paths/auth-providers/providerID/get.json"

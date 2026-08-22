@@ -1,14 +1,17 @@
+import { IconPlugConnected } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, useFormikContext } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {
 	type AuthProvider,
 	type AuthProviderType,
+	type ConfigTestResult,
 	createAuthProvider,
 	providerMetadataUrl,
+	testAuthProviderConfig,
 	updateAuthProvider,
 } from "src/api/backend";
 import { Button } from "src/components";
@@ -105,6 +108,71 @@ function SecretHint({ isSet }: { isSet?: boolean }) {
 	return isSet ? <T id="auth-provider.secret-stored" /> : null;
 }
 
+interface TestConnectionProps {
+	type: AuthProviderType;
+	/** Set when editing, so stored secrets fill in whatever is left blank */
+	providerId?: number;
+	disabled?: boolean;
+}
+/**
+ * Checks the connection settings as they currently stand in the form, so they
+ * can be confirmed before the rest of the details are filled in. Reads the live
+ * Formik values rather than anything saved.
+ */
+function TestConnection({ type, providerId, disabled }: TestConnectionProps) {
+	const { values } = useFormikContext<any>();
+	const [testing, setTesting] = useState(false);
+	const [result, setResult] = useState<ConfigTestResult | null>(null);
+
+	const onTest = async () => {
+		setTesting(true);
+		setResult(null);
+		try {
+			setResult(
+				await testAuthProviderConfig({
+					type,
+					id: providerId,
+					// The point of testing here is to check the connection before
+					// the rest is filled in, so a name may not exist yet
+					name: values.name || undefined,
+					meta: values.meta,
+				}),
+			);
+		} catch (err: any) {
+			// A rejected request (bad payload, no longer an admin) rather than a
+			// directory that would not answer
+			setResult({ valid: false, error: err.message });
+		}
+		setTesting(false);
+	};
+
+	return (
+		<div className="mb-3">
+			<Button size="sm" onClick={onTest} isLoading={testing} disabled={disabled}>
+				<IconPlugConnected size={16} className="me-1" />
+				<T id="auth-provider.test-connection" />
+			</Button>
+			<small className="form-hint">
+				<T id="auth-provider.test-connection-help" />
+			</small>
+			{result ? (
+				<Alert
+					variant={result.valid ? "success" : "danger"}
+					className="mt-2 mb-0 py-2"
+					dismissible
+					onClose={() => setResult(null)}
+				>
+					{result.valid ? (
+						<T id="auth-provider.test-connection-ok" data={{ detail: result.detail || "" }} />
+					) : (
+						result.error
+					)}
+				</Alert>
+			) : null}
+		</div>
+	);
+}
+
 interface FieldsProps {
 	provider?: AuthProvider;
 	disabled?: boolean;
@@ -141,6 +209,7 @@ function LdapFields({ provider, disabled }: FieldsProps) {
 				help={<SecretHint isSet={provider?.meta?.bindPasswordSet} />}
 				disabled={disabled}
 			/>
+			<TestConnection type="ldap" providerId={provider?.id} disabled={disabled} />
 			<TextField
 				name="meta.userFilter"
 				label="auth-provider.ldap.user-filter"
@@ -253,6 +322,7 @@ function SamlFields({ provider, disabled }: FieldsProps) {
 				required
 				disabled={disabled}
 			/>
+			<TestConnection type="saml" providerId={provider?.id} disabled={disabled} />
 			<div className="row">
 				<div className="col-md-4">
 					<TextField
@@ -315,6 +385,7 @@ function OauthFields({ provider, disabled }: FieldsProps) {
 				help={<SecretHint isSet={provider?.meta?.clientSecretSet} />}
 				disabled={disabled}
 			/>
+			<TestConnection type="oauth" providerId={provider?.id} disabled={disabled} />
 			<TextField
 				name="meta.scopes"
 				label="auth-provider.oauth.scopes"

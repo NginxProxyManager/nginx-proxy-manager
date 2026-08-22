@@ -1,0 +1,102 @@
+{
+	"operationId": "testAuthProviderConfig",
+	"summary": "Check connection settings that have not been saved yet",
+	"description": "Runs the same connectivity check as the saved-provider test, against settings supplied in the request. Nothing is written. Supply an existing provider id to reuse its stored secrets for any field left blank, since secrets are never returned to the client. A failure is reported as valid:false with a message rather than an error status.",
+	"tags": [
+		"auth-providers"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"admin"
+			]
+		}
+	],
+	"requestBody": {
+		"description": "Settings to check",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"type"
+					],
+					"properties": {
+						"id": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "Existing provider to take stored secrets from"
+						},
+						"name": {
+							"type": "string",
+							"maxLength": 100,
+							"description": "Only used to label log output; not required"
+						},
+						"type": {
+							"$ref": "../../../components/auth-provider-object.json#/properties/type"
+						},
+						"meta": {
+							"$ref": "../../../components/auth-provider-object.json#/properties/meta"
+						}
+					}
+				},
+				"example": {
+					"type": "ldap",
+					"meta": {
+						"url": "ldap://ldap.example.com:389",
+						"base_dn": "dc=example,dc=com",
+						"bind_dn": "cn=readonly,dc=example,dc=com",
+						"bind_password": "secret"
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"reachable": {
+							"value": {
+								"valid": true,
+								"detail": "bound"
+							}
+						},
+						"unreachable": {
+							"value": {
+								"valid": false,
+								"error": "connect ECONNREFUSED 10.0.0.5:389"
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"required": [
+							"valid"
+						],
+						"additionalProperties": false,
+						"properties": {
+							"valid": {
+								"type": "boolean",
+								"example": true
+							},
+							"detail": {
+								"type": "string",
+								"description": "What succeeded, when it did",
+								"example": "bound"
+							},
+							"error": {
+								"type": "string",
+								"description": "Why it failed, when it did"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

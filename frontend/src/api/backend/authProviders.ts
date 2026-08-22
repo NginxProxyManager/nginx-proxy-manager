@@ -57,6 +57,27 @@ export async function deleteAuthProvider(id: number): Promise<boolean> {
 	return await api.del({ url: `/auth-providers/${id}` });
 }
 
+export interface ConfigTestResult {
+	valid: boolean;
+	/** What succeeded, when it did */
+	detail?: string;
+	/** Why it failed, when it did */
+	error?: string;
+}
+
+/**
+ * Check connection settings that have not been saved yet. Pass the id of an
+ * existing provider so its stored secrets fill in any field left blank.
+ */
+export async function testAuthProviderConfig(data: {
+	type: string;
+	meta: Record<string, any>;
+	id?: number;
+	name?: string;
+}): Promise<ConfigTestResult> {
+	return await api.post({ url: "/auth-providers/test", data });
+}
+
 export async function testAuthProvider(id: number): Promise<{ valid: boolean }> {
 	return await api.post({ url: `/auth-providers/${id}/test` });
 }

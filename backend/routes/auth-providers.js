@@ -89,6 +89,32 @@ router
 	});
 
 /**
+ * POST /api/auth-providers/test
+ *
+ * Check connection settings that have not been saved yet. Declared before the
+ * /:providerID routes so that "test" is not taken for a provider id.
+ */
+router
+	.route("/test")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.post(async (req, res, next) => {
+		try {
+			const payload = await apiValidator(getValidationSchema("/auth-providers/test", "post"), req.body);
+			if (payload.id) {
+				payload.callback_url = internalAuth.getCallbackUrl(req, payload.id);
+			}
+			const result = await internalAuthProvider.testConfig(res.locals.access, payload);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
  * /api/auth-providers/123
  */
 router

@@ -252,6 +252,67 @@ const internalAuthProvider = {
 	},
 
 	/**
+	 * Tests connection settings that have not been saved yet, so the details can
+	 * be checked while they are still being filled in.
+	 *
+	 * When an id is supplied the stored secrets are merged in for any field left
+	 * blank, matching how an update behaves: the client never receives a secret
+	 * back, so it cannot send one it was not given.
+	 *
+	 * Unlike the other calls this reports a failure as a result rather than an
+	 * error, because the caller wants to show it inline next to the fields.
+	 *
+	 * @param   {Access} access
+	 * @param   {Object} data
+	 * @param   {String} data.type
+	 * @param   {Object} data.meta
+	 * @param   {Integer} [data.id]  An existing provider to take stored secrets from
+	 * @returns {Promise<Object>}
+	 */
+	testConfig: async (access, data) => {
+		await access.can("auth_providers:update", data.id || 0);
+
+		if (!PROVIDER_TYPES.includes(data.type)) {
+			throw new errs.ValidationError(`Unknown authentication provider type: ${data.type}`);
+		}
+
+		let meta = normalizeMeta(data.type, data.meta);
+
+		if (data.id) {
+			const stored = await internalAuthProvider.getRaw(data.id);
+			if (stored.type !== data.type) {
+				throw new errs.ValidationError("The type of an existing authentication provider cannot be changed");
+			}
+			meta = internalAuthProvider.mergeMeta(stored, data.meta);
+		}
+
+		const provider = { id: data.id || 0, name: data.name || "unsaved provider", type: data.type, meta };
+
+		try {
+			switch (provider.type) {
+				case "ldap":
+					await ldap.test(provider);
+					return { valid: true, detail: meta.bind_dn ? "bound" : "connected anonymously" };
+				case "oauth": {
+					const endpoints = await oauth.getEndpoints(provider);
+					return {
+						valid: true,
+						detail: endpoints.issuer ? `discovered ${endpoints.issuer}` : "endpoints configured",
+					};
+				}
+				case "saml":
+					await saml.test(provider, data.callback_url || "https://example.com/api/auth/0/callback");
+					return { valid: true, detail: "certificate and settings accepted" };
+				default:
+					throw new errs.ValidationError(`Unknown authentication provider type: ${provider.type}`);
+			}
+		} catch (err) {
+			logger.debug(`Connection test failed for a ${provider.type} provider: ${err.message}`);
+			return { valid: false, error: err.message };
+		}
+	},
+
+	/**
 	 * Verifies a real username and password against a provider, without issuing
 	 * a token. Lets an administrator confirm a directory works before turning it
 	 * on, and shows exactly which attributes came back.
