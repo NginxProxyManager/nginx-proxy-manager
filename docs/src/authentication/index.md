@@ -80,6 +80,29 @@ their code after signing in through a provider. Most identity providers can
 enforce MFA themselves, in which case you probably do not want to enable it
 here as well.
 
+### Directory sync
+
+Signing in provisions one account at a time. That is usually enough, but it
+means an administrator cannot grant permissions to somebody who has never
+logged in, and a group change only takes effect the next time they do.
+
+Turning on **Sync this directory on a schedule** walks the whole directory
+instead, creating the accounts it finds, refreshing their details and their
+group-driven roles. LDAP only: SAML and OAuth have no way to enumerate users.
+
+Enabling sync means accounts are created for everyone the filter matches,
+whether or not they have ever signed in, so narrow it with a filter or a group
+if that is not what you want.
+
+**Disable accounts that leave the directory** is off by default. With it on, an
+account whose entry has disappeared is disabled on the next run. Two guards
+apply: the last remaining administrator is never disabled this way, and a run
+that returns no entries at all disables nobody, so a broken filter or an
+unreachable server cannot switch off an entire organisation.
+
+Use the **Sync** button on the providers list to run one immediately rather than
+waiting for the schedule.
+
 ## LDAP
 
 Nginx Proxy Manager binds to your directory with an optional read-only service
@@ -92,12 +115,12 @@ directory.
 | Server URL | `ldap://host:389` or `ldaps://host:636` |
 | Base DN | Where to search from, e.g. `dc=example,dc=com` |
 | Bind DN / password | A read-only service account. Leave blank to search anonymously. |
-| User filter | `{{username}}` is replaced with whatever was typed into the login form |
+| User filter | <code v-pre>{{username}}</code> is replaced with whatever was typed into the login form |
 | Email attribute | Required. Someone with no email address in the directory cannot sign in. |
 | Group attribute | Read from the user entry, for directories with the `memberOf` overlay or Active Directory |
-| Group filter | Used instead when the user entry carries no groups. `{{dn}}` and `{{username}}` are substituted. |
+| Group filter | Used instead when the user entry carries no groups. <code v-pre>{{dn}}</code> and <code v-pre>{{username}}</code> are substituted. |
 
-The user filter defaults to `(|(uid={{username}})(mail={{username}}))`, which
+The user filter defaults to <code v-pre>(|(uid={{username}})(mail={{username}}))</code>, which
 lets people sign in with either their username or their email address. Values
 are escaped before substitution, so a filter cannot be broken out of.
 
@@ -109,7 +132,7 @@ Directories expose group membership in one of two ways, and both are supported:
   overlay all set `memberOf` on the user entry. Leave the group attribute as
   `memberOf` and you are done.
 - **On the group** — plain OpenLDAP stores members on the group instead. Set a
-  group filter such as `(&(objectClass=groupOfNames)(member={{dn}}))` and the
+  group filter such as <code v-pre>(&(objectClass=groupOfNames)(member={{dn}}))</code> and the
   directory is searched the other way around.
 
 ### Example
@@ -283,23 +306,35 @@ Each provider type accepts the same four options, with `<TYPE>` being `LDAP`,
 
 ### LDAP
 
-| Variable | Default |
-| -------- | ------- |
-| `AUTH_LDAP_URL` | |
-| `AUTH_LDAP_BIND_DN` | |
-| `AUTH_LDAP_BIND_PASSWORD` | |
-| `AUTH_LDAP_BASE_DN` | |
-| `AUTH_LDAP_USER_FILTER` | `(\|(uid={{username}})(mail={{username}}))` |
-| `AUTH_LDAP_EMAIL_ATTRIBUTE` | `mail` |
-| `AUTH_LDAP_NAME_ATTRIBUTE` | `cn` |
-| `AUTH_LDAP_NICKNAME_ATTRIBUTE` | `givenName` |
-| `AUTH_LDAP_GROUP_ATTRIBUTE` | `memberOf` |
-| `AUTH_LDAP_GROUP_BASE_DN` | the base DN |
-| `AUTH_LDAP_GROUP_FILTER` | |
-| `AUTH_LDAP_GROUP_NAME_ATTRIBUTE` | `dn` |
-| `AUTH_LDAP_START_TLS` | `false` |
-| `AUTH_LDAP_TLS_REJECT_UNAUTHORIZED` | `true` |
-| `AUTH_LDAP_TIMEOUT` | `10000` |
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `AUTH_LDAP_URL` | | `ldap://host:389` or `ldaps://host:636` |
+| `AUTH_LDAP_BIND_DN` | | Read-only service account; blank searches anonymously |
+| `AUTH_LDAP_BIND_PASSWORD` | | |
+| `AUTH_LDAP_BASE_DN` | | Where to search from |
+| `AUTH_LDAP_USER_FILTER` | <code v-pre>(&#124;(uid={{username}})(mail={{username}}))</code> | <code v-pre>{{username}}</code> is replaced with what was typed |
+| `AUTH_LDAP_LOGIN_ATTRIBUTES` | | Comma separated attributes accepted at the login prompt, instead of writing a filter |
+| `AUTH_LDAP_EMAIL_ATTRIBUTE` | `mail` | Required; an entry without one cannot sign in |
+| `AUTH_LDAP_NAME_ATTRIBUTE` | `cn` | |
+| `AUTH_LDAP_NICKNAME_ATTRIBUTE` | `givenName` | |
+| `AUTH_LDAP_GROUP_ATTRIBUTE` | `memberOf` | Read from the user entry |
+| `AUTH_LDAP_GROUP_BASE_DN` | the base DN | Where to search for groups |
+| `AUTH_LDAP_GROUP_FILTER` | | Reverse lookup for directories without `memberOf`; <code v-pre>{{dn}}</code> and <code v-pre>{{username}}</code> are substituted |
+| `AUTH_LDAP_GROUP_NAME_ATTRIBUTE` | `dn` | |
+| `AUTH_LDAP_START_TLS` | `false` | Upgrade a plain connection with StartTLS |
+| `AUTH_LDAP_TLS_REJECT_UNAUTHORIZED` | `true` | Verify the server certificate |
+| `AUTH_LDAP_TIMEOUT` | `10000` | Milliseconds |
+| `AUTH_LDAP_PAGE_SIZE` | `500` | Entries per page, for directories that cap search results |
+
+Directory sync, described under [Directory sync](#directory-sync):
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `AUTH_LDAP_SYNC_ENABLED` | `false` | Walk the directory on a schedule |
+| `AUTH_LDAP_SYNC_INTERVAL` | `60` | Minutes between runs; five is the minimum |
+| `AUTH_LDAP_SYNC_FILTER` | `(objectClass=person)` | Which entries to consider |
+| `AUTH_LDAP_SYNC_GROUP` | | Only sync members of this group |
+| `AUTH_LDAP_SYNC_DISABLE_MISSING` | `false` | Disable accounts whose entry has gone away |
 
 ### SAML
 
