@@ -2,10 +2,14 @@
 	"operationId": "runAuthProviderSync",
 	"summary": "Run a directory sync now",
 	"description": "Walks the provider's directory immediately instead of waiting for the schedule. LDAP only.",
-	"tags": ["auth-providers"],
+	"tags": [
+		"auth-providers"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
 	"parameters": [
@@ -28,6 +32,22 @@
 				"application/json": {
 					"schema": {
 						"$ref": "../../../../components/auth-sync-result.json"
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"provider_id": 1,
+								"started_on": "2026-08-22T10:06:15.644Z",
+								"finished_on": "2026-08-22T10:06:15.724Z",
+								"ok": true,
+								"entries": 128,
+								"created": 3,
+								"updated": 125,
+								"disabled": 1,
+								"skipped": 2,
+								"failed": 0
+							}
+						}
 					}
 				}
 			}

@@ -1,7 +1,11 @@
 {
 	"type": "object",
 	"description": "The sign in methods available on the login screen",
-	"required": ["local_enabled", "ldap_enabled", "providers"],
+	"required": [
+		"local_enabled",
+		"ldap_enabled",
+		"providers"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"local_enabled": {
@@ -19,7 +23,11 @@
 			"description": "Providers that sign in by redirecting to an external site",
 			"items": {
 				"type": "object",
-				"required": ["id", "name", "type"],
+				"required": [
+					"id",
+					"name",
+					"type"
+				],
 				"additionalProperties": false,
 				"properties": {
 					"id": {
@@ -34,11 +42,21 @@
 					},
 					"type": {
 						"type": "string",
-						"enum": ["saml", "oauth"],
+						"enum": [
+							"saml",
+							"oauth"
+						],
 						"example": "saml"
 					}
 				}
-			}
+			},
+			"example": [
+				{
+					"id": 2,
+					"name": "Company SSO",
+					"type": "saml"
+				}
+			]
 		}
 	}
 }

@@ -1,7 +1,10 @@
 {
 	"type": "object",
 	"description": "The outcome of a directory sync run",
-	"required": ["provider_id", "ok"],
+	"required": [
+		"provider_id",
+		"ok"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"provider_id": {
@@ -11,11 +14,13 @@
 		},
 		"started_on": {
 			"type": "string",
-			"format": "date-time"
+			"format": "date-time",
+			"example": "2026-08-22T10:06:15.644Z"
 		},
 		"finished_on": {
 			"type": "string",
-			"format": "date-time"
+			"format": "date-time",
+			"example": "2026-08-22T10:06:15.724Z"
 		},
 		"ok": {
 			"type": "boolean",
@@ -23,7 +28,8 @@
 		},
 		"error": {
 			"type": "string",
-			"description": "Present when the run failed"
+			"description": "Present when the run failed",
+			"example": "Invalid credentials — check the bind DN and password"
 		},
 		"entries": {
 			"type": "integer",

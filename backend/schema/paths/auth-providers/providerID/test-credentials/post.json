@@ -2,10 +2,14 @@
 	"operationId": "testAuthProviderCredentials",
 	"summary": "Verify a username and password against a directory",
 	"description": "Runs a real authentication attempt without issuing a token, so a provider can be confirmed before it is switched on. LDAP only.",
-	"tags": ["auth-providers"],
+	"tags": [
+		"auth-providers"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
 	"parameters": [
@@ -29,7 +33,10 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["username", "password"],
+					"required": [
+						"username",
+						"password"
+					],
 					"properties": {
 						"username": {
 							"type": "string",
@@ -65,13 +72,17 @@
 								"email": "alice@example.com",
 								"name": "Alice Anderson",
 								"identifier_source": "entryUUID",
-								"groups": ["cn=npm-admins,ou=groups,dc=example,dc=com"]
+								"groups": [
+									"cn=npm-admins,ou=groups,dc=example,dc=com"
+								]
 							}
 						}
 					},
 					"schema": {
 						"type": "object",
-						"required": ["valid"],
+						"required": [
+							"valid"
+						],
 						"additionalProperties": true,
 						"properties": {
 							"valid": {
@@ -81,24 +92,35 @@
 							},
 							"dn": {
 								"type": "string",
-								"description": "Distinguished name of the entry that matched"
+								"description": "Distinguished name of the entry that matched",
+								"example": "cn=alice,ou=users,dc=example,dc=com"
 							},
 							"email": {
-								"type": "string"
+								"type": "string",
+								"example": "alice@example.com"
 							},
 							"name": {
-								"type": "string"
+								"type": "string",
+								"example": "Alice Anderson"
 							},
 							"identifier_source": {
 								"type": "string",
 								"description": "Which stable identifier the directory published",
-								"enum": ["objectGUID", "entryUUID", "dn"]
+								"enum": [
+									"objectGUID",
+									"entryUUID",
+									"dn"
+								],
+								"example": "entryUUID"
 							},
 							"groups": {
 								"type": "array",
 								"items": {
 									"type": "string"
-								}
+								},
+								"example": [
+									"cn=npm-admins,ou=groups,dc=example,dc=com"
+								]
 							}
 						}
 					}

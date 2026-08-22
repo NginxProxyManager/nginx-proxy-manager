@@ -2,7 +2,9 @@
 	"operationId": "exchangeSsoCode",
 	"summary": "Exchange a single use SSO code for an access token",
 	"description": "Completes a SAML or OAuth login. The code is issued by the provider callback, is valid for one minute and can only be used once.",
-	"tags": ["auth"],
+	"tags": [
+		"auth"
+	],
 	"requestBody": {
 		"description": "Exchange Payload",
 		"required": true,
@@ -11,7 +13,9 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["code"],
+					"required": [
+						"code"
+					],
 					"properties": {
 						"code": {
 							"type": "string",
@@ -41,6 +45,20 @@
 								"$ref": "../../../components/token-challenge.json"
 							}
 						]
+					},
+					"examples": {
+						"token": {
+							"value": {
+								"expires": "2026-08-23T10:06:15.644Z",
+								"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+							}
+						},
+						"requires2fa": {
+							"value": {
+								"requires_2fa": true,
+								"challenge_token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...challenge"
+							}
+						}
 					}
 				}
 			}

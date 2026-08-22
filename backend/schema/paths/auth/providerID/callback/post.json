@@ -2,7 +2,9 @@
 	"operationId": "providerCallbackPost",
 	"summary": "SAML assertion consumer service",
 	"description": "Where the identity provider posts the SAML assertion. Redirects to the login screen with a single use code, or an error message.",
-	"tags": ["auth"],
+	"tags": [
+		"auth"
+	],
 	"parameters": [
 		{
 			"in": "path",
@@ -25,12 +27,18 @@
 					"type": "object",
 					"properties": {
 						"SAMLResponse": {
-							"type": "string"
+							"type": "string",
+							"example": "PHNhbWxwOlJlc3BvbnNlIHhtbG5zOnNhbWxwPSJ1cm46..."
 						},
 						"RelayState": {
-							"type": "string"
+							"type": "string",
+							"example": "7A2hqM3hY12bBL0HiPf0iYSmpRB2FSnAoaip7mr-kEI"
 						}
 					}
+				},
+				"example": {
+					"SAMLResponse": "PHNhbWxwOlJlc3BvbnNlIHhtbG5zOnNhbWxwPSJ1cm46...",
+					"RelayState": "7A2hqM3hY12bBL0HiPf0iYSmpRB2FSnAoaip7mr-kEI"
 				}
 			}
 		}

@@ -27,12 +27,14 @@
 						"id": {
 							"type": "integer",
 							"minimum": 1,
-							"description": "Existing provider to take stored secrets from"
+							"description": "Existing provider to take stored secrets from",
+							"example": 1
 						},
 						"name": {
 							"type": "string",
 							"maxLength": 100,
-							"description": "Only used to label log output; not required"
+							"description": "Only used to label log output; not required",
+							"example": "Company LDAP"
 						},
 						"type": {
 							"$ref": "../../../components/auth-provider-object.json#/properties/type"
@@ -91,7 +93,8 @@
 							},
 							"error": {
 								"type": "string",
-								"description": "Why it failed, when it did"
+								"description": "Why it failed, when it did",
+								"example": "Invalid credentials — check the bind DN and password"
 							}
 						}
 					}
