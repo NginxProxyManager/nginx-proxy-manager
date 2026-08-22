@@ -7,7 +7,7 @@ import {
 	IconShield,
 	IconTrash,
 } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { User } from "src/api/backend";
 import {
@@ -18,6 +18,7 @@ import {
 	TrueFalseFormatter,
 	ValueWithDateFormatter,
 } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 
@@ -47,7 +48,7 @@ export default function Table({
 	onNewUser,
 	onLoginAs,
 }: Props) {
-	const columnHelper = createColumnHelper<User>();
+	const columnHelper = createColumnHelper<Features, User>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row, {
@@ -216,11 +217,10 @@ export default function Table({
 		],
 	);
 
-	const tableInstance = useReactTable<User>({
+	const tableInstance = useTable({
+		features,
 		columns,
 		data,
-		getCoreRowModel: getCoreRowModel(),
-		rowCount: data.length,
 		meta: {
 			isFetching,
 		},
