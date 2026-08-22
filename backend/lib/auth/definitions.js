@@ -150,4 +150,4 @@ const redactProvider = (provider) => {
 	return { ...provider, meta };
 };
 
-export { LDAP, SAML, OAUTH, PROVIDER_TYPES, SECRET_FIELDS, DEFAULTS, normalizeMeta, redactProvider };
+export { DEFAULTS, LDAP, normalizeMeta, OAUTH, PROVIDER_TYPES, redactProvider, SAML, SECRET_FIELDS };

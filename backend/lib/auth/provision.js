@@ -207,4 +207,4 @@ const linkIdentity = async (provider, user, identity) => {
 	});
 };
 
-export { resolveUser, resolveRoles, linkIdentity };
+export { linkIdentity, resolveRoles, resolveUser };

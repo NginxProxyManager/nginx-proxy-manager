@@ -1,7 +1,9 @@
 {
 	"operationId": "createAccessList",
 	"summary": "Create a Access List",
-	"tags": ["access-lists"],
+	"tags": [
+		"access-lists"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -35,6 +37,12 @@
 						},
 						"clients": {
 							"$ref": "../../../common.json#/properties/access_clients"
+						},
+						"auth_provider_ids": {
+							"$ref": "../../../components/access-list-object.json#/properties/auth_provider_ids"
+						},
+						"allowed_groups": {
+							"$ref": "../../../components/access-list-object.json#/properties/allowed_groups"
 						}
 					}
 				},

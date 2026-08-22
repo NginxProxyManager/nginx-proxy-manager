@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import batchflow from "batchflow";
 import _ from "lodash";
+import { invalidate as invalidateAccessCache, verify } from "../lib/auth/access-verify.js";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { access as logger } from "../logger.js";
@@ -9,6 +10,7 @@ import accessListAuthModel from "../models/access_list_auth.js";
 import accessListClientModel from "../models/access_list_client.js";
 import proxyHostModel from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
+import internalAuthProvider from "./auth-provider.js";
 import internalNginx from "./nginx.js";
 
 const omissions = () => {
@@ -29,6 +31,8 @@ const internalAccessList = {
 				name: data.name,
 				satisfy_any: data.satisfy_any,
 				pass_auth: data.pass_auth,
+				auth_provider_ids: data.auth_provider_ids || [],
+				allowed_groups: data.allowed_groups || [],
 				owner_user_id: access.token.getUserId(1),
 			})
 			.then(utils.omitRow(omissions()));
@@ -66,7 +70,7 @@ const internalAccessList = {
 				id: data.id,
 				expand: ["owner", "items", "clients", "proxy_hosts.access_list.[clients,items]"],
 			},
-			true // skip masking
+			true, // skip masking
 		);
 
 		// Audit log
@@ -108,11 +112,16 @@ const internalAccessList = {
 
 		// patch name if specified
 		if (typeof data.name !== "undefined" && data.name) {
-			await accessListModel.query().where({ id: data.id }).patch({
-				name: data.name,
-				satisfy_any: data.satisfy_any,
-				pass_auth: data.pass_auth,
-			});
+			await accessListModel
+				.query()
+				.where({ id: data.id })
+				.patch({
+					name: data.name,
+					satisfy_any: data.satisfy_any,
+					pass_auth: data.pass_auth,
+					auth_provider_ids: data.auth_provider_ids || [],
+					allowed_groups: data.allowed_groups || [],
+				});
 		}
 
 		// Check for items and add/update/remove them
@@ -180,10 +189,10 @@ const internalAccessList = {
 				id: data.id,
 				expand: ["owner", "items", "clients", "proxy_hosts.[certificate,access_list.[clients,items]]"],
 			},
-			true // skip masking
+			true, // skip masking
 		);
 
-		await internalAccessList.build(freshRow)
+		await internalAccessList.build(freshRow);
 		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
 			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
 		}
@@ -202,17 +211,13 @@ const internalAccessList = {
 	 */
 	get: async (access, data, skipMasking) => {
 		const thisData = data || {};
-		const accessData = await access.can("access_lists:get", thisData.id)
+		const accessData = await access.can("access_lists:get", thisData.id);
 
 		const query = accessListModel
 			.query()
 			.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
 			.leftJoin("proxy_host", function () {
-				this.on("proxy_host.access_list_id", "=", "access_list.id").andOn(
-					"proxy_host.is_deleted",
-					"=",
-					0,
-				);
+				this.on("proxy_host.access_list_id", "=", "access_list.id").andOn("proxy_host.is_deleted", "=", 0);
 			})
 			.where("access_list.is_deleted", 0)
 			.andWhere("access_list.id", thisData.id)
@@ -267,19 +272,13 @@ const internalAccessList = {
 		// 4. audit log
 
 		// 1. update row to be deleted
-		await accessListModel
-			.query()
-			.where("id", row.id)
-			.patch({
-				is_deleted: 1,
-			});
+		await accessListModel.query().where("id", row.id).patch({
+			is_deleted: 1,
+		});
 
 		// 2. update any proxy hosts that were using it (ignoring permissions)
 		if (row.proxy_hosts) {
-			await proxyHostModel
-				.query()
-				.where("access_list_id", "=", row.id)
-				.patch({ access_list_id: 0 });
+			await proxyHostModel.query().where("access_list_id", "=", row.id).patch({ access_list_id: 0 });
 
 			// 3. reconfigure those hosts, then reload nginx
 			// set the access_list_id to zero for these items
@@ -325,11 +324,7 @@ const internalAccessList = {
 			.query()
 			.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
 			.leftJoin("proxy_host", function () {
-				this.on("proxy_host.access_list_id", "=", "access_list.id").andOn(
-					"proxy_host.is_deleted",
-					"=",
-					0,
-				);
+				this.on("proxy_host.access_list_id", "=", "access_list.id").andOn("proxy_host.is_deleted", "=", 0);
 			})
 			.where("access_list.is_deleted", 0)
 			.groupBy("access_list.id")
@@ -371,10 +366,7 @@ const internalAccessList = {
 	 * @returns {Promise}
 	 */
 	getCount: async (userId, visibility) => {
-		const query = accessListModel
-			.query()
-			.count("id as count")
-			.where("is_deleted", 0);
+		const query = accessListModel.query().count("id as count").where("is_deleted", 0);
 
 		if (visibility !== "all") {
 			query.andWhere("owner_user_id", userId);
@@ -408,6 +400,49 @@ const internalAccessList = {
 	},
 
 	/**
+	 * Answers whether a set of HTTP Basic credentials may pass an access list.
+	 *
+	 * Called by nginx as a subrequest for every request to a protected site, so
+	 * it has to stay cheap: results are cached, and a list with no providers
+	 * never reaches here at all because nginx handles it with a htpasswd file.
+	 *
+	 * Deliberately unauthenticated. It is the site visitor's credentials being
+	 * checked, not an administrator's, and the answer is only ever yes or no.
+	 *
+	 * @param   {Integer} listId
+	 * @param   {String}  username
+	 * @param   {String}  password
+	 * @returns {Promise<Object>} { allowed, via }
+	 */
+	verifyCredentials: async (listId, username, password) => {
+		const id = Number.parseInt(listId, 10);
+		if (Number.isNaN(id)) {
+			return { allowed: false, reason: "unknown access list" };
+		}
+
+		const list = await accessListModel
+			.query()
+			.where("id", id)
+			.andWhere("is_deleted", 0)
+			.withGraphFetched("[items]")
+			.first();
+
+		if (!list) {
+			return { allowed: false, reason: "unknown access list" };
+		}
+
+		const wanted = list.auth_provider_ids || [];
+		let providers = [];
+
+		if (wanted.length) {
+			const enabled = await internalAuthProvider.getEnabled();
+			providers = enabled.filter((p) => wanted.includes(p.id));
+		}
+
+		return await verify(list, providers, username, password);
+	},
+
+	/**
 	 * @param   {Object}  list
 	 * @param   {Integer} list.id
 	 * @returns {String}
@@ -426,6 +461,9 @@ const internalAccessList = {
 	build: async (list) => {
 		logger.info(`Building Access file #${list.id} for: ${list.name}`);
 
+		// The list has changed, so any decision made under the old rules is stale
+		invalidateAccessCache(list.id);
+
 		const htpasswdFile = internalAccessList.getFilename(list);
 
 		// 1. remove any existing access file
@@ -436,20 +474,24 @@ const internalAccessList = {
 		}
 
 		// 2. create empty access file
-		fs.writeFileSync(htpasswdFile, '', {encoding: 'utf8'});
+		fs.writeFileSync(htpasswdFile, "", { encoding: "utf8" });
 
 		// 3. generate password for each user
 		if (list.items.length) {
 			await new Promise((resolve, reject) => {
-				batchflow(list.items).sequential()
+				batchflow(list.items)
+					.sequential()
 					.each((_i, item, next) => {
 						if (item.password?.length) {
 							logger.info(`Adding: ${item.username}`);
 
-							utils.execFile('openssl', ['passwd', '-apr1', item.password])
+							utils
+								.execFile("openssl", ["passwd", "-apr1", item.password])
 								.then((res) => {
 									try {
-										fs.appendFileSync(htpasswdFile, `${item.username}:${res}\n`, {encoding: 'utf8'});
+										fs.appendFileSync(htpasswdFile, `${item.username}:${res}\n`, {
+											encoding: "utf8",
+										});
 									} catch (err) {
 										reject(err);
 									}
@@ -471,7 +513,7 @@ const internalAccessList = {
 					});
 			});
 		}
-	}
-}
+	},
+};
 
 export default internalAccessList;

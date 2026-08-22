@@ -65,4 +65,4 @@ const loginFlows = new TransientStore(10 * 60 * 1000);
 // Completed logins waiting to be exchanged for a token by the frontend.
 const exchangeCodes = new TransientStore(60 * 1000);
 
-export { TransientStore, loginFlows, exchangeCodes };
+export { exchangeCodes, loginFlows, TransientStore };

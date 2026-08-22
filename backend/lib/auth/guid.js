@@ -107,4 +107,4 @@ const extractDirectoryGuid = (entry) => {
 	return null;
 };
 
-export { parseObjectGuid, guidToLdapFilter, normalizeEntryUuid, extractDirectoryGuid, UUID_PATTERN };
+export { extractDirectoryGuid, guidToLdapFilter, normalizeEntryUuid, parseObjectGuid, UUID_PATTERN };

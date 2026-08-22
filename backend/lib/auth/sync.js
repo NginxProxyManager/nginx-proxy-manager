@@ -271,4 +271,4 @@ const stopAll = () => {
 	}
 };
 
-export { runSync, reschedule, unschedule, stopAll, getLastResult, isRunning, isSyncable, disableMissing };
+export { disableMissing, getLastResult, isRunning, isSyncable, reschedule, runSync, stopAll, unschedule };

@@ -185,4 +185,4 @@ const localAuthDisabledByEnv = () => {
 	return toBool(process.env.AUTH_DISABLE_LOCAL, false);
 };
 
-export { getEnvProviders, syncEnvProviders, localAuthDisabledByEnv };
+export { getEnvProviders, localAuthDisabledByEnv, syncEnvProviders };

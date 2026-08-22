@@ -56,6 +56,12 @@ export interface AccessList {
 	satisfyAny: boolean;
 	passAuth: boolean;
 	proxyHostCount?: number;
+	/** Providers whose users may authenticate against sites using this list */
+	authProviderIds?: number[];
+	/** When set, a provider user must also be in one of these groups */
+	allowedGroups?: string[];
+	/** Derived: true when this list defers to a provider rather than a htpasswd file */
+	providerAuth?: boolean;
 	// Expansions:
 	owner?: User;
 	items?: AccessListItem[];

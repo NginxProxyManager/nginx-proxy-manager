@@ -197,6 +197,60 @@ environment:
   AUTH_SAML_AUTO_CREATE_USER: "true"
 ```
 
+## Protecting proxied sites
+
+Providers are not only for signing in to the admin interface. An **access list**
+can accept the same directory accounts, so the people who already exist in your
+directory can reach a proxied site without anyone maintaining a second list of
+usernames and passwords for it.
+
+Open an access list, go to the **Providers** tab, and tick the directories it
+should accept. Visitors are still prompted for a username and password exactly
+as before; those credentials are checked against the directory instead of the
+list's own entries.
+
+Only LDAP can be used here. SAML and OAuth sign people in by redirecting a
+browser to the identity provider, which cannot happen for an arbitrary proxied
+request — an image or an API call has nowhere to redirect to.
+
+### Restricting to a group
+
+Leave **Restrict to groups** empty and any account the directory authenticates
+is allowed through. Fill it in, one group per line, and a user must belong to at
+least one of them:
+
+```
+cn=vpn-users,ou=groups,dc=example,dc=com
+cn=contractors,ou=groups,dc=example,dc=com
+```
+
+Usernames typed into the **Authorizations** tab are unaffected by this and keep
+working, which is a convenient way to leave one break-glass account that does
+not depend on the directory being reachable.
+
+### How it works, and what it costs
+
+A directory will not hand over password hashes, so its users cannot be written
+into the htpasswd file nginx normally uses. Instead nginx asks the backend, per
+request, whether a set of credentials is acceptable.
+
+To keep that affordable, a decision is cached for five minutes, so a page and
+all of its images cost one directory lookup rather than dozens. A refused
+attempt is cached for thirty seconds only, and every cached decision for a list
+is discarded the moment that list is saved, so revoking somebody's access takes
+effect immediately.
+
+Two headers are passed to the proxied application on success, which saves it
+from asking the directory itself:
+
+| Header | Contents |
+| ------ | -------- |
+| `X-Auth-User` | the username that was supplied |
+| `X-Auth-Email` | the email address on the directory entry |
+
+If the directory is unreachable the request is refused. A protected site does
+not fall open because a server is down.
+
 ## Environment variables
 
 Providers configured this way are recreated from the environment every time the

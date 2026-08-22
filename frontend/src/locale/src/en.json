@@ -62,6 +62,15 @@
 	"access-list.access-count": {
 		"defaultMessage": "{count} {count, plural, one {Rule} other {Rules}}"
 	},
+	"access-list.allowed-groups": {
+		"defaultMessage": "Restrict to groups"
+	},
+	"access-list.allowed-groups-help": {
+		"defaultMessage": "One per line. A directory user must be in at least one of these groups. Leave empty to accept anyone the provider authenticates. Usernames listed on the Authorizations tab are unaffected."
+	},
+	"access-list.allowed-groups-placeholder": {
+		"defaultMessage": "cn=vpn-users,ou=groups,dc=example,dc=com"
+	},
 	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
@@ -73,6 +82,15 @@
 	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Pass Auth to Upstream"
+	},
+	"access-list.providers": {
+		"defaultMessage": "Providers"
+	},
+	"access-list.providers-intro": {
+		"defaultMessage": "Accept sign-ins from a directory as well as the usernames listed here. Visitors are still prompted for a username and password; those credentials are checked against the directory instead of the list."
+	},
+	"access-list.providers-none": {
+		"defaultMessage": "No LDAP provider is set up yet. Add one under Users, Authentication Providers, and it will appear here. SAML and OAuth cannot be used: they sign people in by redirecting a browser, which is not possible for a proxied request."
 	},
 	"access-list.public": {
 		"defaultMessage": "Publicly Accessible"
