@@ -1,3 +1,4 @@
+import fs from "node:fs/promises";
 import internalAuthProvider from "./internal/auth-provider.js";
 import { syncEnvProviders } from "./lib/auth/env.js";
 import { installPlugins } from "./lib/certbot.js";
@@ -8,12 +9,11 @@ import certificateModel from "./models/certificate.js";
 import settingModel from "./models/setting.js";
 import userModel from "./models/user.js";
 import userPermissionModel from "./models/user_permission.js";
-import fs from "fs/promises";
 
 export const isSetup = async () => {
 	const row = await userModel.query().select("id").where("is_deleted", 0).first();
 	return row?.id > 0;
-}
+};
 
 /**
  * Creates a default admin users if one doesn't already exist in the database
@@ -47,18 +47,14 @@ const setupDefaultUser = async () => {
 			roles: ["admin"],
 		};
 
-		const user = await userModel
-			.query()
-			.insertAndFetch(data);
+		const user = await userModel.query().insertAndFetch(data);
 
-		await authModel
-			.query()
-			.insert({
-				user_id: user.id,
-				type: "password",
-				secret: initialAdminPassword,
-				meta: {},
-			});
+		await authModel.query().insert({
+			user_id: user.id,
+			type: "password",
+			secret: initialAdminPassword,
+			meta: {},
+		});
 
 		await userPermissionModel.query().insert({
 			user_id: user.id,
@@ -80,22 +76,16 @@ const setupDefaultUser = async () => {
  * @returns {Promise}
  */
 const setupDefaultSettings = async () => {
-	const row = await settingModel
-		.query()
-		.select("id")
-		.where({ id: "default-site" })
-		.first();
+	const row = await settingModel.query().select("id").where({ id: "default-site" }).first();
 
 	if (!row?.id) {
-		await settingModel
-			.query()
-			.insert({
-				id: "default-site",
-				name: "Default Site",
-				description: "What to show when Nginx is hit with an unknown Host",
-				value: "congratulations",
-				meta: {},
-			});
+		await settingModel.query().insert({
+			id: "default-site",
+			name: "Default Site",
+			description: "What to show when Nginx is hit with an unknown Host",
+			value: "congratulations",
+			meta: {},
+		});
 		logger.info("Default settings added");
 	}
 };
@@ -106,10 +96,7 @@ const setupDefaultSettings = async () => {
  * @returns {Promise}
  */
 const setupCertbotPlugins = async () => {
-	const certificates = await certificateModel
-		.query()
-		.where("is_deleted", 0)
-		.andWhere("provider", "letsencrypt");
+	const certificates = await certificateModel.query().where("is_deleted", 0).andWhere("provider", "letsencrypt");
 
 	if (certificates?.length) {
 		const plugins = [];
@@ -124,14 +111,24 @@ const setupCertbotPlugins = async () => {
 				// Make sure credentials file exists
 				const credentials_loc = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
 				if (typeof certificate.meta.dns_provider_credentials === "string") {
-					promises.push(fs.mkdir("/etc/letsencrypt/credentials", { recursive: true })
-								  .then(() => fs.writeFile(credentials_loc, certificate.meta.dns_provider_credentials, { mode: 0o600, flag: "wx" }))
-								  .catch((err) => { if (err.code !== "EEXIST") throw err; }));
+					promises.push(
+						fs
+							.mkdir("/etc/letsencrypt/credentials", { recursive: true })
+							.then(() =>
+								fs.writeFile(credentials_loc, certificate.meta.dns_provider_credentials, {
+									mode: 0o600,
+									flag: "wx",
+								}),
+							)
+							.catch((err) => {
+								if (err.code !== "EEXIST") throw err;
+							}),
+					);
 				}
 			}
 			return true;
 		});
-		
+
 		await installPlugins(plugins);
 
 		if (promises.length) {

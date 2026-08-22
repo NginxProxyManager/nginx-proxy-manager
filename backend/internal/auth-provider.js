@@ -518,7 +518,7 @@ const internalAuthProvider = {
 		const row = await settingModel.query().where("id", LOCAL_AUTH_SETTING).first();
 		// Missing row means the migration hasn't been seen yet; fail open so
 		// nobody gets locked out of their own instance.
-		return !row || row.value !== "disabled";
+		return row?.value !== "disabled";
 	},
 
 	/**

@@ -1,8 +1,9 @@
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { AccessList } from "src/api/backend";
 import { EmptyData, GravatarFormatter, HasPermission, ValueWithDateFormatter } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { ACCESS_LISTS, MANAGE } from "src/modules/Permissions";
@@ -16,7 +17,7 @@ interface Props {
 	onNew?: () => void;
 }
 export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onNew }: Props) {
-	const columnHelper = createColumnHelper<AccessList>();
+	const columnHelper = createColumnHelper<Features, AccessList>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
@@ -114,11 +115,10 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 		[columnHelper, onEdit, onDelete],
 	);
 
-	const tableInstance = useReactTable<AccessList>({
+	const tableInstance = useTable({
+		features,
 		columns,
 		data,
-		getCoreRowModel: getCoreRowModel(),
-		rowCount: data.length,
 		meta: {
 			isFetching,
 		},
