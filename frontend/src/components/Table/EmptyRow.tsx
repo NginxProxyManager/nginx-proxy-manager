@@ -1,9 +1,10 @@
-import type { Table as ReactTable } from "@tanstack/react-table";
+import type { Table as ReactTable, RowData } from "@tanstack/react-table";
+import type { Features } from "./features";
 
-interface Props {
-	tableInstance: ReactTable<any>;
+interface Props<TData extends RowData> {
+	tableInstance: ReactTable<Features, TData>;
 }
-function EmptyRow({ tableInstance }: Props) {
+function EmptyRow<TData extends RowData>({ tableInstance }: Props<TData>) {
 	return (
 		<tr>
 			<td colSpan={tableInstance.getVisibleFlatColumns().length}>

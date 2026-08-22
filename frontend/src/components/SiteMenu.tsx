@@ -143,7 +143,6 @@ const getMenuDropown = (item: MenuItem, onClick?: () => void) => {
 					className="nav-link dropdown-toggle"
 					href={item.to}
 					data-bs-toggle="dropdown"
-					data-bs-auto-close="outside"
 					aria-expanded="false"
 					role="button"
 				>
@@ -176,13 +175,14 @@ const getMenuDropown = (item: MenuItem, onClick?: () => void) => {
 };
 
 export function SiteMenu() {
-	const closeMenu = () => setTimeout(() => {
-		const navbarToggler = document.querySelector<HTMLElement>(".navbar-toggler");
-		const navbarMenu = document.querySelector("#navbar-menu");
-		if (navbarToggler && navbarMenu?.classList.contains("show")) {
-			navbarToggler.click();
-		}
-	}, 300);
+	const closeMenu = () =>
+		setTimeout(() => {
+			const navbarToggler = document.querySelector<HTMLElement>(".navbar-toggler");
+			const navbarMenu = document.querySelector("#navbar-menu");
+			if (navbarToggler && navbarMenu?.classList.contains("show")) {
+				navbarToggler.click();
+			}
+		}, 300);
 
 	return (
 		<header className="navbar-expand-md">
