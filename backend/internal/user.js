@@ -257,11 +257,9 @@ const internalUser = {
 	},
 
 	deleteAll: async () => {
-		await userModel
-			.query()
-			.patch({
-				is_deleted: 1,
-			});
+		await userModel.query().patch({
+			is_deleted: 1,
+		});
 	},
 
 	/**

@@ -1,5 +1,5 @@
 import knex from "knex";
-import {configGet, configHas} from "./lib/config.js";
+import { configGet, configHas } from "./lib/config.js";
 
 let instance = null;
 
@@ -23,8 +23,8 @@ const generateDbConfig = () => {
 			user: cfg.user,
 			password: cfg.password,
 			database: cfg.name,
-			port:     cfg.port,
-			...(cfg.ssl ? { ssl: cfg.ssl } : {})
+			port: cfg.port,
+			...(cfg.ssl ? { ssl: cfg.ssl } : {}),
 		},
 		migrations: {
 			tableName: "migrations",
@@ -37,6 +37,6 @@ const getInstance = () => {
 		instance = knex(generateDbConfig());
 	}
 	return instance;
-}
+};
 
 export default getInstance;

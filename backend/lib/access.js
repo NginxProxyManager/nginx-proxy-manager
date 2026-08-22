@@ -119,10 +119,7 @@ export default function (tokenString) {
 
 					// Proxy Hosts
 					case "proxy_hosts": {
-						const query = proxyHostModel
-							.query()
-							.select("id")
-							.andWhere("is_deleted", 0);
+						const query = proxyHostModel.query().select("id").andWhere("is_deleted", 0);
 
 						if (permissions.visibility === "user") {
 							query.andWhere("owner_user_id", tokenUserId);
