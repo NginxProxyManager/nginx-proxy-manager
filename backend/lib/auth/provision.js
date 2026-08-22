@@ -207,4 +207,83 @@ const linkIdentity = async (provider, user, identity) => {
 	});
 };
 
-export { linkIdentity, resolveRoles, resolveUser };
+/**
+ * Releases the accounts a provider owns, when that provider goes away.
+ *
+ * Without this, removing a provider strands everyone it created: their link
+ * points at a provider that no longer exists and they hold no password, so
+ * nobody can sign in as them and nothing says why.
+ *
+ * Two outcomes are offered:
+ *
+ * - `convert` keeps the accounts and drops the link. They become local accounts
+ *   with no password set, which an administrator can then set from the Users
+ *   screen. Hosts, permissions and ownership are untouched.
+ * - `delete` removes the accounts too, but only those that would otherwise be
+ *   left with no way in at all.
+ *
+ * @param   {Object} provider
+ * @param   {String} action  "convert" or "delete"
+ * @returns {Promise<Object>} { converted, deleted, kept }
+ */
+const detachProviderUsers = async (provider, action = "convert") => {
+	const links = await authModel.query().where("provider_id", provider.id).andWhere("is_deleted", 0);
+
+	let converted = 0;
+	let deleted = 0;
+	const kept = [];
+
+	for (const link of links) {
+		await authModel.query().where("id", link.id).patch({ is_deleted: true });
+
+		const user = await userModel.query().where("id", link.user_id).andWhere("is_deleted", 0).first();
+		if (!user) {
+			continue;
+		}
+
+		if (action !== "delete") {
+			converted++;
+			continue;
+		}
+
+		// Somebody who also signs in with a password, or through another
+		// provider, is not ours to remove
+		const remaining = await authModel.query().where("user_id", user.id).andWhere("is_deleted", 0).first();
+		if (remaining) {
+			converted++;
+			kept.push({ id: user.id, email: user.email, reason: "has another way to sign in" });
+			continue;
+		}
+
+		// Deleting the last administrator would leave nobody able to administer
+		// the instance, which is never what someone means to do
+		if ((user.roles || []).includes("admin")) {
+			const others = await userModel
+				.query()
+				.where("is_deleted", 0)
+				.andWhere("is_disabled", 0)
+				.andWhere("id", "!=", user.id);
+
+			if (!others.some((u) => (u.roles || []).includes("admin"))) {
+				converted++;
+				kept.push({ id: user.id, email: user.email, reason: "is the only administrator" });
+				logger.warn(
+					`Keeping ${user.email} while removing "${provider.name}": they are the only administrator left`,
+				);
+				continue;
+			}
+		}
+
+		await userModel.query().where("id", user.id).patch({ is_deleted: 1 });
+		deleted++;
+	}
+
+	logger.info(
+		`Removing provider "${provider.name}": ${converted} account(s) converted to local, ${deleted} deleted` +
+			(kept.length ? `, ${kept.length} kept` : ""),
+	);
+
+	return { converted, deleted, kept };
+};
+
+export { detachProviderUsers, linkIdentity, resolveRoles, resolveUser };

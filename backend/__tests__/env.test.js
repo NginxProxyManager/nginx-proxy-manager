@@ -3,6 +3,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 // env.js reaches the database through the model; the parsing this file covers
 // does not, so stub it out rather than standing up a connection.
 vi.mock("../models/auth_provider.js", () => ({ default: {} }));
+// env.js now reaches provision.js, which imports these; without stubs the real
+// modules open a database connection and try to write a JWT key file
+vi.mock("../models/auth.js", () => ({ default: {} }));
+vi.mock("../models/user.js", () => ({ default: {} }));
+vi.mock("../models/user_permission.js", () => ({ default: {} }));
 
 const { getEnvProviders, localAuthDisabledByEnv } = await import("../lib/auth/env.js");
 

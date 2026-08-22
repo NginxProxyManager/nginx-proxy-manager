@@ -157,7 +157,35 @@ router
 	 */
 	.delete(async (req, res, next) => {
 		try {
-			const result = await internalAuthProvider.delete(res.locals.access, req.params.providerID);
+			// Defaults to keeping the accounts: losing people's access should
+			// never be the consequence of leaving a parameter off
+			const result = await internalAuthProvider.delete(
+				res.locals.access,
+				req.params.providerID,
+				req.query.users || "convert",
+			);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * GET /api/auth-providers/123/users
+ *
+ * How many accounts this provider owns, so the interface can say what deleting
+ * it would affect before anyone commits to it.
+ */
+router
+	.route("/:providerID/users")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+	.get(async (req, res, next) => {
+		try {
+			const result = await internalAuthProvider.getUserImpact(res.locals.access, req.params.providerID);
 			res.status(200).send(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);

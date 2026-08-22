@@ -167,6 +167,30 @@
 	"auth-provider.auto-create-user-help": {
 		"defaultMessage": "When off, someone must already have an account here with a matching email address before they can sign in."
 	},
+	"auth-provider.delete-confirm": {
+		"defaultMessage": "Remove {name}? Nobody will be able to sign in through it afterwards."
+	},
+	"auth-provider.delete-convert": {
+		"defaultMessage": "Keep them as local accounts"
+	},
+	"auth-provider.delete-convert-help": {
+		"defaultMessage": "They keep their hosts, permissions and ownership, but hold no password yet. Set one for them from the Users screen so they can sign in again."
+	},
+	"auth-provider.delete-no-users": {
+		"defaultMessage": "No accounts came from this provider, so nothing else is affected."
+	},
+	"auth-provider.delete-users": {
+		"defaultMessage": "Delete them"
+	},
+	"auth-provider.delete-users-help": {
+		"defaultMessage": "{removable, plural, =0 {None would actually be removed: they can all still sign in another way.} one {One account would be removed.} other {# accounts would be removed.}} Anyone who can still sign in another way is kept, and so is the last remaining administrator."
+	},
+	"auth-provider.delete-users-intro": {
+		"defaultMessage": "{count, plural, one {One account came from this provider} other {# accounts came from this provider}}. What should happen to them?"
+	},
+	"auth-provider.delete-users-warning": {
+		"defaultMessage": "Deleting an account also removes what it owns. This cannot be undone."
+	},
 	"auth-provider.disabled": {
 		"defaultMessage": "Disabled"
 	},
@@ -640,6 +664,9 @@
 	},
 	"dead-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hosts}}"
+	},
+	"delete": {
+		"defaultMessage": "Delete"
 	},
 	"disabled": {
 		"defaultMessage": "Disabled"

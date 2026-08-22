@@ -1,6 +1,7 @@
 import { auth as logger } from "../../logger.js";
 import authProviderModel from "../../models/auth_provider.js";
 import { LDAP, normalizeMeta, OAUTH, PROVIDER_TYPES, SAML } from "./definitions.js";
+import { detachProviderUsers } from "./provision.js";
 
 const toBool = (value, fallback) => {
 	if (typeof value === "undefined" || value === null || value === "") {
@@ -151,11 +152,19 @@ const syncEnvProviders = async () => {
 
 	const existing = await authProviderModel.query().where("is_env_managed", 1);
 
-	// Drop rows whose environment variables have been removed
+	// Drop rows whose environment variables have been removed. Their accounts
+	// are converted to local rather than deleted: nobody confirmed anything
+	// here, so a variable disappearing from a compose file must not silently
+	// take people's accounts with it. They keep their hosts and permissions,
+	// and an administrator can set them a password from the Users screen.
 	const stale = existing.filter((row) => !wantedSlugs.includes(row.slug) && !row.is_deleted);
 	for (const row of stale) {
+		const users = await detachProviderUsers(row, "convert");
 		await authProviderModel.query().where("id", row.id).patch({ is_deleted: true, is_enabled: false });
-		logger.info(`Removed environment configured auth provider: ${row.slug}`);
+		logger.info(
+			`Removed environment configured auth provider: ${row.slug}` +
+				(users.converted ? `, ${users.converted} account(s) converted to local` : ""),
+		);
 	}
 
 	for (const provider of wanted) {

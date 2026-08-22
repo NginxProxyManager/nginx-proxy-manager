@@ -6,7 +6,6 @@ import Dropdown from "react-bootstrap/Dropdown";
 import {
 	type AuthProvider,
 	type AuthProviderType,
-	deleteAuthProvider,
 	runAuthProviderSync,
 	setLocalAuth,
 	testAuthProvider,
@@ -15,7 +14,7 @@ import { Button, Loading } from "src/components";
 import { useLocaleState } from "src/context";
 import { useAuthProviders, useLocalAuth } from "src/hooks";
 import { formatDateTime, intl, T } from "src/locale";
-import { showAuthProviderModal, showDeleteConfirmModal } from "src/modals";
+import { showAuthProviderModal, showDeleteAuthProviderModal } from "src/modals";
 import { showError, showObjectSuccess, showSuccess } from "src/notifications";
 
 const TYPES: AuthProviderType[] = ["ldap", "saml", "oauth"];
@@ -87,11 +86,6 @@ function ProviderRow({ provider }: { provider: AuthProvider }) {
 			showError(err.message);
 		}
 		setTesting(false);
-	};
-
-	const onDelete = async () => {
-		await deleteAuthProvider(provider.id);
-		showObjectSuccess("auth-provider", "deleted");
 	};
 
 	const onSync = async () => {
@@ -181,14 +175,7 @@ function ProviderRow({ provider }: { provider: AuthProvider }) {
 							size="sm"
 							actionType="danger"
 							variant="ghost"
-							onClick={() =>
-								showDeleteConfirmModal({
-									title: <T id="object.delete" tData={{ object: "auth-provider" }} />,
-									onConfirm: onDelete,
-									invalidations: [["auth-providers"], ["login-options"]],
-									children: <T id="object.delete.content" tData={{ object: "auth-provider" }} />,
-								})
-							}
+							onClick={() => showDeleteAuthProviderModal(provider)}
 						>
 							<IconTrash size={16} />
 						</Button>

@@ -53,8 +53,35 @@ export async function updateAuthProvider(id: number, item: Partial<NewAuthProvid
 	return await api.put({ url: `/auth-providers/${id}`, data: item });
 }
 
-export async function deleteAuthProvider(id: number): Promise<boolean> {
-	return await api.del({ url: `/auth-providers/${id}` });
+export interface AuthProviderUserImpact {
+	/** Accounts currently linked to this provider */
+	users: number;
+	/** Of those, how many have no other way to sign in */
+	removable: number;
+}
+
+export interface DeleteAuthProviderResult {
+	deletedProvider: boolean;
+	converted?: number;
+	deleted?: number;
+	kept?: { id: number; email: string; reason: string }[];
+}
+
+/** How many accounts deleting this provider would affect */
+export async function getAuthProviderUsers(id: number): Promise<AuthProviderUserImpact> {
+	return await api.get({ url: `/auth-providers/${id}/users` });
+}
+
+/**
+ * @param users what to do with the accounts this provider created. Defaults to
+ *              keeping them, because losing access should never be the result
+ *              of leaving an argument off.
+ */
+export async function deleteAuthProvider(
+	id: number,
+	users: "convert" | "delete" = "convert",
+): Promise<DeleteAuthProviderResult> {
+	return await api.del({ url: `/auth-providers/${id}`, params: { users } });
 }
 
 export interface ConfigTestResult {

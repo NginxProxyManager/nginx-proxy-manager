@@ -2,13 +2,15 @@ import { normalizeMeta, PROVIDER_TYPES, redactProvider, SECRET_FIELDS } from "..
 import { localAuthDisabledByEnv } from "../lib/auth/env.js";
 import * as ldap from "../lib/auth/ldap.js";
 import * as oauth from "../lib/auth/oauth.js";
-import { resolveUser } from "../lib/auth/provision.js";
+import { detachProviderUsers, resolveUser } from "../lib/auth/provision.js";
 import * as saml from "../lib/auth/saml.js";
 import * as sync from "../lib/auth/sync.js";
 import errs from "../lib/error.js";
 import { auth as logger } from "../logger.js";
+import authModel from "../models/auth.js";
 import authProviderModel from "../models/auth_provider.js";
 import settingModel from "../models/setting.js";
+import userModel from "../models/user.js";
 import internalAuditLog from "./audit-log.js";
 
 const LOCAL_AUTH_SETTING = "auth-local";
@@ -198,8 +200,14 @@ const internalAuthProvider = {
 	 * @param   {Integer} id
 	 * @returns {Promise}
 	 */
-	delete: async (access, id) => {
+	delete: async (access, id, userAction = "convert") => {
 		await access.can("auth_providers:delete", id);
+
+		if (!["convert", "delete"].includes(userAction)) {
+			throw new errs.ValidationError(
+				`Unknown action for this provider's users: ${userAction}. Use "convert" or "delete".`,
+			);
+		}
 
 		const row = await internalAuthProvider.getRaw(id);
 		if (row.is_env_managed) {
@@ -208,18 +216,59 @@ const internalAuthProvider = {
 			);
 		}
 
+		// Decide what becomes of its accounts before the provider itself goes,
+		// so they are never left pointing at something that no longer exists
+		const users = await detachProviderUsers(row, userAction);
+
 		await authProviderModel.query().where("id", row.id).patch({ is_deleted: true, is_enabled: false });
 
 		await internalAuditLog.add(access, {
 			action: "deleted",
 			object_type: "auth-provider",
 			object_id: row.id,
-			meta: redactProvider(row),
+			meta: { ...redactProvider(row), users },
 		});
 
 		sync.unschedule(row.id);
 		await internalAuthProvider.refreshSchedules();
-		return true;
+		return { ...users, deleted_provider: true };
+	},
+
+	/**
+	 * How many accounts a provider currently owns, and how many of those would
+	 * be removed rather than kept if its users were deleted along with it.
+	 *
+	 * Used to tell an administrator what they are about to do.
+	 *
+	 * @param   {Access}  access
+	 * @param   {Integer} id
+	 * @returns {Promise<Object>}
+	 */
+	getUserImpact: async (access, id) => {
+		await access.can("auth_providers:get", id);
+		const row = await internalAuthProvider.getRaw(id);
+
+		const links = await authModel.query().where("provider_id", row.id).andWhere("is_deleted", 0);
+
+		let removable = 0;
+		for (const link of links) {
+			const user = await userModel.query().where("id", link.user_id).andWhere("is_deleted", 0).first();
+			if (!user) {
+				continue;
+			}
+			// Anyone with another sign in method survives either way
+			const other = await authModel
+				.query()
+				.where("user_id", user.id)
+				.andWhere("is_deleted", 0)
+				.andWhere("id", "!=", link.id)
+				.first();
+			if (!other) {
+				removable++;
+			}
+		}
+
+		return { users: links.length, removable };
 	},
 
 	/**

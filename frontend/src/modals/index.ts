@@ -3,6 +3,7 @@ export * from "./AuthProviderModal";
 export * from "./ChangePasswordModal";
 export * from "./CustomCertificateModal";
 export * from "./DeadHostModal";
+export * from "./DeleteAuthProviderModal";
 export * from "./DeleteConfirmModal";
 export * from "./DNSCertificateModal";
 export * from "./EventDetailsModal";

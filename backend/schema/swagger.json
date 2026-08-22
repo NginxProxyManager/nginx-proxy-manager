@@ -149,6 +149,11 @@
 				"$ref": "./paths/auth-providers/providerID/delete.json"
 			}
 		},
+		"/auth-providers/{providerID}/users": {
+			"get": {
+				"$ref": "./paths/auth-providers/providerID/users/get.json"
+			}
+		},
 		"/auth-providers/{providerID}/test": {
 			"post": {
 				"$ref": "./paths/auth-providers/providerID/test/post.json"

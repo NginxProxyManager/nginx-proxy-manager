@@ -103,6 +103,28 @@ unreachable server cannot switch off an entire organisation.
 Use the **Sync** button on the providers list to run one immediately rather than
 waiting for the schedule.
 
+### Removing a provider
+
+Accounts created by a provider hold no password of their own, so removing the
+provider has to say what becomes of them. Doing nothing would leave people with
+an account nobody can sign in to and no explanation of why.
+
+Deleting a provider **in the interface** asks which you want:
+
+- **Keep them as local accounts.** The link is dropped and the accounts stay,
+  with their hosts, permissions and ownership intact. They hold no password yet,
+  so set one for them from the Users screen and they can sign in again.
+- **Delete them.** The accounts go too. The dialog says up front how many would
+  actually be removed, because two kinds are always kept regardless: anyone who
+  can still sign in another way, such as with a password or through a second
+  provider, and the last remaining administrator.
+
+Removing a provider's **environment variables** converts its accounts to local
+automatically. Nobody confirmed anything in that case, and a variable
+disappearing from a compose file must not quietly take people's accounts with
+it. The container log names the provider and says how many accounts were
+converted.
+
 ## LDAP
 
 Nginx Proxy Manager binds to your directory with an optional read-only service
