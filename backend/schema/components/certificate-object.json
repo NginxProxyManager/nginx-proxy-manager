@@ -19,7 +19,8 @@
 		"is_deleted": {
 			"type": "boolean",
 			"description": "Whether the certificate has been soft-deleted",
-			"readOnly": true
+			"readOnly": true,
+			"example": false
 		},
 		"provider": {
 			"$ref": "../common.json#/properties/ssl_provider"
