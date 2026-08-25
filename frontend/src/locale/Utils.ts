@@ -1,9 +1,4 @@
-import {
-	fromUnixTime,
-	type IntlFormatFormatOptions,
-	intlFormat,
-	parseISO,
-} from "date-fns";
+import { fromUnixTime, type IntlFormatFormatOptions, intlFormat, parseISO } from "date-fns";
 
 const isUnixTimestamp = (value: unknown): boolean => {
 	if (typeof value !== "number" && typeof value !== "string") return false;

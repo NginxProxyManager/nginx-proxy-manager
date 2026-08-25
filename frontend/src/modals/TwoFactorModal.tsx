@@ -3,13 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import {
-	disable2FA,
-	enable2FA,
-	get2FAStatus,
-	regenerateBackupCodes,
-	start2FASetup,
-} from "src/api/backend";
+import { disable2FA, enable2FA, get2FAStatus, regenerateBackupCodes, start2FASetup } from "src/api/backend";
 import { Button } from "src/components";
 import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
@@ -137,12 +131,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						)}
 					</div>
 					{!isEnabled ? (
-						<Button
-							fullWidth
-							color="azure"
-							onClick={handleStartSetup}
-							isLoading={isSubmitting}
-						>
+						<Button fullWidth color="azure" onClick={handleStartSetup} isLoading={isSubmitting}>
 							<T id="2fa.enable" />
 						</Button>
 					) : (

@@ -11,7 +11,16 @@ interface Props {
 	color?: string;
 	isHttp3GloballyDisabled?: boolean; // when NPM_HTTP3_DISABLED=1 in the container environment
 }
-export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDNSForNew, requireDomainNames, color = "bg-cyan", isHttp3GloballyDisabled = false }: Props) {
+
+export function SSLOptionsFields({
+	forHttp = true,
+	forProxyHost = false,
+	forceDNSForNew,
+	requireDomainNames,
+	color = "bg-cyan",
+	isHttp3GloballyDisabled = false,
+}: Props) {
+
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
 
@@ -140,10 +149,12 @@ export function SSLOptionsFields({ forHttp = true, forProxyHost = false, forceDN
 		</div>
 	);
 
-	const getHttpAdvancedOptions = () =>(
+	const getHttpAdvancedOptions = () => (
 		<div>
 			<details>
-				<summary className="mb-1"><T id="domains.advanced" /></summary>
+				<summary className="mb-1">
+					<T id="domains.advanced" />
+				</summary>
 				<div className="row">
 					<div className="col-12">
 						<Field name="trustForwardedProto">
