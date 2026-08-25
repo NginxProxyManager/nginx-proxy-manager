@@ -119,11 +119,11 @@ export function ProxyPerformanceOptionsFields({ color = "bg-cyan" }: Props) {
 			{toggleRow("gzipEnabled", "host.flags.gzip", gzipEnabled)}
 			{gzipEnabled ? (
 				<div className="py-3">
-					<div className="row">
+					<div className="row align-items-end">
 						<div className="col-md-3">
 							<Field name="gzipCompLevel" validate={validateNumber(1, 9)}>
 								{({ field, form }: any) => (
-									<div className="mb-3">
+									<div>
 										<label className="form-label" htmlFor="gzipCompLevel">
 											<T id="host.gzip-level" />
 										</label>
@@ -148,7 +148,7 @@ export function ProxyPerformanceOptionsFields({ color = "bg-cyan" }: Props) {
 						<div className="col-md-9">
 							<Field name="gzipTypes">
 								{({ field }: any) => (
-									<div className="mb-3">
+									<div>
 										<label className="form-label" htmlFor="gzipTypes">
 											<T id="host.gzip-types" />
 										</label>
@@ -164,14 +164,14 @@ export function ProxyPerformanceOptionsFields({ color = "bg-cyan" }: Props) {
 											isClearable
 											isMulti
 										/>
-										<small className="form-hint">
-											<T id="host.gzip-types-help" />
-										</small>
 									</div>
 								)}
 							</Field>
 						</div>
 					</div>
+					<small className="form-hint mt-2">
+						<T id="host.gzip-types-help" />
+					</small>
 				</div>
 			) : null}
 		</>

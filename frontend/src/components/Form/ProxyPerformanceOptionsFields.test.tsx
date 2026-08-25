@@ -57,4 +57,15 @@ describe("ProxyPerformanceOptionsFields", () => {
 			expect(document.getElementById("gzipTypes")).toBeNull();
 		});
 	});
+
+	it("aligns the gzip controls and renders their help across the full row", () => {
+		renderFields({ gzipEnabled: true });
+
+		const controlsRow = document.getElementById("gzipCompLevel")?.closest(".row");
+		const help = document.querySelector(".form-hint");
+
+		expect(controlsRow?.classList.contains("align-items-end")).toBe(true);
+		expect(help?.previousElementSibling).toBe(controlsRow);
+		expect(help?.closest(".col-md-9")).toBeNull();
+	});
 });
