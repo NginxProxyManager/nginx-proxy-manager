@@ -356,8 +356,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS aldomain-ek"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "A HTTP/1.1 tartalék protokollként engedélyezve marad."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 támogatás"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC támogatás"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge használata"
@@ -416,11 +422,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork-olj a GitHub-on"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Eszköz-gyorsítótár élettartama (másodperc)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Példák: 3600 = 1 óra, 21600 = 6 óra, 86400 = 1 nap."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Gyakori exploitok blokkolása"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Erőforrások gyorsítótárazása"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip tömörítés"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Útvonal megőrzése"
@@ -436,6 +451,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Séma"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Tömörítési szint"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "További MIME-típusok"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "A text/html mindig tömörítve van, amikor a gzip engedélyezett. Kerülje a már tömörített fájlformátumokat."
 	},
 	"hosts": {
 		"defaultMessage": "Kiszolgálók"

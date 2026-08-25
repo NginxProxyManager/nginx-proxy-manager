@@ -287,8 +287,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS Subdomain"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 tetap diaktifkan sebagai fallback."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "Dukungan HTTP/2"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Dukungan HTTP/3 / QUIC"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Gunakan DNS Challenge"
@@ -347,11 +353,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork saya di GitHub"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Masa cache aset (detik)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Contoh: 3600 = 1 jam, 21600 = 6 jam, 86400 = 1 hari."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokir Eksploit Umum"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache Aset"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Kompresi Gzip"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Pertahankan Path"
@@ -367,6 +382,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Skema"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Tingkat Kompresi"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Jenis MIME Tambahan"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html selalu dikompresi saat gzip diaktifkan. Hindari format file yang sudah dikompresi."
 	},
 	"hosts": {
 		"defaultMessage": "Host"

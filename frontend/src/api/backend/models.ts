@@ -118,11 +118,16 @@ export interface ProxyHost {
 	certificateId: number;
 	sslForced: boolean;
 	cachingEnabled: boolean;
+	assetCacheTtl: number;
+	gzipEnabled: boolean;
+	gzipCompLevel: number;
+	gzipTypes: string[];
 	blockExploits: boolean;
 	advancedConfig: string;
 	meta: Record<string, any>;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
+	http3Support: boolean;
 	enabled: boolean;
 	locations?: ProxyLocation[];
 	hstsEnabled: boolean;

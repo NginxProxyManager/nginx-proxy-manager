@@ -22,7 +22,8 @@ export function SSLOptionsFields({
 
 	const newCertificate = v?.certificateId === "new";
 	const hasCertificate = newCertificate || (v?.certificateId && v?.certificateId > 0);
-	const { sslForced, http2Support, hstsEnabled, hstsSubdomains, trustForwardedProto, meta } = v;
+	const { sslForced, http2Support, http3Support, hstsEnabled, hstsSubdomains, trustForwardedProto, meta } =
+		v;
 	const { dnsChallenge } = meta || {};
 
 	if (forceDNSForNew && newCertificate && !dnsChallenge) {
@@ -44,11 +45,12 @@ export function SSLOptionsFields({
 	const getHttpOptions = () => (
 		<div>
 			<div className="row">
-				<div className="col-6">
+				<div className="col-12">
 					<Field name="sslForced">
 						{({ field }: any) => (
-							<label className="form-check form-switch mt-1">
+							<label className="form-check form-switch mt-1" htmlFor="sslForced">
 								<input
+									id="sslForced"
 									className={sslForced ? toggleEnabled : toggleClasses}
 									type="checkbox"
 									checked={!!sslForced}
@@ -62,11 +64,14 @@ export function SSLOptionsFields({
 						)}
 					</Field>
 				</div>
-				<div className="col-6">
+			</div>
+			<div className="row">
+				<div className={forProxyHost ? "col-6" : "col-12"}>
 					<Field name="http2Support">
 						{({ field }: any) => (
-							<label className="form-check form-switch mt-1">
+							<label className="form-check form-switch mt-1" htmlFor="http2Support">
 								<input
+									id="http2Support"
 									className={http2Support ? toggleEnabled : toggleClasses}
 									type="checkbox"
 									checked={!!http2Support}
@@ -80,13 +85,40 @@ export function SSLOptionsFields({
 						)}
 					</Field>
 				</div>
+				{forProxyHost ? (
+					<div className="col-6">
+						<Field name="http3Support">
+							{({ field }: any) => (
+								<label className="form-check form-switch mt-1" htmlFor="http3Support">
+									<input
+										id="http3Support"
+										className={http3Support ? toggleEnabled : toggleClasses}
+										type="checkbox"
+										checked={!!http3Support}
+										onChange={(e) => handleToggleChange(e, field.name)}
+										disabled={!hasCertificate}
+									/>
+									<span className="form-check-label">
+										<T id="domains.http3-support" />
+									</span>
+								</label>
+							)}
+						</Field>
+					</div>
+				) : null}
 			</div>
+			{forProxyHost ? (
+				<small className="form-hint">
+					<T id="domains.http1-fallback" />
+				</small>
+			) : null}
 			<div className="row">
 				<div className="col-6">
 					<Field name="hstsEnabled">
 						{({ field }: any) => (
-							<label className="form-check form-switch mt-1">
+							<label className="form-check form-switch mt-1" htmlFor="hstsEnabled">
 								<input
+									id="hstsEnabled"
 									className={hstsEnabled ? toggleEnabled : toggleClasses}
 									type="checkbox"
 									checked={!!hstsEnabled}
@@ -103,8 +135,9 @@ export function SSLOptionsFields({
 				<div className="col-6">
 					<Field name="hstsSubdomains">
 						{({ field }: any) => (
-							<label className="form-check form-switch mt-1">
+							<label className="form-check form-switch mt-1" htmlFor="hstsSubdomains">
 								<input
+									id="hstsSubdomains"
 									className={hstsSubdomains ? toggleEnabled : toggleClasses}
 									type="checkbox"
 									checked={!!hstsSubdomains}

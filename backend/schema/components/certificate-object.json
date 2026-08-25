@@ -16,6 +16,11 @@
 		"owner_user_id": {
 			"$ref": "../common.json#/properties/user_id"
 		},
+		"is_deleted": {
+			"type": "boolean",
+			"description": "Whether the certificate has been soft-deleted",
+			"readOnly": true
+		},
 		"provider": {
 			"$ref": "../common.json#/properties/ssl_provider"
 		},

@@ -356,8 +356,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS pro subdomény"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 zůstává povoleno jako záložní protokol."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "Podpora HTTP/2"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Podpora HTTP/3 / QUIC"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Použít DNS výzvu"
@@ -416,11 +422,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forkněte mě na GitHubu"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Doba uložení prostředků v mezipaměti (sekundy)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Příklady: 3600 = 1 hodina, 21600 = 6 hodin, 86400 = 1 den."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokovat běžné exploity"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Uložit zdroje do mezipaměti"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Komprese Gzip"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Zachovat cestu"
@@ -436,6 +451,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schéma"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Úroveň komprese"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Další typy MIME"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html je při zapnutém gzip vždy komprimován. Nevybírejte již komprimované formáty souborů."
 	},
 	"hosts": {
 		"defaultMessage": "Hostitelé"

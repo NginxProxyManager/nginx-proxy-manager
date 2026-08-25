@@ -359,8 +359,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS-subdomein"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 blijft ingeschakeld als fallback."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2-ondersteuning"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC-ondersteuning"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Forwarded-Proto-headers van upstream vertrouwen"
@@ -422,11 +428,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Maak een Fork op Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Cacheduur voor assets (seconden)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Voorbeelden: 3600 = 1 uur, 21600 = 6 uur, 86400 = 1 dag."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Veelvoorkomende kwetsbaarheden blokkeren"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Assets opslaan"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip-compressie"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Pad behouden"
@@ -442,6 +457,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schema"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Compressieniveau"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Aanvullende MIME-typen"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html wordt altijd gecomprimeerd wanneer gzip is ingeschakeld. Vermijd reeds gecomprimeerde bestandsindelingen."
 	},
 	"hosts": {
 		"defaultMessage": "Hosts"

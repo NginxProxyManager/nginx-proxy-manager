@@ -299,8 +299,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS 서브도메인 포함"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1은 대체 프로토콜로 계속 활성화됩니다."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 지원"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC 지원"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS 챌린지 사용"
@@ -359,11 +365,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "GitHub에서 포크하기"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "에셋 캐시 수명(초)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "예: 3600 = 1시간, 21600 = 6시간, 86400 = 1일."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "일반적인 공격 차단"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "정적 에셋 캐싱"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip 압축"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "요청 경로 유지"
@@ -379,6 +394,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "프로토콜"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "압축 수준"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "추가 MIME 유형"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "gzip이 활성화되면 text/html은 항상 압축됩니다. 이미 압축된 파일 형식은 피하세요."
 	},
 	"hosts": {
 		"defaultMessage": "호스트 목록"

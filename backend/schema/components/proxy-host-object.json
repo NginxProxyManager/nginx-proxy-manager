@@ -13,11 +13,16 @@
 		"certificate_id",
 		"ssl_forced",
 		"caching_enabled",
+		"asset_cache_ttl",
+		"gzip_enabled",
+		"gzip_comp_level",
+		"gzip_types",
 		"block_exploits",
 		"advanced_config",
 		"meta",
 		"allow_websocket_upgrade",
 		"http2_support",
+		"http3_support",
 		"forward_scheme",
 		"enabled",
 		"locations",
@@ -65,6 +70,18 @@
 		"caching_enabled": {
 			"$ref": "../common.json#/properties/caching_enabled"
 		},
+		"asset_cache_ttl": {
+			"$ref": "../common.json#/properties/asset_cache_ttl"
+		},
+		"gzip_enabled": {
+			"$ref": "../common.json#/properties/gzip_enabled"
+		},
+		"gzip_comp_level": {
+			"$ref": "../common.json#/properties/gzip_comp_level"
+		},
+		"gzip_types": {
+			"$ref": "../common.json#/properties/gzip_types"
+		},
 		"block_exploits": {
 			"$ref": "../common.json#/properties/block_exploits"
 		},
@@ -86,6 +103,9 @@
 		},
 		"http2_support": {
 			"$ref": "../common.json#/properties/http2_support"
+		},
+		"http3_support": {
+			"$ref": "../common.json#/properties/http3_support"
 		},
 		"forward_scheme": {
 			"type": "string",

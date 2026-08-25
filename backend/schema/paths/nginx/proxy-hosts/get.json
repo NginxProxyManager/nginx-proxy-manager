@@ -46,6 +46,10 @@
 									"certificate_id": 1,
 									"ssl_forced": false,
 									"caching_enabled": false,
+									"asset_cache_ttl": 1800,
+									"gzip_enabled": true,
+									"gzip_comp_level": 1,
+									"gzip_types": [],
 									"block_exploits": false,
 									"advanced_config": "",
 									"meta": {
@@ -54,6 +58,7 @@
 									},
 									"allow_websocket_upgrade": false,
 									"http2_support": false,
+									"http3_support": false,
 									"forward_scheme": "http",
 									"enabled": true,
 									"locations": [],

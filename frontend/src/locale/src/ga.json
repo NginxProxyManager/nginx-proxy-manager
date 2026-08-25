@@ -287,8 +287,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "Fo-fhearainn HSTS"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "Fanann HTTP/1.1 cumasaithe mar chúltaca."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "Tacaíocht HTTP/2"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Tacaíocht HTTP/3 / QUIC"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Úsáid Dúshlán DNS"
@@ -347,11 +353,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forc mé ar Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Saolré taisce sócmhainní (soicindí)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Samplaí: 3600 = 1 uair, 21600 = 6 huaire, 86400 = 1 lá."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blocáil Easnaimh Choitianta"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Sócmhainní Taisce"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Comhbhrú Gzip"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Cosán a Chaomhnú"
@@ -367,6 +382,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scéim"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Leibhéal comhbhrúite"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Cineálacha MIME breise"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "Déantar text/html a chomhbhrú i gcónaí nuair atá gzip cumasaithe. Seachain formáidí comhaid atá comhbhrúite cheana."
 	},
 	"hosts": {
 		"defaultMessage": "Óstaigh"

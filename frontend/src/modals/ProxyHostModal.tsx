@@ -13,6 +13,7 @@ import {
 	Loading,
 	LocationsFields,
 	NginxConfigField,
+	ProxyPerformanceOptionsFields,
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
@@ -78,6 +79,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							forwardPort: data?.forwardPort || undefined,
 							accessListId: data?.accessListId || 0,
 							cachingEnabled: data?.cachingEnabled || false,
+							assetCacheTtl: data?.assetCacheTtl ?? 1800,
+							gzipEnabled: data?.gzipEnabled ?? true,
+							gzipCompLevel: data?.gzipCompLevel ?? 1,
+							gzipTypes: data?.gzipTypes ?? [],
 							blockExploits: data?.blockExploits || false,
 							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
 							// Locations tab
@@ -86,6 +91,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
 							http2Support: data?.http2Support || false,
+							http3Support: data?.http3Support || false,
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
 							trustForwardedProto: data?.trustForwardedProto || false,
@@ -259,29 +265,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														<T id="options" />
 													</h4>
 													<div className="divide-y">
-														<div>
-															<label className="row" htmlFor="cachingEnabled">
-																<span className="col">
-																	<T id="host.flags.cache-assets" />
-																</span>
-																<span className="col-auto">
-																	<Field name="cachingEnabled" type="checkbox">
-																		{({ field }: any) => (
-																			<label className="form-check form-check-single form-switch">
-																				<input
-																					{...field}
-																					id="cachingEnabled"
-																					className={cn("form-check-input", {
-																						"bg-lime": field.checked,
-																					})}
-																					type="checkbox"
-																				/>
-																			</label>
-																		)}
-																	</Field>
-																</span>
-															</label>
-														</div>
+														<ProxyPerformanceOptionsFields color="bg-lime" />
 														<div>
 															<label className="row" htmlFor="blockExploits">
 																<span className="col">

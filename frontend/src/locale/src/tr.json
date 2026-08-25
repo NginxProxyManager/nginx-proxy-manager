@@ -287,8 +287,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS Alt Alan Adları"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 yedek protokol olarak etkin kalır."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Desteği"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC Desteği"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge Kullan"
@@ -347,11 +353,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Github'da Fork Yap"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Varlık önbelleği ömrü (saniye)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Örnekler: 3600 = 1 saat, 21600 = 6 saat, 86400 = 1 gün."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Yaygın Saldırıları Engelle"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Varlıkları Önbelleğe Al"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip Sıkıştırması"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Yolu Koru"
@@ -367,6 +382,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Şema"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Sıkıştırma Seviyesi"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Ek MIME Türleri"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "gzip etkinken text/html her zaman sıkıştırılır. Önceden sıkıştırılmış dosya biçimlerinden kaçının."
 	},
 	"hosts": {
 		"defaultMessage": "Host'lar"

@@ -287,8 +287,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS 子域名"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 会保持启用，作为回退协议。"
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 支持"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC 支持"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "信任上游代理传递的协议类型头"
@@ -350,11 +356,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "在 Github 上复刻 (Fork) 本项目"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "资源缓存时长（秒）"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "示例：3600 = 1 小时，21600 = 6 小时，86400 = 1 天。"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "阻止常见攻击"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "缓存资源"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip 压缩"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "保留路径"
@@ -370,6 +385,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "协议"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "压缩级别"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "其他 MIME 类型"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "启用 gzip 时，text/html 始终会被压缩。请避免选择已经压缩的文件格式。"
 	},
 	"hosts": {
 		"defaultMessage": "主机列表"

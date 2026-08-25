@@ -359,8 +359,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS Sub-domains"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 jääb varuprotokollina lubatuks."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Support"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC tugi"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Trust Upstream Forwarded Proto Headers"
@@ -422,11 +428,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Varade vahemälu kestus (sekundites)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Näited: 3600 = 1 tund, 21600 = 6 tundi, 86400 = 1 päev."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache Assets"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip-tihendus"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Preserve Path"
@@ -442,6 +457,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scheme"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Tihendustase"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Täiendavad MIME-tüübid"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html tihendatakse alati, kui gzip on lubatud. Väldi juba tihendatud failivorminguid."
 	},
 	"hosts": {
 		"defaultMessage": "Hosts"

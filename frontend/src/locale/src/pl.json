@@ -290,8 +290,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS dla subdomen"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 pozostaje włączony jako protokół zapasowy."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "Obsługa HTTP/2"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Obsługa HTTP/3 / QUIC"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Użyj wyzwania DNS"
@@ -350,11 +356,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forkuj mnie na Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Czas przechowywania zasobów w pamięci podręcznej (sekundy)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Przykłady: 3600 = 1 godzina, 21600 = 6 godzin, 86400 = 1 dzień."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokuj typowe exploity"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Buforuj zasoby statyczne (ang. cache)"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Kompresja Gzip"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Zachowaj ścieżkę"
@@ -370,6 +385,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schemat"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Poziom kompresji"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Dodatkowe typy MIME"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html jest zawsze kompresowany, gdy gzip jest włączony. Nie wybieraj już skompresowanych formatów plików."
 	},
 	"hosts": {
 		"defaultMessage": "Hosty"

@@ -118,6 +118,11 @@
 			"type": "boolean",
 			"example": true
 		},
+		"http3_support": {
+			"description": "HTTP3 Protocol Support over QUIC",
+			"type": "boolean",
+			"example": false
+		},
 		"block_exploits": {
 			"description": "Should we block common exploits",
 			"type": "boolean",
@@ -127,6 +132,52 @@
 			"description": "Should we cache assets",
 			"type": "boolean",
 			"example": true
+		},
+		"asset_cache_ttl": {
+			"description": "Asset cache lifetime in seconds",
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 31536000,
+			"example": 1800
+		},
+		"gzip_enabled": {
+			"description": "Should responses be compressed with gzip",
+			"type": "boolean",
+			"example": true
+		},
+		"gzip_comp_level": {
+			"description": "Gzip compression level",
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 9,
+			"example": 1
+		},
+		"gzip_types": {
+			"description": "Additional MIME types to compress; text/html is always compressed by Nginx",
+			"type": "array",
+			"maxItems": 20,
+			"uniqueItems": true,
+			"items": {
+				"type": "string",
+				"enum": [
+					"application/atom+xml",
+					"application/javascript",
+					"application/json",
+					"application/ld+json",
+					"application/manifest+json",
+					"application/rss+xml",
+					"application/wasm",
+					"application/xhtml+xml",
+					"application/xml",
+					"font/otf",
+					"font/ttf",
+					"image/svg+xml",
+					"text/css",
+					"text/plain",
+					"text/xml"
+				]
+			},
+			"example": ["application/javascript", "application/json", "text/css"]
 		},
 		"email": {
 			"description": "Email address",

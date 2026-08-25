@@ -18,6 +18,8 @@ RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
+RUN nginx -V 2>&1 | grep -q -- --with-http_v3_module
+
 # Task
 WORKDIR /usr
 RUN curl -sL 'https://taskfile.dev/install.sh' | sh
@@ -38,5 +40,5 @@ RUN ln -s NginxProxyManager.crt 1d0e3f10.0 && update-ca-certificates
 
 WORKDIR /root
 
-EXPOSE 80 81 443
+EXPOSE 80/tcp 81/tcp 443/tcp 443/udp
 ENTRYPOINT [ "/init" ]

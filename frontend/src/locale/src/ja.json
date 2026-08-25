@@ -284,8 +284,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTSサブドメイン"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 はフォールバックとして有効のままです。"
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2サポート"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC サポート"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNSチャレンジを使用"
@@ -344,11 +350,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "アセットキャッシュの有効期間（秒）"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "例: 3600 = 1時間、21600 = 6時間、86400 = 1日。"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "一般的なエクスプロイトをブロックする"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "アセットをキャッシュする"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip 圧縮"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "パスワードは一致する必要があります"
@@ -364,6 +379,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "スキーム"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "圧縮レベル"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "追加の MIME タイプ"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "gzip が有効な場合、text/html は常に圧縮されます。すでに圧縮済みのファイル形式は避けてください。"
 	},
 	"hosts": {
 		"defaultMessage": "ホスト"

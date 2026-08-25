@@ -299,8 +299,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS за поддомейни"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 остава активиран като резервен протокол."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "Поддръжка на HTTP/2"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Поддръжка на HTTP/3 / QUIC"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Използване на DNS Challenge"
@@ -359,11 +365,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork в GitHub"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Време за кеширане на ресурсите (секунди)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Примери: 3600 = 1 час, 21600 = 6 часа, 86400 = 1 ден."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Блокиране на често срещани експлойти"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Кеширане на ресурси"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip компресия"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Запазване на пътя"
@@ -379,6 +394,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Схема"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Ниво на компресия"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Допълнителни MIME типове"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html винаги се компресира, когато gzip е активиран. Избягвайте вече компресирани файлови формати."
 	},
 	"hosts": {
 		"defaultMessage": "Хостове"

@@ -6,6 +6,7 @@ import streamModel from "../models/stream.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
 import internalHost from "./host.js";
+import internalHttp3 from "./http3.js";
 import internalNginx from "./nginx.js";
 
 const omissions = () => {
@@ -39,7 +40,10 @@ const internalStream = {
 				const data_no_domains = structuredClone(data);
 				delete data_no_domains.domain_names;
 
-				return streamModel.query().insertAndFetch(data_no_domains).then(utils.omitRow(omissions()));
+				return internalHttp3.withPort443Lock(async (trx) => {
+					await internalHttp3.assertStreamCanUseUdp443(data_no_domains, trx);
+					return streamModel.query(trx).insertAndFetch(data_no_domains).then(utils.omitRow(omissions()));
+				});
 			})
 			.then((row) => {
 				if (create_certificate) {
@@ -131,40 +135,40 @@ const internalStream = {
 				return row;
 			})
 			.then((row) => {
-				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				thisData = _.assign(
-					{},
-					{
-						domain_names: row.domain_names,
-					},
-					thisData,
-				);
+				return internalNginx.withConfigLock(async () => {
+					const currentRow = await internalStream.get(access, { id: row.id });
+					thisData = _.assign({}, { domain_names: currentRow.domain_names }, thisData);
+					const effectiveStream = _.assign({}, currentRow, thisData);
 
-				return streamModel
-					.query()
-					.patchAndFetchById(row.id, thisData)
-					.then(utils.omitRow(omissions()))
-					.then((saved_row) => {
-						// Add to audit log
-						return internalAuditLog
-							.add(access, {
-								action: "updated",
-								object_type: "stream",
-								object_id: row.id,
-								meta: thisData,
-							})
-							.then(() => {
-								return saved_row;
-							});
+					await internalHttp3.withPort443Lock(async (trx) => {
+						await internalHttp3.assertStreamCanUseUdp443(effectiveStream, trx);
+						await streamModel.query(trx).patchAndFetchById(row.id, thisData);
 					});
-			})
-			.then(() => {
-				return internalStream.get(access, { id: thisData.id, expand: ["owner", "certificate"] }).then((row) => {
-					return internalNginx.configure(streamModel, "stream", row).then((new_meta) => {
-						row.meta = new_meta;
-						return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
+
+					const savedRow = await internalStream.get(access, {
+						id: thisData.id,
+						expand: ["owner", "certificate"],
 					});
+					if (!savedRow.enabled) {
+						await internalNginx.deleteConfig("stream", savedRow);
+						await internalNginx.reloadNow();
+						return _.omit(internalHost.cleanRowCertificateMeta(savedRow), omissions());
+					}
+
+					const newMeta = await internalNginx.configureNow(streamModel, "stream", savedRow);
+					savedRow.meta = newMeta;
+					return _.omit(internalHost.cleanRowCertificateMeta(savedRow), omissions());
 				});
+			})
+			.then((row) => {
+				return internalAuditLog
+					.add(access, {
+						action: "updated",
+						object_type: "stream",
+						object_id: row.id,
+						meta: thisData,
+					})
+					.then(() => row);
 			});
 	},
 
@@ -222,36 +226,23 @@ const internalStream = {
 	delete: (access, data) => {
 		return access
 			.can("streams:delete", data.id)
-			.then(() => {
-				return internalStream.get(access, { id: data.id });
-			})
-			.then((row) => {
+			.then(() => internalNginx.withConfigLock(async () => {
+				const row = await internalStream.get(access, { id: data.id });
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 
-				return streamModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						is_deleted: 1,
-					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("stream", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "deleted",
-							object_type: "stream",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
+				await streamModel.query().where("id", row.id).patch({ is_deleted: 1 });
+				await internalNginx.deleteConfig("stream", row);
+				await internalNginx.reloadNow();
+				return row;
+			}))
+			.then((row) => internalAuditLog.add(access, {
+				action: "deleted",
+				object_type: "stream",
+				object_id: row.id,
+				meta: _.omit(row, omissions()),
+			}))
 			.then(() => {
 				return true;
 			});
@@ -267,13 +258,11 @@ const internalStream = {
 	enable: (access, data) => {
 		return access
 			.can("streams:update", data.id)
-			.then(() => {
-				return internalStream.get(access, {
+			.then(() => internalNginx.withConfigLock(async () => {
+				const row = await internalStream.get(access, {
 					id: data.id,
 					expand: ["certificate", "owner"],
 				});
-			})
-			.then((row) => {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
@@ -283,26 +272,19 @@ const internalStream = {
 
 				row.enabled = 1;
 
-				return streamModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 1,
-					})
-					.then(() => {
-						// Configure nginx
-						return internalNginx.configure(streamModel, "stream", row);
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "enabled",
-							object_type: "stream",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
+				await internalHttp3.withPort443Lock(async (trx) => {
+					await internalHttp3.assertStreamCanUseUdp443(row, trx);
+					await streamModel.query(trx).where("id", row.id).patch({ enabled: 1 });
+				});
+				await internalNginx.configureNow(streamModel, "stream", row);
+				return row;
+			}))
+			.then((row) => internalAuditLog.add(access, {
+				action: "enabled",
+				object_type: "stream",
+				object_id: row.id,
+				meta: _.omit(row, omissions()),
+			}))
 			.then(() => {
 				return true;
 			});
@@ -318,10 +300,8 @@ const internalStream = {
 	disable: (access, data) => {
 		return access
 			.can("streams:update", data.id)
-			.then(() => {
-				return internalStream.get(access, { id: data.id });
-			})
-			.then((row) => {
+			.then(() => internalNginx.withConfigLock(async () => {
+				const row = await internalStream.get(access, { id: data.id });
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
@@ -331,28 +311,17 @@ const internalStream = {
 
 				row.enabled = 0;
 
-				return streamModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 0,
-					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("stream", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "disabled",
-							object_type: "stream",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
+				await streamModel.query().where("id", row.id).patch({ enabled: 0 });
+				await internalNginx.deleteConfig("stream", row);
+				await internalNginx.reloadNow();
+				return row;
+			}))
+			.then((row) => internalAuditLog.add(access, {
+				action: "disabled",
+				object_type: "stream",
+				object_id: row.id,
+				meta: _.omit(row, omissions()),
+			}))
 			.then(() => {
 				return true;
 			});

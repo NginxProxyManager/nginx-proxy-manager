@@ -359,8 +359,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS Underdomener"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 forblir aktivert som reserve."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Støtte"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Støtte for HTTP/3 / QUIC"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Stol på Upstream Forwarded Proto Headers"
@@ -422,11 +428,20 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork meg på Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Levetid for ressursbuffer (sekunder)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Eksempler: 3600 = 1 time, 21600 = 6 timer, 86400 = 1 dag."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokker vanlige utnyttelser"
 	},
 	"host.flags.cache-assets": {
 		"defaultMessage": "Mellomlagre ressurser"
+	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip-komprimering"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Behold sti"
@@ -442,6 +457,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Skjema"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Komprimeringsnivå"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Flere MIME-typer"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html komprimeres alltid når gzip er aktivert. Unngå filformater som allerede er komprimert."
 	},
 	"hosts": {
 		"defaultMessage": "Vertsnavn"
