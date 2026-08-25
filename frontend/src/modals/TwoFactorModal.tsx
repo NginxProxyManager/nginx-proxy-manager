@@ -7,6 +7,7 @@ import { disable2FA, enable2FA, get2FAStatus, regenerateBackupCodes, start2FASet
 import { Button } from "src/components";
 import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
+import QRCode from "react-qr-code";
 
 type Step = "loading" | "status" | "setup" | "verify" | "backup" | "disable";
 
@@ -155,11 +156,10 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<T id="2fa.setup-instructions" />
 					</p>
 					<div className="text-center mb-3">
-						<img
-							src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupData.otpauthUrl)}`}
-							alt="QR Code"
-							className="img-fluid"
-							style={{ maxWidth: "200px" }}
+						<QRCode
+							value={setupData.otpauthUrl}
+							size={200}
+							style={{ maxWidth: "200px", height: "auto" }}
 						/>
 					</div>
 					<label className="mb-3 d-block">
