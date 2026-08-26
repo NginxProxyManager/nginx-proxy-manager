@@ -366,7 +366,8 @@
 		"defaultMessage": "HTTP/2 Support"
 	},
 	"domains.http3-support": {
-		"defaultMessage": "HTTP/3-/QUIC-Unterstützung"
+	"defaultMessage": "HTTP/3-/QUIC-Unterstützung"
+	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Upstream Forwarded-Proto-Header vertrauen"
 	},
