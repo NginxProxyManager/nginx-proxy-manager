@@ -2,11 +2,11 @@
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
 	<img src="https://img.shields.io/badge/version-2.14.0-green.svg?style=for-the-badge">
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/stars/jc21/nginx-proxy-manager.svg?style=for-the-badge">
+	<a href="https://github.com/NginxProxyManager/nginx-proxy-manager/pkgs/container/nginx-proxy-manager">
+		<img src="https://img.shields.io/badge/package-ghcr.io%2Fnginxproxymanager%2Fnginx--proxy--manager-2ea44f.svg?style=for-the-badge">
 	</a>
-	<a href="https://hub.docker.com/repository/docker/jc21/nginx-proxy-manager">
-		<img src="https://img.shields.io/docker/pulls/jc21/nginx-proxy-manager.svg?style=for-the-badge">
+	<a href="https://github.com/wickedyoda/nginx-proxy-manager/pkgs/container/nginx-proxy-manager">
+		<img src="https://img.shields.io/badge/registry-GitHub%20Packages-181717.svg?style=for-the-badge">
 	</a>
 </p>
 
@@ -61,7 +61,7 @@ I won't go in to too much detail here but here are the basics for someone new to
 ```yml
 services:
   app:
-    image: 'docker.io/jc21/nginx-proxy-manager:latest'
+    image: 'ghcr.io/wickedyoda/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
       - '80:80'
@@ -93,7 +93,7 @@ Sometimes this can take a little bit because of the entropy of keys.
 All are welcome to create pull requests for this project, against the `develop` branch. Official releases are created from the `master` branch.
 
 CI is used in this project. All PR's must pass before being considered. After passing,
-docker builds for PR's are available on dockerhub for manual verifications.
+docker builds for PR's are published to GitHub Packages for manual verification.
 
 Documentation within the `develop` branch is available for preview at
 [https://develop.nginxproxymanager.com](https://develop.nginxproxymanager.com)
