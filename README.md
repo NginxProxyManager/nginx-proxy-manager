@@ -2,8 +2,8 @@
 	<img src="https://nginxproxymanager.com/github.png">
 	<br><br>
 	<img src="https://img.shields.io/badge/version-2.14.0-green.svg?style=for-the-badge">
-	<a href="https://github.com/wickedyoda/nginx-proxy-manager/pkgs/container/nginx-proxy-manager">
-		<img src="https://img.shields.io/badge/package-ghcr.io%2Fwickedyoda%2Fnginx--proxy--manager-2ea44f.svg?style=for-the-badge">
+	<a href="https://github.com/NginxProxyManager/nginx-proxy-manager/pkgs/container/nginx-proxy-manager">
+		<img src="https://img.shields.io/badge/package-ghcr.io%2Fnginxproxymanager%2Fnginx--proxy--manager-2ea44f.svg?style=for-the-badge">
 	</a>
 	<a href="https://github.com/wickedyoda/nginx-proxy-manager/pkgs/container/nginx-proxy-manager">
 		<img src="https://img.shields.io/badge/registry-GitHub%20Packages-181717.svg?style=for-the-badge">
