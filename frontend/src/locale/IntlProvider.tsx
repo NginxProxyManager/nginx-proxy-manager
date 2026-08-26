@@ -21,6 +21,7 @@ import langZh from "./lang/zh.json";
 import langTr from "./lang/tr.json";
 import langHu from "./lang/hu.json";
 import langNo from "./lang/no.json";
+import langUk from "./lang/uk.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
@@ -49,6 +50,7 @@ const localeOptions = [
 	["tr", "tr-TR", langTr],
 	["hu", "hu-HU", langHu],
 	["no", "no-NO", langNo],
+	["uk", "uk-UA", langUk],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -73,6 +75,7 @@ const getFlagCodeForLocale = (locale?: string) => {
 		ko: "kr", // Korea
 		cs: "cz", // Czechia
 		ga: "ie", // Ireland (Irish)
+		uk: "ua", // Ukraine
 	};
 
 	if (specialCases[thisLocale]) {
