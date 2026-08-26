@@ -1,0 +1,5 @@
+.qrcode {
+	max-width: "200px";
+	height: "auto";
+	border: 6px solid #fff;
+}
