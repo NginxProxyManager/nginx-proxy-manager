@@ -637,7 +637,7 @@
 		"full_plugin_name": "dns-timeweb",
 		"name": "Timeweb Cloud",
 		"package_name": "certbot-dns-timeweb",
-		"version": "~=1.0.1"
+		"version": "~=2.0.0"
 	},
 	"transip": {
 		"credentials": "dns_transip_username = my_username\ndns_transip_key_file = /etc/letsencrypt/transip-rsa.key",
