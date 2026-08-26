@@ -3,11 +3,12 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
+import QRCode from "react-qr-code";
 import { disable2FA, enable2FA, get2FAStatus, regenerateBackupCodes, start2FASetup } from "src/api/backend";
 import { Button } from "src/components";
 import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
-import QRCode from "react-qr-code";
+import styles from "./TwoFactorModal.module.css";
 
 type Step = "loading" | "status" | "setup" | "verify" | "backup" | "disable";
 
@@ -156,11 +157,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<T id="2fa.setup-instructions" />
 					</p>
 					<div className="text-center mb-3">
-						<QRCode
-							value={setupData.otpauthUrl}
-							size={200}
-							style={{ maxWidth: "200px", height: "auto" }}
-						/>
+						<QRCode value={setupData.otpauthUrl} size={200} className={styles.qrcode} />
 					</div>
 					<label className="mb-3 d-block">
 						<span className="form-label small text-muted">
