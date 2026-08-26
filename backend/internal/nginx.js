@@ -217,7 +217,10 @@ const internalNginx = {
 			}
 
 			// For redirection hosts, if the scheme is not http or https, set it to $scheme
-			if (nice_host_type === "redirection_host" && ['http', 'https'].indexOf(host.forward_scheme.toLowerCase()) === -1) {
+			if (
+				nice_host_type === "redirection_host" &&
+				["http", "https"].indexOf(host.forward_scheme.toLowerCase()) === -1
+			) {
 				host.forward_scheme = "$scheme";
 			}
 

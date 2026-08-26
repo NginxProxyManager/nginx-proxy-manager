@@ -44,18 +44,11 @@ router
 					},
 				},
 				{
-					expand:
-						typeof req.query.expand === "string"
-							? req.query.expand.split(",")
-							: null,
+					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
 					query: typeof req.query.query === "string" ? req.query.query : null,
 				},
 			);
-			const rows = await internalCertificate.getAll(
-				res.locals.access,
-				data.expand,
-				data.query,
-			);
+			const rows = await internalCertificate.getAll(res.locals.access, data.expand, data.query);
 			res.status(200).send(rows);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -70,15 +63,9 @@ router
 	 */
 	.post(async (req, res, next) => {
 		try {
-			const payload = await apiValidator(
-				getValidationSchema("/nginx/certificates", "post"),
-				req.body,
-			);
+			const payload = await apiValidator(getValidationSchema("/nginx/certificates", "post"), req.body);
 			req.setTimeout(900000); // 15 minutes timeout
-			const result = await internalCertificate.create(
-				res.locals.access,
-				payload,
-			);
+			const result = await internalCertificate.create(res.locals.access, payload);
 			res.status(201).send(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -139,16 +126,10 @@ router
 	 */
 	.post(async (req, res, next) => {
 		try {
-			const payload = await apiValidator(
-				getValidationSchema("/nginx/certificates/test-http", "post"),
-				req.body,
-			);
+			const payload = await apiValidator(getValidationSchema("/nginx/certificates/test-http", "post"), req.body);
 			req.setTimeout(60000); // 1 minute timeout
 
-			const result = await internalCertificate.testHttpsChallenge(
-				res.locals.access,
-				payload,
-			);
+			const result = await internalCertificate.testHttpsChallenge(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -224,10 +205,7 @@ router
 				},
 				{
 					certificate_id: req.params.certificate_id,
-					expand:
-						typeof req.query.expand === "string"
-							? req.query.expand.split(",")
-							: null,
+					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
 				},
 			);
 			const row = await internalCertificate.get(res.locals.access, {

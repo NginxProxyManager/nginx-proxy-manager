@@ -1,11 +1,5 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import {
-	createColumnHelper,
-	getCoreRowModel,
-	getSortedRowModel,
-	type SortingState,
-	useReactTable,
-} from "@tanstack/react-table";
+import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import type { ProxyHost } from "src/api/backend";
 import {
@@ -17,6 +11,7 @@ import {
 	HasPermission,
 	TrueFalseFormatter,
 } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
@@ -31,7 +26,7 @@ interface Props {
 	onNew?: () => void;
 }
 export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
-	const columnHelper = createColumnHelper<ProxyHost>();
+	const columnHelper = createColumnHelper<Features, ProxyHost>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
@@ -48,7 +43,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row, {
 				id: "domainNames",
 				header: intl.formatMessage({ id: "column.source" }),
-				sortingFn: (a, b) => {
+				sortFn: (a, b) => {
 					const aVal = a.original.domainNames?.[0] ?? "";
 					const bVal = b.original.domainNames?.[0] ?? "";
 					return aVal.localeCompare(bVal);
@@ -61,7 +56,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row, {
 				id: "forwardHost",
 				header: intl.formatMessage({ id: "column.destination" }),
-				sortingFn: (a, b) => {
+				sortFn: (a, b) => {
 					const aVal = `${a.original.forwardHost}:${a.original.forwardPort}`;
 					const bVal = `${b.original.forwardHost}:${b.original.forwardPort}`;
 					return aVal.localeCompare(bVal);
@@ -165,14 +160,12 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 
 	const [sorting, setSorting] = useState<SortingState>([]);
 
-	const tableInstance = useReactTable<ProxyHost>({
+	const tableInstance = useTable({
+		features,
 		columns,
 		data,
 		state: { sorting },
 		onSortingChange: setSorting,
-		getCoreRowModel: getCoreRowModel(),
-		getSortedRowModel: getSortedRowModel(),
-		rowCount: data.length,
 		meta: {
 			isFetching,
 		},
