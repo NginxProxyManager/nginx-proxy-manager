@@ -686,5 +686,13 @@
 		"name": "RcodeZero",
 		"package_name": "certbot-dns-rcode0",
 		"version": "~=0.0.0.2"
+	},
+	"lws": {
+	  "credentials": "dns_lws_login = 123456\ndns_lws_api_key = YOUR_API_KEY",
+	  "dependencies": "",
+	  "full_plugin_name": "dns-lws",
+	  "name": "LWS",
+	  "package_name": "certbot-dns-lws",
+	  "version": "~=1.0.0"
 	}
 }
