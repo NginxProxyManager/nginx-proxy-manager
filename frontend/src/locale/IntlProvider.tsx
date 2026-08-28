@@ -67,16 +67,17 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 const getFlagCodeForLocale = (locale?: string) => {
 	const thisLocale = (locale || "en").slice(0, 2);
 
-	// only add to this if your flag is different from the locale code
-	const specialCases: Record<string, string> = {
-		ja: "jp", // Japan
-		zh: "cn", // China
-		vi: "vn", // Vietnam
-		ko: "kr", // Korea
-		cs: "cz", // Czechia
-		ga: "ie", // Ireland (Irish)
-		uk: "ua", // Ukraine
-	};
+  // only add to this if your flag is different from the locale code
+  const specialCases: Record<string, string> = {
+    ja: "jp", // Japan
+    zh: "cn", // China
+    vi: "vn", // Vietnam
+    ko: "kr", // Korea
+    cs: "cz", // Czechia
+    ga: "ie", // Ireland (Irish)
+    et: "ee", // Estonia
+    uk: "ua", // Ukraine
+  };
 
 	if (specialCases[thisLocale]) {
 		return specialCases[thisLocale].toUpperCase();
