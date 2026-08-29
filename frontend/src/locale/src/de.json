@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Verbleibende Backup-Codes: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Bewahre diese Backup-Codes an einem sicheren Ort auf. Jeder Code kann nur einmal verwendet werden."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Zwei-Faktor-Authentifizierung deaktivieren"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "2FA deaktivieren"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Das Deaktivieren der Zwei-Faktor-Authentifizierung macht dein Konto weniger sicher."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Deaktiviert"
+	},
+	"2fa.done": {
+		"defaultMessage": "Ich habe meine Backup-Codes gespeichert"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Zwei-Faktor-Authentifizierung aktivieren"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Aktiviert"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Verifizierungscode eingeben"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Verifizierungscode zum Deaktivieren eingeben"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Neu generieren"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Backup-Codes neu generieren"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Gib einen Verifizierungscode ein, um neue Backup-Codes zu generieren. Deine alten Codes werden dadurch ungültig."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Geheimer Schlüssel"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Scanne diesen QR-Code mit deiner Authenticator-App oder gib den geheimen Schlüssel manuell ein."
+	},
+	"2fa.status": {
+		"defaultMessage": "Status"
+	},
+	"2fa.title": {
+		"defaultMessage": "Zwei-Faktor-Authentifizierung"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verifizieren und aktivieren"
+	},
 	"access-list": {
 		"defaultMessage": "Zugriffsliste"
 	},
@@ -23,6 +80,9 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "Keine Authentifizierung erforderlich"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 oder 192.168.1.0/24 oder 2001:0db8::/32"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Satisfy Any"
 	},
@@ -38,11 +98,17 @@
 	"action.add-location": {
 		"defaultMessage": "Pfad hinzufügen"
 	},
+	"action.allow": {
+		"defaultMessage": "Erlauben"
+	},
 	"action.close": {
 		"defaultMessage": "Schließen"
 	},
 	"action.delete": {
 		"defaultMessage": "Löschen"
+	},
+	"action.deny": {
+		"defaultMessage": "Verweigern"
 	},
 	"action.disable": {
 		"defaultMessage": "Deaktivieren"
@@ -67,6 +133,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Protokolle"
+	},
+	"auto": {
+		"defaultMessage": "Automatisch"
 	},
 	"cancel": {
 		"defaultMessage": "Abbrechen"
@@ -127,6 +196,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "DNS Provider"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Anbieter auswählen..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Dieser Abschnitt erfordert einige Kenntnisse über Certbot und seine DNS-Plugins. Bitte konsultieren Sie die jeweilige Plugin-Dokumentation."
@@ -275,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Wildcards werden für diese Zertifizierungsstelle nicht unterstützt."
 	},
+	"domains.advanced": {
+		"defaultMessage": "Erweitert"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Erzwinge SSL"
 	},
@@ -286,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Support"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Upstream Forwarded-Proto-Header vertrauen"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Nutze DNS Challenge"
@@ -354,7 +432,7 @@
 		"defaultMessage": "Pfad beibehalten"
 	},
 	"host.flags.protocols": {
-		"defaultMessage": "Protokole"
+		"defaultMessage": "Protokolle"
 	},
 	"host.flags.websockets-upgrade": {
 		"defaultMessage": "Websockets Support"
@@ -382,6 +460,21 @@
 	},
 	"loading": {
 		"defaultMessage": "Laden…"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Verifizierungscode"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Code eingeben"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Gib den Code aus deiner Authenticator-App ein"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Zwei-Faktor-Authentifizierung"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verifizieren"
 	},
 	"login.title": {
 		"defaultMessage": "Anmelden"
@@ -530,6 +623,24 @@
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}"
 	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Mehrere Auswahlmöglichkeiten"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Dauerhaft verschoben"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Vorübergehend verschoben"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Siehe andere"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Temporäre Umleitung"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Permanente Umleitung"
+	},
 	"role.admin": {
 		"defaultMessage": "Administrator"
 	},
@@ -587,6 +698,9 @@
 	"stream.forward-host": {
 		"defaultMessage": "Forward Host"
 	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com oder 10.0.0.1 oder 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
 	"stream.incoming-port": {
 		"defaultMessage": "Incoming Port"
 	},
@@ -604,6 +718,9 @@
 	},
 	"test": {
 		"defaultMessage": "Test"
+	},
+	"update-available": {
+		"defaultMessage": "Update verfügbar: {latestVersion}"
 	},
 	"user": {
 		"defaultMessage": "User"
@@ -646,6 +763,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Zum Light Mode wechseln"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Zwei-Faktor-Auth"
 	},
 	"username": {
 		"defaultMessage": "Benutzername"
