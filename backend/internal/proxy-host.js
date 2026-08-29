@@ -7,6 +7,7 @@ import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
 import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
+import internalAccessList from "./access-list.js";
 
 const omissions = () => {
 	return ["is_deleted", "owner.is_deleted"];
@@ -347,12 +348,18 @@ const internalProxyHost = {
 						return internalNginx.configure(proxyHostModel, "proxy_host", row);
 					})
 					.then(() => {
-						// Add to audit log
+						// Add to audit log with masked sensitive data
+						const auditRow = _.cloneDeep(row);
+
+						if (auditRow.access_list) {
+							internalAccessList.maskItems(auditRow.access_list);
+						}
+
 						return internalAuditLog.add(access, {
 							action: "enabled",
 							object_type: "proxy-host",
 							object_id: row.id,
-							meta: _.omit(row, omissions()),
+							meta: _.omit(auditRow, omissions()),
 						});
 					});
 			})
