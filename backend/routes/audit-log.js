@@ -86,10 +86,7 @@ router
 				},
 				{
 					event_id: req.params.event_id,
-					expand:
-						typeof req.query.expand === "string"
-							? req.query.expand.split(",")
-							: null,
+					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
 				},
 			);
 
