@@ -20,6 +20,7 @@ const fetchProxyHost = (id: number | "new") => {
 			meta: {},
 			allowWebsocketUpgrade: false,
 			http2Support: false,
+			http3Support: false,
 			forwardScheme: "",
 			enabled: true,
 			hstsEnabled: false,

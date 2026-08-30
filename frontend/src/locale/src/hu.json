@@ -356,8 +356,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS aldomain-ek"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "A HTTP/1.1 tartalék protokollként engedélyezve marad."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 támogatás"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC támogatás"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge használata"

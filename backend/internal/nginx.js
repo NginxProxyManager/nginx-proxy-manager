@@ -3,13 +3,25 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
 import errs from "../lib/error.js";
+import createPromiseQueue from "../lib/promise-queue.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
+import internalHttp3 from "./http3.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const queueConfigLifecycle = createPromiseQueue();
 
 const internalNginx = {
+	/**
+	 * Serializes database state transitions with their generated Nginx configuration.
+	 * Callers that use this lock must use the *Now variants to avoid queueing recursively.
+	 *
+	 * @param {Function} callback
+	 * @returns {Promise<*>}
+	 */
+	withConfigLock: (callback) => queueConfigLifecycle(callback),
+
 	/**
 	 * This will:
 	 * - test the nginx config first to make sure it's OK
@@ -25,79 +37,63 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	configure: (model, host_type, host) => {
+		return internalNginx.withConfigLock(() => internalNginx.configureNow(model, host_type, host));
+	},
+
+	/**
+	 * Configures a host while the caller owns the configuration lifecycle lock.
+	 *
+	 * @param   {Object|String}  model
+	 * @param   {String}         host_type
+	 * @param   {Object}         host
+	 * @returns {Promise}
+	 */
+	configureNow: async (model, host_type, host) => {
 		let combined_meta = {};
+		const persistedHost = await model.query().findById(host.id);
+		const hostIsEnabled = persistedHost?.enabled === true || persistedHost?.enabled === 1;
 
-		return internalNginx
-			.test()
-			.then(() => {
-				// Nginx is OK
-				// We're deleting this config regardless.
-				// Don't throw errors, as the file may not exist at all
-				// Delete the .err file too
-				return internalNginx.deleteConfig(host_type, host, true);
-			})
-			.then(() => {
-				return internalNginx.generateConfig(host_type, host);
-			})
-			.then(() => {
-				// Test nginx again and update meta with result
-				return internalNginx
-					.test()
-					.then(() => {
-						// nginx is ok
-						combined_meta = _.assign({}, host.meta, {
-							nginx_online: true,
-							nginx_err: null,
-						});
+		// A lifecycle operation queued before this one may already have disabled or
+		// deleted the row. Never recreate a stale configuration in that case.
+		if (!persistedHost || persistedHost.is_deleted || !hostIsEnabled) {
+			await internalNginx.deleteConfig(host_type, host, true);
+			await internalNginx.syncHttp3Listener();
+			return _.assign({}, host.meta);
+		}
 
-						return model.query().where("id", host.id).patch({
-							meta: combined_meta,
-						});
-					})
-					.catch((err) => {
-						// Remove the error_log line because it's a docker-ism false positive that doesn't need to be reported.
-						// It will always look like this:
-						//   nginx: [alert] could not open error log file: open() "/var/log/nginx/error.log" failed (6: No such device or address)
+		await internalNginx.test();
+		// We're deleting this config regardless. Don't throw errors if it does not exist.
+		await internalNginx.deleteConfig(host_type, host, true);
+		await internalNginx.generateConfig(host_type, host);
+		await internalNginx.syncHttp3Listener();
 
-						const valid_lines = [];
-						const err_lines = err.message.split("\n");
-						err_lines.map((line) => {
-							if (line.indexOf("/var/log/nginx/error.log") === -1) {
-								valid_lines.push(line);
-							}
-							return true;
-						});
-
-						debug(logger, "Nginx test failed:", valid_lines.join("\n"));
-
-						// config is bad, update meta and delete config
-						combined_meta = _.assign({}, host.meta, {
-							nginx_online: false,
-							nginx_err: valid_lines.join("\n"),
-						});
-
-						return model
-							.query()
-							.where("id", host.id)
-							.patch({
-								meta: combined_meta,
-							})
-							.then(() => {
-								// Keep the failed config as a .err file for inspection
-								return internalNginx.renameConfigAsError(host_type, host);
-							})
-							.then(() => {
-								// The rename removed the live config already, don't touch the .err file
-								return internalNginx.deleteConfig(host_type, host, false);
-							});
-					});
-			})
-			.then(() => {
-				return internalNginx.reload();
-			})
-			.then(() => {
-				return combined_meta;
+		try {
+			await internalNginx.test();
+			combined_meta = _.assign({}, host.meta, {
+				nginx_online: true,
+				nginx_err: null,
 			});
+			await model.query().where("id", host.id).patch({ meta: combined_meta });
+		} catch (err) {
+			// Remove the Docker-specific error_log warning from the user-facing error.
+			const valid_lines = err.message
+				.split("\n")
+				.filter((line) => line.indexOf("/var/log/nginx/error.log") === -1);
+
+			debug(logger, "Nginx test failed:", valid_lines.join("\n"));
+			combined_meta = _.assign({}, host.meta, {
+				nginx_online: false,
+				nginx_err: valid_lines.join("\n"),
+			});
+
+			await model.query().where("id", host.id).patch({ meta: combined_meta });
+			await internalNginx.renameConfigAsError(host_type, host);
+			await internalNginx.deleteConfig(host_type, host, false);
+			await internalNginx.syncHttp3Listener();
+		}
+
+		await internalNginx.reloadNow();
+		return combined_meta;
 	},
 
 	/**
@@ -111,12 +107,27 @@ const internalNginx = {
 	/**
 	 * @returns {Promise}
 	 */
-	reload: () => {
-		return internalNginx.test().then(() => {
-			logger.info("Reloading Nginx");
-			return utils.execFile("/usr/sbin/nginx", ["-s", "reload"]);
-		});
+	reload: () => internalNginx.withConfigLock(() => internalNginx.reloadNow()),
+
+	/**
+	 * Reloads Nginx while the caller owns the configuration lifecycle lock.
+	 *
+	 * @returns {Promise}
+	 */
+	reloadNow: () => {
+		return internalNginx
+			.syncHttp3Listener()
+			.then(() => internalNginx.test())
+			.then(() => {
+				logger.info("Reloading Nginx");
+				return utils.execFile("/usr/sbin/nginx", ["-s", "reload"]);
+			});
 	},
+
+	/**
+	 * @returns {Promise<boolean>}
+	 */
+	syncHttp3Listener: () => internalHttp3.syncListener(internalNginx.ipv6Enabled()),
 
 	/**
 	 * @param   {String}  host_type
@@ -160,6 +171,8 @@ const internalNginx = {
 						{ block_exploits: host.block_exploits },
 						{ allow_websocket_upgrade: host.allow_websocket_upgrade },
 						{ http2_support: host.http2_support },
+						{ http3_support: host.http3_support },
+						{ public_https_port: host.public_https_port },
 						{ hsts_enabled: host.hsts_enabled },
 						{ hsts_subdomains: host.hsts_subdomains },
 						{ access_list: host.access_list },
@@ -191,6 +204,10 @@ const internalNginx = {
 		// Prevent modifying the original object:
 		const host = JSON.parse(JSON.stringify(host_row));
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
+
+		// Values shared by the main template and rendered custom locations.
+		host.ipv6 = internalNginx.ipv6Enabled();
+		host.public_https_port = internalNginx.publicHttpsPort();
 
 		debug(logger, `Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));
 
@@ -242,9 +259,6 @@ const internalNginx = {
 			} else {
 				locationsPromise = Promise.resolve();
 			}
-
-			// Set the IPv6 setting for the host
-			host.ipv6 = internalNginx.ipv6Enabled();
 
 			locationsPromise.then(() => {
 				renderEngine
@@ -437,6 +451,11 @@ const internalNginx = {
 
 		return true;
 	},
+
+	/**
+	 * @returns {number}
+	 */
+	publicHttpsPort: () => internalHttp3.publicHttpsPort(),
 };
 
 export default internalNginx;

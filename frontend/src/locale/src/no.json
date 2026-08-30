@@ -359,8 +359,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS Underdomener"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 forblir aktivert som reserve."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Støtte"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Støtte for HTTP/3 / QUIC"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Stol på Upstream Forwarded Proto Headers"
