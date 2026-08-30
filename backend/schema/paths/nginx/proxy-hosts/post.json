@@ -60,6 +60,9 @@
 						"caching_enabled": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/caching_enabled"
 						},
+						"asset_cache_ttl": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/asset_cache_ttl"
+						},
 						"allow_websocket_upgrade": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/allow_websocket_upgrade"
 						},
@@ -112,6 +115,7 @@
 								"certificate_id": 0,
 								"ssl_forced": false,
 								"caching_enabled": false,
+								"asset_cache_ttl": 1800,
 								"block_exploits": false,
 								"advanced_config": "",
 								"meta": {},

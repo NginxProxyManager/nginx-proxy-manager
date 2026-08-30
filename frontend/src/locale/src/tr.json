@@ -350,6 +350,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Github'da Fork Yap"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Varlık önbelleği ömrü (saniye)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Örnekler: 3600 = 1 saat, 21600 = 6 saat, 86400 = 1 gün."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Yaygın Saldırıları Engelle"
 	},

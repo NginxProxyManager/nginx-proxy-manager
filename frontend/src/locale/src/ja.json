@@ -344,6 +344,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "アセットキャッシュの有効期間（秒）"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "例: 3600 = 1時間、21600 = 6時間、86400 = 1日。"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "一般的なエクスプロイトをブロックする"
 	},

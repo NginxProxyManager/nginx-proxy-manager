@@ -350,6 +350,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "在 Github 上复刻 (Fork) 本项目"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "资源缓存时长（秒）"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "示例：3600 = 1 小时，21600 = 6 小时，86400 = 1 天。"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "阻止常见攻击"
 	},

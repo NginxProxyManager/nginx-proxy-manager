@@ -425,6 +425,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Зробити форк на GitHub"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Asset Cache Lifetime (seconds)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Examples: 3600 = 1 hour, 21600 = 6 hours, 86400 = 1 day."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Блокувати відомі експлойти"
 	},

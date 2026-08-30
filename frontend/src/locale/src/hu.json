@@ -416,6 +416,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork-olj a GitHub-on"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Eszköz-gyorsítótár élettartama (másodperc)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Példák: 3600 = 1 óra, 21600 = 6 óra, 86400 = 1 nap."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Gyakori exploitok blokkolása"
 	},

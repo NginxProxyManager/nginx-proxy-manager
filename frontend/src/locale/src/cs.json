@@ -416,6 +416,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forkněte mě na GitHubu"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Doba uložení prostředků v mezipaměti (sekundy)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Příklady: 3600 = 1 hodina, 21600 = 6 hodin, 86400 = 1 den."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokovat běžné exploity"
 	},
