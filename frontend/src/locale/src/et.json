@@ -428,6 +428,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache Assets"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip-tihendus"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Preserve Path"
 	},
@@ -442,6 +445,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scheme"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Tihendustase"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Täiendavad MIME-tüübid"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html tihendatakse alati, kui gzip on lubatud. Väldi juba tihendatud failivorminguid."
 	},
 	"hosts": {
 		"defaultMessage": "Hosts"
