@@ -80,10 +80,10 @@
     "@babel/helper-string-parser" "^7.29.7"
     "@babel/helper-validator-identifier" "^7.29.7"
 
-"@cypress/grep@^6.0.3":
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/@cypress/grep/-/grep-6.0.3.tgz#c8023bbf996e406fe932e5861674ded0499e8fda"
-  integrity sha512-9pm3HVlbXHp9K9XU3hrnY7OBXsCGKGeCZ49n7yOrXbBlPv6FdSq3ub1KDJQ0AvtIi6A/3zCzwU0uZzq9skG6Ag==
+"@cypress/grep@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@cypress/grep/-/grep-7.0.0.tgz#2cdc92a395017947dc18fe3623fa7334631887e1"
+  integrity sha512-pk1EJaIzt8xQZYA47xvwA2mA+ajGd73mDSIdYeAxYRuyifLVZGhTf1FpuTktjPYGarkdLjWKzDSijGfJnn6lEA==
   dependencies:
     debug "^4.3.4"
     find-test-names "^1.28.18"
