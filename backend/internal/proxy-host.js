@@ -10,7 +10,7 @@ import internalHttp3 from "./http3.js";
 import internalNginx from "./nginx.js";
 
 const omissions = () => {
-	return ["is_deleted", "owner.is_deleted"];
+	return ["is_deleted", "owner.is_deleted", "certificate.is_deleted"];
 };
 
 const cleanHttp3Data = (data) => {
