@@ -2,13 +2,13 @@ import fs from "node:fs";
 import NodeRSA from "node-rsa";
 import { global as logger } from "../logger.js";
 
-const keysFile               = '/data/keys.json';
-const mysqlEngine            = 'mysql2';
-const postgresEngine         = 'pg';
-const sqliteClientName       = 'better-sqlite3';
+const keysFile = "/data/keys.json";
+const mysqlEngine = "mysql2";
+const postgresEngine = "pg";
+const sqliteClientName = "better-sqlite3";
 
 // Not used for new setups anymore but may exist in legacy setups
-const legacySqliteClientName = 'sqlite3';
+const legacySqliteClientName = "sqlite3";
 
 let instance = null;
 
@@ -40,14 +40,20 @@ const configure = () => {
 		}
 	}
 
-	const toBool = (v) => /^(1|true|yes|on)$/i.test((v || '').trim());
+	const toBool = (v) => /^(1|true|yes|on)$/i.test((v || "").trim());
 
-	const envMysqlHost                  = process.env.DB_MYSQL_HOST || null;
-	const envMysqlUser                  = process.env.DB_MYSQL_USER || null;
-	const envMysqlName                  = process.env.DB_MYSQL_NAME || null;
-	const envMysqlSSL                   = toBool(process.env.DB_MYSQL_SSL);
-	const envMysqlSSLRejectUnauthorized	= process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED === undefined ? true : toBool(process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED);
-	const envMysqlSSLVerifyIdentity		= process.env.DB_MYSQL_SSL_VERIFY_IDENTITY === undefined ? true : toBool(process.env.DB_MYSQL_SSL_VERIFY_IDENTITY);
+	const envMysqlHost = process.env.DB_MYSQL_HOST || null;
+	const envMysqlUser = process.env.DB_MYSQL_USER || null;
+	const envMysqlName = process.env.DB_MYSQL_NAME || null;
+	const envMysqlSSL = toBool(process.env.DB_MYSQL_SSL);
+	const envMysqlSSLRejectUnauthorized =
+		process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED === undefined
+			? true
+			: toBool(process.env.DB_MYSQL_SSL_REJECT_UNAUTHORIZED);
+	const envMysqlSSLVerifyIdentity =
+		process.env.DB_MYSQL_SSL_VERIFY_IDENTITY === undefined
+			? true
+			: toBool(process.env.DB_MYSQL_SSL_VERIFY_IDENTITY);
 	if (envMysqlHost && envMysqlUser && envMysqlName) {
 		// we have enough mysql creds to go with mysql
 		logger.info("Using MySQL configuration");
@@ -58,8 +64,10 @@ const configure = () => {
 				port: process.env.DB_MYSQL_PORT || 3306,
 				user: envMysqlUser,
 				password: process.env.DB_MYSQL_PASSWORD,
-				name:     envMysqlName,
-				ssl:      envMysqlSSL ? { rejectUnauthorized: envMysqlSSLRejectUnauthorized, verifyIdentity: envMysqlSSLVerifyIdentity } : false,
+				name: envMysqlName,
+				ssl: envMysqlSSL
+					? { rejectUnauthorized: envMysqlSSLRejectUnauthorized, verifyIdentity: envMysqlSSLVerifyIdentity }
+					: false,
 			},
 			keys: getKeys(),
 		};
@@ -137,7 +145,7 @@ const generateKeys = () => {
 
 	// Write keys config
 	try {
-		fs.writeFileSync(keysFile, JSON.stringify(keys, null, 2));
+		fs.writeFileSync(keysFile, JSON.stringify(keys, null, 2), { mode: 0o600 });
 	} catch (err) {
 		logger.error(`Could not write JWT key pair to config file: ${keysFile}: ${err.message}`);
 		process.exit(1);
@@ -222,7 +230,7 @@ const isDebugMode = () => !!process.env.DEBUG;
  *
  * @returns {boolean}
  */
-const isCI = () => process.env.CI === 'true' && process.env.DEBUG === 'true';
+const isCI = () => process.env.CI === "true" && process.env.DEBUG === "true";
 
 /**
  * Returns a public key
@@ -259,4 +267,16 @@ const useLetsencryptServer = () => {
 	return null;
 };
 
-export { isCI, configHas, configGet, isSqlite, isMysql, isPostgres, isDebugMode, getPrivateKey, getPublicKey, useLetsencryptStaging, useLetsencryptServer };
+export {
+	isCI,
+	configHas,
+	configGet,
+	isSqlite,
+	isMysql,
+	isPostgres,
+	isDebugMode,
+	getPrivateKey,
+	getPublicKey,
+	useLetsencryptStaging,
+	useLetsencryptServer,
+};
