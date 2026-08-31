@@ -376,13 +376,14 @@
 		"version": "~=0.2.2"
 	},
 	"inwx": {
-		"credentials": "dns_inwx_url = https://api.domrobot.com/xmlrpc/\ndns_inwx_username = your_username\ndns_inwx_password = your_password\ndns_inwx_shared_secret = your_shared_secret optional",
-		"dependencies": "",
-		"full_plugin_name": "dns-inwx",
+    "credentials": "dns_inwx_url = https://api.domrobot.com/\ndns_inwx_username = your_username\ndns_inwx_password = your_password\ndns_inwx_shared_secret = your_shared_secret optional",
+		"dependencies": "inwx-domrobot>=3.2.0",
+    "full_plugin_name": "dns-inwx",
 		"name": "INWX",
 		"package_name": "certbot-dns-inwx",
-		"version": "~=2.1.2"
-	},
+    "version": "~=3.0.3",
+
+  },
 	"ionos": {
 		"credentials": "dns_ionos_prefix = myapikeyprefix\ndns_ionos_secret = verysecureapikeysecret\ndns_ionos_endpoint = https://api.hosting.ionos.com",
 		"dependencies": "",
