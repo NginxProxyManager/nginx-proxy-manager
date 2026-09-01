@@ -1471,10 +1471,10 @@ ms@^2.1.1, ms@^2.1.3:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-mysql2@^3.23.4:
-  version "3.23.4"
-  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.23.4.tgz#33550efbf42f05f8b1ecea98b214010680766112"
-  integrity sha512-J1Rgl8Oy5iw3mOBjKeTMQ3cJNjMYtJYavQVXShsMtSj9rKV8Q1+QaGKNJqDVQFcNINqYYp6Vxd90r69cCoBxBA==
+mysql2@^3.24.2:
+  version "3.24.2"
+  resolved "https://registry.yarnpkg.com/mysql2/-/mysql2-3.24.2.tgz#7a3cb17bfa00a354be97cd6d0a37ba4592da5767"
+  integrity sha512-l9kXeKGwd6VCbSjmpO/bLWb+YCYpbvE4whte8ec6InXebvCNyEEydyRCnRU+TSHNqRLJ8B+Tk1uWb+vMCJgJzA==
   dependencies:
     aws-ssl-profiles "^1.1.2"
     generate-function "^2.3.1"
