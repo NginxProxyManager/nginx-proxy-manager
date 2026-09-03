@@ -1,0 +1,37 @@
+{
+	"operationId": "getLocalAuth",
+	"summary": "Check whether email and password sign in is enabled",
+	"tags": ["auth-providers"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"local_enabled": true
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"required": ["local_enabled"],
+						"additionalProperties": false,
+						"properties": {
+							"local_enabled": {
+								"type": "boolean",
+								"example": true
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,103 @@
+{
+	"operationId": "getAuthProviderSync",
+	"summary": "Get the directory sync status for a provider",
+	"tags": [
+		"auth-providers"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"admin"
+			]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Authentication Provider ID",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"required": [
+							"supported",
+							"enabled",
+							"running"
+						],
+						"additionalProperties": false,
+						"properties": {
+							"supported": {
+								"type": "boolean",
+								"description": "Only LDAP providers can be enumerated",
+								"example": true
+							},
+							"enabled": {
+								"type": "boolean",
+								"example": true
+							},
+							"running": {
+								"type": "boolean",
+								"example": false
+							},
+							"last_result": {
+								"oneOf": [
+									{
+										"$ref": "../../../../components/auth-sync-result.json"
+									},
+									{
+										"type": "null"
+									}
+								],
+								"example": {
+									"provider_id": 1,
+									"started_on": "2026-08-22T10:06:15.644Z",
+									"finished_on": "2026-08-22T10:06:15.724Z",
+									"ok": true,
+									"entries": 128,
+									"created": 3,
+									"updated": 125,
+									"disabled": 1,
+									"skipped": 2,
+									"failed": 0
+								}
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"supported": true,
+								"enabled": true,
+								"running": false,
+								"last_result": {
+									"provider_id": 1,
+									"started_on": "2026-08-22T10:06:15.644Z",
+									"finished_on": "2026-08-22T10:06:15.724Z",
+									"ok": true,
+									"entries": 128,
+									"created": 3,
+									"updated": 125,
+									"disabled": 1,
+									"skipped": 2,
+									"failed": 0
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

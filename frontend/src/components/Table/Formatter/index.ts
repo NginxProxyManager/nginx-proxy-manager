@@ -1,4 +1,5 @@
 export * from "./AccessListformatter";
+export * from "./AuthSourceFormatter";
 export * from "./CertificateFormatter";
 export * from "./CertificateInUseFormatter";
 export * from "./DateFormatter";

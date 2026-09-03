@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import batchflow from "batchflow";
 import _ from "lodash";
+import { invalidate as invalidateAccessCache, verify } from "../lib/auth/access-verify.js";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { access as logger } from "../logger.js";
@@ -9,6 +10,7 @@ import accessListAuthModel from "../models/access_list_auth.js";
 import accessListClientModel from "../models/access_list_client.js";
 import proxyHostModel from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
+import internalAuthProvider from "./auth-provider.js";
 import internalNginx from "./nginx.js";
 
 const omissions = () => {
@@ -29,6 +31,8 @@ const internalAccessList = {
 				name: data.name,
 				satisfy_any: data.satisfy_any,
 				pass_auth: data.pass_auth,
+				auth_provider_ids: data.auth_provider_ids || [],
+				allowed_groups: data.allowed_groups || [],
 				owner_user_id: access.token.getUserId(1),
 			})
 			.then(utils.omitRow(omissions()));
@@ -108,11 +112,16 @@ const internalAccessList = {
 
 		// patch name if specified
 		if (typeof data.name !== "undefined" && data.name) {
-			await accessListModel.query().where({ id: data.id }).patch({
-				name: data.name,
-				satisfy_any: data.satisfy_any,
-				pass_auth: data.pass_auth,
-			});
+			await accessListModel
+				.query()
+				.where({ id: data.id })
+				.patch({
+					name: data.name,
+					satisfy_any: data.satisfy_any,
+					pass_auth: data.pass_auth,
+					auth_provider_ids: data.auth_provider_ids || [],
+					allowed_groups: data.allowed_groups || [],
+				});
 		}
 
 		// Check for items and add/update/remove them
@@ -391,6 +400,49 @@ const internalAccessList = {
 	},
 
 	/**
+	 * Answers whether a set of HTTP Basic credentials may pass an access list.
+	 *
+	 * Called by nginx as a subrequest for every request to a protected site, so
+	 * it has to stay cheap: results are cached, and a list with no providers
+	 * never reaches here at all because nginx handles it with a htpasswd file.
+	 *
+	 * Deliberately unauthenticated. It is the site visitor's credentials being
+	 * checked, not an administrator's, and the answer is only ever yes or no.
+	 *
+	 * @param   {Integer} listId
+	 * @param   {String}  username
+	 * @param   {String}  password
+	 * @returns {Promise<Object>} { allowed, via }
+	 */
+	verifyCredentials: async (listId, username, password) => {
+		const id = Number.parseInt(listId, 10);
+		if (Number.isNaN(id)) {
+			return { allowed: false, reason: "unknown access list" };
+		}
+
+		const list = await accessListModel
+			.query()
+			.where("id", id)
+			.andWhere("is_deleted", 0)
+			.withGraphFetched("[items]")
+			.first();
+
+		if (!list) {
+			return { allowed: false, reason: "unknown access list" };
+		}
+
+		const wanted = list.auth_provider_ids || [];
+		let providers = [];
+
+		if (wanted.length) {
+			const enabled = await internalAuthProvider.getEnabled();
+			providers = enabled.filter((p) => wanted.includes(p.id));
+		}
+
+		return await verify(list, providers, username, password);
+	},
+
+	/**
 	 * @param   {Object}  list
 	 * @param   {Integer} list.id
 	 * @returns {String}
@@ -408,6 +460,9 @@ const internalAccessList = {
 	 */
 	build: async (list) => {
 		logger.info(`Building Access file #${list.id} for: ${list.name}`);
+
+		// The list has changed, so any decision made under the old rules is stale
+		invalidateAccessCache(list.id);
 
 		const htpasswdFile = internalAccessList.getFilename(list);
 

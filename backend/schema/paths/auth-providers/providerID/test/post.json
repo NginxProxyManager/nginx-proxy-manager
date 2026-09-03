@@ -1,0 +1,50 @@
+{
+	"operationId": "testAuthProvider",
+	"summary": "Verify that an authentication provider is reachable and correctly configured",
+	"tags": ["auth-providers"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Authentication Provider ID",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"valid": true
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"required": ["valid"],
+						"additionalProperties": false,
+						"properties": {
+							"valid": {
+								"type": "boolean",
+								"example": true
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

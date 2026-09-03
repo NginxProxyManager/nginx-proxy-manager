@@ -1,7 +1,17 @@
 {
 	"type": "object",
 	"description": "Access List object",
-	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "meta", "satisfy_any", "pass_auth", "proxy_host_count"],
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"owner_user_id",
+		"name",
+		"meta",
+		"satisfy_any",
+		"pass_auth",
+		"proxy_host_count"
+	],
 	"properties": {
 		"id": {
 			"$ref": "../common.json#/properties/id"
@@ -36,6 +46,34 @@
 			"type": "integer",
 			"minimum": 0,
 			"example": 3
+		},
+		"auth_provider_ids": {
+			"type": "array",
+			"description": "Authentication providers whose users may sign in to sites protected by this list. Only LDAP providers can be used: SAML and OAuth authenticate by redirecting a browser, which an nginx subrequest cannot do.",
+			"items": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"example": [
+				1
+			]
+		},
+		"allowed_groups": {
+			"type": "array",
+			"description": "When set, a provider user must also belong to one of these groups. Entries typed into the list itself are unaffected.",
+			"items": {
+				"type": "string",
+				"minLength": 1
+			},
+			"example": [
+				"cn=vpn-users,ou=groups,dc=example,dc=com"
+			]
+		},
+		"provider_auth": {
+			"type": "boolean",
+			"readOnly": true,
+			"description": "Whether this list defers credential checking to a provider, rather than a htpasswd file",
+			"example": true
 		}
 	}
 }

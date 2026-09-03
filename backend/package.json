@@ -9,11 +9,14 @@
 	"scripts": {
 		"lint": "biome lint",
 		"prettier": "biome format --write .",
-		"validate-schema": "node validate-schema.js",
-		"regenerate-config": "node scripts/regenerate-config"
+		"regenerate-config": "node scripts/regenerate-config",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"validate-schema": "node validate-schema.js"
 	},
 	"dependencies": {
 		"@apidevtools/json-schema-ref-parser": "^16.0.0",
+		"@node-saml/node-saml": "^5.1.0",
 		"ajv": "^8.20.0",
 		"archiver": "^8.0.0",
 		"batchflow": "^0.4.0",
@@ -27,6 +30,7 @@
 		"gravatar": "^1.8.2",
 		"jsonwebtoken": "^9.0.3",
 		"knex": "3.3.0",
+		"ldapts": "^9.0.0",
 		"liquidjs": "10.29.0",
 		"lodash": "^4.18.1",
 		"moment": "^2.30.1",
@@ -44,7 +48,8 @@
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^12.1.0",
 		"@biomejs/biome": "^2.5.10",
-		"nodemon": "^3.1.14"
+		"nodemon": "^3.1.14",
+		"vitest": "^4.1.8"
 	},
 	"signale": {
 		"displayDate": true,
