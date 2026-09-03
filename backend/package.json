@@ -34,7 +34,7 @@
 		"liquidjs": "10.29.0",
 		"lodash": "^4.18.1",
 		"moment": "^2.30.1",
-		"mysql2": "^3.23.4",
+		"mysql2": "^3.24.2",
 		"node-rsa": "^2.0.0",
 		"objection": "3.1.5",
 		"otplib": "^13.5.0",
