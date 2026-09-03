@@ -13,7 +13,7 @@
 		"regenerate-config": "node scripts/regenerate-config"
 	},
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "^16.0.0",
+		"@apidevtools/json-schema-ref-parser": "^16.0.1",
 		"ajv": "^8.20.0",
 		"archiver": "^8.0.0",
 		"batchflow": "^0.4.0",
