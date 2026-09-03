@@ -44,6 +44,9 @@
 	"action.allow": {
 		"defaultMessage": "İzin Ver"
 	},
+	"action.clear": {
+		"defaultMessage": "Temizle"
+	},
 	"action.close": {
 		"defaultMessage": "Kapat"
 	},
@@ -385,6 +388,12 @@
 	},
 	"loading": {
 		"defaultMessage": "Yükleniyor…"
+	},
+	"location.advanced-config": {
+		"defaultMessage": "Özel Nginx yapılandırması var"
+	},
+	"location.filter": {
+		"defaultMessage": "Yol veya hedefe göre filtrele"
 	},
 	"login.title": {
 		"defaultMessage": "Hesabınıza giriş yapın"

@@ -1,6 +1,6 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
+import { useMemo, useState } from "react";
 import type { DeadHost } from "src/api/backend";
 import {
 	CertificateFormatter,
@@ -10,6 +10,7 @@ import {
 	HasPermission,
 	TrueFalseFormatter,
 } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { DEAD_HOSTS, MANAGE } from "src/modules/Permissions";
@@ -24,11 +25,12 @@ interface Props {
 	onNew?: () => void;
 }
 export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
-	const columnHelper = createColumnHelper<DeadHost>();
+	const columnHelper = createColumnHelper<Features, DeadHost>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
+				enableSorting: false,
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
@@ -40,6 +42,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row, {
 				id: "domainNames",
 				header: intl.formatMessage({ id: "column.source" }),
+				sortFn: (a, b) => {
+					const aVal = a.original.domainNames?.[0] ?? "";
+					const bVal = b.original.domainNames?.[0] ?? "";
+					return aVal.localeCompare(bVal);
+				},
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
@@ -47,6 +54,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {
 				id: "certificate",
+				enableSorting: false,
 				header: intl.formatMessage({ id: "column.ssl" }),
 				cell: (info: any) => {
 					return <CertificateFormatter certificate={info.getValue()} />;
@@ -128,11 +136,14 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 		[columnHelper, onDelete, onEdit, onDisableToggle],
 	);
 
-	const tableInstance = useReactTable<DeadHost>({
+	const [sorting, setSorting] = useState<SortingState>([]);
+
+	const tableInstance = useTable({
+		features,
 		columns,
 		data,
-		getCoreRowModel: getCoreRowModel(),
-		rowCount: data.length,
+		state: { sorting },
+		onSortingChange: setSorting,
 		meta: {
 			isFetching,
 		},

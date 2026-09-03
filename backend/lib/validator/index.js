@@ -1,4 +1,4 @@
-import Ajv from 'ajv/dist/2020.js';
+import Ajv from "ajv/dist/2020.js";
 import _ from "lodash";
 import commonDefinitions from "../../schema/common.json" with { type: "json" };
 import errs from "../error.js";

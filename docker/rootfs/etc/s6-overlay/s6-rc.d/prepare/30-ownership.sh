@@ -46,6 +46,12 @@ for loc in "${locations[@]}"; do
 	chownit "$loc"
 done
 
+# Ensure the JWT key file is owned by the runtime user, even when the /data
+# directory ownership already matches PUID:PGID (chownit skips recursion then)
+if [ -f /data/keys.json ]; then
+	chown "$PUID:$PGID" /data/keys.json
+fi
+
 if [ "$(is_true "${SKIP_CERTBOT_OWNERSHIP:-}")" = '1' ]; then
 	log_info 'Skipping ownership change of certbot directories'
 else
