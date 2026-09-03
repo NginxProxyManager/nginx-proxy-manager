@@ -119,10 +119,7 @@ export default function (tokenString) {
 
 					// Proxy Hosts
 					case "proxy_hosts": {
-						const query = proxyHostModel
-							.query()
-							.select("id")
-							.andWhere("is_deleted", 0);
+						const query = proxyHostModel.query().select("id").andWhere("is_deleted", 0);
 
 						if (permissions.visibility === "user") {
 							query.andWhere("owner_user_id", tokenUserId);
@@ -271,7 +268,7 @@ export default function (tokenString) {
 				err.permission = permission;
 				err.permission_data = data;
 				logger.error(permission, data, err.message);
-				throw errs.PermissionError("Permission Denied", err);
+				throw new errs.PermissionError("Permission Denied", err);
 			}
 		},
 	};

@@ -54,9 +54,7 @@ const internalDeadHost = {
 			thisData.advanced_config = "";
 		}
 
-		const row = await deadHostModel.query()
-			.insertAndFetch(thisData)
-			.then(utils.omitRow(omissions()));
+		const row = await deadHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 
 		// Add to audit log
 		await internalAuditLog.add(access, {
@@ -153,12 +151,8 @@ const internalDeadHost = {
 
 		thisData = internalHost.cleanSslHstsData(thisData, row);
 
-
 		// do the row update
-		await deadHostModel
-			.query()
-			.where({id: data.id})
-			.patch(data);
+		await deadHostModel.query().where({ id: data.id }).patch(data);
 
 		// Add to audit log
 		await internalAuditLog.add(access, {
@@ -168,15 +162,18 @@ const internalDeadHost = {
 			meta: thisData,
 		});
 
-		const thisRow = await internalDeadHost
-			.get(access, {
-				id: thisData.id,
-				expand: ["owner", "certificate"],
-			});
+		const thisRow = await internalDeadHost.get(access, {
+			id: thisData.id,
+			expand: ["owner", "certificate"],
+		});
 
 		// Configure nginx
-		const newMeta = await internalNginx.configure(deadHostModel, "dead_host", row);
-		row.meta = newMeta;
+		if (!thisRow.enabled) {
+			// No need to add nginx config if host is disabled
+			return _.omit(internalHost.cleanRowCertificateMeta(thisRow), omissions());
+		}
+		const newMeta = await internalNginx.configure(deadHostModel, "dead_host", thisRow);
+		thisRow.meta = newMeta;
 		return _.omit(internalHost.cleanRowCertificateMeta(thisRow), omissions());
 	},
 
@@ -206,7 +203,7 @@ const internalDeadHost = {
 		}
 
 		const row = await query.then(utils.omitRow(omissions()));
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 		// Custom omissions
@@ -224,18 +221,15 @@ const internalDeadHost = {
 	 * @returns {Promise}
 	 */
 	delete: async (access, data) => {
-		await access.can("dead_hosts:delete", data.id)
+		await access.can("dead_hosts:delete", data.id);
 		const row = await internalDeadHost.get(access, { id: data.id });
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 
-		await deadHostModel
-			.query()
-			.where("id", row.id)
-			.patch({
-				is_deleted: 1,
-			});
+		await deadHostModel.query().where("id", row.id).patch({
+			is_deleted: 1,
+		});
 
 		// Delete Nginx Config
 		await internalNginx.deleteConfig("dead_host", row);
@@ -259,12 +253,12 @@ const internalDeadHost = {
 	 * @returns {Promise}
 	 */
 	enable: async (access, data) => {
-		await access.can("dead_hosts:update", data.id)
+		await access.can("dead_hosts:update", data.id);
 		const row = await internalDeadHost.get(access, {
 			id: data.id,
 			expand: ["certificate", "owner"],
 		});
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 		if (row.enabled) {
@@ -273,12 +267,9 @@ const internalDeadHost = {
 
 		row.enabled = 1;
 
-		await deadHostModel
-			.query()
-			.where("id", row.id)
-			.patch({
-				enabled: 1,
-			});
+		await deadHostModel.query().where("id", row.id).patch({
+			enabled: 1,
+		});
 
 		// Configure nginx
 		await internalNginx.configure(deadHostModel, "dead_host", row);
@@ -301,9 +292,9 @@ const internalDeadHost = {
 	 * @returns {Promise}
 	 */
 	disable: async (access, data) => {
-		await access.can("dead_hosts:update", data.id)
+		await access.can("dead_hosts:update", data.id);
 		const row = await internalDeadHost.get(access, { id: data.id });
-		if (!row || !row.id) {
+		if (!row?.id) {
 			throw new errs.ItemNotFoundError(data.id);
 		}
 		if (!row.enabled) {
@@ -312,12 +303,9 @@ const internalDeadHost = {
 
 		row.enabled = 0;
 
-		await deadHostModel
-			.query()
-			.where("id", row.id)
-			.patch({
-				enabled: 0,
-			});
+		await deadHostModel.query().where("id", row.id).patch({
+			enabled: 0,
+		});
 
 		// Delete Nginx Config
 		await internalNginx.deleteConfig("dead_host", row);
@@ -342,7 +330,7 @@ const internalDeadHost = {
 	 * @returns {Promise}
 	 */
 	getAll: async (access, expand, searchQuery) => {
-		const accessData = await access.can("dead_hosts:list")
+		const accessData = await access.can("dead_hosts:list");
 		const query = deadHostModel
 			.query()
 			.where("is_deleted", 0)

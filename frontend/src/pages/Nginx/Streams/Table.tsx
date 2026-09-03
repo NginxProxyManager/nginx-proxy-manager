@@ -1,6 +1,6 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
+import { useMemo, useState } from "react";
 import type { Stream } from "src/api/backend";
 import {
 	CertificateFormatter,
@@ -10,6 +10,7 @@ import {
 	TrueFalseFormatter,
 	ValueWithDateFormatter,
 } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { MANAGE, STREAMS } from "src/modules/Permissions";
@@ -24,11 +25,12 @@ interface Props {
 	onNew?: () => void;
 }
 export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onDisableToggle, onNew }: Props) {
-	const columnHelper = createColumnHelper<Stream>();
+	const columnHelper = createColumnHelper<Features, Stream>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
 				id: "owner",
+				enableSorting: false,
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
@@ -40,6 +42,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor((row: any) => row, {
 				id: "incomingPort",
 				header: intl.formatMessage({ id: "column.incoming-port" }),
+				sortFn: (a, b) => (a.original.incomingPort ?? 0) - (b.original.incomingPort ?? 0),
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <ValueWithDateFormatter value={value.incomingPort} createdOn={value.createdOn} />;
@@ -48,6 +51,11 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor((row: any) => row, {
 				id: "forwardHttpCode",
 				header: intl.formatMessage({ id: "column.destination" }),
+				sortFn: (a, b) => {
+					const aVal = `${a.original.forwardingHost}:${a.original.forwardingPort}`;
+					const bVal = `${b.original.forwardingHost}:${b.original.forwardingPort}`;
+					return aVal.localeCompare(bVal);
+				},
 				cell: (info: any) => {
 					const value = info.getValue();
 					return `${value.forwardingHost}:${value.forwardingPort}`;
@@ -55,6 +63,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			}),
 			columnHelper.accessor((row: any) => row, {
 				id: "tcpForwarding",
+				enableSorting: false,
 				header: intl.formatMessage({ id: "column.protocol" }),
 				cell: (info: any) => {
 					const value = info.getValue();
@@ -76,6 +85,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {
 				id: "certificate",
+				enableSorting: false,
 				header: intl.formatMessage({ id: "column.ssl" }),
 				cell: (info: any) => {
 					return <CertificateFormatter certificate={info.getValue()} />;
@@ -130,7 +140,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 										}}
 									>
 										<IconPower size={16} />
-										<T id="action.disable" />
+										<T id={info.row.original.enabled ? "action.disable" : "action.enable"} />
 									</a>
 									<div className="dropdown-divider" />
 									<a
@@ -157,11 +167,14 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 		[columnHelper, onEdit, onDisableToggle, onDelete],
 	);
 
-	const tableInstance = useReactTable<Stream>({
+	const [sorting, setSorting] = useState<SortingState>([]);
+
+	const tableInstance = useTable({
+		features,
 		columns,
 		data,
-		getCoreRowModel: getCoreRowModel(),
-		rowCount: data.length,
+		state: { sorting },
+		onSortingChange: setSorting,
 		meta: {
 			isFetching,
 		},

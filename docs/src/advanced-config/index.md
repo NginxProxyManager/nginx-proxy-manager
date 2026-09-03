@@ -248,3 +248,21 @@ On startup, we generate a resolvers directive for Nginx unless this is defined:
 
 In this configuration, all DNS queries performed by Nginx will fall to the `/etc/hosts` file
 and then the `/etc/resolv.conf`.
+
+
+## Changing the Admin UI port from 81 to something else
+
+First, add an env var to your docker compose file:
+```yml
+    environment:
+      NPM_ADMIN_PORT: '8000'
+```
+
+And you'll probably want to expose that port as well
+
+```yml
+    ports:
+      - '8000:8000'
+```
+
+Then you'll be able to access admin UI at `http://localhost:8000`
