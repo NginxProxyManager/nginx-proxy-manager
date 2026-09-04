@@ -1,0 +1,34 @@
+# Nginx Proxy Manager — Production Example docker-compose.yml
+#
+# This is the recommended base configuration for production deployments.
+# Copy this file to your server and adjust volume paths as needed.
+#
+# HTTP/3 (QUIC) Notes:
+#   - UDP port 443 MUST be explicitly mapped for QUIC handshakes to reach the container.
+#     Docker does not automatically infer both TCP and UDP from a bare `443:443` mapping.
+#   - If you deploy on Unraid using a macvlan/custom br0 network (dedicated container IP),
+#     Docker port mappings are bypassed entirely. In that case, configure your router's
+#     firewall to forward UDP/443 directly to the container's LAN IP address.
+#   - Set NPM_HTTP3_DISABLED=1 to globally suppress HTTP/3 without rebuilding the image.
+#   - Set NPM_PUBLIC_HTTPS_PORT if your public-facing port differs from 443 (e.g. behind
+#     a firewall doing port translation) so that Alt-Svc headers advertise the correct port.
+
+services:
+  app:
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443/tcp"
+      - "443:443/udp"   # HTTP/3 QUIC — UDP must be explicitly mapped
+    environment:
+      # The external HTTPS port advertised in Alt-Svc headers. Change this only if
+      # you expose NPM behind a firewall/NAT that translates to a non-443 public port.
+      NPM_PUBLIC_HTTPS_PORT: 443
+      # Set to '1' to globally disable HTTP/3 at the backend level without any code change.
+      # When enabled, the UI toggle is hidden and no QUIC sockets are allocated.
+      NPM_HTTP3_DISABLED: 0
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt

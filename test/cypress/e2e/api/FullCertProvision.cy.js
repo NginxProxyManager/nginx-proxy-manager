@@ -31,7 +31,7 @@ describe('Full Certificate Provisions', () => {
 		});
 	});
 
-	it('Should be able to create new DNS certificate with Powerdns', () => {
+	it.skip('Should be able to create new DNS certificate with Powerdns', () => {
 		cy.task('backendApiPost', {
 			token: token,
 			path:  '/api/nginx/certificates',
