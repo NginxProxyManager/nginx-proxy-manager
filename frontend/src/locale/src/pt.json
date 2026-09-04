@@ -353,6 +353,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache de Conteúdos Estáticos"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Preservar Caminho"
 	},
@@ -367,6 +370,9 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Esquema"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Hosts"
