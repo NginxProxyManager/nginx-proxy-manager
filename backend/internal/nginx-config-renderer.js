@@ -449,6 +449,31 @@ const canonicalDependencyId = (value) => {
 	return Number.isSafeInteger(numeric) ? numeric : value;
 };
 
+/**
+ * Objection relation rows are Model instances rather than plain objects. Keep
+ * those persistence objects out of the canonical hash boundary and retain only
+ * fields that can change the rendered access policy or its credential file.
+ * Passwords are represented by a one-way fingerprint and never copied into the
+ * render context or returned preview data.
+ */
+const normalizeAccessListDependency = (host, accessList) => {
+	if (!accessList || Number(host.access_list_id || 0) <= 0) return null;
+	return {
+		id: canonicalDependencyId(accessList.id ?? host.access_list_id),
+		clients: (accessList.clients ?? []).map((client) => ({
+			directive: String(client?.directive ?? ""),
+			address: String(client?.address ?? ""),
+		})),
+		items: (accessList.items ?? []).map((item) => ({
+			username: String(item?.username ?? ""),
+			credential_hash:
+				item?.credential_hash ?? sha256(Buffer.from(String(item?.password ?? ""), "utf8")),
+		})),
+		pass_auth: Boolean(accessList.pass_auth ?? true),
+		satisfy_any: Boolean(accessList.satisfy_any ?? false),
+	};
+};
+
 const buildDependencyManifest = (host, dependencies) => ({
 	certificate: dependencies.certificate
 		? {
@@ -484,11 +509,16 @@ const buildDependencyManifest = (host, dependencies) => ({
  */
 export const buildProxyHostCandidate = async ({ host, dependencies = {}, capability = {} }) => {
 	const normalized = normalizeProxyHost(host);
+	const accessList = normalizeAccessListDependency(
+		normalized,
+		dependencies.access_list ?? normalized.access_list,
+	);
+	const normalizedDependencies = { ...dependencies, access_list: accessList };
 	const { capability: effectiveCapability, diagnostics: capabilityDiagnostics } = validateNginxCapability(capability);
 	const effectiveConfig = resolveEffectiveProxyConfig(normalized);
 	const diagnostics = [
 		...capabilityDiagnostics,
-		...(dependencies.includes ?? []).flatMap((entry) => entry.diagnostics ?? []),
+		...(normalizedDependencies.includes ?? []).flatMap((entry) => entry.diagnostics ?? []),
 		...scanAdvancedConfig(normalized.advanced_config),
 		...normalized.locations.flatMap((location) => [
 			...location._normalization_warnings,
@@ -504,7 +534,7 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 			diagnostics,
 		});
 	const templateHash = await readTemplateManifest("proxy_host.conf");
-	const dependencyManifest = buildDependencyManifest(normalized, dependencies);
+	const dependencyManifest = buildDependencyManifest(normalized, normalizedDependencies);
 	const dependencyHash = hashCanonical(dependencyManifest);
 	const capabilityHash = hashCanonical(effectiveCapability);
 	const payload = {
@@ -547,20 +577,20 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 		);
 	const renderHost = {
 		...normalized,
-		certificate: dependencies.certificate ?? normalized.certificate,
-		access_list: dependencies.access_list ?? normalized.access_list,
+		certificate: normalizedDependencies.certificate ?? normalized.certificate,
+		access_list: accessList,
 	};
 	const renderContext = {
 		...renderHost,
 		ipv6: effectiveCapability.ipv6,
 		use_default_location: useDefaultLocation,
-		locations: normalized.locations.map((location, index) => renderLocation(location, renderHost, dependencies.upstreams ?? {}, effectiveConfig.locations[index].effective_flat)).join("\n\n"),
+		locations: normalized.locations.map((location, index) => renderLocation(location, renderHost, normalizedDependencies.upstreams ?? {}, effectiveConfig.locations[index].effective_flat)).join("\n\n"),
 		managed_assets_location: normalized.caching_enabled
-			? renderAssetsLocation(renderHost, effectiveConfig.server.effective_flat, dependencies.upstreams ?? {})
+			? renderAssetsLocation(renderHost, effectiveConfig.server.effective_flat, normalizedDependencies.upstreams ?? {})
 			: "  # npm:feature field=caching_enabled source=user value=off",
 		default_proxy_pass:
 			normalized.default_target.type === "upstream"
-				? `${normalized.default_target.scheme}://${proxyTargetAuthority(normalized.default_target, dependencies.upstreams ?? {})}$request_uri`
+				? `${normalized.default_target.scheme}://${proxyTargetAuthority(normalized.default_target, normalizedDependencies.upstreams ?? {})}$request_uri`
 				: "$forward_scheme://$server:$port$request_uri",
 		managed_nginx_location_options: renderOptions(
 			normalized.nginx_options,

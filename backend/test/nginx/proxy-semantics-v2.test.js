@@ -395,6 +395,40 @@ test("COMPOSITE-001 TLS, cache, websocket, ACL, HSTS, exploit blocking, and moni
 	assert.notEqual(passThrough.dependencyHash, stripped.dependencyHash);
 });
 
+test("ACL-001 database model rows are normalized before dependency hashing", async () => {
+	class DatabaseRow {
+		constructor(value) {
+			Object.assign(this, value);
+		}
+	}
+
+	const accessList = new DatabaseRow({
+		id: 9,
+		items: [new DatabaseRow({ username: "operator", password: "secret-one" })],
+		clients: [new DatabaseRow({ directive: "allow", address: "10.0.0.0/8" })],
+		pass_auth: false,
+		satisfy_any: true,
+	});
+	const candidate = await buildProxyHostCandidate({
+		host: baseHost({ access_list_id: 9 }),
+		dependencies: { access_list: accessList },
+	});
+	const changedCredential = await buildProxyHostCandidate({
+		host: baseHost({ access_list_id: 9 }),
+		dependencies: {
+			access_list: new DatabaseRow({
+				...accessList,
+				items: [new DatabaseRow({ username: "operator", password: "secret-two" })],
+			}),
+		},
+	});
+
+	assert.match(candidate.config, /allow 10\.0\.0\.0\/8;/);
+	assert.match(candidate.config, /auth_basic_user_file\s+\/data\/access\/9;/);
+	assert.notEqual(candidate.dependencyHash, changedCredential.dependencyHash);
+	assert.equal(candidate.configHash, changedCredential.configHash);
+});
+
 test("API-CONTRACT-001 preview and artifact response schemas match runtime payloads", async () => {
 	const compiled = await getCompiledSchema();
 	const previewSchema =

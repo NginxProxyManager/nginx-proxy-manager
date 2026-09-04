@@ -202,8 +202,18 @@ const resolvePreviewCandidate = async (access, payload) => {
 		certificate = await internalCertificate.get(access, { id: host.certificate_id });
 	}
 
-	if (Number.isInteger(host.access_list_id) && host.access_list_id > 0 && accessList?.id !== host.access_list_id) {
-		accessList = await internalAccessList.get(access, { id: host.access_list_id, expand: ["clients", "items"] });
+	if (!Number.isInteger(host.access_list_id) || host.access_list_id <= 0) {
+		accessList = null;
+	} else if (accessList?.id !== host.access_list_id) {
+		// The preview dependency hash must be built from the same credentials that
+		// the deployment path reads. The normal Access List response masks
+		// passwords in-place, which would otherwise make preview and deployment
+		// produce different dependency hashes.
+		accessList = await internalAccessList.get(
+			access,
+			{ id: host.access_list_id, expand: ["clients", "items"] },
+			true,
+		);
 	}
 
 	const targets = prepareProxyTargets(previewFields(payload), persisted || {}).references;
