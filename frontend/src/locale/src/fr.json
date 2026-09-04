@@ -422,6 +422,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forkez-moi sur Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Durée du cache des ressources (secondes)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Exemples : 3600 = 1 heure, 21600 = 6 heures, 86400 = 1 jour."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Bloquer les exploits courants"
 	},

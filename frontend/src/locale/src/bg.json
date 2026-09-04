@@ -359,6 +359,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork в GitHub"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Време за кеширане на ресурсите (секунди)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Примери: 3600 = 1 час, 21600 = 6 часа, 86400 = 1 ден."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Блокиране на често срещани експлойти"
 	},

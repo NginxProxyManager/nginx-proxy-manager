@@ -344,6 +344,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork dự án này trên Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Thời gian lưu bộ nhớ đệm tài nguyên (giây)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Ví dụ: 3600 = 1 giờ, 21600 = 6 giờ, 86400 = 1 ngày."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
 	},

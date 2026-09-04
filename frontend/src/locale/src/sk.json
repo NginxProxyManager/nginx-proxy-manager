@@ -416,6 +416,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forknite ma na GitHube"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Doba uloženia prostriedkov vo vyrovnávacej pamäti (sekundy)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Príklady: 3600 = 1 hodina, 21600 = 6 hodín, 86400 = 1 deň."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokovať bežné exploity"
 	},
