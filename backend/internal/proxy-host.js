@@ -452,6 +452,31 @@ const internalProxyHost = {
 	},
 
 	/**
+	 * @param  {Access}   access
+	 * @param  {Number}   hostId
+	 * @return {Promise}
+	 */
+	getHostForLogs: (access, hostId) => {
+		return access
+			.can("proxy_hosts:logs", hostId)
+			.then((access_data) => {
+				const query = proxyHostModel.query().where("is_deleted", 0).andWhere("id", hostId).first();
+
+				if (access_data.permission_visibility !== "all") {
+					query.andWhere("owner_user_id", access.token.getUserId(1));
+				}
+
+				return query;
+			})
+			.then((row) => {
+				if (!row?.id) {
+					throw new errs.ItemNotFoundError(hostId);
+				}
+				return row;
+			});
+	},
+
+	/**
 	 * Report use
 	 *
 	 * @param   {Number}  user_id
