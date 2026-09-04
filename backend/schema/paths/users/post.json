@@ -1,10 +1,14 @@
 {
 	"operationId": "createUser",
 	"summary": "Create a User",
-	"tags": ["users"],
+	"tags": [
+		"users"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
 	"requestBody": {
@@ -15,7 +19,11 @@
 				"schema": {
 					"type": "object",
 					"additionalProperties": false,
-					"required": ["name", "nickname", "email"],
+					"required": [
+						"name",
+						"nickname",
+						"email"
+					],
 					"properties": {
 						"name": {
 							"$ref": "../../components/user-object.json#/properties/name"
@@ -61,12 +69,10 @@
 								"name": "Jamie Curnow",
 								"nickname": "James",
 								"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-								"roles": ["admin"],
+								"roles": [
+									"admin"
+								],
 								"permissions": {
-									"id": 3,
-									"created_on": "2020-01-30T09:41:04.000Z",
-									"modified_on": "2020-01-30T09:41:04.000Z",
-									"user_id": 2,
 									"visibility": "user",
 									"proxy_hosts": "manage",
 									"redirection_hosts": "manage",
