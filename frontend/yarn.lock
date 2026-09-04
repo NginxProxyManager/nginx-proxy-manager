@@ -2334,10 +2334,10 @@ react-fast-compare@^2.0.1:
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
 
-react-intl@^10.1.22:
-  version "10.1.22"
-  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-10.1.22.tgz#049895605ecee3b3ba2d6428b20f2a6b2d46d5cb"
-  integrity sha512-6PxlTKapYpv/Kl+yYEH06J3T5T7gUVx6STjrWJedeITOAkGEn6sBvb6r0qtjg2pK7PZsom7gXKUFKwNykLoLSQ==
+react-intl@^10.1.23:
+  version "10.1.23"
+  resolved "https://registry.yarnpkg.com/react-intl/-/react-intl-10.1.23.tgz#a0b2414eaacb6cbadc9665cef9f311f1389a1075"
+  integrity sha512-ky6bkRTUAiymd2l+qOhv4eV46gOd4JuAry2qDgSA3mjk49BrmQMPRumtrLzpUYdvfg0+iq5iPjpBGHgM4XtMJg==
   dependencies:
     "@formatjs/icu-messageformat-parser" "3.5.17"
     "@formatjs/intl" "4.1.19"
