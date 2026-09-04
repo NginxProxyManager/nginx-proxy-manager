@@ -287,8 +287,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "Fo-fhearainn HSTS"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "Fanann HTTP/1.1 cumasaithe mar chúltaca."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "Tacaíocht HTTP/2"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Tacaíocht HTTP/3 / QUIC"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Úsáid Dúshlán DNS"

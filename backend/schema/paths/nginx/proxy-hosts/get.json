@@ -54,6 +54,7 @@
 									},
 									"allow_websocket_upgrade": false,
 									"http2_support": false,
+									"http3_support": false,
 									"forward_scheme": "http",
 									"enabled": true,
 									"locations": [],

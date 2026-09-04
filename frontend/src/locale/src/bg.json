@@ -299,8 +299,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS за поддомейни"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 остава активиран като резервен протокол."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "Поддръжка на HTTP/2"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Поддръжка на HTTP/3 / QUIC"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Използване на DNS Challenge"
