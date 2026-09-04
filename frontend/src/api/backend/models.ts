@@ -118,6 +118,9 @@ export interface ProxyHost {
 	certificateId: number;
 	sslForced: boolean;
 	cachingEnabled: boolean;
+	gzipEnabled: boolean;
+	gzipCompLevel: number;
+	gzipTypes: string[];
 	blockExploits: boolean;
 	advancedConfig: string;
 	meta: Record<string, any>;

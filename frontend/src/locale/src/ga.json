@@ -353,6 +353,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Sócmhainní Taisce"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Comhbhrú Gzip"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Cosán a Chaomhnú"
 	},
@@ -367,6 +370,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scéim"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Leibhéal comhbhrúite"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Cineálacha MIME breise"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "Déantar text/html a chomhbhrú i gcónaí nuair atá gzip cumasaithe. Seachain formáidí comhaid atá comhbhrúite cheana."
 	},
 	"hosts": {
 		"defaultMessage": "Óstaigh"

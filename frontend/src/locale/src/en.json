@@ -431,6 +431,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache Assets"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip Compression"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Preserve Path"
 	},
@@ -445,6 +448,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scheme"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Compression Level"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Additional MIME Types"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html is always compressed when gzip is enabled. Avoid already compressed file formats."
 	},
 	"hosts": {
 		"defaultMessage": "Hosts"

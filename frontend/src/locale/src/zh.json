@@ -356,6 +356,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "缓存资源"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip 压缩"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "保留路径"
 	},
@@ -370,6 +373,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "协议"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "压缩级别"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "其他 MIME 类型"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "启用 gzip 时，text/html 始终会被压缩。请避免选择已经压缩的文件格式。"
 	},
 	"hosts": {
 		"defaultMessage": "主机列表"
