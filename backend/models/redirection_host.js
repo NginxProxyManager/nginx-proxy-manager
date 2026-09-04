@@ -3,7 +3,7 @@
 
 import { Model } from "objection";
 import db from "../db.js";
-import { castJsonIfNeed, convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import { castJsonIfNeed, cleanDomainNames, convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
 import Certificate from "./certificate.js";
 import now from "./now_helper.js";
 import User from "./user.js";
@@ -36,15 +36,14 @@ class RedirectionHost extends Model {
 			this.meta = {};
 		}
 
-		this.domain_names.sort();
+		this.domain_names = cleanDomainNames(this.domain_names);
 	}
 
 	$beforeUpdate() {
 		this.modified_on = now();
 
-		// Sort domain_names
 		if (typeof this.domain_names !== "undefined") {
-			this.domain_names.sort();
+			this.domain_names = cleanDomainNames(this.domain_names);
 		}
 	}
 
