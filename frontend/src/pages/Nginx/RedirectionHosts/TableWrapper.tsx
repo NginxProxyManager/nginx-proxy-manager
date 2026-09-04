@@ -99,14 +99,27 @@ export default function TableWrapper() {
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showRedirectionHostModal(id)}
-					onDelete={(id: number) =>
+					onDelete={(id: number) => {
+						const host = data?.find((h) => h.id === id);
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "redirection-host" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["redirection-hosts"], ["redirection-host", id]],
-							children: <T id="object.delete.content" tData={{ object: "redirection-host" }} />,
-						})
-					}
+							children: (
+								<>
+									<T id="object.delete.content" tData={{ object: "redirection-host" }} />
+									{host?.domainNames?.length ? (
+										<div className="mt-2 fw-bold text-break">{host.domainNames.join(", ")}</div>
+									) : null}
+									{host?.forwardDomainName ? (
+										<div className="mt-1 text-muted small">
+											({host.forwardScheme}://{host.forwardDomainName})
+										</div>
+									) : null}
+								</>
+							),
+						});
+					}}
 					onDisableToggle={handleDisableToggle}
 					onNew={() => showRedirectionHostModal("new")}
 				/>
