@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import errs from "../lib/error.js";
 import settingModel from "../models/setting.js";
+import reconfigureDefaultSite from "./default-site.js";
 import internalNginx from "./nginx.js";
 
 const internalSetting = {
@@ -39,34 +40,7 @@ const internalSetting = {
 					}
 
 					// Configure nginx
-					return internalNginx
-						.deleteConfig("default")
-						.then(() => {
-							return internalNginx.generateConfig("default", row);
-						})
-						.then(() => {
-							return internalNginx.test();
-						})
-						.then(() => {
-							return internalNginx.reload();
-						})
-						.then(() => {
-							return row;
-						})
-						.catch((/*err*/) => {
-							internalNginx
-								.deleteConfig("default")
-								.then(() => {
-									return internalNginx.test();
-								})
-								.then(() => {
-									return internalNginx.reload();
-								})
-								.then(() => {
-									// I'm being slack here I know..
-									throw new errs.ValidationError("Could not reconfigure Nginx. Please check logs.");
-								});
-						});
+					return reconfigureDefaultSite(row, internalNginx);
 				}
 				return row;
 			});
