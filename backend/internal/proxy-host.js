@@ -555,7 +555,7 @@ const internalProxyHost = {
 					meta: thisData,
 				});
 
-				await deployProxyHost(row).catch(() => undefined);
+				if (row.enabled) await deployProxyHost(row).catch(() => undefined);
 				return internalProxyHost.get(access, {
 					id: row.id,
 					expand: ["certificate", "owner", "access_list.[clients,items]"],
@@ -1044,6 +1044,19 @@ const internalProxyHost = {
 			return Number.parseInt(row.count, 10);
 		});
 	},
+};
+
+export {
+	assertPortListenerAvailable,
+	assertReferencedUpstreamsAvailable,
+	deployProxyHost,
+	deploymentError,
+	getPortListenerPort,
+	prepareProxyTargets,
+	previewFields,
+	removeProxyHostArtifact,
+	resolveUpstreamDependencies,
+	syncUpstreamReferences,
 };
 
 export default internalProxyHost;

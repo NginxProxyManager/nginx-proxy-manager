@@ -1,19 +1,37 @@
 import https from "node:https";
 import { ProxyAgent } from "proxy-agent";
 import { debug, remoteVersion as logger } from "../logger.js";
-import pjson from "../package.json" with { type: "json" };
+import { formatVersion, parseVersion } from "./app-version.js";
 
-const VERSION_URL = "https://api.github.com/repos/NginxProxyManager/nginx-proxy-manager/releases/latest";
+const VERSION_URL = "https://hub.docker.com/v2/repositories/moailaozi/nginx-proxy-manager/tags?page_size=100";
+
+const compareVersions = (current, latest) => {
+	const currentVersion = parseVersion(current);
+	const latestVersion = parseVersion(latest);
+	if (!currentVersion || !latestVersion) return false;
+
+	for (const part of ["major", "minor", "revision"]) {
+		if (latestVersion[part] > currentVersion[part]) return true;
+		if (latestVersion[part] < currentVersion[part]) return false;
+	}
+	return false;
+};
+
+const latestStableTag = (tags) =>
+	tags
+		.map((tag) => String(tag?.name || "").trim())
+		.filter((tag) => /^v?\d+\.\d+\.\d+$/.test(tag))
+		.sort((left, right) => {
+			if (compareVersions(left, right)) return 1;
+			if (compareVersions(right, left)) return -1;
+			return 0;
+		})[0] || null;
 
 const internalRemoteVersion = {
-	cache_timeout: 1000 * 60 * 15, // 15 minutes
+	cache_timeout: 1000 * 60 * 15,
 	last_result: null,
 	last_fetch_time: null,
 
-	/**
-	 * Fetch the latest version info, using a cached result if within the cache timeout period.
-	 * @return {Promise<{current: string, latest: string, update_available: boolean}>} Version info
-	 */
 	get: async () => {
 		if (
 			!internalRemoteVersion.last_result ||
@@ -21,64 +39,48 @@ const internalRemoteVersion = {
 			Date.now() - internalRemoteVersion.last_fetch_time > internalRemoteVersion.cache_timeout
 		) {
 			const raw = await internalRemoteVersion.fetchUrl(VERSION_URL);
-			const data = JSON.parse(raw);
-			internalRemoteVersion.last_result = data;
+			internalRemoteVersion.last_result = JSON.parse(raw);
 			internalRemoteVersion.last_fetch_time = Date.now();
 		} else {
-			debug(logger, "Using cached remote version result");
+			debug(logger, "Using cached Docker Hub version result");
 		}
 
-		const latestVersion = internalRemoteVersion.last_result.tag_name;
-		const version = pjson.version.split("-").shift().split(".");
-		const currentVersion = `v${version[0]}.${version[1]}.${version[2]}`;
+		const current = formatVersion();
+		const latest = latestStableTag(internalRemoteVersion.last_result.results || []);
 		return {
-			current: currentVersion,
-			latest: latestVersion,
-			update_available: internalRemoteVersion.compareVersions(currentVersion, latestVersion),
+			current,
+			latest,
+			update_available: latest ? compareVersions(current, latest) : false,
 		};
 	},
 
 	fetchUrl: (url) => {
 		const agent = new ProxyAgent();
-		const headers = {
-			"User-Agent": `NginxProxyManager v${pjson.version}`,
-		};
+		const headers = { "User-Agent": `Lorwell-Nginx-Proxy-Manager/${formatVersion()}` };
 
 		return new Promise((resolve, reject) => {
 			logger.info(`Fetching ${url}`);
-			return https
+			https
 				.get(url, { agent, headers }, (res) => {
 					res.setEncoding("utf8");
-					let raw_data = "";
+					let rawData = "";
 					res.on("data", (chunk) => {
-						raw_data += chunk;
+						rawData += chunk;
 					});
 					res.on("end", () => {
-						resolve(raw_data);
+						if (!res.statusCode || res.statusCode < 200 || res.statusCode >= 300) {
+							reject(new Error(`Docker Hub returned HTTP ${res.statusCode || "unknown"}`));
+							return;
+						}
+						resolve(rawData);
 					});
 				})
-				.on("error", (err) => {
-					reject(err);
-				});
+				.on("error", reject);
 		});
 	},
 
-	compareVersions: (current, latest) => {
-		const cleanCurrent = current.replace(/^v/, "");
-		const cleanLatest = latest.replace(/^v/, "");
-
-		const currentParts = cleanCurrent.split(".").map(Number);
-		const latestParts = cleanLatest.split(".").map(Number);
-
-		for (let i = 0; i < Math.max(currentParts.length, latestParts.length); i++) {
-			const curr = currentParts[i] || 0;
-			const lat = latestParts[i] || 0;
-
-			if (lat > curr) return true;
-			if (lat < curr) return false;
-		}
-		return false;
-	},
+	compareVersions,
+	latestStableTag,
 };
 
 export default internalRemoteVersion;

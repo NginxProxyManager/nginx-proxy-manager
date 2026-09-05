@@ -148,7 +148,7 @@ export default {
 				expires: expiry.toISOString(),
 			};
 		}
-		throw new error.AssertionFailedError("Existing token contained invalid user data");
+		throw new errs.AssertionFailedError("Existing token contained invalid user data");
 	},
 
 	/**

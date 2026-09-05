@@ -1,32 +1,31 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
 layout: home
 
 hero:
-  name: "Nginx Proxy Manager"
-  tagline: Expose your services easily and securely
+  name: "Nginx Proxy Manager — Lorwell Fork"
+  tagline: Observable, managed reverse-proxy configuration
   image:
     src: /logo.svg
-    alt: NPM Logo
+    alt: Nginx Proxy Manager logo
   actions:
     - theme: brand
       text: Get Started
       link: /guide/
     - theme: alt
-      text: GitHub
-      link: https://github.com/NginxProxyManager/nginx-proxy-manager
+      text: Current Repository
+      link: https://github.com/Lorwell/nginx-proxy-manager
 
 features:
-  - title: Get Connected
-    details: Expose web services on your network &middot; Free SSL with Let's Encrypt  &middot; Designed with security in mind  &middot; Perfect for home networks
-  - title: Proxy Hosts
-    details: Expose your private network Web services and get connected anywhere.
-  - title: Beautiful UI
-    details: Based on Tabler, the interface is a pleasure to use. Configuring a server has never been so fun.
-  - title: Free SSL
-    details: Built in Let’s Encrypt support allows you to secure your Web services at no cost to you. The certificates even renew themselves!
-  - title: Docker FTW
-    details: Built as a Docker Image, Nginx Proxy Manager only requires a database.
-  - title: Multiple Users
-    details: Configure other users to either view or manage their own hosts. Full access permissions are available.
+  - title: Managed Nginx Configuration
+    details: Validate and preview structured proxy options before safely publishing generated Nginx configuration.
+  - title: Reusable Upstreams
+    details: Define multi-target upstream groups once, inspect references and attach them to proxy hosts.
+  - title: Host Monitoring
+    details: Combine scheduled probes and passive log observations into visible proxy-host health state.
+  - title: Live Logs
+    details: Inspect bounded access and error log output directly from the administration interface.
+  - title: TLS and Access Control
+    details: Issue Let's Encrypt certificates, upload custom certificates and protect services with access lists.
+  - title: Independent Releases
+    details: Version checks, images, documentation and upgrade guidance follow this fork's own release line.
 ---

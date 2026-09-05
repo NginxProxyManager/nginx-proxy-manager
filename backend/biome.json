@@ -12,7 +12,8 @@
             "**/*.tsx",
             "**/*.js",
             "**/*.jsx",
-            "!**/dist/**/*"
+            "!**/dist/**/*",
+            "!**/coverage/**/*"
         ]
     },
     "formatter": {
@@ -87,5 +88,17 @@
                 "noUselessElse": "error"
             }
         }
-    }
+    },
+    "overrides": [
+        {
+            "includes": ["test/**/*.js"],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noThenProperty": "off"
+                    }
+                }
+            }
+        }
+    ]
 }

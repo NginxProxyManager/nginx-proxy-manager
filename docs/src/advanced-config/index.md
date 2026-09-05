@@ -14,7 +14,7 @@ on the `data` and `letsencrypt` folders at startup.
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    image: 'docker.io/moailaozi/nginx-proxy-manager:1.4.0'
     environment:
       PUID: 1000
       PGID: 1000
@@ -101,7 +101,7 @@ secrets:
 
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    image: 'docker.io/moailaozi/nginx-proxy-manager:1.4.0'
     restart: unless-stopped
     ports:
       # Public HTTP Port:
@@ -191,6 +191,31 @@ You can add your custom configuration snippet files at `/data/nginx/custom` as f
 
 Every file is optional.
 
+Managed proxy directives are owned by the structured proxy editor and may be rejected when duplicated in a custom
+include. Use the preview diagnostics to identify a conflict before publishing.
+
+## Fork monitoring and log controls
+
+The defaults work for a single-container deployment. These optional environment variables tune fork-specific
+operational features:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `PROXY_HOST_MONITORING` | `true` | Enables the monitoring service globally. |
+| `PROXY_HOST_MONITOR_ACTIVE` | `true` | Allows scheduled active probes. |
+| `PROXY_HOST_MONITOR_PASSIVE` | `true` | Allows passive metrics ingestion from the Nginx monitor log. |
+| `PROXY_HOST_MONITOR_TICK_MS` | `5000` | Monitoring loop interval in milliseconds. |
+| `PROXY_HOST_MONITOR_MAX_CONCURRENCY` | `10` | Maximum concurrent active probes. |
+| `PROXY_HOST_MONITOR_MAX_INGEST_BYTES` | `4194304` | Maximum passive-log bytes read in one cycle. |
+| `PROXY_HOST_MONITOR_RETENTION_DAYS` | `30` | Detailed monitoring retention in days. |
+| `PROXY_HOST_MONITOR_HOUR_RETENTION_DAYS` | `180` | Hourly aggregate retention in days. |
+| `PROXY_HOST_MONITOR_INGEST_FROM_START` | `false` | On first startup, ingest an existing monitor log from byte zero. |
+| `NGINX_LOGS_DIR` | `/data/logs` | Root directory available to the bounded log viewer. |
+
+`PROXY_HOST_MONITOR_LOG_PATH` may override the passive monitor log path, but it must remain aligned with the Nginx
+logging configuration. `NGINX_LOG_CURSOR_SECRET` and `NPM_NGINX_PREVIEW_TOKEN_SECRET` may be set to stable random
+secrets when cursor/preview tokens must survive a backend restart.
+
 
 ## X-FRAME-OPTIONS Header
 
@@ -216,7 +241,7 @@ You can customise the logrotate configuration through a mount (if your custom co
     - ./logrotate.custom:/etc/logrotate.d/nginx-proxy-manager
 ```
 
-For reference, the default configuration can be found [here](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/docker/rootfs/etc/logrotate.d/nginx-proxy-manager).
+For reference, the default configuration is stored [in this repository](https://github.com/Lorwell/nginx-proxy-manager/blob/dev/docker/rootfs/etc/logrotate.d/nginx-proxy-manager).
 
 ## Enabling the geoip2 module
 

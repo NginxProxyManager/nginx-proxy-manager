@@ -14,12 +14,13 @@ use by the project.
 ## Can I run it on a Raspberry Pi?
 
 Yes! The docker image is multi-arch and is built for a variety of architectures. If yours is
-[not listed](https://hub.docker.com/r/jc21/nginx-proxy-manager/tags) please open a
-[GitHub issue](https://github.com/NginxProxyManager/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
+[not listed](https://hub.docker.com/r/moailaozi/nginx-proxy-manager/tags) please open a
+[GitHub issue](https://github.com/Lorwell/nginx-proxy-manager/issues/new?labels=enhancement).
 
 ## I can't get my service to proxy properly?
 
-Your best bet is to ask the [Reddit community for support](https://www.reddit.com/r/nginxproxymanager/). There's safety in numbers.
+Open an issue in the [fork repository](https://github.com/Lorwell/nginx-proxy-manager/issues) with the image version,
+relevant logs and a minimal reproduction. Upstream communities may not recognize fork-specific behavior.
 
 ## When adding username and password access control to a proxy host, I can no longer login into the app.
 

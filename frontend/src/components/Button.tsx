@@ -1,7 +1,7 @@
 import cn from "classnames";
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-interface Props {
+interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "color" | "onClick" | "type"> {
 	children: ReactNode;
 	className?: string;
 	type?: "button" | "submit";
@@ -38,6 +38,7 @@ function Button({
 	fullWidth,
 	isLoading,
 	disabled,
+	...buttonProps
 }: Props) {
 	const myOnClick = () => {
 		!isLoading && onClick && onClick();
@@ -55,7 +56,7 @@ function Button({
 	);
 
 	return (
-		<button type={type || "button"} className={cns} onClick={myOnClick} disabled={disabled}>
+		<button {...buttonProps} type={type || "button"} className={cns} onClick={myOnClick} disabled={disabled}>
 			{children}
 		</button>
 	);

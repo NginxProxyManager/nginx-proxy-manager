@@ -72,7 +72,7 @@ app.use("/", mainRoutes);
 
 // production error handler
 // no stacktraces leaked to user
-app.use((err, req, res, _) => {
+const errorHandler = (err, req, res, _) => {
 	const payload = {
 		error: {
 			code: err.status || 500,
@@ -108,6 +108,9 @@ app.use((err, req, res, _) => {
 	}
 
 	res.status(err.status || 500).send(payload);
-});
+};
 
+app.use(errorHandler);
+
+export { errorHandler };
 export default app;

@@ -1,5 +1,8 @@
-import { formatDateTime, getFlagCodeForLocale } from "src/locale";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { changeLocale, formatDateTime, getFlagCodeForLocale, getLocale, localeOptions, T } from "src/locale";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+
+afterEach(cleanup);
 
 describe("DateFormatter", () => {
 	// Keep a reference to the real Intl to restore later
@@ -95,5 +98,28 @@ describe("getFlagCodeForLocale", () => {
 	it("falls back to EN when no locale is provided", () => {
 		expect(getFlagCodeForLocale()).toBe("EN");
 		expect(getFlagCodeForLocale(undefined)).toBe("EN");
+	});
+});
+
+describe("locale runtime", () => {
+	it("reads, changes, and falls back across supported and unsupported locales", () => {
+		window.localStorage.removeItem("locale");
+		document.documentElement.lang = "en-US";
+		expect(getLocale()).toBe("en-US");
+		expect(getLocale(true)).toBe("en");
+		changeLocale("zh-CN");
+		expect(window.localStorage.getItem("locale")).toBe("zh-CN");
+		expect(document.documentElement.lang).toBe("zh-CN");
+		const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined);
+		changeLocale("xx-XX");
+		consoleError.mockRestore();
+		expect(getLocale()).toBe("xx-XX");
+		expect(localeOptions.length).toBeGreaterThan(20);
+	});
+
+	it("renders translated parameters and translated object names", () => {
+		changeLocale("en");
+		render(<T id="object.add" data={{ count: 2 }} tData={{ object: "proxy-host" }} />);
+		expect(screen.getByText(/Add Proxy Host/i)).toHaveAttribute("data-translation-id", "object.add");
 	});
 });

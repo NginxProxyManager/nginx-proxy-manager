@@ -19,6 +19,8 @@ const TEMPLATE_VERSION = "nginx-config-renderer-v4";
 const PROTECTED_HEADERS = new Set(["host", "x-forwarded-scheme", "x-forwarded-proto", "x-forwarded-for", "x-real-ip"]);
 
 const quote = (value) => `"${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\$/g, "\\$")}"`;
+// Location regexes are compiled as PCRE, not expanded as complex values: preserve the $ anchor.
+const quoteRegex = (value) => `"${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 const directiveBoolean = (value) => (value ? "on" : "off");
 const asLf = (value) => `${String(value).replace(/\r\n?/g, "\n").replace(/[\t ]+\n/g, "\n").replace(/\n*$/, "")}\n`;
 
@@ -241,7 +243,7 @@ const renderHstsPolicy = (host) => {
 	if (host.certificate && Number(host.certificate_id || 0) > 0 && host.ssl_forced && host.hsts_enabled) {
 		return [
 			"# npm:feature field=hsts_enabled source=user begin",
-			"add_header Strict-Transport-Security $hsts_header always;",
+			`add_header Strict-Transport-Security $hsts_header_proxy_host_${host.id ?? "preview"} always;`,
 			"# npm:feature field=hsts_enabled source=user end",
 		].join("\n");
 	}
@@ -254,8 +256,8 @@ const renderLocation = (location, host, upstreams = {}, effectiveOptions = host.
 		prefix: location.path,
 		priority_prefix: `^~ ${location.path}`,
 		exact: `= ${location.path}`,
-		regex: `~ ${quote(location.path)}`,
-		regex_i: `~* ${quote(location.path)}`,
+		regex: `~ ${quoteRegex(location.path)}`,
+		regex_i: `~* ${quoteRegex(location.path)}`,
 	}[location.match_type];
 	const target = location.target ?? {
 		type: "direct",
@@ -582,6 +584,7 @@ export const buildProxyHostCandidate = async ({ host, dependencies = {}, capabil
 	};
 	const renderContext = {
 		...renderHost,
+		hsts_variable: `proxy_host_${normalized.id ?? "preview"}`,
 		ipv6: effectiveCapability.ipv6,
 		use_default_location: useDefaultLocation,
 		locations: normalized.locations.map((location, index) => renderLocation(location, renderHost, normalizedDependencies.upstreams ?? {}, effectiveConfig.locations[index].effective_flat)).join("\n\n"),
@@ -629,7 +632,12 @@ export const buildCandidate = async ({ hostType, host, ...input }) => {
 	if (hostType === "upstream") return buildUpstreamCandidate({ upstream: host });
 	const template = await fs.readFile(join(templatesDir, adapter.template), "utf8");
 	const engine = utils.getRenderEngine();
-	const config = asLf(await engine.parseAndRender(template, structuredClone(host)));
+	const context = structuredClone(host);
+	context.hsts_variable = `${hostType}_${host.id ?? "preview"}`;
+	if (["redirection_host", "dead_host"].includes(hostType)) {
+		context.use_default_location = host.use_default_location ?? !/\blocation\s+(?:=\s+)?\/\s*\{/.test(host.advanced_config || "");
+	}
+	const config = asLf(await engine.parseAndRender(template, context));
 	const partial = {
 		config,
 		configHash: sha256(Buffer.from(config)),

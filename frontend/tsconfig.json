@@ -8,7 +8,9 @@
 			"DOM.Iterable"
 		],
 		"types": [
-			"node"
+			"node",
+			"vitest/globals",
+			"@testing-library/jest-dom"
 		],
 		"module": "ESNext",
 		"skipLibCheck": true,

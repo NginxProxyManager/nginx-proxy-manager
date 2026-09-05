@@ -21,7 +21,7 @@ export function SiteFooter() {
 						<ul className="list-inline list-inline-dots mb-0">
 							<li className="list-inline-item">
 								<a
-									href="https://github.com/NginxProxyManager/nginx-proxy-manager"
+									href="https://github.com/Lorwell/nginx-proxy-manager"
 									target="_blank"
 									className="link-secondary"
 									rel="noopener"
@@ -35,8 +35,8 @@ export function SiteFooter() {
 						<ul className="list-inline list-inline-dots mb-0">
 							<li className="list-inline-item">
 								© 2026{" "}
-								<a href="https://jc21.com" rel="noreferrer" target="_blank" className="link-secondary">
-									jc21.com
+								<a href="https://github.com/Lorwell" rel="noreferrer" target="_blank" className="link-secondary">
+									Lorwell contributors
 								</a>
 							</li>
 							<li className="list-inline-item">
@@ -47,7 +47,7 @@ export function SiteFooter() {
 							</li>
 							<li className="list-inline-item">
 								<a
-									href={`https://github.com/NginxProxyManager/nginx-proxy-manager/releases/tag/${getVersion()}`}
+									href={`https://hub.docker.com/r/moailaozi/nginx-proxy-manager/tags?name=${getVersion().replace(/^v/, "")}`}
 									className="link-secondary"
 									target="_blank"
 									rel="noopener"
@@ -59,7 +59,7 @@ export function SiteFooter() {
 							{versionData?.updateAvailable && versionData?.latest && (
 								<li className="list-inline-item">
 									<a
-										href={`https://github.com/NginxProxyManager/nginx-proxy-manager/releases/tag/${versionData.latest}`}
+										href={`https://hub.docker.com/r/moailaozi/nginx-proxy-manager/tags?name=${versionData.latest.replace(/^v/, "")}`}
 										className="link-warning fw-bold"
 										target="_blank"
 										rel="noopener"

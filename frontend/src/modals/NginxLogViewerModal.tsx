@@ -26,13 +26,13 @@ interface RawFollowPayload {
 	reason?: string;
 }
 
-const splitLines = (content: string) => {
+export const splitLines = (content: string) => {
 	const lines = content.replace(/\r\n/g, "\n").split("\n");
 	if (lines[lines.length - 1] === "") lines.pop();
 	return lines;
 };
 
-const boundedLines = (lines: string[]) => {
+export const boundedLines = (lines: string[]) => {
 	let start = Math.max(0, lines.length - MAX_LINES);
 	let byteSize = 0;
 	for (let index = lines.length - 1; index >= start; index -= 1) {
@@ -45,7 +45,7 @@ const boundedLines = (lines: string[]) => {
 	return lines.slice(start);
 };
 
-const parseSseFrame = (frame: string) => {
+export const parseSseFrame = (frame: string) => {
 	const fields: Record<string, string> = {};
 	for (const line of frame.replace(/\r/g, "").split("\n")) {
 		if (!line || line.startsWith(":")) continue;
@@ -71,7 +71,7 @@ const showNginxLogViewerModal = (hostType: NginxLogHostType, hostId: number, lab
 	EasyModal.show(NginxLogViewerModal, { hostType, hostId, label });
 };
 
-const NginxLogViewerModal = EasyModal.create(({ hostType, hostId, label, visible, remove }: Props) => {
+export const NginxLogViewerModal = EasyModal.create(({ hostType, hostId, label, visible, remove }: Props) => {
 	const [logKind, setLogKind] = useState<NginxLogKind>("access");
 	const [lines, setLines] = useState<string[]>([]);
 	const [isLoading, setIsLoading] = useState(true);

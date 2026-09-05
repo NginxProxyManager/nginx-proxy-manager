@@ -6,7 +6,7 @@ let instance = null;
 const generateDbConfig = () => {
 	if (!configHas("database")) {
 		throw new Error(
-			"Database config does not exist! Please read the instructions: https://nginxproxymanager.com/setup/",
+			"Database config does not exist. See https://github.com/Lorwell/nginx-proxy-manager/blob/dev/docs/src/setup/index.md",
 		);
 	}
 

@@ -18,7 +18,7 @@ export const isSetup = async () => {
  *
  * @returns {Promise}
  */
-const setupDefaultUser = async () => {
+export const setupDefaultUser = async () => {
 	const initialAdminEmail = process.env.INITIAL_ADMIN_EMAIL;
 	const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
 
@@ -78,7 +78,7 @@ const setupDefaultUser = async () => {
  *
  * @returns {Promise}
  */
-const setupDefaultSettings = async () => {
+export const setupDefaultSettings = async () => {
 	const row = await settingModel
 		.query()
 		.select("id")
@@ -104,7 +104,7 @@ const setupDefaultSettings = async () => {
  *
  * @returns {Promise}
  */
-const setupCertbotPlugins = async () => {
+export const setupCertbotPlugins = async () => {
 	const certificates = await certificateModel
 		.query()
 		.where("is_deleted", 0)
@@ -144,7 +144,7 @@ const setupCertbotPlugins = async () => {
  * Starts a timer to call run the logrotation binary every two days
  * @returns {Promise}
  */
-const setupLogrotation = () => {
+export const setupLogrotation = () => {
 	const intervalTimeout = 1000 * 60 * 60 * 24 * 2; // 2 days
 
 	const runLogrotate = async () => {

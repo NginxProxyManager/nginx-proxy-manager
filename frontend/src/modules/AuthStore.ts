@@ -54,7 +54,8 @@ export class AuthStore {
 		const now = Math.round(Date.now() / 1000);
 		const oneMinuteBuffer = 60;
 		for (let i = t.length - 1; i >= 0; i--) {
-			const dte = getUnixTime(parseISO(t[i].expires));
+			const dte =
+				typeof t[i].expires === "number" ? t[i].expires : getUnixTime(parseISO(String(t[i].expires)));
 			const valid = dte - oneMinuteBuffer > now;
 			if (valid) {
 				return true;

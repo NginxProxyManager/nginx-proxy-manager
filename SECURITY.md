@@ -1,30 +1,19 @@
 # Security Policy
 
-## Supported Versions
+## Supported versions
 
-Only the latest stable release receives security updates.
-Older versions are not actively maintained.
+Only the latest stable release of this fork receives security fixes. The supported release is identified by the
+`latest` tag in the fork's Docker Hub repository:
 
-| Version | Supported |
-| ------- | --------- |
-| 2.15.x (latest) | :white_check_mark: |
-| < 2.15.0 | :x: |
+- `moailaozi/nginx-proxy-manager:latest`
+- `moailaozi/nginx-proxy-manager:<full-version>`
 
-Docker images: `jc21/nginx-proxy-manager:latest`, `jc21/nginx-proxy-manager:2`
+Upstream `jc21/nginx-proxy-manager` versions are a different release line and are not support versions for this fork.
 
-See all releases: https://github.com/NginxProxyManager/nginx-proxy-manager/releases
+## Reporting a vulnerability
 
-## Reporting a Vulnerability
+Do not open a public issue for a suspected vulnerability. Use the fork repository's
+[private vulnerability reporting](https://github.com/Lorwell/nginx-proxy-manager/security/advisories/new).
 
-**Do NOT open a public GitHub Issue to report a security vulnerability.**
-
-Use GitHub's private vulnerability reporting:
-https://github.com/NginxProxyManager/nginx-proxy-manager/security/advisories/new
-
-Please include:
-- Affected version (Docker image tag or release)
-- Description of the vulnerability
-- Steps to reproduce
-- Potential impact
-
-Once a fix is available, a public GitHub Security Advisory will be published.
+Include the affected image tag, a description, reproduction steps and the potential impact. If private reporting is
+not enabled, contact the repository owner privately before disclosing details.

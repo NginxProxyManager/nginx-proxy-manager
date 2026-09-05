@@ -2,15 +2,9 @@ name: Build and push Docker image
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: Docker image version tag (1.0 or later)
-        required: true
-        default: '1.0'
-        type: string
 
 concurrency:
-  group: dockerhub-nginx-proxy-manager-${{ inputs.version }}
+  group: dockerhub-nginx-proxy-manager-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
@@ -40,6 +34,9 @@ jobs:
       - name: Install Yarn
         run: npm install --global yarn@1.22.22
 
+      - name: Verify release version sources
+        run: node scripts/set-version.mjs --check
+
       - name: Validate backend schemas, catalog, lint, and tests
         working-directory: backend
         run: |
@@ -48,6 +45,17 @@ jobs:
           yarn check:proxy-directives
           yarn lint
           yarn test
+
+      - name: Validate real requests against OpenResty 1.31.1.1
+        run: node scripts/test-nginx-live.mjs
+
+      - name: Upload real Nginx request results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nginx-live-results
+          path: backend/coverage/nginx-live/results.json
+          if-no-files-found: warn
 
       - name: Validate frontend catalog coverage, types, locales, tests, and build
         working-directory: frontend
@@ -66,15 +74,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Validate image version
-        env:
-          VERSION: ${{ inputs.version }}
+      - name: Read and validate image version
+        id: version
         shell: bash
         run: |
-          if [[ ! "$VERSION" =~ ^[1-9][0-9]*\.[0-9]+(\.[0-9]+)?$ ]]; then
-            echo "Version must be numeric and at least 1.0 (for example: 1.0 or 1.0.1)."
+          if [[ "$GITHUB_REF" != "refs/heads/dev" ]]; then
+            echo "Stable images must be published from the dev branch."
             exit 1
           fi
+          VERSION="$(tr -d '[:space:]' < .version)"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo ".version must use major.minor.patch format (for example: 1.3.1)."
+            exit 1
+          fi
+          IFS=. read -r MAJOR MINOR PATCH <<< "$VERSION"
+          echo "full=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "minor=$MAJOR.$MINOR" >> "$GITHUB_OUTPUT"
+          echo "major=$MAJOR" >> "$GITHUB_OUTPUT"
 
       - name: Set build metadata
         id: metadata
@@ -104,9 +120,13 @@ jobs:
           file: docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ inputs.version }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.full }}
+            ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.minor }}
+            ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.major }}
+            ${{ env.IMAGE_NAME }}:latest
           build-args: |
-            BUILD_VERSION=${{ inputs.version }}
+            BUILD_VERSION=${{ steps.version.outputs.full }}
             BUILD_COMMIT=${{ steps.metadata.outputs.commit }}
             BUILD_DATE=${{ steps.metadata.outputs.date }}
           cache-from: type=gha

@@ -6,6 +6,7 @@
 certbot-help.txt
 test/node_modules
 */node_modules
+*/coverage
 docker/dev/dnsrouter-config.json.tmp
 docker/dev/resolv.conf
 .claude

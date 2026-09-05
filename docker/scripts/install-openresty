@@ -1,0 +1,27 @@
+#!/bin/sh
+set -eu
+
+# Source and checksum are pinned together; never silently use the base image's nginx.
+version=1.31.1.1
+checksum=65b78baadd3f0984055de89bf13f4a1932e5bfe9c31932037a134ea2b1a0ce42
+build_dir=$(mktemp -d /tmp/npm-openresty.XXXXXX)
+trap 'rm -rf "$build_dir"' EXIT
+apt-get update
+apt-get install -y --no-install-recommends build-essential libpcre2-dev libssl-dev zlib1g-dev ca-certificates curl
+curl -fsSL --retry 3 "https://openresty.org/download/openresty-${version}.tar.gz" -o "$build_dir/source.tar.gz"
+printf '%s  %s\n' "$checksum" "$build_dir/source.tar.gz" | sha256sum -c -
+tar -xzf "$build_dir/source.tar.gz" -C "$build_dir"
+cd "$build_dir/openresty-${version}"
+./configure --prefix=/opt/openresty --sbin-path=/usr/sbin/nginx \
+    --conf-path=/etc/nginx/nginx.conf --pid-path=/var/run/nginx.pid \
+    --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log \
+    --with-threads --with-http_ssl_module --with-http_v2_module --with-http_v3_module \
+    --with-http_realip_module --with-http_stub_status_module --with-http_auth_request_module \
+    --with-http_gzip_static_module --with-http_gunzip_module --with-http_sub_module \
+    --with-http_addition_module --with-http_dav_module --with-http_flv_module \
+    --with-http_mp4_module --with-http_random_index_module --with-http_secure_link_module \
+    --with-http_slice_module --with-stream --with-stream_ssl_module \
+    --with-stream_ssl_preread_module --with-stream_realip_module --with-mail --with-mail_ssl_module
+make -j2
+make install
+/usr/sbin/nginx -v 2>&1 | grep -F "openresty/${version}"

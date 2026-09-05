@@ -74,6 +74,16 @@ export default defineConfig({
 	test: {
 		environment: "happy-dom",
 		setupFiles: ["./vitest-setup.js"],
+		coverage: {
+			provider: "v8",
+			reporter: ["text", "html"],
+			include: ["src/**/*.{ts,tsx}"],
+			exclude: ["src/generated/**", "src/locale/lang/**"],
+			thresholds: {
+				statements: 90,
+				lines: 90,
+			},
+		},
 	},
 	assetsInclude: ["**/*.md", "**/*.png", "**/*.svg"],
 });

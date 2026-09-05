@@ -188,5 +188,15 @@ router.get("/:system_log_id/follow", jwtdecode(), async (req, res, next) => {
 	}
 });
 
-export { registerHostLogRoutes };
+export {
+	createHostHandlers,
+	getTailLines,
+	parseId,
+	registerHostLogRoutes,
+	startFollow,
+	streamHeaders,
+	userId,
+	writeHeartbeat,
+	writeSse,
+};
 export default router;

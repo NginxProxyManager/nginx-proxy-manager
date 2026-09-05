@@ -10,6 +10,28 @@ const rendered = (config) => ({ config, configHash: `sha256:${config}`, payloadH
 
 const temporaryRoot = async () => fs.mkdtemp(join(os.tmpdir(), "npm-nginx-coordinator-"));
 
+test("standalone syntax test and reload serialize commands and release their lock after failure", async (context) => {
+	const root = await temporaryRoot();
+	context.after(() => fs.rm(root, { recursive: true, force: true }));
+	const commands = [];
+	let failSyntax = true;
+	const coordinator = new NginxDeploymentCoordinator({
+		nginxRoot: root,
+		commandRunner: async (_command, args) => {
+			commands.push(args[0]);
+			if (failSyntax && args[0] === "-t") throw new Error("invalid syntax");
+			return { stdout: "ok", stderr: "" };
+		},
+	});
+	await assert.rejects(coordinator.reloadOnly(), /invalid syntax/);
+	assert.deepEqual(commands, ["-t"], "a failed syntax test must not reload nginx");
+	await assert.rejects(fs.access(coordinator.lockPath), { code: "ENOENT" });
+	failSyntax = false;
+	await Promise.all([coordinator.testOnly(), coordinator.reloadOnly()]);
+	assert.deepEqual(commands, ["-t", "-t", "-t", "-s"]);
+	await assert.rejects(fs.access(coordinator.lockPath), { code: "ENOENT" });
+});
+
 test("DEP-007 rollback preserves a prior active artifact when reload fails", async (context) => {
 	const root = await temporaryRoot();
 	context.after(() => fs.rm(root, { recursive: true, force: true }));

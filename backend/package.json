@@ -1,8 +1,11 @@
 {
 	"name": "nginx-proxy-manager",
-	"version": "2.0.0",
-	"description": "A beautiful interface for creating Nginx endpoints",
-	"author": "Jamie Curnow <jc@jc21.com>",
+	"version": "1.4.0",
+	"description": "An independently maintained Nginx proxy management interface",
+	"author": "Lorwell fork contributors",
+	"contributors": [
+		"Jamie Curnow and Nginx Proxy Manager contributors"
+	],
 	"license": "MIT",
 	"main": "index.js",
 	"type": "module",
@@ -12,6 +15,8 @@
 		"validate-schema": "node validate-schema.js",
 		"regenerate-config": "node scripts/regenerate-config",
 		"test": "node --test",
+		"test:nginx-live": "node ../scripts/test-nginx-live.mjs",
+		"test:coverage": "c8 --all --check-coverage --statements=90 --lines=90 --include='*.js' --include='internal/**/*.js' --include='lib/**/*.js' --include='models/**/*.js' --include='routes/**/*.js' --exclude='test/**' --exclude='migrations/**' --exclude='scripts/**' --reporter=text --reporter=html node --test",
 		"generate:proxy-directives": "node scripts/generate-proxy-directive-artifacts.js",
 		"check:proxy-directives": "node scripts/generate-proxy-directive-artifacts.js --check",
 		"validate:proxy-runtime": "node scripts/validate-proxy-runtime.js"
@@ -48,6 +53,7 @@
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^12.1.0",
 		"@biomejs/biome": "^2.4.15",
+		"c8": "10.1.3",
 		"nodemon": "^3.1.14"
 	},
 	"signale": {

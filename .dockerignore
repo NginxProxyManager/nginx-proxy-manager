@@ -7,6 +7,7 @@
 **/.cache
 **/dist
 **/dist-ssr
+**/coverage
 
 .tmp-s6-overlay-root
 .tmp-s6-overlay.tar

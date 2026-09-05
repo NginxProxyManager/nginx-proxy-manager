@@ -481,7 +481,7 @@ function DefaultTargetFields() {
 	);
 }
 
-const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
+export const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
 	const { data, isLoading, error } = useProxyHost(id);
 	const { mutate: setProxyHost } = useSetProxyHost();

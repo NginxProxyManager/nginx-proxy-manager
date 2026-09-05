@@ -1,7 +1,9 @@
 FROM nginxproxymanager/testca AS testca
 FROM shinsenter/s6-overlay:v3.2.3.0 AS s6-overlay
 FROM nginxproxymanager/nginx-full:certbot-node
-LABEL maintainer="Jamie Curnow <jc@jc21.com>"
+COPY docker/scripts/install-openresty /tmp/install-openresty
+RUN sed -i 's/\r$//' /tmp/install-openresty && sh /tmp/install-openresty
+LABEL org.opencontainers.image.source="https://github.com/Lorwell/nginx-proxy-manager"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 

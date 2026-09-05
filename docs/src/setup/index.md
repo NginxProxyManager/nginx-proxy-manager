@@ -4,6 +4,9 @@ outline: deep
 
 # Full Setup Instructions
 
+These examples use this fork's image. Pin a full `moailaozi/nginx-proxy-manager` version; an upstream
+`jc21/nginx-proxy-manager` image does not contain the fork-specific database and managed-configuration behavior.
+
 ## Running the App
 
 Create a `docker-compose.yml` file:
@@ -11,7 +14,7 @@ Create a `docker-compose.yml` file:
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    image: 'docker.io/moailaozi/nginx-proxy-manager:1.4.0'
     restart: unless-stopped
 
     ports:
@@ -55,7 +58,7 @@ Here is an example of what your `docker-compose.yml` will look like when using a
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    image: 'docker.io/moailaozi/nginx-proxy-manager:1.4.0'
     restart: unless-stopped
     ports:
       # These ports are in format <host-port>:<container-port>
@@ -118,7 +121,7 @@ Similar to the MySQL server setup:
 ```yml
 services:
   app:
-    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    image: 'docker.io/moailaozi/nginx-proxy-manager:1.4.0'
     restart: unless-stopped
     ports:
       # These ports are in format <host-port>:<container-port>
@@ -165,17 +168,12 @@ The docker images support the following architectures:
 - amd64
 - arm64
 
-::: warning
-`armv7` is no longer supported in version 2.14+. This is due to Nodejs dropping support for armhf. Please
-use the `2.13.7` image tag if this applies to you.
-:::
-
 The docker images are a manifest of all the architecture docker builds supported, so this means
 you don't have to worry about doing anything special and you can follow the common instructions above.
 
-Check out the [dockerhub tags](https://hub.docker.com/r/jc21/nginx-proxy-manager/tags)
+Check out the [Docker Hub tags](https://hub.docker.com/r/moailaozi/nginx-proxy-manager/tags)
 for a list of supported architectures and if you want one that doesn't exist,
-[create a feature request](https://github.com/NginxProxyManager/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
+[create a feature request](https://github.com/Lorwell/nginx-proxy-manager/issues/new?labels=enhancement).
 
 Also, if you don't know how to already, follow [this guide to install docker and docker-compose](https://manre-universe.net/how-to-run-docker-and-docker-compose-on-raspbian/)
 on Raspbian.
@@ -186,6 +184,6 @@ After the app is running for the first time, the following will happen:
 
 1. JWT keys will be generated and saved in the data folder
 2. The database will initialize with table structures
-3. A default admin user will be created
+3. The first-user setup screen will become available
 
 This process can take a couple of minutes depending on your machine.

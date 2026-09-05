@@ -1,6 +1,6 @@
 {
 	"operationId": "checkVersion",
-	"summary": "Returns any new version data from github",
+	"summary": "Returns stable release version data from the fork's Docker Hub repository",
 	"tags": ["public"],
 	"responses": {
 		"200": {
@@ -10,8 +10,8 @@
 					"examples": {
 						"default": {
 							"value": {
-								"current": "v2.12.0",
-								"latest": "v2.13.4",
+								"current": "1.4.0",
+								"latest": "1.4.0",
 								"update_available": true
 							}
 						}

@@ -7,12 +7,12 @@
 		"current": {
 			"type": ["string", "null"],
 			"description": "Current version string",
-			"example": "v2.10.1"
+			"example": "1.4.0"
 		},
 		"latest": {
 			"type": ["string", "null"],
 			"description": "Latest version string",
-			"example": "v2.13.4"
+			"example": "1.4.0"
 		},
 		"update_available": {
 			"type": "boolean",

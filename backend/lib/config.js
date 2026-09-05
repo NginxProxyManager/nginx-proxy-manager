@@ -2,7 +2,7 @@ import fs from "node:fs";
 import NodeRSA from "node-rsa";
 import { global as logger } from "../logger.js";
 
-const keysFile               = '/data/keys.json';
+const keysFile               = process.env.NPM_KEYS_FILE || '/data/keys.json';
 const mysqlEngine            = 'mysql2';
 const postgresEngine         = 'pg';
 const sqliteClientName       = 'better-sqlite3';

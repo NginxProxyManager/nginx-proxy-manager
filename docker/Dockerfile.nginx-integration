@@ -1,0 +1,9 @@
+ARG NPM_TEST_IMAGE=moailaozi/nginx-proxy-manager:1.3
+FROM ${NPM_TEST_IMAGE}
+COPY docker/scripts/install-openresty /tmp/install-openresty
+RUN sed -i 's/\r$//' /tmp/install-openresty && sh /tmp/install-openresty
+# Exercise current sources with the same OpenResty and Linux dependencies as the application.
+COPY backend /app
+COPY docker/rootfs/etc/nginx /etc/nginx
+WORKDIR /app
+ENTRYPOINT ["node", "integration/nginx-live.mjs"]

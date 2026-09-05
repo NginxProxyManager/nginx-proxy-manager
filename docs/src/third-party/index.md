@@ -4,8 +4,8 @@ outline: deep
 
 # Third Party
 
-As this software gains popularity it's common to see it integrated with other platforms. Please be aware that unless specifically mentioned in the documentation of those
-integrations, they are *not supported* by me.
+The integrations below target Nginx Proxy Manager APIs or images maintained by third parties. They are not supported
+by this fork, and compatibility with fork-specific configuration, upstream and monitoring APIs is not guaranteed.
 
 Known integrations:
 
@@ -19,4 +19,4 @@ Known integrations:
 
 
 If you would like your integration of NPM listed, please open a
-[Github issue](https://github.com/NginxProxyManager/nginx-proxy-manager/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=)
+[GitHub issue](https://github.com/Lorwell/nginx-proxy-manager/issues/new?labels=enhancement)

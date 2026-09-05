@@ -4,6 +4,12 @@ outline: deep
 
 # Screenshots
 
+::: warning
+These images were inherited from the upstream interface and are retained only as a visual baseline. They do not show
+this fork's Upstreams page, monitoring controls, live log viewer or structured Nginx configuration editor. The running
+interface for the pinned image version is authoritative until a fork-specific screenshot set is produced.
+:::
+
 ### Light Mode
 
 ::: raw

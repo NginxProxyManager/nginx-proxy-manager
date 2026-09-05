@@ -52,6 +52,27 @@ describe("ProxyHostModal semantic payload", () => {
 		expect(prepared.locations[0].nginxConfig.overrides.headers).toEqual({ hideResponse: [] });
 	});
 
+	it("normalizes port listeners and upstream targets into legacy-compatible payloads", () => {
+		const prepared = prepareProxyHostValues({
+			domainNames: ["ignored.example"], certificateId: 4, sslForced: true, http2Support: true,
+			hstsEnabled: true, hstsSubdomains: true,
+			forwardScheme: "https", forwardHost: "legacy", forwardPort: 9443,
+			defaultTarget: { type: "upstream", scheme: "https", upstreamId: 9 },
+			nginxConfig: { listener: { mode: "port", port: "8443" }, server: {} },
+			locations: [
+				{ path: "/direct", forwardScheme: "http", forwardHost: " 10.0.0.2 ", forwardPort: "8080", nginxConfig: {} },
+				{ path: "/group", target: { type: "upstream", scheme: "http", upstreamId: 10 }, nginxConfig: {} },
+			],
+		});
+		expect(prepared.nginxConfig.listener).toEqual({ mode: "port", port: 8443 });
+		expect(prepared.domainNames).toEqual([]);
+		expect(prepared.certificateId).toBe(0);
+		expect(prepared.defaultTarget).toEqual({ type: "upstream", scheme: "https", upstreamId: 9 });
+		expect(prepared.forwardHost).toBe("upstream");
+		expect(prepared.locations[0].target).toEqual({ type: "direct", scheme: "http", host: "10.0.0.2", port: 8080 });
+		expect(prepared.locations[1].forwardHost).toBe("upstream");
+	});
+
 	it("only allows proxy_redirect default when the variable-backed managed root Location is not rendered", () => {
 		expect(usesManagedDefaultLocation({ nginxConfig: { server: {} }, locations: [], advancedConfig: "" })).toBe(
 			true,

@@ -248,7 +248,7 @@ const toCursor = (stat, offset, partialLine, lastEventTimestamp = null) => ({
 	updated_on: databaseTimestamp(),
 });
 
-class ProxyHostMonitor {
+export class ProxyHostMonitor {
 	constructor() {
 		this.timer = null;
 		this.running = false;
@@ -778,6 +778,26 @@ const runProbe = async (host, config) => {
 		code: !directResult.success ? `upstream_${directResult.code}` : !e2eResult.success ? `end_to_end_${e2eResult.code}` : null,
 		summary: !directResult.success ? directResult.summary : e2eResult.summary,
 	};
+};
+
+export {
+	bodyMatches,
+	directProbe,
+	histogramQuantile,
+	httpRequest,
+	mergeMetric,
+	mergeMetricRows,
+	normalizeExpectedStatuses,
+	probeTargets,
+	resolveUpstreamTargets,
+	runDirectProbe,
+	runProbe,
+	statusExpected,
+	summarizeMetrics,
+	tcpConnect,
+	tlsConnect,
+	toCursor,
+	unavailableUpstream,
 };
 
 const proxyHostMonitor = new ProxyHostMonitor();

@@ -10,12 +10,12 @@
 		"ipv6",
 		"modules",
 		"image",
-		"image_digest",
+		"source_sha256",
 		"notes",
-		"validated_on",
 		"profile_hash"
 	],
 	"properties": {
+		"source_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
 		"schema_version": {
 			"type": "integer",
 			"const": 1

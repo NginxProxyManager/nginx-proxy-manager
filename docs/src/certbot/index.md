@@ -9,7 +9,7 @@ Nginx Proxy Manager uses Certbot to issue and renew Let’s Encrypt certificates
 When you request a certificate using a DNS challenge, Nginx Proxy Manager installs
 the corresponding Certbot DNS plugin for the provider you selected. The available
 providers and package versions are defined in
-⁠[certbot-dns-plugins.json](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/backend/certbot/dns-plugins.json).
+⁠[certbot-dns-plugins.json](https://github.com/Lorwell/nginx-proxy-manager/blob/dev/backend/certbot/dns-plugins.json).
 
 ## Important limitations
 
@@ -27,7 +27,7 @@ dependency conflicts between Certbot plugins.
 
 1. Check the Nginx Proxy Manager container logs for Certbot or Python package installation errors.
 2. Identify the plugin package and version defined for your provider in
-⁠[certbot-dns-plugins.json](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/backend/certbot/dns-plugins.json).
+⁠[certbot-dns-plugins.json](https://github.com/Lorwell/nginx-proxy-manager/blob/dev/backend/certbot/dns-plugins.json).
 3. Check [PyPI](https://pypi.org/) or the plugin project for a newer compatible release.
 4. If needed, update the plugin definition, including any required dependency pins.
 5. Submitting a pull request and CI will build a testable docker image for you.
@@ -35,4 +35,4 @@ dependency conflicts between Certbot plugins.
 ## File reference
 
 Use this file when reviewing or updating provider definitions:
-- ⁠[certbot-dns-plugins.json](https://github.com/NginxProxyManager/nginx-proxy-manager/blob/develop/backend/certbot/dns-plugins.json)
+- ⁠[certbot-dns-plugins.json](https://github.com/Lorwell/nginx-proxy-manager/blob/dev/backend/certbot/dns-plugins.json)

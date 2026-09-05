@@ -1,9 +1,12 @@
 {
+  "name": "nginx-proxy-manager-lorwell-docs",
+  "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "vitepress dev --host",
     "build": "vitepress build",
     "preview": "vitepress preview",
-    "set-version": "./scripts/set-version.sh"
+    "set-version": "node ../scripts/set-version.mjs"
   },
   "devDependencies": {
     "vitepress": "^1.6.4"

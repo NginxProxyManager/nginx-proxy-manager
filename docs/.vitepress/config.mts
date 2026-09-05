@@ -1,9 +1,8 @@
 import { defineConfig } from "vitepress";
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
-	title: "Nginx Proxy Manager",
-	description: "Expose your services easily and securely",
+	title: "Nginx Proxy Manager — Lorwell Fork",
+	description: "Documentation for the independently maintained Lorwell fork of Nginx Proxy Manager",
 	head: [
 		["link", { rel: "icon", href: "/icon.png" }],
 		[
@@ -11,75 +10,33 @@ export default defineConfig({
 			{
 				name: "description",
 				content:
-					"Docker container and built in Web Application for managing Nginx proxy hosts with a simple, powerful interface, providing free SSL support via Let's Encrypt",
+					"Managed Nginx proxy configuration, upstream groups, host monitoring, live logs and TLS in an independently maintained Docker image.",
 			},
 		],
-		["meta", { property: "og:title", content: "Nginx Proxy Manager" }],
+		["meta", { property: "og:title", content: "Nginx Proxy Manager — Lorwell Fork" }],
 		[
 			"meta",
 			{
 				property: "og:description",
-				content:
-					"Docker container and built in Web Application for managing Nginx proxy hosts with a simple, powerful interface, providing free SSL support via Let's Encrypt",
+				content: "Documentation for the Lorwell fork and its independent release line.",
 			},
 		],
 		["meta", { property: "og:type", content: "website" }],
-		["meta", { property: "og:url", content: "https://nginxproxymanager.com/" }],
-		[
-			"meta",
-			{
-				property: "og:image",
-				content: "https://nginxproxymanager.com/icon.png",
-			},
-		],
-		["meta", { name: "twitter:card", content: "summary" }],
-		["meta", { name: "twitter:title", content: "Nginx Proxy Manager" }],
-		[
-			"meta",
-			{
-				name: "twitter:description",
-				content:
-					"Docker container and built in Web Application for managing Nginx proxy hosts with a simple, powerful interface, providing free SSL support via Let's Encrypt",
-			},
-		],
-		[
-			"meta",
-			{
-				name: "twitter:image",
-				content: "https://nginxproxymanager.com/icon.png",
-			},
-		],
-		["meta", { name: "twitter:alt", content: "Nginx Proxy Manager" }],
-		// GA
-		[
-			"script",
-			{
-				async: "true",
-				src: "https://www.googletagmanager.com/gtag/js?id=G-TXT8F5WY5B",
-			},
-		],
-		[
-			"script",
-			{},
-			"window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-TXT8F5WY5B');",
-		],
 	],
-	sitemap: {
-		hostname: "https://nginxproxymanager.com",
-	},
 	metaChunk: true,
 	srcDir: "./src",
 	outDir: "./dist",
 	themeConfig: {
-		// https://vitepress.dev/reference/default-theme-config
 		logo: { src: "/logo.svg", width: 24, height: 24 },
-		nav: [{ text: "Setup", link: "/setup/" }],
+		nav: [
+			{ text: "Setup", link: "/setup/" },
+			{ text: "Docker Images", link: "https://hub.docker.com/r/moailaozi/nginx-proxy-manager/tags" },
+		],
 		sidebar: [
 			{
 				items: [
-					// { text: 'Home', link: '/' },
 					{ text: "Guide", link: "/guide/" },
-					{ text: "Screenshots", link: "/screenshots/" },
+					{ text: "Fork Features", link: "/features/" },
 					{ text: "Setup Instructions", link: "/setup/" },
 					{ text: "Advanced Configuration", link: "/advanced-config/" },
 					{ text: "Upgrading", link: "/upgrading/" },
@@ -89,18 +46,11 @@ export default defineConfig({
 				],
 			},
 		],
-		socialLinks: [
-			{
-				icon: "github",
-				link: "https://github.com/NginxProxyManager/nginx-proxy-manager",
-			},
-		],
-		search: {
-			provider: "local",
-		},
+		socialLinks: [{ icon: "github", link: "https://github.com/Lorwell/nginx-proxy-manager" }],
+		search: { provider: "local" },
 		footer: {
-			message: "Released under the MIT License.",
-			copyright: "Copyright © 2016-present jc21.com",
+			message: "Released under the MIT License. Based on the original Nginx Proxy Manager project.",
+			copyright: "Copyright © 2026 Lorwell fork contributors",
 		},
 	},
 });

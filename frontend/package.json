@@ -1,8 +1,11 @@
 {
 	"name": "nginx-proxy-manager",
-	"version": "2.0.0",
+	"version": "1.4.0",
 	"type": "module",
-	"author": "Jamie Curnow <jc@jc21.com>",
+	"author": "Lorwell fork contributors",
+	"contributors": [
+		"Jamie Curnow and Nginx Proxy Manager contributors"
+	],
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite",
@@ -13,7 +16,8 @@
 		"locale-extract": "formatjs extract 'src/**/*.tsx'",
 		"locale-compile": "formatjs compile-folder src/locale/src src/locale/lang",
 		"locale-sort": "./src/locale/scripts/locale-sort.sh",
-		"test": "vitest"
+		"test": "vitest",
+		"test:coverage": "vitest run --coverage"
 	},
 	"dependencies": {
 		"@tabler/core": "^1.4.0",
@@ -55,6 +59,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@types/react-table": "^7.7.20",
 		"@vitejs/plugin-react": "^6.0.2",
+		"@vitest/coverage-v8": "4.1.8",
 		"happy-dom": "^20.9.0",
 		"postcss": "^8.5.15",
 		"postcss-simple-vars": "^7.0.1",

@@ -1,55 +1,32 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report reproducible behavior in the Lorwell fork
 title: ''
 labels: bug
 assignees: ''
-
 ---
-<!--
- 
-Are you in the right place?
-- If you are looking for support on how to get your upstream server forwarding, please consider asking the community on Reddit.
-- If you are writing code changes to contribute and need to ask about the internals of the software, Gitter is the best place to ask.
-- If you think you found a bug with NPM (not Nginx, or your upstream server or MySql) then you are in the *right place.*
-
--->
 
 **Checklist**
-- Have you pulled and found the error with `jc21/nginx-proxy-manager:latest` docker image?
-  - Yes / No
-- Are you sure you're not using someone else's docker image?
-  - Yes / No
-- Have you searched for similar issues (both open and closed)?
-  - Yes / No
 
-**Describe the bug**
-<!-- A clear and concise description of what the bug is. -->
+- [ ] I reproduced this with `moailaozi/nginx-proxy-manager:<version>`.
+- [ ] I am not using the upstream `jc21/nginx-proxy-manager` image.
+- [ ] I searched open and closed issues in this repository.
+- [ ] I removed passwords, tokens, certificate private keys and domain data that must remain private.
 
+**Fork version and image digest**
 
-**Nginx Proxy Manager Version**
-<!-- What version of Nginx Proxy Manager is reported on the login page? -->
+<!-- Copy the version shown on the login/footer and, if possible, the Docker image digest. -->
 
+**Database and platform**
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+<!-- SQLite, MySQL/MariaDB or PostgreSQL; host OS; amd64 or arm64; Docker/Compose versions. -->
 
+**What happened?**
 
-**Expected behavior**
-<!-- A clear and concise description of what you expected to happen. -->
+<!-- Include concise reproduction steps, expected behavior and actual behavior. -->
 
+**Logs and screenshots**
 
-**Screenshots**
-<!-- If applicable, add screenshots to help explain your problem. -->
-
-
-**Operating System**
-<!-- Please specify if using a Rpi, Mac, orchestration tool or any other setups that might affect the reproduction of this error. -->
-
+<!-- Include relevant application/Nginx logs and screenshots after removing secrets. -->
 
 **Additional context**
-<!-- Add any other context about the problem here, docker version, browser version, logs if applicable to the problem. Too much info is better than too little. -->

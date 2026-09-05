@@ -235,27 +235,27 @@ const REFRESH_OPTIONS: ReadonlyArray<[RefreshInterval, string]> = [
 	[300_000, "5m"],
 	[900_000, "15m"],
 ];
-const refreshIntervalLabel = (interval: RefreshInterval) => {
+export const refreshIntervalLabel = (interval: RefreshInterval) => {
 	if (interval === null) return message("refreshOff");
 	return REFRESH_OPTIONS.find(([value]) => value === interval)?.[1] ?? message("refreshOff");
 };
 
-const createRange = (preset: Exclude<TimeRangePreset, "custom">): MonitoringRange => {
+export const createRange = (preset: Exclude<TimeRangePreset, "custom">): MonitoringRange => {
 	const end = new Date();
 	return { preset, from: new Date(end.getTime() - PRESET_DURATION_MS[preset]).toISOString(), to: end.toISOString() };
 };
-const toDateTimeLocal = (value: string) => {
+export const toDateTimeLocal = (value: string) => {
 	const date = new Date(value);
 	return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 };
-const formatBytes = (value = 0) => {
+export const formatBytes = (value = 0) => {
 	if (!value) return "0 B";
 	const units = ["B", "KiB", "MiB", "GiB", "TiB"];
 	const index = Math.min(units.length - 1, Math.floor(Math.log(value) / Math.log(1024)));
 	return `${(value / 1024 ** index).toFixed(index ? 1 : 0)} ${units[index]}`;
 };
 const UTC_DATABASE_TIMESTAMP = /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?$/;
-const parseDateTime = (value?: string | null) => {
+export const parseDateTime = (value?: string | null) => {
 	if (!value) return null;
 	const numericValue = Number(value);
 	const isNumericTimestamp = value.trim() !== "" && Number.isFinite(numericValue);
@@ -265,8 +265,8 @@ const parseDateTime = (value?: string | null) => {
 		: new Date(normalizedValue);
 	return Number.isNaN(date.getTime()) ? null : date;
 };
-const formatDateTime = (value?: string | null) => parseDateTime(value)?.toLocaleString() ?? "—";
-const formatDuration = (value?: number | null) => {
+export const formatDateTime = (value?: string | null) => parseDateTime(value)?.toLocaleString() ?? "—";
+export const formatDuration = (value?: number | null) => {
 	if (value === null || value === undefined || !Number.isFinite(value)) return "—";
 	const milliseconds = Math.max(0, Math.round(value));
 	if (milliseconds < 1000) return `${milliseconds}ms`;
@@ -274,7 +274,7 @@ const formatDuration = (value?: number | null) => {
 	const remainingMilliseconds = milliseconds % 1000;
 	return remainingMilliseconds ? `${seconds}s${remainingMilliseconds}ms` : `${seconds}s`;
 };
-const statusKey = (status?: string | null) =>
+export const statusKey = (status?: string | null) =>
 	status && Object.keys(statusMessages).includes(status) ? (status as keyof typeof statusMessages) : "unknown";
 const statusLabel = (status?: string | null) => intl.formatMessage(statusMessages[statusKey(status)]);
 
@@ -419,7 +419,7 @@ const RefreshPicker = ({
 const showProxyHostMonitoringModal = (hostId: number, label: string) =>
 	EasyModal.show(ProxyHostMonitoringModal, { hostId, label });
 
-const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, remove }: Props) => {
+export const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, remove }: Props) => {
 	const queryClient = useQueryClient();
 	const [screen, setScreen] = useState<MonitoringScreen>("dashboard");
 	const [config, setConfig] = useState<ProxyHostMonitoringConfig | null>(null);
@@ -696,7 +696,7 @@ const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, rem
 										className="monitoring-custom-range border-top mt-3 pt-3"
 										id="monitoring-custom-range"
 									>
-										<Form.Group className="monitoring-custom-range-field">
+										<Form.Group className="monitoring-custom-range-field" controlId="monitoring-range-from">
 											<Form.Label>{message("timeStart")}</Form.Label>
 											<Form.Control
 												size="sm"
@@ -706,7 +706,7 @@ const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, rem
 												onChange={(event) => setCustomFrom(event.target.value)}
 											/>
 										</Form.Group>
-										<Form.Group className="monitoring-custom-range-field">
+										<Form.Group className="monitoring-custom-range-field" controlId="monitoring-range-to">
 											<Form.Label>{message("timeEnd")}</Form.Label>
 											<Form.Control
 												size="sm"
@@ -1126,7 +1126,7 @@ const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, rem
 										<div className="row g-3">
 											<div className="col-12">
 												<div className="d-flex align-items-center gap-1 mb-2">
-													<Form.Label className="mb-0">{message("probeMode")}</Form.Label>
+													<Form.Label className="mb-0" htmlFor="monitor-probe-mode">{message("probeMode")}</Form.Label>
 													<OverlayTrigger
 														trigger={["hover", "focus", "click"]}
 														placement="top"
@@ -1142,6 +1142,7 @@ const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, rem
 													</OverlayTrigger>
 												</div>
 												<Form.Select
+													id="monitor-probe-mode"
 													value={config.probeMode}
 													onChange={(event) =>
 														changeConfig(
@@ -1159,8 +1160,9 @@ const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, rem
 												</Form.Select>
 											</div>
 											<div className="col-sm-6">
-												<Form.Label>{message("interval")}</Form.Label>
-												<Form.Control
+											<Form.Label htmlFor="monitor-interval">{message("interval")}</Form.Label>
+											<Form.Control
+												id="monitor-interval"
 													type="number"
 													min={15}
 													max={3600}
@@ -1171,8 +1173,9 @@ const ProxyHostMonitoringModal = EasyModal.create(({ hostId, label, visible, rem
 												/>
 											</div>
 											<div className="col-sm-6">
-												<Form.Label>{message("timeout")}</Form.Label>
-												<Form.Control
+											<Form.Label htmlFor="monitor-timeout">{message("timeout")}</Form.Label>
+											<Form.Control
+												id="monitor-timeout"
 													type="number"
 													min={500}
 													max={30000}

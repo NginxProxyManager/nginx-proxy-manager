@@ -363,7 +363,7 @@ test("COMPOSITE-001 TLS, cache, websocket, ACL, HSTS, exploit blocking, and moni
 	assert.equal((config.match(/proxy_set_header\s+Authorization\s+"";/g) || []).length, 3);
 	assert.equal((config.match(/allow\s+10\.0\.0\.0\/8;/g) || []).length, 3);
 	assert.equal((config.match(/satisfy\s+any;/g) || []).length, 3);
-	assert.equal((config.match(/add_header Strict-Transport-Security \$hsts_header always;/g) || []).length, 4);
+	assert.equal((config.match(/add_header Strict-Transport-Security \$hsts_header_proxy_host_\w+ always;/g) || []).length, 4);
 	assert.equal(
 		(config.match(/access_log \/data\/logs\/npm-monitor-http\.log npm_proxy_metrics_v1/g) || []).length,
 		4,
