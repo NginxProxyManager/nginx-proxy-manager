@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFile } from "node:fs/promises";
 
 import express from "express";
 import ciRoutes from "../routes/ci.js";
@@ -58,7 +59,8 @@ test("schema route compiles, caches, and publishes a request-specific API origin
 		let response = await fetch(`${baseUrl}/`, { headers: { origin: "https://manager.example" } });
 		assert.equal(response.status, 200);
 		let body = await response.json();
-		assert.equal(body.info.version, "1.3.2");
+		const release = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+		assert.equal(body.info.version, release.version);
 		assert.equal(body.servers[0].url, "https://manager.example/api");
 
 		response = await fetch(`${baseUrl}/`, { headers: { "x-forwarded-proto": "https" } });

@@ -29,7 +29,7 @@ test("deployment store persists creation, transitions and logical candidate path
 
 	try {
 		const store = createDeploymentStore({
-			nginxRoot: "C:\\data\\nginx",
+			nginxRoot: testRoot,
 			ownerUserId: 9,
 			parentOperationId: "parent",
 		});
@@ -44,7 +44,7 @@ test("deployment store persists creation, transitions and logical candidate path
 			diagnostics: { warnings: [] },
 		});
 		await store.transition("op-1", "failed", null, "nginx rejected config");
-		await store.setCandidatePath("op-1", "C:\\data\\nginx\\deployments\\op-1\\candidate.conf");
+		await store.setCandidatePath("op-1", path.join(testRoot, "deployments", "op-1", "candidate.conf"));
 
 		assert.equal(operations[0].type, "insert");
 		assert.equal(operations[0].value.owner_user_id, 9);
