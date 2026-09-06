@@ -30,6 +30,7 @@ const allLocales = [
   ["hu", "hu-HU"],
   ["no", "no-NO"],
   ["uk", "uk-UA"],
+  ["uz", "uz-UZ"],
 ];
 
 const ignoreUnused = [/^.*$/];

@@ -209,7 +209,11 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										)}
 									</Field>
 								</div>
-								{!isAdmin && (
+								{isAdmin ? (
+									<Alert variant="info" className="my-3">
+										<T id="role.admin" />: <T id="column.satisfy-all" />
+									</Alert>
+								) : (
 									<>
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">

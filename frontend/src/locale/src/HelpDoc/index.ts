@@ -20,8 +20,9 @@ import * as zh from "./zh/index";
 import * as tr from "./tr/index";
 import * as hu from "./hu/index";
 import * as uk from "./uk/index";
+import * as uz from "./uz/index";
 
-const items: any = { en, de, pt, es, et, ja, sk, cs, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu, uk };
+const items: any = { en, de, pt, es, et, ja, sk, cs, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu, uk, uz };
 
 const fallbackLang = "en";
 

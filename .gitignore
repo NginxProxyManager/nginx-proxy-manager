@@ -10,3 +10,9 @@ docker/dev/dnsrouter-config.json.tmp
 docker/dev/resolv.conf
 .claude
 
+# Runtime data & certificates
+data/
+letsencrypt/
+*.sqlite
+*.sqlite-journal
+

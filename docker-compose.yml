@@ -1,0 +1,24 @@
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      # Public HTTP Port:
+      - '80:80'
+      # Admin Web Port:
+      - '81:81'
+      # Public HTTPS Port:
+      - '443:443'
+    environment:
+      # Default admin user credentials:
+      INITIAL_ADMIN_EMAIL: "admin@example.com"
+      INITIAL_ADMIN_PASSWORD: "changeme"
+      # Uncomment if IPv6 is not supported on your host:
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+      - ./frontend/dist:/app/frontend:ro
+      - ./backend/internal/user.js:/app/internal/user.js:ro
+      - ./backend/routes/users.js:/app/routes/users.js:ro
