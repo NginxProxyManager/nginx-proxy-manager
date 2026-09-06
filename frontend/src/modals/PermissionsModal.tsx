@@ -232,7 +232,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										</div>
 										{values.visibility === "user" && values.proxyHosts !== "hidden" && (
 											<div className="mb-3 ps-3 border-start border-2 border-primary">
-												<label className="form-label mb-1">
+												<label htmlFor="ignored-allowed-hosts" className="form-label mb-1">
 													<T id="permissions.allowed-proxy-hosts" />
 												</label>
 												<div className="text-secondary small mb-2">

@@ -584,23 +584,23 @@
 	"password.show": {
 		"defaultMessage": "Parolni ko'rsatish"
 	},
-	"permissions.hidden": {
-		"defaultMessage": "Yashirin"
-	},
-	"permissions.manage": {
-		"defaultMessage": "Boshqarish"
-	},
-	"permissions.view": {
-		"defaultMessage": "Faqat ko'rish"
-	},
 	"permissions.allowed-proxy-hosts": {
 		"defaultMessage": "Ruxsat berilgan proksi hostlar"
 	},
 	"permissions.allowed-proxy-hosts-help": {
 		"defaultMessage": "Foydalanuvchi faqat belgilangan proksi hostlarni ko'rishi va boshqarishi mumkin ('Faqat o'zi yaratgan elementlar' rejimida)."
 	},
+	"permissions.hidden": {
+		"defaultMessage": "Yashirin"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Boshqarish"
+	},
 	"permissions.no-proxy-hosts": {
 		"defaultMessage": "Proksi hostlar mavjud emas"
+	},
+	"permissions.view": {
+		"defaultMessage": "Faqat ko'rish"
 	},
 	"permissions.visibility.all": {
 		"defaultMessage": "Barcha elementlar"

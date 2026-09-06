@@ -57,7 +57,7 @@ const internalRedirectionHost = {
 					thisData.advanced_config = "";
 				}
 
-				const isAdmin = (access.hasRole && access.hasRole("admin")) || access.token.hasScope("admin");
+				const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
 				if (!isAdmin && thisData.advanced_config && thisData.advanced_config.trim() !== "") {
 					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
 				}
@@ -188,7 +188,7 @@ const internalRedirectionHost = {
 
 				thisData = internalHost.cleanSslHstsData(thisData, row);
 
-				const isAdmin = (access.hasRole && access.hasRole("admin")) || access.token.hasScope("admin");
+				const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
 				if (
 					!isAdmin &&
 					typeof thisData.advanced_config !== "undefined" &&
