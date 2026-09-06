@@ -90,18 +90,11 @@ export default function (tokenString) {
 					.where("type", "=", "password")
 					.first();
 
-				if (auth && typeof tokenData.iat === "number") {
-					// SQLite gives this back as a local time string, the other drivers as a Date.
-					const changedAt =
-						auth.modified_on instanceof Date
-							? auth.modified_on.getTime()
-							: Date.parse(String(auth.modified_on).replace(" ", "T"));
-
-					// Whole seconds on both sides, which is all `iat` carries, so a token issued in the
-					// same second as the change is kept. Postgres stores this column to the microsecond.
-					if (!Number.isNaN(changedAt) && tokenData.iat < Math.floor(changedAt / 1000)) {
-						throw new errs.TokenRevokedError("Token was issued before the password was changed");
-					}
+				// Both sides come from the same clock and in the same unit, whole seconds since
+				// the epoch: `setPassword` stamps the marker and `jsonwebtoken` stamps `iat`.
+				const changedAt = auth?.meta?.password_changed_at;
+				if (changedAt && typeof tokenData.iat === "number" && tokenData.iat < changedAt) {
+					throw new errs.TokenRevokedError("Token was issued before the password was changed");
 				}
 
 				initialised = true;
