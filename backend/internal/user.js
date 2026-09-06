@@ -39,7 +39,7 @@ const internalUser = {
 
 		let user = await userModel.query().insertAndFetch(data).then(utils.omitRow(omissions()));
 		if (auth) {
-			user = await authModel.query().insert({
+			await authModel.query().insert({
 				user_id: user.id,
 				type: auth.type,
 				secret: auth.secret,
@@ -434,7 +434,7 @@ const internalUser = {
 				return internalUser.get(access, { id: data.id });
 			})
 			.then((user) => {
-				if (user.id !== data.id) {
+				if (Number(user.id) !== Number(data.id)) {
 					// Sanity check that something crazy hasn't happened
 					throw new errs.InternalValidationError(
 						`User could not be updated, IDs do not match: ${user.id} !== ${data.id}`,
@@ -444,6 +444,7 @@ const internalUser = {
 				return user;
 			})
 			.then((user) => {
+				const permData = _.omit(data, ["id"]);
 				// Get perms row, patch if it exists
 				return userPermissionModel
 					.query()
@@ -455,10 +456,10 @@ const internalUser = {
 							return userPermissionModel
 								.query()
 								.where("user_id", user.id)
-								.patchAndFetchById(existing_auth.id, _.assign({ user_id: user.id }, data));
+								.patchAndFetchById(existing_auth.id, _.assign({ user_id: user.id }, permData));
 						}
 						// insert
-						return userPermissionModel.query().insertAndFetch(_.assign({ user_id: user.id }, data));
+						return userPermissionModel.query().insertAndFetch(_.assign({ user_id: user.id }, permData));
 					})
 					.then((permissions) => {
 						// Add to Audit Log

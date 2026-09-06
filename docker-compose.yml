@@ -1,0 +1,36 @@
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      # Public HTTP Port:
+      - '80:80'
+      # Admin Web Port:
+      - '81:81'
+      # Public HTTPS Port:
+      - '443:443'
+    environment:
+      # Default admin user credentials:
+      INITIAL_ADMIN_EMAIL: "admin@example.com"
+      INITIAL_ADMIN_PASSWORD: "changeme"
+      PUID: 1000
+      PGID: 1000
+      # Uncomment if IPv6 is not supported on your host:
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+      - ./frontend/dist:/app/frontend:ro
+      - ./backend/internal/user.js:/app/internal/user.js:ro
+      - ./backend/routes/users.js:/app/routes/users.js:ro
+      - ./backend/routes/tokens.js:/app/routes/tokens.js:ro
+      - ./backend/lib/express/rate-limit.js:/app/lib/express/rate-limit.js:ro
+      - ./backend/lib/access.js:/app/lib/access.js:ro
+      - ./backend/internal/proxy-host.js:/app/internal/proxy-host.js:ro
+      - ./backend/internal/dead-host.js:/app/internal/dead-host.js:ro
+      - ./backend/internal/redirection-host.js:/app/internal/redirection-host.js:ro
+      - ./backend/models/user_permission.js:/app/models/user_permission.js:ro
+      - ./backend/schema/components/permission-object.json:/app/schema/components/permission-object.json:ro
+      - ./backend/migrations:/app/migrations:ro
+      - ./backend/node_modules/qs:/app/node_modules/qs:ro

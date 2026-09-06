@@ -584,11 +584,20 @@
 	"password.show": {
 		"defaultMessage": "Show Password"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Allowed Proxy Hosts"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "The user will only be able to view and manage selected proxy hosts (in 'Created Items Only' visibility mode)."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Hidden"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Manage"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "No proxy hosts found"
 	},
 	"permissions.view": {
 		"defaultMessage": "View Only"

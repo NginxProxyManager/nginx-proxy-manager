@@ -12,7 +12,7 @@
 		"prettier": "biome format --write ./src",
 		"locale-extract": "formatjs extract 'src/**/*.tsx'",
 		"locale-compile": "formatjs compile-folder src/locale/src src/locale/lang",
-		"locale-sort": "./src/locale/scripts/locale-sort.sh",
+		"locale-sort": "node ./src/locale/scripts/locale-sort.cjs",
 		"test": "vitest"
 	},
 	"dependencies": {

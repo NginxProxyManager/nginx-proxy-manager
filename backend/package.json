@@ -49,5 +49,11 @@
 	"signale": {
 		"displayDate": true,
 		"displayTimestamp": true
+	},
+	"resolutions": {
+		"qs": "^6.16.0"
+	},
+	"overrides": {
+		"qs": "^6.16.0"
 	}
 }

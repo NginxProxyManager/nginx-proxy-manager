@@ -233,10 +233,10 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 										</div>
 									</div>
 									<div className="row">
-										<div className="col-md-3">
+										<div className="col-sm-3 col-md-3">
 											<div className="mb-3">
 												<label
-													className="form-label"
+													className="form-label text-nowrap"
 													htmlFor={`location-forwardScheme-${row.id}`}
 												>
 													<T id="host.forward-scheme" />
@@ -254,10 +254,10 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 												</select>
 											</div>
 										</div>
-										<div className="col-md-6">
+										<div className="col-sm-5 col-md-5">
 											<div className="mb-3">
 												<label
-													className="form-label"
+													className="form-label text-nowrap"
 													htmlFor={`location-forwardHost-${row.id}`}
 												>
 													<T id="proxy-host.forward-host" />
@@ -275,10 +275,10 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 												/>
 											</div>
 										</div>
-										<div className="col-md-3">
+										<div className="col-sm-4 col-md-4">
 											<div className="mb-3">
 												<label
-													className="form-label"
+													className="form-label text-nowrap"
 													htmlFor={`location-forwardPort-${row.id}`}
 												>
 													<T id="host.forward-port" />

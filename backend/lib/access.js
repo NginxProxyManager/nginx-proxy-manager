@@ -122,7 +122,13 @@ export default function (tokenString) {
 						const query = proxyHostModel.query().select("id").andWhere("is_deleted", 0);
 
 						if (permissions.visibility === "user") {
-							query.andWhere("owner_user_id", tokenUserId);
+							const allowedIds = permissions.meta?.proxy_host_ids || permissions.meta?.proxyHostIds || [];
+							query.andWhere((builder) => {
+								builder.where("owner_user_id", tokenUserId);
+								if (allowedIds.length > 0) {
+									builder.orWhereIn("id", allowedIds);
+								}
+							});
 						}
 
 						const rows = await query;
@@ -196,6 +202,10 @@ export default function (tokenString) {
 	return {
 		token: Token,
 
+		getPermissions: () => permissions,
+		getRoles: () => userRoles,
+		hasRole: (role) => userRoles.includes(role),
+
 		/**
 		 *
 		 * @param   {Boolean}  [allowInternal]
@@ -203,7 +213,8 @@ export default function (tokenString) {
 		 */
 		load: async (allowInternal) => {
 			if (tokenString) {
-				return await Token.load(tokenString);
+				await this.init();
+				return tokenData;
 			}
 			allowInternalAccess = allowInternal;
 			return allowInternal || null;
@@ -238,6 +249,7 @@ export default function (tokenString) {
 						permission_streams: permissions.streams,
 						permission_access_lists: permissions.access_lists,
 						permission_certificates: permissions.certificates,
+						permission_meta: permissions.meta,
 					},
 				};
 
