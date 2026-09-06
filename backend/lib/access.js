@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 import Ajv from "ajv/dist/2020.js";
 import _ from "lodash";
 import { access as logger } from "../logger.js";
+import authModel from "../models/auth.js";
 import proxyHostModel from "../models/proxy_host.js";
 import TokenModel from "../models/token.js";
 import userModel from "../models/user.js";
@@ -80,6 +81,29 @@ export default function (tokenString) {
 				if (!ok) {
 					throw new errs.AuthError("Invalid token scope for User");
 				}
+
+				// A token issued before the password was last changed is no longer valid: taking an account
+				// back from whoever has the old password has to end the sessions that password opened.
+				const auth = await authModel
+					.query()
+					.where("user_id", "=", user.id)
+					.where("type", "=", "password")
+					.first();
+
+				if (auth && typeof tokenData.iat === "number") {
+					// SQLite gives this back as a local time string, the other drivers as a Date.
+					const changedAt =
+						auth.modified_on instanceof Date
+							? auth.modified_on.getTime()
+							: Date.parse(String(auth.modified_on).replace(" ", "T"));
+
+					// Whole seconds on both sides, which is all `iat` carries, so a token issued in the
+					// same second as the change is kept. Postgres stores this column to the microsecond.
+					if (!Number.isNaN(changedAt) && tokenData.iat < Math.floor(changedAt / 1000)) {
+						throw new errs.TokenRevokedError("Token was issued before the password was changed");
+					}
+				}
+
 				initialised = true;
 				userRoles = user.roles;
 				permissions = user.permissions;
@@ -268,6 +292,11 @@ export default function (tokenString) {
 				err.permission = permission;
 				err.permission_data = data;
 				logger.error(permission, data, err.message);
+				// A revoked token is not a permission problem, and the client can tell: the frontend
+				// clears the session on a 401 and on nothing else.
+				if (err instanceof errs.TokenRevokedError) {
+					throw err;
+				}
 				throw new errs.PermissionError("Permission Denied", err);
 			}
 		},
