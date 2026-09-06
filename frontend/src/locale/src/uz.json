@@ -426,13 +426,13 @@
 		"defaultMessage": "Github-da fork qilish"
 	},
 	"host.flags.block-exploits": {
-		"defaultMessage": "Keng tarqalgan hujumlarni bloklash (Block Exploits)"
+		"defaultMessage": "Hujumlarni bloklash"
 	},
 	"host.flags.cache-assets": {
-		"defaultMessage": "Statik fayllarni keshlash (Cache Assets)"
+		"defaultMessage": "Statik fayllarni keshlash"
 	},
 	"host.flags.preserve-path": {
-		"defaultMessage": "Yo'lni saqlab qolish (Preserve Path)"
+		"defaultMessage": "Yo'lni saqlab qolish"
 	},
 	"host.flags.protocols": {
 		"defaultMessage": "Protokollar"
@@ -441,10 +441,10 @@
 		"defaultMessage": "Websockets qo'llab-quvvatlash"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Yo'naltirish porti (Forward Port)"
+		"defaultMessage": "Yo'naltirish porti"
 	},
 	"host.forward-scheme": {
-		"defaultMessage": "Sxema (Scheme)"
+		"defaultMessage": "Sxema"
 	},
 	"hosts": {
 		"defaultMessage": "Hostlar"
@@ -606,7 +606,7 @@
 		"defaultMessage": "Proksi host"
 	},
 	"proxy-host.forward-host": {
-		"defaultMessage": "Yo'naltiriladigan hostname / IP"
+		"defaultMessage": "Yo'naltirish hosti / IP"
 	},
 	"proxy-hosts": {
 		"defaultMessage": "Proksi hostlar"

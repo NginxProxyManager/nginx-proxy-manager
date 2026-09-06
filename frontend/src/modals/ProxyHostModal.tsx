@@ -165,12 +165,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
 												<div className="row">
-													<div className="col-md-3">
+													<div className="col-sm-3 col-md-3">
 														<Field name="forwardScheme">
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label
-																		className="form-label"
+																		className="form-label text-nowrap"
 																		htmlFor="forwardScheme"
 																	>
 																		<T id="host.forward-scheme" />
@@ -196,11 +196,11 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															)}
 														</Field>
 													</div>
-													<div className="col-md-6">
+													<div className="col-sm-5 col-md-5">
 														<Field name="forwardHost" validate={validateString(1, 255)}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
-																	<label className="form-label" htmlFor="forwardHost">
+																	<label className="form-label text-nowrap" htmlFor="forwardHost">
 																		<T id="proxy-host.forward-host" />
 																	</label>
 																	<input
@@ -223,11 +223,11 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															)}
 														</Field>
 													</div>
-													<div className="col-md-3">
+													<div className="col-sm-4 col-md-4">
 														<Field name="forwardPort" validate={validateNumber(1, 65535)}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
-																	<label className="form-label" htmlFor="forwardPort">
+																	<label className="form-label text-nowrap" htmlFor="forwardPort">
 																		<T id="host.forward-port" />
 																	</label>
 																	<input
