@@ -593,6 +593,15 @@
 	"permissions.view": {
 		"defaultMessage": "View Only"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Allowed Proxy Hosts"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "The user will only be able to view and manage selected proxy hosts (in 'Created Items Only' visibility mode)."
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "No proxy hosts found"
+	},
 	"permissions.visibility.all": {
 		"defaultMessage": "All Items"
 	},

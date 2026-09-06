@@ -57,6 +57,11 @@ const internalProxyHost = {
 					thisData.advanced_config = "";
 				}
 
+				const isAdmin = (access.hasRole && access.hasRole("admin")) || access.token.hasScope("admin");
+				if (!isAdmin && thisData.advanced_config && thisData.advanced_config.trim() !== "") {
+					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
+				}
+
 				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
@@ -183,6 +188,15 @@ const internalProxyHost = {
 
 				thisData = internalHost.cleanSslHstsData(thisData, row);
 
+				const isAdmin = (access.hasRole && access.hasRole("admin")) || access.token.hasScope("admin");
+				if (
+					!isAdmin &&
+					typeof thisData.advanced_config !== "undefined" &&
+					thisData.advanced_config !== row.advanced_config
+				) {
+					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
+				}
+
 				return proxyHostModel
 					.query()
 					.where({ id: thisData.id })
@@ -243,7 +257,14 @@ const internalProxyHost = {
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
-					query.andWhere("owner_user_id", access.token.getUserId(1));
+					const permissions = access.getPermissions ? access.getPermissions() : {};
+					const allowedIds = permissions.meta?.proxy_host_ids || permissions.meta?.proxyHostIds || [];
+					query.andWhere((builder) => {
+						builder.where("owner_user_id", access.token.getUserId(1));
+						if (allowedIds.length > 0) {
+							builder.orWhereIn("id", allowedIds);
+						}
+					});
 				}
 
 				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
@@ -430,7 +451,14 @@ const internalProxyHost = {
 			.orderBy(castJsonIfNeed("domain_names"), "ASC");
 
 		if (accessData.permission_visibility !== "all") {
-			query.andWhere("owner_user_id", access.token.getUserId(1));
+			const permissions = access.getPermissions ? access.getPermissions() : {};
+			const allowedIds = permissions.meta?.proxy_host_ids || permissions.meta?.proxyHostIds || [];
+			query.andWhere((builder) => {
+				builder.where("owner_user_id", access.token.getUserId(1));
+				if (allowedIds.length > 0) {
+					builder.orWhereIn("id", allowedIds);
+				}
+			});
 		}
 
 		// Query is used for searching

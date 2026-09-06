@@ -593,6 +593,15 @@
 	"permissions.view": {
 		"defaultMessage": "Faqat ko'rish"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Ruxsat berilgan proksi hostlar"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Foydalanuvchi faqat belgilangan proksi hostlarni ko'rishi va boshqarishi mumkin ('Faqat o'zi yaratgan elementlar' rejimida)."
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Proksi hostlar mavjud emas"
+	},
 	"permissions.visibility.all": {
 		"defaultMessage": "Barcha elementlar"
 	},

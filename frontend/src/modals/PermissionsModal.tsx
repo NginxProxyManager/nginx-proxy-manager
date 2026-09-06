@@ -7,7 +7,7 @@ import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { setPermissions } from "src/api/backend";
 import { Button, Loading } from "src/components";
-import { useUser } from "src/hooks";
+import { useProxyHosts, useUser } from "src/hooks";
 import { T } from "src/locale";
 import styles from "./PermissionsModal.module.css";
 
@@ -22,6 +22,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const queryClient = useQueryClient();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const { data, isLoading, error } = useUser(id);
+	const { data: proxyHosts } = useProxyHosts();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -144,18 +145,24 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 				<Formik
 					initialValues={
 						{
-							visibility: data.permissions?.visibility,
-							accessLists: data.permissions?.accessLists,
-							certificates: data.permissions?.certificates,
-							deadHosts: data.permissions?.deadHosts,
-							proxyHosts: data.permissions?.proxyHosts,
-							redirectionHosts: data.permissions?.redirectionHosts,
-							streams: data.permissions?.streams,
+							visibility: data.permissions?.visibility || "user",
+							accessLists: data.permissions?.accessLists || "hidden",
+							certificates: data.permissions?.certificates || "hidden",
+							deadHosts: data.permissions?.deadHosts || "hidden",
+							proxyHosts: data.permissions?.proxyHosts || "hidden",
+							redirectionHosts: data.permissions?.redirectionHosts || "hidden",
+							streams: data.permissions?.streams || "hidden",
+							meta: {
+								proxy_host_ids:
+									data.permissions?.meta?.proxyHostIds ||
+									data.permissions?.meta?.proxy_host_ids ||
+									[],
+							},
 						} as any
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
+					{({ values, setFieldValue }: any) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -223,6 +230,64 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												{({ field, form }: any) => getPermissionButtons(field, form)}
 											</Field>
 										</div>
+										{values.visibility === "user" && values.proxyHosts !== "hidden" && (
+											<div className="mb-3 ps-3 border-start border-2 border-primary">
+												<label className="form-label mb-1">
+													<T id="permissions.allowed-proxy-hosts" />
+												</label>
+												<div className="text-secondary small mb-2">
+													<T id="permissions.allowed-proxy-hosts-help" />
+												</div>
+												<div
+													style={{
+														maxHeight: "180px",
+														overflowY: "auto",
+														border: "1px solid var(--tblr-border-color, #e6e7e9)",
+														borderRadius: "4px",
+														padding: "8px",
+														backgroundColor: "var(--tblr-bg-surface-secondary, #f8fafc)",
+													}}
+												>
+													{proxyHosts && proxyHosts.length > 0 ? (
+														proxyHosts.map((host) => {
+															const selectedIds: number[] = values.meta?.proxy_host_ids || [];
+															const isChecked = selectedIds.includes(host.id);
+															return (
+																<div key={host.id} className="form-check mb-1">
+																	<input
+																		type="checkbox"
+																		className="form-check-input"
+																		id={`perm-proxy-host-${host.id}`}
+																		checked={isChecked}
+																		onChange={(e) => {
+																			const newIds = e.target.checked
+																				? [...selectedIds, host.id]
+																				: selectedIds.filter((hId) => hId !== host.id);
+																			setFieldValue("meta.proxy_host_ids", newIds);
+																		}}
+																	/>
+																	<label
+																		className="form-check-label user-select-none"
+																		htmlFor={`perm-proxy-host-${host.id}`}
+																	>
+																		<span className="fw-semibold">
+																			{host.domainNames.join(", ")}
+																		</span>
+																		<span className="text-secondary small ms-2">
+																			&rarr; {host.forwardScheme}://{host.forwardHost}:{host.forwardPort}
+																		</span>
+																	</label>
+																</div>
+															);
+														})
+													) : (
+														<div className="text-secondary small">
+															<T id="permissions.no-proxy-hosts" />
+														</div>
+													)}
+												</div>
+											</div>
+										)}
 										<div className="mb-3">
 											<label htmlFor="ignored" className="form-label">
 												<T id="redirection-hosts" />
