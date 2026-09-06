@@ -8,8 +8,9 @@ import { getValidationSchema } from "../schema/index.js";
 
 const tokenRateLimiter = createRateLimiter({
 	windowMs: 60 * 1000,
-	max: 5,
+	max: 10,
 	message: "Too many login attempts. Please try again in 1 minute.",
+	skipSuccessfulRequests: true,
 });
 
 const router = express.Router({
