@@ -42,7 +42,7 @@
 		"temp-write": "^6.0.1"
 	},
 	"devDependencies": {
-		"@apidevtools/swagger-parser": "^12.1.0",
+		"@apidevtools/swagger-parser": "^13.0.0",
 		"@biomejs/biome": "^2.5.10",
 		"nodemon": "^3.1.14"
 	},
