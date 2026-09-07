@@ -254,47 +254,47 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.12.tgz#afefe785949f16ac4cdd1e695935a321572dd56a"
   integrity sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==
 
-"@formatjs/cli-native-darwin-arm64@1.1.13":
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-darwin-arm64/-/cli-native-darwin-arm64-1.1.13.tgz#b9bb994d3b0043061deacf18b6431e452338f67f"
-  integrity sha512-YFmGCKyIgAo/yQ6r156Ty1BTRVHxR85kPFXQ5AhpQoHO9z6DE+iVo5sOcu/RaomwNTzPELP5nY7iqiPXqxnPoQ==
+"@formatjs/cli-native-darwin-arm64@1.1.17":
+  version "1.1.17"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-darwin-arm64/-/cli-native-darwin-arm64-1.1.17.tgz#803b92545508a298fb427248e31b5956c9571165"
+  integrity sha512-RB3OD7yKakaUXocjqAy6HSBDFGlyFaDIveO/GA6ddjWF7UBHt2YdyJyUYxaA0rNDvs2DTyqt8YKgMl1kqVVlYQ==
 
-"@formatjs/cli-native-linux-arm64-musl@1.0.11":
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-arm64-musl/-/cli-native-linux-arm64-musl-1.0.11.tgz#346b1a0396de28ed06d2d37c83e661bd4e200e4f"
-  integrity sha512-/0QMXaWCdqi1ZWwWuHn2Po593oCWBuZAohf9OVjnUvuSfZyQs3aD5DZVvJuai7bCeBDArN40fv8RrD8bI4F89Q==
+"@formatjs/cli-native-linux-arm64-musl@1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-arm64-musl/-/cli-native-linux-arm64-musl-1.0.15.tgz#526a01b028eb0bc2999f95c0f0090a3a6149b91b"
+  integrity sha512-dmie/XV+sycRUEBY9GwDIteNEXm/WafsIELkINyrHV3mCLkhsZAgWf6CJ4a/ohQKV7LDkWiaaJ/rRLcEYFwZrA==
 
-"@formatjs/cli-native-linux-arm64@1.2.13":
-  version "1.2.13"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-arm64/-/cli-native-linux-arm64-1.2.13.tgz#09e6cd544d41daf12134789d4441ddb2470dad4e"
-  integrity sha512-5T79kvS6fUXyTrt1EWhFtWJJucPX39TbSHPAMSXl2SdRgTWlRZcMAplnpg18JMjXUcsRySeLQiCgfX+0al+0Gw==
+"@formatjs/cli-native-linux-arm64@1.2.17":
+  version "1.2.17"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-arm64/-/cli-native-linux-arm64-1.2.17.tgz#058a624dc955c9d356744524c59a9fda4691a0ce"
+  integrity sha512-t058WJ5nHDYdXTzwJt6EJ5xXNzHoEUG5hYCwBFkp1PvlTJok+vzaDiOnjNBxg/AWjxBWd324f3jpz5oIEL/c7w==
 
-"@formatjs/cli-native-linux-x64-musl@1.0.11":
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-x64-musl/-/cli-native-linux-x64-musl-1.0.11.tgz#72efee12b3fee10637b28043cc67e3dfe086fa03"
-  integrity sha512-+hQH5fsuo7Mrdm2Omzmp6foTDP8MmrLU07LbyThZ4EtGV4Q1t9in3tgnD9/+lkfmqVfugYSHJQeMK6zpm84Ovw==
+"@formatjs/cli-native-linux-x64-musl@1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-x64-musl/-/cli-native-linux-x64-musl-1.0.15.tgz#a56d67f77f41df88411f9cd2857ef1c27a660d20"
+  integrity sha512-XaeyOB/VQ/QQGoTRZffRLbd/tUIGNTLM/OprzpZ+leuCuGT42qDNPlcTBRmzXaBLG5qsWKeBO34N95uE6AZfag==
 
-"@formatjs/cli-native-linux-x64@1.1.13":
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-x64/-/cli-native-linux-x64-1.1.13.tgz#d4a69a0fd36dbac165f7e2d2a659f0c09f23659c"
-  integrity sha512-tG+8iLAC0b6PKAIqijYktzkFIDjZShmPuQUlKxD7G3WrNAHSNOVXJ8+Cf49GTYeYP5zBw/NzeElhgud+LBx46A==
+"@formatjs/cli-native-linux-x64@1.1.17":
+  version "1.1.17"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-x64/-/cli-native-linux-x64-1.1.17.tgz#23f6068e1c500d7590d51720dd528307c22c0bd6"
+  integrity sha512-p7xALk3DyLNGKirurKeLjRmaQpGh06pW6TIrx0EN7H8ccTreH3PIZD1FWapSqDeY1/8OKo3cMhioy/Qhq5nPAw==
 
-"@formatjs/cli-native-win32-x64@1.1.14":
-  version "1.1.14"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-win32-x64/-/cli-native-win32-x64-1.1.14.tgz#5c2f5731a6c99cb647ff0932bc3caf3345a321ba"
-  integrity sha512-lNHPcA5rRacs/6nWOC+CCQ45Q/QY1zc0kLXjtss4h4cue5ShR2aPHEHBONRDjDWuuqbkolhIC5lTFD6Dg12eGQ==
+"@formatjs/cli-native-win32-x64@1.1.18":
+  version "1.1.18"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-win32-x64/-/cli-native-win32-x64-1.1.18.tgz#dbe2b4f61fa8cab3a65dbb57df35601973b7f753"
+  integrity sha512-3d/R3nRmi56gXvVmzpEJixCAOam/F74RWqqTBLxnXEikMOhxSuGMRt99YynqvJIIJsn7tsVSBt2tg6T3cpms3w==
 
-"@formatjs/cli@^6.16.19":
-  version "6.16.19"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli/-/cli-6.16.19.tgz#b92ab015bbb7370ef967a6c4ca7aafb46545fa9a"
-  integrity sha512-/0F4n6To1wvroswFT+/3CE+eA8SRi/6y/22OrWmanNVwyeqpkUTHreQy2QzZDgFROH/C/b1tG7qxmQdPCoi1Vw==
+"@formatjs/cli@^6.16.23":
+  version "6.16.23"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli/-/cli-6.16.23.tgz#77bdfeb51371cf573ea5c1c92d60f1e60d0ec54e"
+  integrity sha512-TwhhTTpvctbVmD10uS651+nLD2FuIf/UdmwtqmDrwpkZXguI5l9sLcmCWQ2PV2/Kcotx7Xx4EsWEQl7p2IF0GA==
   optionalDependencies:
-    "@formatjs/cli-native-darwin-arm64" "1.1.13"
-    "@formatjs/cli-native-linux-arm64" "1.2.13"
-    "@formatjs/cli-native-linux-arm64-musl" "1.0.11"
-    "@formatjs/cli-native-linux-x64" "1.1.13"
-    "@formatjs/cli-native-linux-x64-musl" "1.0.11"
-    "@formatjs/cli-native-win32-x64" "1.1.14"
+    "@formatjs/cli-native-darwin-arm64" "1.1.17"
+    "@formatjs/cli-native-linux-arm64" "1.2.17"
+    "@formatjs/cli-native-linux-arm64-musl" "1.0.15"
+    "@formatjs/cli-native-linux-x64" "1.1.17"
+    "@formatjs/cli-native-linux-x64-musl" "1.0.15"
+    "@formatjs/cli-native-win32-x64" "1.1.18"
 
 "@formatjs/fast-memoize@3.1.7":
   version "3.1.7"
@@ -701,10 +701,10 @@
     picocolors "^1.1.1"
     redent "^3.0.0"
 
-"@testing-library/react@^16.3.2":
-  version "16.3.2"
-  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-16.3.2.tgz#672883b7acb8e775fc0492d9e9d25e06e89786d0"
-  integrity sha512-XU5/SytQM+ykqMnAnvB2umaJNIOsLF3PVv//1Ew4CTcpz0/BRyy/af40qqrt7SjKpDdT1saBMc42CUok5gaw+g==
+"@testing-library/react@^16.3.3":
+  version "16.3.3"
+  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-16.3.3.tgz#426907e7716f37038dab8aa69d8f0459f9ec24b2"
+  integrity sha512-Uo193NgQbPMz6lrrhtRQQFcMC6Re/ELLFbbuVL30WDlZxlpZf9/lMHTAVxPRLw1q1iu9OJmR1c2BLiENRstdBg==
   dependencies:
     "@babel/runtime" "^7.12.5"
 
@@ -810,10 +810,10 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.15.tgz#e6e5a86d602beaca71ce5163fadf5f95d70931c7"
   integrity sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==
 
-"@types/react-dom@^19.2.4":
-  version "19.2.4"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-19.2.4.tgz#165ab5e97dfb081847b0f6755060cf40a3f6666b"
-  integrity sha512-Bsc+QHgp+P/F02XDzNCY9jnZNCUuLki36KT7VKrTXXLdHf+vHMNZnW1rVu5DNW/rCK+fya3DATySbLM4yhtKUw==
+"@types/react-dom@^19.2.7":
+  version "19.2.7"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-19.2.7.tgz#eba78fc6201e564986ec40d56c86c8434593cace"
+  integrity sha512-I8bPpDLcHBv1qiIiXDCy71Rt8eQDKJP0sMSWJphDdAcdqiJ1sGpZamavoEIRZmYzjia9LuEb2HlYdDpmoENpvQ==
 
 "@types/react-table@^7.7.20":
   version "7.7.20"
@@ -975,10 +975,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.3.3.tgz#094041e1a4cb1987f038335421281ac8be390bcc"
   integrity sha512-60YRaenCQcVjYEKOcG824+DRGGIQ3VKErcBoAEDJZz5bKIs2ZG+X/H9Nk+Q6EVkwJk5QNApxbrc5QtBSwtrXAg==
 
-"@vitejs/plugin-react@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@vitejs/plugin-react/-/plugin-react-6.1.0.tgz#a3d7a3b998c618385d076e390b74398c3d8c65bc"
-  integrity sha512-qd2BzUBehkov86WFhg0JkEFEYyCLG9uPCe6qWTY/kRlss9OvJrOF2UbIWT7p+8IzZHkEu0DNGHc4HSv+JdDLsw==
+"@vitejs/plugin-react@^6.1.1":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-react/-/plugin-react-6.1.1.tgz#47fa1a2f956e88eaf778ebf65ddce8e2b36597e7"
+  integrity sha512-yxLaQV9gkhS8ezJqCM6+ndU7mDY6gqAg75NQ+0IjwEI8IYOmQCgkRwHKVSfWXW076DsqMo0Dk+0FK1U+M5RgFw==
   dependencies:
     "@rolldown/pluginutils" "^1.0.1"
 
@@ -2096,7 +2096,7 @@ ms@^2.1.3:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-nanoid@^3.3.17:
+nanoid@^3.3.18:
   version "3.3.18"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.18.tgz#f66a2de1199ffde0fcf21c8a5f13106b1c081913"
   integrity sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==
@@ -2206,12 +2206,12 @@ postcss-simple-vars@^7.0.1:
   resolved "https://registry.yarnpkg.com/postcss-simple-vars/-/postcss-simple-vars-7.0.1.tgz#836b3097a54dcd13dbd3c36a5dbdd512fad2954c"
   integrity sha512-5GLLXaS8qmzHMOjVxqkk1TZPf1jMqesiI7qLhnlyERalG0sMbHIbJqrcnrpmZdKCLglHnRHoEBB61RtGTsj++A==
 
-postcss@^8.5.26:
-  version "8.5.26"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.5.26.tgz#6e75135780c7e10df3433bf2266c552d35c8c620"
-  integrity sha512-u82N74LFzG8ca+dD8puPnplTXoGH4fTPpVGuIbt36G3qvNlkvfD0lEAZSxaly3KX8TS/L1A1gsCEmvKmBcVbkQ==
+postcss@^8.5.26, postcss@^8.5.28:
+  version "8.5.28"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.5.28.tgz#da4563a99a06e62d6c1cd1acae363224bcaed6e9"
+  integrity sha512-RRuzqDtt5Y9h3quz5hWhK+TPnsmVs6WwSU6LkJMeY4HstUEDuYTG8UJSdawMRzmzAtV+KEoG8N3Qg2qLy5vM/A==
   dependencies:
-    nanoid "^3.3.17"
+    nanoid "^3.3.18"
     picocolors "^1.1.1"
     source-map-js "^1.2.1"
 
