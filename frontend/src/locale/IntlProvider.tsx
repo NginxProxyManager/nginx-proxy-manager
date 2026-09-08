@@ -22,6 +22,7 @@ import langTr from "./lang/tr.json";
 import langHu from "./lang/hu.json";
 import langNo from "./lang/no.json";
 import langUk from "./lang/uk.json";
+import langAz from "./lang/az.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
@@ -51,6 +52,7 @@ const localeOptions = [
 	["hu", "hu-HU", langHu],
 	["no", "no-NO", langNo],
 	["uk", "uk-UA", langUk],
+	["az", "az-AZ", langAz],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
