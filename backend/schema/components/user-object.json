@@ -1,7 +1,17 @@
 {
 	"type": "object",
 	"description": "User object",
-	"required": ["id", "created_on", "modified_on", "is_disabled", "email", "name", "nickname", "avatar", "roles"],
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"is_disabled",
+		"email",
+		"name",
+		"nickname",
+		"avatar",
+		"roles"
+	],
 	"additionalProperties": false,
 	"properties": {
 		"id": {
@@ -49,7 +59,9 @@
 		},
 		"roles": {
 			"description": "Roles applied",
-			"example": ["admin"],
+			"example": [
+				"admin"
+			],
 			"type": "array",
 			"items": {
 				"type": "string"
@@ -111,6 +123,59 @@
 					"pattern": "^(manage|view|hidden)$"
 				}
 			}
+		},
+		"auth_sources": {
+			"type": "array",
+			"description": "Where this user is able to sign in from. Only returned when listing users.",
+			"items": {
+				"type": "object",
+				"required": [
+					"type"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"type": {
+						"type": "string",
+						"enum": [
+							"local",
+							"ldap",
+							"saml",
+							"oauth"
+						],
+						"example": "ldap"
+					},
+					"provider_id": {
+						"description": "Null for local password accounts",
+						"anyOf": [
+							{
+								"type": "integer",
+								"minimum": 1
+							},
+							{
+								"type": "null"
+							}
+						]
+					},
+					"name": {
+						"description": "Provider display name, null if the provider has since been removed",
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "null"
+							}
+						]
+					}
+				}
+			},
+			"example": [
+				{
+					"type": "ldap",
+					"provider_id": 1,
+					"name": "Company LDAP"
+				}
+			]
 		}
 	}
 }

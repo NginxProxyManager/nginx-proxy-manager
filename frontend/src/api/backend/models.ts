@@ -29,6 +29,8 @@ export interface User {
 	avatar: string;
 	roles: string[];
 	permissions?: UserPermissions;
+	/** Only returned when listing users */
+	authSources?: AuthSource[];
 }
 
 export interface AuditLog {
@@ -54,6 +56,12 @@ export interface AccessList {
 	satisfyAny: boolean;
 	passAuth: boolean;
 	proxyHostCount?: number;
+	/** Providers whose users may authenticate against sites using this list */
+	authProviderIds?: number[];
+	/** When set, a provider user must also be in one of these groups */
+	allowedGroups?: string[];
+	/** Derived: true when this list defers to a provider rather than a htpasswd file */
+	providerAuth?: boolean;
 	// Expansions:
 	owner?: User;
 	items?: AccessListItem[];
@@ -207,4 +215,146 @@ export interface DNSProvider {
 	id: string;
 	name: string;
 	credentials: string;
+}
+
+/** Where a user is able to sign in from, shown in the Users list */
+export interface AuthSource {
+	type: "local" | "ldap" | "saml" | "oauth";
+	providerId?: number | null;
+	/** Provider display name; null for local, or if the provider was removed */
+	name?: string | null;
+}
+
+export type AuthProviderType = "ldap" | "saml" | "oauth";
+
+/**
+ * Provider configuration. The shape depends on the provider type; secrets are
+ * never returned by the API, instead a `<field>Set` boolean says whether one is
+ * stored.
+ */
+export interface AuthProviderMeta {
+	// Common
+	autoCreateUser?: boolean;
+	defaultRoles?: string[];
+	adminGroup?: string;
+	linkByEmail?: boolean;
+	identifierAttribute?: string;
+
+	// LDAP
+	url?: string;
+	bindDn?: string;
+	bindPassword?: string;
+	bindPasswordSet?: boolean;
+	baseDn?: string;
+	userFilter?: string;
+	emailAttribute?: string;
+	nameAttribute?: string;
+	nicknameAttribute?: string;
+	groupAttribute?: string;
+	groupBaseDn?: string;
+	groupFilter?: string;
+	groupNameAttribute?: string;
+	loginAttributes?: string;
+	pageSize?: number;
+	syncEnabled?: boolean;
+	syncInterval?: number;
+	syncFilter?: string;
+	syncGroup?: string;
+	syncDisableMissing?: boolean;
+	startTls?: boolean;
+	tlsRejectUnauthorized?: boolean;
+	timeout?: number;
+
+	// SAML
+	entryPoint?: string;
+	issuer?: string;
+	idpCert?: string;
+	spPrivateKey?: string;
+	spPrivateKeySet?: boolean;
+	signatureAlgorithm?: string;
+	wantAssertionsSigned?: boolean;
+	wantAuthnResponseSigned?: boolean;
+
+	// OAuth
+	issuerUrl?: string;
+	authorizationUrl?: string;
+	tokenUrl?: string;
+	userinfoUrl?: string;
+	jwksUrl?: string;
+	clientId?: string;
+	clientSecret?: string;
+	clientSecretSet?: boolean;
+	scopes?: string;
+	emailClaim?: string;
+	nameClaim?: string;
+	nicknameClaim?: string;
+	groupClaim?: string;
+	useBasicAuth?: boolean;
+
+	[key: string]: any;
+}
+
+export interface AuthProvider {
+	id: number;
+	createdOn: string;
+	modifiedOn: string;
+	isDeleted?: boolean;
+	isEnabled: boolean;
+	isEnvManaged: boolean;
+	slug: string;
+	name: string;
+	type: AuthProviderType;
+	sortOrder: number;
+	meta: AuthProviderMeta;
+}
+
+export interface NewAuthProvider {
+	name: string;
+	type: AuthProviderType;
+	isEnabled?: boolean;
+	sortOrder?: number;
+	meta?: AuthProviderMeta;
+}
+
+/** A provider as advertised on the (unauthenticated) login screen */
+export interface LoginProvider {
+	id: number;
+	name: string;
+	type: "saml" | "oauth";
+}
+
+export interface AuthSyncResult {
+	providerId: number;
+	startedOn?: string;
+	finishedOn?: string;
+	ok: boolean;
+	error?: string;
+	entries?: number;
+	created?: number;
+	updated?: number;
+	disabled?: number;
+	skipped?: number;
+	failed?: number;
+}
+
+export interface AuthSyncStatus {
+	supported: boolean;
+	enabled: boolean;
+	running: boolean;
+	lastResult?: AuthSyncResult | null;
+}
+
+export interface AuthCredentialTest {
+	valid: boolean;
+	dn?: string;
+	email?: string;
+	name?: string;
+	identifierSource?: string;
+	groups?: string[];
+}
+
+export interface LoginOptions {
+	localEnabled: boolean;
+	ldapEnabled: boolean;
+	providers: LoginProvider[];
 }

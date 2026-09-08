@@ -1,0 +1,66 @@
+{
+	"operationId": "updateAuthProvider",
+	"summary": "Update an authentication provider",
+	"tags": ["auth-providers"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Authentication Provider ID",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Authentication Provider Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"minProperties": 1,
+					"properties": {
+						"name": {
+							"$ref": "../../../components/auth-provider-object.json#/properties/name"
+						},
+						"is_enabled": {
+							"$ref": "../../../components/auth-provider-object.json#/properties/is_enabled"
+						},
+						"sort_order": {
+							"$ref": "../../../components/auth-provider-object.json#/properties/sort_order"
+						},
+						"meta": {
+							"$ref": "../../../components/auth-provider-object.json#/properties/meta"
+						}
+					}
+				},
+				"example": {
+					"name": "Company LDAP",
+					"is_enabled": false
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/auth-provider-object.json"
+					}
+				}
+			}
+		}
+	}
+}

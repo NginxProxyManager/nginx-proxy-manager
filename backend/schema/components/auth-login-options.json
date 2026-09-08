@@ -1,0 +1,62 @@
+{
+	"type": "object",
+	"description": "The sign in methods available on the login screen",
+	"required": [
+		"local_enabled",
+		"ldap_enabled",
+		"providers"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"local_enabled": {
+			"type": "boolean",
+			"description": "Whether an email address and password can be used to sign in",
+			"example": true
+		},
+		"ldap_enabled": {
+			"type": "boolean",
+			"description": "Whether at least one LDAP directory is configured. LDAP uses the same form as local sign in.",
+			"example": false
+		},
+		"providers": {
+			"type": "array",
+			"description": "Providers that sign in by redirecting to an external site",
+			"items": {
+				"type": "object",
+				"required": [
+					"id",
+					"name",
+					"type"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"type": "integer",
+						"minimum": 1,
+						"example": 2
+					},
+					"name": {
+						"type": "string",
+						"minLength": 1,
+						"example": "Company SSO"
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"saml",
+							"oauth"
+						],
+						"example": "saml"
+					}
+				}
+			},
+			"example": [
+				{
+					"id": 2,
+					"name": "Company SSO",
+					"type": "saml"
+				}
+			]
+		}
+	}
+}

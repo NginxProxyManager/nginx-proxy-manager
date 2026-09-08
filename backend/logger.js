@@ -9,6 +9,7 @@ const global = new signale.Signale({ scope: "Global   ", ...opts });
 const migrate = new signale.Signale({ scope: "Migrate  ", ...opts });
 const express = new signale.Signale({ scope: "Express  ", ...opts });
 const access = new signale.Signale({ scope: "Access   ", ...opts });
+const auth = new signale.Signale({ scope: "Auth     ", ...opts });
 const nginx = new signale.Signale({ scope: "Nginx    ", ...opts });
 const ssl = new signale.Signale({ scope: "SSL      ", ...opts });
 const certbot = new signale.Signale({ scope: "Certbot  ", ...opts });
@@ -23,4 +24,4 @@ const debug = (logger, ...args) => {
 	}
 };
 
-export { debug, global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges, remoteVersion };
+export { debug, global, migrate, express, access, auth, nginx, ssl, certbot, importer, setup, ipRanges, remoteVersion };

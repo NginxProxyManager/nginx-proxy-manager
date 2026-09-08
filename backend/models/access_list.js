@@ -31,12 +31,20 @@ class AccessList extends Model {
 
 	$parseDatabaseJson(json) {
 		const thisJson = super.$parseDatabaseJson(json);
+
+		// A real property rather than a getter: this value has to survive being
+		// copied into a plain object on its way to the nginx templates, which a
+		// prototype getter would not.
+		thisJson.provider_auth = Array.isArray(thisJson.auth_provider_ids) && thisJson.auth_provider_ids.length > 0;
+
 		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
 	$formatDatabaseJson(json) {
-		const thisJson = convertBoolFieldsToInt(json, boolFields);
-		return super.$formatDatabaseJson(thisJson);
+		// Derived on read, never stored
+		const thisJson = { ...json };
+		delete thisJson.provider_auth;
+		return super.$formatDatabaseJson(convertBoolFieldsToInt(thisJson, boolFields));
 	}
 
 	static get name() {
@@ -48,7 +56,7 @@ class AccessList extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["meta"];
+		return ["meta", "auth_provider_ids", "allowed_groups"];
 	}
 
 	static get relationMappings() {
