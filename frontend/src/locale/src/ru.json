@@ -362,6 +362,12 @@
 	"domains.http2-support": {
 		"defaultMessage": "Поддержка HTTP/2"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "Enable HTTP/3 (QUIC)"
+	},
+	"domains.http3-support-description": {
+		"defaultMessage": "Enable HTTP/3 (QUIC over UDP)"
+	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Доверять X-Forwarded-Proto"
 	},
