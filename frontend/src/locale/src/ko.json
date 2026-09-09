@@ -299,8 +299,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS 서브도메인 포함"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1은 대체 프로토콜로 계속 활성화됩니다."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 지원"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC 지원"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS 챌린지 사용"

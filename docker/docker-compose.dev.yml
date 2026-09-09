@@ -9,7 +9,8 @@ services:
     ports:
       - 3080:80
       - 3081:81
-      - 3443:443
+      - 3443:443/tcp
+      - 3443:443/udp
     networks:
       nginx_proxy_manager:
         aliases:
@@ -21,6 +22,7 @@ services:
       PUID: 1000
       PGID: 1000
       FORCE_COLOR: 1
+      NPM_PUBLIC_HTTPS_PORT: 3443
       # specifically for dev:
       DEBUG: "true"
       DEVELOPMENT: "true"

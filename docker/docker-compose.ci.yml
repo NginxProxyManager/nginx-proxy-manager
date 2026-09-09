@@ -27,6 +27,7 @@ services:
       - "80/tcp"
       - "81/tcp"
       - "443/tcp"
+      - "443/udp"
       - "1500/tcp"
       - "1501/tcp"
       - "1502/tcp"

@@ -86,6 +86,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
 							http2Support: data?.http2Support || false,
+							http3Support: data?.http3Support || false,
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
 							trustForwardedProto: data?.trustForwardedProto || false,
