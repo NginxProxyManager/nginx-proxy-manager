@@ -520,12 +520,12 @@
 		"version": "=={{certbot-version}}"
 	},
 	"oci": {
-		"credentials": "[DEFAULT]\nuser = ocid1.user.oc1...\nfingerprint = xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx\ntenancy = ocid1.tenancy.oc1...\nregion = us-ashburn-1\nkey_file = ~/.oci/oci_api_key.pem",
+		"credentials": "[DEFAULT]\nuser = ocid1.user.oc1...\nfingerprint = xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx\ntenancy = ocid1.tenancy.oc1...\nregion = us-ashburn-1\nkey_file = /root/.oci/oci_api_key.pem",
 		"dependencies": "oci",
-		"full_plugin_name": "dns-oci",
+		"full_plugin_name": "dns-oraclecloud",
 		"name": "Oracle Cloud Infrastructure DNS",
-		"package_name": "certbot-dns-oci",
-		"version": "~=0.3.6"
+		"package_name": "certbot-dns-oraclecloud",
+		"version": "~=1.0.1"
 	},
 	"ovh": {
 		"credentials": "dns_ovh_endpoint = ovh-eu\ndns_ovh_application_key = MDAwMDAwMDAwMDAw\ndns_ovh_application_secret = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw\ndns_ovh_consumer_key = MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw",
