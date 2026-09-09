@@ -1,5 +1,5 @@
 ## Mis on ümbersuunamishost?
 
-Ümbersuunamishost suunab sissetuleva domeeni päringud ümber ja suunab vaataja teisele domeenile.
+Ümbersuunamishost võtab päringud ühelt domeenilt ja saadab külastaja teisele.
 
-Kõige levinum põhjus seda tüüpi hosti kasutamiseks on see, kui teie veebisaidi domeenid muutuvad, kuid otsingumootori või suunaja lingid osutavad endiselt vanale domeenile.
+Kõige sagedamini on seda vaja siis, kui sait kolis uuele domeenile, aga vanad lingid otsingust või viidetest käivad veel vana aadressi pihta.
