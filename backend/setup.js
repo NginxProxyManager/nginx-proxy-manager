@@ -1,4 +1,3 @@
-import fs from "node:fs/promises";
 import { installPlugins } from "./lib/certbot.js";
 import utils from "./lib/utils.js";
 import { setup as logger } from "./logger.js";
@@ -98,7 +97,6 @@ const setupCertbotPlugins = async () => {
 
 	if (certificates?.length) {
 		const plugins = [];
-		const promises = [];
 
 		certificates.map((certificate) => {
 			if (certificate.meta && certificate.meta.dns_challenge === true) {
@@ -106,31 +104,23 @@ const setupCertbotPlugins = async () => {
 					plugins.push(certificate.meta.dns_provider);
 				}
 
-				// Make sure credentials file exists
-				const credentials_loc = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
-				if (typeof certificate.meta.dns_provider_credentials === "string") {
-					promises.push(
-						fs
-							.mkdir("/etc/letsencrypt/credentials", { recursive: true })
-							.then(() =>
-								fs.writeFile(credentials_loc, certificate.meta.dns_provider_credentials, {
-									mode: 0o600,
-									flag: "wx",
-								}),
-							)
-							.catch((err) => {
-								if (err.code !== "EEXIST") throw err;
-							}),
-					);
-				}
+				// Deliberately does NOT write the DNS credentials file here any more.
+				//
+				// It used to, so that a later `certbot renew` would find the path recorded in its
+				// renewal config. The effect was that every backend restart rewrote a plaintext
+				// DNS provider API token for every DNS-01 certificate, and left it there.
+				//
+				// internalCertificate now writes that file immediately before it runs certbot and
+				// removes it again afterwards, so there is exactly one writer and the credential
+				// is on disk only for the length of a certbot run. Recreating the files at boot
+				// would put every one of them straight back.
 			}
 			return true;
 		});
 
 		await installPlugins(plugins);
 
-		if (promises.length) {
-			await Promise.all(promises);
+		if (plugins.length) {
 			logger.info(`Added Certbot plugins ${plugins.join(", ")}`);
 		}
 	}
