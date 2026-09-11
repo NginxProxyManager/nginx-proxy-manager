@@ -1,9 +1,7 @@
-## Mis on 404 host?
+## Mis on 404-host?
 
-404 host on lihtsalt hosti seadistus, mis kuvab 404 lehte.
+404-host on lihtsalt host, mis näitab 404 lehte.
 
-See võib olla kasulik, kui teie domeen on otsingumootorites loetletud ja soovite
-esitada kenama vealehe või konkreetselt otsingu indekseerijatele öelda, et
-domeenilehed enam ei eksisteeri.
+Sellest on abi, kui domeen on otsingumootorites kirjas ja tahad näidata kenamat vealehte või anda indekseerijatele märku, et lehti enam pole.
 
-Selle hosti teine eelis on selle külastatavuste logide jälgimine ja suunajate vaatamine.
+Lisaks näed logist, kes sinna sattus ja kust nad tulid.

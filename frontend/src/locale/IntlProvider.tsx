@@ -22,6 +22,7 @@ import langTr from "./lang/tr.json";
 import langHu from "./lang/hu.json";
 import langNo from "./lang/no.json";
 import langUk from "./lang/uk.json";
+import langAz from "./lang/az.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
@@ -51,6 +52,7 @@ const localeOptions = [
 	["hu", "hu-HU", langHu],
 	["no", "no-NO", langNo],
 	["uk", "uk-UA", langUk],
+	["az", "az-AZ", langAz],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -67,17 +69,17 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 const getFlagCodeForLocale = (locale?: string) => {
 	const thisLocale = (locale || "en").slice(0, 2);
 
-  // only add to this if your flag is different from the locale code
-  const specialCases: Record<string, string> = {
-    ja: "jp", // Japan
-    zh: "cn", // China
-    vi: "vn", // Vietnam
-    ko: "kr", // Korea
-    cs: "cz", // Czechia
-    ga: "ie", // Ireland (Irish)
-    et: "ee", // Estonia
-    uk: "ua", // Ukraine
-  };
+	// only add to this if your flag is different from the locale code
+	const specialCases: Record<string, string> = {
+		ja: "jp", // Japan
+		zh: "cn", // China
+		vi: "vn", // Vietnam
+		ko: "kr", // Korea
+		cs: "cz", // Czechia
+		ga: "ie", // Ireland (Irish)
+		et: "ee", // Estonia (ISO 3166-1). "et" as a country code would be Ethiopia.
+		uk: "ua", // Ukraine
+	};
 
 	if (specialCases[thisLocale]) {
 		return specialCases[thisLocale].toUpperCase();
