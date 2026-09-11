@@ -38,7 +38,8 @@
 		"react-router-dom": "^7.18.2",
 		"react-select": "^5.10.2",
 		"react-toastify": "^11.1.0",
-		"rooks": "^9.9.0"
+		"rooks": "^9.9.0",
+		"tldts": "^7.4.8"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.10",
