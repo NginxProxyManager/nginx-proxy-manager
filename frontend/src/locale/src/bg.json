@@ -365,6 +365,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Кеширане на ресурси"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip компресия"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Запазване на пътя"
 	},
@@ -379,6 +382,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Схема"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Ниво на компресия"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Допълнителни MIME типове"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html винаги се компресира, когато gzip е активиран. Избягвайте вече компресирани файлови формати."
 	},
 	"hosts": {
 		"defaultMessage": "Хостове"

@@ -356,6 +356,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Varlıkları Önbelleğe Al"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip Sıkıştırması"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Yolu Koru"
 	},
@@ -370,6 +373,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Şema"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Sıkıştırma Seviyesi"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Ek MIME Türleri"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "gzip etkinken text/html her zaman sıkıştırılır. Önceden sıkıştırılmış dosya biçimlerinden kaçının."
 	},
 	"hosts": {
 		"defaultMessage": "Host'lar"

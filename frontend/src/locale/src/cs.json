@@ -422,6 +422,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Uložit zdroje do mezipaměti"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Komprese Gzip"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Zachovat cestu"
 	},
@@ -436,6 +439,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schéma"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Úroveň komprese"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Další typy MIME"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html je při zapnutém gzip vždy komprimován. Nevybírejte již komprimované formáty souborů."
 	},
 	"hosts": {
 		"defaultMessage": "Hostitelé"
