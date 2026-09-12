@@ -231,6 +231,14 @@
 		"package_name": "certbot-plugin-edgedns",
 		"version": "~=0.1.0"
 	},
+	"edgeone": {
+        "credentials": "dns_edgeone_secret_id = YOUR_TENCENTCLOUD_SECRET_ID\ndns_edgeone_secret_key = YOUR_TENCENTCLOUD_SECRET_KEY",
+        "dependencies": "",
+        "full_plugin_name": "dns-edgeone",
+        "name": "Tencent Cloud EdgeOne",
+        "package_name": "certbot-dns-edgeone",
+        "version": ">=0.1.0"
+    },
 	"eurodns": {
 		"credentials": "dns_eurodns_applicationId = myuser\ndns_eurodns_apiKey = mysecretpassword\ndns_eurodns_endpoint = https://rest-api.eurodns.com/dns-zones/",
 		"dependencies": "",
