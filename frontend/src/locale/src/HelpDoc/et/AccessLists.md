@@ -1,7 +1,7 @@
 ## Mis on juurdepääsuloend?
 
-Ligipääsuloendid pakuvad konkreetsete klientide IP-aadresside musta või valget nimekirja koos puhverserverite autentimisega põhilise HTTP-autentimise kaudu.
+Juurdepääsuloendiga saad lubada või keelata klientide IP-aadresse ning panna puhverserverile ette HTTP basic-autentimise.
 
-Saate ühe juurdepääsuloendi jaoks konfigureerida mitu kliendireeglit, kasutajanime ja parooli ning seejärel rakendada neid ühele või mitmele _puhverserverile_.
+Ühte loendisse saab panna mitu reeglit, kasutajanime ja parooli. Sama loendi saad kinnitada ühele või mitmele puhverserverile.
 
-See on kõige kasulikum edastatud veebiteenuste puhul, millel pole sisseehitatud autentimismehhanisme või kui soovite kaitsta tundmatute klientide eest.
+Sellest on kasu siis, kui edastataval teenusel endal sisselogimist pole või tahad võõrad kliendid eemal hoida.
