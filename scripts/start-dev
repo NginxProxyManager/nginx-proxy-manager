@@ -45,9 +45,14 @@ if hash docker 2>/dev/null; then
 	bash "$DIR/wait-healthy" "$(docker compose ps --all -q fullstack)" 120
 
 	echo ""
-	echo -e "${CYAN}Admin UI:     http://127.0.0.1:3081${RESET}"
-	echo -e "${CYAN}Nginx:        http://127.0.0.1:3080${RESET}"
-	echo -e "${CYAN}Swagger Doc:  http://127.0.0.1:3001${RESET}"
+	echo -e "${CYAN}Admin UI:      http://127.0.0.1:3081${RESET}"
+	echo -e "${CYAN}Nginx (HTTP):  http://127.0.0.1:3080${RESET}"
+	echo -e "${CYAN}Nginx (HTTPS): http://127.0.0.1:3443${RESET}"
+	echo -e "${CYAN}Swagger Doc:   http://127.0.0.1:3001${RESET}"
+	echo -e
+	echo -e "${CYAN}PROXY protocol:${RESET}"
+	echo -e "${CYAN}Nginx (HTTP):  http://127.0.0.1:3088${RESET}"
+	echo -e "${CYAN}Nginx (HTTPS): http://127.0.0.1:3444${RESET}"
 	echo ""
 
 	if [ "$1" == "-f" ]; then
