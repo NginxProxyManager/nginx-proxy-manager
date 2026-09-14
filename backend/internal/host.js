@@ -3,6 +3,7 @@ import { castJsonIfNeed } from "../lib/helpers.js";
 import deadHostModel from "../models/dead_host.js";
 import proxyHostModel from "../models/proxy_host.js";
 import redirectionHostModel from "../models/redirection_host.js";
+import streamModel from "../models/stream.js";
 
 const internalHost = {
 	/**
@@ -194,6 +195,46 @@ const internalHost = {
 		}
 
 		return isTaken;
+	},
+
+	/**
+	 * Returns all enabled, non-deleted hosts across all types that reference a given certificate.
+	 *
+	 * @param   {Number}  certificateId
+	 * @returns {Promise}
+	 */
+	getHostsWithCertificate: async (certificateId) => {
+		const result = {
+			total_count: 0,
+			proxy_hosts: [],
+			redirection_hosts: [],
+			dead_hosts: [],
+			streams: [],
+		};
+
+		// Only select id and meta — bulkDeleteConfigs needs id, the meta patch needs meta.
+		const baseQuery = (model) =>
+			model
+				.query()
+				.select("id", "meta")
+				.where("is_deleted", 0)
+				.andWhere("enabled", 1)
+				.andWhere("certificate_id", certificateId);
+
+		const [proxyHosts, redirectionHosts, deadHosts, streams] = await Promise.all([
+			baseQuery(proxyHostModel),
+			baseQuery(redirectionHostModel),
+			baseQuery(deadHostModel),
+			baseQuery(streamModel),
+		]);
+
+		result.proxy_hosts = proxyHosts;
+		result.redirection_hosts = redirectionHosts;
+		result.dead_hosts = deadHosts;
+		result.streams = streams;
+		result.total_count = proxyHosts.length + redirectionHosts.length + deadHosts.length + streams.length;
+
+		return result;
 	},
 
 	/**
