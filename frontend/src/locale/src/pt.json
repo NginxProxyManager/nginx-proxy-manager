@@ -287,8 +287,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS para Subdomínios"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "O HTTP/1.1 permanece ativado como alternativa."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "Suporte HTTP/2"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "Suporte HTTP/3 / QUIC"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Utilizar DNS Challenge"

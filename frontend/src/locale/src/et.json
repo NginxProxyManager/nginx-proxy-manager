@@ -362,8 +362,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "HSTS alamdomeenidel"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 jääb varuprotokollina lubatuks."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 tugi"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC tugi"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Usalda sihtserveri Forwarded Proto päiseid"

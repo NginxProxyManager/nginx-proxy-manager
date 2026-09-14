@@ -54,6 +54,9 @@
 						"http2_support": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/http2_support"
 						},
+						"http3_support": {
+							"$ref": "../../../components/proxy-host-object.json#/properties/http3_support"
+						},
 						"block_exploits": {
 							"$ref": "../../../components/proxy-host-object.json#/properties/block_exploits"
 						},
@@ -117,6 +120,7 @@
 								"meta": {},
 								"allow_websocket_upgrade": false,
 								"http2_support": false,
+								"http3_support": false,
 								"forward_scheme": "http",
 								"enabled": true,
 								"locations": [],

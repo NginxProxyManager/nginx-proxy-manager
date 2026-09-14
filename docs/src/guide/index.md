@@ -48,7 +48,7 @@ so that the barrier for entry here is low.
 I won't go in to too much detail here but here are the basics for someone new to this self-hosted world.
 
 1. Your home router will have a Port Forwarding section somewhere. Log in and find it
-2. Add port forwarding for port 80 and 443 to the server hosting this project
+2. Add port forwarding for TCP ports 80 and 443, plus UDP port 443 for HTTP/3, to the server hosting this project
 3. Configure your domain name details to point to your home, either with a static ip or a service like DuckDNS or [Amazon Route53](https://github.com/jc21/route53-ddns)
 4. Use the Nginx Proxy Manager as your gateway to forward to your other web based services
 
@@ -71,7 +71,8 @@ services:
     ports:
       - '80:80'
       - '81:81'
-      - '443:443'
+      - '443:443/tcp'
+      - '443:443/udp'
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt

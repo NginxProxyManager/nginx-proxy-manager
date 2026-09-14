@@ -107,7 +107,8 @@ services:
       # Public HTTP Port:
       - '80:80'
       # Public HTTPS Port:
-      - '443:443'
+      - '443:443/tcp'
+      - '443:443/udp'
       # Admin Web Port:
       - '81:81'
     environment:
@@ -248,6 +249,30 @@ On startup, we generate a resolvers directive for Nginx unless this is defined:
 
 In this configuration, all DNS queries performed by Nginx will fall to the `/etc/hosts` file
 and then the `/etc/resolv.conf`.
+
+## HTTP/3 / QUIC
+
+HTTP/3 uses UDP in addition to the normal HTTPS TCP listener. Publish the same public port for both protocols and allow UDP port 443 through your firewall and router:
+
+```yml
+    ports:
+      - '443:443/tcp'
+      - '443:443/udp'
+```
+
+If HTTPS is published on a non-standard public port, set that port so the generated `Alt-Svc` header advertises the correct endpoint:
+
+```yml
+    environment:
+      NPM_PUBLIC_HTTPS_PORT: '8443'
+    ports:
+      - '8443:443/tcp'
+      - '8443:443/udp'
+```
+
+An enabled UDP stream on port 443 and HTTP/3 cannot be used at the same time. Nginx Proxy Manager rejects the second setting instead of generating a conflicting Nginx configuration.
+
+When managed HTTP/3 is enabled, do not add manual `listen ... quic` directives in a Proxy Host's Advanced configuration or in custom includes such as `root.conf`, `http.conf`, or `server_proxy.conf`. The managed listener owns the shared QUIC socket. Nginx Proxy Manager rejects detected per-host conflicts; QUIC listeners injected through custom files are unsupported and can make the Nginx configuration invalid. Completely custom raw `location` blocks are outside managed header inheritance; add the appropriate `Alt-Svc` header there yourself if required.
 
 
 ## Changing the Admin UI port from 81 to something else

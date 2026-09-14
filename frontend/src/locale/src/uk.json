@@ -362,8 +362,14 @@
 	"domains.hsts-subdomains": {
 		"defaultMessage": "Піддомени HSTS"
 	},
+	"domains.http1-fallback": {
+		"defaultMessage": "HTTP/1.1 remains enabled as a fallback."
+	},
 	"domains.http2-support": {
 		"defaultMessage": "Підтримка HTTP/2"
+	},
+	"domains.http3-support": {
+		"defaultMessage": "HTTP/3 / QUIC Support"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Довіряти заголовкам X-Forwarded-Proto від upstream-сервера"
