@@ -701,6 +701,9 @@
 	"ssl-certificate": {
 		"defaultMessage": "SSL Certificate"
 	},
+	"ssl-certificate-mismatch": {
+		"defaultMessage": "Selected certificate does not cover: {domains}"
+	},
 	"stream": {
 		"defaultMessage": "Stream"
 	},
