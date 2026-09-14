@@ -93,14 +93,22 @@ export default function TableWrapper() {
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showDeadHostModal(id)}
-					onDelete={(id: number) =>
+					onDelete={(id: number) => {
+						const host = data?.find((h) => h.id === id);
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "dead-host" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["dead-hosts"], ["dead-host", id]],
-							children: <T id="object.delete.content" tData={{ object: "dead-host" }} />,
-						})
-					}
+							children: (
+								<>
+									<T id="object.delete.content" tData={{ object: "dead-host" }} />
+									{host?.domainNames?.length ? (
+										<div className="mt-2 fw-bold text-break">{host.domainNames.join(", ")}</div>
+									) : null}
+								</>
+							),
+						});
+					}}
 					onDisableToggle={handleDisableToggle}
 					onNew={() => showDeadHostModal("new")}
 				/>
