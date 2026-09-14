@@ -2265,10 +2265,10 @@ qrcode-generator@^2.0.4:
   resolved "https://registry.yarnpkg.com/qrcode-generator/-/qrcode-generator-2.0.4.tgz#e8b3f30922577eba52078aa9c0d5a2a74fe1fd94"
   integrity sha512-mZSiP6RnbHl4xL2Ap5HfkjLnmxfKcPWpWe/c+5XxCuetEenqmNFf1FH/ftXPCtFG5/TDobjsjz6sSNL0Sr8Z9g==
 
-query-string@^9.5.0:
-  version "9.5.0"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-9.5.0.tgz#e6f4003dcb321580dd043109b6fbe2a3890afff6"
-  integrity sha512-YlJmwNyi0RGYjlxYcuDncMsxFU7YyutbuI7gTm8ySxIGBlwx5yiBCOD5ig9ZNoHkawk/1Dey0N5mEfcUybMVAA==
+query-string@^9.5.1:
+  version "9.5.1"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-9.5.1.tgz#aecdc091d3dc7ce293eed83957e220d523a3d0f7"
+  integrity sha512-/zO3RwuRCMTIcEgq6YMv4OrtEE1XzBG7w5N6zc6ydYnkWYOWsnLI/5894hYEzfESfMOT4cHCsRTIdxsSl1KjGg==
   dependencies:
     decode-uri-component "^0.5.0"
     filter-obj "^5.1.0"
@@ -2383,17 +2383,17 @@ react-qr-code@^2.2.0:
     prop-types "^15.8.1"
     qrcode-generator "^2.0.4"
 
-react-router-dom@^7.18.2:
-  version "7.18.2"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-7.18.2.tgz#00bf1d0ce8bf17a6d831949aacda72a6120e4926"
-  integrity sha512-AIKJ/jgGlFb3EbfCXk5Gzshiwt+l3mqbCrNjmEWMMjqQxNJ3svBa6bgzFyCC2Sw3RA0VWF1kg3uQf2OFhxb8hw==
+react-router-dom@^7.18.3:
+  version "7.18.3"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-7.18.3.tgz#0688c91b4b376c8b0dcaf0a0064975d52a32e0f7"
+  integrity sha512-ytVbyBBM7vMfRCam25r0WMhSVSom909A8p+8m0/f1w853dz/xfFu6etAT2SEbVoSnI+ZoPRDqIsQXVT89gp7kg==
   dependencies:
-    react-router "7.18.2"
+    react-router "7.18.3"
 
-react-router@7.18.2:
-  version "7.18.2"
-  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.18.2.tgz#a76c46ce9e5edacd4f51289d5a71f71305db9152"
-  integrity sha512-aUVMjFm3GAPTTZL7oYr5E7ETiqfQCHRLH+B+5afnICvf0r7kkK4eR6SMuwbSTJw/7t+12khT/Kahij49fqOCIg==
+react-router@7.18.3:
+  version "7.18.3"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.18.3.tgz#2a3257aa7c5edd5a71f878063e4c7f3fcfc4b76a"
+  integrity sha512-gyXgtdr5uACJ5b1Q4udzjVV+tb/rlHIMJKuJ0e89R4Kzgz47z/rgP0dIKxktqIEUhDHluGTPJJH/wRha7CyqsA==
   dependencies:
     cookie "^1.0.1"
     set-cookie-parser "^2.6.0"
