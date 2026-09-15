@@ -168,6 +168,30 @@ By default, NPM fetches IP ranges from CloudFront and Cloudflare during applicat
       IP_RANGES_FETCH_ENABLED: 'false'
 ```
 
+## Pre-resolving Upstream Hostnames
+
+By default, proxy upstream hostnames are resolved by Nginx's configured DNS resolver.
+In some Docker setups, hostnames such as `host.docker.internal` may only be available
+through the container's system resolver path (for example `extra_hosts`) and may not be
+resolvable by Nginx runtime DNS resolution.
+
+To enable optional pre-resolution in NPM while generating proxy configs:
+
+```yml
+    environment:
+      NPM_PRE_RESOLVE_UPSTREAM_HOSTS: 'true'
+```
+
+When enabled, NPM attempts to resolve eligible upstream hostnames via the system resolver
+before writing Nginx config and stores the resolved IP in generated upstream targets.
+If resolution fails, NPM keeps the original hostname.
+
+Notes:
+
+- Default is disabled (`false`) to preserve existing behavior.
+- Resolution happens when configs are generated/re-generated, not per request at runtime.
+- If upstream IPs change, regenerate or reload the related proxy host config.
+
 ## Custom Nginx Configurations
 
 If you are a more advanced user, you might be itching for extra Nginx customizability.
