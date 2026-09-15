@@ -62,6 +62,15 @@
 	"access-list.access-count": {
 		"defaultMessage": "{count} {count, plural, one {Rule} other {Rules}}"
 	},
+	"access-list.allowed-groups": {
+		"defaultMessage": "Restrict to groups"
+	},
+	"access-list.allowed-groups-help": {
+		"defaultMessage": "One per line. A directory user must be in at least one of these groups. Leave empty to accept anyone the provider authenticates. Usernames listed on the Authorizations tab are unaffected."
+	},
+	"access-list.allowed-groups-placeholder": {
+		"defaultMessage": "cn=vpn-users,ou=groups,dc=example,dc=com"
+	},
 	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
 	},
@@ -73,6 +82,15 @@
 	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Pass Auth to Upstream"
+	},
+	"access-list.providers": {
+		"defaultMessage": "Providers"
+	},
+	"access-list.providers-intro": {
+		"defaultMessage": "Accept sign-ins from a directory as well as the usernames listed here. Visitors are still prompted for a username and password; those credentials are checked against the directory instead of the list."
+	},
+	"access-list.providers-none": {
+		"defaultMessage": "No LDAP provider is set up yet. Add one under Users, Authentication Providers, and it will appear here. SAML and OAuth cannot be used: they sign people in by redirecting a browser, which is not possible for a proxied request."
 	},
 	"access-list.public": {
 		"defaultMessage": "Publicly Accessible"
@@ -136,6 +154,327 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Audit Logs"
+	},
+	"auth-provider": {
+		"defaultMessage": "Authentication Provider"
+	},
+	"auth-provider.admin-group": {
+		"defaultMessage": "Administrator group"
+	},
+	"auth-provider.admin-group-help": {
+		"defaultMessage": "Anyone in this group is given the admin role on every sign in, and loses it when they leave the group. Leave blank to manage roles here instead."
+	},
+	"auth-provider.auto-create-user": {
+		"defaultMessage": "Create users on first sign in"
+	},
+	"auth-provider.auto-create-user-help": {
+		"defaultMessage": "When off, only people already linked to this provider can sign in. New accounts are never created."
+	},
+	"auth-provider.delete-confirm": {
+		"defaultMessage": "Remove {name}? Nobody will be able to sign in through it afterwards."
+	},
+	"auth-provider.delete-convert": {
+		"defaultMessage": "Keep them as local accounts"
+	},
+	"auth-provider.delete-convert-help": {
+		"defaultMessage": "They keep their hosts, permissions and ownership, but hold no password yet. Set one for them from the Users screen so they can sign in again."
+	},
+	"auth-provider.delete-no-users": {
+		"defaultMessage": "No accounts came from this provider, so nothing else is affected."
+	},
+	"auth-provider.delete-users": {
+		"defaultMessage": "Delete them"
+	},
+	"auth-provider.delete-users-help": {
+		"defaultMessage": "{removable, plural, =0 {None would actually be removed: they can all still sign in another way.} one {One account would be removed.} other {# accounts would be removed.}} Anyone who can still sign in another way is kept, and so is the last remaining administrator."
+	},
+	"auth-provider.delete-users-intro": {
+		"defaultMessage": "{count, plural, one {One account came from this provider} other {# accounts came from this provider}}. What should happen to them?"
+	},
+	"auth-provider.delete-users-warning": {
+		"defaultMessage": "Deleting an account also removes what it owns. This cannot be undone."
+	},
+	"auth-provider.disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"auth-provider.empty-summary": {
+		"defaultMessage": "Add an LDAP directory, a SAML identity provider or an OAuth/OpenID Connect application to get started."
+	},
+	"auth-provider.enabled": {
+		"defaultMessage": "Enabled"
+	},
+	"auth-provider.env-managed": {
+		"defaultMessage": "From environment"
+	},
+	"auth-provider.env-managed-help": {
+		"defaultMessage": "This provider is configured with environment variables and can only be changed by editing them."
+	},
+	"auth-provider.intro": {
+		"defaultMessage": "Let people sign in with your existing directory or identity provider."
+	},
+	"auth-provider.ldap.base-dn": {
+		"defaultMessage": "Base DN"
+	},
+	"auth-provider.ldap.bind-dn": {
+		"defaultMessage": "Bind DN"
+	},
+	"auth-provider.ldap.bind-dn-help": {
+		"defaultMessage": "A read-only service account used to look users up. Leave blank to search anonymously."
+	},
+	"auth-provider.ldap.bind-password": {
+		"defaultMessage": "Bind password"
+	},
+	"auth-provider.ldap.email-attribute": {
+		"defaultMessage": "Email attribute"
+	},
+	"auth-provider.ldap.group-attribute": {
+		"defaultMessage": "Group attribute"
+	},
+	"auth-provider.ldap.group-attribute-help": {
+		"defaultMessage": "Read from the user entry, if your directory provides it."
+	},
+	"auth-provider.ldap.group-filter": {
+		"defaultMessage": "Group filter"
+	},
+	"auth-provider.ldap.group-filter-help": {
+		"defaultMessage": "Used when the user entry has no group attribute. '{{dn}}' and '{{username}}' are substituted before searching."
+	},
+	"auth-provider.ldap.login-attributes": {
+		"defaultMessage": "Login attributes"
+	},
+	"auth-provider.ldap.login-attributes-help": {
+		"defaultMessage": "Comma separated attributes accepted at the login prompt, for example uid, mail, sAMAccountName. Ignored when a user filter is set."
+	},
+	"auth-provider.ldap.name-attribute": {
+		"defaultMessage": "Name attribute"
+	},
+	"auth-provider.ldap.nickname-attribute": {
+		"defaultMessage": "Nickname attribute"
+	},
+	"auth-provider.ldap.page-size": {
+		"defaultMessage": "Page size"
+	},
+	"auth-provider.ldap.page-size-help": {
+		"defaultMessage": "Directories cap how many entries one search returns, 1000 in Active Directory by default. Paging walks past that limit."
+	},
+	"auth-provider.ldap.start-tls": {
+		"defaultMessage": "Upgrade the connection with StartTLS"
+	},
+	"auth-provider.ldap.url": {
+		"defaultMessage": "Server URL"
+	},
+	"auth-provider.ldap.user-filter": {
+		"defaultMessage": "User filter"
+	},
+	"auth-provider.ldap.user-filter-help": {
+		"defaultMessage": "'{{username}}' is replaced with whatever was typed into the login form."
+	},
+	"auth-provider.ldap.verify-tls": {
+		"defaultMessage": "Verify the TLS certificate"
+	},
+	"auth-provider.ldap.verify-tls-help": {
+		"defaultMessage": "Only turn this off for a directory using a self-signed certificate you trust."
+	},
+	"auth-provider.link-by-email": {
+		"defaultMessage": "Adopt existing accounts by email address"
+	},
+	"auth-provider.link-by-email-help": {
+		"defaultMessage": "The first time someone signs in, attach them to an account here that already has the same email address. Only turn this on if you trust this provider to have proved the address belongs to them."
+	},
+	"auth-provider.link-by-email-help-oauth": {
+		"defaultMessage": "The first time someone signs in, attach them to an account here that already has the same email address. The provider must also report the address as verified, otherwise anyone able to set their own could claim somebody else's account."
+	},
+	"auth-provider.local-enabled": {
+		"defaultMessage": "Allow email and password sign in"
+	},
+	"auth-provider.local-enabled-help": {
+		"defaultMessage": "Turn this off to require an authentication provider. Make sure you can sign in with one first."
+	},
+	"auth-provider.local-required-help": {
+		"defaultMessage": "Add and enable a provider before you can turn this off."
+	},
+	"auth-provider.name": {
+		"defaultMessage": "Display name"
+	},
+	"auth-provider.name-help": {
+		"defaultMessage": "Shown on the login screen."
+	},
+	"auth-provider.oauth.authorization-url": {
+		"defaultMessage": "Authorization URL"
+	},
+	"auth-provider.oauth.client-id": {
+		"defaultMessage": "Client ID"
+	},
+	"auth-provider.oauth.client-secret": {
+		"defaultMessage": "Client secret"
+	},
+	"auth-provider.oauth.email-claim": {
+		"defaultMessage": "Email claim"
+	},
+	"auth-provider.oauth.group-claim": {
+		"defaultMessage": "Group claim"
+	},
+	"auth-provider.oauth.issuer-url": {
+		"defaultMessage": "Issuer URL"
+	},
+	"auth-provider.oauth.issuer-url-help": {
+		"defaultMessage": "Endpoints are discovered from here. Leave blank to configure them by hand below."
+	},
+	"auth-provider.oauth.jwks-url": {
+		"defaultMessage": "JWKS URL"
+	},
+	"auth-provider.oauth.manual-endpoints": {
+		"defaultMessage": "Configure endpoints manually"
+	},
+	"auth-provider.oauth.name-claim": {
+		"defaultMessage": "Name claim"
+	},
+	"auth-provider.oauth.redirect-uri": {
+		"defaultMessage": "Redirect URI"
+	},
+	"auth-provider.oauth.redirect-uri-help": {
+		"defaultMessage": "Add this to the allowed redirect URIs of your OAuth application."
+	},
+	"auth-provider.oauth.scopes": {
+		"defaultMessage": "Scopes"
+	},
+	"auth-provider.oauth.token-url": {
+		"defaultMessage": "Token URL"
+	},
+	"auth-provider.oauth.use-basic-auth": {
+		"defaultMessage": "Send credentials in the Authorization header"
+	},
+	"auth-provider.oauth.use-basic-auth-help": {
+		"defaultMessage": "Some providers require client_secret_basic instead of sending the secret in the request body."
+	},
+	"auth-provider.oauth.userinfo-url": {
+		"defaultMessage": "Userinfo URL"
+	},
+	"auth-provider.saml.email-attribute": {
+		"defaultMessage": "Email attribute"
+	},
+	"auth-provider.saml.entry-point": {
+		"defaultMessage": "Sign-in URL"
+	},
+	"auth-provider.saml.group-attribute": {
+		"defaultMessage": "Group attribute"
+	},
+	"auth-provider.saml.identifier-attribute": {
+		"defaultMessage": "Identifier attribute"
+	},
+	"auth-provider.saml.identifier-attribute-help": {
+		"defaultMessage": "Attribute holding a lasting id for each person, such as an employee number. Leave blank to use the NameID, or the email address when your IdP issues a transient NameID."
+	},
+	"auth-provider.saml.idp-cert": {
+		"defaultMessage": "Identity provider certificate"
+	},
+	"auth-provider.saml.issuer": {
+		"defaultMessage": "Entity ID"
+	},
+	"auth-provider.saml.issuer-help": {
+		"defaultMessage": "How this instance identifies itself to the identity provider."
+	},
+	"auth-provider.saml.metadata": {
+		"defaultMessage": "Service provider metadata"
+	},
+	"auth-provider.saml.metadata-help": {
+		"defaultMessage": "Give this URL to your identity provider to configure the connection."
+	},
+	"auth-provider.saml.name-attribute": {
+		"defaultMessage": "Name attribute"
+	},
+	"auth-provider.saml.sp-private-key": {
+		"defaultMessage": "Signing key"
+	},
+	"auth-provider.saml.want-assertions-signed": {
+		"defaultMessage": "Require signed assertions"
+	},
+	"auth-provider.saml.want-response-signed": {
+		"defaultMessage": "Require a signed response"
+	},
+	"auth-provider.secret-stored": {
+		"defaultMessage": "A value is stored. Leave blank to keep it."
+	},
+	"auth-provider.sync": {
+		"defaultMessage": "Directory sync"
+	},
+	"auth-provider.sync-disable-missing": {
+		"defaultMessage": "Disable accounts that leave the directory"
+	},
+	"auth-provider.sync-disable-missing-help": {
+		"defaultMessage": "The last remaining administrator is never disabled this way, and nothing is disabled if a run returns no entries at all."
+	},
+	"auth-provider.sync-enabled": {
+		"defaultMessage": "Sync this directory on a schedule"
+	},
+	"auth-provider.sync-enabled-help": {
+		"defaultMessage": "Sync creates a local account for everyone it finds, whether or not they have ever signed in."
+	},
+	"auth-provider.sync-every": {
+		"defaultMessage": "Syncs every {minutes}m"
+	},
+	"auth-provider.sync-filter": {
+		"defaultMessage": "Sync filter"
+	},
+	"auth-provider.sync-filter-help": {
+		"defaultMessage": "Restricts which directory entries are considered."
+	},
+	"auth-provider.sync-group": {
+		"defaultMessage": "Limit to group"
+	},
+	"auth-provider.sync-group-help": {
+		"defaultMessage": "Only sync members of this group. Leave blank to sync everyone the filter matches."
+	},
+	"auth-provider.sync-interval": {
+		"defaultMessage": "Run every (minutes)"
+	},
+	"auth-provider.sync-interval-help": {
+		"defaultMessage": "Five minutes is the shortest interval allowed."
+	},
+	"auth-provider.sync-intro": {
+		"defaultMessage": "Walks the directory on a schedule so accounts exist before anyone signs in, and so group changes are picked up without waiting for a login."
+	},
+	"auth-provider.sync-now": {
+		"defaultMessage": "Sync"
+	},
+	"auth-provider.sync-result": {
+		"defaultMessage": "Sync finished: {created} created, {updated} updated, {disabled} disabled"
+	},
+	"auth-provider.test": {
+		"defaultMessage": "Test"
+	},
+	"auth-provider.test-connection": {
+		"defaultMessage": "Test connection"
+	},
+	"auth-provider.test-connection-help": {
+		"defaultMessage": "Checks the settings above without saving them, so you can confirm them before filling in the rest."
+	},
+	"auth-provider.test-connection-ok": {
+		"defaultMessage": "Connected successfully ({detail})"
+	},
+	"auth-provider.type.ldap": {
+		"defaultMessage": "LDAP"
+	},
+	"auth-provider.type.oauth": {
+		"defaultMessage": "OAuth / OpenID Connect"
+	},
+	"auth-provider.type.saml": {
+		"defaultMessage": "SAML"
+	},
+	"auth-provider.view": {
+		"defaultMessage": "View"
+	},
+	"auth-providers": {
+		"defaultMessage": "Authentication Providers"
+	},
+	"auth-source.external-title": {
+		"defaultMessage": "Signs in through {name}"
+	},
+	"auth-source.local": {
+		"defaultMessage": "Local"
+	},
+	"auth-source.local-title": {
+		"defaultMessage": "Signs in with an email address and password"
 	},
 	"auto": {
 		"defaultMessage": "Auto"
@@ -248,8 +587,14 @@
 	"certificates.request.title": {
 		"defaultMessage": "Request a new Certificate"
 	},
+	"close": {
+		"defaultMessage": "Close"
+	},
 	"column.access": {
 		"defaultMessage": "Access"
+	},
+	"column.auth-source": {
+		"defaultMessage": "Auth"
 	},
 	"column.authorization": {
 		"defaultMessage": "Authorization"
@@ -290,6 +635,9 @@
 	"column.provider": {
 		"defaultMessage": "Provider"
 	},
+	"column.provisioning": {
+		"defaultMessage": "Provisioning"
+	},
 	"column.roles": {
 		"defaultMessage": "Roles"
 	},
@@ -317,6 +665,9 @@
 	"column.status": {
 		"defaultMessage": "Status"
 	},
+	"column.type": {
+		"defaultMessage": "Type"
+	},
 	"created-on": {
 		"defaultMessage": "Created: {date}"
 	},
@@ -331,6 +682,9 @@
 	},
 	"dead-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hosts}}"
+	},
+	"delete": {
+		"defaultMessage": "Delete"
 	},
 	"disabled": {
 		"defaultMessage": "Disabled"
@@ -371,6 +725,9 @@
 	"domains.use-dns": {
 		"defaultMessage": "Use DNS Challenge"
 	},
+	"edit": {
+		"defaultMessage": "Edit"
+	},
 	"email-address": {
 		"defaultMessage": "Email address"
 	},
@@ -388,6 +745,9 @@
 	},
 	"error.access.duplicate-usernames": {
 		"defaultMessage": "Authorization Usernames must be unique"
+	},
+	"error.external-email-already-taken": {
+		"defaultMessage": "An account with this email address already exists. Ask an administrator to link it to this provider."
 	},
 	"error.invalid-auth": {
 		"defaultMessage": "Invalid email or password"
@@ -412,6 +772,9 @@
 	},
 	"error.minimum": {
 		"defaultMessage": "Minimum is {min}"
+	},
+	"error.no-account-for-external-user": {
+		"defaultMessage": "There is no account here for this user. Ask an administrator to create one."
 	},
 	"error.passwords-must-match": {
 		"defaultMessage": "Passwords must match"
@@ -485,8 +848,20 @@
 	"login.2fa-verify": {
 		"defaultMessage": "Verify"
 	},
+	"login.continue-with": {
+		"defaultMessage": "Continue with {name}"
+	},
+	"login.no-methods": {
+		"defaultMessage": "No sign in methods are configured. Set one up with environment variables to get back in."
+	},
+	"login.or": {
+		"defaultMessage": "or"
+	},
 	"login.title": {
 		"defaultMessage": "Login to your account"
+	},
+	"login.username-or-email": {
+		"defaultMessage": "Username or email address"
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Custom Nginx Configuration"
@@ -523,6 +898,9 @@
 	},
 	"notification.object-saved": {
 		"defaultMessage": "{object} has been saved"
+	},
+	"notification.object-tested": {
+		"defaultMessage": "{object} settings look good"
 	},
 	"notification.success": {
 		"defaultMessage": "Success"
@@ -562,6 +940,9 @@
 	},
 	"object.event.updated": {
 		"defaultMessage": "Updated {object}"
+	},
+	"object.view": {
+		"defaultMessage": "View {object}"
 	},
 	"offline": {
 		"defaultMessage": "Offline"

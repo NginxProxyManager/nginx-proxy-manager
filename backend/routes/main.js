@@ -4,7 +4,10 @@ import errs from "../lib/error.js";
 import logRequest from "../lib/express/log-request.js";
 import pjson from "../package.json" with { type: "json" };
 import { isSetup } from "../setup.js";
+import accessVerifyRoutes from "./access-verify.js";
 import auditLogRoutes from "./audit-log.js";
+import authRoutes from "./auth.js";
+import authProviderRoutes from "./auth-providers.js";
 import ciRoutes from "./ci.js";
 import accessListsRoutes from "./nginx/access_lists.js";
 import certificatesHostsRoutes from "./nginx/certificates.js";
@@ -46,8 +49,15 @@ router.get("/", async (_, res /*, next*/) => {
 	});
 });
 
+// Called by nginx as an auth_request subrequest for access lists backed by an
+// authentication provider. Carries the visitor's Basic credentials, not a token,
+// so it sits outside the authenticated routes below.
+router.use("/access-lists", accessVerifyRoutes);
+
 router.use("/schema", schemaRoutes);
 router.use("/tokens", tokensRoutes);
+router.use("/auth", authRoutes);
+router.use("/auth-providers", authProviderRoutes);
 router.use("/users", usersRoutes);
 router.use("/audit-log", auditLogRoutes);
 router.use("/reports", reportsRoutes);

@@ -1,0 +1,33 @@
+{
+	"operationId": "getLoginOptions",
+	"summary": "Get the sign in methods available on the login screen",
+	"description": "Unauthenticated. Returns only the names and types of enabled providers, never their configuration.",
+	"tags": ["auth"],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"local_enabled": true,
+								"ldap_enabled": true,
+								"providers": [
+									{
+										"id": 2,
+										"name": "Company SSO",
+										"type": "saml"
+									}
+								]
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/auth-login-options.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,108 @@
+{
+	"operationId": "deleteAuthProvider",
+	"summary": "Delete an authentication provider",
+	"tags": [
+		"auth-providers"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"admin"
+			]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Authentication Provider ID",
+			"example": 1
+		},
+		{
+			"in": "query",
+			"name": "users",
+			"schema": {
+				"type": "string",
+				"enum": [
+					"convert",
+					"delete"
+				],
+				"default": "convert"
+			},
+			"required": false,
+			"description": "What to do with the accounts this provider created",
+			"example": "convert"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"converted": 3,
+								"deleted": 0,
+								"kept": [],
+								"deleted_provider": true
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"required": [
+							"deleted_provider"
+						],
+						"additionalProperties": false,
+						"properties": {
+							"deleted_provider": {
+								"type": "boolean",
+								"example": true
+							},
+							"converted": {
+								"type": "integer",
+								"description": "Accounts kept and turned into local accounts",
+								"example": 3
+							},
+							"deleted": {
+								"type": "integer",
+								"description": "Accounts removed",
+								"example": 0
+							},
+							"kept": {
+								"type": "array",
+								"description": "Accounts deliberately kept despite a delete being asked for",
+								"items": {
+									"type": "object",
+									"additionalProperties": false,
+									"properties": {
+										"id": {
+											"type": "integer",
+											"example": 2
+										},
+										"email": {
+											"type": "string",
+											"example": "alice@example.com"
+										},
+										"reason": {
+											"type": "string",
+											"example": "is the only administrator"
+										}
+									}
+								},
+								"example": []
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"description": "Removes a provider and decides what becomes of the accounts it created. Defaults to converting them to local accounts, because losing access should never be the consequence of omitting a parameter. Accounts that can still sign in another way, and the last remaining administrator, are always kept."
+}

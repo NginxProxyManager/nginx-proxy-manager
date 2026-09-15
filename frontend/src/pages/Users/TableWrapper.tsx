@@ -63,61 +63,58 @@ export default function TableWrapper() {
 	}
 
 	return (
-		<div className="card mt-4">
-			<div className="card-status-top bg-orange" />
-			<div className="card-table">
-				<div className="card-header">
-					<div className="row w-full">
-						<div className="col">
-							<h2 className="mt-1 mb-0">
-								<T id="users" />
-							</h2>
-						</div>
-						{data?.length ? (
-							<div className="col-md-auto col-sm-12">
-								<div className="ms-auto d-flex flex-wrap btn-list">
-									<div className="input-group input-group-flat w-auto">
-										<span className="input-group-text input-group-text-sm">
-											<IconSearch size={16} />
-										</span>
-										<input
-											id="advanced-table-search"
-											type="text"
-											className="form-control form-control-sm"
-											autoComplete="off"
-											onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
-										/>
-									</div>
-
-									<Button size="sm" className="btn-orange" onClick={() => showUserModal("new")}>
-										<T id="object.add" tData={{ object: "user" }} />
-									</Button>
-								</div>
-							</div>
-						) : null}
+		<>
+			<div className="card-header">
+				<div className="row w-full">
+					<div className="col">
+						<h2 className="mt-1 mb-0">
+							<T id="users" />
+						</h2>
 					</div>
+					{data?.length ? (
+						<div className="col-md-auto col-sm-12">
+							<div className="ms-auto d-flex flex-wrap btn-list">
+								<div className="input-group input-group-flat w-auto">
+									<span className="input-group-text input-group-text-sm">
+										<IconSearch size={16} />
+									</span>
+									<input
+										id="advanced-table-search"
+										type="text"
+										className="form-control form-control-sm"
+										autoComplete="off"
+										onChange={(e: any) => setSearch(e.target.value.toLowerCase().trim())}
+									/>
+								</div>
+
+								<Button size="sm" className="btn-orange" onClick={() => showUserModal("new")}>
+									<T id="object.add" tData={{ object: "user" }} />
+								</Button>
+							</div>
+						</div>
+					) : null}
 				</div>
-				<Table
-					data={filtered ?? data ?? []}
-					isFiltered={!!search}
-					isFetching={isFetching}
-					currentUserId={currentUser?.id}
-					onEditUser={(id: number) => showUserModal(id)}
-					onEditPermissions={(id: number) => showPermissionsModal(id)}
-					onSetPassword={(id: number) => showSetPasswordModal(id)}
-					onDeleteUser={(id: number) =>
-						showDeleteConfirmModal({
-							title: <T id="object.delete" tData={{ object: "user" }} />,
-							onConfirm: () => handleDelete(id),
-							invalidations: [["users"], ["user", id]],
-							children: <T id="object.delete.content" tData={{ object: "user" }} />,
-						})
-					}
-					onDisableToggle={handleDisableToggle}
-					onNewUser={() => showUserModal("new")}
-					onLoginAs={handleLoginAs}
-				/>
 			</div>
-		</div>
+			<Table
+				data={filtered ?? data ?? []}
+				isFiltered={!!search}
+				isFetching={isFetching}
+				currentUserId={currentUser?.id}
+				onEditUser={(id: number) => showUserModal(id)}
+				onEditPermissions={(id: number) => showPermissionsModal(id)}
+				onSetPassword={(id: number) => showSetPasswordModal(id)}
+				onDeleteUser={(id: number) =>
+					showDeleteConfirmModal({
+						title: <T id="object.delete" tData={{ object: "user" }} />,
+						onConfirm: () => handleDelete(id),
+						invalidations: [["users"], ["user", id]],
+						children: <T id="object.delete.content" tData={{ object: "user" }} />,
+					})
+				}
+				onDisableToggle={handleDisableToggle}
+				onNewUser={() => showUserModal("new")}
+				onLoginAs={handleLoginAs}
+			/>
+		</>
 	);
 }
