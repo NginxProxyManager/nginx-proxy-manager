@@ -62,6 +62,15 @@
 	"access-list.access-count": {
 		"defaultMessage": "{count} {count, plural, one {reegel} other {reeglit}}"
 	},
+	"access-list.allowed-groups": {
+		"defaultMessage": "Piira gruppidega"
+	},
+	"access-list.allowed-groups-help": {
+		"defaultMessage": "Üks rea kohta. Kataloogi kasutaja peab kuuluma vähemalt ühte neist gruppidest. Jäta tühjaks, et lubada kõik, kelle pakkuja autendib. Volituste vahekaardil loetletud kasutajanimesid see ei puuduta."
+	},
+	"access-list.allowed-groups-placeholder": {
+		"defaultMessage": "cn=vpn-kasutajad,ou=grupid,dc=naide,dc=com"
+	},
 	"access-list.auth-count": {
 		"defaultMessage": "{count} {count, plural, one {kasutaja} other {kasutajat}}"
 	},
@@ -73,6 +82,15 @@
 	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Edasta autentimine sihtserverile"
+	},
+	"access-list.providers": {
+		"defaultMessage": "Pakkujad"
+	},
+	"access-list.providers-intro": {
+		"defaultMessage": "Luba sisselogimine kataloogist lisaks siin loetletud kasutajanimedele. Külastajalt küsitakse endiselt kasutajanime ja parooli, kuid neid kontrollitakse kataloogist, mitte nimekirjast."
+	},
+	"access-list.providers-none": {
+		"defaultMessage": "Ühtegi LDAP-pakkujat pole veel seadistatud. Lisa see Kasutajate all jaotises Autentimise pakkujad ja see ilmub siia. SAML-i ja OAuthi ei saa kasutada: need logivad inimese sisse brauserit ümber suunates, mis puhverdatud päringu puhul ei ole võimalik."
 	},
 	"access-list.public": {
 		"defaultMessage": "Avalikult ligipääsetav"
@@ -136,6 +154,327 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Auditilogid"
+	},
+	"auth-provider": {
+		"defaultMessage": "Autentimise pakkuja"
+	},
+	"auth-provider.admin-group": {
+		"defaultMessage": "Administraatorite grupp"
+	},
+	"auth-provider.admin-group-help": {
+		"defaultMessage": "Igale selle grupi liikmele antakse igal sisselogimisel administraatori roll ja see võetakse ära, kui ta grupist lahkub. Jäta tühjaks, et hallata rolle siin."
+	},
+	"auth-provider.auto-create-user": {
+		"defaultMessage": "Loo kasutajad esimesel sisselogimisel"
+	},
+	"auth-provider.auto-create-user-help": {
+		"defaultMessage": "Kui see on väljas, saavad sisse logida ainult selle pakkujaga juba seotud inimesed. Uusi kontosid ei looda."
+	},
+	"auth-provider.delete-confirm": {
+		"defaultMessage": "Kas eemaldada {name}? Pärast seda ei saa keegi selle kaudu sisse logida."
+	},
+	"auth-provider.delete-convert": {
+		"defaultMessage": "Säilita nad kohalike kontodena"
+	},
+	"auth-provider.delete-convert-help": {
+		"defaultMessage": "Nende hostid, õigused ja omandiõigus jäävad alles, kuid parooli neil veel ei ole. Määra see neile Kasutajate vaates, et nad saaksid uuesti sisse logida."
+	},
+	"auth-provider.delete-no-users": {
+		"defaultMessage": "Ükski konto ei pärine sellest pakkujast, seega muud see ei mõjuta."
+	},
+	"auth-provider.delete-users": {
+		"defaultMessage": "Kustuta nad"
+	},
+	"auth-provider.delete-users-help": {
+		"defaultMessage": "{removable, plural, =0 {Ühtegi tegelikult ei eemaldata: nad kõik saavad ikka muul viisil sisse logida.} one {Eemaldatakse üks konto.} other {Eemaldatakse # kontot.}} Kes saab endiselt muul viisil sisse logida, see jääb alles, samuti viimane administraator."
+	},
+	"auth-provider.delete-users-intro": {
+		"defaultMessage": "{count, plural, one {Üks konto pärineb sellest pakkujast} other {# kontot pärineb sellest pakkujast}}. Mis nendega peaks saama?"
+	},
+	"auth-provider.delete-users-warning": {
+		"defaultMessage": "Konto kustutamine eemaldab ka selle, mis talle kuulub. Seda ei saa tagasi võtta."
+	},
+	"auth-provider.disabled": {
+		"defaultMessage": "Väljas"
+	},
+	"auth-provider.empty-summary": {
+		"defaultMessage": "Alustamiseks lisa LDAP-kataloog, SAML-i identiteedipakkuja või OAuth/OpenID Connecti rakendus."
+	},
+	"auth-provider.enabled": {
+		"defaultMessage": "Sees"
+	},
+	"auth-provider.env-managed": {
+		"defaultMessage": "Keskkonnamuutujatest"
+	},
+	"auth-provider.env-managed-help": {
+		"defaultMessage": "See pakkuja on seadistatud keskkonnamuutujatega ja seda saab muuta ainult neid redigeerides."
+	},
+	"auth-provider.intro": {
+		"defaultMessage": "Luba inimestel sisse logida olemasoleva kataloogi või identiteedipakkujaga."
+	},
+	"auth-provider.ldap.base-dn": {
+		"defaultMessage": "Baas-DN"
+	},
+	"auth-provider.ldap.bind-dn": {
+		"defaultMessage": "Sidumise DN"
+	},
+	"auth-provider.ldap.bind-dn-help": {
+		"defaultMessage": "Kirjutuskaitsega teenusekonto, mille abil kasutajaid otsitakse. Jäta tühjaks, et otsida anonüümselt."
+	},
+	"auth-provider.ldap.bind-password": {
+		"defaultMessage": "Sidumise parool"
+	},
+	"auth-provider.ldap.email-attribute": {
+		"defaultMessage": "E-posti atribuut"
+	},
+	"auth-provider.ldap.group-attribute": {
+		"defaultMessage": "Grupi atribuut"
+	},
+	"auth-provider.ldap.group-attribute-help": {
+		"defaultMessage": "Loetakse kasutajakirjest, kui kataloog seda pakub."
+	},
+	"auth-provider.ldap.group-filter": {
+		"defaultMessage": "Grupifilter"
+	},
+	"auth-provider.ldap.group-filter-help": {
+		"defaultMessage": "Kasutatakse siis, kui kasutajakirjel puudub grupi atribuut. '{{dn}}' ja '{{username}}' asendatakse enne otsingut."
+	},
+	"auth-provider.ldap.login-attributes": {
+		"defaultMessage": "Sisselogimise atribuudid"
+	},
+	"auth-provider.ldap.login-attributes-help": {
+		"defaultMessage": "Komaga eraldatud atribuudid, mida sisselogimisel aktsepteeritakse, näiteks uid, mail, sAMAccountName. Kasutajafiltri määramisel neid eiratakse."
+	},
+	"auth-provider.ldap.name-attribute": {
+		"defaultMessage": "Nime atribuut"
+	},
+	"auth-provider.ldap.nickname-attribute": {
+		"defaultMessage": "Hüüdnime atribuut"
+	},
+	"auth-provider.ldap.page-size": {
+		"defaultMessage": "Lehe suurus"
+	},
+	"auth-provider.ldap.page-size-help": {
+		"defaultMessage": "Kataloogid piiravad, mitu kirjet üks otsing tagastab, Active Directorys on vaikimisi 1000. Lehekülgedeks jaotamine võimaldab sellest piirist edasi minna."
+	},
+	"auth-provider.ldap.start-tls": {
+		"defaultMessage": "Uuenda ühendus StartTLS-iga"
+	},
+	"auth-provider.ldap.url": {
+		"defaultMessage": "Serveri URL"
+	},
+	"auth-provider.ldap.user-filter": {
+		"defaultMessage": "Kasutajafilter"
+	},
+	"auth-provider.ldap.user-filter-help": {
+		"defaultMessage": "'{{username}}' asendatakse sellega, mis sisselogimisvormi kirjutati."
+	},
+	"auth-provider.ldap.verify-tls": {
+		"defaultMessage": "Kontrolli TLS-sertifikaati"
+	},
+	"auth-provider.ldap.verify-tls-help": {
+		"defaultMessage": "Lülita see välja ainult sellise kataloogi puhul, mis kasutab sinu usaldatavat ise allkirjastatud sertifikaati."
+	},
+	"auth-provider.link-by-email": {
+		"defaultMessage": "Seo olemasolevad kontod e-posti aadressi järgi"
+	},
+	"auth-provider.link-by-email-help": {
+		"defaultMessage": "Esimesel sisselogimisel seotakse inimene siinse kontoga, millel on juba sama e-posti aadress. Lülita see sisse ainult siis, kui usaldad, et pakkuja on aadressi kuuluvuse tuvastanud."
+	},
+	"auth-provider.link-by-email-help-oauth": {
+		"defaultMessage": "Esimesel sisselogimisel seotakse inimene siinse kontoga, millel on juba sama e-posti aadress. Pakkuja peab aadressi ka kinnitatuks märkima, muidu saab igaüks, kes selle ise määrata suudab, kellegi teise konto endale võtta."
+	},
+	"auth-provider.local-enabled": {
+		"defaultMessage": "Luba sisselogimine e-posti ja parooliga"
+	},
+	"auth-provider.local-enabled-help": {
+		"defaultMessage": "Lülita see välja, et nõuda autentimise pakkujat. Veendu enne, et saad ühega sisse logida."
+	},
+	"auth-provider.local-required-help": {
+		"defaultMessage": "Enne väljalülitamist lisa ja luba mõni pakkuja."
+	},
+	"auth-provider.name": {
+		"defaultMessage": "Kuvatav nimi"
+	},
+	"auth-provider.name-help": {
+		"defaultMessage": "Näidatakse sisselogimisekraanil."
+	},
+	"auth-provider.oauth.authorization-url": {
+		"defaultMessage": "Autoriseerimise URL"
+	},
+	"auth-provider.oauth.client-id": {
+		"defaultMessage": "Kliendi ID"
+	},
+	"auth-provider.oauth.client-secret": {
+		"defaultMessage": "Kliendi saladus"
+	},
+	"auth-provider.oauth.email-claim": {
+		"defaultMessage": "E-posti väide"
+	},
+	"auth-provider.oauth.group-claim": {
+		"defaultMessage": "Grupi väide"
+	},
+	"auth-provider.oauth.issuer-url": {
+		"defaultMessage": "Väljastaja URL"
+	},
+	"auth-provider.oauth.issuer-url-help": {
+		"defaultMessage": "Lõpp-punktid avastatakse siit. Jäta tühjaks, et seadistada need allpool käsitsi."
+	},
+	"auth-provider.oauth.jwks-url": {
+		"defaultMessage": "JWKS-i URL"
+	},
+	"auth-provider.oauth.manual-endpoints": {
+		"defaultMessage": "Seadista lõpp-punktid käsitsi"
+	},
+	"auth-provider.oauth.name-claim": {
+		"defaultMessage": "Nime väide"
+	},
+	"auth-provider.oauth.redirect-uri": {
+		"defaultMessage": "Ümbersuunamise URI"
+	},
+	"auth-provider.oauth.redirect-uri-help": {
+		"defaultMessage": "Lisa see oma OAuthi rakenduse lubatud ümbersuunamise URI-de hulka."
+	},
+	"auth-provider.oauth.scopes": {
+		"defaultMessage": "Skoobid"
+	},
+	"auth-provider.oauth.token-url": {
+		"defaultMessage": "Tokeni URL"
+	},
+	"auth-provider.oauth.use-basic-auth": {
+		"defaultMessage": "Saada mandaat Authorizationi päises"
+	},
+	"auth-provider.oauth.use-basic-auth-help": {
+		"defaultMessage": "Mõni pakkuja nõuab client_secret_basic-ut selle asemel, et saata saladus päringu kehas."
+	},
+	"auth-provider.oauth.userinfo-url": {
+		"defaultMessage": "Kasutajateabe URL"
+	},
+	"auth-provider.saml.email-attribute": {
+		"defaultMessage": "E-posti atribuut"
+	},
+	"auth-provider.saml.entry-point": {
+		"defaultMessage": "Sisselogimise URL"
+	},
+	"auth-provider.saml.group-attribute": {
+		"defaultMessage": "Grupi atribuut"
+	},
+	"auth-provider.saml.identifier-attribute": {
+		"defaultMessage": "Identifikaatori atribuut"
+	},
+	"auth-provider.saml.identifier-attribute-help": {
+		"defaultMessage": "Atribuut, mis hoiab iga inimese püsivat tunnust, näiteks töötaja numbrit. Jäta tühjaks, et kasutada NameID-d, või e-posti aadressi, kui sinu IdP väljastab ajutise NameID."
+	},
+	"auth-provider.saml.idp-cert": {
+		"defaultMessage": "Identiteedipakkuja sertifikaat"
+	},
+	"auth-provider.saml.issuer": {
+		"defaultMessage": "Olemi ID"
+	},
+	"auth-provider.saml.issuer-help": {
+		"defaultMessage": "Kuidas see paigaldus end identiteedipakkujale tutvustab."
+	},
+	"auth-provider.saml.metadata": {
+		"defaultMessage": "Teenusepakkuja metaandmed"
+	},
+	"auth-provider.saml.metadata-help": {
+		"defaultMessage": "Anna see URL oma identiteedipakkujale ühenduse seadistamiseks."
+	},
+	"auth-provider.saml.name-attribute": {
+		"defaultMessage": "Nime atribuut"
+	},
+	"auth-provider.saml.sp-private-key": {
+		"defaultMessage": "Allkirjastamisvõti"
+	},
+	"auth-provider.saml.want-assertions-signed": {
+		"defaultMessage": "Nõua allkirjastatud väiteid"
+	},
+	"auth-provider.saml.want-response-signed": {
+		"defaultMessage": "Nõua allkirjastatud vastust"
+	},
+	"auth-provider.secret-stored": {
+		"defaultMessage": "Väärtus on salvestatud. Jäta tühjaks, et see alles jätta."
+	},
+	"auth-provider.sync": {
+		"defaultMessage": "Kataloogi sünkroonimine"
+	},
+	"auth-provider.sync-disable-missing": {
+		"defaultMessage": "Lülita välja kontod, mis kataloogist kaovad"
+	},
+	"auth-provider.sync-disable-missing-help": {
+		"defaultMessage": "Viimast administraatorit sel viisil kunagi välja ei lülitata ja midagi ei lülitata välja, kui käivitus ei tagasta ühtegi kirjet."
+	},
+	"auth-provider.sync-enabled": {
+		"defaultMessage": "Sünkrooni seda kataloogi ajakava järgi"
+	},
+	"auth-provider.sync-enabled-help": {
+		"defaultMessage": "Sünkroonimine loob kohaliku konto igaühele, kelle leiab, olenemata sellest, kas ta on kunagi sisse loginud."
+	},
+	"auth-provider.sync-every": {
+		"defaultMessage": "Sünkroonib iga {minutes} min järel"
+	},
+	"auth-provider.sync-filter": {
+		"defaultMessage": "Sünkroonimise filter"
+	},
+	"auth-provider.sync-filter-help": {
+		"defaultMessage": "Piirab, milliseid kataloogikirjeid arvesse võetakse."
+	},
+	"auth-provider.sync-group": {
+		"defaultMessage": "Piira grupiga"
+	},
+	"auth-provider.sync-group-help": {
+		"defaultMessage": "Sünkrooni ainult selle grupi liikmeid. Jäta tühjaks, et sünkroonida kõiki, kes filtrile vastavad."
+	},
+	"auth-provider.sync-interval": {
+		"defaultMessage": "Käivita iga (minutit)"
+	},
+	"auth-provider.sync-interval-help": {
+		"defaultMessage": "Viis minutit on lühim lubatud intervall."
+	},
+	"auth-provider.sync-intro": {
+		"defaultMessage": "Käib kataloogi ajakava järgi läbi, et kontod oleksid olemas juba enne sisselogimist ja et grupimuudatused jõuaksid kohale sisselogimist ootamata."
+	},
+	"auth-provider.sync-now": {
+		"defaultMessage": "Sünkrooni"
+	},
+	"auth-provider.sync-result": {
+		"defaultMessage": "Sünkroonimine lõppes: {created} loodud, {updated} uuendatud, {disabled} välja lülitatud"
+	},
+	"auth-provider.test": {
+		"defaultMessage": "Testi"
+	},
+	"auth-provider.test-connection": {
+		"defaultMessage": "Testi ühendust"
+	},
+	"auth-provider.test-connection-help": {
+		"defaultMessage": "Kontrollib ülaltoodud seadeid neid salvestamata, et saaksid need enne ülejäänu täitmist üle vaadata."
+	},
+	"auth-provider.test-connection-ok": {
+		"defaultMessage": "Ühendus õnnestus ({detail})"
+	},
+	"auth-provider.type.ldap": {
+		"defaultMessage": "LDAP"
+	},
+	"auth-provider.type.oauth": {
+		"defaultMessage": "OAuth / OpenID Connect"
+	},
+	"auth-provider.type.saml": {
+		"defaultMessage": "SAML"
+	},
+	"auth-provider.view": {
+		"defaultMessage": "Vaata"
+	},
+	"auth-providers": {
+		"defaultMessage": "Autentimise pakkujad"
+	},
+	"auth-source.external-title": {
+		"defaultMessage": "Logib sisse {name} kaudu"
+	},
+	"auth-source.local": {
+		"defaultMessage": "Kohalik"
+	},
+	"auth-source.local-title": {
+		"defaultMessage": "Logib sisse e-posti aadressi ja parooliga"
 	},
 	"auto": {
 		"defaultMessage": "Automaatne"
@@ -248,8 +587,14 @@
 	"certificates.request.title": {
 		"defaultMessage": "Taotle uut sertifikaati"
 	},
+	"close": {
+		"defaultMessage": "Sulge"
+	},
 	"column.access": {
 		"defaultMessage": "Juurdepääs"
+	},
+	"column.auth-source": {
+		"defaultMessage": "Autentimine"
 	},
 	"column.authorization": {
 		"defaultMessage": "Autentimine"
@@ -290,6 +635,9 @@
 	"column.provider": {
 		"defaultMessage": "Pakkuja"
 	},
+	"column.provisioning": {
+		"defaultMessage": "Provisioneerimine"
+	},
 	"column.roles": {
 		"defaultMessage": "Rollid"
 	},
@@ -317,6 +665,9 @@
 	"column.status": {
 		"defaultMessage": "Olek"
 	},
+	"column.type": {
+		"defaultMessage": "Tüüp"
+	},
 	"created-on": {
 		"defaultMessage": "Loodud: {date}"
 	},
@@ -331,6 +682,9 @@
 	},
 	"dead-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {404-host} other {404-hosti}}"
+	},
+	"delete": {
+		"defaultMessage": "Kustuta"
 	},
 	"disabled": {
 		"defaultMessage": "Väljas"
@@ -371,6 +725,9 @@
 	"domains.use-dns": {
 		"defaultMessage": "Kasuta DNS-väljakutset"
 	},
+	"edit": {
+		"defaultMessage": "Muuda"
+	},
 	"email-address": {
 		"defaultMessage": "E-posti aadress"
 	},
@@ -388,6 +745,9 @@
 	},
 	"error.access.duplicate-usernames": {
 		"defaultMessage": "Kasutajanimed peavad olema unikaalsed"
+	},
+	"error.external-email-already-taken": {
+		"defaultMessage": "Selle e-posti aadressiga konto on juba olemas. Palu administraatoril see selle pakkujaga siduda."
 	},
 	"error.invalid-auth": {
 		"defaultMessage": "Vale e-post või parool"
@@ -412,6 +772,9 @@
 	},
 	"error.minimum": {
 		"defaultMessage": "Miinimum on {min}"
+	},
+	"error.no-account-for-external-user": {
+		"defaultMessage": "Sellel kasutajal ei ole siin kontot. Palu administraatoril see luua."
 	},
 	"error.passwords-must-match": {
 		"defaultMessage": "Paroolid peavad klappima"
@@ -485,8 +848,20 @@
 	"login.2fa-verify": {
 		"defaultMessage": "Kinnita"
 	},
+	"login.continue-with": {
+		"defaultMessage": "Jätka: {name}"
+	},
+	"login.no-methods": {
+		"defaultMessage": "Ühtegi sisselogimisviisi pole seadistatud. Tagasi pääsemiseks seadista mõni keskkonnamuutujatega."
+	},
+	"login.or": {
+		"defaultMessage": "või"
+	},
 	"login.title": {
 		"defaultMessage": "Logi kontole sisse"
+	},
+	"login.username-or-email": {
+		"defaultMessage": "Kasutajanimi või e-posti aadress"
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Kohandatud Nginx seadistus"
@@ -523,6 +898,9 @@
 	},
 	"notification.object-saved": {
 		"defaultMessage": "{object} on salvestatud"
+	},
+	"notification.object-tested": {
+		"defaultMessage": "{object} seaded on korras"
 	},
 	"notification.success": {
 		"defaultMessage": "Korras"
@@ -562,6 +940,9 @@
 	},
 	"object.event.updated": {
 		"defaultMessage": "Muudetud: {object}"
+	},
+	"object.view": {
+		"defaultMessage": "Vaata: {object}"
 	},
 	"offline": {
 		"defaultMessage": "Maas"
