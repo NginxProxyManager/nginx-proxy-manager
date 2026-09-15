@@ -350,6 +350,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forkuj mnie na Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Czas przechowywania zasobów w pamięci podręcznej (sekundy)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Przykłady: 3600 = 1 godzina, 21600 = 6 godzin, 86400 = 1 dzień."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokuj typowe exploity"
 	},

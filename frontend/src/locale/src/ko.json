@@ -359,6 +359,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "GitHub에서 포크하기"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "에셋 캐시 수명(초)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "예: 3600 = 1시간, 21600 = 6시간, 86400 = 1일."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "일반적인 공격 차단"
 	},

@@ -344,6 +344,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forkami su GitHub"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Durata cache risorse (secondi)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Esempi: 3600 = 1 ora, 21600 = 6 ore, 86400 = 1 giorno."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blocca Exploit Comuni"
 	},

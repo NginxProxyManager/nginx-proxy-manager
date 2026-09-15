@@ -425,6 +425,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Tee GitHubis fork"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Varade vahemälu kestus (sekundites)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Näited: 3600 = 1 tund, 21600 = 6 tundi, 86400 = 1 päev."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
 	},

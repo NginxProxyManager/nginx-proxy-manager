@@ -13,6 +13,7 @@ import {
 	Loading,
 	LocationsFields,
 	NginxConfigField,
+	ProxyCacheOptionsFields,
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
@@ -78,6 +79,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							forwardPort: data?.forwardPort || undefined,
 							accessListId: data?.accessListId || 0,
 							cachingEnabled: data?.cachingEnabled || false,
+							assetCacheTtl: data?.assetCacheTtl ?? 1800,
 							blockExploits: data?.blockExploits || false,
 							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
 							// Locations tab
@@ -259,29 +261,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														<T id="options" />
 													</h4>
 													<div className="divide-y">
-														<div>
-															<label className="row" htmlFor="cachingEnabled">
-																<span className="col">
-																	<T id="host.flags.cache-assets" />
-																</span>
-																<span className="col-auto">
-																	<Field name="cachingEnabled" type="checkbox">
-																		{({ field }: any) => (
-																			<label className="form-check form-check-single form-switch">
-																				<input
-																					{...field}
-																					id="cachingEnabled"
-																					className={cn("form-check-input", {
-																						"bg-lime": field.checked,
-																					})}
-																					type="checkbox"
-																				/>
-																			</label>
-																		)}
-																	</Field>
-																</span>
-															</label>
-														</div>
+														<ProxyCacheOptionsFields color="bg-lime" />
 														<div>
 															<label className="row" htmlFor="blockExploits">
 																<span className="col">

@@ -46,6 +46,7 @@
 									"certificate_id": 1,
 									"ssl_forced": false,
 									"caching_enabled": false,
+									"asset_cache_ttl": 1800,
 									"block_exploits": false,
 									"advanced_config": "",
 									"meta": {

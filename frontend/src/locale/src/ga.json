@@ -347,6 +347,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forc mé ar Github"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Saolré taisce sócmhainní (soicindí)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Samplaí: 3600 = 1 uair, 21600 = 6 huaire, 86400 = 1 lá."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blocáil Easnaimh Choitianta"
 	},

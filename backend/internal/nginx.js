@@ -157,6 +157,7 @@ const internalNginx = {
 						{ certificate_id: host.certificate_id },
 						{ ssl_forced: host.ssl_forced },
 						{ caching_enabled: host.caching_enabled },
+						{ asset_cache_ttl: host.asset_cache_ttl },
 						{ block_exploits: host.block_exploits },
 						{ allow_websocket_upgrade: host.allow_websocket_upgrade },
 						{ http2_support: host.http2_support },

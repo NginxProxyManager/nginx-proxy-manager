@@ -347,6 +347,12 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork saya di GitHub"
 	},
+	"host.cache-ttl": {
+		"defaultMessage": "Masa cache aset (detik)"
+	},
+	"host.cache-ttl-help": {
+		"defaultMessage": "Contoh: 3600 = 1 jam, 21600 = 6 jam, 86400 = 1 hari."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokir Eksploit Umum"
 	},

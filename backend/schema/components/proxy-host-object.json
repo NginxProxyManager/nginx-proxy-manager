@@ -13,6 +13,7 @@
 		"certificate_id",
 		"ssl_forced",
 		"caching_enabled",
+		"asset_cache_ttl",
 		"block_exploits",
 		"advanced_config",
 		"meta",
@@ -64,6 +65,9 @@
 		},
 		"caching_enabled": {
 			"$ref": "../common.json#/properties/caching_enabled"
+		},
+		"asset_cache_ttl": {
+			"$ref": "../common.json#/properties/asset_cache_ttl"
 		},
 		"block_exploits": {
 			"$ref": "../common.json#/properties/block_exploits"

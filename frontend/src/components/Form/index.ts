@@ -5,5 +5,6 @@ export * from "./DNSProviderFields";
 export * from "./DomainNamesField";
 export * from "./LocationsFields";
 export * from "./NginxConfigField";
+export * from "./ProxyCacheOptionsFields";
 export * from "./SSLCertificateField";
 export * from "./SSLOptionsFields";

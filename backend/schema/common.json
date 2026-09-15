@@ -128,6 +128,13 @@
 			"type": "boolean",
 			"example": true
 		},
+		"asset_cache_ttl": {
+			"description": "Asset cache lifetime in seconds",
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 31536000,
+			"example": 1800
+		},
 		"email": {
 			"description": "Email address",
 			"type": "string",
