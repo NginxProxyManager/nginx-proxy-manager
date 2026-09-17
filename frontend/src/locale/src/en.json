@@ -104,6 +104,9 @@
 	"action.allow": {
 		"defaultMessage": "Allow"
 	},
+	"action.clear": {
+		"defaultMessage": "Clear"
+	},
 	"action.close": {
 		"defaultMessage": "Close"
 	},
@@ -463,6 +466,12 @@
 	},
 	"loading": {
 		"defaultMessage": "Loading…"
+	},
+	"location.advanced-config": {
+		"defaultMessage": "Has custom Nginx configuration"
+	},
+	"location.filter": {
+		"defaultMessage": "Filter by path or destination"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Verification Code"

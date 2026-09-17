@@ -65,8 +65,12 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 									value={client.directive}
 									onChange={(e) => handleChange(idx, "directive", e.target.value)}
 								>
-									<option value="allow"><T id="action.allow" /></option>
-									<option value="deny"><T id="action.deny" /></option>
+									<option value="allow">
+										<T id="action.allow" />
+									</option>
+									<option value="deny">
+										<T id="action.deny" />
+									</option>
 								</select>
 							</span>
 							<input
@@ -91,16 +95,13 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 						</div>
 					</div>
 					<div className="col-1">
-						<a
-							role="button"
+						<button
+							type="button"
 							className="btn btn-ghost btn-danger p-0"
-							onClick={(e) => {
-								e.preventDefault();
-								handleRemove(idx);
-							}}
+							onClick={() => handleRemove(idx)}
 						>
 							<IconX size={16} />
-						</a>
+						</button>
 					</div>
 				</div>
 			))}
@@ -122,7 +123,9 @@ export function AccessClientFields({ initialValues, name = "clients" }: Props) {
 								value="deny"
 								disabled
 							>
-								<option value="deny"><T id="action.deny" /></option>
+								<option value="deny">
+									<T id="action.deny" />
+								</option>
 							</select>
 						</span>
 						<input

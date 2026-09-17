@@ -64,5 +64,11 @@
   },
   "locale-no-NO": {
     "defaultMessage": "Norsk"
+  },
+  "locale-uk-UA": {
+    "defaultMessage": "Українська"
+  },
+  "locale-az-AZ": {
+    "defaultMessage": "Azərbaycanca"
   }
 }

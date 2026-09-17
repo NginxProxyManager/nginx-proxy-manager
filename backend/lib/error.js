@@ -22,6 +22,15 @@ const errs = {
 		this.status = 404;
 	},
 
+	TokenRevokedError: function (message, previous) {
+		Error.captureStackTrace(this, this.constructor);
+		this.name = this.constructor.name;
+		this.previous = previous;
+		this.message = message;
+		this.public = true;
+		this.status = 401;
+	},
+
 	AuthError: function (message, messageI18n, previous) {
 		Error.captureStackTrace(this, this.constructor);
 		this.name = this.constructor.name;
