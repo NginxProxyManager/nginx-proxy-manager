@@ -566,6 +566,75 @@
 	"offline": {
 		"defaultMessage": "Maas"
 	},
+	"oidc.advanced": {
+		"defaultMessage": "Täpsemad seaded"
+	},
+	"oidc.auto-login": {
+		"defaultMessage": "Alusta OIDC sisselogimist automaatselt"
+	},
+	"oidc.callback": {
+		"defaultMessage": "Tagasisuunamise URL"
+	},
+	"oidc.client-id": {
+		"defaultMessage": "Kliendi ID"
+	},
+	"oidc.client-secret": {
+		"defaultMessage": "Kliendi saladus"
+	},
+	"oidc.description": {
+		"defaultMessage": "Ühenda standardne OIDC pakkuja. Kasutajad seovad olemasoleva NPM-i konto kasutajamenüüst; rollid ja kohalikud paroolid säilivad. Rakenduse ligipääsu haldab identiteedipakkuja."
+	},
+	"oidc.enabled": {
+		"defaultMessage": "Luba OIDC"
+	},
+	"oidc.issuer": {
+		"defaultMessage": "Väljastaja URL"
+	},
+	"oidc.link": {
+		"defaultMessage": "Seo konto"
+	},
+	"oidc.link-description": {
+		"defaultMessage": "Seo NPM-i konto identiteedipakkuja kontoga. Nõutud on praegune parool ja kasutusel olev kaheastmeline kinnitamine."
+	},
+	"oidc.link-success": {
+		"defaultMessage": "OIDC konto edukalt seotud."
+	},
+	"oidc.link-title": {
+		"defaultMessage": "OIDC konto"
+	},
+	"oidc.linked": {
+		"defaultMessage": "Selle kontoga on seotud OIDC identiteet."
+	},
+	"oidc.public-url": {
+		"defaultMessage": "Avalik URL"
+	},
+	"oidc.saved": {
+		"defaultMessage": "OIDC seaded salvestatud. Seo konto kasutajamenüüst enne sisselogimise katsetamist."
+	},
+	"oidc.secret-kept": {
+		"defaultMessage": "Seadistatud. Olemasoleva saladuse säilitamiseks jäta tühjaks."
+	},
+	"oidc.secret-new": {
+		"defaultMessage": "Sisesta identiteedipakkuja antud saladus."
+	},
+	"oidc.sign-in": {
+		"defaultMessage": "Logi sisse OIDC-ga"
+	},
+	"oidc.signing-in": {
+		"defaultMessage": "OIDC sisselogimise lõpetamine…"
+	},
+	"oidc.title": {
+		"defaultMessage": "OpenID Connecti sisselogimine"
+	},
+	"oidc.token-auth": {
+		"defaultMessage": "Tokeni lõpp-punkti autentimine"
+	},
+	"oidc.totp": {
+		"defaultMessage": "Kinnituskood, kui kaheastmeline autentimine on lubatud"
+	},
+	"oidc.unlink": {
+		"defaultMessage": "Eemalda seos"
+	},
 	"online": {
 		"defaultMessage": "Töös"
 	},

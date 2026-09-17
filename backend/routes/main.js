@@ -16,6 +16,7 @@ import reportsRoutes from "./reports.js";
 import schemaRoutes from "./schema.js";
 import settingsRoutes from "./settings.js";
 import tokensRoutes from "./tokens.js";
+import oidcRoutes from "./oidc.js";
 import usersRoutes from "./users.js";
 import versionRoutes from "./version.js";
 
@@ -48,6 +49,7 @@ router.get("/", async (_, res /*, next*/) => {
 
 router.use("/schema", schemaRoutes);
 router.use("/tokens", tokensRoutes);
+router.use("/oidc", oidcRoutes);
 router.use("/users", usersRoutes);
 router.use("/audit-log", auditLogRoutes);
 router.use("/reports", reportsRoutes);

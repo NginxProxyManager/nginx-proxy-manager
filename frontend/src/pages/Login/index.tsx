@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
@@ -7,6 +7,65 @@ import { useHealth } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import styles from "./index.module.css";
+import { getOIDCStatus, startOIDC } from "src/api/backend/oidc";
+
+function OIDCLogin() {
+	const { completeOIDC } = useAuthState();
+	const [enabled, setEnabled] = useState(false);
+	const [busy, setBusy] = useState(false);
+	const [error, setError] = useState("");
+	const started = useRef(false);
+	const begin = useCallback(async () => {
+		setBusy(true);
+		try {
+			await startOIDC();
+		} catch {
+			setError("OIDC login failed. Use local login or check the provider settings.");
+			setBusy(false);
+		}
+	}, []);
+	useEffect(() => {
+		if (started.current) return;
+		started.current = true;
+		const query = new URLSearchParams(window.location.search);
+		if (query.get("oidc") === "complete") {
+			setBusy(true);
+			completeOIDC()
+				.catch(() => {
+					setError("OIDC login failed. Try again or sign in locally.");
+					window.history.replaceState(null, "", "/?local=1");
+					getOIDCStatus()
+						.then((status) => setEnabled(status.enabled))
+						.catch(() => {});
+				})
+				.finally(() => setBusy(false));
+			return;
+		}
+		getOIDCStatus()
+			.then((status) => {
+				setEnabled(status.enabled);
+				if (status.enabled && status.autoLogin && !query.has("local")) begin();
+			})
+			.catch(() => {});
+	}, [completeOIDC, begin]);
+	return (
+		<>
+			{error && <Alert variant="danger">{error}</Alert>}
+			{enabled && (
+				<div className="mb-4">
+					<Button type="button" fullWidth color="azure" onClick={begin} disabled={busy}>
+						<T id="oidc.sign-in" />
+					</Button>
+				</div>
+			)}
+			{busy && (
+				<p className="text-secondary">
+					<T id="oidc.signing-in" />
+				</p>
+			)}
+		</>
+	);
+}
 
 function TwoFactorForm() {
 	const codeRef = useRef<HTMLInputElement>(null);
@@ -103,6 +162,7 @@ function LoginForm() {
 			<h2 className="h2 text-center mb-4">
 				<T id="login.title" />
 			</h2>
+			<OIDCLogin />
 			{formErr !== "" && <Alert variant="danger">{formErr}</Alert>}
 			<Formik
 				initialValues={

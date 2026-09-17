@@ -470,6 +470,75 @@
 	"offline": {
 		"defaultMessage": "离线"
 	},
+	"oidc.advanced": {
+		"defaultMessage": "高级选项"
+	},
+	"oidc.auto-login": {
+		"defaultMessage": "自动发起 OIDC 登录"
+	},
+	"oidc.callback": {
+		"defaultMessage": "回调地址"
+	},
+	"oidc.client-id": {
+		"defaultMessage": "Client ID"
+	},
+	"oidc.client-secret": {
+		"defaultMessage": "Client Secret"
+	},
+	"oidc.description": {
+		"defaultMessage": "连接通用 OIDC 身份服务。用户在右上角菜单关联已有 NPM 账号，保留原权限与本地密码。请在身份服务中控制此应用的访问范围。"
+	},
+	"oidc.enabled": {
+		"defaultMessage": "启用 OIDC"
+	},
+	"oidc.issuer": {
+		"defaultMessage": "Issuer URL"
+	},
+	"oidc.link": {
+		"defaultMessage": "关联账号"
+	},
+	"oidc.link-description": {
+		"defaultMessage": "将当前 NPM 账号关联到身份服务。需要验证当前密码；已开启双重验证时还需验证码。"
+	},
+	"oidc.link-success": {
+		"defaultMessage": "OIDC 账号关联成功。"
+	},
+	"oidc.link-title": {
+		"defaultMessage": "OIDC 账号关联"
+	},
+	"oidc.linked": {
+		"defaultMessage": "当前账号已关联 OIDC 身份。"
+	},
+	"oidc.public-url": {
+		"defaultMessage": "公开访问地址"
+	},
+	"oidc.saved": {
+		"defaultMessage": "OIDC 设置已保存。请在用户菜单关联账号后测试登录。"
+	},
+	"oidc.secret-kept": {
+		"defaultMessage": "已配置，留空保留原密钥。"
+	},
+	"oidc.secret-new": {
+		"defaultMessage": "填写身份服务提供的密钥。"
+	},
+	"oidc.sign-in": {
+		"defaultMessage": "使用 OIDC 登录"
+	},
+	"oidc.signing-in": {
+		"defaultMessage": "正在完成 OIDC 登录…"
+	},
+	"oidc.title": {
+		"defaultMessage": "OIDC 单点登录"
+	},
+	"oidc.token-auth": {
+		"defaultMessage": "Token 端点认证方式"
+	},
+	"oidc.totp": {
+		"defaultMessage": "验证码（已开启双重验证时填写）"
+	},
+	"oidc.unlink": {
+		"defaultMessage": "解除关联"
+	},
 	"online": {
 		"defaultMessage": "在线"
 	},

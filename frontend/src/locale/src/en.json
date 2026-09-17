@@ -566,6 +566,75 @@
 	"offline": {
 		"defaultMessage": "Offline"
 	},
+	"oidc.advanced": {
+		"defaultMessage": "Advanced options"
+	},
+	"oidc.auto-login": {
+		"defaultMessage": "Automatically start OIDC login"
+	},
+	"oidc.callback": {
+		"defaultMessage": "Callback URL"
+	},
+	"oidc.client-id": {
+		"defaultMessage": "Client ID"
+	},
+	"oidc.client-secret": {
+		"defaultMessage": "Client secret"
+	},
+	"oidc.description": {
+		"defaultMessage": "Connect a standard OIDC provider. Users link their existing NPM account from the user menu; NPM roles and local passwords are preserved. Control application access at the identity provider."
+	},
+	"oidc.enabled": {
+		"defaultMessage": "Enable OIDC"
+	},
+	"oidc.issuer": {
+		"defaultMessage": "Issuer URL"
+	},
+	"oidc.link": {
+		"defaultMessage": "Link account"
+	},
+	"oidc.link-description": {
+		"defaultMessage": "Link this NPM account to an identity at the configured provider. Your current password and existing two-factor verification are required."
+	},
+	"oidc.link-success": {
+		"defaultMessage": "OIDC account linked successfully."
+	},
+	"oidc.link-title": {
+		"defaultMessage": "OIDC account"
+	},
+	"oidc.linked": {
+		"defaultMessage": "An OIDC identity is linked to this account."
+	},
+	"oidc.public-url": {
+		"defaultMessage": "Public URL"
+	},
+	"oidc.saved": {
+		"defaultMessage": "OIDC settings saved. Link your account from the user menu before testing login."
+	},
+	"oidc.secret-kept": {
+		"defaultMessage": "Configured. Leave blank to keep the existing secret."
+	},
+	"oidc.secret-new": {
+		"defaultMessage": "Enter the secret from your identity provider."
+	},
+	"oidc.sign-in": {
+		"defaultMessage": "Sign in with OIDC"
+	},
+	"oidc.signing-in": {
+		"defaultMessage": "Completing OIDC sign-in…"
+	},
+	"oidc.title": {
+		"defaultMessage": "OpenID Connect"
+	},
+	"oidc.token-auth": {
+		"defaultMessage": "Token endpoint authentication"
+	},
+	"oidc.totp": {
+		"defaultMessage": "Verification code (if two-factor authentication is enabled)"
+	},
+	"oidc.unlink": {
+		"defaultMessage": "Unlink account"
+	},
 	"online": {
 		"defaultMessage": "Online"
 	},

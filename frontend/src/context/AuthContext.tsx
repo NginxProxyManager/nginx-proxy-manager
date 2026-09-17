@@ -10,6 +10,7 @@ import {
 	type TokenResponse,
 } from "src/api/backend";
 import AuthStore from "src/modules/AuthStore";
+import { exchangeOIDC } from "src/api/backend/oidc";
 
 // 2FA challenge state
 export interface TwoFactorChallenge {
@@ -21,6 +22,7 @@ export interface AuthContextType {
 	authenticated: boolean;
 	twoFactorChallenge: TwoFactorChallenge | null;
 	login: (username: string, password: string) => Promise<void>;
+	completeOIDC: () => Promise<void>;
 	verifyTwoFactor: (code: string) => Promise<void>;
 	cancelTwoFactor: () => void;
 	loginAs: (id: number) => Promise<void>;
@@ -63,6 +65,16 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		const response = await verify2FA(twoFactorChallenge.challengeToken, code);
 		handleTokenUpdate(response);
 	};
+	const completeOIDC = async () => {
+		const response = await exchangeOIDC();
+		window.history.replaceState(null, "", "/?local=1");
+		if (isTwoFactorChallenge(response)) {
+			setTwoFactorChallenge({ challengeToken: response.challengeToken });
+			return;
+		}
+		handleTokenUpdate(response);
+		window.history.replaceState(null, "", "/");
+	};
 
 	const cancelTwoFactor = () => {
 		setTwoFactorChallenge(null);
@@ -83,6 +95,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 			return;
 		}
 		AuthStore.clear();
+		window.history.replaceState(null, "", "/?local=1");
 		setAuthenticated(false);
 		queryClient.clear();
 	};
@@ -106,6 +119,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		authenticated,
 		twoFactorChallenge,
 		login,
+		completeOIDC,
 		verifyTwoFactor,
 		cancelTwoFactor,
 		loginAs,
