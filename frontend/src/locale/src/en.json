@@ -582,7 +582,7 @@
 		"defaultMessage": "Client secret"
 	},
 	"oidc.description": {
-		"defaultMessage": "Connect a standard OIDC provider. Users link their existing NPM account from the user menu; NPM roles and local passwords are preserved. Control application access at the identity provider."
+		"defaultMessage": "Configure a standard OIDC provider here. All users link their own account under Edit Profile → Login methods. Existing NPM roles and local login are preserved."
 	},
 	"oidc.enabled": {
 		"defaultMessage": "Enable OIDC"
@@ -594,7 +594,7 @@
 		"defaultMessage": "Link account"
 	},
 	"oidc.link-description": {
-		"defaultMessage": "Link this NPM account to an identity at the configured provider. Your current password and existing two-factor verification are required."
+		"defaultMessage": "Link your current NPM account to the configured identity provider. Your current login is sufficient; no additional password is required."
 	},
 	"oidc.link-success": {
 		"defaultMessage": "OIDC account linked successfully."
@@ -605,11 +605,17 @@
 	"oidc.linked": {
 		"defaultMessage": "An OIDC identity is linked to this account."
 	},
+	"oidc.login-methods": {
+		"defaultMessage": "Login methods"
+	},
+	"oidc.not-configured": {
+		"defaultMessage": "OIDC is not configured or enabled. Ask an administrator to complete Settings → OpenID Connect first."
+	},
 	"oidc.public-url": {
 		"defaultMessage": "Public URL"
 	},
 	"oidc.saved": {
-		"defaultMessage": "OIDC settings saved. Link your account from the user menu before testing login."
+		"defaultMessage": "OIDC settings saved. Open Edit Profile → Login methods to link your account."
 	},
 	"oidc.secret-kept": {
 		"defaultMessage": "Configured. Leave blank to keep the existing secret."
@@ -628,9 +634,6 @@
 	},
 	"oidc.token-auth": {
 		"defaultMessage": "Token endpoint authentication"
-	},
-	"oidc.totp": {
-		"defaultMessage": "Verification code (if two-factor authentication is enabled)"
 	},
 	"oidc.unlink": {
 		"defaultMessage": "Unlink account"

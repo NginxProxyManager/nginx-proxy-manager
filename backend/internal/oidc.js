@@ -4,7 +4,6 @@ import { seal, unseal, validateConfig, discover, random, identityKey } from "../
 import errs from "../lib/error.js";
 import userModel from "../models/user.js";
 import authModel from "../models/auth.js";
-import twoFactor from "./2fa.js";
 import TokenModel from "../models/token.js";
 import internalToken from "./token.js";
 import crypto from "node:crypto";
@@ -13,11 +12,11 @@ const authStamp = (auth) =>
 		.createHash("sha256")
 		.update(
 			JSON.stringify([
-				auth.secret,
-				auth.meta?.password_changed_at,
-				auth.meta?.totp_enabled,
-				auth.meta?.totp_secret,
-				auth.meta?.totp_enabled_at,
+				auth?.secret,
+				auth?.meta?.password_changed_at,
+				auth?.meta?.totp_enabled,
+				auth?.meta?.totp_secret,
+				auth?.meta?.totp_enabled_at,
 			]),
 		)
 		.digest("hex");
@@ -103,17 +102,9 @@ export async function activeUser(id) {
 	if (!user) throw new errs.AuthError("Account is unavailable");
 	return user;
 }
-export async function reauthenticate(id, password, code) {
+export async function authenticationStamp(id) {
 	await activeUser(id);
 	const auth = await authModel.query().where({ user_id: id, type: "password", is_deleted: 0 }).first();
-	if (typeof password !== "string" || password.length > 1024 || !auth || !(await auth.verifyPassword(password)))
-		throw new errs.AuthError("Invalid current password");
-	if (auth.meta?.totp_enabled) {
-		if (typeof code !== "string" || code.length > 32 || !(await twoFactor.verifyForLogin(id, code)))
-			throw new errs.AuthError("Invalid verification code");
-	}
-	const latest = await authModel.query().where({ user_id: id, type: "password", is_deleted: 0 }).first();
-	if (!latest || authStamp(latest) !== authStamp(auth)) throw new errs.AuthError("Authentication changed; try again");
 	return authStamp(auth);
 }
 export async function linkIdentity(id, issuer, subject, stamp) {
@@ -124,8 +115,7 @@ export async function linkIdentity(id, issuer, subject, stamp) {
 			.where({ user_id: id, type: "password", is_deleted: 0 })
 			.forUpdate()
 			.first();
-		if (!auth || authStamp(auth) !== stamp)
-			throw new errs.AuthError("Local authentication changed; start linking again");
+		if (authStamp(auth) !== stamp) throw new errs.AuthError("Local authentication changed; start linking again");
 		const user = await userModel.query(trx).where({ id, is_deleted: 0, is_disabled: 0 }).first();
 		if (!user) throw new errs.AuthError("Account is unavailable");
 		const current = await trx("oidc_identity").where({ user_id: id }).first();
@@ -143,7 +133,8 @@ export async function linkedUser(issuer, subject) {
 }
 export async function loginResult(user) {
 	await activeUser(user.id);
-	if (await twoFactor.isEnabled(user.id)) {
+	const auth = await authModel.query().where({ user_id: user.id, type: "password", is_deleted: 0 }).first();
+	if (auth?.meta?.totp_enabled === true) {
 		const signed = await TokenModel().create({
 			iss: "api",
 			attrs: { id: user.id },

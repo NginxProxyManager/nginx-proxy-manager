@@ -10,9 +10,12 @@ scope is `openid`; username, email and group claims are not required. Advanced
 options support automatic login and standard token-endpoint authentication
 methods (auto, client_secret_basic, client_secret_post).
 
-Sign in locally, open the user menu → OIDC account, and link your existing NPM
-account. Linking/unlinking requires the current password and existing NPM 2FA
-code if enabled. Identities are bound by issuer + subject, not matching email or
+Open the user menu → Edit Profile → Login methods to link your own existing
+NPM account. Administrators and standard users use the same area. Linking and
+unlinking require a valid authenticated NPM user session, without another
+password prompt or a recent-login requirement. Linking is available only after
+an administrator saves and enables a valid OIDC provider.
+Identities are bound by issuer + subject, not matching email or
 display name. Unknown identities cannot create accounts or gain administrator
 privileges. Original user roles and proxy-host ownership are retained.
 

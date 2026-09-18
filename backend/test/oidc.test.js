@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import knex from "knex";
 import express from "express";
+import { request as httpRequest } from "node:http";
 import { generateKeyPair, exportJWK, SignJWT } from "jose";
 
 const keys = crypto.generateKeyPairSync("rsa", {
@@ -133,14 +134,35 @@ test("OIDC integration with standard-only signed tokens and existing NPM account
 		await new Promise((resolve) => server.close(resolve));
 		await database.destroy();
 	});
-	async function req(path, { token, body, cookie, method = body ? "POST" : "GET", requestOrigin = origin } = {}) {
+	async function req(
+		path,
+		{ token, body, cookie, method = body ? "POST" : "GET", requestOrigin = origin, host } = {},
+	) {
 		const headers = {
 			"Content-Type": "application/json",
 			Origin: requestOrigin,
 			"Sec-Fetch-Site": "same-origin",
 			...(token ? { Authorization: `Bearer ${token}` } : {}),
 			...(cookie ? { Cookie: cookie } : {}),
+			...(host ? { Host: host } : {}),
 		};
+		if (host)
+			return new Promise((resolve, reject) => {
+				const request = httpRequest(`${base}/api/oidc/${path}`, { method, headers }, (response) => {
+					const chunks = [];
+					response.on("data", (chunk) => chunks.push(chunk));
+					response.on("end", () =>
+						resolve(
+							new Response(Buffer.concat(chunks), {
+								status: response.statusCode,
+								headers: response.headers,
+							}),
+						),
+					);
+				});
+				request.on("error", reject);
+				request.end(body ? JSON.stringify(body) : undefined);
+			});
 		return nativeFetch(`${base}/api/oidc/${path}`, {
 			method,
 			headers,
@@ -178,7 +200,7 @@ test("OIDC integration with standard-only signed tokens and existing NPM account
 		assert.equal((await service.readConfig()).config.public_url, origin);
 	});
 	async function start(token) {
-		const r = await req(token ? "link" : "start", { token, body: token ? { password: "current-password" } : {} });
+		const r = await req(token ? "link" : "start", { token, body: {} });
 		assert.equal(r.status, 200);
 		const url = new URL((await r.json()).url);
 		nonce = url.searchParams.get("nonce");
@@ -236,6 +258,8 @@ test("OIDC integration with standard-only signed tokens and existing NPM account
 		const tx = await start();
 		assert.equal((await callback({ ...tx, cookie: "" })).status, 401);
 		assert.notEqual((await req("identity", { token: challenge })).status, 200);
+		assert.notEqual((await req("link", { token: challenge, body: {} })).status, 200);
+		assert.notEqual((await req("link", { body: {} })).status, 200);
 		assert.equal((await req("start", { body: {}, requestOrigin: "https://evil.example" })).status, 403);
 	});
 	await t.test("disabled users and unlinked handoffs fail closed", async () => {
@@ -257,33 +281,34 @@ test("OIDC integration with standard-only signed tokens and existing NPM account
 		assert.equal(await database("oidc_identity").where({ user_id: 2 }).first(), undefined);
 		subject = "subject-1";
 	});
-	await t.test("password reset during password verification cannot mint a fresh link stamp", async () => {
-		const original = Auth.prototype.verifyPassword;
-		let began;
-		let release;
-		const started = new Promise((r) => {
-			began = r;
-		});
-		const barrier = new Promise((r) => {
-			release = r;
-		});
-		Auth.prototype.verifyPassword = async () => {
-			began();
-			await barrier;
-			return true;
-		};
-		try {
-			const result = service.reauthenticate(2, "new-password").then(
-				() => false,
-				() => true,
-			);
-			await started;
-			await Auth.query().where({ user_id: 2, type: "password" }).patch({ secret: "reset-during-verification" });
-			release();
-			assert.equal(await result, true);
-		} finally {
-			Auth.prototype.verifyPassword = original;
-		}
+	await t.test("standard users link only themselves using a valid session without a password", async () => {
+		subject = "standard-subject";
+		const tx = await start(regular);
+		assert.equal((await callback(tx)).status, 303);
+		const row = await database("oidc_identity").where({ user_id: 2 }).first();
+		assert.equal(row.subject, subject);
+		assert.equal((await database("user").where({ id: 2 }).first()).roles, "[]");
+		const own = await req("identity?user_id=1", { token: regular });
+		assert.equal((await own.json()).issuer, "https://id.example");
+		assert.equal((await req("unlink", { token: regular, body: { user_id: 1 }, requestOrigin: base })).status, 200);
+		assert.ok(await database("oidc_identity").where({ user_id: 1 }).first());
+		assert.equal(await database("oidc_identity").where({ user_id: 2 }).first(), undefined);
+		subject = "subject-1";
+	});
+	await t.test("linking requires an enabled saved provider and rejects expired or disabled sessions", async () => {
+		const row = await database("oidc_config").where({ id: 1 }).first();
+		const saved = JSON.parse(row.config);
+		await database("oidc_config")
+			.where({ id: 1 })
+			.update({ config: JSON.stringify({ ...saved, enabled: false }) });
+		assert.equal((await (await req("identity", { token: regular })).json()).available, false);
+		assert.equal((await req("link", { token: regular, body: {} })).status, 404);
+		await database("oidc_config").where({ id: 1 }).update({ config: row.config });
+		const expired = (await Token().create({ attrs: { id: 2 }, scope: ["user"], expiresIn: "-1s" })).token;
+		assert.notEqual((await req("link", { token: expired, body: {} })).status, 200);
+		await database("user").where({ id: 2 }).update({ is_disabled: 1 });
+		assert.notEqual((await req("link", { token: regular, body: {} })).status, 200);
+		await database("user").where({ id: 2 }).update({ is_disabled: 0 });
 	});
 	await t.test("NPM two-factor remains required after OIDC", async () => {
 		const auth = await Auth.query().where({ user_id: 1, type: "password" }).first();
@@ -294,6 +319,48 @@ test("OIDC integration with standard-only signed tokens and existing NPM account
 		assert.equal(result.requires_2fa, true);
 		assert.equal(result.token, undefined);
 	});
+	await t.test("a session expiring during the IdP round trip cannot finish linking", async () => {
+		const short = (await Token().create({ attrs: { id: 2 }, scope: ["user"], expiresIn: "1s" })).token;
+		const tx = await start(short);
+		await new Promise((resolve) => setTimeout(resolve, 1100));
+		assert.equal((await callback(tx)).status, 401);
+		assert.equal(await database("oidc_identity").where({ user_id: 2 }).first(), undefined);
+	});
+	await t.test(
+		"valid-session accounts without passwords can link and sign in; unlink works after provider removal",
+		async () => {
+			await database("auth").where({ user_id: 2 }).delete();
+			subject = "passwordless-subject";
+			const tx = await start(regular);
+			assert.equal((await callback(tx)).status, 303);
+			const result = await service.loginResult(await service.linkedUser("https://id.example", subject));
+			assert.ok(result.token);
+			assert.equal(result.requires_2fa, undefined);
+			const row = await database("oidc_config").where({ id: 1 }).first();
+			const cfg = JSON.parse(row.config);
+			await database("oidc_config")
+				.where({ id: 1 })
+				.update({ config: JSON.stringify({ ...cfg, enabled: false, public_url: "", issuer: "" }) });
+			assert.equal(
+				(await req("unlink", { token: regular, body: {}, requestOrigin: "https://evil.example" })).status,
+				403,
+			);
+			assert.equal(
+				(
+					await req("unlink", {
+						token: regular,
+						body: {},
+						requestOrigin: "http://nas.example:81",
+						host: "nas.example",
+					})
+				).status,
+				200,
+			);
+			assert.equal(await database("oidc_identity").where({ user_id: 2 }).first(), undefined);
+			await database("oidc_config").where({ id: 1 }).update({ config: row.config });
+			subject = "subject-1";
+		},
+	);
 	assert.ok(discoveryCount < 4);
 	await down(database);
 	assert.equal(await database.schema.hasTable("oidc_identity"), false);

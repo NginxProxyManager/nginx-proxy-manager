@@ -5,7 +5,6 @@ import { useUser } from "src/hooks";
 import { T } from "src/locale";
 import { showChangePasswordModal, showTwoFactorModal, showUserModal } from "src/modals";
 import styles from "./SiteHeader.module.css";
-import { showOIDCLinkModal } from "src/modals/OIDCLinkModal";
 
 export function SiteHeader() {
 	const { data: currentUser } = useUser("me");
@@ -124,10 +123,6 @@ export function SiteHeader() {
 									<T id="user.two-factor" />
 								</a>
 								<div className="dropdown-divider" />
-								<button type="button" className="dropdown-item" onClick={() => showOIDCLinkModal()}>
-									<IconShieldLock width={18} />
-									<T id="oidc.link-title" />
-								</button>
 								<a
 									href="?"
 									className="dropdown-item"

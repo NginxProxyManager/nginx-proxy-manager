@@ -4,6 +4,8 @@ import { client, discover, OneTimeStore, sameOrigin } from "../lib/oidc.js";
 import * as service from "../internal/oidc.js";
 import jwtdecode from "../lib/express/jwt-decode.js";
 import db from "../db.js";
+import Access from "../lib/access.js";
+import { validateConfig } from "../lib/oidc.js";
 
 const router = express.Router();
 const transactions = new OneTimeStore();
@@ -63,30 +65,44 @@ router.get(
 		const id = await requireUser(res);
 		await service.activeUser(id);
 		const row = await db()("oidc_identity").where({ user_id: id }).first();
-		res.json({ linked: !!row, issuer: row?.issuer || "" });
+		const { config } = await service.readConfig();
+		let available = false;
+		try {
+			validateConfig(config);
+			available = config.enabled;
+		} catch {
+			/* Incomplete provider configuration. */
+		}
+		res.json({ linked: !!row, issuer: row?.issuer || "", available });
 	}),
 );
 router.post(
 	"/unlink",
 	jwtdecode(),
 	handler(async (req, res) => {
-		const { config } = await service.readConfig();
-		if (!sameOrigin(req, config)) return res.sendStatus(403);
+		// Local account management must work after the provider is removed. The
+		// bearer session is mandatory; never use forwarded headers as a trust source.
+		if (!req.is("application/json") || (req.get("Sec-Fetch-Site") && req.get("Sec-Fetch-Site") !== "same-origin"))
+			return res.sendStatus(403);
+		// NPM's internal nginx forwards $host without its port. Sec-Fetch-Site
+		// checks modern browser origins; hostname comparison covers older clients.
+		if (req.get("Origin") && new URL(req.get("Origin")).hostname !== new URL(`http://${req.get("Host")}`).hostname)
+			return res.sendStatus(403);
 		const id = await requireUser(res);
-		await service.reauthenticate(id, req.body.password, req.body.code);
 		await db()("oidc_identity").where({ user_id: id }).delete();
 		res.json({ linked: false });
 	}),
 );
-async function start(req, res, userId = null, stamp = null) {
+async function start(req, res, userId = null, stamp = null, token = null) {
 	const { config, revision } = await service.readConfig();
 	if (!config.enabled) return res.sendStatus(404);
+	validateConfig(config);
 	if (!sameOrigin(req, config)) return res.sendStatus(403);
 	const provider = await discover(config, revision);
 	const state = client.randomState();
 	const nonce = client.randomNonce();
 	const verifier = client.randomPKCECodeVerifier();
-	const tx = transactions.put({ state, nonce, verifier, revision, userId, stamp });
+	const tx = transactions.put({ state, nonce, verifier, revision, userId, stamp, token });
 	putCookie(res, txCookie, tx, 300);
 	const url = client.buildAuthorizationUrl(provider, {
 		redirect_uri: new URL("/api/oidc/callback", config.public_url).href,
@@ -109,8 +125,10 @@ router.post(
 		const { config } = await service.readConfig();
 		if (!sameOrigin(req, config)) return res.sendStatus(403);
 		const id = await requireUser(res);
-		const stamp = await service.reauthenticate(id, req.body.password, req.body.code);
-		return start(req, res, id, stamp);
+		if (await db()("oidc_identity").where({ user_id: id }).first())
+			return res.status(409).json({ error: { message: "An OIDC identity is already linked" } });
+		const stamp = await service.authenticationStamp(id);
+		return start(req, res, id, stamp, res.locals.token);
 	}),
 );
 router.get("/callback", async (req, res) => {
@@ -133,6 +151,10 @@ router.get("/callback", async (req, res) => {
 		const current = await service.readConfig();
 		if (current.revision !== revision || !current.config.enabled) throw new Error("Configuration changed");
 		if (tx.userId) {
+			// The original authenticated session must still be valid after the IdP round trip.
+			const access = new Access(tx.token);
+			await access.can("users:get", tx.userId);
+			if (access.token.getUserId() !== tx.userId) throw new Error("Account changed");
 			await service.linkIdentity(tx.userId, claims.iss, claims.sub, tx.stamp);
 			return res.redirect(303, new URL("/?oidc=linked", config.public_url).href);
 		}

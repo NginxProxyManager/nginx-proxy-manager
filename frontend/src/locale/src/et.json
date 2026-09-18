@@ -582,7 +582,7 @@
 		"defaultMessage": "Kliendi saladus"
 	},
 	"oidc.description": {
-		"defaultMessage": "Ühenda standardne OIDC pakkuja. Kasutajad seovad olemasoleva NPM-i konto kasutajamenüüst; rollid ja kohalikud paroolid säilivad. Rakenduse ligipääsu haldab identiteedipakkuja."
+		"defaultMessage": "Seadista siin OIDC pakkuja. Kõik kasutajad seovad oma konto jaotises Muuda profiili → Sisselogimisviisid. Rollid ja kohalik sisselogimine säilivad."
 	},
 	"oidc.enabled": {
 		"defaultMessage": "Luba OIDC"
@@ -594,7 +594,7 @@
 		"defaultMessage": "Seo konto"
 	},
 	"oidc.link-description": {
-		"defaultMessage": "Seo NPM-i konto identiteedipakkuja kontoga. Nõutud on praegune parool ja kasutusel olev kaheastmeline kinnitamine."
+		"defaultMessage": "Seo praegune NPM-i konto identiteedipakkujaga. Kehtiv sisselogimine on piisav; parooli uuesti sisestada pole vaja."
 	},
 	"oidc.link-success": {
 		"defaultMessage": "OIDC konto edukalt seotud."
@@ -605,11 +605,17 @@
 	"oidc.linked": {
 		"defaultMessage": "Selle kontoga on seotud OIDC identiteet."
 	},
+	"oidc.login-methods": {
+		"defaultMessage": "Sisselogimisviisid"
+	},
+	"oidc.not-configured": {
+		"defaultMessage": "OIDC pole seadistatud või lubatud. Palu administraatoril avada Seaded → OpenID Connect."
+	},
 	"oidc.public-url": {
 		"defaultMessage": "Avalik URL"
 	},
 	"oidc.saved": {
-		"defaultMessage": "OIDC seaded salvestatud. Seo konto kasutajamenüüst enne sisselogimise katsetamist."
+		"defaultMessage": "OIDC seaded salvestatud. Konto sidumiseks ava Muuda profiili → Sisselogimisviisid."
 	},
 	"oidc.secret-kept": {
 		"defaultMessage": "Seadistatud. Olemasoleva saladuse säilitamiseks jäta tühjaks."
@@ -628,9 +634,6 @@
 	},
 	"oidc.token-auth": {
 		"defaultMessage": "Tokeni lõpp-punkti autentimine"
-	},
-	"oidc.totp": {
-		"defaultMessage": "Kinnituskood, kui kaheastmeline autentimine on lubatud"
 	},
 	"oidc.unlink": {
 		"defaultMessage": "Eemalda seos"
