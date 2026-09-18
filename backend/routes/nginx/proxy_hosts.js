@@ -206,4 +206,47 @@ router
 		}
 	});
 
+/**
+ * Specific proxy-host by domain
+ *
+ * /api/nginx/proxy-hosts/domain/:domain
+ */
+router
+	.route("/domain/:domain")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * GET /api/nginx/proxy-hosts/domain/:domain
+	 */
+	.get(async (req, res, next) => {
+		try {
+			const data = await validator({
+				required: ["domain"],
+				additionalProperties: false,
+				properties:           {
+					domain: {
+						type: "string",
+					},
+					expand: {
+						$ref: "common#/properties/expand"
+					}
+				}
+			}, {
+				domain: req.params.domain,
+				expand: (typeof req.query.expand === "string" ? req.query.expand.split(",") : null)
+			});
+			const row = await internalProxyHost.getByDomain(res.locals.access, {
+				domain: data.domain,
+				expand: data.expand
+			});
+			res.status(200).send(row);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
 export default router;
