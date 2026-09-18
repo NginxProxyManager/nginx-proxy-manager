@@ -15,6 +15,7 @@ const boolFields = [
 	"is_deleted",
 	"ssl_forced",
 	"caching_enabled",
+	"gzip_enabled",
 	"block_exploits",
 	"allow_websocket_upgrade",
 	"http2_support",
@@ -39,6 +40,10 @@ class ProxyHost extends Model {
 			this.meta = {};
 		}
 
+		if (!Array.isArray(this.gzip_types)) {
+			this.gzip_types = [];
+		}
+
 		this.domain_names.sort();
 	}
 
@@ -53,7 +58,11 @@ class ProxyHost extends Model {
 
 	$parseDatabaseJson(json) {
 		const thisJson = super.$parseDatabaseJson(json);
-		return convertIntFieldsToBool(thisJson, boolFields);
+		const parsedJson = convertIntFieldsToBool(thisJson, boolFields);
+		if (!Array.isArray(parsedJson.gzip_types)) {
+			parsedJson.gzip_types = [];
+		}
+		return parsedJson;
 	}
 
 	$formatDatabaseJson(json) {
@@ -70,7 +79,7 @@ class ProxyHost extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["domain_names", "meta", "locations"];
+		return ["domain_names", "meta", "locations", "gzip_types"];
 	}
 
 	static get defaultAllowGraph() {

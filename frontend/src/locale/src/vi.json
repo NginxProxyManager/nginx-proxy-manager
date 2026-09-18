@@ -350,6 +350,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Cache tài nguyên"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Nén Gzip"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Bảo toàn đường dẫn"
 	},
@@ -364,6 +367,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scheme"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Mức nén"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Các loại MIME bổ sung"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html luôn được nén khi gzip được bật. Tránh các định dạng tệp đã được nén."
 	},
 	"hosts": {
 		"defaultMessage": "Máy chủ"

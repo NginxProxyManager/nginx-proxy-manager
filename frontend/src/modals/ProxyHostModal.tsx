@@ -13,6 +13,7 @@ import {
 	Loading,
 	LocationsFields,
 	NginxConfigField,
+	ProxyGzipOptionsFields,
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
@@ -79,6 +80,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							accessListId: data?.accessListId || 0,
 							cachingEnabled: data?.cachingEnabled || false,
 							blockExploits: data?.blockExploits || false,
+							gzipEnabled: data?.gzipEnabled ?? true,
+							gzipCompLevel: data?.gzipCompLevel ?? 1,
+							gzipTypes: data?.gzipTypes ?? [],
 							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
 							// Locations tab
 							locations: data?.locations || [],
@@ -328,6 +332,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																</span>
 															</label>
 														</div>
+														<ProxyGzipOptionsFields color="bg-lime" />
 													</div>
 												</div>
 											</div>

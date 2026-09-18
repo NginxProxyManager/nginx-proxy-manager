@@ -365,6 +365,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "정적 에셋 캐싱"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip 압축"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "요청 경로 유지"
 	},
@@ -379,6 +382,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "프로토콜"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "압축 수준"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "추가 MIME 유형"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "gzip이 활성화되면 text/html은 항상 압축됩니다. 이미 압축된 파일 형식은 피하세요."
 	},
 	"hosts": {
 		"defaultMessage": "호스트 목록"

@@ -46,6 +46,9 @@
 									"certificate_id": 1,
 									"ssl_forced": false,
 									"caching_enabled": false,
+									"gzip_enabled": true,
+									"gzip_comp_level": 1,
+									"gzip_types": [],
 									"block_exploits": false,
 									"advanced_config": "",
 									"meta": {

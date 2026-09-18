@@ -428,6 +428,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Кэшировать ресурсы"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip-сжатие"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Сохранять путь"
 	},
@@ -442,6 +445,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Схема"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "Уровень сжатия"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "Дополнительные MIME-типы"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "text/html всегда сжимается, когда gzip включён. Не выбирайте уже сжатые форматы файлов."
 	},
 	"hosts": {
 		"defaultMessage": "Хосты"

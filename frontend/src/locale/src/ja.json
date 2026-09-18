@@ -350,6 +350,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "アセットをキャッシュする"
 	},
+	"host.flags.gzip": {
+		"defaultMessage": "Gzip 圧縮"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "パスワードは一致する必要があります"
 	},
@@ -364,6 +367,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "スキーム"
+	},
+	"host.gzip-level": {
+		"defaultMessage": "圧縮レベル"
+	},
+	"host.gzip-types": {
+		"defaultMessage": "追加の MIME タイプ"
+	},
+	"host.gzip-types-help": {
+		"defaultMessage": "gzip が有効な場合、text/html は常に圧縮されます。すでに圧縮済みのファイル形式は避けてください。"
 	},
 	"hosts": {
 		"defaultMessage": "ホスト"
