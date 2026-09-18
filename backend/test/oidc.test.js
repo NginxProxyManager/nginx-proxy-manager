@@ -1,10 +1,10 @@
-import { test, mock } from "node:test";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
-import knex from "knex";
-import express from "express";
 import { request as httpRequest } from "node:http";
-import { generateKeyPair, exportJWK, SignJWT } from "jose";
+import { mock, test } from "node:test";
+import express from "express";
+import { exportJWK, generateKeyPair, SignJWT } from "jose";
+import knex from "knex";
 
 const keys = crypto.generateKeyPairSync("rsa", {
 	modulusLength: 2048,
@@ -336,6 +336,12 @@ test("OIDC integration with standard-only signed tokens and existing NPM account
 			const result = await service.loginResult(await service.linkedUser("https://id.example", subject));
 			assert.ok(result.token);
 			assert.equal(result.requires_2fa, undefined);
+			assert.equal((await (await req("identity", { token: regular })).json()).can_unlink, false);
+			assert.equal((await req("unlink", { token: regular, body: {}, requestOrigin: base })).status, 409);
+			assert.ok(await database("oidc_identity").where({ user_id: 2 }).first());
+			// An administrator can set a local password before the last login method is removed.
+			await Auth.query().insert({ user_id: 2, type: "password", secret: "restored-password", meta: {} });
+			assert.equal((await (await req("identity", { token: regular })).json()).can_unlink, true);
 			const row = await database("oidc_config").where({ id: 1 }).first();
 			const cfg = JSON.parse(row.config);
 			await database("oidc_config")
@@ -361,6 +367,66 @@ test("OIDC integration with standard-only signed tokens and existing NPM account
 			subject = "subject-1";
 		},
 	);
+	for (const enabled of [false, true]) {
+		await t.test(`provider ${enabled ? "replacement" : "disable"} during callback prevents linking`, async () => {
+			subject = "provider-change-subject";
+			const tx = await start(regular);
+			const saved = await database("oidc_config").where({ id: 1 }).first();
+			const originalQuery = Auth.query;
+			let changed = false;
+			// The callback has checked its revision before Access loads this auth row.
+			// Commit an administrator's update before the identity transaction starts.
+			Auth.query = function (...args) {
+				const query = originalQuery.apply(this, args);
+				const originalFirst = query.first;
+				query.first = async function (...values) {
+					const result = await originalFirst.apply(this, values);
+					if (!changed) {
+						changed = true;
+						await database("oidc_config")
+							.where({ id: 1 })
+							.update({
+								config: JSON.stringify({ ...JSON.parse(saved.config), enabled }),
+								revision: "provider-changed-during-callback",
+							});
+					}
+					return result;
+				};
+				return query;
+			};
+			try {
+				assert.equal((await callback(tx)).status, 401);
+				assert.equal(changed, true);
+				assert.equal(await database("oidc_identity").where({ user_id: 2 }).first(), undefined);
+			} finally {
+				Auth.query = originalQuery;
+				await database("oidc_identity").where({ user_id: 2 }).delete();
+				await database("oidc_config")
+					.where({ id: 1 })
+					.update({ config: saved.config, revision: saved.revision });
+				subject = "subject-1";
+			}
+		});
+	}
+	await t.test("only a deleted owner's identity can be linked to a replacement account", async () => {
+		await User.query().insert({ id: 3, email: "replacement@example.com", name: "Replacement", roles: [] });
+		await database("user_permission").insert({ user_id: 3, visibility: "user", proxy_hosts: "view" });
+		const replacement = (await Token().create({ attrs: { id: 3 }, scope: ["user"], expiresIn: "1h" })).token;
+		subject = "subject-1";
+		for (const disabled of [0, 1]) {
+			await database("user").where({ id: 1 }).update({ is_disabled: disabled });
+			const tx = await start(replacement);
+			assert.equal((await callback(tx)).status, 401);
+			assert.ok(await database("oidc_identity").where({ user_id: 1 }).first());
+			assert.equal(await database("oidc_identity").where({ user_id: 3 }).first(), undefined);
+		}
+		await database("user").where({ id: 1 }).update({ is_deleted: 1 });
+		const tx = await start(replacement);
+		assert.equal((await callback(tx)).status, 303);
+		assert.equal(await database("oidc_identity").where({ user_id: 1 }).first(), undefined);
+		assert.equal((await service.linkedUser("https://id.example", subject)).id, 3);
+		assert.equal((await database("user").where({ id: 3 }).first()).roles, "[]");
+	});
 	assert.ok(discoveryCount < 4);
 	await down(database);
 	assert.equal(await database.schema.hasTable("oidc_identity"), false);

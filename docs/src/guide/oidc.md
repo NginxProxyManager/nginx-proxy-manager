@@ -15,6 +15,9 @@ NPM account. Administrators and standard users use the same area. Linking and
 unlinking require a valid authenticated NPM user session, without another
 password prompt or a recent-login requirement. Linking is available only after
 an administrator saves and enables a valid OIDC provider.
+Accounts without a local password cannot unlink their only login method; an
+administrator must set a local password first. Deleting an NPM account releases
+its identity for an explicit link to another account; disabling it does not.
 Identities are bound by issuer + subject, not matching email or
 display name. Unknown identities cannot create accounts or gain administrator
 privileges. Original user roles and proxy-host ownership are retained.

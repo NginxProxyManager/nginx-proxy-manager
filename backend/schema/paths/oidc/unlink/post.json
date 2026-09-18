@@ -1,0 +1,70 @@
+{
+	"tags": [
+		"oidc"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"operationId": "unlinkOidcIdentity",
+	"summary": "Unlink the current user\u2019s OIDC identity",
+	"description": "Requires a valid NPM user session and a JSON request. Works even after the OIDC provider is disabled or removed. A supplied Sec-Fetch-Site must be same-origin; a supplied Origin must match the request hostname.",
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "OIDC identity removed.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"required": [
+							"linked"
+						],
+						"properties": {
+							"linked": {
+								"type": "boolean",
+								"const": false
+							}
+						}
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "Session unavailable or unlink failed.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		},
+		"401": {
+			"description": "Invalid or expired bearer token."
+		},
+		"403": {
+			"description": "Request is not same-origin JSON."
+		},
+		"409": {
+			"description": "Cannot remove the account\u2019s last login method.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		}
+	}
+}

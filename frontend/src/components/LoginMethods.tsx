@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
-import { Button, Loading } from "src/components";
 import { oidcRequest } from "src/api/backend/oidc";
+import { Button, Loading } from "src/components";
 import { T } from "src/locale";
 
 interface Identity {
 	linked: boolean;
 	issuer: string;
 	available: boolean;
+	canUnlink: boolean;
 }
 
 // Both administrator and standard accounts manage only their own identity here.
@@ -60,10 +61,15 @@ export function LoginMethods() {
 							<T id="oidc.not-configured" />
 						</Alert>
 					)}
+					{identity.linked && !identity.canUnlink && (
+						<Alert variant="info">
+							<T id="oidc.last-login-method" />
+						</Alert>
+					)}
 					<Button
 						type="button"
 						actionType={identity.linked ? undefined : "primary"}
-						disabled={busy || (!identity.linked && !identity.available)}
+						disabled={busy || (identity.linked ? !identity.canUnlink : !identity.available)}
 						isLoading={busy}
 						onClick={act}
 					>

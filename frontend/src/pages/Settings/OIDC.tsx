@@ -1,9 +1,9 @@
+import { Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
-import { Formik, Form, Field } from "formik";
 import { Alert } from "react-bootstrap";
+import { type OIDCSettings, oidcRequest } from "src/api/backend/oidc";
 import { Button, Loading } from "src/components";
-import { oidcRequest, type OIDCSettings } from "src/api/backend/oidc";
-import { T, intl } from "src/locale";
+import { intl, T } from "src/locale";
 
 export default function OIDC() {
 	const [data, setData] = useState<OIDCSettings>();

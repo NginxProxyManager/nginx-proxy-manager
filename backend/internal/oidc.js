@@ -1,12 +1,13 @@
+import crypto from "node:crypto";
 import db from "../db.js";
 import { getPrivateKey } from "../lib/config.js";
-import { seal, unseal, validateConfig, discover, random, identityKey } from "../lib/oidc.js";
 import errs from "../lib/error.js";
-import userModel from "../models/user.js";
+import { discover, identityKey, random, seal, unseal, validateConfig } from "../lib/oidc.js";
 import authModel from "../models/auth.js";
 import TokenModel from "../models/token.js";
+import userModel from "../models/user.js";
 import internalToken from "./token.js";
-import crypto from "node:crypto";
+
 const authStamp = (auth) =>
 	crypto
 		.createHash("sha256")
@@ -107,9 +108,16 @@ export async function authenticationStamp(id) {
 	const auth = await authModel.query().where({ user_id: id, type: "password", is_deleted: 0 }).first();
 	return authStamp(auth);
 }
-export async function linkIdentity(id, issuer, subject, stamp) {
+export async function canUnlinkIdentity(id) {
+	const auth = await authModel.query().where({ user_id: id, type: "password", is_deleted: 0 }).first();
+	return typeof auth?.secret === "string" && auth.secret.length > 0;
+}
+export async function linkIdentity(id, issuer, subject, stamp, revision) {
 	await activeUser(id);
 	await db().transaction(async (trx) => {
+		const provider = await trx("oidc_config").where({ id: 1 }).forUpdate().first();
+		if (!provider || provider.revision !== revision || JSON.parse(provider.config).enabled !== true)
+			throw new errs.AuthError("OIDC configuration changed; start linking again");
 		const auth = await authModel
 			.query(trx)
 			.where({ user_id: id, type: "password", is_deleted: 0 })
@@ -120,7 +128,14 @@ export async function linkIdentity(id, issuer, subject, stamp) {
 		if (!user) throw new errs.AuthError("Account is unavailable");
 		const current = await trx("oidc_identity").where({ user_id: id }).first();
 		if (current) throw new errs.ValidationError("An OIDC identity is already linked");
-		await trx("oidc_identity").insert({ user_id: id, identity_key: identityKey(issuer, subject), issuer, subject });
+		const key = identityKey(issuer, subject);
+		const existing = await trx("oidc_identity").where({ identity_key: key }).forUpdate().first();
+		if (existing) {
+			const owner = await userModel.query(trx).where({ id: existing.user_id }).forUpdate().first();
+			if (!owner?.is_deleted) throw new errs.ValidationError("Identity is already linked to another account");
+			await trx("oidc_identity").where({ id: existing.id }).delete();
+		}
+		await trx("oidc_identity").insert({ user_id: id, identity_key: key, issuer, subject });
 	});
 }
 export async function linkedUser(issuer, subject) {

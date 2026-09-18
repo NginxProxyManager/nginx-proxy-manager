@@ -1,0 +1,56 @@
+{
+	"type": "object",
+	"required": [
+		"enabled",
+		"auto_login",
+		"issuer",
+		"public_url",
+		"client_id",
+		"scopes",
+		"token_auth_method",
+		"revision",
+		"client_secret_configured",
+		"callback_url"
+	],
+	"properties": {
+		"enabled": {
+			"type": "boolean"
+		},
+		"auto_login": {
+			"type": "boolean"
+		},
+		"issuer": {
+			"type": "string",
+			"description": "HTTPS issuer URL; may be empty when disabled."
+		},
+		"public_url": {
+			"type": "string",
+			"description": "HTTPS origin of the NPM admin interface; may be empty when disabled."
+		},
+		"client_id": {
+			"type": "string"
+		},
+		"scopes": {
+			"type": "string",
+			"description": "Space-separated scopes including openid when enabled."
+		},
+		"token_auth_method": {
+			"type": "string",
+			"enum": [
+				"auto",
+				"client_secret_basic",
+				"client_secret_post"
+			]
+		},
+		"revision": {
+			"type": "string",
+			"description": "Opaque revision used for optimistic concurrency."
+		},
+		"client_secret_configured": {
+			"type": "boolean"
+		},
+		"callback_url": {
+			"type": "string"
+		}
+	}
+}

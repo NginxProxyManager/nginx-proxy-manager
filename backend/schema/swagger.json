@@ -61,11 +61,58 @@
 			"description": "Endpoints for managing authentication tokens"
 		},
 		{
+			"name": "oidc",
+			"description": "OpenID Connect configuration, account linking and sign-in"
+		},
+		{
 			"name": "users",
 			"description": "Endpoints for managing users"
 		}
 	],
 	"paths": {
+		"/oidc/status": {
+			"get": {
+				"$ref": "./paths/oidc/status/get.json"
+			}
+		},
+		"/oidc/settings": {
+			"get": {
+				"$ref": "./paths/oidc/settings/get.json"
+			},
+			"put": {
+				"$ref": "./paths/oidc/settings/put.json"
+			}
+		},
+		"/oidc/identity": {
+			"get": {
+				"$ref": "./paths/oidc/identity/get.json"
+			}
+		},
+		"/oidc/unlink": {
+			"post": {
+				"$ref": "./paths/oidc/unlink/post.json"
+			}
+		},
+		"/oidc/start": {
+			"post": {
+				"$ref": "./paths/oidc/start/post.json"
+			}
+		},
+		"/oidc/link": {
+			"post": {
+				"$ref": "./paths/oidc/link/post.json"
+			}
+		},
+		"/oidc/callback": {
+			"get": {
+				"$ref": "./paths/oidc/callback/get.json"
+			}
+		},
+		"/oidc/exchange": {
+			"post": {
+				"$ref": "./paths/oidc/exchange/post.json"
+			}
+		},
 		"/": {
 			"get": {
 				"$ref": "./paths/get.json"

@@ -1,7 +1,8 @@
-import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { test, expect, vi, afterEach } from "vitest";
+import { afterEach, expect, test, vi } from "vitest";
 import { LoginMethods } from "./LoginMethods";
+
 const request = vi.hoisted(() => vi.fn());
 vi.mock("src/api/backend/oidc", () => ({ oidcRequest: request }));
 vi.mock("src/locale", () => ({ T: ({ id }: { id: string }) => id }));
@@ -33,10 +34,19 @@ test("link uses the existing session with an empty payload", async () => {
 });
 test("linked account can unlink using the same area", async () => {
 	request
-		.mockResolvedValueOnce({ linked: true, issuer: "https://id.example", available: true })
+		.mockResolvedValueOnce({ linked: true, issuer: "https://id.example", available: true, canUnlink: true })
 		.mockResolvedValueOnce({ linked: false });
 	render(<LoginMethods />);
 	fireEvent.click(await screen.findByRole("button", { name: "oidc.unlink" }));
 	await screen.findByRole("button", { name: "oidc.link" });
 	expect(request).toHaveBeenLastCalledWith("unlink", "POST", {});
+});
+test("the only login method cannot be unlinked", async () => {
+	request.mockResolvedValue({ linked: true, issuer: "https://id.example", available: true, canUnlink: false });
+	render(<LoginMethods />);
+	const unlink = await screen.findByRole("button", { name: "oidc.unlink" });
+	expect(unlink).toBeDisabled();
+	expect(screen.getByText("oidc.last-login-method")).toBeVisible();
+	fireEvent.click(unlink);
+	expect(request).toHaveBeenCalledTimes(1);
 });

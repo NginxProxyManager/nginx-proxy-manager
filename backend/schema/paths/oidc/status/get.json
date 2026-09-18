@@ -1,0 +1,42 @@
+{
+	"tags": [
+		"oidc"
+	],
+	"operationId": "getOidcStatus",
+	"summary": "Get public OIDC availability",
+	"security": [],
+	"responses": {
+		"200": {
+			"description": "OIDC login availability and automatic-login setting.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"required": [
+							"enabled",
+							"auto_login"
+						],
+						"properties": {
+							"enabled": {
+								"type": "boolean"
+							},
+							"auto_login": {
+								"type": "boolean"
+							}
+						}
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "Configuration could not be read.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		}
+	}
+}

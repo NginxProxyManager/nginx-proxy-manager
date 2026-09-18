@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
-import * as client from "openid-client";
 import { LRUCache } from "lru-cache";
+import * as client from "openid-client";
 
 export const random = () => crypto.randomBytes(32).toString("base64url");
 export const identityKey = (issuer, subject) =>

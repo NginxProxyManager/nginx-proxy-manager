@@ -590,6 +590,9 @@
 	"oidc.issuer": {
 		"defaultMessage": "Issuer URL"
 	},
+	"oidc.last-login-method": {
+		"defaultMessage": "This is your only login method. Ask an administrator to set a local password before unlinking."
+	},
 	"oidc.link": {
 		"defaultMessage": "Link account"
 	},

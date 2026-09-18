@@ -1,7 +1,7 @@
+import { useState } from "react";
 import { T } from "src/locale";
 import DefaultSite from "./DefaultSite";
 import OIDC from "./OIDC";
-import { useState } from "react";
 
 export default function Layout() {
 	const [section, setSection] = useState(

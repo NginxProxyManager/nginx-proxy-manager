@@ -1,7 +1,8 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import OIDC from "./OIDC";
+
 const request = vi.hoisted(() => vi.fn());
 vi.mock("src/api/backend/oidc", () => ({ oidcRequest: request }));
 vi.mock("src/locale", () => ({

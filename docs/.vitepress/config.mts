@@ -79,6 +79,7 @@ export default defineConfig({
 				items: [
 					// { text: 'Home', link: '/' },
 					{ text: "Guide", link: "/guide/" },
+					{ text: "OpenID Connect", link: "/guide/oidc" },
 					{ text: "Screenshots", link: "/screenshots/" },
 					{ text: "Setup Instructions", link: "/setup/" },
 					{ text: "Advanced Configuration", link: "/advanced-config/" },

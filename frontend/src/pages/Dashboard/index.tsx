@@ -1,6 +1,6 @@
 import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { HasPermission } from "src/components";
 import { useHostReport } from "src/hooks";
 import { T } from "src/locale";

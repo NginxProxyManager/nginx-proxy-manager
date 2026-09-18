@@ -1,11 +1,10 @@
-import express from "express";
 import { parse, serialize } from "cookie";
-import { client, discover, OneTimeStore, sameOrigin } from "../lib/oidc.js";
-import * as service from "../internal/oidc.js";
-import jwtdecode from "../lib/express/jwt-decode.js";
+import express from "express";
 import db from "../db.js";
+import * as service from "../internal/oidc.js";
 import Access from "../lib/access.js";
-import { validateConfig } from "../lib/oidc.js";
+import jwtdecode from "../lib/express/jwt-decode.js";
+import { client, discover, OneTimeStore, sameOrigin, validateConfig } from "../lib/oidc.js";
 
 const router = express.Router();
 const transactions = new OneTimeStore();
@@ -73,7 +72,12 @@ router.get(
 		} catch {
 			/* Incomplete provider configuration. */
 		}
-		res.json({ linked: !!row, issuer: row?.issuer || "", available });
+		res.json({
+			linked: !!row,
+			issuer: row?.issuer || "",
+			available,
+			can_unlink: await service.canUnlinkIdentity(id),
+		});
 	}),
 );
 router.post(
@@ -89,6 +93,10 @@ router.post(
 		if (req.get("Origin") && new URL(req.get("Origin")).hostname !== new URL(`http://${req.get("Host")}`).hostname)
 			return res.sendStatus(403);
 		const id = await requireUser(res);
+		if (!(await service.canUnlinkIdentity(id)))
+			return res
+				.status(409)
+				.json({ error: { message: "Set a local password before unlinking your last login method" } });
 		await db()("oidc_identity").where({ user_id: id }).delete();
 		res.json({ linked: false });
 	}),
@@ -155,7 +163,7 @@ router.get("/callback", async (req, res) => {
 			const access = new Access(tx.token);
 			await access.can("users:get", tx.userId);
 			if (access.token.getUserId() !== tx.userId) throw new Error("Account changed");
-			await service.linkIdentity(tx.userId, claims.iss, claims.sub, tx.stamp);
+			await service.linkIdentity(tx.userId, claims.iss, claims.sub, tx.stamp, revision);
 			return res.redirect(303, new URL("/?oidc=linked", config.public_url).href);
 		}
 		const user = await service.linkedUser(claims.iss, claims.sub);

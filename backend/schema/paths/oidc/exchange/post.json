@@ -1,0 +1,82 @@
+{
+	"tags": [
+		"oidc"
+	],
+	"operationId": "exchangeOidcHandoff",
+	"summary": "Exchange an OIDC handoff for an NPM session",
+	"description": "Consumes the browser-bound handoff exactly once. Rechecks the linked local account and enabled provider. Local NPM 2FA remains required when configured.",
+	"security": [],
+	"parameters": [
+		{
+			"in": "header",
+			"name": "Origin",
+			"required": true,
+			"description": "Must exactly match the configured public HTTPS origin. Sec-Fetch-Site, if sent, must be same-origin.",
+			"schema": {
+				"type": "string",
+				"format": "uri"
+			}
+		},
+		{
+			"in": "cookie",
+			"name": "__Host-npm_oidc_handoff",
+			"required": true,
+			"schema": {
+				"type": "string"
+			}
+		}
+	],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "Ordinary NPM token or a local 2FA challenge for POST /tokens/2fa.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"oneOf": [
+							{
+								"$ref": "../../../components/token-object.json"
+							},
+							{
+								"$ref": "../../../components/token-challenge.json"
+							}
+						]
+					}
+				}
+			},
+			"headers": {
+				"Set-Cookie": {
+					"description": "Clears the handoff cookie.",
+					"schema": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "Exchange failed or the local account is unavailable.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		},
+		"401": {
+			"description": "Handoff missing, expired, consumed, unlinked, or invalidated by a configuration change."
+		},
+		"403": {
+			"description": "Request is not same-origin JSON."
+		}
+	}
+}

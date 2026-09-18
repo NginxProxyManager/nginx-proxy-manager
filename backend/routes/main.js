@@ -12,11 +12,11 @@ import deadHostsRoutes from "./nginx/dead_hosts.js";
 import proxyHostsRoutes from "./nginx/proxy_hosts.js";
 import redirectionHostsRoutes from "./nginx/redirection_hosts.js";
 import streamsRoutes from "./nginx/streams.js";
+import oidcRoutes from "./oidc.js";
 import reportsRoutes from "./reports.js";
 import schemaRoutes from "./schema.js";
 import settingsRoutes from "./settings.js";
 import tokensRoutes from "./tokens.js";
-import oidcRoutes from "./oidc.js";
 import usersRoutes from "./users.js";
 import versionRoutes from "./version.js";
 

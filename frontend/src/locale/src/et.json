@@ -590,6 +590,9 @@
 	"oidc.issuer": {
 		"defaultMessage": "Väljastaja URL"
 	},
+	"oidc.last-login-method": {
+		"defaultMessage": "See on sinu ainus sisselogimisviis. Palu administraatoril enne seose eemaldamist määrata kohalik parool."
+	},
 	"oidc.link": {
 		"defaultMessage": "Seo konto"
 	},

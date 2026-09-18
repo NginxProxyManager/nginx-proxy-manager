@@ -1,0 +1,61 @@
+{
+	"tags": [
+		"oidc"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"operationId": "getOidcIdentity",
+	"summary": "Get the current user\u2019s OIDC link",
+	"description": "Requires a full authenticated NPM user session. Always refers to the bearer-token owner.",
+	"responses": {
+		"200": {
+			"description": "Current identity and available actions.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"required": [
+							"linked",
+							"issuer",
+							"available",
+							"can_unlink"
+						],
+						"properties": {
+							"linked": {
+								"type": "boolean"
+							},
+							"issuer": {
+								"type": "string",
+								"description": "Linked issuer or an empty string."
+							},
+							"available": {
+								"type": "boolean",
+								"description": "A valid provider configuration is saved and enabled."
+							},
+							"can_unlink": {
+								"type": "boolean",
+								"description": "Whether a non-deleted local password record with a nonempty secret exists; independent of linked."
+							}
+						}
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "Session is unavailable or lacks user access.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		},
+		"401": {
+			"description": "Invalid or expired bearer token."
+		}
+	}
+}

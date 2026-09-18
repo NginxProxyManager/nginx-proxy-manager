@@ -1,0 +1,76 @@
+{
+	"tags": [
+		"oidc"
+	],
+	"operationId": "startOidcLogin",
+	"summary": "Start OIDC sign-in",
+	"description": "Uses Authorization Code with PKCE S256, state and nonce. No bearer token is required.",
+	"security": [],
+	"parameters": [
+		{
+			"in": "header",
+			"name": "Origin",
+			"required": true,
+			"description": "Must exactly match the configured public HTTPS origin. Sec-Fetch-Site, if sent, must be same-origin.",
+			"schema": {
+				"type": "string",
+				"format": "uri"
+			}
+		}
+	],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "Navigate the browser to this provider authorization URL.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"required": [
+							"url"
+						],
+						"properties": {
+							"url": {
+								"type": "string",
+								"format": "uri"
+							}
+						}
+					}
+				}
+			},
+			"headers": {
+				"Set-Cookie": {
+					"description": "Sets __Host-npm_oidc_tx for five minutes: Secure, HttpOnly, Path=/, SameSite=Lax. The callback requires this browser-bound cookie.",
+					"schema": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "Invalid OIDC configuration or provider discovery failure.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		},
+		"403": {
+			"description": "Request is not same-origin JSON."
+		},
+		"404": {
+			"description": "OIDC is disabled."
+		}
+	}
+}

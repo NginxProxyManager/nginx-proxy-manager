@@ -494,6 +494,9 @@
 	"oidc.issuer": {
 		"defaultMessage": "Issuer URL"
 	},
+	"oidc.last-login-method": {
+		"defaultMessage": "这是当前唯一的登录方式。请先联系管理员设置本地密码，再解除关联。"
+	},
 	"oidc.link": {
 		"defaultMessage": "关联账号"
 	},
