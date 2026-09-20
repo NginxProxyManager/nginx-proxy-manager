@@ -23,6 +23,7 @@ import langHu from "./lang/hu.json";
 import langNo from "./lang/no.json";
 import langUk from "./lang/uk.json";
 import langAz from "./lang/az.json";
+import langFa from "./lang/fa.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
@@ -53,6 +54,7 @@ const localeOptions = [
 	["no", "no-NO", langNo],
 	["uk", "uk-UA", langUk],
 	["az", "az-AZ", langAz],
+	["fa", "fa-IR", langFa],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
@@ -79,12 +81,22 @@ const getFlagCodeForLocale = (locale?: string) => {
 		ga: "ie", // Ireland (Irish)
 		et: "ee", // Estonia (ISO 3166-1). "et" as a country code would be Ethiopia.
 		uk: "ua", // Ukraine
+		fa: "ir", // Iran (Persian)
 	};
 
 	if (specialCases[thisLocale]) {
 		return specialCases[thisLocale].toUpperCase();
 	}
 	return thisLocale.toUpperCase();
+};
+
+const rtlLocales = ["fa"];
+
+const isRTLLocale = (locale?: string) => rtlLocales.includes((locale || "en").slice(0, 2));
+
+const applyDocumentLocale = (locale: string): void => {
+	document.documentElement.lang = locale;
+	document.documentElement.dir = isRTLLocale(locale) ? "rtl" : "ltr";
 };
 
 const getLocale = (short = false) => {
@@ -105,13 +117,14 @@ const getLocale = (short = false) => {
 const cache = createIntlCache();
 
 const initialMessages = loadMessages(getLocale());
+applyDocumentLocale(getLocale());
 let intl = createIntl({ locale: getLocale(), messages: initialMessages }, cache);
 
 const changeLocale = (locale: string): void => {
 	const messages = loadMessages(locale);
 	intl = createIntl({ locale, messages }, cache);
 	window.localStorage.setItem("locale", locale);
-	document.documentElement.lang = locale;
+	applyDocumentLocale(locale);
 };
 
 // This is a translation component that wraps the translation in a span with a data
@@ -147,4 +160,4 @@ const T = ({
 
 //console.log("L:", localeOptions);
 
-export { localeOptions, getFlagCodeForLocale, getLocale, createIntl, changeLocale, intl, T };
+export { localeOptions, getFlagCodeForLocale, getLocale, isRTLLocale, createIntl, changeLocale, intl, T };

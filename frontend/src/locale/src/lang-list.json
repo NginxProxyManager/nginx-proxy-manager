@@ -70,5 +70,8 @@
   },
   "locale-az-AZ": {
     "defaultMessage": "Azərbaycanca"
+  },
+  "locale-fa-IR": {
+    "defaultMessage": "فارسی"
   }
 }
