@@ -566,6 +566,81 @@
 	"offline": {
 		"defaultMessage": "Offline"
 	},
+	"oidc.advanced": {
+		"defaultMessage": "Advanced options"
+	},
+	"oidc.auto-login": {
+		"defaultMessage": "Automatically start OIDC login"
+	},
+	"oidc.callback": {
+		"defaultMessage": "Callback URL"
+	},
+	"oidc.client-id": {
+		"defaultMessage": "Client ID"
+	},
+	"oidc.client-secret": {
+		"defaultMessage": "Client secret"
+	},
+	"oidc.description": {
+		"defaultMessage": "Configure a standard OIDC provider here. All users link their own account under Edit Profile → Login methods. Existing NPM roles and local login are preserved."
+	},
+	"oidc.enabled": {
+		"defaultMessage": "Enable OIDC"
+	},
+	"oidc.issuer": {
+		"defaultMessage": "Issuer URL"
+	},
+	"oidc.last-login-method": {
+		"defaultMessage": "This is your only login method. Ask an administrator to set a local password before unlinking."
+	},
+	"oidc.link": {
+		"defaultMessage": "Link account"
+	},
+	"oidc.link-description": {
+		"defaultMessage": "Link your current NPM account to the configured identity provider. Your current login is sufficient; no additional password is required."
+	},
+	"oidc.link-success": {
+		"defaultMessage": "OIDC account linked successfully."
+	},
+	"oidc.link-title": {
+		"defaultMessage": "OIDC account"
+	},
+	"oidc.linked": {
+		"defaultMessage": "An OIDC identity is linked to this account."
+	},
+	"oidc.login-methods": {
+		"defaultMessage": "Login methods"
+	},
+	"oidc.not-configured": {
+		"defaultMessage": "OIDC is not configured or enabled. Ask an administrator to complete Settings → OpenID Connect first."
+	},
+	"oidc.public-url": {
+		"defaultMessage": "Public URL"
+	},
+	"oidc.saved": {
+		"defaultMessage": "OIDC settings saved. Open Edit Profile → Login methods to link your account."
+	},
+	"oidc.secret-kept": {
+		"defaultMessage": "Configured. Leave blank to keep the existing secret."
+	},
+	"oidc.secret-new": {
+		"defaultMessage": "Enter the secret from your identity provider."
+	},
+	"oidc.sign-in": {
+		"defaultMessage": "Sign in with OIDC"
+	},
+	"oidc.signing-in": {
+		"defaultMessage": "Completing OIDC sign-in…"
+	},
+	"oidc.title": {
+		"defaultMessage": "OpenID Connect"
+	},
+	"oidc.token-auth": {
+		"defaultMessage": "Token endpoint authentication"
+	},
+	"oidc.unlink": {
+		"defaultMessage": "Unlink account"
+	},
 	"online": {
 		"defaultMessage": "Online"
 	},

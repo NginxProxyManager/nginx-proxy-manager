@@ -1,4 +1,5 @@
 import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc } from "@tabler/icons-react";
+import { Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { HasPermission } from "src/components";
 import { useHostReport } from "src/hooks";
@@ -11,6 +12,11 @@ const Dashboard = () => {
 
 	return (
 		<div>
+			{new URLSearchParams(window.location.search).get("oidc") === "linked" && (
+				<Alert variant="success">
+					<T id="oidc.link-success" />
+				</Alert>
+			)}
 			<h2>
 				<T id="dashboard" />
 			</h2>

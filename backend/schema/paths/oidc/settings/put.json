@@ -1,0 +1,108 @@
+{
+	"tags": [
+		"oidc"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"admin"
+			]
+		}
+	],
+	"operationId": "updateOidcSettings",
+	"summary": "Update OIDC settings",
+	"description": "Administrator only. The enabled configuration is checked by HTTPS discovery before saving. Supply the revision returned by GET; stale updates are rejected.",
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"required": [
+						"enabled",
+						"auto_login",
+						"issuer",
+						"public_url",
+						"client_id",
+						"client_secret",
+						"scopes",
+						"revision"
+					],
+					"properties": {
+						"enabled": {
+							"type": "boolean"
+						},
+						"auto_login": {
+							"type": "boolean"
+						},
+						"issuer": {
+							"type": "string",
+							"description": "HTTPS issuer URL; may be empty when disabled.",
+							"maxLength": 2048
+						},
+						"public_url": {
+							"type": "string",
+							"description": "HTTPS origin of the NPM admin interface; may be empty when disabled.",
+							"maxLength": 2048
+						},
+						"client_id": {
+							"type": "string",
+							"maxLength": 2048
+						},
+						"scopes": {
+							"type": "string",
+							"description": "Space-separated scopes including openid when enabled.",
+							"maxLength": 2048
+						},
+						"token_auth_method": {
+							"type": "string",
+							"enum": [
+								"auto",
+								"client_secret_basic",
+								"client_secret_post"
+							]
+						},
+						"revision": {
+							"type": "string",
+							"description": "Opaque revision used for optimistic concurrency."
+						},
+						"client_secret": {
+							"type": "string",
+							"maxLength": 8192,
+							"writeOnly": true,
+							"description": "A nonempty value replaces the secret. An empty string retains the saved secret. A secret is required to enable OIDC."
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "Saved settings without the client secret.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-settings-object.json"
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "Invalid fields, discovery failure, or stale revision.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		},
+		"401": {
+			"description": "Invalid, expired or revoked bearer token."
+		},
+		"403": {
+			"description": "Administrator permission required."
+		}
+	}
+}

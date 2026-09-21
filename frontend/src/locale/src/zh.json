@@ -470,6 +470,81 @@
 	"offline": {
 		"defaultMessage": "离线"
 	},
+	"oidc.advanced": {
+		"defaultMessage": "高级选项"
+	},
+	"oidc.auto-login": {
+		"defaultMessage": "自动发起 OIDC 登录"
+	},
+	"oidc.callback": {
+		"defaultMessage": "回调地址"
+	},
+	"oidc.client-id": {
+		"defaultMessage": "Client ID"
+	},
+	"oidc.client-secret": {
+		"defaultMessage": "Client Secret"
+	},
+	"oidc.description": {
+		"defaultMessage": "在此配置通用 OIDC 身份服务。管理员和普通用户均在“个人资料 → 登录方式”关联自己的账号，保留原 NPM 权限及本地登录。"
+	},
+	"oidc.enabled": {
+		"defaultMessage": "启用 OIDC"
+	},
+	"oidc.issuer": {
+		"defaultMessage": "Issuer URL"
+	},
+	"oidc.last-login-method": {
+		"defaultMessage": "这是当前唯一的登录方式。请先联系管理员设置本地密码，再解除关联。"
+	},
+	"oidc.link": {
+		"defaultMessage": "关联账号"
+	},
+	"oidc.link-description": {
+		"defaultMessage": "将当前 NPM 账号关联到已配置的身份服务，使用当前登录状态，无需再次输入密码。"
+	},
+	"oidc.link-success": {
+		"defaultMessage": "OIDC 账号关联成功。"
+	},
+	"oidc.link-title": {
+		"defaultMessage": "OIDC 账号关联"
+	},
+	"oidc.linked": {
+		"defaultMessage": "当前账号已关联 OIDC 身份。"
+	},
+	"oidc.login-methods": {
+		"defaultMessage": "登录方式"
+	},
+	"oidc.not-configured": {
+		"defaultMessage": "OIDC 尚未配置或启用，请先由管理员在“设置 → OIDC 单点登录”完成配置。"
+	},
+	"oidc.public-url": {
+		"defaultMessage": "公开访问地址"
+	},
+	"oidc.saved": {
+		"defaultMessage": "OIDC 设置已保存，可在“个人资料 → 登录方式”关联账号。"
+	},
+	"oidc.secret-kept": {
+		"defaultMessage": "已配置，留空保留原密钥。"
+	},
+	"oidc.secret-new": {
+		"defaultMessage": "填写身份服务提供的密钥。"
+	},
+	"oidc.sign-in": {
+		"defaultMessage": "使用 OIDC 登录"
+	},
+	"oidc.signing-in": {
+		"defaultMessage": "正在完成 OIDC 登录…"
+	},
+	"oidc.title": {
+		"defaultMessage": "OIDC 单点登录"
+	},
+	"oidc.token-auth": {
+		"defaultMessage": "Token 端点认证方式"
+	},
+	"oidc.unlink": {
+		"defaultMessage": "解除关联"
+	},
 	"online": {
 		"defaultMessage": "在线"
 	},

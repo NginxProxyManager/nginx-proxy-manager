@@ -1,0 +1,40 @@
+{
+	"tags": [
+		"oidc"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"admin"
+			]
+		}
+	],
+	"operationId": "getOidcSettings",
+	"summary": "Get OIDC settings",
+	"description": "Administrator only. The client secret is never returned.",
+	"responses": {
+		"200": {
+			"description": "Current settings and revision.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-settings-object.json"
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "Permission denied or settings could not be read.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		},
+		"401": {
+			"description": "Invalid or expired bearer token."
+		}
+	}
+}

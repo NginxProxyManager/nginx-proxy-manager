@@ -1,0 +1,93 @@
+{
+	"tags": [
+		"oidc"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"operationId": "startOidcLink",
+	"summary": "Link OIDC to the current NPM account",
+	"description": "Requires a valid NPM user session and a saved, enabled provider. No repeated password or recent-login check. The session is revalidated after the provider callback. The identity is matched by issuer and subject, not email.",
+	"parameters": [
+		{
+			"in": "header",
+			"name": "Origin",
+			"required": true,
+			"description": "Must exactly match the configured public HTTPS origin. Sec-Fetch-Site, if sent, must be same-origin.",
+			"schema": {
+				"type": "string",
+				"format": "uri"
+			}
+		}
+	],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "Navigate the browser to this provider authorization URL.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"required": [
+							"url"
+						],
+						"properties": {
+							"url": {
+								"type": "string",
+								"format": "uri"
+							}
+						}
+					}
+				}
+			},
+			"headers": {
+				"Set-Cookie": {
+					"description": "Sets __Host-npm_oidc_tx for five minutes: Secure, HttpOnly, Path=/, SameSite=Lax. The callback requires this browser-bound cookie.",
+					"schema": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "Invalid OIDC configuration or provider discovery failure.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		},
+		"401": {
+			"description": "Invalid or expired bearer token."
+		},
+		"403": {
+			"description": "Request is not same-origin JSON."
+		},
+		"404": {
+			"description": "OIDC is disabled."
+		},
+		"409": {
+			"description": "The account already has an OIDC link.",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/oidc-error.json"
+					}
+				}
+			}
+		}
+	}
+}

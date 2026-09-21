@@ -566,6 +566,81 @@
 	"offline": {
 		"defaultMessage": "Maas"
 	},
+	"oidc.advanced": {
+		"defaultMessage": "Täpsemad seaded"
+	},
+	"oidc.auto-login": {
+		"defaultMessage": "Alusta OIDC sisselogimist automaatselt"
+	},
+	"oidc.callback": {
+		"defaultMessage": "Tagasisuunamise URL"
+	},
+	"oidc.client-id": {
+		"defaultMessage": "Kliendi ID"
+	},
+	"oidc.client-secret": {
+		"defaultMessage": "Kliendi saladus"
+	},
+	"oidc.description": {
+		"defaultMessage": "Seadista siin OIDC pakkuja. Kõik kasutajad seovad oma konto jaotises Muuda profiili → Sisselogimisviisid. Rollid ja kohalik sisselogimine säilivad."
+	},
+	"oidc.enabled": {
+		"defaultMessage": "Luba OIDC"
+	},
+	"oidc.issuer": {
+		"defaultMessage": "Väljastaja URL"
+	},
+	"oidc.last-login-method": {
+		"defaultMessage": "See on sinu ainus sisselogimisviis. Palu administraatoril enne seose eemaldamist määrata kohalik parool."
+	},
+	"oidc.link": {
+		"defaultMessage": "Seo konto"
+	},
+	"oidc.link-description": {
+		"defaultMessage": "Seo praegune NPM-i konto identiteedipakkujaga. Kehtiv sisselogimine on piisav; parooli uuesti sisestada pole vaja."
+	},
+	"oidc.link-success": {
+		"defaultMessage": "OIDC konto edukalt seotud."
+	},
+	"oidc.link-title": {
+		"defaultMessage": "OIDC konto"
+	},
+	"oidc.linked": {
+		"defaultMessage": "Selle kontoga on seotud OIDC identiteet."
+	},
+	"oidc.login-methods": {
+		"defaultMessage": "Sisselogimisviisid"
+	},
+	"oidc.not-configured": {
+		"defaultMessage": "OIDC pole seadistatud või lubatud. Palu administraatoril avada Seaded → OpenID Connect."
+	},
+	"oidc.public-url": {
+		"defaultMessage": "Avalik URL"
+	},
+	"oidc.saved": {
+		"defaultMessage": "OIDC seaded salvestatud. Konto sidumiseks ava Muuda profiili → Sisselogimisviisid."
+	},
+	"oidc.secret-kept": {
+		"defaultMessage": "Seadistatud. Olemasoleva saladuse säilitamiseks jäta tühjaks."
+	},
+	"oidc.secret-new": {
+		"defaultMessage": "Sisesta identiteedipakkuja antud saladus."
+	},
+	"oidc.sign-in": {
+		"defaultMessage": "Logi sisse OIDC-ga"
+	},
+	"oidc.signing-in": {
+		"defaultMessage": "OIDC sisselogimise lõpetamine…"
+	},
+	"oidc.title": {
+		"defaultMessage": "OpenID Connecti sisselogimine"
+	},
+	"oidc.token-auth": {
+		"defaultMessage": "Tokeni lõpp-punkti autentimine"
+	},
+	"oidc.unlink": {
+		"defaultMessage": "Eemalda seos"
+	},
 	"online": {
 		"defaultMessage": "Töös"
 	},

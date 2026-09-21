@@ -1,0 +1,71 @@
+{
+	"tags": [
+		"oidc"
+	],
+	"operationId": "completeOidcCallback",
+	"summary": "Handle the provider authorization callback",
+	"description": "Browser redirect endpoint. Validates the authorization response, state, nonce and PKCE against a one-time transaction. Linking retains the existing NPM session; login creates a one-time handoff for POST /oidc/exchange. Unknown identities cannot create accounts.",
+	"security": [],
+	"parameters": [
+		{
+			"in": "cookie",
+			"name": "__Host-npm_oidc_tx",
+			"required": true,
+			"description": "Browser-bound transaction set by start or link.",
+			"schema": {
+				"type": "string"
+			}
+		},
+		{
+			"in": "query",
+			"name": "state",
+			"schema": {
+				"type": "string"
+			}
+		},
+		{
+			"in": "query",
+			"name": "code",
+			"schema": {
+				"type": "string"
+			}
+		},
+		{
+			"in": "query",
+			"name": "error",
+			"description": "Provider authorization error instead of a code.",
+			"schema": {
+				"type": "string"
+			}
+		}
+	],
+	"responses": {
+		"303": {
+			"description": "Redirect to the configured public origin with oidc=linked or oidc=complete.",
+			"headers": {
+				"Location": {
+					"schema": {
+						"type": "string",
+						"format": "uri"
+					}
+				},
+				"Set-Cookie": {
+					"description": "Clears the transaction cookie. Successful login also sets __Host-npm_oidc_handoff for one minute with Secure, HttpOnly, Path=/ and SameSite=Lax.",
+					"schema": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"401": {
+			"description": "OIDC callback rejected. Returns an HTML page with a local-login link.",
+			"content": {
+				"text/html": {
+					"schema": {
+						"type": "string"
+					}
+				}
+			}
+		}
+	}
+}

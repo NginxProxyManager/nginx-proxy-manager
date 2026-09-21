@@ -1,12 +1,91 @@
 import { Field, Form, Formik } from "formik";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import { getOIDCStatus, startOIDC } from "src/api/backend/oidc";
 import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import styles from "./index.module.css";
+
+function OIDCLogin() {
+	const { completeOIDC } = useAuthState();
+	const [enabled, setEnabled] = useState(false);
+	const [busy, setBusy] = useState(false);
+	const [error, setError] = useState("");
+	const request = useRef<AbortController | null>(null);
+	const complete = useRef(completeOIDC);
+	complete.current = completeOIDC;
+	const begin = useCallback(async () => {
+		const signal = request.current?.signal;
+		if (!signal || signal.aborted) return;
+		setBusy(true);
+		setError("");
+		try {
+			const result = await startOIDC(signal);
+			if (!signal.aborted) window.location.assign(result.url);
+		} catch {
+			if (signal.aborted) return;
+			setError("OIDC login failed. Use local login or check the provider settings.");
+			setBusy(false);
+		}
+	}, []);
+	useEffect(() => {
+		const controller = new AbortController();
+		request.current = controller;
+		const { signal } = controller;
+		const query = new URLSearchParams(window.location.search);
+		if (query.get("oidc") === "complete") {
+			setBusy(true);
+			// Strict Mode replays effects before this microtask. Only the active
+			// setup may consume the one-time handoff.
+			Promise.resolve()
+				.then(() => {
+					if (!signal.aborted) return complete.current(signal);
+				})
+				.catch(() => {
+					if (signal.aborted) return;
+					setError("OIDC login failed. Try again or sign in locally.");
+					window.history.replaceState(null, "", "/?local=1");
+					getOIDCStatus(signal)
+						.then((status) => {
+							if (!signal.aborted) setEnabled(status.enabled);
+						})
+						.catch(() => {});
+				})
+				.finally(() => {
+					if (!signal.aborted) setBusy(false);
+				});
+			return () => controller.abort();
+		}
+		getOIDCStatus(signal)
+			.then((status) => {
+				if (signal.aborted) return;
+				setEnabled(status.enabled);
+				if (status.enabled && status.autoLogin && !query.has("local")) begin();
+			})
+			.catch(() => {});
+		return () => controller.abort();
+	}, [begin]);
+	return (
+		<>
+			{error && <Alert variant="danger">{error}</Alert>}
+			{enabled && (
+				<div className="mb-4">
+					<Button type="button" fullWidth color="azure" onClick={begin} disabled={busy}>
+						<T id="oidc.sign-in" />
+					</Button>
+				</div>
+			)}
+			{busy && (
+				<p className="text-secondary">
+					<T id="oidc.signing-in" />
+				</p>
+			)}
+		</>
+	);
+}
 
 function TwoFactorForm() {
 	const codeRef = useRef<HTMLInputElement>(null);
@@ -103,6 +182,7 @@ function LoginForm() {
 			<h2 className="h2 text-center mb-4">
 				<T id="login.title" />
 			</h2>
+			<OIDCLogin />
 			{formErr !== "" && <Alert variant="danger">{formErr}</Alert>}
 			<Formik
 				initialValues={
