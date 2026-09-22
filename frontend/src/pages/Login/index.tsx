@@ -193,9 +193,7 @@ export default function Login() {
 					</div>
 				</div>
 				<div className="card card-md">
-					<div className="card-body">
-						{twoFactorChallenge ? <TwoFactorForm /> : <LoginForm />}
-					</div>
+					<div className="card-body">{twoFactorChallenge ? <TwoFactorForm /> : <LoginForm />}</div>
 				</div>
 				<div className="text-center text-secondary mt-3">{getVersion()}</div>
 			</div>
