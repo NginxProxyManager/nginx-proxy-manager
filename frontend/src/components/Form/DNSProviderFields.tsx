@@ -1,7 +1,7 @@
 import { IconAlertTriangle } from "@tabler/icons-react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import { Field, useFormikContext } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Select, { type ActionMeta } from "react-select";
 import type { DNSProvider } from "src/api/backend";
 import { useDnsProviders } from "src/hooks";
@@ -23,6 +23,7 @@ export function DNSProviderFields({ showBoundaryBox = false, editMode = false }:
 	const { values, setFieldValue } = useFormikContext();
 	const { data: dnsProviders, isLoading } = useDnsProviders();
 	const [dnsProviderId, setDnsProviderId] = useState<string | null>(null);
+	const seededProviderId = useRef<string | null>(null);
 
 	const v: any = values || {};
 
@@ -30,6 +31,7 @@ export function DNSProviderFields({ showBoundaryBox = false, editMode = false }:
 		setFieldValue("meta.dnsProvider", newValue?.value);
 		setFieldValue("meta.dnsProviderCredentials", newValue?.credentials);
 		setDnsProviderId(newValue?.value);
+		seededProviderId.current = newValue?.value ?? null;
 	};
 
 	const options: DNSProviderOption[] =
@@ -43,14 +45,14 @@ export function DNSProviderFields({ showBoundaryBox = false, editMode = false }:
 	const selectedOption = options.find((o) => o.value === selectedProviderId) ?? null;
 	const showCredentials = dnsProviderId ?? selectedProviderId;
 
-	// Create mode only: if a provider is selected and credentials are empty, use the plugin template.
-	// Edit mode leaves a blank field blank so existing credentials are not shown or overwritten.
+	// Seed the plugin template once per provider (both in create and edit mode).
+	// Do not depend on the credentials value — clearing the field must leave it empty.
 	useEffect(() => {
-		if (editMode) return;
-		if (selectedProviderId && selectedOption?.credentials && (v.meta?.dnsProviderCredentials ?? "") === "") {
-			setFieldValue("meta.dnsProviderCredentials", selectedOption.credentials);
-		}
-	}, [editMode, selectedProviderId, selectedOption?.credentials, v.meta?.dnsProviderCredentials, setFieldValue]);
+		if (!selectedProviderId || !selectedOption?.credentials) return;
+		if (seededProviderId.current === selectedProviderId) return;
+		seededProviderId.current = selectedProviderId;
+		setFieldValue("meta.dnsProviderCredentials", selectedOption.credentials);
+	}, [selectedProviderId, selectedOption?.credentials, setFieldValue]);
 
 	return (
 		<div className={showBoundaryBox ? styles.dnsChallengeWarning : undefined}>
