@@ -79,6 +79,14 @@ describe("BasicAuthFields", () => {
 		expect(view.names()).toEqual(["items-username-0", "items-password-0"]);
 	});
 
+	it("names and marks the blank row left after the only row is removed", () => {
+		const view = renderFields([row("one")]);
+		fireEvent.click(view.remove(0));
+		expect(view.usernames()[0].value).toEqual("");
+		expect(view.names()).toEqual(["items-username-0", "items-password-0"]);
+		expect(view.autocompletes()).toEqual(["new-password", "new-password"]);
+	});
+
 	it("keeps the name and autocomplete of a row that is typed into", () => {
 		const view = renderFields();
 		fireEvent.change(view.usernames()[0], { target: { value: "typed" } });
