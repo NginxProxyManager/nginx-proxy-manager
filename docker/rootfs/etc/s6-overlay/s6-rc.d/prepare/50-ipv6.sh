@@ -26,7 +26,10 @@ process_folder () {
 	do
 		echo "- ${FILE}"
 		TMPFILE="${FILE}.tmp"
-		if sed -E "$SED_REGEX" "$FILE" > "$TMPFILE" && [ -s "$TMPFILE" ]; then
+
+		if is_mounted "${FILE}"; then
+			echo "WARNING: skipping ${FILE} — mounted file" >&2
+		elif sed -E "$SED_REGEX" "$FILE" > "$TMPFILE" && [ -s "$TMPFILE" ]; then
 			mv "$TMPFILE" "$FILE"
 		else
 			echo "WARNING: skipping ${FILE} — sed produced empty output" >&2

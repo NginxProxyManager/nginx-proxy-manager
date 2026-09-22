@@ -10,16 +10,16 @@ const migrateName = "trust_forwarded_proto";
  * @param   {Object} knex
  * @returns {Promise}
  */
-const up = function (knex) {
-    logger.info(`[${migrateName}] Migrating Up...`);
+const up = (knex) => {
+	logger.info(`[${migrateName}] Migrating Up...`);
 
-    return knex.schema
-        .alterTable('proxy_host', (table) => {
-            table.tinyint('trust_forwarded_proto').notNullable().defaultTo(0);
-        })
-        .then(() => {
-            logger.info(`[${migrateName}] proxy_host Table altered`);
-        });
+	return knex.schema
+		.alterTable("proxy_host", (table) => {
+			table.tinyint("trust_forwarded_proto").notNullable().defaultTo(0);
+		})
+		.then(() => {
+			logger.info(`[${migrateName}] proxy_host Table altered`);
+		});
 };
 
 /**
@@ -28,16 +28,16 @@ const up = function (knex) {
  * @param   {Object} knex
  * @returns {Promise}
  */
-const down = function (knex) {
-    logger.info(`[${migrateName}] Migrating Down...`);
+const down = (knex) => {
+	logger.info(`[${migrateName}] Migrating Down...`);
 
-    return knex.schema
-        .alterTable('proxy_host', (table) => {
-            table.dropColumn('trust_forwarded_proto');
-        })
-        .then(() => {
-            logger.info(`[${migrateName}] proxy_host Table altered`);
-        });
+	return knex.schema
+		.alterTable("proxy_host", (table) => {
+			table.dropColumn("trust_forwarded_proto");
+		})
+		.then(() => {
+			logger.info(`[${migrateName}] proxy_host Table altered`);
+		});
 };
 
 export { up, down };

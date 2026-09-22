@@ -1,4 +1,4 @@
-import { formatDateTime } from "src/locale";
+import { formatDateTime, getFlagCodeForLocale } from "src/locale";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 describe("DateFormatter", () => {
@@ -70,5 +70,45 @@ describe("DateFormatter", () => {
 		const value = "-100";
 		const text = formatDateTime(value);
 		expect(text).toBe("-100");
+	});
+});
+
+describe("getFlagCodeForLocale", () => {
+	it("returns correct flag code for standard locales", () => {
+		expect(getFlagCodeForLocale("en-US")).toBe("EN");
+		expect(getFlagCodeForLocale("de-DE")).toBe("DE");
+		expect(getFlagCodeForLocale("fr-FR")).toBe("FR");
+	});
+
+	it("returns correct flag code for special-case locales", () => {
+		expect(getFlagCodeForLocale("ja-JP")).toBe("JP");
+		expect(getFlagCodeForLocale("zh-CN")).toBe("CN");
+		expect(getFlagCodeForLocale("vi-VN")).toBe("VN");
+		expect(getFlagCodeForLocale("ko-KR")).toBe("KR");
+		expect(getFlagCodeForLocale("cs-CZ")).toBe("CZ");
+	});
+
+	it("returns IE (Ireland) for Irish locale, not GA (Gabon)", () => {
+		expect(getFlagCodeForLocale("ga-IE")).toBe("IE");
+	});
+
+	it("returns EE (Estonia) for Estonian locale, not ET (Ethiopia)", () => {
+		expect(getFlagCodeForLocale("et")).toBe("EE");
+		expect(getFlagCodeForLocale("et-EE")).toBe("EE");
+	});
+
+	it("falls back to EN when no locale is provided", () => {
+		expect(getFlagCodeForLocale()).toBe("EN");
+		expect(getFlagCodeForLocale(undefined)).toBe("EN");
+	});
+});
+
+describe("formatDateTime Estonian locale", () => {
+	it("uses 24-hour clock for et and et-EE", () => {
+		const value = "2024-06-15T15:30:00.000Z";
+		for (const locale of ["et", "et-EE"]) {
+			const text = formatDateTime(value, locale);
+			expect(text.toLowerCase()).not.toMatch(/\b(am|pm)\b/);
+		}
 	});
 });
