@@ -39,15 +39,18 @@ export function DNSProviderFields({ showBoundaryBox = false, editMode = false }:
 			credentials: p.credentials,
 		})) || [];
 
-	const selectedOption = options.find((o) => o.value === v.meta?.dnsProvider) ?? null;
-	const showCredentials = dnsProviderId ?? v.meta?.dnsProvider;
+	const selectedProviderId = v.meta?.dnsProvider ?? null;
+	const selectedOption = options.find((o) => o.value === selectedProviderId) ?? null;
+	const showCredentials = dnsProviderId ?? selectedProviderId;
 
-	// When a provider is selected and credentials are empty, use the template from dns-plugins.json as the value
+	// Create mode only: if a provider is selected and credentials are empty, use the plugin template.
+	// Edit mode leaves a blank field blank so existing credentials are not shown or overwritten.
 	useEffect(() => {
-		if (selectedOption && (v.meta?.dnsProviderCredentials ?? "") === "") {
+		if (editMode) return;
+		if (selectedProviderId && selectedOption?.credentials && (v.meta?.dnsProviderCredentials ?? "") === "") {
 			setFieldValue("meta.dnsProviderCredentials", selectedOption.credentials);
 		}
-	}, [selectedOption, selectedOption?.credentials, v.meta?.dnsProviderCredentials, setFieldValue]);
+	}, [editMode, selectedProviderId, selectedOption?.credentials, v.meta?.dnsProviderCredentials, setFieldValue]);
 
 	return (
 		<div className={showBoundaryBox ? styles.dnsChallengeWarning : undefined}>

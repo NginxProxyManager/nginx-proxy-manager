@@ -43,8 +43,20 @@
 									"type": "integer",
 									"minimum": 0
 								}
+							},
+							"example": {
+								"dns_provider": "cloudflare",
+								"dns_provider_credentials": "dns_cloudflare_api_token=0123456789abcdef0123456789abcdef01234567",
+								"propagation_seconds": 120
 							}
 						}
+					}
+				},
+				"example": {
+					"meta": {
+						"dns_provider": "cloudflare",
+						"dns_provider_credentials": "dns_cloudflare_api_token=0123456789abcdef0123456789abcdef01234567",
+						"propagation_seconds": 120
 					}
 				}
 			}
