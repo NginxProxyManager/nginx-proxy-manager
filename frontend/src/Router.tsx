@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import {
 	ErrorNotFound,
 	LoadingPage,
@@ -61,6 +61,7 @@ function Router() {
 					<Suspense fallback={<LoadingPage noLogo />}>
 						<Routes>
 							<Route path="*" element={<ErrorNotFound />} />
+							<Route path="/login" element={<Navigate to="/" replace />} />
 							<Route path="/certificates" element={<Certificates />} />
 							<Route path="/access" element={<Access />} />
 							<Route path="/audit-log" element={<AuditLog />} />
