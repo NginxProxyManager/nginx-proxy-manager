@@ -237,6 +237,18 @@ Setting these environment variables will create the default user on startup, ski
       INITIAL_ADMIN_PASSWORD: mypassword1
 ```
 
+## Proxy Host Load Balancing
+
+In a Proxy Host, open **Load Balancing** and add one or more backend servers. Choose Round Robin (the default), Least Connections, or IP Hash. Nginx uses passive failure detection through `max_fails` and `fail_timeout`; this does not perform active health checks. Backup servers cannot be used with IP Hash, and every non-empty group must contain at least one non-backup server.
+
+Set **Upstream Name** to choose the Nginx upstream identifier, or leave it empty to use `npm-<Proxy Host ID>`. Custom names are stored in lowercase, must start with a letter or underscore, and may contain letters, digits, underscores and hyphens (up to 128 characters). The `npm-` prefix is reserved for automatic names. Names must be unique across all Proxy Hosts, including disabled hosts; clearing the name or deleting its host releases it. Names identify a single host's group and do not share servers between Proxy Hosts.
+
+In **Details**, select **Hostname / IP** to use Forward Hostname / IP and Port, or **Upstream group** to route the default location and cached assets through this host's group. Switching to Hostname / IP preserves the upstream server list. Upstream mode requires at least one server. Existing hosts keep their previous routing until explicitly changed.
+
+The original Forward Host and Forward Port are preserved for compatibility. They remain available to advanced custom configurations that reference `$server` or `$port`. The default location and cached assets use the upstream group when Upstream is selected; custom locations continue to use their own forward target.
+
+Backend hostnames use the Nginx resolver generated from the container's `/etc/resolv.conf` and are refreshed according to its cache lifetime. If you set `DISABLE_RESOLVER`, provide a resolver in custom Nginx configuration before using hostname based load balancing. IP address backends do not need DNS. Hostnames found only in `/etc/hosts` are not available to the Nginx DNS resolver.
+
 ## Disable Nginx Resolver
 
 On startup, we generate a resolvers directive for Nginx unless this is defined:
