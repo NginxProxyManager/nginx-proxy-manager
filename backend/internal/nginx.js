@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import net from "node:net";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
@@ -34,7 +35,7 @@ const internalNginx = {
 				// We're deleting this config regardless.
 				// Don't throw errors, as the file may not exist at all
 				// Delete the .err file too
-				return internalNginx.deleteConfig(host_type, host, false, true);
+				return internalNginx.deleteConfig(host_type, host, true);
 			})
 			.then(() => {
 				return internalNginx.generateConfig(host_type, host);
@@ -83,10 +84,12 @@ const internalNginx = {
 								meta: combined_meta,
 							})
 							.then(() => {
-								internalNginx.renameConfigAsError(host_type, host);
+								// Keep the failed config as a .err file for inspection
+								return internalNginx.renameConfigAsError(host_type, host);
 							})
 							.then(() => {
-								return internalNginx.deleteConfig(host_type, host, true);
+								// The rename removed the live config already, don't touch the .err file
+								return internalNginx.deleteConfig(host_type, host, false);
 							});
 					});
 			})
@@ -217,8 +220,19 @@ const internalNginx = {
 			}
 
 			// For redirection hosts, if the scheme is not http or https, set it to $scheme
-			if (nice_host_type === "redirection_host" && ['http', 'https'].indexOf(host.forward_scheme.toLowerCase()) === -1) {
+			if (
+				nice_host_type === "redirection_host" &&
+				["http", "https"].indexOf(host.forward_scheme.toLowerCase()) === -1
+			) {
 				host.forward_scheme = "$scheme";
+			}
+
+			// A stream forwarding to an IPv6 literal must have the address wrapped in
+			// square brackets before nginx appends ":<port>". Without the brackets nginx
+			// reads the trailing ":<port>" as part of the address and rejects the upstream
+			// ("invalid port in upstream"), so the stream saves but never activates (#5740).
+			if (nice_host_type === "stream" && net.isIPv6(host.forwarding_host)) {
+				host.forwarding_host = `[${host.forwarding_host}]`;
 			}
 
 			if (host.locations) {
@@ -375,8 +389,8 @@ const internalNginx = {
 		const config_file_err = `${config_file}.err`;
 
 		return new Promise((resolve /*, reject*/) => {
-			fs.unlink(config_file, () => {
-				// ignore result, continue
+			fs.unlink(config_file_err, () => {
+				// ignore result, a previous .err file may not exist
 				fs.rename(config_file, config_file_err, () => {
 					// also ignore result, as this is a debugging informative file anyway
 					resolve();

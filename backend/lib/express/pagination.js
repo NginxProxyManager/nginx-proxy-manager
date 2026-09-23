@@ -1,4 +1,4 @@
-import _  from "lodash";
+import _ from "lodash";
 
 export default (default_sort, default_offset, default_limit, max_limit) => {
 	/**
