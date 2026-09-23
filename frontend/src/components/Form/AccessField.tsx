@@ -1,4 +1,4 @@
-import { IconLock, IconLockOpen2 } from "@tabler/icons-react";
+import { IconArrowBackUp, IconLock, IconLockOpen2 } from "@tabler/icons-react";
 import { Field, useFormikContext } from "formik";
 import type { ReactNode } from "react";
 import Select, { type ActionMeta, components, type OptionProps } from "react-select";
@@ -32,8 +32,16 @@ interface Props {
 	name?: string;
 	label?: string;
 	onFormChange?: (value: number) => void;
+	// When set, the 0 option inherits the host's access list instead of being public
+	inheritHost?: boolean;
 }
-export function AccessField({ name = "accessListId", label = "access-list", id = "accessListId", onFormChange }: Props) {
+export function AccessField({
+	name = "accessListId",
+	label = "access-list",
+	id = "accessListId",
+	onFormChange,
+	inheritHost = false,
+}: Props) {
 	const { locale } = useLocaleState();
 	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"]);
 	const { setFieldValue } = useFormikContext();
@@ -60,13 +68,22 @@ export function AccessField({ name = "accessListId", label = "access-list", id =
 			icon: <IconLock size={14} className="text-lime" />,
 		})) || [];
 
-	// Public option
-	options?.unshift({
-		value: 0,
-		label: intl.formatMessage({ id: "access-list.public" }),
-		subLabel: intl.formatMessage({ id: "access-list.public.subtitle" }),
-		icon: <IconLockOpen2 size={14} className="text-red" />,
-	});
+	// Public or inherit option
+	options?.unshift(
+		inheritHost
+			? {
+					value: 0,
+					label: intl.formatMessage({ id: "access-list.inherit" }),
+					subLabel: intl.formatMessage({ id: "access-list.inherit.subtitle" }),
+					icon: <IconArrowBackUp size={14} className="text-secondary" />,
+				}
+			: {
+					value: 0,
+					label: intl.formatMessage({ id: "access-list.public" }),
+					subLabel: intl.formatMessage({ id: "access-list.public.subtitle" }),
+					icon: <IconLockOpen2 size={14} className="text-red" />,
+				},
+	);
 
 	return (
 		<Field name={name}>

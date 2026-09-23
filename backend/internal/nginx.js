@@ -6,6 +6,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
+import accessListModel from "../models/access_list.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -168,6 +169,24 @@ const internalNginx = {
 						host.locations[i],
 					);
 
+					// A location with its own access list overrides the host's,
+					// otherwise it inherits the host's access list
+					let locationAccessList = null;
+					if (locationCopy.access_list_id > 0 && locationCopy.access_list_id !== host.access_list?.id) {
+						locationAccessList = await accessListModel
+							.query()
+							.where("is_deleted", 0)
+							.andWhere("id", locationCopy.access_list_id)
+							.withGraphFetched("[clients,items]")
+							.first();
+					}
+					if (locationAccessList) {
+						locationCopy.access_list = locationAccessList;
+					} else {
+						locationCopy.access_list_id = host.access_list_id;
+						locationCopy.access_list = host.access_list;
+					}
+
 					if (locationCopy.forward_host.indexOf("/") > -1) {
 						const splitted = locationCopy.forward_host.split("/");
 
@@ -179,7 +198,9 @@ const internalNginx = {
 				}
 			};
 
-			locationRendering().then(() => resolve(renderedLocations));
+			locationRendering()
+				.then(() => resolve(renderedLocations))
+				.catch(reject);
 		});
 	},
 
@@ -271,6 +292,9 @@ const internalNginx = {
 						debug(logger, `Could not write ${filename}:`, err.message);
 						reject(new errs.ConfigurationError(err.message));
 					});
+			}).catch((err) => {
+				debug(logger, `Could not render locations for ${filename}:`, err.message);
+				reject(new errs.ConfigurationError(err.message));
 			});
 		});
 	},

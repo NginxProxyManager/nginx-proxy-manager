@@ -2,7 +2,6 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import utils from "../lib/utils.js";
-import accessListModel from "../models/access_list.js";
 import proxyHostModel from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
@@ -11,33 +10,6 @@ import internalNginx from "./nginx.js";
 
 const omissions = () => {
 	return ["is_deleted", "owner.is_deleted"];
-};
-
-/**
- * Fetches access lists for each location that has its own access_list_id.
- * Attaches the expanded access_list object (with clients and items) to each location.
- *
- * @param {Object} host
- * @returns {Promise}
- */
-const fetchLocationAccessLists = async (host) => {
-	if (!host.locations?.length) {
-		return;
-	}
-	for (let i = 0; i < host.locations.length; i++) {
-		const loc = host.locations[i];
-		if (loc.access_list_id && loc.access_list_id > 0) {
-			const accessList = await accessListModel
-				.query()
-				.where("is_deleted", 0)
-				.andWhere("id", loc.access_list_id)
-				.withGraphFetched("[clients,items]")
-				.first();
-			if (accessList) {
-				host.locations[i].access_list = accessList;
-			}
-		}
-	}
 };
 
 const internalProxyHost = {
@@ -112,7 +84,6 @@ const internalProxyHost = {
 				});
 			})
 		.then(async (row) => {
-			await fetchLocationAccessLists(row);
 			// Configure nginx
 			return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
 				return row;
@@ -242,7 +213,6 @@ const internalProxyHost = {
 						// No need to add nginx config if host is disabled
 						return row;
 					}
-					await fetchLocationAccessLists(row);
 					// Configure nginx
 					return internalNginx.configure(proxyHostModel, "proxy_host", row).then((new_meta) => {
 						row.meta = new_meta;
@@ -372,8 +342,6 @@ const internalProxyHost = {
 				.patch({
 					enabled: 1,
 				});
-
-			await fetchLocationAccessLists(row);
 
 			// Configure nginx
 			await internalNginx.configure(proxyHostModel, "proxy_host", row);

@@ -312,6 +312,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 										label="access-list"
 										id={`locations-access-list-${row.id}`}
 										onFormChange={(value) => handleAccessListChange(row.id, value)}
+										inheritHost
 									/>
 									{advVisible.includes(row.id) && (
 										<div className="">
