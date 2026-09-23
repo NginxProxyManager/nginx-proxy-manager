@@ -165,7 +165,7 @@ const internalLogViewer = {
 				dead: toHostOptions(deadHosts),
 				stream: streams.map((row) => ({
 					id: row.id,
-					label: `Port ${row.incoming_port} → ${row.forward_ip}:${row.forwarding_port}`,
+					label: `Port ${row.incoming_port} → ${row.forwarding_host}:${row.forwarding_port}`,
 				})),
 			},
 		};
