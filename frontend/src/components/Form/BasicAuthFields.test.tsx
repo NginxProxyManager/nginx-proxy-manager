@@ -1,97 +1,58 @@
 import { fireEvent, render, waitFor } from "@testing-library/react";
 import { Form, Formik } from "formik";
+import type { AccessListItem } from "src/api/backend";
 import { BasicAuthFields } from "src/components";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-const row = (username: string) => ({ username, password: "" });
-
-const renderFields = (initialValues: any[] = [], name?: string, onSubmit: (values: any) => void = () => {}) => {
-	const { container } = render(
-		<Formik initialValues={{ [name || "items"]: initialValues }} onSubmit={onSubmit}>
+const renderFields = (items: AccessListItem[], name?: string, onSubmit = vi.fn()) =>
+	render(
+		<Formik initialValues={{ [name || "items"]: items }} onSubmit={onSubmit}>
 			<Form>
-				<BasicAuthFields initialValues={initialValues} name={name} />
+				<BasicAuthFields initialValues={items} name={name} />
 			</Form>
 		</Formik>,
-	);
+	).container;
 
-	const inputs = (type: string) => Array.from(container.querySelectorAll<HTMLInputElement>(`input[type="${type}"]`));
-
-	return {
-		form: () => container.querySelector("form") as HTMLFormElement,
-		usernames: () => inputs("text"),
-		passwords: () => inputs("password"),
-		attributes: (attribute: string) =>
-			[...inputs("text"), ...inputs("password")].map((input) => input.getAttribute(attribute)),
-		add: () => container.querySelector<HTMLButtonElement>("button.btn-sm") as HTMLButtonElement,
-		remove: (idx: number) => container.querySelectorAll<HTMLButtonElement>("button.btn-ghost")[idx],
-	};
+const expectFields = (container: HTMLElement, names: string[]) => {
+	const inputs = Array.from(container.querySelectorAll("input"));
+	expect(inputs.map((input) => input.getAttribute("name"))).toEqual(names);
+	expect(inputs.map((input) => input.getAttribute("autocomplete"))).toEqual(names.map(() => "new-password"));
 };
-
-type Fields = ReturnType<typeof renderFields>;
-
-const marked = (count: number) => Array(count).fill("new-password");
 
 describe("BasicAuthFields", () => {
 	it.each([
-		{ rows: "a blank row", initialValues: [], name: undefined, names: ["items-username-0", "items-password-0"] },
-		{
-			rows: "two rows",
-			initialValues: [row("one"), row("two")],
-			name: undefined,
-			names: ["items-username-0", "items-username-1", "items-password-0", "items-password-1"],
-		},
-		{ rows: "a named field", initialValues: [], name: "auth", names: ["auth-username-0", "auth-password-0"] },
-		{ rows: "an empty field name", initialValues: [], name: "", names: ["-username-0", "-password-0"] },
-	])("names and marks $rows", ({ initialValues, name, names }) => {
-		const view = renderFields(initialValues, name);
-		expect(view.attributes("name")).toEqual(names);
-		expect(view.attributes("autocomplete")).toEqual(marked(names.length));
+		[undefined, ["items-username-0", "items-password-0"]],
+		["auth", ["auth-username-0", "auth-password-0"]],
+		["", ["-username-0", "-password-0"]],
+	])("names and marks the inputs for field %j", (name, names) => {
+		expectFields(renderFields([], name), names);
 	});
 
-	it.each([
-		{
-			change: "a row is added",
-			initialValues: [row("one")],
-			act: (view: Fields) => fireEvent.click(view.add()),
-			names: ["items-username-0", "items-username-1", "items-password-0", "items-password-1"],
-		},
-		{
-			change: "an earlier row is removed",
-			initialValues: [row("one"), row("two")],
-			act: (view: Fields) => fireEvent.click(view.remove(0)),
-			names: ["items-username-0", "items-password-0"],
-		},
-		{
-			change: "the only row is removed",
-			initialValues: [row("one")],
-			act: (view: Fields) => fireEvent.click(view.remove(0)),
-			names: ["items-username-0", "items-password-0"],
-		},
-		{
-			change: "a row is typed into",
-			initialValues: [],
-			act: (view: Fields) => fireEvent.change(view.usernames()[0], { target: { value: "typed" } }),
-			names: ["items-username-0", "items-password-0"],
-		},
-	])("names and marks the rows after $change", ({ initialValues, act, names }) => {
-		const view = renderFields(initialValues);
-		act(view);
-		expect(view.attributes("name")).toEqual(names);
-		expect(view.attributes("autocomplete")).toEqual(marked(names.length));
+	it("names and marks the inputs as rows are added, edited and removed", () => {
+		const container = renderFields([{ username: "one", password: "" }]);
+		const click = (selector: string) => fireEvent.click(container.querySelector(selector) as HTMLButtonElement);
+
+		click("button.btn-sm");
+		fireEvent.change(container.querySelectorAll("input")[2], { target: { value: "two" } });
+		expectFields(container, ["items-username-0", "items-password-0", "items-username-1", "items-password-1"]);
+
+		click("button.btn-ghost");
+		expectFields(container, ["items-username-0", "items-password-0"]);
+
+		click("button.btn-ghost");
+		expectFields(container, ["items-username-0", "items-password-0"]);
 	});
 
 	it("submits the typed username and password", async () => {
-		let submitted: unknown;
-		const view = renderFields([], undefined, (values) => {
-			submitted = values;
-		});
+		const onSubmit = vi.fn();
+		const container = renderFields([], undefined, onSubmit);
+		const [username, password] = Array.from(container.querySelectorAll("input"));
 
-		fireEvent.change(view.usernames()[0], { target: { value: "typed" } });
-		fireEvent.change(view.passwords()[0], { target: { value: "secret" } });
-		fireEvent.submit(view.form());
+		fireEvent.change(username, { target: { value: "typed" } });
+		fireEvent.change(password, { target: { value: "secret" } });
+		fireEvent.submit(container.querySelector("form") as HTMLFormElement);
 
-		await waitFor(() => {
-			expect(submitted).toEqual({ items: [{ username: "typed", password: "secret" }] });
-		});
+		await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+		expect(onSubmit.mock.calls[0][0]).toEqual({ items: [{ username: "typed", password: "secret" }] });
 	});
 });
