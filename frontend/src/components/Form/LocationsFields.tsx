@@ -13,6 +13,7 @@ import { useFormikContext } from "formik";
 import { useRef, useState } from "react";
 import type { ProxyLocation } from "src/api/backend";
 import { intl, T } from "src/locale";
+import { AccessField } from "./AccessField";
 import styles from "./LocationsFields.module.css";
 
 // Below this many locations the list is short enough to scan by eye, and the
@@ -45,6 +46,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		forwardScheme: "http",
 		forwardHost: "",
 		forwardPort: 80,
+		accessListId: 0,
 	};
 
 	const toggleExpanded = (id: number) => {
@@ -75,6 +77,12 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 
 	const handleChange = (id: number, field: string, fieldValue: string) => {
 		const newRows = rows.map((r: Row) => (r.id === id ? { ...r, value: { ...r.value, [field]: fieldValue } } : r));
+		setRows(newRows);
+		setFormField(newRows);
+	};
+
+	const handleAccessListChange = (id: number, accessListId: number) => {
+		const newRows = rows.map((r: Row) => (r.id === id ? { ...r, value: { ...r.value, accessListId } } : r));
 		setRows(newRows);
 		setFormField(newRows);
 	};
@@ -299,6 +307,12 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 											</div>
 										</div>
 									</div>
+									<AccessField
+										name={`locations[${row.id}].accessListId`}
+										label="access-list"
+										id={`locations-access-list-${row.id}`}
+										onFormChange={(value) => handleAccessListChange(row.id, value)}
+									/>
 									{advVisible.includes(row.id) && (
 										<div className="">
 											<CodeEditor

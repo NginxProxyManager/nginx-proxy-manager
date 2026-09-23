@@ -31,14 +31,18 @@ interface Props {
 	id?: string;
 	name?: string;
 	label?: string;
+	onFormChange?: (value: number) => void;
 }
-export function AccessField({ name = "accessListId", label = "access-list", id = "accessListId" }: Props) {
+export function AccessField({ name = "accessListId", label = "access-list", id = "accessListId", onFormChange }: Props) {
 	const { locale } = useLocaleState();
 	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"]);
 	const { setFieldValue } = useFormikContext();
 
 	const handleChange = (newValue: any, _actionMeta: ActionMeta<AccessOption>) => {
 		setFieldValue(name, newValue?.value);
+		if (onFormChange) {
+			onFormChange(newValue?.value ?? 0);
+		}
 	};
 
 	const options: AccessOption[] =

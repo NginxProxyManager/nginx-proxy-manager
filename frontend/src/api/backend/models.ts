@@ -127,6 +127,8 @@ export interface ProxyLocation {
 	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
+	accessListId?: number;
+	accessList?: AccessList;
 }
 
 export interface ProxyHost {

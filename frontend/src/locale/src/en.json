@@ -125,6 +125,9 @@
 	"action.enable": {
 		"defaultMessage": "Enable"
 	},
+	"action.logs": {
+		"defaultMessage": "Logs"
+	},
 	"action.permissions": {
 		"defaultMessage": "Permissions"
 	},
@@ -268,6 +271,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "Email"
+	},
+	"column.error": {
+		"defaultMessage": "Error"
 	},
 	"column.event": {
 		"defaultMessage": "Event"

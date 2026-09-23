@@ -13,6 +13,7 @@ export * from "./useHostReport";
 export * from "./useLogSources";
 export * from "./useLogTail";
 export * from "./useProxyHost";
+export * from "./useProxyHostLogs";
 export * from "./useProxyHosts";
 export * from "./useRedirectionHost";
 export * from "./useRedirectionHosts";
