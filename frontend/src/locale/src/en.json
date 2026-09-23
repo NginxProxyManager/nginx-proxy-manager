@@ -488,6 +488,51 @@
 	"login.title": {
 		"defaultMessage": "Login to your account"
 	},
+	"logs": {
+		"defaultMessage": "Logs"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Access"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Error"
+	},
+	"logs.download": {
+		"defaultMessage": "Download"
+	},
+	"logs.empty": {
+		"defaultMessage": "No log entries yet."
+	},
+	"logs.level": {
+		"defaultMessage": "Level"
+	},
+	"logs.level.all": {
+		"defaultMessage": "All Levels"
+	},
+	"logs.lines": {
+		"defaultMessage": "Lines"
+	},
+	"logs.live": {
+		"defaultMessage": "Live"
+	},
+	"logs.paused": {
+		"defaultMessage": "Paused"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Refresh"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Search log…"
+	},
+	"logs.source": {
+		"defaultMessage": "Source"
+	},
+	"logs.source.system": {
+		"defaultMessage": "System"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Only the most recent portion of this file is shown."
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Custom Nginx Configuration"
 	},

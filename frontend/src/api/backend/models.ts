@@ -44,6 +44,30 @@ export interface AuditLog {
 	user?: User;
 }
 
+export type LogSourceType = "system" | "letsencrypt" | "host";
+export type LogHostType = "proxy" | "redirection" | "dead" | "stream";
+// Which of the two files nginx writes per host - named "channel", not "stream",
+// to avoid confusion with the "stream" LogHostType (TCP/UDP stream hosts).
+export type LogChannel = "access" | "error";
+
+export interface LogHostOption {
+	id: number;
+	label: string;
+}
+
+export interface LogSources {
+	system: { label: string };
+	letsencrypt: { label: string };
+	hosts: Record<LogHostType, LogHostOption[]>;
+}
+
+export interface LogTail {
+	lines: string[];
+	size: number;
+	truncated: boolean;
+	exists: boolean;
+}
+
 export interface AccessList {
 	id?: number;
 	createdOn?: string;

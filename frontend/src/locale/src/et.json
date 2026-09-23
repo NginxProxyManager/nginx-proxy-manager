@@ -488,6 +488,51 @@
 	"login.title": {
 		"defaultMessage": "Logi kontole sisse"
 	},
+	"logs": {
+		"defaultMessage": "Logid"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Juurdepääs"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Viga"
+	},
+	"logs.download": {
+		"defaultMessage": "Laadi alla"
+	},
+	"logs.empty": {
+		"defaultMessage": "Logikirjeid pole veel."
+	},
+	"logs.level": {
+		"defaultMessage": "Tase"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Kõik tasemed"
+	},
+	"logs.lines": {
+		"defaultMessage": "Read"
+	},
+	"logs.live": {
+		"defaultMessage": "Reaalajas"
+	},
+	"logs.paused": {
+		"defaultMessage": "Peatatud"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Värskenda"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Otsi logist…"
+	},
+	"logs.source": {
+		"defaultMessage": "Allikas"
+	},
+	"logs.source.system": {
+		"defaultMessage": "Süsteem"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Kuvatakse ainult faili kõige uuem osa."
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Kohandatud Nginx seadistus"
 	},
