@@ -71,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Luba ja keela reeglid rakenduvad selles järjekorras, milles need on kirjas."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Päri puhverserverilt"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Kasutab puhverserveri juurdepääsuloendit"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Edasta autentimine sihtserverile"
 	},
