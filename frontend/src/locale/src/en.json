@@ -254,9 +254,6 @@
 	"column.access": {
 		"defaultMessage": "Access"
 	},
-	"column.error": {
-		"defaultMessage": "Error"
-	},
 	"column.authorization": {
 		"defaultMessage": "Authorization"
 	},
@@ -274,6 +271,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "Email"
+	},
+	"column.error": {
+		"defaultMessage": "Error"
 	},
 	"column.event": {
 		"defaultMessage": "Event"

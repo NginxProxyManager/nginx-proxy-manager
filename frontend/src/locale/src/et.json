@@ -125,6 +125,9 @@
 	"action.enable": {
 		"defaultMessage": "Lülita sisse"
 	},
+	"action.logs": {
+		"defaultMessage": "Logid"
+	},
 	"action.permissions": {
 		"defaultMessage": "Õigused"
 	},
@@ -268,6 +271,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "E-post"
+	},
+	"column.error": {
+		"defaultMessage": "Viga"
 	},
 	"column.event": {
 		"defaultMessage": "Sündmus"

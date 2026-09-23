@@ -1,11 +1,5 @@
 import { IconDotsVertical, IconEdit, IconFileText, IconPower, IconTrash } from "@tabler/icons-react";
-import {
-	createColumnHelper,
-	getCoreRowModel,
-	getSortedRowModel,
-	type SortingState,
-	useReactTable,
-} from "@tanstack/react-table";
+import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import type { ProxyHost } from "src/api/backend";
 import {
@@ -32,8 +26,17 @@ interface Props {
 	onLogs?: (id: number) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onLogs, onNew, isFiltered }: Props) {
-	const columnHelper = createColumnHelper<ProxyHost>();
+export default function Table({
+	data,
+	isFetching,
+	onEdit,
+	onDelete,
+	onDisableToggle,
+	onLogs,
+	onNew,
+	isFiltered,
+}: Props) {
+	const columnHelper = createColumnHelper<Features, ProxyHost>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
@@ -117,30 +120,30 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 										data={{ id: info.row.original.id }}
 									/>
 								</span>
-							<a
-								className="dropdown-item"
-								href="#"
-								onClick={(e) => {
-									e.preventDefault();
-									onEdit?.(info.row.original.id);
-								}}
-							>
-								<IconEdit size={16} />
-								<T id="action.edit" />
-							</a>
-							<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
 								<a
 									className="dropdown-item"
 									href="#"
 									onClick={(e) => {
 										e.preventDefault();
-										onLogs?.(info.row.original.id);
+										onEdit?.(info.row.original.id);
 									}}
 								>
-									<IconFileText size={16} />
-									<T id="action.logs" />
+									<IconEdit size={16} />
+									<T id="action.edit" />
 								</a>
-								<a
+								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onLogs?.(info.row.original.id);
+										}}
+									>
+										<IconFileText size={16} />
+										<T id="action.logs" />
+									</a>
+									<a
 										className="dropdown-item"
 										href="#"
 										onClick={(e) => {

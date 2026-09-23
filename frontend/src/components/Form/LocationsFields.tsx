@@ -81,14 +81,14 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 		setFormField(newRows);
 	};
 
-	const handleAccessListChange = (idx: number, accessListId: number) => {
-		const newValues = values.map((v: ProxyLocation, i: number) => (i === idx ? { ...v, accessListId } : v));
-		setValues(newValues);
-		setFormField(newValues);
+	const handleAccessListChange = (id: number, accessListId: number) => {
+		const newRows = rows.map((r: Row) => (r.id === id ? { ...r, value: { ...r.value, accessListId } } : r));
+		setRows(newRows);
+		setFormField(newRows);
 	};
 
-	const setFormField = (newValues: ProxyLocation[]) => {
-		const filtered = newValues.filter((v: ProxyLocation) => v?.path?.trim() !== "");
+	const setFormField = (newRows: Row[]) => {
+		const filtered = newRows.map((r: Row) => r.value).filter((v: ProxyLocation) => v?.path?.trim() !== "");
 		setFieldValue(name, filtered);
 	};
 
@@ -307,6 +307,12 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 											</div>
 										</div>
 									</div>
+									<AccessField
+										name={`locations[${row.id}].accessListId`}
+										label="access-list"
+										id={`locations-access-list-${row.id}`}
+										onFormChange={(value) => handleAccessListChange(row.id, value)}
+									/>
 									{advVisible.includes(row.id) && (
 										<div className="">
 											<CodeEditor
@@ -330,51 +336,9 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 								</div>
 							)}
 						</div>
-						<AccessField
-							name={`locations[${idx}].accessListId`}
-							label="access-list"
-							id={`locations-access-list-${idx}`}
-							onFormChange={(value) => handleAccessListChange(idx, value)}
-						/>
-						{advVisible.includes(idx) && (
-							<div className="">
-								<CodeEditor
-									language="nginx"
-									placeholder={intl.formatMessage({ id: "nginx-config.placeholder" })}
-									padding={15}
-									data-color-mode="dark"
-									minHeight={170}
-									indentWidth={2}
-									value={item.advancedConfig}
-									onChange={(e) => handleChange(idx, "advancedConfig", e.target.value)}
-									style={{
-										fontFamily:
-											"ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-										borderRadius: "0.3rem",
-										minHeight: "170px",
-									}}
-								/>
-							</div>
-						)}
-						<div className="mt-1">
-							<a
-								href="#"
-								onClick={(e) => {
-									e.preventDefault();
-									handleRemove(idx);
-								}}
-							>
-								<T id="action.delete" />
-							</a>
-						</div>
-					</div>
-				</div>
-			))}
-			<div>
-				<button type="button" className="btn btn-sm" onClick={handleAdd}>
-					<T id="action.add-location" />
-				</button>
-			</div>
+					);
+				})
+			)}
 		</>
 	);
 }
