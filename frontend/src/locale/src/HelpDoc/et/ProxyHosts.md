@@ -1,7 +1,7 @@
 ## Mis on puhverserver?
 
-Puhverserver on veebiteenuse sissetuleva andmevoo lõpp-punkt, mida soovite edastada.
+Puhverserver on veebiteenuse sisend, mille suunad edasi oma tegelikule teenusele.
 
-See pakub valikulist SSL-i lõpetamist teie teenusele, millel ei pruugi olla sisseehitatud SSL-tuge.
+Soovi korral lõpetab see SSL-i sinu eest — isegi kui teenusel endal SSL-tuge pole.
 
-Puhverserverid on Nginxi puhverserveri halduri kõige levinum kasutusala.
+Puhverserverid on Nginx Proxy Manageri kõige tavalisem kasutus.

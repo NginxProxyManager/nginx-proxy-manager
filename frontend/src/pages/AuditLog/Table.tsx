@@ -16,7 +16,8 @@ export default function Table({ data, isFetching, onSelectItem }: Props) {
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.user, {
-				id: "user.avatar",
+				id: "owner",
+				enableSorting: false,
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
@@ -28,6 +29,7 @@ export default function Table({ data, isFetching, onSelectItem }: Props) {
 			columnHelper.accessor((row: any) => row, {
 				id: "objectType",
 				header: intl.formatMessage({ id: "column.event" }),
+				enableSorting: false,
 				cell: (info: any) => {
 					return <EventFormatter row={info.getValue()} />;
 				},
