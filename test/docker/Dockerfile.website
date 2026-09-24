@@ -1,0 +1,6 @@
+FROM nginx:stable
+
+RUN rm -rf /etc/nginx/conf.d
+COPY nginx /etc/nginx
+COPY www /www
+RUN chown -R nginx:nginx /www

@@ -71,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Inherit from Proxy Host"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Uses the proxy host's access list"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Pass Auth to Upstream"
 	},
@@ -101,6 +107,9 @@
 	"action.allow": {
 		"defaultMessage": "Allow"
 	},
+	"action.clear": {
+		"defaultMessage": "Clear"
+	},
 	"action.close": {
 		"defaultMessage": "Close"
 	},
@@ -121,6 +130,9 @@
 	},
 	"action.enable": {
 		"defaultMessage": "Enable"
+	},
+	"action.logs": {
+		"defaultMessage": "Logs"
 	},
 	"action.permissions": {
 		"defaultMessage": "Permissions"
@@ -265,6 +277,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "Email"
+	},
+	"column.error": {
+		"defaultMessage": "Error"
 	},
 	"column.event": {
 		"defaultMessage": "Event"
@@ -461,6 +476,12 @@
 	"loading": {
 		"defaultMessage": "Loading…"
 	},
+	"location.advanced-config": {
+		"defaultMessage": "Has custom Nginx configuration"
+	},
+	"location.filter": {
+		"defaultMessage": "Filter by path or destination"
+	},
 	"login.2fa-code": {
 		"defaultMessage": "Verification Code"
 	},
@@ -484,6 +505,51 @@
 	},
 	"login.title": {
 		"defaultMessage": "Login to your account"
+	},
+	"logs": {
+		"defaultMessage": "Logs"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Access"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Error"
+	},
+	"logs.download": {
+		"defaultMessage": "Download"
+	},
+	"logs.empty": {
+		"defaultMessage": "No log entries yet."
+	},
+	"logs.level": {
+		"defaultMessage": "Level"
+	},
+	"logs.level.all": {
+		"defaultMessage": "All Levels"
+	},
+	"logs.lines": {
+		"defaultMessage": "Lines"
+	},
+	"logs.live": {
+		"defaultMessage": "Live"
+	},
+	"logs.paused": {
+		"defaultMessage": "Paused"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Refresh"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Search log…"
+	},
+	"logs.source": {
+		"defaultMessage": "Source"
+	},
+	"logs.source.system": {
+		"defaultMessage": "System"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Only the most recent portion of this file is shown."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Custom Nginx Configuration"
