@@ -83,29 +83,3 @@ func (d *db) GetGormConnectURL() string {
 	}
 	return ""
 }
-
-// GetDBMateConnectURL is used by Dbmate
-func (d *db) GetDBMateConnectURL() string {
-	switch d.GetDriver() {
-	case DatabaseSqlite:
-		return fmt.Sprintf("sqlite:%s/nginxproxymanager.db", Configuration.DataFolder)
-	case DatabasePostgres:
-		return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
-			d.Username,
-			d.Password,
-			d.Host,
-			d.Port,
-			d.Name,
-			d.SSLMode,
-		)
-	case DatabaseMysql:
-		return fmt.Sprintf("mysql://%s:%s@%s:%d/%s",
-			d.Username,
-			d.Password,
-			d.Host,
-			d.Port,
-			d.Name,
-		)
-	}
-	return ""
-}

@@ -15,6 +15,7 @@ import (
 	"npm/internal/jobqueue"
 	"npm/internal/jwt"
 	"npm/internal/logger"
+	"npm/internal/migrations"
 
 	// properly respect available cpu cores
 	_ "go.uber.org/automaxprocs"
@@ -29,7 +30,7 @@ func main() {
 	config.CreateDataFolders()
 	logger.Info("Build Version: %s (%s)", version, commit)
 
-	database.Migrate(func() {
+	migrations.Migrate(func() {
 		if err := jwt.LoadKeys(); err != nil {
 			logger.Error("KeysError", err)
 			os.Exit(1)

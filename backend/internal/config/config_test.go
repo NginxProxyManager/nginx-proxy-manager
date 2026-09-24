@@ -53,8 +53,7 @@ func TestConnectURLs(t *testing.T) {
 	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	type want struct {
-		gorm   string
-		dbmate string
+		gorm string
 	}
 
 	tests := []struct {
@@ -69,8 +68,7 @@ func TestConnectURLs(t *testing.T) {
 				"NPM_DATA_FOLDER=/path/to/data",
 			},
 			want: want{
-				gorm:   "/path/to/data/nginxproxymanager.db",
-				dbmate: "sqlite:/path/to/data/nginxproxymanager.db",
+				gorm: "/path/to/data/nginxproxymanager.db",
 			},
 		},
 		{
@@ -85,8 +83,7 @@ func TestConnectURLs(t *testing.T) {
 				"NPM_DB_NAME=npm",
 			},
 			want: want{
-				gorm:   "host=2.2.2.2 user=postgresuser password=pgpass dbname=npm port=9824 sslmode=strict TimeZone=UTC",
-				dbmate: "postgres://postgresuser:pgpass@2.2.2.2:9824/npm?sslmode=strict",
+				gorm: "host=2.2.2.2 user=postgresuser password=pgpass dbname=npm port=9824 sslmode=strict TimeZone=UTC",
 			},
 		},
 		{
@@ -100,8 +97,7 @@ func TestConnectURLs(t *testing.T) {
 				"NPM_DB_NAME=npm",
 			},
 			want: want{
-				gorm:   "mysqluser:mypass@tcp(3.3.3.3:3307)/npm?charset=utf8mb4&parseTime=True&loc=Local",
-				dbmate: "mysql://mysqluser:mypass@3.3.3.3:3307/npm",
+				gorm: "mysqluser:mypass@tcp(3.3.3.3:3307)/npm?charset=utf8mb4&parseTime=True&loc=Local",
 			},
 		},
 	}
@@ -119,7 +115,6 @@ func TestConnectURLs(t *testing.T) {
 			}
 			Init(&version, &commit)
 			assert.Equal(t, tt.want.gorm, Configuration.DB.GetGormConnectURL())
-			assert.Equal(t, tt.want.dbmate, Configuration.DB.GetDBMateConnectURL())
 		})
 	}
 }
