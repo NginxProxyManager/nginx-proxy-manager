@@ -25,7 +25,7 @@ RUN curl -sL 'https://taskfile.dev/install.sh' | sh
 COPY rootfs /
 
 COPY scripts/install-s6 /tmp/install-s6
-RUN rm -f /etc/nginx/conf.d/production.conf \
+RUN rm -f /etc/nginx/conf.d/production.conf.template \
 	&& chmod 644 /etc/logrotate.d/nginx-proxy-manager \
 	&& /tmp/install-s6 "${TARGETPLATFORM}" \
 	&& rm -f /tmp/install-s6 \

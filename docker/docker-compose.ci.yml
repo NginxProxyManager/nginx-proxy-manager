@@ -38,6 +38,16 @@ services:
           - website2.example.com
           - website3.example.com
 
+  examplesite:
+    image: "${IMAGE}-examplesite:ci-${BUILD_NUMBER}"
+    build:
+      context: ../test/docker
+      dockerfile: Dockerfile.website
+    expose:
+      - "80/tcp"
+    networks:
+      - fulltest
+
   stepca:
     image: nginxproxymanager/testca
     volumes:
@@ -105,6 +115,7 @@ services:
     environment:
       HTTP_PROXY: "squid:3128"
       HTTPS_PROXY: "squid:3128"
+      NPM_ADMIN_PORT: 81
     volumes:
       - "cypress_logs:/test/results"
       - "./dev/resolv.conf:/etc/resolv.conf:ro"

@@ -1,7 +1,7 @@
 # Admin Interface
 server {
-	listen 81 default;
-	listen [::]:81 default;
+	listen {{NPM_ADMIN_PORT}} default;
+	listen [::]:{{NPM_ADMIN_PORT}} default;
 
 	server_name nginxproxymanager;
 	root /app/frontend;
