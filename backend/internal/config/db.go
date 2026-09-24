@@ -3,6 +3,10 @@ package config
 import (
 	"fmt"
 	"strings"
+
+	"npm/internal/errors"
+
+	"github.com/rotisserie/eris"
 )
 
 const (
@@ -24,6 +28,34 @@ type db struct {
 // GetDriver returns the lowercase driver name
 func (d *db) GetDriver() string {
 	return strings.ToLower(d.Driver)
+}
+
+// IsValid is a basic check for config. Sqlite has no host/port/credentials
+// to validate; postgres and mysql require them to form a usable DSN.
+func (d *db) IsValid() (bool, error) {
+	var errs []error
+
+	switch d.GetDriver() {
+	case DatabaseSqlite:
+		// no connection fields required
+	case DatabasePostgres, DatabaseMysql:
+		if d.Name == "" {
+			errs = append(errs, eris.New("database name is empty"))
+		}
+		if d.Host == "" {
+			errs = append(errs, eris.New("database host is empty"))
+		}
+		if d.Port <= 0 {
+			errs = append(errs, eris.New("database port is invalid"))
+		}
+		if d.Username == "" {
+			errs = append(errs, eris.New("database username is empty"))
+		}
+	default:
+		errs = append(errs, eris.Errorf("database driver %s is not supported. Valid options are: %s, %s or %s", d.Driver, DatabaseSqlite, DatabasePostgres, DatabaseMysql))
+	}
+
+	return len(errs) == 0, errors.Join(errs...)
 }
 
 // GetGormConnectURL is used by Gorm

@@ -75,6 +75,7 @@ pipeline {
 						sh '''docker build --pull --no-cache \\
 							-t "${IMAGE}:${BRANCH_LOWER}-ci-${BUILD_NUMBER}" \\
 							-f docker/Dockerfile \\
+							--progress=plain \\
 							--build-arg BUILD_COMMIT="${BUILD_COMMIT}" \\
 							--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \\
 							--build-arg BUILD_VERSION="${BUILD_VERSION}" \\

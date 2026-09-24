@@ -41,3 +41,27 @@ func TestBodyContext(t *testing.T) {
 	status := rr.Code
 	assert.Equal(t, http.StatusOK, status)
 }
+
+func TestBodyContextRejectsOversizedBody(t *testing.T) {
+	// goleak is used to detect goroutine leaks
+	defer goleak.VerifyNone(t, goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
+
+	// One byte over BodyContext's own maxRequestBodyBytes (1 MiB) cap
+	oversized := (1 << 20) + 1
+	body := bytes.Repeat([]byte("a"), oversized)
+	req, err := http.NewRequest("POST", "/test", bytes.NewBuffer(body))
+	assert.Nil(t, err)
+
+	rr := httptest.NewRecorder()
+
+	called := false
+	handler := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {
+		called = true
+	})
+
+	mw := middleware.BodyContext()(handler)
+	mw.ServeHTTP(rr, req)
+
+	assert.False(t, called, "the wrapped handler must not run once the body is rejected as too large")
+	assert.Equal(t, http.StatusRequestEntityTooLarge, rr.Code)
+}

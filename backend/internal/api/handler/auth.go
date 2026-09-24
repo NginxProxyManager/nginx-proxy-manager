@@ -201,9 +201,23 @@ func newTokenLDAP(w http.ResponseWriter, r *http.Request, payload tokenPayload) 
 // Route: POST /auth/refresh
 func RefreshToken() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO: Use your own methods to verify an existing user is
-		// able to refresh their token and then give them a new one
-		userObj, _ := user.GetByEmail("jc@jc21.com")
+		userID, ok := r.Context().Value(c.UserIDCtxKey).(uint)
+		if !ok {
+			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
+			return
+		}
+
+		userObj, userErr := user.GetByID(userID)
+		if userErr != nil {
+			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
+			return
+		}
+
+		if userObj.IsDisabled {
+			h.ResultErrorJSON(w, r, http.StatusUnauthorized, errors.ErrUserDisabled.Error(), nil)
+			return
+		}
+
 		if response, err := njwt.Generate(&userObj, false); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusInternalServerError, err.Error(), nil)
 		} else {

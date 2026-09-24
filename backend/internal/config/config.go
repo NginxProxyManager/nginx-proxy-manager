@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	golog "log"
+	"strings"
 
 	"npm/internal/logger"
 
@@ -38,7 +39,7 @@ func initLogger() error {
 	// this removes timestamp prefixes from logs
 	golog.SetFlags(0)
 
-	switch Configuration.Log.Level {
+	switch strings.ToLower(Configuration.Log.Level) {
 	case "debug":
 		logLevel = logger.DebugLevel
 	case "warn":

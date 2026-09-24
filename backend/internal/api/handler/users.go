@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"slices"
 	"time"
 
 	c "npm/internal/api/context"
@@ -85,6 +86,8 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 		case nil:
 			// nolint: errcheck,gosec
 			userObject.Expand([]string{"capabilities"})
+			hadFullAdmin := slices.Contains(userObject.Capabilities, user.CapabilityFullAdmin)
+
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 			err := json.Unmarshal(bodyBytes, &userObject)
 			if err != nil {
@@ -94,6 +97,16 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 
 			if userObject.IsDisabled && self {
 				h.ResultErrorJSON(w, r, http.StatusBadRequest, "You cannot disable yourself!", nil)
+				return
+			}
+
+			// Only reachable via the admin (UpdateUserAdmin-schema'd) route,
+			// since the self-service schema never allows "capabilities" in
+			// the payload at all - but an admin can still target their own
+			// numeric id, so guard it explicitly rather than relying on
+			// that alone.
+			if self && hadFullAdmin && !slices.Contains(userObject.Capabilities, user.CapabilityFullAdmin) {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, "You cannot remove your own full-admin capability!", nil)
 				return
 			}
 

@@ -28,10 +28,7 @@ func NotFound() func(http.ResponseWriter, *http.Request) {
 		defaultFile := "index.html"
 		path := strings.TrimLeft(r.URL.Path, "/")
 
-		isAPI := false
-		if len(path) >= 3 && path[0:3] == "api" {
-			isAPI = true
-		}
+		isAPI := len(path) >= 4 && path[0:4] == "api/"
 
 		if path == "" {
 			path = defaultFile

@@ -142,7 +142,12 @@ func (l *Logger) logLevel(logLevel Level, format string, args ...any) {
 	errorClass := ""
 	if logLevel == ErrorLevel {
 		// First arg is the errorClass
-		errorClass = args[0].(string)
+		if value, ok := args[0].(string); ok {
+			errorClass = value
+		} else {
+			errorClass = ""
+		}
+
 		if len(args) > 1 {
 			args = args[1:]
 		} else {

@@ -12,6 +12,11 @@ import (
 
 const defaultLimit = 10
 
+// maxLimit caps ?limit= on every paginated list endpoint - without a cap, a
+// client could ask for an arbitrarily large page and force the server to
+// pull an unbounded result set in one query.
+const maxLimit = 500
+
 func getPageInfoFromRequest(r *http.Request) (model.PageInfo, error) {
 	pageInfo := model.PageInfo{}
 	var err error
@@ -98,6 +103,9 @@ func getPagination(r *http.Request) (int, int, error) {
 	limit, err := getQueryVarInt(r, "limit", false, defaultLimit)
 	if err != nil {
 		return 0, 0, err
+	}
+	if limit > maxLimit {
+		limit = maxLimit
 	}
 
 	return offset, limit, nil

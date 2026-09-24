@@ -48,9 +48,15 @@ func Enforce(permissions ...string) func(http.Handler) http.Handler {
 					return
 				}
 
-				userID := uint(claims["uid"].(float64))
+				uidClaim, ok := claims["uid"].(float64)
+				if token == nil || !ok {
+					h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
+					return
+				}
+
+				userID := uint(uidClaim)
 				_, enabled, _ := user.IsEnabled(userID)
-				if token == nil || !enabled {
+				if !enabled {
 					h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 					return
 				}

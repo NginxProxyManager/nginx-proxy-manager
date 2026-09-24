@@ -39,10 +39,20 @@ func NewRouter() http.Handler {
 
 	r := chi.NewRouter()
 	r.Use(
+		// corss.Handler is the one and only place that decides
+		// Access-Control-Allow-Origin - it must run before
+		// middleware.Cors/Options so it can fully answer (and stop the
+		// chain for) a real CORS preflight using the configured allowlist;
+		// those two previously ran first and Options independently
+		// hardcoded a wildcard, which shadowed this properly-configured
+		// library entirely for every preflight request. middleware.Cors/
+		// Options still run afterward for their own, non-CORS purpose
+		// (reporting a matched route's allowed methods, and answering a
+		// bare OPTIONS probe that isn't a browser CORS preflight at all).
 		middleware.AccessControl,
+		corss.Handler,
 		middleware.Cors(r),
 		middleware.Options(r),
-		corss.Handler,
 		chiMiddleware.RealIP,
 		chiMiddleware.Recoverer,
 		chiMiddleware.Throttle(5),

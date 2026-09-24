@@ -20,6 +20,11 @@ var dbInstance *gorm.DB
 
 // NewDB creates a new connection
 func NewDB() {
+	if ok, err := config.Configuration.DB.IsValid(); !ok {
+		logger.Error("DatabaseError", eris.Wrap(err, "database configuration is invalid, check for missing environment variables"))
+		return
+	}
+
 	logger.Info("Creating new DB instance using %s", strings.ToLower(config.Configuration.DB.Driver))
 	db, err := connect()
 	if err != nil {

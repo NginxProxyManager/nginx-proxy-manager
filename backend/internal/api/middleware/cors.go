@@ -71,7 +71,6 @@ func Options(routes chi.Router) func(http.Handler) http.Handler {
 				return
 			}
 			if r.Method == http.MethodOptions {
-				w.Header().Set("Access-Control-Allow-Origin", "*")
 				w.Header().Set("Content-Type", "application/json")
 				fmt.Fprint(w, "{}")
 				return

@@ -6,7 +6,7 @@ import (
 	"npm/internal/entity/user"
 	"npm/internal/logger"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/rotisserie/eris"
 )
 
@@ -14,7 +14,7 @@ import (
 type UserJWTClaims struct {
 	UserID uint     `json:"uid"`
 	Roles  []string `json:"roles"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 // GeneratedResponse is the response of a generated token, usually used in http response
@@ -39,9 +39,9 @@ func Generate(userObj *user.Model, forSSE bool) (GeneratedResponse, error) {
 	claims := UserJWTClaims{
 		userObj.ID,
 		[]string{"user"},
-		jwt.StandardClaims{
-			IssuedAt:  time.Now().Unix(),
-			ExpiresAt: expires.Unix(),
+		jwt.RegisteredClaims{
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(expires),
 			Issuer:    issuer,
 		},
 	}
@@ -49,8 +49,7 @@ func Generate(userObj *user.Model, forSSE bool) (GeneratedResponse, error) {
 	// Create a new token object, specifying signing method and the claims
 	// you would like it to contain.
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
-	var err error
-	token.Signature, err = token.SignedString(key)
+	signed, err := token.SignedString(key)
 	if err != nil {
 		logger.Error("JWTError", eris.Wrapf(err, "Error signing token: %v", err))
 		return response, err
@@ -58,7 +57,7 @@ func Generate(userObj *user.Model, forSSE bool) (GeneratedResponse, error) {
 
 	response = GeneratedResponse{
 		Expires: expires.Unix(),
-		Token:   token.Signature,
+		Token:   signed,
 	}
 
 	return response, nil

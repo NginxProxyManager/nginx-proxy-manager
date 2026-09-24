@@ -58,7 +58,10 @@ func TestOptions(t *testing.T) {
 	rr := httptest.NewRecorder()
 	r.ServeHTTP(rr, req)
 
-	assert.Equal(t, "*", rr.Header().Get("Access-Control-Allow-Origin"))
+	// Access-Control-Allow-Origin is deliberately not set here any more -
+	// that's corss.Handler's job alone now (see router.go/cors.go's own
+	// doc comments) - Options() only answers the request body/content-type.
+	assert.Equal(t, "", rr.Header().Get("Access-Control-Allow-Origin"))
 	assert.Equal(t, "application/json", rr.Header().Get("Content-Type"))
 	assert.Equal(t, "{}", rr.Body.String())
 }
