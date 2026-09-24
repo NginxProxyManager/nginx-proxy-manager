@@ -29,6 +29,7 @@ export interface User {
 	avatar: string;
 	roles: string[];
 	permissions?: UserPermissions;
+	hasPassword?: boolean;
 }
 
 export interface AuditLog {

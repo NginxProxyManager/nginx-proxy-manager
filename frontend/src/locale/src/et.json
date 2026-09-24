@@ -497,6 +497,12 @@
 	"login.2fa-verify": {
 		"defaultMessage": "Kinnita"
 	},
+	"login.or": {
+		"defaultMessage": "või"
+	},
+	"login.passkey-sign-in": {
+		"defaultMessage": "Logi sisse pääsuvõtmega"
+	},
 	"login.title": {
 		"defaultMessage": "Logi kontole sisse"
 	},
@@ -629,6 +635,39 @@
 	"options": {
 		"defaultMessage": "Valikud"
 	},
+	"passkey.backed-up": {
+		"defaultMessage": "Varundatud"
+	},
+	"passkey.delete": {
+		"defaultMessage": "Kustuta"
+	},
+	"passkey.delete-confirm": {
+		"defaultMessage": "Kas oled kindel, et tahad selle pääsuvõtme kustutada? Sa ei saa seda enam sisselogimiseks kasutada."
+	},
+	"passkey.device-type.multi": {
+		"defaultMessage": "Mitu seadet"
+	},
+	"passkey.device-type.single": {
+		"defaultMessage": "Üks seade"
+	},
+	"passkey.friendly-name": {
+		"defaultMessage": "Pääsuvõtme nimi"
+	},
+	"passkey.no-passkeys": {
+		"defaultMessage": "Ühtegi pääsuvõtit pole registreeritud"
+	},
+	"passkey.no-passkeys-description": {
+		"defaultMessage": "Registreeri pääsuvõti, et saaksid ilma paroolita sisse logida."
+	},
+	"passkey.register": {
+		"defaultMessage": "Registreeri uus pääsuvõti"
+	},
+	"passkey.rename": {
+		"defaultMessage": "Nimeta ümber"
+	},
+	"passkey.title": {
+		"defaultMessage": "Pääsuvõtmed"
+	},
 	"password": {
 		"defaultMessage": "Parool"
 	},
@@ -746,6 +785,18 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Ümbersuunamine"
 	},
+	"setup.choose-auth-method": {
+		"defaultMessage": "Vali, kuidas oma kontot kaitsta."
+	},
+	"setup.create-with-passkey": {
+		"defaultMessage": "Seadista pääsuvõtmega"
+	},
+	"setup.create-with-password": {
+		"defaultMessage": "Seadista parooliga"
+	},
+	"setup.next": {
+		"defaultMessage": "Edasi"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Alustuseks loo endale administraatori konto."
 	},
@@ -817,6 +868,12 @@
 	},
 	"user.nickname": {
 		"defaultMessage": "Hüüdnimi"
+	},
+	"user.passkeys": {
+		"defaultMessage": "Pääsuvõtmed"
+	},
+	"user.remove-password": {
+		"defaultMessage": "Eemalda parool"
 	},
 	"user.set-password": {
 		"defaultMessage": "Määra parool"

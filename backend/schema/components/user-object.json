@@ -55,6 +55,11 @@
 				"type": "string"
 			}
 		},
+		"has_password": {
+			"type": "boolean",
+			"description": "Whether the user has a password set (only included for own user or admin requests)",
+			"example": true
+		},
 		"permissions": {
 			"type": "object",
 			"description": "Permissions if expanded in request",
@@ -111,6 +116,16 @@
 					"pattern": "^(manage|view|hidden)$"
 				}
 			}
+		},
+		"token": {
+			"type": "string",
+			"description": "JWT Token, only present when user is created during initial setup",
+			"example": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+		},
+		"expires": {
+			"type": "string",
+			"description": "Token Expiry Timestamp, only present when user is created during initial setup",
+			"example": "2025-02-04T20:40:46.340Z"
 		}
 	}
 }
