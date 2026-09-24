@@ -45,7 +45,8 @@ describe('Streams', () => {
 				certificate_id: 0,
 				meta: {},
 				tcp_forwarding: true,
-				udp_forwarding: false
+				udp_forwarding: false,
+				enable_proxy_protocol: false
 			}
 		}).then((data) => {
 			cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
@@ -54,6 +55,7 @@ describe('Streams', () => {
 			expect(data).to.have.property('enabled', true);
 			expect(data).to.have.property('tcp_forwarding', true);
 			expect(data).to.have.property('udp_forwarding', false);
+			expect(data).to.have.property('enable_proxy_protocol', false);
 
 			cy.exec('curl --noproxy -- http://website1.example.com:1500').then((result) => {
 				expect(result.exitCode).to.eq(0);
@@ -73,7 +75,8 @@ describe('Streams', () => {
 				certificate_id: 0,
 				meta: {},
 				tcp_forwarding: false,
-				udp_forwarding: true
+				udp_forwarding: true,
+				enable_proxy_protocol: false
 			}
 		}).then((data) => {
 			cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
@@ -82,6 +85,7 @@ describe('Streams', () => {
 			expect(data).to.have.property('enabled', true);
 			expect(data).to.have.property('tcp_forwarding', false);
 			expect(data).to.have.property('udp_forwarding', true);
+			expect(data).to.have.property('enable_proxy_protocol', false);
 		});
 	});
 
@@ -96,7 +100,8 @@ describe('Streams', () => {
 				certificate_id: 0,
 				meta: {},
 				tcp_forwarding: true,
-				udp_forwarding: true
+				udp_forwarding: true,
+				enable_proxy_protocol: false
 			}
 		}).then((data) => {
 			cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
@@ -105,11 +110,37 @@ describe('Streams', () => {
 			expect(data).to.have.property('enabled', true);
 			expect(data).to.have.property('tcp_forwarding', true);
 			expect(data).to.have.property('udp_forwarding', true);
+			expect(data).to.have.property('enable_proxy_protocol', false);
 
 			cy.exec('curl --noproxy -- http://website1.example.com:1502').then((result) => {
 				expect(result.exitCode).to.eq(0);
 				expect(result.stdout).to.contain('yay it works');
 			});
+		});
+	});
+
+	it('Should be able to enable PROXY protocol on a Stream', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/streams',
+			data:  {
+				incoming_port: 1502,
+				forwarding_host: '127.0.0.1',
+				forwarding_port: 80,
+				certificate_id: 0,
+				meta: {},
+				tcp_forwarding: true,
+				udp_forwarding: true,
+				enable_proxy_protocol: true
+			}
+		}).then((data) => {
+			cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
+			expect(data).to.have.property('id');
+			expect(data.id).to.be.greaterThan(0);
+			expect(data).to.have.property('enabled', true);
+			expect(data).to.have.property('tcp_forwarding', true);
+			expect(data).to.have.property('udp_forwarding', true);
+			expect(data).to.have.property('enable_proxy_protocol', true);
 		});
 	});
 
@@ -153,7 +184,8 @@ describe('Streams', () => {
 						certificate_id: certID,
 						meta: {},
 						tcp_forwarding: true,
-						udp_forwarding: false
+						udp_forwarding: false,
+						enable_proxy_protocol: false
 					}
 				}).then((data) => {
 					cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
@@ -163,6 +195,7 @@ describe('Streams', () => {
 					expect(data).to.have.property('tcp_forwarding', true);
 					expect(data).to.have.property('udp_forwarding', false);
 					expect(data).to.have.property('certificate_id', certID);
+					expect(data).to.have.property('enable_proxy_protocol', false);
 
 					// Check the ssl termination
 					cy.task('log', '[testssl.sh] Running ...');
