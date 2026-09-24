@@ -1,0 +1,25 @@
+{
+  "domains": [
+    {
+      "hostname": "yourdomain.duckdns.org",
+      "description": "Replace with your actual domain"
+    },
+    {
+      "hostname": "anotherdomain.example.com",
+      "description": "You can monitor multiple domains"
+    }
+  ],
+  "check_interval": 300,
+  "backup_configs": true,
+  "restart_nginx": true,
+  "nginx_container_name": "nginx-proxy",
+  "settings": {
+    "log_level": "INFO",
+    "max_backups": 10,
+    "notification": {
+      "enabled": false,
+      "webhook_url": "",
+      "email": ""
+    }
+  }
+}
