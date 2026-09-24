@@ -275,6 +275,8 @@ const internalNginx = {
 
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
+			host.http_port = internalNginx.getHttpPort();
+			host.https_port = internalNginx.getHttpsPort();
 
 			locationsPromise.then(() => {
 				renderEngine
@@ -323,6 +325,7 @@ const internalNginx = {
 			}
 
 			certificate.ipv6 = internalNginx.ipv6Enabled();
+			certificate.http_port = internalNginx.getHttpPort();
 
 			renderEngine
 				.parseAndRender(template, certificate)
@@ -469,6 +472,27 @@ const internalNginx = {
 		}
 
 		return true;
+	},
+
+	/**
+	 * @returns {number}
+	 */
+	getHttpPort: () => {
+		return Number.parseInt(process.env.HTTP_PORT, 10) || 80;
+	},
+
+	/**
+	 * @returns {number}
+	 */
+	getHttpsPort: () => {
+		return Number.parseInt(process.env.HTTPS_PORT, 10) || 443;
+	},
+
+	/**
+	 * @returns {number}
+	 */
+	getWebUiPort: () => {
+		return Number.parseInt(process.env.WEB_UI_PORT, 10) || 81;
 	},
 };
 
