@@ -23,6 +23,12 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "无需基本认证"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 或 192.168.1.0/24 或 2001:0db8::/32"
+	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "例如：“家庭”或“办公室”"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "满足任意条件"
 	},

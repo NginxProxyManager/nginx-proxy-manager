@@ -23,6 +23,12 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "Nie wymaga uwierzytelnienia podstawowego"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 lub 192.168.1.0/24 lub 2001:0db8::/32"
+	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "Np. „Dom” lub „Biuro”"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Spełnij dowolny warunek"
 	},

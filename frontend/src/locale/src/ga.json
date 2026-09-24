@@ -26,6 +26,9 @@
 	"access-list.rule-source.placeholder": {
 		"defaultMessage": "192.168.1.100 nó 192.168.1.0/24 nó 2001:0db8::/32"
 	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "M.sh. \"Baile\" nó \"Oifig\""
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Sásaigh Aon"
 	},
