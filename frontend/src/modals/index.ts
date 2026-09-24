@@ -8,6 +8,7 @@ export * from "./DeleteConfirmModal";
 export * from "./DNSCertificateModal";
 export * from "./EventDetailsModal";
 export * from "./HelpModal";
+export * from "./HostLogsModal";
 export * from "./HTTPCertificateModal";
 export * from "./PermissionsModal";
 export * from "./ProxyHostModal";

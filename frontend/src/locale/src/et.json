@@ -80,6 +80,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Luba ja keela reeglid rakenduvad selles järjekorras, milles need on kirjas."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Päri puhverserverilt"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Kasutab puhverserveri juurdepääsuloendit"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Edasta autentimine sihtserverile"
 	},
@@ -142,6 +148,9 @@
 	},
 	"action.enable": {
 		"defaultMessage": "Lülita sisse"
+	},
+	"action.logs": {
+		"defaultMessage": "Logid"
 	},
 	"action.permissions": {
 		"defaultMessage": "Õigused"
@@ -614,6 +623,9 @@
 	"column.email": {
 		"defaultMessage": "E-post"
 	},
+	"column.error": {
+		"defaultMessage": "Viga"
+	},
 	"column.event": {
 		"defaultMessage": "Sündmus"
 	},
@@ -862,6 +874,51 @@
 	},
 	"login.username-or-email": {
 		"defaultMessage": "Kasutajanimi või e-posti aadress"
+	},
+	"logs": {
+		"defaultMessage": "Logid"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Juurdepääs"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Viga"
+	},
+	"logs.download": {
+		"defaultMessage": "Laadi alla"
+	},
+	"logs.empty": {
+		"defaultMessage": "Logikirjeid pole veel."
+	},
+	"logs.level": {
+		"defaultMessage": "Tase"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Kõik tasemed"
+	},
+	"logs.lines": {
+		"defaultMessage": "Read"
+	},
+	"logs.live": {
+		"defaultMessage": "Reaalajas"
+	},
+	"logs.paused": {
+		"defaultMessage": "Peatatud"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Värskenda"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Otsi logist…"
+	},
+	"logs.source": {
+		"defaultMessage": "Allikas"
+	},
+	"logs.source.system": {
+		"defaultMessage": "Süsteem"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Kuvatakse ainult faili kõige uuem osa."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Kohandatud Nginx seadistus"

@@ -33,6 +33,10 @@
 			"description": "Endpoints related to Audit Logs"
 		},
 		{
+			"name": "logs",
+			"description": "Endpoints for viewing system, Let's Encrypt and per-host logs"
+		},
+		{
 			"name": "access-lists",
 			"description": "Endpoints related to Access Lists"
 		},
@@ -170,6 +174,16 @@
 		"/auth-providers/{providerID}/test-credentials": {
 			"post": {
 				"$ref": "./paths/auth-providers/providerID/test-credentials/post.json"
+			}
+		},
+		"/logs/sources": {
+			"get": {
+				"$ref": "./paths/logs/sources/get.json"
+			}
+		},
+		"/logs/tail": {
+			"get": {
+				"$ref": "./paths/logs/tail/get.json"
 			}
 		},
 		"/nginx/access-lists": {

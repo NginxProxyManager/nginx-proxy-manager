@@ -37,6 +37,10 @@ class AccessList extends Model {
 		// prototype getter would not.
 		thisJson.provider_auth = Array.isArray(thisJson.auth_provider_ids) && thisJson.auth_provider_ids.length > 0;
 
+		// Postgres returns COUNT() as a string
+		if (typeof thisJson.proxy_host_count === "string") {
+			thisJson.proxy_host_count = Number.parseInt(thisJson.proxy_host_count, 10);
+		}
 		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 

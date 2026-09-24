@@ -3,7 +3,9 @@ import batchflow from "batchflow";
 import _ from "lodash";
 import { invalidate as invalidateAccessCache, verify } from "../lib/auth/access-verify.js";
 import errs from "../lib/error.js";
+import { isMysql, isPostgres } from "../lib/config.js";
 import utils from "../lib/utils.js";
+import db from "../db.js";
 import { access as logger } from "../logger.js";
 import accessListModel from "../models/access_list.js";
 import accessListAuthModel from "../models/access_list_auth.js";
@@ -15,6 +17,38 @@ import internalNginx from "./nginx.js";
 
 const omissions = () => {
 	return ["is_deleted"];
+};
+
+/**
+ * Find proxy hosts that reference an access list in their locations JSON.
+ *
+ * @param   {Integer}  accessListId
+ * @returns {Promise<Array>}
+ */
+const getProxyHostsUsingAccessListInLocations = async (accessListId) => {
+	let result;
+	if (isMysql()) {
+		const searchObj = JSON.stringify([{ access_list_id: accessListId }]);
+		result = await db().raw(
+			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND JSON_CONTAINS(locations, ?, ?)",
+			[searchObj, "$"],
+		);
+	} else if (isPostgres()) {
+		result = await db().raw(
+			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations::jsonb @> ?::jsonb",
+			[JSON.stringify([{ access_list_id: accessListId }])],
+		);
+	} else {
+		result = await db().raw(
+			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations LIKE ?",
+			[`%"access_list_id":${accessListId}%`],
+		);
+	}
+	// knex raw() returns [rows, metadata] for MySQL, { rows } for Postgres and rows for SQLite
+	if (!Array.isArray(result)) {
+		return result?.rows || [];
+	}
+	return (Array.isArray(result[0]) ? result[0] : result) || [];
 };
 
 const internalAccessList = {
@@ -196,6 +230,24 @@ const internalAccessList = {
 		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
 			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
 		}
+
+		// Also regenerate configs for proxy hosts that reference this access list in their locations
+		const locationHostRows = await getProxyHostsUsingAccessListInLocations(data.id);
+		if (locationHostRows?.length) {
+			const locationHostIds = locationHostRows.map((r) => r.id).filter((id) => {
+				// Exclude hosts already regenerated above
+				return !freshRow.proxy_hosts?.find((h) => h.id === id);
+			});
+			if (locationHostIds.length) {
+				const locationHosts = await proxyHostModel.query()
+					.where("is_deleted", 0)
+					.whereIn("id", locationHostIds)
+					.allowGraph(proxyHostModel.defaultAllowGraph)
+					.withGraphFetched("[owner, certificate, access_list.[clients,items]]");
+				await internalNginx.bulkGenerateConfigs("proxy_host", locationHosts);
+			}
+		}
+
 		await internalNginx.reload();
 		return internalAccessList.maskItems(freshRow);
 	},
@@ -277,17 +329,36 @@ const internalAccessList = {
 		});
 
 		// 2. update any proxy hosts that were using it (ignoring permissions)
-		if (row.proxy_hosts) {
+		const affectedHostIds = new Set((row.proxy_hosts || []).map((h) => h.id));
+		if (affectedHostIds.size) {
 			await proxyHostModel.query().where("access_list_id", "=", row.id).patch({ access_list_id: 0 });
+		}
 
-			// 3. reconfigure those hosts, then reload nginx
-			// set the access_list_id to zero for these items
-			row.proxy_hosts.map((_val, idx) => {
-				row.proxy_hosts[idx].access_list_id = 0;
-				return true;
-			});
+		// Also clear it from any proxy host locations using it, these will then inherit the host's access list
+		const locationHostRows = await getProxyHostsUsingAccessListInLocations(row.id);
+		for (const { id: hostId } of locationHostRows) {
+			const host = await proxyHostModel.query().where("id", hostId).first();
+			if (host?.locations?.some((loc) => loc.access_list_id === row.id)) {
+				const updatedLocations = host.locations.map((loc) => {
+					if (loc.access_list_id === row.id) {
+						return { ...loc, access_list_id: 0 };
+					}
+					return loc;
+				});
+				await proxyHostModel.query().where("id", hostId).patch({ locations: updatedLocations });
+				affectedHostIds.add(hostId);
+			}
+		}
 
-			await internalNginx.bulkGenerateConfigs("proxy_host", row.proxy_hosts);
+		// 3. reconfigure those hosts from fresh rows, then reload nginx
+		if (affectedHostIds.size) {
+			const affectedHosts = await proxyHostModel
+				.query()
+				.where("is_deleted", 0)
+				.whereIn("id", [...affectedHostIds])
+				.allowGraph(proxyHostModel.defaultAllowGraph)
+				.withGraphFetched("[owner, certificate, access_list.[clients,items]]");
+			await internalNginx.bulkGenerateConfigs("proxy_host", affectedHosts);
 		}
 
 		await internalNginx.reload();
