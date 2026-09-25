@@ -7,6 +7,7 @@ import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
 import accessListModel from "../models/access_list.js";
+import { prepareLocationForward } from "./upstream_host.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -187,11 +188,12 @@ const internalNginx = {
 						locationCopy.access_list = host.access_list;
 					}
 
-					if (locationCopy.forward_host.indexOf("/") > -1) {
-						const splitted = locationCopy.forward_host.split("/");
-
-						locationCopy.forward_host = splitted.shift();
-						locationCopy.forward_path = `/${splitted.join("/")}`;
+					// A slash in forward_host is a path suffix. An IPv6 literal must then
+					// be bracketed or "host:port" is an invalid upstream.
+					const forward = prepareLocationForward(locationCopy.forward_host);
+					locationCopy.forward_host = forward.forward_host;
+					if (forward.forward_path !== undefined) {
+						locationCopy.forward_path = forward.forward_path;
 					}
 
 					renderedLocations += await renderEngine.parseAndRender(template, locationCopy);
