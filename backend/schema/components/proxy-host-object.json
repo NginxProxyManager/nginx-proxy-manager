@@ -23,7 +23,9 @@
 		"locations",
 		"hsts_enabled",
 		"hsts_subdomains",
-		"trust_forwarded_proto"
+		"trust_forwarded_proto",
+		"lb_method",
+		"upstream_servers"
 	],
 	"properties": {
 		"id": {
@@ -150,6 +152,33 @@
 			"type": "boolean",
 			"description": "Trust the forwarded headers",
 			"example": false
+		},
+		"lb_method": {
+			"type": "string",
+			"enum": ["round_robin", "least_conn", "ip_hash"],
+			"default": "round_robin",
+			"example": "round_robin"
+		},
+		"forwarding_mode": {
+			"type": ["string", "null"],
+			"enum": ["direct", "upstream", null],
+			"description": "Default route destination. Null preserves legacy selection based on whether upstream servers exist.",
+			"example": "upstream"
+		},
+		"upstream_name": {
+			"type": ["string", "null"],
+			"maxLength": 128,
+			"pattern": "^(?:[A-Za-z_][A-Za-z0-9_-]*)?$",
+			"description": "Optional unique upstream name. Stored in lowercase. Empty or null uses npm-ID. The npm- prefix is reserved.",
+			"example": "my_backend"
+		},
+		"upstream_servers": {
+			"type": "array",
+			"minItems": 0,
+			"items": {
+				"$ref": "./upstream-server-object.json"
+			},
+			"example": []
 		},
 		"certificate": {
 			"oneOf": [

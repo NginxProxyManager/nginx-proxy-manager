@@ -38,6 +38,9 @@ class ProxyHost extends Model {
 		if (typeof this.meta === "undefined") {
 			this.meta = {};
 		}
+		if (typeof this.upstream_servers === "undefined") {
+			this.upstream_servers = [];
+		}
 
 		this.domain_names.sort();
 	}
@@ -53,6 +56,7 @@ class ProxyHost extends Model {
 
 	$parseDatabaseJson(json) {
 		const thisJson = super.$parseDatabaseJson(json);
+		thisJson.upstream_servers = thisJson.upstream_servers ?? [];
 		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
@@ -70,7 +74,7 @@ class ProxyHost extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["domain_names", "meta", "locations"];
+		return ["domain_names", "meta", "locations", "upstream_servers"];
 	}
 
 	static get defaultAllowGraph() {
