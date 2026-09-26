@@ -69,6 +69,9 @@ describe('Certificates endpoints', () => {
 				}).then((data) => {
 					cy.validateSwaggerSchema('get', 200, '/nginx/certificates', data);
 					expect(data.length).to.be.greaterThan(0);
+					const cert = data.find((c) => c.id === certID);
+					expect(cert.meta).to.have.property('certificate');
+					expect(cert.meta).to.not.have.property('certificate_key');
 
 					// Delete cert
 					cy.task('backendApiDelete', {
