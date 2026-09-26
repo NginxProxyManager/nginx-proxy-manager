@@ -22,6 +22,7 @@ const boolFields = [
 	"hsts_enabled",
 	"hsts_subdomains",
 	"trust_forwarded_proto",
+	"http3_support",
 ];
 
 class ProxyHost extends Model {
@@ -53,7 +54,13 @@ class ProxyHost extends Model {
 
 	$parseDatabaseJson(json) {
 		const thisJson = super.$parseDatabaseJson(json);
-		return convertIntFieldsToBool(thisJson, boolFields);
+		const result = convertIntFieldsToBool(thisJson, boolFields);
+		// Provide a safe default for http3_support when the column is absent
+		// (e.g. before the migration has run, or on pre-feature rows).
+		if (result && result.http3_support === undefined) {
+			result.http3_support = false;
+		}
+		return result;
 	}
 
 	$formatDatabaseJson(json) {
