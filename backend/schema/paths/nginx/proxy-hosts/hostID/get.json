@@ -1,7 +1,9 @@
 {
 	"operationId": "getProxyHost",
 	"summary": "Get a Proxy Host",
-	"tags": ["proxy-hosts"],
+	"tags": [
+		"proxy-hosts"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -20,6 +22,19 @@
 			},
 			"required": true,
 			"example": 1
+		},
+		{
+			"in": "query",
+			"name": "expand",
+			"description": "Expansions",
+			"schema": {
+				"type": "string",
+				"enum": [
+					"access_list",
+					"owner",
+					"certificate"
+				]
+			}
 		}
 	],
 	"responses": {
