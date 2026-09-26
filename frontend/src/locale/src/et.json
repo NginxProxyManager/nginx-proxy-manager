@@ -197,6 +197,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "See plugin tahab seadistusfaili, kus on teenusepakkuja API token või muud tunnused"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Uus tunnuste faili sisu (asendab olemasoleva)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Need andmed jäävad andmebaasi ja faili avatekstina!"
 	},
@@ -214,6 +217,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "See osa eeldab Certboti ja selle DNS-pluginate tundmist. Vaata vastava plugina juhendit."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "Muuda DNS-i seadeid"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Sellel domeenil on küll server, aga see ei tundu olevat Nginx Proxy Manager. Vaata, et domeen osutaks IP-le, kus NPM tegelikult töötab."

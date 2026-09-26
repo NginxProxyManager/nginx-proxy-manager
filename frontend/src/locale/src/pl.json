@@ -122,6 +122,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Ta wtyczka wymaga pliku konfiguracyjnego zawierającego token API lub inne poświadczenia dla twojego dostawcy"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Nowa zawartość pliku poświadczeń (zastępuje istniejącą)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Te dane zostaną zapisane jako zwykły tekst w bazie danych i pliku!"
 	},
@@ -136,6 +139,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Ta sekcja wymaga pewnej wiedzy na temat Certbot i jego wtyczek DNS. Zapoznaj się z dokumentacją odpowiednich wtyczek."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "Edytuj ustawienia DNS"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Znaleziono serwer pod tą domeną, ale nie wygląda na to, że jest to Nginx Proxy Manager. Upewnij się, że twoja domena wskazuje na adres IP, gdzie działa twoja instancja NPM."

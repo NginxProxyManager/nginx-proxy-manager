@@ -116,6 +116,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Plugin này yêu cầu tệp cấu hình chứa mã thông báo API hoặc thông tin xác thực khác cho nhà cung cấp của bạn"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Nội dung file thông tin xác thực mới (thay thế nội dung hiện có)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Dữ liệu này sẽ được lưu trữ dưới dạng bản rõ trong cơ sở dữ liệu và trong một tệp!"
 	},
@@ -130,6 +133,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Phần này yêu cầu một số kiến thức về Certbot và các plugin DNS của nó. Vui lòng tham khảo tài liệu plugin tương ứng."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "Chỉnh sửa cài đặt DNS"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng có vẻ như nó không phải là NPM. Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
