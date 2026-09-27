@@ -49,7 +49,9 @@ done
 # Ensure the JWT key file is owned by the runtime user, even when the /data
 # directory ownership already matches PUID:PGID (chownit skips recursion then)
 if [ -f /data/keys.json ]; then
-	chown "$PUID:$PGID" /data/keys.json
+	if [ "$(stat -c '%u:%g' '/data/keys.json')" != "$PUID:$PGID" ]; then
+		chown "$PUID:$PGID" /data/keys.json
+	fi
 fi
 
 if [ "$(is_true "${SKIP_CERTBOT_OWNERSHIP:-}")" = '1' ]; then

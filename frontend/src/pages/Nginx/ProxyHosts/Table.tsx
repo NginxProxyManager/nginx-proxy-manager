@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconEdit, IconFileText, IconPower, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import type { ProxyHost } from "src/api/backend";
@@ -23,9 +23,19 @@ interface Props {
 	onEdit?: (id: number) => void;
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
+	onLogs?: (id: number) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, onEdit, onDelete, onDisableToggle, onNew, isFiltered }: Props) {
+export default function Table({
+	data,
+	isFetching,
+	onEdit,
+	onDelete,
+	onDisableToggle,
+	onLogs,
+	onNew,
+	isFiltered,
+}: Props) {
 	const columnHelper = createColumnHelper<Features, ProxyHost>();
 	const columns = useMemo(
 		() => [
@@ -127,6 +137,17 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 										href="#"
 										onClick={(e) => {
 											e.preventDefault();
+											onLogs?.(info.row.original.id);
+										}}
+									>
+										<IconFileText size={16} />
+										<T id="action.logs" />
+									</a>
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
 											onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
 										}}
 									>
@@ -155,7 +176,7 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onDisableToggle, onDelete, onLogs],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);
