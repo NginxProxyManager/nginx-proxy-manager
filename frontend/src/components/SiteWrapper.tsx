@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useCallback, useEffect } from "react";
 
 import { Box, Container, useToast } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,10 +15,13 @@ function SiteWrapper({ children }: Props) {
 	const queryClient = useQueryClient();
 	const toast = useToast();
 
-	// TODO: fix bug where this will fail if the browser is kept open longer
-	// than the expiry of the sse token
-	useEffect(() => {
+	const cb = useCallback(
 		async function fetchData() {
+			if (AuthStore.token) {
+				return;
+			}
+
+			// Fetch the SSE token and set up the EventSource
 			const response = await getSSEToken();
 			const eventSource = new EventSource(
 				`/api/sse/changes?jwt=${response.token}`,
@@ -47,11 +50,15 @@ function SiteWrapper({ children }: Props) {
 			return () => {
 				eventSource.close();
 			};
-		}
-		if (AuthStore.token) {
-			fetchData();
-		}
-	}, [queryClient, toast]);
+		},
+		[queryClient, toast],
+	);
+
+	// TODO: fix bug where this will fail if the browser is kept open longer
+	// than the expiry of the sse token
+	useEffect(() => {
+		cb();
+	});
 
 	return (
 		<Box display="flex" flexDir="column" height="100vh">

@@ -1,5 +1,3 @@
-import { useEffect, useRef } from "react";
-
 import {
 	Box,
 	Center,
@@ -13,6 +11,7 @@ import {
 	useToast,
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
+import { useEffect, useRef } from "react";
 
 import { LocalePicker, PrettyButton, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
@@ -59,7 +58,8 @@ function Login() {
 			minH="100vh"
 			w="100vw"
 			flexDir="column"
-			bg={useColorModeValue("gray.50", "gray.800")}>
+			bg={useColorModeValue("gray.50", "gray.800")}
+		>
 			<Stack h={10} m={4} justify="end" direction="row">
 				<ThemeSwitcher />
 				<LocalePicker className="text-right" />
@@ -75,7 +75,8 @@ function Login() {
 						rounded="lg"
 						bg={useColorModeValue("white", "gray.700")}
 						boxShadow="lg"
-						p={8}>
+						p={8}
+					>
 						<Formik
 							initialValues={
 								{
@@ -83,7 +84,8 @@ function Login() {
 									password: "",
 								} as any
 							}
-							onSubmit={onSubmit}>
+							onSubmit={onSubmit}
+						>
 							{({ isSubmitting }) => (
 								<Form>
 									<Stack spacing={4}>
@@ -91,7 +93,8 @@ function Login() {
 											{({ field, form }: any) => (
 												<FormControl
 													isRequired
-													isInvalid={form.errors.email && form.touched.email}>
+													isInvalid={form.errors.email && form.touched.email}
+												>
 													<FormLabel htmlFor="email" fontWeight="bold">
 														{intl.formatMessage({ id: "user.email" })}
 													</FormLabel>
@@ -116,7 +119,8 @@ function Login() {
 													isRequired
 													isInvalid={
 														form.errors.password && form.touched.password
-													}>
+													}
+												>
 													<FormLabel fontWeight="bold" htmlFor="password">
 														{intl.formatMessage({
 															id: "user.password",
