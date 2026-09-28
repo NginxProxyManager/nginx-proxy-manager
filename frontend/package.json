@@ -57,7 +57,7 @@
 		"happy-dom": "^20.14.5",
 		"postcss": "^8.5.28",
 		"postcss-simple-vars": "^7.0.1",
-		"sass": "^1.104.1",
+		"sass": "^1.105.0",
 		"tmp": "^0.2.7",
 		"typescript": "7.0.2",
 		"vite": "^8.3.0",
