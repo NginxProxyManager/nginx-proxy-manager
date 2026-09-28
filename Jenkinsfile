@@ -122,19 +122,19 @@ pipeline {
 				sh 'rm -rf ./test/results/junit/*'
 				sh './scripts/ci/fulltest-cypress'
 				// Adding this here as the schema needs to come from a running stack, but this will be used by docs later
-				sh 'docker-compose exec -T fullstack curl -s --output /temp-docs/api-schema.json "http://fullstack:81/api/schema"'
+				sh 'docker compose exec -T fullstack curl -s --output /temp-docs/api-schema.json "http://fullstack:81/api/schema"'
 			}
 			post {
 				always {
 					// Dumps to analyze later
 					sh 'mkdir -p debug/sqlite'
-					sh 'docker logs $(docker-compose ps --all -q fullstack) > debug/sqlite/docker_fullstack.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q stepca) > debug/sqlite/docker_stepca.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q pdns) > debug/sqlite/docker_pdns.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/sqlite/docker_pdns-db.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/sqlite/docker_dnsrouter.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q fullstack) > debug/sqlite/docker_fullstack.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q stepca) > debug/sqlite/docker_stepca.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q pdns) > debug/sqlite/docker_pdns.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q pdns-db) > debug/sqlite/docker_pdns-db.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q dnsrouter) > debug/sqlite/docker_dnsrouter.log 2>&1'
 					junit 'test/results/junit/*'
-					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
+					sh 'docker compose down --remove-orphans --volumes -t 30 || true'
 				}
 			}
 		}
@@ -156,13 +156,13 @@ pipeline {
 				always {
 					// Dumps to analyze later
 					sh 'mkdir -p debug/mysql'
-					sh 'docker logs $(docker-compose ps --all -q fullstack) > debug/mysql/docker_fullstack.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q stepca) > debug/mysql/docker_stepca.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q pdns) > debug/mysql/docker_pdns.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/mysql/docker_pdns-db.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/mysql/docker_dnsrouter.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q fullstack) > debug/mysql/docker_fullstack.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q stepca) > debug/mysql/docker_stepca.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q pdns) > debug/mysql/docker_pdns.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q pdns-db) > debug/mysql/docker_pdns-db.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q dnsrouter) > debug/mysql/docker_dnsrouter.log 2>&1'
 					junit 'test/results/junit/*'
-					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
+					sh 'docker compose down --remove-orphans --volumes -t 30 || true'
 				}
 			}
 		}
@@ -184,18 +184,18 @@ pipeline {
 				always {
 					// Dumps to analyze later
 					sh 'mkdir -p debug/postgres'
-					sh 'docker logs $(docker-compose ps --all -q fullstack) > debug/postgres/docker_fullstack.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q stepca) > debug/postgres/docker_stepca.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q pdns) > debug/postgres/docker_pdns.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q pdns-db) > debug/postgres/docker_pdns-db.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q dnsrouter) > debug/postgres/docker_dnsrouter.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q db-postgres) > debug/postgres/docker_db.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q authentik) > debug/postgres/docker_authentik.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q authentik-redis) > debug/postgres/docker_authentik-redis.log 2>&1'
-					sh 'docker logs $(docker-compose ps --all -q authentik-ldap) > debug/postgres/docker_authentik-ldap.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q fullstack) > debug/postgres/docker_fullstack.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q stepca) > debug/postgres/docker_stepca.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q pdns) > debug/postgres/docker_pdns.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q pdns-db) > debug/postgres/docker_pdns-db.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q dnsrouter) > debug/postgres/docker_dnsrouter.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q db-postgres) > debug/postgres/docker_db.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q authentik) > debug/postgres/docker_authentik.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q authentik-redis) > debug/postgres/docker_authentik-redis.log 2>&1'
+					sh 'docker logs $(docker compose ps --all -q authentik-ldap) > debug/postgres/docker_authentik-ldap.log 2>&1'
 
 					junit 'test/results/junit/*'
-					sh 'docker-compose down --remove-orphans --volumes -t 30 || true'
+					sh 'docker compose down --remove-orphans --volumes -t 30 || true'
 				}
 			}
 		}
