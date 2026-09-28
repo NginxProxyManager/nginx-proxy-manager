@@ -20,6 +20,7 @@ const NginxTemplates = lazy(() => import("src/pages/NginxTemplates"));
 const Login = lazy(() => import("src/pages/Login"));
 const GeneralSettings = lazy(() => import("src/pages/Settings"));
 const Setup = lazy(() => import("src/pages/Setup"));
+const SetupDatabase = lazy(() => import("src/pages/SetupDatabase"));
 const Upstreams = lazy(() => import("src/pages/Upstreams"));
 const Users = lazy(() => import("src/pages/Users"));
 
@@ -46,6 +47,14 @@ function Router() {
 
 	if (health.isError || !health.data?.healthy) {
 		return <Unhealthy />;
+	}
+
+	if (health.data?.healthy && !health.data?.dbSetup) {
+		return (
+			<Suspense fallback={Spinner}>
+				<SetupDatabase />
+			</Suspense>
+		);
 	}
 
 	if (health.data?.healthy && !health.data?.setup) {

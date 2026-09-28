@@ -138,6 +138,11 @@
 				"$ref": "file://./paths/schema/get.json"
 			}
 		},
+		"/setup/database": {
+			"post": {
+				"$ref": "file://./paths/setup/database/post.json"
+			}
+		},
 		"/settings": {
 			"get": {
 				"$ref": "file://./paths/settings/get.json"

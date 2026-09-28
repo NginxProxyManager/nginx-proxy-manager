@@ -86,6 +86,8 @@ func replaceIncomingSchemas(swaggerSchema []byte) []byte {
 	str = strings.ReplaceAll(str, `"{{schema.CreateCertificate}}"`, schema.CreateCertificate())
 	str = strings.ReplaceAll(str, `"{{schema.UpdateCertificate}}"`, schema.UpdateCertificate(""))
 
+	str = strings.ReplaceAll(str, `"{{schema.SetupDatabase}}"`, schema.SetupDatabase())
+
 	str = strings.ReplaceAll(str, `"{{schema.CreateSetting}}"`, schema.CreateSetting())
 	str = strings.ReplaceAll(str, `"{{schema.UpdateSetting}}"`, schema.UpdateSetting())
 

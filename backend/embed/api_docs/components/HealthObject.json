@@ -2,7 +2,7 @@
 	"type": "object",
 	"description": "HealthObject",
 	"additionalProperties": false,
-	"required": ["version", "commit", "healthy", "setup"],
+	"required": ["version", "commit", "healthy", "db_setup", "setup"],
 	"properties": {
 		"version": {
 			"type": "string",
@@ -17,6 +17,10 @@
 		"healthy": {
 			"type": "boolean",
 			"description": "Healthy?"
+		},
+		"db_setup": {
+			"type": "boolean",
+			"description": "Is the database configured?"
 		},
 		"setup": {
 			"type": "boolean",

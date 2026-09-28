@@ -20,6 +20,7 @@ export interface BaseResponse {
 
 export interface HealthResponse {
 	commit: string;
+	dbSetup: boolean;
 	errorReporting: boolean;
 	healthy: boolean;
 	setup: boolean;

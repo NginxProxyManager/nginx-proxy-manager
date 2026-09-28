@@ -15,8 +15,11 @@ const (
 	DatabaseMysql    = "mysql"
 )
 
-type db struct {
-	Driver   string `json:"driver" envconfig:"optional,default=sqlite"`
+// DBConfig holds the database connection parameters. It is populated from
+// NPM_DB_* environment variables when NPM_DB_DRIVER is set, otherwise from
+// the db.conf file in the data folder written by the setup wizard.
+type DBConfig struct {
+	Driver   string `json:"driver" envconfig:"optional"`
 	Host     string `json:"host" envconfig:"optional,default="`
 	Port     int    `json:"port" envconfig:"optional,default="`
 	Username string `json:"username" envconfig:"optional,default="`
@@ -26,13 +29,19 @@ type db struct {
 }
 
 // GetDriver returns the lowercase driver name
-func (d *db) GetDriver() string {
+func (d *DBConfig) GetDriver() string {
 	return strings.ToLower(d.Driver)
+}
+
+// IsConfigured returns true when a database driver has been chosen, either
+// by environment variables or by the setup wizard
+func (d *DBConfig) IsConfigured() bool {
+	return d.Driver != ""
 }
 
 // IsValid is a basic check for config. Sqlite has no host/port/credentials
 // to validate; postgres and mysql require them to form a usable DSN.
-func (d *db) IsValid() (bool, error) {
+func (d *DBConfig) IsValid() (bool, error) {
 	var errs []error
 
 	switch d.GetDriver() {
@@ -59,7 +68,7 @@ func (d *db) IsValid() (bool, error) {
 }
 
 // GetGormConnectURL is used by Gorm
-func (d *db) GetGormConnectURL() string {
+func (d *DBConfig) GetGormConnectURL() string {
 	switch d.GetDriver() {
 	case DatabaseSqlite:
 		return fmt.Sprintf("%s/nginxproxymanager.db", Configuration.DataFolder)

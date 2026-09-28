@@ -22,6 +22,7 @@
 									"version": "3.0.0",
 									"commit": "9f119b6",
 									"healthy": true,
+									"db_setup": true,
 									"setup": true
 								}
 							}
@@ -32,6 +33,7 @@
 									"version": "3.0.0",
 									"commit": "9f119b6",
 									"healthy": false,
+									"db_setup": true,
 									"setup": true
 								}
 							}

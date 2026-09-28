@@ -341,6 +341,42 @@
 	"settings.title": {
 		"defaultMessage": "تنظیمات"
 	},
+	"setup-database.description": {
+		"defaultMessage": "محل ذخیره داده‌های Nginx Proxy Manager را انتخاب کنید. این تنظیمات در فایل db.conf در پوشه داده ذخیره می‌شود."
+	},
+	"setup-database.driver": {
+		"defaultMessage": "نوع پایگاه داده"
+	},
+	"setup-database.error": {
+		"defaultMessage": "اتصال به پایگاه داده ممکن نیست"
+	},
+	"setup-database.host": {
+		"defaultMessage": "میزبان"
+	},
+	"setup-database.name": {
+		"defaultMessage": "نام پایگاه داده"
+	},
+	"setup-database.password": {
+		"defaultMessage": "رمز عبور"
+	},
+	"setup-database.port": {
+		"defaultMessage": "پورت"
+	},
+	"setup-database.sqlite-description": {
+		"defaultMessage": "SQLite همه چیز را در یک فایل در پوشه داده ذخیره می‌کند و به پیکربندی بیشتری نیاز ندارد."
+	},
+	"setup-database.sslmode": {
+		"defaultMessage": "حالت SSL"
+	},
+	"setup-database.submit": {
+		"defaultMessage": "ادامه"
+	},
+	"setup-database.title": {
+		"defaultMessage": "پیکربندی پایگاه داده"
+	},
+	"setup-database.username": {
+		"defaultMessage": "نام کاربری"
+	},
 	"setup.create": {
 		"defaultMessage": "ثبت نام"
 	},

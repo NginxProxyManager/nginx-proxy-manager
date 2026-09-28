@@ -30,59 +30,83 @@ func main() {
 	config.CreateDataFolders()
 	logger.Info("Build Version: %s (%s)", version, commit)
 
-	migrations.Migrate(func() {
-		if err := jwt.LoadKeys(); err != nil {
-			logger.Error("KeysError", err)
+	if err := config.LoadDBConfig(); err != nil {
+		logger.Error("DatabaseConfigError", err)
+		os.Exit(1)
+	}
+
+	if config.Configuration.DB.IsConfigured() {
+		if err := start(); err != nil {
+			logger.Error("StartupError", err)
 			os.Exit(1)
 		}
+	} else {
+		logger.Warn("No database configured, starting in Database Setup Mode")
+		api.SetHandler(api.NewSetupRouter(start))
+	}
 
-		checkSetup()
+	// Http server
+	go api.StartServer()
 
-		// Internal Job Queue
-		jobqueue.Start()
-		certificate.AddPendingJobs()
-		host.AddPendingJobs()
+	irqchan := make(chan os.Signal, 1)
+	signal.Notify(irqchan, syscall.SIGINT, syscall.SIGTERM)
 
-		// Http server
-		api.StartServer()
-		irqchan := make(chan os.Signal, 1)
-		signal.Notify(irqchan, syscall.SIGINT, syscall.SIGTERM)
-
-		for irq := range irqchan {
-			if irq == syscall.SIGINT || irq == syscall.SIGTERM {
-				logger.Info("Got ", irq, " shutting server down ...")
-				// Close db
-				sqlDB, _ := database.GetDB().DB()
-				err := sqlDB.Close()
-				if err != nil {
-					logger.Error("DatabaseCloseError", err)
-				}
-				// nolint
-				jobqueue.Shutdown()
-				break
-			}
+	for irq := range irqchan {
+		if irq == syscall.SIGINT || irq == syscall.SIGTERM {
+			logger.Info("Got %v, shutting server down ...", irq)
+			database.Close()
+			// nolint
+			jobqueue.Shutdown()
+			break
 		}
-	})
+	}
+}
+
+// start connects to the configured database, applies migrations and
+// starts everything that depends on the database, then switches the http
+// server over to the full router. It runs at boot when a database is
+// already configured, otherwise when the database setup wizard completes.
+func start() error {
+	if !migrations.Migrate(func() {}) {
+		return errors.ErrDatabaseUnavailable
+	}
+
+	if err := jwt.LoadKeys(); err != nil {
+		return err
+	}
+
+	if err := checkSetup(); err != nil {
+		return err
+	}
+
+	// Internal Job Queue
+	jobqueue.Start()
+	certificate.AddPendingJobs()
+	host.AddPendingJobs()
+
+	config.IsDBSetup = true
+	api.SetHandler(api.NewRouter())
+	return nil
 }
 
 // checkSetup Quick check by counting the number of users in the database
-func checkSetup() {
+func checkSetup() error {
 	db := database.GetDB()
-	var count int64
-
-	if db != nil {
-		db.Model(&user.Model{}).
-			Where("is_disabled = ?", false).
-			Where("is_system = ?", false).
-			Count(&count)
-
-		if count == 0 {
-			logger.Warn("No users found, starting in Setup Mode")
-		} else {
-			config.IsSetup = true
-			logger.Info("Application is setup")
-		}
-	} else {
-		logger.Error("DatabaseError", errors.ErrDatabaseUnavailable)
+	if db == nil {
+		return errors.ErrDatabaseUnavailable
 	}
+
+	var count int64
+	db.Model(&user.Model{}).
+		Where("is_disabled = ?", false).
+		Where("is_system = ?", false).
+		Count(&count)
+
+	if count == 0 {
+		logger.Warn("No users found, starting in Setup Mode")
+	} else {
+		config.IsSetup = true
+		logger.Info("Application is setup")
+	}
+	return nil
 }

@@ -12,6 +12,10 @@ var Version string
 // Commit is the git commit set by ldflags
 var Commit string
 
+// IsDBSetup defines whether the database has been configured, connected
+// to and migrated
+var IsDBSetup bool
+
 // IsSetup defines whether we have an admin user or not
 var IsSetup bool
 
@@ -19,12 +23,12 @@ var logLevel logger.Level
 
 // Configuration is the main configuration object
 var Configuration struct {
-	DataFolder  string `json:"data_folder" envconfig:"optional,default=/data"`
-	DisableIPV4 bool   `json:"disable_ipv4" envconfig:"optional"`
-	DisableIPV6 bool   `json:"disable_ipv6" envconfig:"optional"`
-	Acmesh      acmesh `json:"acmesh"`
-	DB          db     `json:"db"`
-	Log         log    `json:"log"`
+	DataFolder  string   `json:"data_folder" envconfig:"optional,default=/data"`
+	DisableIPV4 bool     `json:"disable_ipv4" envconfig:"optional"`
+	DisableIPV6 bool     `json:"disable_ipv6" envconfig:"optional"`
+	Acmesh      acmesh   `json:"acmesh"`
+	DB          DBConfig `json:"db"`
+	Log         log      `json:"log"`
 }
 
 type log struct {

@@ -617,6 +617,42 @@
 	"settings.title": {
 		"defaultMessage": "Settings"
 	},
+	"setup-database.description": {
+		"defaultMessage": "Choose where Nginx Proxy Manager should store its data. These settings will be saved to db.conf in the data folder."
+	},
+	"setup-database.driver": {
+		"defaultMessage": "Database Type"
+	},
+	"setup-database.error": {
+		"defaultMessage": "Unable to connect to the database"
+	},
+	"setup-database.host": {
+		"defaultMessage": "Host"
+	},
+	"setup-database.name": {
+		"defaultMessage": "Database Name"
+	},
+	"setup-database.password": {
+		"defaultMessage": "Password"
+	},
+	"setup-database.port": {
+		"defaultMessage": "Port"
+	},
+	"setup-database.sqlite-description": {
+		"defaultMessage": "SQLite stores everything in a single file in the data folder and requires no further configuration."
+	},
+	"setup-database.sslmode": {
+		"defaultMessage": "SSL Mode"
+	},
+	"setup-database.submit": {
+		"defaultMessage": "Continue"
+	},
+	"setup-database.title": {
+		"defaultMessage": "Configure your Database"
+	},
+	"setup-database.username": {
+		"defaultMessage": "Username"
+	},
 	"setup.create": {
 		"defaultMessage": "Sign up"
 	},

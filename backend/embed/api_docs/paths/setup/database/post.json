@@ -1,0 +1,103 @@
+{
+	"operationId": "setupDatabase",
+	"summary": "Configure the database connection. Only available before a database has been configured",
+	"tags": ["Setup"],
+	"requestBody": {
+		"description": "Database Connection Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": "{{schema.SetupDatabase}}"
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"required": ["result"],
+						"properties": {
+							"result": {
+								"type": "boolean"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": true
+							}
+						}
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "400 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["error"],
+						"properties": {
+							"result": {
+								"type": "object",
+								"nullable": true
+							},
+							"error": {
+								"$ref": "#/components/schemas/ErrorObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": null,
+								"error": {
+									"code": 400,
+									"message": "failed to connect to `user=npm database=npm`: dial tcp 172.18.0.2:5432: connect: connection refused"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"403": {
+			"description": "403 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["error"],
+						"properties": {
+							"result": {
+								"type": "object",
+								"nullable": true
+							},
+							"error": {
+								"$ref": "#/components/schemas/ErrorObject"
+							}
+						}
+					},
+					"examples": {
+						"default": {
+							"value": {
+								"result": null,
+								"error": {
+									"code": 403,
+									"message": "Database is already configured"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

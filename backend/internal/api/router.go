@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"npm/internal/api/handler"
+	h "npm/internal/api/http"
 	"npm/internal/api/middleware"
 	"npm/internal/api/schema"
 	"npm/internal/config"
@@ -28,6 +29,37 @@ import (
 
 // NewRouter returns a new router object
 func NewRouter() http.Handler {
+	r := newBaseRouter(middleware.DecodeAuth())
+	return applyRoutes(r)
+}
+
+// NewSetupRouter returns the router used before a database has been
+// configured. It only serves the frontend, the health and schema endpoints
+// and the database setup wizard endpoint. Everything else needs the database
+// (including JWT keys for auth) so it is unavailable until onConfigured has
+// run and the full router has replaced this one.
+func NewSetupRouter(onConfigured func() error) http.Handler {
+	r := newBaseRouter()
+	r.NotFound(handler.NotFound())
+	r.MethodNotAllowed(handler.NotAllowed())
+
+	r.With(chiMiddleware.Timeout(30*time.Second)).Route("/api", func(r chi.Router) {
+		r.Get("/", handler.Health())
+		r.Get("/schema", handler.Schema())
+		r.With(middleware.EnforceRequestSchema(schema.SetupDatabase())).
+			Post("/setup/database", handler.SetupDatabase(onConfigured))
+
+		r.HandleFunc("/*", func(w http.ResponseWriter, r *http.Request) {
+			h.ResultErrorJSON(w, r, http.StatusForbidden, "Not available during database setup phase", nil)
+		})
+	})
+
+	return r
+}
+
+// newBaseRouter returns a router with the middleware common to all routers.
+// extra is inserted before the request body and logging middleware.
+func newBaseRouter(extra ...func(http.Handler) http.Handler) *chi.Mux {
 	// Cors
 	corss := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -60,12 +92,14 @@ func NewRouter() http.Handler {
 		chiMiddleware.Throttle(5),
 		middleware.PrettyPrint,
 		middleware.Expansion,
-		middleware.DecodeAuth(),
+	)
+	r.Use(extra...)
+	r.Use(
 		middleware.BodyContext(),
 		middleware.Log,
 	)
 
-	return applyRoutes(r)
+	return r
 }
 
 // applyRoutes is where the magic happens

@@ -13,6 +13,7 @@ type healthCheckResponse struct {
 	Commit        string `json:"commit"`
 	AcmeShVersion string `json:"acme.sh"`
 	Healthy       bool   `json:"healthy"`
+	IsDBSetup     bool   `json:"db_setup"`
 	IsSetup       bool   `json:"setup"`
 }
 
@@ -24,6 +25,7 @@ func Health() func(http.ResponseWriter, *http.Request) {
 			Version:       config.Version,
 			Commit:        config.Commit,
 			Healthy:       true,
+			IsDBSetup:     config.IsDBSetup,
 			IsSetup:       config.IsSetup,
 			AcmeShVersion: acme.GetAcmeShVersion(),
 		}

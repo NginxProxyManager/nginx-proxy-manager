@@ -31,3 +31,4 @@ export * from "./setCertificate";
 export * from "./setCertificateAuthority";
 export * from "./setDNSProvider";
 export * from "./setUser";
+export * from "./setupDatabase";
