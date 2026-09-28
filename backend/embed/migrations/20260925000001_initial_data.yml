@@ -1,0 +1,253 @@
+# Seed data for a new database.
+#
+# created_at/updated_at hold unix epoch milliseconds. polyschema always sends
+# insert values as bind parameters, so an SQL expression for "now" can't be
+# used as a value. The rows are inserted without them, and the sql operations
+# at the end fill them in using each engine's own clock.
+operations:
+  # Capabilities
+  - insert:
+      table: capability
+      rows:
+        - { name: 'full-admin' }
+        - { name: 'access-lists.view' }
+        - { name: 'access-lists.manage' }
+        - { name: 'audit-log.view' }
+        - { name: 'certificates.view' }
+        - { name: 'certificates.manage' }
+        - { name: 'certificate-authorities.view' }
+        - { name: 'certificate-authorities.manage' }
+        - { name: 'dns-providers.view' }
+        - { name: 'dns-providers.manage' }
+        - { name: 'hosts.view' }
+        - { name: 'hosts.manage' }
+        - { name: 'nginx-templates.view' }
+        - { name: 'nginx-templates.manage' }
+        - { name: 'settings.manage' }
+        - { name: 'streams.view' }
+        - { name: 'streams.manage' }
+        - { name: 'users.manage' }
+  # Default settings
+  - insert:
+      table: setting
+      rows:
+        - { is_deleted: 0, name: 'default-site', description: 'What to show users who hit your Nginx server by default', value: '"welcome"' }
+        - { is_deleted: 0, name: 'auth-methods', description: 'Which methods are enabled for authentication', value: '["local"]' }
+        - { is_deleted: 0, name: 'oauth-auth', description: 'Configuration for OAuth authentication', value: '{}' }
+        - { is_deleted: 0, name: 'ldap-auth', description: 'Configuration for LDAP authentication', value: '{"host": "", "dn": "", "sync_by": "uid"}' }
+  # Built-in certificate authorities
+  - insert:
+      table: certificate_authority
+      rows:
+        - { is_deleted: 0, name: 'ZeroSSL', acmesh_server: 'zerossl', max_domains: 10, is_wildcard_supported: true, is_readonly: true }
+        - { is_deleted: 0, name: 'Let''s Encrypt', acmesh_server: 'https://acme-v02.api.letsencrypt.org/directory', max_domains: 10, is_wildcard_supported: true, is_readonly: true }
+        - { is_deleted: 0, name: 'Buypass Go SSL', acmesh_server: 'https://api.buypass.com/acme/directory', max_domains: 5, is_wildcard_supported: false, is_readonly: true }
+        - { is_deleted: 0, name: 'SSL.com', acmesh_server: 'ssl.com', max_domains: 10, is_wildcard_supported: false, is_readonly: true }
+        - { is_deleted: 0, name: 'Let''s Encrypt (Testing)', acmesh_server: 'https://acme-staging-v02.api.letsencrypt.org/directory', max_domains: 10, is_wildcard_supported: true, is_readonly: true }
+        - { is_deleted: 0, name: 'Buypass Go SSL (Testing)', acmesh_server: 'https://api.test4.buypass.no/acme/directory', max_domains: 5, is_wildcard_supported: false, is_readonly: true }
+  # The system user (id 1, owns the built-in nginx templates)
+  - insert:
+      table: user
+      rows:
+        - { is_deleted: 0, name: 'System', email: 'system@localhost', is_disabled: false, is_system: true }
+  # Built-in nginx templates
+  - insert:
+      table: nginx_template
+      rows:
+        - is_deleted: 0
+          user_id: 1
+          name: 'Default Proxy Template'
+          type: 'proxy'
+          template: |
+            # ------------------------------------------------------------
+            {{#each Host.DomainNames}}
+            # {{this}}
+            {{/each}}
+            # ------------------------------------------------------------
+
+            server {
+              {{#if Config.Ipv4}}
+              listen 80;
+              {{/if}}
+              {{#if Config.Ipv6}}
+              listen [::]:80;
+              {{/if}}
+
+              {{#if Certificate.ID}}
+              {{#if Config.Ipv4}}
+              listen 443 ssl {{#if Host.HTTP2Support}}http2{{/if}};
+              {{/if}}
+              {{#if Config.Ipv6}}
+              listen [::]:443 ssl {{#if Host.HTTP2Support}}http2{{/if}};
+              {{/if}}
+              {{/if}}
+
+              server_name {{#each Host.DomainNames}}{{this}} {{/each}};
+
+              {{#if Certificate.ID}}
+              include conf.d/include/ssl-ciphers.conf;
+              {{#if Certificate.IsAcme}}
+              ssl_certificate {{Certificate.Folder}}/fullchain.pem;
+              ssl_certificate_key {{Certificate.Folder}}/privkey.pem;
+              {{else}}
+              # Custom SSL
+              ssl_certificate /data/custom_ssl/npm-{{Certicicate.ID}}/fullchain.pem;
+              ssl_certificate_key /data/custom_ssl/npm-{{Certificate.ID}}/privkey.pem;
+              {{/if}}
+              {{/if}}
+
+              {{#if Host.CachingEnabled}}
+              include conf.d/include/assets.conf;
+              {{/if}}
+
+              {{#if Host.BlockExploits}}
+              include conf.d/include/block-exploits.conf;
+              {{/if}}
+
+              {{#if Certificate.ID}}
+              {{#if Host.SSLForced}}
+              {{#if Host.HSTSEnabled}}
+              # HSTS (ngx_http_headers_module is required) (63072000 seconds = 2 years)
+              add_header Strict-Transport-Security "max-age=63072000;{{#if Host.HSTSSubdomains}} includeSubDomains;{{/if}} preload" always;
+              {{/if}}
+              # Force SSL
+              include conf.d/include/force-ssl.conf;
+              {{/if}}
+              {{/if}}
+
+              {{#if Host.AllowWebsocketUpgrade}}
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection $http_connection;
+              proxy_http_version 1.1;
+              {{/if}}
+
+              access_log /data/logs/host-{{Host.ID}}_access.log proxy;
+              error_log /data/logs/host-{{Host.ID}}_error.log warn;
+
+              {{Host.AdvancedConfig}}
+
+              # locations ?
+
+              # default location:
+              location / {
+                {{#if Host.AccessListID}}
+                # Authorization
+                auth_basic            "Authorization required";
+                auth_basic_user_file  /data/access/{{Host.AccessListID}};
+                # access_list.passauth ? todo
+                {{/if}}
+
+                # Access Rules ? todo
+
+                # Access checks must...? todo
+
+                {{#if Certificate.ID}}
+                {{#if Host.SSLForced}}
+                {{#if Host.HSTSEnabled}}
+                # HSTS (ngx_http_headers_module is required) (63072000 seconds = 2 years)
+                add_header Strict-Transport-Security "max-age=63072000;{{#if Host.HSTSSubdomains}} includeSubDomains;{{/if}} preload" always;
+                {{/if}}
+                {{/if}}
+                {{/if}}
+
+                {{#if Host.AllowWebsocketUpgrade}}
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $http_connection;
+                {{/if}}
+
+                # Proxy!
+                add_header       X-Served-By $host;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-Scheme $scheme;
+                proxy_set_header X-Forwarded-Proto  $scheme;
+                proxy_set_header X-Forwarded-For    $remote_addr;
+                proxy_http_version 1.1;
+
+                {{#if Upstream.ID}}
+                # upstream
+                proxy_pass {{Host.ProxyScheme}}://npm_upstream_{{Upstream.ID}};
+                {{else}}
+                # proxy a single host
+                proxy_pass {{Host.ProxyScheme}}://{{Host.ProxyHost}}:{{Host.ProxyPort}};
+                {{/if}}
+              }
+
+              # Legacy Custom Configuration
+              include /data/nginx/custom/server_proxy[.]conf;
+            }
+        - is_deleted: 0
+          user_id: 1
+          name: 'Default Redirect Template'
+          type: 'redirect'
+          template: '# this is a redirect template'
+        - is_deleted: 0
+          user_id: 1
+          name: 'Default Dead Template'
+          type: 'dead'
+          template: '# this is a dead template'
+        - is_deleted: 0
+          user_id: 1
+          name: 'Default Stream Template'
+          type: 'stream'
+          template: '# this is a stream template'
+        - is_deleted: 0
+          user_id: 1
+          name: 'Default Upstream Template'
+          type: 'upstream'
+          template: |
+            # ------------------------------------------------------------
+            # Upstream {{Upstream.ID}}: {{Upstream.Name}}
+            # ------------------------------------------------------------
+
+            upstream npm_upstream_{{Upstream.ID}} {
+
+              {{#if Upstream.IPHash~}}
+              ip_hash;
+              {{~/if}}
+
+              {{#if Upstream.NTLM~}}
+              ntlm;
+              {{~/if}}
+
+              {{#if Upstream.Keepalive~}}
+              keepalive {{Upstream.Keepalive}};
+              {{~/if}}
+
+              {{#if Upstream.KeepaliveRequests~}}
+              keepalive_requests {{Upstream.KeepaliveRequests}};
+              {{~/if}}
+
+              {{#if Upstream.KeepaliveTime~}}
+              keepalive_time {{Upstream.KeepaliveTime}};
+              {{~/if}}
+
+              {{#if Upstream.KeepaliveTimeout~}}
+              keepalive_timeout {{Upstream.KeepaliveTimeout}};
+              {{~/if}}
+
+              {{Upstream.AdvancedConfig}}
+
+              {{#each Upstream.Servers~}}
+              {{#unless IsDeleted~}}
+              server {{Server}} {{#if Weight}}weight={{Weight}} {{/if}}{{#if MaxConns}}max_conns={{MaxConns}} {{/if}}{{#if MaxFails}}max_fails={{MaxFails}} {{/if}}{{#if FailTimeout}}fail_timeout={{FailTimeout}} {{/if}}{{#if Backup}}backup{{/if}};
+              {{/unless}}
+              {{/each}}
+            }
+
+  # Timestamps for everything above
+  - sql:
+      postgres: 'UPDATE "setting" SET created_at = (extract(epoch from clock_timestamp()) * 1000)::bigint, updated_at = (extract(epoch from clock_timestamp()) * 1000)::bigint'
+      mysql:    'UPDATE `setting` SET created_at = CAST(UNIX_TIMESTAMP(NOW(3)) * 1000 AS UNSIGNED), updated_at = CAST(UNIX_TIMESTAMP(NOW(3)) * 1000 AS UNSIGNED)'
+      sqlite:   'UPDATE "setting" SET created_at = CAST((julianday(''now'') - 2440587.5) * 86400000 AS INTEGER), updated_at = CAST((julianday(''now'') - 2440587.5) * 86400000 AS INTEGER)'
+  - sql:
+      postgres: 'UPDATE "certificate_authority" SET created_at = (extract(epoch from clock_timestamp()) * 1000)::bigint, updated_at = (extract(epoch from clock_timestamp()) * 1000)::bigint'
+      mysql:    'UPDATE `certificate_authority` SET created_at = CAST(UNIX_TIMESTAMP(NOW(3)) * 1000 AS UNSIGNED), updated_at = CAST(UNIX_TIMESTAMP(NOW(3)) * 1000 AS UNSIGNED)'
+      sqlite:   'UPDATE "certificate_authority" SET created_at = CAST((julianday(''now'') - 2440587.5) * 86400000 AS INTEGER), updated_at = CAST((julianday(''now'') - 2440587.5) * 86400000 AS INTEGER)'
+  - sql:
+      postgres: 'UPDATE "user" SET created_at = (extract(epoch from clock_timestamp()) * 1000)::bigint, updated_at = (extract(epoch from clock_timestamp()) * 1000)::bigint'
+      mysql:    'UPDATE `user` SET created_at = CAST(UNIX_TIMESTAMP(NOW(3)) * 1000 AS UNSIGNED), updated_at = CAST(UNIX_TIMESTAMP(NOW(3)) * 1000 AS UNSIGNED)'
+      sqlite:   'UPDATE "user" SET created_at = CAST((julianday(''now'') - 2440587.5) * 86400000 AS INTEGER), updated_at = CAST((julianday(''now'') - 2440587.5) * 86400000 AS INTEGER)'
+  - sql:
+      postgres: 'UPDATE "nginx_template" SET created_at = (extract(epoch from clock_timestamp()) * 1000)::bigint, updated_at = (extract(epoch from clock_timestamp()) * 1000)::bigint'
+      mysql:    'UPDATE `nginx_template` SET created_at = CAST(UNIX_TIMESTAMP(NOW(3)) * 1000 AS UNSIGNED), updated_at = CAST(UNIX_TIMESTAMP(NOW(3)) * 1000 AS UNSIGNED)'
+      sqlite:   'UPDATE "nginx_template" SET created_at = CAST((julianday(''now'') - 2440587.5) * 86400000 AS INTEGER), updated_at = CAST((julianday(''now'') - 2440587.5) * 86400000 AS INTEGER)'

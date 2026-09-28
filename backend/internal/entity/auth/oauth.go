@@ -41,7 +41,8 @@ type OAuthUser struct {
 func (m *OAuthUser) GetResourceField(field string) string {
 	if m.Resource != nil {
 		if value, ok := m.Resource[field]; ok {
-			return value.(string)
+			str, _ := value.(string)
+			return str
 		}
 	}
 	return ""

@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSServercow() Provider {
 	return Provider{
 		Title:                "dns_servercow",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"SERVERCOW_API_Username",
@@ -11,13 +11,13 @@ func getDNSServercow() Provider {
 		},
 		Properties: map[string]providerField{
 			"SERVERCOW_API_Username": {
-				Title:     "user",
-				Type:      "string",
+				Title:     titleUser,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"SERVERCOW_API_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

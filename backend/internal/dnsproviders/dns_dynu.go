@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSDynu() Provider {
 	return Provider{
 		Title:                "dns_dynu",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"Dynu_ClientId",
@@ -11,12 +11,12 @@ func getDNSDynu() Provider {
 		Properties: map[string]providerField{
 			"Dynu_ClientId": {
 				Title:     "client-id",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"Dynu_Secret": {
-				Title:     "secret",
-				Type:      "string",
+				Title:     titleSecret,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

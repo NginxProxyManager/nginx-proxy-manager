@@ -58,16 +58,13 @@ func listQuerySort(
 		return ctx, 0, ""
 	}
 
-	// Split sort fields up in to slice
-	sorts := strings.Split(sortString, ",")
-	for _, sortItem := range sorts {
+	// Split sort fields up
+	for sortItem := range strings.SplitSeq(sortString, ",") {
 		if strings.Contains(sortItem, ".") {
 			theseItems := strings.Split(sortItem, ".")
 
 			switch strings.ToLower(theseItems[1]) {
-			case "desc":
-				fallthrough
-			case "descending":
+			case "desc", "descending":
 				theseItems[1] = "DESC"
 			default:
 				theseItems[1] = "ASC"

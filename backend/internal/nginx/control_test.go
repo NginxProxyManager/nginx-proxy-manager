@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"npm/internal/entity/host"
-	"npm/internal/model"
 	"npm/internal/test"
 
 	"github.com/stretchr/testify/assert"
@@ -25,9 +24,7 @@ func TestGetHostFilename(t *testing.T) {
 		{
 			"test1",
 			host.Model{
-				Base: model.Base{
-					ID: 10,
-				},
+				ID: 10,
 			},
 			"",
 			"/data/nginx/hosts/host_10.conf",
@@ -35,9 +32,7 @@ func TestGetHostFilename(t *testing.T) {
 		{
 			"test2",
 			host.Model{
-				Base: model.Base{
-					ID: 10,
-				},
+				ID: 10,
 			},
 			".deleted",
 			"/data/nginx/hosts/host_10.conf.deleted",

@@ -50,10 +50,8 @@ func GetFilterMap(m any, globalTablePrefix string) map[string]model.FilterMapVal
 	}
 
 	// Iterate over all available fields and read the tag value
-	for i := 0; i < t.NumField(); i++ {
-		// Get the field, returns https://golang.org/pkg/reflect/#StructField
-		field := t.Field(i)
-
+	// Each field is a https://golang.org/pkg/reflect/#StructField
+	for field := range t.Fields() {
 		// Get the field tag value
 		filterTag := field.Tag.Get("filter")
 		dbTag := field.Tag.Get("gorm")
@@ -61,10 +59,9 @@ func GetFilterMap(m any, globalTablePrefix string) map[string]model.FilterMapVal
 		// Filter -> Schema mapping
 		if filterTag != "" && filterTag != "-" {
 			f := model.FilterMapValue{
-				Model: name,
+				Model:  name,
+				Schema: getFilterTagSchema(filterTag),
 			}
-
-			f.Schema = getFilterTagSchema(filterTag)
 			parts := strings.Split(filterTag, ",")
 
 			// Filter -> DB Field mapping
@@ -104,15 +101,9 @@ func getFilterTagSchema(filterTag string) string {
 	}
 
 	switch items[1] {
-	case "number":
-		fallthrough
-	case "int":
-		fallthrough
-	case "integer":
+	case "number", "int", "integer":
 		return intFieldSchema(items[0])
-	case "bool":
-		fallthrough
-	case "boolean":
+	case "bool", "boolean":
 		return boolFieldSchema(items[0])
 	case "date":
 		return dateFieldSchema(items[0])
@@ -131,7 +122,7 @@ func getFilterTagSchema(filterTag string) string {
 // object given and by reading the struct "filter" tags.
 func GetFilterSchema(m any) string {
 	filterMap := GetFilterMap(m, "")
-	schemas := make([]string, 0)
+	schemas := make([]string, 0, len(filterMap))
 
 	for _, f := range filterMap {
 		schemas = append(schemas, f.Schema)

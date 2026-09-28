@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSAli() Provider {
 	return Provider{
 		Title:                "dns_ali",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"Ali_Key",
@@ -11,13 +11,13 @@ func getDNSAli() Provider {
 		},
 		Properties: map[string]providerField{
 			"Ali_Key": {
-				Title:     "api-key",
-				Type:      "string",
+				Title:     titleAPIKey,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"Ali_Secret": {
-				Title:     "secret",
-				Type:      "string",
+				Title:     titleSecret,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

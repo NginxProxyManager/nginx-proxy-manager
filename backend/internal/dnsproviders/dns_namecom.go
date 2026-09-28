@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSNamecom() Provider {
 	return Provider{
 		Title:                "dns_namecom",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"Namecom_Username",
@@ -11,13 +11,13 @@ func getDNSNamecom() Provider {
 		},
 		Properties: map[string]providerField{
 			"Namecom_Username": {
-				Title:     "username",
-				Type:      "string",
+				Title:     titleUsername,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"Namecom_Token": {
-				Title:     "token",
-				Type:      "string",
+				Title:     titleToken,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

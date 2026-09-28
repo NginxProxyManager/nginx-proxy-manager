@@ -23,9 +23,7 @@ func ListQueryBuilder(
 	filters []model.Filter,
 	filterMap map[string]model.FilterMapValue,
 ) *gorm.DB {
-	scopes := make([]func(*gorm.DB) *gorm.DB, 0)
-	scopes = append(scopes, ScopeFilters(filters, filterMap))
-	return database.GetDB().Scopes(scopes...)
+	return database.GetDB().Scopes(ScopeFilters(filters, filterMap))
 }
 
 // AddOrderToList is used after query above is used for counting

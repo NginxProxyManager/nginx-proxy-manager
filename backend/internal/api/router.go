@@ -53,7 +53,9 @@ func NewRouter() http.Handler {
 		corss.Handler,
 		middleware.Cors(r),
 		middleware.Options(r),
-		chiMiddleware.RealIP,
+		// nginx in front of the api overwrites X-Forwarded-For with the
+		// connecting address, so the last value is the only trusted one
+		chiMiddleware.ClientIPFromHeader("X-Forwarded-For"),
 		chiMiddleware.Recoverer,
 		chiMiddleware.Throttle(5),
 		middleware.PrettyPrint,
@@ -170,51 +172,35 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// Access Lists
-		r.With(middleware.EnforceSetup()).Route("/access-lists", func(r chi.Router) {
-			// List
-			r.With(
-				middleware.Enforce(user.CapabilityAccessListsView),
-				middleware.ListQuery(accesslist.Model{}),
-			).Get("/", handler.GetAccessLists())
-
-			// Create
-			r.With(middleware.Enforce(user.CapabilityAccessListsManage), middleware.EnforceRequestSchema(schema.CreateAccessList())).
-				Post("/", handler.CreateAccessList())
-
-			// Specific Item
-			r.Route("/{accessListID:[0-9]+}", func(r chi.Router) {
-				r.With(middleware.Enforce(user.CapabilityAccessListsView)).
-					Get("/", handler.GetAccessList())
-				r.With(middleware.Enforce(user.CapabilityAccessListsManage)).Route("/", func(r chi.Router) {
-					r.Delete("/{accessListID:[0-9]+}", handler.DeleteAccessList())
-					r.With(middleware.EnforceRequestSchema(schema.UpdateAccessList())).
-						Put("/{accessListID:[0-9]+}", handler.UpdateAccessList())
-				})
-			})
-		})
+		r.With(middleware.EnforceSetup()).Route("/access-lists", resourceRoutes{
+			idParam:          "accessListID",
+			model:            accesslist.Model{},
+			viewCapability:   user.CapabilityAccessListsView,
+			manageCapability: user.CapabilityAccessListsManage,
+			createSchema:     schema.CreateAccessList(),
+			updateSchema:     schema.UpdateAccessList(),
+			list:             handler.GetAccessLists(),
+			create:           handler.CreateAccessList(),
+			get:              handler.GetAccessList(),
+			update:           handler.UpdateAccessList(),
+			del:              handler.DeleteAccessList(),
+		}.mount)
 
 		// DNS Providers
 		r.With(middleware.EnforceSetup()).Route("/dns-providers", func(r chi.Router) {
-			// List
-			r.With(
-				middleware.Enforce(user.CapabilityDNSProvidersView),
-				middleware.ListQuery(dnsprovider.Model{}),
-			).Get("/", handler.GetDNSProviders())
-
-			// Create
-			r.With(middleware.Enforce(user.CapabilityDNSProvidersManage), middleware.EnforceRequestSchema(schema.CreateDNSProvider())).
-				Post("/", handler.CreateDNSProvider())
-
-			// Specific Item
-			r.Route("/{providerID:[0-9]+}", func(r chi.Router) {
-				r.With(middleware.Enforce(user.CapabilityDNSProvidersView)).
-					Get("/{providerID:[0-9]+}", handler.GetDNSProvider())
-				r.With(middleware.Enforce(user.CapabilityDNSProvidersManage)).Route("/", func(r chi.Router) {
-					r.Delete("/", handler.DeleteDNSProvider())
-					r.With(middleware.EnforceRequestSchema(schema.UpdateDNSProvider())).
-						Put("/{providerID:[0-9]+}", handler.UpdateDNSProvider())
-				})
-			})
+			resourceRoutes{
+				idParam:          "providerID",
+				model:            dnsprovider.Model{},
+				viewCapability:   user.CapabilityDNSProvidersView,
+				manageCapability: user.CapabilityDNSProvidersManage,
+				createSchema:     schema.CreateDNSProvider(),
+				updateSchema:     schema.UpdateDNSProvider(),
+				list:             handler.GetDNSProviders(),
+				create:           handler.CreateDNSProvider(),
+				get:              handler.GetDNSProvider(),
+				update:           handler.UpdateDNSProvider(),
+				del:              handler.DeleteDNSProvider(),
+			}.mount(r)
 
 			// List Acme DNS Providers
 			r.With(middleware.Enforce(user.CapabilityDNSProvidersView)).Route("/acmesh", func(r chi.Router) {
@@ -224,161 +210,106 @@ func applyRoutes(r chi.Router) chi.Router {
 		})
 
 		// Certificate Authorities
-		r.With(middleware.EnforceSetup()).Route("/certificate-authorities", func(r chi.Router) {
-			// List
-			r.With(
-				middleware.Enforce(user.CapabilityCertificateAuthoritiesView),
-				middleware.ListQuery(certificateauthority.Model{}),
-			).Get("/", handler.GetCertificateAuthorities())
-
-			// Create
-			r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesManage), middleware.EnforceRequestSchema(schema.CreateCertificateAuthority())).
-				Post("/", handler.CreateCertificateAuthority())
-
-			// Specific Item
-			r.Route("/{caID:[0-9]+}", func(r chi.Router) {
-				r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesView)).
-					Get("/", handler.GetCertificateAuthority())
-
-				r.With(middleware.EnforceRequestSchema(schema.UpdateCertificateAuthority())).
-					Put("/", handler.UpdateCertificateAuthority())
-				r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesManage)).
-					Delete("/", handler.DeleteCertificateAuthority())
-
-				r.With(middleware.Enforce(user.CapabilityCertificateAuthoritiesManage)).Route("/", func(r chi.Router) {
-					r.Delete("/{caID:[0-9]+}", handler.DeleteCertificateAuthority())
-					r.With(middleware.EnforceRequestSchema(schema.UpdateCertificateAuthority())).
-						Put("/{caID:[0-9]+}", handler.UpdateCertificateAuthority())
-				})
-			})
-		})
+		r.With(middleware.EnforceSetup()).Route("/certificate-authorities", resourceRoutes{
+			idParam:          "caID",
+			model:            certificateauthority.Model{},
+			viewCapability:   user.CapabilityCertificateAuthoritiesView,
+			manageCapability: user.CapabilityCertificateAuthoritiesManage,
+			createSchema:     schema.CreateCertificateAuthority(),
+			updateSchema:     schema.UpdateCertificateAuthority(),
+			list:             handler.GetCertificateAuthorities(),
+			create:           handler.CreateCertificateAuthority(),
+			get:              handler.GetCertificateAuthority(),
+			update:           handler.UpdateCertificateAuthority(),
+			del:              handler.DeleteCertificateAuthority(),
+		}.mount)
 
 		// Certificates
-		r.With(middleware.EnforceSetup()).Route("/certificates", func(r chi.Router) {
-			// List
-			r.With(
-				middleware.Enforce(user.CapabilityCertificatesView),
-				middleware.ListQuery(certificate.Model{}),
-			).Get("/", handler.GetCertificates())
-
-			// Create
-			r.With(middleware.Enforce(user.CapabilityCertificatesManage), middleware.EnforceRequestSchema(schema.CreateCertificate())).
-				Post("/", handler.CreateCertificate())
-
-			// Specific Item
-			r.Route("/{certificateID:[0-9]+}", func(r chi.Router) {
-				r.With(middleware.Enforce(user.CapabilityCertificatesView)).
-					Get("/", handler.GetCertificate())
-				r.With(middleware.Enforce(user.CapabilityCertificatesManage)).Route("/", func(r chi.Router) {
-					r.Delete("/", handler.DeleteCertificate())
-					r.Put("/", handler.UpdateCertificate())
-					// r.With(middleware.EnforceRequestSchema(schema.UpdateCertificate())).
-					//     Put("/", handler.UpdateCertificate())
-					r.Post("/renew", handler.RenewCertificate())
-					r.Get("/download", handler.DownloadCertificate())
-				})
-			})
-		})
+		r.With(middleware.EnforceSetup()).Route("/certificates", resourceRoutes{
+			idParam:          "certificateID",
+			model:            certificate.Model{},
+			viewCapability:   user.CapabilityCertificatesView,
+			manageCapability: user.CapabilityCertificatesManage,
+			createSchema:     schema.CreateCertificate(),
+			// updateSchema:  schema.UpdateCertificate(),
+			list:   handler.GetCertificates(),
+			create: handler.CreateCertificate(),
+			get:    handler.GetCertificate(),
+			update: handler.UpdateCertificate(),
+			del:    handler.DeleteCertificate(),
+			manageItem: func(r chi.Router) {
+				r.Post("/renew", handler.RenewCertificate())
+				r.Get("/download", handler.DownloadCertificate())
+			},
+		}.mount)
 
 		// Hosts
-		r.With(middleware.EnforceSetup()).Route("/hosts", func(r chi.Router) {
-			// List
-			r.With(
-				middleware.Enforce(user.CapabilityHostsView),
-				middleware.ListQuery(host.Model{}),
-			).Get("/", handler.GetHosts())
-
-			// Create
-			r.With(middleware.Enforce(user.CapabilityHostsManage), middleware.EnforceRequestSchema(schema.CreateHost())).
-				Post("/", handler.CreateHost())
-
-			// Specific Item
-			r.Route("/{hostID:[0-9]+}", func(r chi.Router) {
-				r.With(middleware.Enforce(user.CapabilityHostsView)).
-					Get("/", handler.GetHost())
-				r.With(middleware.Enforce(user.CapabilityHostsManage)).Route("/", func(r chi.Router) {
-					r.Delete("/", handler.DeleteHost())
-					r.With(middleware.EnforceRequestSchema(schema.UpdateHost())).
-						Put("/", handler.UpdateHost())
-					r.Get("/nginx-config", handler.GetHostNginxConfig("json"))
-					r.Get("/nginx-config.txt", handler.GetHostNginxConfig("text"))
-				})
-			})
-		})
+		r.With(middleware.EnforceSetup()).Route("/hosts", resourceRoutes{
+			idParam:          "hostID",
+			model:            host.Model{},
+			viewCapability:   user.CapabilityHostsView,
+			manageCapability: user.CapabilityHostsManage,
+			createSchema:     schema.CreateHost(),
+			updateSchema:     schema.UpdateHost(),
+			list:             handler.GetHosts(),
+			create:           handler.CreateHost(),
+			get:              handler.GetHost(),
+			update:           handler.UpdateHost(),
+			del:              handler.DeleteHost(),
+			manageItem: func(r chi.Router) {
+				r.Get("/nginx-config", handler.GetHostNginxConfig("json"))
+				r.Get("/nginx-config.txt", handler.GetHostNginxConfig("text"))
+			},
+		}.mount)
 
 		// Nginx Templates
-		r.With(middleware.EnforceSetup()).Route("/nginx-templates", func(r chi.Router) {
-			// List
-			r.With(
-				middleware.Enforce(user.CapabilityNginxTemplatesView),
-				middleware.ListQuery(nginxtemplate.Model{}),
-			).Get("/", handler.GetNginxTemplates())
-
-			// Create
-			r.With(middleware.Enforce(user.CapabilityNginxTemplatesManage), middleware.EnforceRequestSchema(schema.CreateNginxTemplate())).
-				Post("/", handler.CreateNginxTemplate())
-
-			// Specific Item
-			r.Route("/{templateID:[0-9]+}", func(r chi.Router) {
-				r.With(middleware.Enforce(user.CapabilityNginxTemplatesView)).
-					Get("/", handler.GetNginxTemplates())
-				r.With(middleware.Enforce(user.CapabilityHostsManage)).Route("/", func(r chi.Router) {
-					r.Delete("/", handler.DeleteNginxTemplate())
-					r.With(middleware.EnforceRequestSchema(schema.UpdateNginxTemplate())).
-						Put("/", handler.UpdateNginxTemplate())
-				})
-			})
-		})
+		r.With(middleware.EnforceSetup()).Route("/nginx-templates", resourceRoutes{
+			idParam:          "templateID",
+			model:            nginxtemplate.Model{},
+			viewCapability:   user.CapabilityNginxTemplatesView,
+			manageCapability: user.CapabilityNginxTemplatesManage,
+			createSchema:     schema.CreateNginxTemplate(),
+			updateSchema:     schema.UpdateNginxTemplate(),
+			list:             handler.GetNginxTemplates(),
+			create:           handler.CreateNginxTemplate(),
+			get:              handler.GetNginxTemplate(),
+			update:           handler.UpdateNginxTemplate(),
+			del:              handler.DeleteNginxTemplate(),
+		}.mount)
 
 		// Streams
-		r.With(middleware.EnforceSetup()).Route("/streams", func(r chi.Router) {
-			// List
-			r.With(
-				middleware.Enforce(user.CapabilityStreamsView),
-				middleware.ListQuery(stream.Model{}),
-			).Get("/", handler.GetStreams())
-
-			// Create
-			r.With(middleware.Enforce(user.CapabilityStreamsManage), middleware.EnforceRequestSchema(schema.CreateStream())).
-				Post("/", handler.CreateStream())
-
-			// Specific Item
-			r.Route("/{hostID:[0-9]+}", func(r chi.Router) {
-				r.With(middleware.Enforce(user.CapabilityStreamsView)).
-					Get("/", handler.GetStream())
-				r.With(middleware.Enforce(user.CapabilityHostsManage)).Route("/", func(r chi.Router) {
-					r.Delete("/", handler.DeleteStream())
-					r.With(middleware.EnforceRequestSchema(schema.UpdateStream())).
-						Put("/", handler.UpdateStream())
-				})
-			})
-		})
+		r.With(middleware.EnforceSetup()).Route("/streams", resourceRoutes{
+			idParam:          "hostID",
+			model:            stream.Model{},
+			viewCapability:   user.CapabilityStreamsView,
+			manageCapability: user.CapabilityStreamsManage,
+			createSchema:     schema.CreateStream(),
+			updateSchema:     schema.UpdateStream(),
+			list:             handler.GetStreams(),
+			create:           handler.CreateStream(),
+			get:              handler.GetStream(),
+			update:           handler.UpdateStream(),
+			del:              handler.DeleteStream(),
+		}.mount)
 
 		// Upstreams
-		r.With(middleware.EnforceSetup()).Route("/upstreams", func(r chi.Router) {
-			// List
-			r.With(
-				middleware.Enforce(user.CapabilityHostsView),
-				middleware.ListQuery(upstream.Model{}),
-			).Get("/", handler.GetUpstreams())
-
-			// Create
-			r.With(middleware.Enforce(user.CapabilityHostsManage), middleware.EnforceRequestSchema(schema.CreateUpstream())).
-				Post("/", handler.CreateUpstream())
-
-			// Specific Item
-			r.Route("/{upstreamID:[0-9]+}", func(r chi.Router) {
-				r.With(middleware.Enforce(user.CapabilityHostsView)).
-					Get("/", handler.GetUpstream())
-				r.With(middleware.Enforce(user.CapabilityHostsManage)).Route("/", func(r chi.Router) {
-					r.Delete("/", handler.DeleteUpstream())
-					r.With(middleware.EnforceRequestSchema(schema.UpdateUpstream())).
-						Put("/", handler.UpdateUpstream())
-					r.Get("/nginx-config", handler.GetUpstreamNginxConfig("json"))
-					r.Get("/nginx-config.txt", handler.GetUpstreamNginxConfig("text"))
-				})
-			})
-		})
+		r.With(middleware.EnforceSetup()).Route("/upstreams", resourceRoutes{
+			idParam:          "upstreamID",
+			model:            upstream.Model{},
+			viewCapability:   user.CapabilityHostsView,
+			manageCapability: user.CapabilityHostsManage,
+			createSchema:     schema.CreateUpstream(),
+			updateSchema:     schema.UpdateUpstream(),
+			list:             handler.GetUpstreams(),
+			create:           handler.CreateUpstream(),
+			get:              handler.GetUpstream(),
+			update:           handler.UpdateUpstream(),
+			del:              handler.DeleteUpstream(),
+			manageItem: func(r chi.Router) {
+				r.Get("/nginx-config", handler.GetUpstreamNginxConfig("json"))
+				r.Get("/nginx-config.txt", handler.GetUpstreamNginxConfig("text"))
+			},
+		}.mount)
 	})
 
 	return r

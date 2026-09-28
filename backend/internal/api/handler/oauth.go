@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strings"
 
 	h "npm/internal/api/http"
 	"npm/internal/entity/auth"
@@ -15,17 +14,15 @@ import (
 	njwt "npm/internal/jwt"
 	"npm/internal/logger"
 
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"gorm.io/gorm"
 )
 
-// getRequestIPAddress will use X-FORWARDED-FOR header if it exists
-// otherwise it will use RemoteAddr
+// getRequestIPAddress will use the client IP set by the router's client IP
+// middleware if it exists, otherwise it will use RemoteAddr
 func getRequestIPAddress(r *http.Request) string {
-	// this Get is case insensitive
-	xff := r.Header.Get("X-FORWARDED-FOR")
-	if xff != "" {
-		ip, _, _ := strings.Cut(xff, ",")
-		return strings.TrimSpace(ip)
+	if ip := chiMiddleware.GetClientIP(r.Context()); ip != "" {
+		return ip
 	}
 	return r.RemoteAddr
 }

@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSFreeDNS() Provider {
 	return Provider{
 		Title:                "dns_freedns",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"FREEDNS_User",
@@ -11,13 +11,13 @@ func getDNSFreeDNS() Provider {
 		},
 		Properties: map[string]providerField{
 			"FREEDNS_User": {
-				Title:     "user",
-				Type:      "string",
+				Title:     titleUser,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"FREEDNS_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

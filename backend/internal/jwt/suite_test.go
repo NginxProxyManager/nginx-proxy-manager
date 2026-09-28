@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"npm/internal/entity/user"
-	"npm/internal/model"
 	"npm/internal/test"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -183,9 +182,7 @@ func (s *testsuite) TestGetPrivateKey() {
 
 	// Set currentKeys and try again
 	currentKeys = KeysModel{
-		Base: model.Base{
-			ID: 10,
-		},
+		ID:         10,
 		PrivateKey: s.privateKeyString,
 		PublicKey:  s.publicKeyString,
 	}
@@ -210,9 +207,7 @@ func (s *testsuite) TestGetPublicKey() {
 
 	// Set currentKeys and try again
 	currentKeys = KeysModel{
-		Base: model.Base{
-			ID: 10,
-		},
+		ID:         10,
 		PrivateKey: s.privateKeyString,
 		PublicKey:  s.publicKeyString,
 	}
@@ -228,17 +223,13 @@ func (s *testsuite) TestGenerate() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	currentKeys = KeysModel{
-		Base: model.Base{
-			ID: 10,
-		},
+		ID:         10,
 		PrivateKey: s.privateKeyString,
 		PublicKey:  s.publicKeyString,
 	}
 
 	usr := user.Model{
-		Base: model.Base{
-			ID: 10,
-		},
+		ID: 10,
 	}
 
 	// test 1, user key

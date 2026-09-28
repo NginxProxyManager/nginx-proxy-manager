@@ -1,9 +1,12 @@
 package migrations
 
 import (
+	"io/fs"
 	"path/filepath"
 	"testing"
 
+	"npm/embed"
+	"npm/internal/config"
 	"npm/internal/database"
 	"npm/internal/entity"
 	"npm/internal/entity/certificateauthority"
@@ -12,16 +15,18 @@ import (
 	"npm/internal/entity/user"
 
 	"github.com/glebarez/sqlite"
-	"github.com/go-gormigrate/gormigrate/v2"
+	polyschema "github.com/jc21/polyschema/v1"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
 )
 
 func openTestDB(t *testing.T) *gorm.DB {
 	t.Helper()
+	config.Configuration.DB.Driver = config.DatabaseSqlite
 	dsn := filepath.Join(t.TempDir(), "test.db")
-	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{Logger: gormlogger.Default.LogMode(gormlogger.Silent)})
 	require.NoError(t, err)
 	return db
 }
@@ -55,9 +60,9 @@ func TestMigrateFreshDatabase(t *testing.T) {
 	require.NoError(t, db.Model(&nginxtemplate.Model{}).Count(&templateCount).Error)
 	assert.EqualValues(t, 5, templateCount)
 
-	var migrationCount int64
-	require.NoError(t, db.Table(gormigrate.DefaultOptions.TableName).Count(&migrationCount).Error)
-	assert.EqualValues(t, len(all()), migrationCount)
+	var historyCount int64
+	require.NoError(t, db.Table(historyTable).Count(&historyCount).Error)
+	assert.EqualValues(t, 2, historyCount, "one history row per migration file")
 }
 
 func TestMigrateIsIdempotent(t *testing.T) {
@@ -76,36 +81,26 @@ func TestMigrateIsIdempotent(t *testing.T) {
 	assert.EqualValues(t, 1, userCount)
 }
 
-// TestBootstrapFromLegacyDBMate simulates a database that was previously
-// migrated by dbmate: it has dbmate's schema_migrations table with the two
-// legacy versions recorded, and already contains seeded data. Migrate must
-// detect this and mark the equivalent gormigrate migrations as already
-// applied instead of re-running them and duplicating the seed data.
-func TestBootstrapFromLegacyDBMate(t *testing.T) {
-	db := openTestDB(t)
-	database.SetDB(db)
-
-	require.NoError(t, db.Exec(`CREATE TABLE schema_migrations (version TEXT PRIMARY KEY)`).Error)
-	for _, v := range legacyMigrationIDs {
-		require.NoError(t, db.Exec(`INSERT INTO schema_migrations (version) VALUES (?)`, v).Error)
-	}
-	require.NoError(t, db.Exec(`CREATE TABLE capability (name TEXT PRIMARY KEY)`).Error)
-	require.NoError(t, db.Exec(`INSERT INTO capability (name) VALUES (?)`, "full-admin").Error)
-
-	require.True(t, Migrate(func() {}))
-
-	var capabilityCount int64
-	require.NoError(t, db.Table("capability").Count(&capabilityCount).Error)
-	assert.EqualValues(t, 1, capabilityCount, "legacy data must not be re-seeded")
-
-	var migrationIDs []string
-	require.NoError(t, db.Table(gormigrate.DefaultOptions.TableName).Pluck("id", &migrationIDs).Error)
-	assert.ElementsMatch(t, legacyMigrationIDs, migrationIDs)
-}
-
 func TestMigrateNoDB(t *testing.T) {
 	database.SetDB(nil)
 	assert.False(t, Migrate(func() {
 		t.Error("followup should not be called")
 	}))
+}
+
+// TestMigrationsRenderForEveryEngine catches a migration file that won't
+// run on one of the supported engines, without needing those databases.
+func TestMigrationsRenderForEveryEngine(t *testing.T) {
+	files, err := fs.Sub(embed.MigrationFiles, "migrations")
+	require.NoError(t, err)
+
+	issues, err := polyschema.CheckFS(files, polyschema.Postgres, polyschema.MySQL, polyschema.SQLite)
+	require.NoError(t, err)
+	for _, is := range issues {
+		if is.Severity == polyschema.Error {
+			t.Error(is)
+		} else {
+			t.Log(is)
+		}
+	}
 }

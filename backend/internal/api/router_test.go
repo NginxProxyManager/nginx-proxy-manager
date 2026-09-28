@@ -3,7 +3,6 @@ package api
 import (
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"npm/internal/config"
@@ -21,8 +20,7 @@ var (
 // Tear up/down
 func TestMain(m *testing.M) {
 	config.Init(&version, &commit)
-	code := m.Run()
-	os.Exit(code)
+	m.Run()
 }
 
 func TestGetHealthz(t *testing.T) {

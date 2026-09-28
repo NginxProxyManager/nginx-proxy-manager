@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSInwx() Provider {
 	return Provider{
 		Title:                "dns_inwx",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"INWX_User",
@@ -11,13 +11,13 @@ func getDNSInwx() Provider {
 		},
 		Properties: map[string]providerField{
 			"INWX_User": {
-				Title:     "user",
-				Type:      "string",
+				Title:     titleUser,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"INWX_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

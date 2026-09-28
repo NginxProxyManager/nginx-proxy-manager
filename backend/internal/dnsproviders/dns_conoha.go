@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSConoha() Provider {
 	return Provider{
 		Title:                "dns_conoha",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"CONOHA_IdentityServiceApi",
@@ -13,24 +13,24 @@ func getDNSConoha() Provider {
 		},
 		Properties: map[string]providerField{
 			"CONOHA_IdentityServiceApi": {
-				Title:     "api-url",
-				Type:      "string",
+				Title:     titleAPIURL,
+				Type:      typeString,
 				MinLength: 4,
 			},
 			"CONOHA_Username": {
-				Title:     "username",
-				Type:      "string",
+				Title:     titleUsername,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"CONOHA_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},
 			"CONOHA_TenantId": {
 				Title:     "tenant-id",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 		},

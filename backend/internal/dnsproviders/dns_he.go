@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSHe() Provider {
 	return Provider{
 		Title:                "dns_he",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"HE_Username",
@@ -11,13 +11,13 @@ func getDNSHe() Provider {
 		},
 		Properties: map[string]providerField{
 			"HE_Username": {
-				Title:     "username",
-				Type:      "string",
+				Title:     titleUsername,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"HE_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

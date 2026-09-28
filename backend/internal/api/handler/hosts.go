@@ -172,34 +172,7 @@ func DeleteHost() func(http.ResponseWriter, *http.Request) {
 // Route: GET /hosts/{hostID}/nginx-config
 // Route: GET /hosts/{hostID}/nginx-config.txt
 func GetHostNginxConfig(format string) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var err error
-		var hostID uint
-		if hostID, err = getURLParamInt(r, "hostID"); err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
-		item, err := host.GetByID(hostID)
-		switch err {
-		case gorm.ErrRecordNotFound:
-			h.NotFound(w, r)
-		case nil:
-			// Get the config from disk
-			content, nErr := nginx.GetHostConfigContent(item)
-			if nErr != nil {
-				h.ResultErrorJSON(w, r, http.StatusBadRequest, nErr.Error(), nil)
-				return
-			}
-			if format == "text" {
-				h.ResultResponseText(w, http.StatusOK, content)
-				return
-			}
-			h.ResultResponseJSON(w, r, http.StatusOK, content)
-		default:
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		}
-	}
+	return getNginxConfig(format, "hostID", host.GetByID, nginx.GetHostConfigContent)
 }
 
 func configureHost(hst host.Model) {

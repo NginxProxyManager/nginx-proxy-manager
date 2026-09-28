@@ -168,7 +168,6 @@ func TestConfigure(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			if err := Configure(tt.args.c); (err != nil) != tt.wantErr {
 				t.Errorf("Configure() error = %v, wantErr %v", err, tt.wantErr)

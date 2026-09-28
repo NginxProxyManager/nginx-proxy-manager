@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSLoopia() Provider {
 	return Provider{
 		Title:                "dns_loopia",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"LOOPIA_Api",
@@ -12,18 +12,18 @@ func getDNSLoopia() Provider {
 		},
 		Properties: map[string]providerField{
 			"LOOPIA_Api": {
-				Title:     "api-url",
-				Type:      "string",
+				Title:     titleAPIURL,
+				Type:      typeString,
 				MinLength: 4,
 			},
 			"LOOPIA_User": {
-				Title:     "user",
-				Type:      "string",
+				Title:     titleUser,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"LOOPIA_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

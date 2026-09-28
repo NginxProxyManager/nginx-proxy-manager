@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSPDNS() Provider {
 	return Provider{
 		Title:                "dns_pdns",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"PDNS_Url",
@@ -14,22 +14,22 @@ func getDNSPDNS() Provider {
 		Properties: map[string]providerField{
 			"PDNS_Url": {
 				Title:     "url",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"PDNS_ServerId": {
 				Title:     "server-id",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"PDNS_Token": {
-				Title:     "token",
-				Type:      "string",
+				Title:     titleToken,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"PDNS_Ttl": {
 				Title:   "ttl",
-				Type:    "integer",
+				Type:    typeInteger,
 				Minimum: 1,
 			},
 		},

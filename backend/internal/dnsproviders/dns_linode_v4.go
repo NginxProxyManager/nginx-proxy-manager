@@ -5,15 +5,15 @@ package dnsproviders
 func getDNSLinodeV4() Provider {
 	return Provider{
 		Title:                "dns_linode_v4",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"LINODE_V4_API_KEY",
 		},
 		Properties: map[string]providerField{
 			"LINODE_V4_API_KEY": {
-				Title:     "api-key",
-				Type:      "string",
+				Title:     titleAPIKey,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

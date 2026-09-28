@@ -33,17 +33,14 @@ func TestShutdown(t *testing.T) {
 	err := Shutdown()
 	require.Nil(t, err, "Shutdown should not return an error when jobqueue is started")
 
-	// nolint: gosimple
-	select {
-	case <-ctx.Done():
-		switch ctx.Err() {
-		case context.DeadlineExceeded:
-			fmt.Println("context timeout exceeded")
-		case context.Canceled:
-			fmt.Println("context cancelled by force. whole process is complete")
-		default:
-			require.Nil(t, ctx.Err(), "Context done state has unexpected value")
-		}
+	<-ctx.Done()
+	switch ctx.Err() {
+	case context.DeadlineExceeded:
+		fmt.Println("context timeout exceeded")
+	case context.Canceled:
+		fmt.Println("context cancelled by force. whole process is complete")
+	default:
+		require.Nil(t, ctx.Err(), "Context done state has unexpected value")
 	}
 
 	require.Nil(t, cancel, "Cancel function should be nil after Shutdown")

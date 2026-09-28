@@ -96,7 +96,7 @@ func ScopeFilters(filters []model.Filter, filterMap map[string]model.FilterMapVa
 }
 
 func sortToOrderString(sorts []model.Sort) string {
-	strs := make([]string, 0)
+	strs := make([]string, 0, len(sorts))
 	for _, i := range sorts {
 		str := i.Field
 		if i.Direction != "" {
@@ -110,17 +110,7 @@ func sortToOrderString(sorts []model.Sort) string {
 func parseBoolValue(v string) []string {
 	bVal := "0"
 	switch strings.ToLower(v) {
-	case "yes":
-		fallthrough
-	case "true":
-		fallthrough
-	case "on":
-		fallthrough
-	case "t":
-		fallthrough
-	case "1":
-		fallthrough
-	case "y":
+	case "yes", "true", "on", "t", "1", "y":
 		bVal = "1"
 	}
 	return []string{bVal}

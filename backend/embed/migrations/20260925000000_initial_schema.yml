@@ -1,0 +1,224 @@
+# The application's initial schema.
+#
+# Columns are nullable unless marked otherwise. Two columns use a bounded
+# string rather than text because MySQL can't make a TEXT column a primary
+# key (capability.name) or give it a literal default (auth.type). They're
+# still TEXT on SQLite.
+operations:
+  - createTable:
+      name: access_list
+      columns:
+        - { name: id,         type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at, type: bigint }
+        - { name: updated_at, type: bigint }
+        - { name: is_deleted, type: bigint }
+        - { name: user_id,    type: bigint }
+        - { name: name,       type: text }
+        - { name: meta,       type: text }
+
+  - createTable:
+      name: audit_log
+      columns:
+        - { name: id,          type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,  type: bigint }
+        - { name: updated_at,  type: bigint }
+        - { name: is_deleted,  type: bigint }
+        - { name: user_id,     type: bigint }
+        - { name: object_type, type: text }
+        - { name: object_id,   type: bigint }
+        - { name: action,      type: text }
+        - { name: meta,        type: text }
+
+  - createTable:
+      name: auth
+      columns:
+        - { name: id,         type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at, type: bigint }
+        - { name: updated_at, type: bigint }
+        - { name: is_deleted, type: bigint }
+        - { name: user_id,    type: bigint }
+        - { name: type,       type: string, length: 191, default: local }
+        - { name: identity,   type: text }
+        - { name: secret,     type: text }
+
+  - createTable:
+      name: capability
+      columns:
+        - { name: name, type: string, length: 191, primaryKey: true }
+
+  - createTable:
+      name: certificate
+      columns:
+        - { name: id,                       type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,               type: bigint }
+        - { name: updated_at,               type: bigint }
+        - { name: is_deleted,               type: bigint }
+        - { name: user_id,                  type: bigint }
+        - { name: type,                     type: text }
+        - { name: certificate_authority_id, type: bigint }
+        - { name: dns_provider_id,          type: bigint }
+        - { name: name,                     type: text }
+        - { name: domain_names,             type: text }
+        - { name: expires_on,               type: bigint }
+        - { name: status,                   type: text }
+        - { name: error_message,            type: text }
+        - { name: meta,                     type: text }
+        - { name: is_ecc,                   type: boolean }
+
+  - createTable:
+      name: certificate_authority
+      columns:
+        - { name: id,                    type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,            type: bigint }
+        - { name: updated_at,            type: bigint }
+        - { name: is_deleted,            type: bigint }
+        - { name: name,                  type: text }
+        - { name: acmesh_server,         type: text }
+        - { name: ca_bundle,             type: text }
+        - { name: max_domains,           type: bigint }
+        - { name: is_wildcard_supported, type: boolean }
+        - { name: is_readonly,           type: boolean }
+
+  - createTable:
+      name: dns_provider
+      columns:
+        - { name: id,          type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,  type: bigint }
+        - { name: updated_at,  type: bigint }
+        - { name: is_deleted,  type: bigint }
+        - { name: user_id,     type: bigint }
+        - { name: name,        type: text }
+        - { name: acmesh_name, type: text }
+        - { name: dns_sleep,   type: bigint }
+        - { name: meta,        type: text }
+
+  - createTable:
+      name: host
+      columns:
+        - { name: id,                      type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,              type: bigint }
+        - { name: updated_at,              type: bigint }
+        - { name: is_deleted,              type: bigint }
+        - { name: user_id,                 type: bigint }
+        - { name: type,                    type: text }
+        - { name: nginx_template_id,       type: bigint }
+        - { name: listen_interface,        type: text }
+        - { name: domain_names,            type: text }
+        - { name: upstream_id,             type: bigint }
+        - { name: proxy_scheme,            type: text }
+        - { name: proxy_host,              type: text }
+        - { name: proxy_port,              type: bigint }
+        - { name: certificate_id,          type: bigint }
+        - { name: access_list_id,          type: bigint }
+        - { name: ssl_forced,              type: boolean }
+        - { name: caching_enabled,         type: boolean }
+        - { name: block_exploits,          type: boolean }
+        - { name: allow_websocket_upgrade, type: boolean }
+        - { name: http2_support,           type: boolean }
+        - { name: hsts_enabled,            type: boolean }
+        - { name: hsts_subdomains,         type: boolean }
+        - { name: paths,                   type: text }
+        - { name: advanced_config,         type: text }
+        - { name: status,                  type: text }
+        - { name: error_message,           type: text }
+        - { name: is_disabled,             type: boolean }
+
+  - createTable:
+      name: jwt_keys
+      columns:
+        - { name: id,          type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,  type: bigint }
+        - { name: updated_at,  type: bigint }
+        - { name: is_deleted,  type: bigint }
+        - { name: public_key,  type: text }
+        - { name: private_key, type: text }
+
+  - createTable:
+      name: nginx_template
+      columns:
+        - { name: id,         type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at, type: bigint }
+        - { name: updated_at, type: bigint }
+        - { name: is_deleted, type: bigint }
+        - { name: user_id,    type: bigint }
+        - { name: name,       type: text }
+        - { name: type,       type: text }
+        - { name: template,   type: text }
+
+  - createTable:
+      name: setting
+      columns:
+        - { name: id,          type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,  type: bigint }
+        - { name: updated_at,  type: bigint }
+        - { name: is_deleted,  type: bigint }
+        - { name: name,        type: text }
+        - { name: description, type: text }
+        - { name: value,       type: json }
+
+  - createTable:
+      name: stream
+      columns:
+        - { name: id,           type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,   type: bigint }
+        - { name: updated_at,   type: bigint }
+        - { name: is_deleted,   type: bigint }
+        - { name: expires_on,   type: bigint }
+        - { name: user_id,      type: bigint }
+        - { name: provider,     type: text }
+        - { name: name,         type: text }
+        - { name: domain_names, type: text }
+        - { name: meta,         type: text }
+
+  - createTable:
+      name: upstream
+      columns:
+        - { name: id,                 type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,         type: bigint }
+        - { name: updated_at,         type: bigint }
+        - { name: is_deleted,         type: bigint }
+        - { name: user_id,            type: bigint }
+        - { name: name,               type: text }
+        - { name: nginx_template_id,  type: bigint }
+        - { name: ip_hash,            type: boolean }
+        - { name: ntlm,               type: boolean }
+        - { name: keepalive,          type: bigint }
+        - { name: keepalive_requests, type: bigint }
+        - { name: keepalive_time,     type: text }
+        - { name: keepalive_timeout,  type: text }
+        - { name: advanced_config,    type: text }
+        - { name: status,             type: text }
+        - { name: error_message,      type: text }
+
+  - createTable:
+      name: upstream_server
+      columns:
+        - { name: id,           type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,   type: bigint }
+        - { name: updated_at,   type: bigint }
+        - { name: is_deleted,   type: bigint }
+        - { name: upstream_id,  type: bigint }
+        - { name: server,       type: text }
+        - { name: weight,       type: bigint }
+        - { name: max_conns,    type: bigint }
+        - { name: max_fails,    type: bigint }
+        - { name: fail_timeout, type: bigint }
+        - { name: is_backup,    type: boolean }
+
+  - createTable:
+      name: user
+      columns:
+        - { name: id,          type: bigint, primaryKey: true, autoIncrement: true }
+        - { name: created_at,  type: bigint }
+        - { name: updated_at,  type: bigint }
+        - { name: is_deleted,  type: bigint }
+        - { name: name,        type: text }
+        - { name: email,       type: text }
+        - { name: is_disabled, type: boolean }
+        - { name: is_system,   type: boolean }
+
+  - createTable:
+      name: user_has_capability
+      columns:
+        - { name: user_id,         type: bigint }
+        - { name: capability_name, type: text }

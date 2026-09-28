@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSAcmeDNS() Provider {
 	return Provider{
 		Title:                "dns_acmedns",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"ACMEDNS_BASE_URL",
@@ -14,19 +14,19 @@ func getDNSAcmeDNS() Provider {
 		Properties: map[string]providerField{
 			"ACMEDNS_BASE_URL": {
 				Title: "base-url",
-				Type:  "string",
+				Type:  typeString,
 			},
 			"ACMEDNS_SUBDOMAIN": {
 				Title: "subdomain",
-				Type:  "string",
+				Type:  typeString,
 			},
 			"ACMEDNS_USERNAME": {
-				Title: "username",
-				Type:  "string",
+				Title: titleUsername,
+				Type:  typeString,
 			},
 			"ACMEDNS_PASSWORD": {
-				Title:    "password",
-				Type:     "string",
+				Title:    titlePassword,
+				Type:     typeString,
 				IsSecret: true,
 			},
 		},

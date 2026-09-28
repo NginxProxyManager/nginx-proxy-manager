@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSCloudns() Provider {
 	return Provider{
 		Title:                "dns_cloudns",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"CLOUDNS_AUTH_ID",
@@ -13,17 +13,17 @@ func getDNSCloudns() Provider {
 		Properties: map[string]providerField{
 			"CLOUDNS_AUTH_ID": {
 				Title:     "auth-id",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"CLOUDNS_SUB_AUTH_ID": {
 				Title:     "sub-auth-id",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"CLOUDNS_AUTH_PASSWORD": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

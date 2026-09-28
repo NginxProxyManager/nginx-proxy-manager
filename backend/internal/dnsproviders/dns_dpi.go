@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSDpi() Provider {
 	return Provider{
 		Title:                "dns_dpi",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"DPI_Id",
@@ -12,12 +12,12 @@ func getDNSDpi() Provider {
 		Properties: map[string]providerField{
 			"DPI_Id": {
 				Title:     "id",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"DPI_Key": {
-				Title:     "key",
-				Type:      "string",
+				Title:     titleKey,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

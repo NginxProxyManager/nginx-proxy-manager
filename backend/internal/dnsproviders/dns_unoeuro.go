@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSUnoeuro() Provider {
 	return Provider{
 		Title:                "dns_unoeuro",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"UNO_Key",
@@ -11,14 +11,14 @@ func getDNSUnoeuro() Provider {
 		},
 		Properties: map[string]providerField{
 			"UNO_Key": {
-				Title:     "key",
-				Type:      "string",
+				Title:     titleKey,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},
 			"UNO_User": {
-				Title:     "user",
-				Type:      "string",
+				Title:     titleUser,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

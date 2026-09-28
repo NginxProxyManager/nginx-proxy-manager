@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSGd() Provider {
 	return Provider{
 		Title:                "dns_gd",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"GD_Key",
@@ -11,13 +11,13 @@ func getDNSGd() Provider {
 		},
 		Properties: map[string]providerField{
 			"GD_Key": {
-				Title:     "key",
-				Type:      "string",
+				Title:     titleKey,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"GD_Secret": {
-				Title:     "secret",
-				Type:      "string",
+				Title:     titleSecret,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

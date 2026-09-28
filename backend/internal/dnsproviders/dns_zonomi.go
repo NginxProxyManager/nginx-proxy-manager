@@ -3,15 +3,15 @@ package dnsproviders
 func getDNSZonomi() Provider {
 	return Provider{
 		Title:                "dns_zonomi",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"ZM_Key",
 		},
 		Properties: map[string]providerField{
 			"ZM_Key": {
-				Title:     "api-key",
-				Type:      "string",
+				Title:     titleAPIKey,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

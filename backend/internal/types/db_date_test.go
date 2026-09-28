@@ -25,7 +25,10 @@ func TestDBDate_Value(t *testing.T) {
 	}
 
 	// Convert the value to int64
-	unixTime := value.(int64)
+	unixTime, ok := value.(int64)
+	if !ok {
+		t.Fatalf("Expected int64 value, got %T", value)
+	}
 
 	// Convert the unix time back to time.Time
 	actualTime := time.Unix(unixTime, 0)
@@ -55,11 +58,11 @@ func TestDBDate_Scan(t *testing.T) {
 	}
 
 	// Convert the DBDate's time to unix timestamp for comparison
-	actualUnixTime := dbDate.Time.Unix()
+	actualUnixSec := dbDate.Time.Unix()
 
 	// Compare the actual unix time with the expected unix time
-	if actualUnixTime != unixTime {
-		t.Errorf("Expected unix time '%v', got '%v'", unixTime, actualUnixTime)
+	if actualUnixSec != unixTime {
+		t.Errorf("Expected unix time '%v', got '%v'", unixTime, actualUnixSec)
 	}
 }
 
@@ -82,12 +85,12 @@ func TestDBDate_UnmarshalJSON(t *testing.T) {
 	}
 
 	// Convert the DBDate's time to unix timestamp for comparison
-	actualUnixTime := dbDate.Time.Unix()
+	actualUnixSec := dbDate.Time.Unix()
 
 	// Compare the actual unix time with the expected unix time
 	expectedUnixTime := int64(1640995200)
-	if actualUnixTime != expectedUnixTime {
-		t.Errorf("Expected unix time '%v', got '%v'", expectedUnixTime, actualUnixTime)
+	if actualUnixSec != expectedUnixTime {
+		t.Errorf("Expected unix time '%v', got '%v'", expectedUnixTime, actualUnixSec)
 	}
 }
 

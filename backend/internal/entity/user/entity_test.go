@@ -226,9 +226,7 @@ func (s *testsuite) TestDelete() {
 	assert.Equal(s.T(), "Unable to delete a new object", err.Error())
 
 	m2 := Model{
-		Base: model.Base{
-			ID: 10,
-		},
+		ID:   10,
 		Name: "John Doe",
 	}
 	err2 := m2.Delete()
@@ -442,9 +440,7 @@ func (s *testsuite) TestSaveCapabilitiesInvalid() {
 
 	// Empty model returns error
 	m := Model{
-		Base: model.Base{
-			ID: 10,
-		},
+		ID:           10,
 		Capabilities: []string{"doesnotexist", "hosts.manage"},
 	}
 	err := m.SaveCapabilities()

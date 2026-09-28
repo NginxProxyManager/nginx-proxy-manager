@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSTele3() Provider {
 	return Provider{
 		Title:                "dns_tele3",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"TELE3_Key",
@@ -11,13 +11,13 @@ func getDNSTele3() Provider {
 		},
 		Properties: map[string]providerField{
 			"TELE3_Key": {
-				Title:     "key",
-				Type:      "string",
+				Title:     titleKey,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"TELE3_Secret": {
-				Title:     "secret",
-				Type:      "string",
+				Title:     titleSecret,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSIspconfig() Provider {
 	return Provider{
 		Title:                "dns_ispconfig",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"ISPC_User",
@@ -12,24 +12,24 @@ func getDNSIspconfig() Provider {
 		},
 		Properties: map[string]providerField{
 			"ISPC_User": {
-				Title:     "user",
-				Type:      "string",
+				Title:     titleUser,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"ISPC_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},
 			"ISPC_Api": {
-				Title:     "api-url",
-				Type:      "string",
+				Title:     titleAPIURL,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"ISPC_Api_Insecure": {
 				Title: "insecure",
-				Type:  "boolean",
+				Type:  typeBoolean,
 			},
 		},
 	}

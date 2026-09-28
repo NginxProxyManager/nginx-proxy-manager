@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSCyon() Provider {
 	return Provider{
 		Title:                "dns_cyon",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"CY_Username",
@@ -12,19 +12,19 @@ func getDNSCyon() Provider {
 		},
 		Properties: map[string]providerField{
 			"CY_Username": {
-				Title:     "user",
-				Type:      "string",
+				Title:     titleUser,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"CY_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},
 			"CY_OTP_Secret": {
 				Title:     "otp-secret",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

@@ -35,12 +35,13 @@ func NotFound() func(http.ResponseWriter, *http.Request) {
 		}
 
 		err := tryRead(assetsSub, path, w)
-		if err == errIsDir {
+		switch err {
+		case errIsDir:
 			err = tryRead(assetsSub, defaultFile, w)
 			if err != nil {
 				h.NotFound(w, r)
 			}
-		} else if err == nil {
+		case nil:
 			return
 		}
 

@@ -22,10 +22,10 @@ func TestNullableDBDateValue(t *testing.T) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	expectedValue := tme.Unix()
+	expectedSec := tme.Unix()
 
-	if value != expectedValue {
-		t.Errorf("Incorrect value. Expected: %d, Got: %v", expectedValue, value)
+	if value != expectedSec {
+		t.Errorf("Incorrect value. Expected: %d, Got: %v", expectedSec, value)
 	}
 }
 
@@ -101,10 +101,10 @@ func TestNullableDBDateAsInt64(t *testing.T) {
 	}
 
 	unixtime := d.AsInt64()
-	expectedUnixtime := tme.Unix()
+	expectedSec := tme.Unix()
 
-	if unixtime != expectedUnixtime {
-		t.Errorf("Incorrect unixtime. Expected: %d, Got: %d", expectedUnixtime, unixtime)
+	if unixtime != expectedSec {
+		t.Errorf("Incorrect unixtime. Expected: %d, Got: %d", expectedSec, unixtime)
 	}
 }
 

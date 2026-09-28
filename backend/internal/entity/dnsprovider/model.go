@@ -34,6 +34,11 @@ func (m *Model) LoadByID(id uint) error {
 	return result.Error
 }
 
+// SetUserID sets the owner of this model
+func (m *Model) SetUserID(userID uint) {
+	m.UserID = userID
+}
+
 // Save will save this model to the DB
 func (m *Model) Save() error {
 	if m.UserID == 0 {

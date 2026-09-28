@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSKinghost() Provider {
 	return Provider{
 		Title:                "dns_kinghost",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"KINGHOST_Username",
@@ -11,13 +11,13 @@ func getDNSKinghost() Provider {
 		},
 		Properties: map[string]providerField{
 			"KINGHOST_Username": {
-				Title:     "user",
-				Type:      "string",
+				Title:     titleUser,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"KINGHOST_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

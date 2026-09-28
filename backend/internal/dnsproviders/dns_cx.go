@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSCx() Provider {
 	return Provider{
 		Title:                "dns_cx",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"CX_Key",
@@ -11,12 +11,12 @@ func getDNSCx() Provider {
 		},
 		Properties: map[string]providerField{
 			"CX_Key": {
-				Title: "key",
-				Type:  "string",
+				Title: titleKey,
+				Type:  typeString,
 			},
 			"CX_Secret": {
-				Title:    "secret",
-				Type:     "string",
+				Title:    titleSecret,
+				Type:     typeString,
 				IsSecret: true,
 			},
 		},

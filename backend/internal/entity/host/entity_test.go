@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"npm/internal/model"
 	"npm/internal/status"
 	"npm/internal/test"
 	"npm/internal/types"
@@ -189,9 +188,7 @@ func (s *testsuite) TestDelete() {
 	assert.Equal(s.T(), "Unable to delete a new object", err.Error())
 
 	m2 := Model{
-		Base: model.Base{
-			ID: 10,
-		},
+		ID: 10,
 	}
 	err2 := m2.Delete()
 	require.NoError(s.T(), err2)
@@ -203,11 +200,9 @@ func (s *testsuite) TestGetTemplate() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	m := Model{
-		Base: model.Base{
-			ID:        10,
-			CreatedAt: time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).UnixMilli(),
-			UpdatedAt: time.Date(2018, 8, 12, 7, 30, 24, 16, time.UTC).UnixMilli(),
-		},
+		ID:              10,
+		CreatedAt:       time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC).UnixMilli(),
+		UpdatedAt:       time.Date(2018, 8, 12, 7, 30, 24, 16, time.UTC).UnixMilli(),
 		UserID:          100,
 		Type:            "proxy",
 		NginxTemplateID: 20,

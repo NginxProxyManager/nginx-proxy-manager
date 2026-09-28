@@ -38,8 +38,8 @@ func SSEAuth(next http.Handler) http.Handler {
 			return
 		}
 
-		iss, _ := token.Get("iss")
-		if iss != "sse" {
+		iss, ok := token.Issuer()
+		if !ok || iss != "sse" {
 			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 			return
 		}

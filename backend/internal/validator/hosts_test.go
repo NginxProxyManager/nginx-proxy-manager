@@ -21,7 +21,8 @@ type MockCertificate struct {
 
 func (m *MockCertificate) GetByID(id uint) (certificate.Model, error) {
 	args := m.Called(id)
-	return args.Get(0).(certificate.Model), args.Error(1)
+	model, _ := args.Get(0).(certificate.Model)
+	return model, args.Error(1)
 }
 
 type MockUpstream struct {
@@ -30,7 +31,8 @@ type MockUpstream struct {
 
 func (m *MockUpstream) GetByID(id uint) (upstream.Model, error) {
 	args := m.Called(id)
-	return args.Get(0).(upstream.Model), args.Error(1)
+	model, _ := args.Get(0).(upstream.Model)
+	return model, args.Error(1)
 }
 
 type MockNginxTemplate struct {
@@ -39,7 +41,8 @@ type MockNginxTemplate struct {
 
 func (m *MockNginxTemplate) GetByID(id uint) (nginxtemplate.Model, error) {
 	args := m.Called(id)
-	return args.Get(0).(nginxtemplate.Model), args.Error(1)
+	model, _ := args.Get(0).(nginxtemplate.Model)
+	return model, args.Error(1)
 }
 
 func TestValidateHost(t *testing.T) {

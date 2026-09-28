@@ -25,9 +25,9 @@ func (j *JSONB) Scan(src any) error {
 	var srcString string
 	switch v := src.(type) {
 	case string:
-		srcString = src.(string)
+		srcString = v
 	case []uint8:
-		srcString = string(src.([]uint8))
+		srcString = string(v)
 	default:
 		return eris.Errorf("Incompatible type for JSONB: %v", v)
 	}

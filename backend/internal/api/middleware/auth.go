@@ -70,7 +70,7 @@ func Enforce(permissions ...string) func(http.Handler) http.Handler {
 
 					var userCapabilities []string
 					if found {
-						userCapabilities = cacheItem.([]string)
+						userCapabilities, _ = cacheItem.([]string)
 					} else {
 						// Get from db and store it
 						userCapabilities, err = user.GetCapabilities(userID)

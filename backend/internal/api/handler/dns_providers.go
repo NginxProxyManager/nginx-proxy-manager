@@ -1,144 +1,44 @@
 package handler
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 
-	c "npm/internal/api/context"
 	h "npm/internal/api/http"
-	"npm/internal/api/middleware"
 	"npm/internal/dnsproviders"
 	"npm/internal/entity/dnsprovider"
 	"npm/internal/errors"
-
-	"gorm.io/gorm"
 )
 
 // GetDNSProviders will return a list of DNS Providers
 // Route: GET /dns-providers
 func GetDNSProviders() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		pageInfo, err := getPageInfoFromRequest(r)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
-		items, err := dnsprovider.List(pageInfo, middleware.GetFiltersFromContext(r))
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		} else {
-			h.ResultResponseJSON(w, r, http.StatusOK, items)
-		}
-	}
+	return listHandler(dnsprovider.List)
 }
 
 // GetDNSProvider will return a single DNS Provider
 // Route: GET /dns-providers/{providerID}
 func GetDNSProvider() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var err error
-		var providerID uint
-		if providerID, err = getURLParamInt(r, "providerID"); err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
-		item, err := dnsprovider.GetByID(providerID)
-		switch err {
-		case gorm.ErrRecordNotFound:
-			h.NotFound(w, r)
-		case nil:
-			h.ResultResponseJSON(w, r, http.StatusOK, item)
-		default:
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		}
-	}
+	return getByIDHandler("providerID", dnsprovider.GetByID)
 }
 
 // CreateDNSProvider will create a DNS Provider
 // Route: POST /dns-providers
 func CreateDNSProvider() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
-
-		var newItem dnsprovider.Model
-		err := json.Unmarshal(bodyBytes, &newItem)
-		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
-			return
-		}
-
-		// Get userID from token
-		userID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
-		newItem.UserID = userID
-
-		if err = newItem.Save(); err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, fmt.Sprintf("Unable to save DNS Provider: %s", err.Error()), nil)
-			return
-		}
-
-		h.ResultResponseJSON(w, r, http.StatusOK, newItem)
+		createUserOwned(w, r, &dnsprovider.Model{}, "DNS Provider")
 	}
 }
 
 // UpdateDNSProvider updates a provider
 // Route: PUT /dns-providers/{providerID}
 func UpdateDNSProvider() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var err error
-		var providerID uint
-		if providerID, err = getURLParamInt(r, "providerID"); err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
-		item, err := dnsprovider.GetByID(providerID)
-		switch err {
-		case gorm.ErrRecordNotFound:
-			h.NotFound(w, r)
-		case nil:
-			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
-			err := json.Unmarshal(bodyBytes, &item)
-			if err != nil {
-				h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
-				return
-			}
-
-			if err = item.Save(); err != nil {
-				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-				return
-			}
-
-			h.ResultResponseJSON(w, r, http.StatusOK, item)
-		default:
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		}
-	}
+	return updateByIDHandler("providerID", dnsprovider.GetByID, (*dnsprovider.Model).Save)
 }
 
 // DeleteDNSProvider removes a provider
 // Route: DELETE /dns-providers/{providerID}
 func DeleteDNSProvider() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var err error
-		var providerID uint
-		if providerID, err = getURLParamInt(r, "providerID"); err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-			return
-		}
-
-		item, err := dnsprovider.GetByID(providerID)
-		switch err {
-		case gorm.ErrRecordNotFound:
-			h.NotFound(w, r)
-		case nil:
-			h.ResultResponseJSON(w, r, http.StatusOK, item.Delete())
-		default:
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-		}
-	}
+	return deleteByIDHandler("providerID", dnsprovider.GetByID, (*dnsprovider.Model).Delete)
 }
 
 // GetAcmeshProviders will return a list of acme.sh providers

@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSDyn() Provider {
 	return Provider{
 		Title:                "dns_dyn",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"DYN_Customer",
@@ -13,17 +13,17 @@ func getDNSDyn() Provider {
 		Properties: map[string]providerField{
 			"DYN_Customer": {
 				Title:     "customer",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"DYN_Username": {
-				Title:     "username",
-				Type:      "string",
+				Title:     titleUsername,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"DYN_Password": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

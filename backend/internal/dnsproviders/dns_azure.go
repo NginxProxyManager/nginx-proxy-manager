@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSAzure() Provider {
 	return Provider{
 		Title:                "dns_azure",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"AZUREDNS_SUBSCRIPTIONID",
@@ -14,22 +14,22 @@ func getDNSAzure() Provider {
 		Properties: map[string]providerField{
 			"AZUREDNS_SUBSCRIPTIONID": {
 				Title:     "subscription-id",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"AZUREDNS_TENANTID": {
 				Title:     "tenant-id",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"AZUREDNS_APPID": {
 				Title:     "app-id",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"AZUREDNS_CLIENTSECRET": {
 				Title:     "client-secret",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},

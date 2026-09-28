@@ -6,6 +6,23 @@ import (
 	"npm/internal/errors"
 )
 
+// JSON schema types and common field titles used by providers
+const (
+	typeString  = "string"
+	typeObject  = "object"
+	typeInteger = "integer"
+	typeBoolean = "boolean"
+
+	titleAPIKey   = "api-key"
+	titleAPIURL   = "api-url"
+	titleKey      = "key"
+	titlePassword = "password"
+	titleSecret   = "secret"
+	titleToken    = "token"
+	titleUser     = "user"
+	titleUsername = "username"
+)
+
 // providerField should mimick jsonschema, so that
 // the ui can render a field and validate it
 // before we do.

@@ -1,22 +1,32 @@
 #!/bin/bash
+set -eufo pipefail
 
-BLUE='\E[1;34m'
-YELLOW='\E[1;33m'
-RESET='\E[0m'
-RESULT=0
+export RED='\E[1;31m'
+export YELLOW='\E[1;33m'
+export RESET='\033[0m'
 
-# go files: incomplete comment check
-INCOMPLETE_COMMENTS=$(find . -iname "*.go*" | grep -v " " | xargs grep --colour -H -n -E "^\s*\/\/\s*[A-Z]\w+ \.{3}" 2>/dev/null)
-if [[ -n "$INCOMPLETE_COMMENTS" ]]; then
-	echo -e "${BLUE}❯ ${YELLOW}WARN: Please fix incomplete exported comments:${RESET}"
-	echo -e "${RED}${INCOMPLETE_COMMENTS}${RESET}"
-	echo
-	# RESULT=1
+PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+
+trap cleanup EXIT
+cleanup() {
+	if [ "$?" -ne 0 ]; then
+		echo -e "${RED}LINTING FAILED${RESET}"
+	fi
+}
+
+if ! command -v golangci-lint &>/dev/null; then
+	echo -e "${YELLOW}Installing golangci-lint ...${RESET}"
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 fi
 
 echo -e "${YELLOW}golangci-lint ...${RESET}"
-if ! golangci-lint run -E goimports ./...; then
-	exit 1
+golangci-lint --max-same-issues=0 --max-issues-per-linter=0 run ./...
+
+if ! command -v modernize &>/dev/null; then
+	echo -e "${YELLOW}Installing modernize ...${RESET}"
+	go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest
 fi
 
-exit "$RESULT"
+echo -e "${YELLOW}modernize ...${RESET}"
+modernize -test "$@" ./...

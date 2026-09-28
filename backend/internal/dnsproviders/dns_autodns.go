@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSAutoDNS() Provider {
 	return Provider{
 		Title:                "dns_autodns",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"AUTODNS_USER",
@@ -12,19 +12,19 @@ func getDNSAutoDNS() Provider {
 		},
 		Properties: map[string]providerField{
 			"AUTODNS_USER": {
-				Title:     "user",
-				Type:      "string",
+				Title:     titleUser,
+				Type:      typeString,
 				MinLength: 1,
 			},
 			"AUTODNS_PASSWORD": {
-				Title:     "password",
-				Type:      "string",
+				Title:     titlePassword,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},
 			"AUTODNS_CONTEXT": {
 				Title:     "context",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 1,
 			},
 		},

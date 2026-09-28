@@ -12,6 +12,11 @@ var APIDocFiles embed.FS
 //go:embed assets
 var Assets embed.FS
 
+// MigrationFiles is for database schema migrations
+//
+//go:embed migrations
+var MigrationFiles embed.FS
+
 // NginxFiles hold nginx config templates
 //
 //go:embed nginx

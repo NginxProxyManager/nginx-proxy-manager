@@ -3,7 +3,7 @@ package dnsproviders
 func getDNSLua() Provider {
 	return Provider{
 		Title:                "dns_lua",
-		Type:                 "object",
+		Type:                 typeObject,
 		AdditionalProperties: false,
 		Required: []string{
 			"LUA_Key",
@@ -11,14 +11,14 @@ func getDNSLua() Provider {
 		},
 		Properties: map[string]providerField{
 			"LUA_Key": {
-				Title:     "key",
-				Type:      "string",
+				Title:     titleKey,
+				Type:      typeString,
 				MinLength: 1,
 				IsSecret:  true,
 			},
 			"LUA_Email": {
 				Title:     "email",
-				Type:      "string",
+				Type:      typeString,
 				MinLength: 5,
 			},
 		},
