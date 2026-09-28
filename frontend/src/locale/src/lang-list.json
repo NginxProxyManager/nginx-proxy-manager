@@ -73,5 +73,8 @@
   },
   "locale-fa-IR": {
     "defaultMessage": "فارسی"
+  },
+  "locale-uz-UZ": {
+    "defaultMessage": "O'zbekcha"
   }
 }
