@@ -115,6 +115,7 @@ const certbot = createLogger("Certbot  ");
 const importer = createLogger("Importer ");
 const setup = createLogger("Setup    ");
 const ipRanges = createLogger("IP Ranges");
+const ipRangesEO = createLogger("EO Ranges");
 const remoteVersion = createLogger("Remote Version");
 
 const debug = (logger, ...args) => {
@@ -123,4 +124,4 @@ const debug = (logger, ...args) => {
 	}
 };
 
-export { debug, global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges, remoteVersion };
+export { debug, global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges, ipRangesEO, remoteVersion };
