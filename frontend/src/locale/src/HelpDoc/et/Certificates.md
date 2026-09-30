@@ -2,25 +2,20 @@
 
 ### HTTP-sertifikaat
 
-HTTP-valideeritud sertifikaat tähendab, et Let's Encrypti serverid
+HTTP-ga kinnitatud sertifikaadi puhul üritavad Let's Encrypti serverid su domeenidele ligi saada HTTP kaudu (mitte HTTPS!) ja õnnestumise korral väljastavad sertifikaadi.
 
-proovivad teie domeenidega ühendust luua HTTP (mitte HTTPS!) kaudu ja kui see õnnestub,
-väljastavad nad teile sertifikaadi.
+Selleks peab olema loodud puhverserver, mis on HTTP kaudu kättesaadav ja osutab sellele Nginxile. Kui sertifikaat on käes, võid puhverserveri panna HTTPS-i ka kasutama. Uuendamiseks peab HTTP-ligipääs siiski alles jääma.
 
-Selle meetodi jaoks peate oma domeeni(de) jaoks looma _Proxy Host_, millele pääseb ligi HTTP kaudu ja mis osutab sellele Nginxi installile. Pärast sertifikaadi väljastamist saate muuta _Proxy Host_'i, et seda sertifikaati ka HTTPS
-ühenduste jaoks kasutada. Sertifikaadi uuendamiseks tuleb aga _Proxy Host_ ikkagi HTTP-juurdepääsu jaoks konfigureerida.
-
-See protsess _ei_ toeta metamärke kasutavaid domeene.
+Metamärgid (wildcard) selle meetodiga ei tööta.
 
 ### DNS-sertifikaat
 
-DNS-i poolt valideeritud sertifikaadi saamiseks peate kasutama DNS-pakkuja pistikprogrammi. Seda DNS-teenuse pakkujat kasutatakse teie domeenis ajutiste kirjete loomiseks ja seejärel pärib Let's
-Encrypt nende kirjete kohta päringu, et veenduda, et olete omanik, ja kui see õnnestub, väljastavad nad teile sertifikaadi.
+DNS-iga kinnitatud sertifikaat vajab DNS-teenuse pakkuja pluginat. Plugin loob domeenile ajutised kirjed, Let's Encrypt kontrollib need üle ja õnnestumise korral väljastab sertifikaadi.
 
-Selle tüüpi sertifikaadi taotlemiseks ei ole vaja luua _Proxy Host_'i. Samuti ei pea teie _Proxy Host_ olema HTTP-juurdepääsu jaoks konfigureeritud.
+Puhverserverit enne taotlust looma ei pea. HTTP-ligipääsu ka ei nõuta.
 
-See protsess _toetab_ metamärke kasutavaid domeene.
+See meetod toetab metamärke.
 
 ### Kohandatud sertifikaat
 
-Kasutage seda valikut oma SSL-sertifikaadi üleslaadimiseks, mille on esitanud teie enda sertifitseerimisasutus.
+Siia saad üles laadida oma SSL-sertifikaadi, mille on väljastanud sinu sertifitseerija.

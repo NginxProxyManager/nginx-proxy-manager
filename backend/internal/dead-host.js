@@ -168,8 +168,12 @@ const internalDeadHost = {
 		});
 
 		// Configure nginx
-		const newMeta = await internalNginx.configure(deadHostModel, "dead_host", row);
-		row.meta = newMeta;
+		if (!thisRow.enabled) {
+			// No need to add nginx config if host is disabled
+			return _.omit(internalHost.cleanRowCertificateMeta(thisRow), omissions());
+		}
+		const newMeta = await internalNginx.configure(deadHostModel, "dead_host", thisRow);
+		thisRow.meta = newMeta;
 		return _.omit(internalHost.cleanRowCertificateMeta(thisRow), omissions());
 	},
 

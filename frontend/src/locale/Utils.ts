@@ -20,18 +20,29 @@ const parseDate = (value: string | number): Date | null => {
 	}
 };
 
+const DATE_LOCALE_BY_LANG: Record<string, string> = {
+	et: "et-EE",
+};
+
+const HOUR_CYCLE_BY_LANG: Record<string, "h12" | "h23"> = {
+	et: "h23",
+};
+
 const formatDateTime = (value: string | number, locale = "en-US"): string => {
 	const d = parseDate(value);
 	if (!d) return `${value}`;
+	const lang = (locale || "en").slice(0, 2);
+	const resolvedLocale = DATE_LOCALE_BY_LANG[lang] || locale;
+	const hourCycle = HOUR_CYCLE_BY_LANG[lang] || "h12";
 	try {
 		return intlFormat(
 			d,
 			{
 				dateStyle: "medium",
 				timeStyle: "medium",
-				hourCycle: "h12",
+				hourCycle,
 			} as IntlFormatFormatOptions,
-			{ locale },
+			{ locale: resolvedLocale },
 		);
 	} catch {
 		return `${value}`;
