@@ -8,6 +8,7 @@ export interface DatabaseConfig {
 	password?: string;
 	name?: string;
 	sslmode?: string;
+	schema?: string;
 }
 
 export async function setupDatabase(

@@ -83,7 +83,22 @@ func TestConnectURLs(t *testing.T) {
 				"NPM_DB_NAME=npm",
 			},
 			want: want{
-				gorm: "host=2.2.2.2 user=postgresuser password=pgpass dbname=npm port=9824 sslmode=strict TimeZone=UTC",
+				gorm: "host=2.2.2.2 user=postgresuser password=pgpass dbname=npm port=9824 sslmode=strict search_path=public TimeZone=UTC",
+			},
+		},
+		{
+			name: "postgres-schema",
+			envs: []string{
+				"NPM_DB_DRIVER=postgres",
+				"NPM_DB_HOST=2.2.2.2",
+				"NPM_DB_PORT=5432",
+				"NPM_DB_USERNAME=postgresuser",
+				"NPM_DB_PASSWORD=pgpass",
+				"NPM_DB_NAME=npm",
+				"NPM_DB_SCHEMA=npm_app",
+			},
+			want: want{
+				gorm: "host=2.2.2.2 user=postgresuser password=pgpass dbname=npm port=5432 sslmode=disable search_path=npm_app TimeZone=UTC",
 			},
 		},
 		{

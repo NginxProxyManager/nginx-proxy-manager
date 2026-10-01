@@ -29,6 +29,7 @@ interface Payload {
 	password: string;
 	name: string;
 	sslmode: string;
+	schema: string;
 }
 
 const defaultPorts: Record<string, string> = {
@@ -62,7 +63,7 @@ function SetupDatabase() {
 						password: values.password,
 						name: values.name,
 						...(values.driver === "postgres"
-							? { sslmode: values.sslmode }
+							? { sslmode: values.sslmode, schema: values.schema }
 							: {}),
 					};
 
@@ -128,6 +129,7 @@ function SetupDatabase() {
 										password: "",
 										name: "",
 										sslmode: "disable",
+										schema: "public",
 									} as Payload
 								}
 								onSubmit={onSubmit}>
@@ -276,6 +278,29 @@ function SetupDatabase() {
 															</FormControl>
 														)}
 													</Field>
+													{values.driver === "postgres" ? (
+														<Field
+															name="schema"
+															validate={validateString(1, 63)}>
+															{({ field, form }: any) => (
+																<FormControl
+																	isRequired
+																	isInvalid={
+																		form.errors.schema && form.touched.schema
+																	}>
+																	<FormLabel htmlFor="schema">
+																		{intl.formatMessage({
+																			id: "setup-database.schema",
+																		})}
+																	</FormLabel>
+																	<Input {...field} id="schema" />
+																	<FormErrorMessage>
+																		{form.errors.schema}
+																	</FormErrorMessage>
+																</FormControl>
+															)}
+														</Field>
+													) : null}
 													{values.driver === "postgres" ? (
 														<Field name="sslmode">
 															{({ field }: any) => (

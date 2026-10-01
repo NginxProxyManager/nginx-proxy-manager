@@ -365,6 +365,9 @@
 	"setup-database.sqlite-description": {
 		"defaultMessage": "SQLite همه چیز را در یک فایل در پوشه داده ذخیره می‌کند و به پیکربندی بیشتری نیاز ندارد."
 	},
+	"setup-database.schema": {
+		"defaultMessage": "اسکیما"
+	},
 	"setup-database.sslmode": {
 		"defaultMessage": "حالت SSL"
 	},

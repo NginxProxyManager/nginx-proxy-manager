@@ -37,11 +37,21 @@ func SetupDatabase(onConfigured func() error) func(http.ResponseWriter, *http.Re
 			return
 		}
 
-		// Sqlite lives in the data folder and needs nothing else
-		if newCfg.GetDriver() == config.DatabaseSqlite {
+		switch newCfg.GetDriver() {
+		case config.DatabaseSqlite:
+			// Sqlite lives in the data folder and needs nothing else
 			newCfg = config.DBConfig{Driver: config.DatabaseSqlite}
-		} else if newCfg.SSLMode == "" {
-			newCfg.SSLMode = "disable"
+		case config.DatabasePostgres:
+			if newCfg.SSLMode == "" {
+				newCfg.SSLMode = "disable"
+			}
+			newCfg.Schema = newCfg.GetSchema()
+		default:
+			if newCfg.SSLMode == "" {
+				newCfg.SSLMode = "disable"
+			}
+			// Schemas are a postgres concept
+			newCfg.Schema = ""
 		}
 
 		if err := database.TestConnection(newCfg); err != nil {

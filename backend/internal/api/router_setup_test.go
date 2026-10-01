@@ -50,6 +50,9 @@ func TestSetupRouter(t *testing.T) {
 	// Schema validation
 	assert.Equal(t, http.StatusBadRequest, post(failing, `{"driver":"oracle"}`).Code)
 
+	// Postgres schema must be a plain identifier
+	assert.Equal(t, http.StatusBadRequest, post(failing, `{"driver":"postgres","schema":"public; drop table x"}`).Code)
+
 	// Postgres/mysql config missing fields
 	assert.Equal(t, http.StatusBadRequest, post(failing, `{"driver":"postgres","host":"db"}`).Code)
 

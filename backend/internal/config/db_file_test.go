@@ -29,6 +29,7 @@ func TestDBConfigFile(t *testing.T) {
 		Password: "secret",
 		Name:     "npm",
 		SSLMode:  "require",
+		Schema:   "npm",
 	}
 	require.NoError(t, SaveDBConfig(cfg))
 

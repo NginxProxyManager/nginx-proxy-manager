@@ -31,6 +31,10 @@ func SetupDatabase() string {
 				"sslmode": {
 					"type": "string",
 					"enum": ["disable", "allow", "prefer", "require", "verify-ca", "verify-full"]
+				},
+				"schema": {
+					"type": "string",
+					"pattern": "^[A-Za-z_][A-Za-z0-9_$]{0,62}$"
 				}
 			}
 		}

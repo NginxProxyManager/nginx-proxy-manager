@@ -641,6 +641,9 @@
 	"setup-database.sqlite-description": {
 		"defaultMessage": "SQLite stores everything in a single file in the data folder and requires no further configuration."
 	},
+	"setup-database.schema": {
+		"defaultMessage": "Schema"
+	},
 	"setup-database.sslmode": {
 		"defaultMessage": "SSL Mode"
 	},

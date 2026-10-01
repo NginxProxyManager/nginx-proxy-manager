@@ -67,7 +67,27 @@ func TestConnection(cfg config.DBConfig) error {
 	// nolint: errcheck
 	defer sqlDB.Close()
 
-	return sqlDB.Ping()
+	if err := sqlDB.Ping(); err != nil {
+		return err
+	}
+
+	// Postgres will happily connect with a search_path that doesn't exist,
+	// then fail to create any tables during migration
+	if cfg.GetDriver() == config.DatabasePostgres {
+		var exists bool
+		row := sqlDB.QueryRow(
+			"SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = $1)",
+			cfg.GetSchema(),
+		)
+		if err := row.Scan(&exists); err != nil {
+			return err
+		}
+		if !exists {
+			return eris.Errorf("schema %s does not exist in database %s", cfg.GetSchema(), cfg.Name)
+		}
+	}
+
+	return nil
 }
 
 // Close closes and discards the current instance, if any
