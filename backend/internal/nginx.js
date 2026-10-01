@@ -107,6 +107,8 @@ const internalNginx = {
 	 */
 	test: () => {
 		debug(logger, "Testing Nginx configuration");
+		// nginx.conf points client_body_temp_path here; it only gets created at container start
+		fs.mkdirSync("/tmp/nginx/body", { recursive: true });
 		return utils.execFile("/usr/sbin/nginx", ["-t", "-g", "error_log off;"]);
 	},
 
