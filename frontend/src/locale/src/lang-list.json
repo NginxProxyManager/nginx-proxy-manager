@@ -57,20 +57,23 @@
     "defaultMessage": "Български"
   },
   "locale-tr-TR": {
-    "defaultMessage": "Türkçe"
-  },
-  "locale-hu-HU": {
-    "defaultMessage": "Magyar"
-  },
-  "locale-no-NO": {
-    "defaultMessage": "Norsk"
-  },
-  "locale-uk-UA": {
-    "defaultMessage": "Українська"
-  },
-  "locale-az-AZ": {
-    "defaultMessage": "Azərbaycanca"
-  },
+      "defaultMessage": "Türkçe"
+    },
+    "locale-hu-HU": {
+      "defaultMessage": "Magyar"
+    },
+    "locale-no-NO": {
+      "defaultMessage": "Norsk"
+    },
+    "locale-uk-UA": {
+      "defaultMessage": "Українська"
+    },
+    "locale-sv-SE": {
+      "defaultMessage": "Svenska"
+    },
+    "locale-az-AZ": {
+      "defaultMessage": "Azərbaycanca"
+    },
   "locale-fa-IR": {
     "defaultMessage": "فارسی"
   }
