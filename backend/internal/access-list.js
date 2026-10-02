@@ -49,6 +49,33 @@ const getProxyHostsUsingAccessListInLocations = async (accessListId) => {
 	return (Array.isArray(result[0]) ? result[0] : result) || [];
 };
 
+/**
+ * Counts the distinct proxy hosts using an access list, whether at the host
+ * level (proxy_host.access_list_id) or inside a custom location (locations JSON).
+ *
+ * @param   {Integer}  accessListId
+ * @returns {Promise<Number>}
+ */
+const getProxyHostCount = async (accessListId) => {
+	const hostIds = new Set();
+
+	const fkRows = await proxyHostModel
+		.query()
+		.select("id")
+		.where("is_deleted", 0)
+		.andWhere("access_list_id", accessListId);
+	for (const r of fkRows) {
+		hostIds.add(r.id);
+	}
+
+	const locationRows = await getProxyHostsUsingAccessListInLocations(accessListId);
+	for (const r of locationRows) {
+		hostIds.add(r.id);
+	}
+
+	return hostIds.size;
+};
+
 const internalAccessList = {
 	/**
 	 * @param   {Access}  access
@@ -281,6 +308,7 @@ const internalAccessList = {
 		if (!row?.id) {
 			throw new errs.ItemNotFoundError(thisData.id);
 		}
+		row.proxy_host_count = await getProxyHostCount(row.id);
 		if (!skipMasking && typeof row.items !== "undefined" && row.items) {
 			row = internalAccessList.maskItems(row);
 		}
@@ -410,12 +438,12 @@ const internalAccessList = {
 
 		const rows = await query.then(utils.omitRows(omissions()));
 		if (rows) {
-			rows.map((row, idx) => {
-				if (typeof row.items !== "undefined" && row.items) {
-					rows[idx] = internalAccessList.maskItems(row);
+			for (let idx = 0; idx < rows.length; idx++) {
+				rows[idx].proxy_host_count = await getProxyHostCount(rows[idx].id);
+				if (typeof rows[idx].items !== "undefined" && rows[idx].items) {
+					rows[idx] = internalAccessList.maskItems(rows[idx]);
 				}
-				return true;
-			});
+			}
 		}
 		return rows;
 	},
