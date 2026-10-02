@@ -1,0 +1,36 @@
+dn: dc=example,dc=org
+objectClass: dcObject
+objectClass: organization
+dc: example
+o: Example Org
+
+dn: ou=users,dc=example,dc=org
+objectClass: organizationalUnit
+ou: users
+
+dn: ou=groups,dc=example,dc=org
+objectClass: organizationalUnit
+ou: groups
+
+dn: cn=alice,ou=users,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: alice
+sn: Anderson
+givenName: Alice
+uid: alice
+mail: alice@example.org
+userPassword: alicepass
+
+dn: cn=bob,ou=users,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: bob
+sn: Baker
+givenName: Bob
+uid: bob
+mail: bob@example.org
+userPassword: bobpass
+
+dn: cn=npm-admins,ou=groups,dc=example,dc=org
+objectClass: groupOfNames
+cn: npm-admins
+member: cn=alice,ou=users,dc=example,dc=org

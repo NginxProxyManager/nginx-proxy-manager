@@ -1,0 +1,131 @@
+{
+	"operationId": "testAuthProviderCredentials",
+	"summary": "Verify a username and password against a directory",
+	"description": "Runs a real authentication attempt without issuing a token, so a provider can be confirmed before it is switched on. LDAP only.",
+	"tags": [
+		"auth-providers"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"admin"
+			]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Authentication Provider ID",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "Credentials to try",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"username",
+						"password"
+					],
+					"properties": {
+						"username": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 255,
+							"example": "alice"
+						},
+						"password": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 255,
+							"example": "hunter2"
+						}
+					}
+				},
+				"example": {
+					"username": "alice",
+					"password": "hunter2"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"valid": true,
+								"dn": "cn=alice,ou=users,dc=example,dc=com",
+								"email": "alice@example.com",
+								"name": "Alice Anderson",
+								"identifier_source": "entryUUID",
+								"groups": [
+									"cn=npm-admins,ou=groups,dc=example,dc=com"
+								]
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"required": [
+							"valid"
+						],
+						"additionalProperties": true,
+						"properties": {
+							"valid": {
+								"type": "boolean",
+								"description": "Whether the credentials were accepted",
+								"example": true
+							},
+							"dn": {
+								"type": "string",
+								"description": "Distinguished name of the entry that matched",
+								"example": "cn=alice,ou=users,dc=example,dc=com"
+							},
+							"email": {
+								"type": "string",
+								"example": "alice@example.com"
+							},
+							"name": {
+								"type": "string",
+								"example": "Alice Anderson"
+							},
+							"identifier_source": {
+								"type": "string",
+								"description": "Which stable identifier the directory published",
+								"enum": [
+									"objectGUID",
+									"entryUUID",
+									"dn"
+								],
+								"example": "entryUUID"
+							},
+							"groups": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								},
+								"example": [
+									"cn=npm-admins,ou=groups,dc=example,dc=com"
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

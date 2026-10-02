@@ -1,0 +1,77 @@
+{
+	"type": "object",
+	"description": "Authentication Provider object",
+	"required": ["id", "created_on", "modified_on", "name", "type", "slug", "is_enabled", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1,
+			"description": "Unique identifier",
+			"example": 1
+		},
+		"created_on": {
+			"type": "string",
+			"description": "Date and time of creation",
+			"format": "date-time",
+			"example": "2026-08-21T09:41:04.000Z"
+		},
+		"modified_on": {
+			"type": "string",
+			"description": "Date and time of last update",
+			"format": "date-time",
+			"example": "2026-08-21T09:41:04.000Z"
+		},
+		"is_deleted": {
+			"type": "boolean",
+			"description": "Is Deleted",
+			"example": false
+		},
+		"is_enabled": {
+			"type": "boolean",
+			"description": "Whether this provider can be used to sign in",
+			"example": true
+		},
+		"is_env_managed": {
+			"type": "boolean",
+			"description": "Configured through environment variables and therefore read only",
+			"example": false
+		},
+		"slug": {
+			"type": "string",
+			"description": "Stable identifier derived from the name",
+			"minLength": 1,
+			"example": "company-ldap"
+		},
+		"name": {
+			"type": "string",
+			"description": "Display name, shown on the login screen",
+			"minLength": 1,
+			"maxLength": 100,
+			"example": "Company LDAP"
+		},
+		"type": {
+			"type": "string",
+			"description": "Protocol used to talk to the provider",
+			"enum": ["ldap", "saml", "oauth"],
+			"example": "ldap"
+		},
+		"sort_order": {
+			"type": "integer",
+			"minimum": 0,
+			"description": "Order in which providers are listed",
+			"example": 0
+		},
+		"meta": {
+			"type": "object",
+			"description": "Provider configuration. Secret values are never returned; instead a boolean `<field>_set` indicates whether one is stored.",
+			"example": {
+				"url": "ldap://ldap.example.com:389",
+				"base_dn": "dc=example,dc=com",
+				"bind_password_set": true,
+				"auto_create_user": true,
+				"link_by_email": false
+			}
+		}
+	}
+}
