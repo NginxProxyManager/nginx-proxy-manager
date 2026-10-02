@@ -1,6 +1,9 @@
 import _ from "lodash";
+import { UniqueViolationError } from "objection";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
+import { withProxyHostLock, withUpstreamNameLocks } from "../lib/upstream-name-lock.js";
+import { normalizeForwardingMode, normalizeUpstreamName, normalizeUpstreamServers } from "../lib/upstream-servers.js";
 import utils from "../lib/utils.js";
 import proxyHostModel from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
@@ -10,6 +13,22 @@ import internalNginx from "./nginx.js";
 
 const omissions = () => {
 	return ["is_deleted", "owner.is_deleted"];
+};
+
+const handleUpstreamNameConflict = (error) => {
+	// better-sqlite3 errors are not classified by the db-errors version used by
+	// Objection. Match its native code and this exact column as well.
+	const nativeError = error.nativeError || error;
+	if (
+		(error instanceof UniqueViolationError &&
+			(error.columns?.includes("upstream_name") ||
+				error.constraint?.split(".").pop() === "proxy_host_upstream_name_unique")) ||
+		(nativeError.code === "SQLITE_CONSTRAINT_UNIQUE" &&
+			/UNIQUE constraint failed: proxy_host\.upstream_name$/.test(nativeError.message))
+	) {
+		throw new errs.ValidationError("Upstream name is already in use");
+	}
+	throw error;
 };
 
 const internalProxyHost = {
@@ -47,6 +66,14 @@ const internalProxyHost = {
 				});
 			})
 			.then(() => {
+				thisData.upstream_name = normalizeUpstreamName(thisData.upstream_name);
+				if (thisData.upstream_servers) {
+					thisData.upstream_servers = normalizeUpstreamServers(thisData.upstream_servers, thisData.lb_method);
+				}
+				const mode = normalizeForwardingMode(thisData.forwarding_mode, thisData.upstream_servers ?? []);
+				thisData.forwarding_mode = thisData.forwarding_mode === null ? null : mode;
+			})
+			.then(() => {
 				// At this point the domains should have been checked
 				thisData.owner_user_id = access.token.getUserId(1);
 				thisData = internalHost.cleanSslHstsData(thisData);
@@ -57,7 +84,9 @@ const internalProxyHost = {
 					thisData.advanced_config = "";
 				}
 
-				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
+				return withUpstreamNameLocks([thisData.upstream_name], () =>
+					proxyHostModel.query().insertAndFetch(thisData).catch(handleUpstreamNameConflict),
+				).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
 				if (createCertificate) {
@@ -76,35 +105,23 @@ const internalProxyHost = {
 				}
 				return row;
 			})
+			.then((row) => configureCreatedHost(access, row))
 			.then((row) => {
-				// re-fetch with cert
-				return internalProxyHost.get(access, {
-					id: row.id,
-					expand: ["certificate", "owner", "access_list.[clients,items]"],
-				});
-			})
-		.then(async (row) => {
-			// Configure nginx
-			return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
-				return row;
-			});
-		})
-		.then((row) => {
-			// Audit log
-			thisData.meta = _.assign({}, thisData.meta || {}, row.meta);
+				// Audit log
+				thisData.meta = _.assign({}, thisData.meta || {}, row.meta);
 
-			// Add to audit log
-			return internalAuditLog
-				.add(access, {
-					action: "created",
-					object_type: "proxy-host",
-					object_id: row.id,
-					meta: thisData,
-				})
-				.then(() => {
-					return row;
-				});
-		});
+				// Add to audit log
+				return internalAuditLog
+					.add(access, {
+						action: "created",
+						object_type: "proxy-host",
+						object_id: row.id,
+						meta: thisData,
+					})
+					.then(() => {
+						return row;
+					});
+			});
 	},
 
 	/**
@@ -113,7 +130,7 @@ const internalProxyHost = {
 	 * @param  {Number}  data.id
 	 * @return {Promise}
 	 */
-	update: (access, data) => {
+	update: withProxyHostLock((access, data) => {
 		let thisData = data;
 		const createCertificate = thisData.certificate_id === "new";
 
@@ -155,6 +172,25 @@ const internalProxyHost = {
 					);
 				}
 
+				if (thisData.upstream_name !== undefined) {
+					thisData.upstream_name = normalizeUpstreamName(thisData.upstream_name);
+				}
+
+				const servers = normalizeUpstreamServers(
+					thisData.upstream_servers ?? row.upstream_servers ?? [],
+					thisData.lb_method ?? row.lb_method,
+				);
+				if (thisData.upstream_servers !== undefined) {
+					thisData.upstream_servers = servers;
+				}
+				const mode = normalizeForwardingMode(
+					thisData.forwarding_mode !== undefined ? thisData.forwarding_mode : row.forwarding_mode,
+					servers,
+				);
+				if (thisData.forwarding_mode !== undefined) {
+					thisData.forwarding_mode = thisData.forwarding_mode === null ? null : mode;
+				}
+
 				if (createCertificate) {
 					return internalCertificate
 						.createQuickCertificate(access, {
@@ -172,55 +208,68 @@ const internalProxyHost = {
 				return row;
 			})
 			.then((row) => {
-				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				thisData = _.assign(
-					{},
-					{
-						domain_names: row.domain_names,
-					},
-					data,
-				);
+				const names =
+					thisData.upstream_name !== undefined && thisData.upstream_name !== row.upstream_name
+						? [row.upstream_name, thisData.upstream_name]
+						: [];
 
-				thisData = internalHost.cleanSslHstsData(thisData, row);
+				return withUpstreamNameLocks(names, () => {
+					// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
+					thisData = _.assign(
+						{},
+						{
+							domain_names: row.domain_names,
+						},
+						data,
+					);
 
-				return proxyHostModel
-					.query()
-					.where({ id: thisData.id })
-					.patch(thisData)
-					.then(utils.omitRow(omissions()))
-					.then((saved_row) => {
-						// Add to audit log
-						return internalAuditLog
-							.add(access, {
-								action: "updated",
-								object_type: "proxy-host",
-								object_id: row.id,
-								meta: thisData,
-							})
-							.then(() => {
-								return saved_row;
-							});
-					});
-			})
-		.then(() => {
-			return internalProxyHost
-				.get(access, {
-					id: thisData.id,
-					expand: ["owner", "certificate", "access_list.[clients,items]"],
-				})
-				.then(async (row) => {
-					if (!row.enabled) {
-						// No need to add nginx config if host is disabled
-						return row;
-					}
-					// Configure nginx
-					return internalNginx.configure(proxyHostModel, "proxy_host", row).then((new_meta) => {
-						row.meta = new_meta;
-						return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
-					});
+					thisData = internalHost.cleanSslHstsData(thisData, row);
+
+					return proxyHostModel
+						.query()
+						.where({ id: thisData.id })
+						.patch(thisData)
+						.catch(handleUpstreamNameConflict)
+						.then(utils.omitRow(omissions()))
+						.then((saved_row) => {
+							// Add to audit log
+							return internalAuditLog
+								.add(access, {
+									action: "updated",
+									object_type: "proxy-host",
+									object_id: row.id,
+									meta: thisData,
+								})
+								.then(() => {
+									return saved_row;
+								});
+						})
+						.then(() => {
+							return internalProxyHost
+								.get(access, {
+									id: thisData.id,
+									expand: ["owner", "certificate", "access_list.[clients,items]"],
+								})
+								.then((updatedRow) => {
+									if (!updatedRow.enabled) {
+										// No need to add nginx config if host is disabled
+										return updatedRow;
+									}
+									// Configure nginx
+									return internalNginx
+										.configure(proxyHostModel, "proxy_host", updatedRow)
+										.then((new_meta) => {
+											updatedRow.meta = new_meta;
+											return _.omit(
+												internalHost.cleanRowCertificateMeta(updatedRow),
+												omissions(),
+											);
+										});
+								});
+						});
 				});
-		});
-	},
+			});
+	}),
 
 	/**
 	 * @param  {Access}   access
@@ -272,7 +321,7 @@ const internalProxyHost = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	delete: (access, data) => {
+	delete: withProxyHostLock((access, data) => {
 		return access
 			.can("proxy_hosts:delete", data.id)
 			.then(() => {
@@ -283,32 +332,35 @@ const internalProxyHost = {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 
-				return proxyHostModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						is_deleted: 1,
-					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("proxy_host", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "deleted",
-							object_type: "proxy-host",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
+				return withUpstreamNameLocks([row.upstream_name], () =>
+					proxyHostModel
+						.query()
+						.where("id", row.id)
+						.patch({
+							is_deleted: 1,
+							upstream_name: null,
+						})
+						.then(() => {
+							// Delete Nginx Config
+							return internalNginx.deleteConfig("proxy_host", row).then(() => {
+								return internalNginx.reload();
+							});
+						})
+						.then(() => {
+							// Add to audit log
+							return internalAuditLog.add(access, {
+								action: "deleted",
+								object_type: "proxy-host",
+								object_id: row.id,
+								meta: _.omit(row, omissions()),
+							});
+						}),
+				);
 			})
 			.then(() => {
 				return true;
 			});
-	},
+	}),
 
 	/**
 	 * @param {Access}  access
@@ -317,7 +369,7 @@ const internalProxyHost = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	enable: (access, data) => {
+	enable: withProxyHostLock((access, data) => {
 		return access
 			.can("proxy_hosts:update", data.id)
 			.then(() => {
@@ -326,37 +378,34 @@ const internalProxyHost = {
 					expand: ["certificate", "owner", "access_list"],
 				});
 			})
-		.then(async (row) => {
-			if (!row?.id) {
-				throw new errs.ItemNotFoundError(data.id);
-			}
-			if (row.enabled) {
-				throw new errs.ValidationError("Host is already enabled");
-			}
+			.then(async (row) => {
+				if (!row?.id) {
+					throw new errs.ItemNotFoundError(data.id);
+				}
+				if (row.enabled) {
+					throw new errs.ValidationError("Host is already enabled");
+				}
 
-			row.enabled = 1;
+				row.enabled = 1;
 
-			await proxyHostModel
-				.query()
-				.where("id", row.id)
-				.patch({
+				await proxyHostModel.query().where("id", row.id).patch({
 					enabled: 1,
 				});
 
-			// Configure nginx
-			await internalNginx.configure(proxyHostModel, "proxy_host", row);
+				// Configure nginx
+				await internalNginx.configure(proxyHostModel, "proxy_host", row);
 
-			// Add to audit log
-			await internalAuditLog.add(access, {
-				action: "enabled",
-				object_type: "proxy-host",
-				object_id: row.id,
-				meta: _.omit(row, omissions()),
+				// Add to audit log
+				await internalAuditLog.add(access, {
+					action: "enabled",
+					object_type: "proxy-host",
+					object_id: row.id,
+					meta: _.omit(row, omissions()),
+				});
+
+				return true;
 			});
-
-			return true;
-		});
-	},
+	}),
 
 	/**
 	 * @param {Access}  access
@@ -365,7 +414,7 @@ const internalProxyHost = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	disable: (access, data) => {
+	disable: withProxyHostLock((access, data) => {
 		return access
 			.can("proxy_hosts:update", data.id)
 			.then(() => {
@@ -406,7 +455,7 @@ const internalProxyHost = {
 			.then(() => {
 				return true;
 			});
-	},
+	}),
 
 	/**
 	 * All Hosts
@@ -467,5 +516,18 @@ const internalProxyHost = {
 		});
 	},
 };
+
+// Read and configure under the same host lock: a concurrent delete/rename must
+// not leave a config generated from a stale row after its name has been released.
+const configureCreatedHost = withProxyHostLock(async (access, data) => {
+	const row = await internalProxyHost.get(access, {
+		id: data.id,
+		expand: ["certificate", "owner", "access_list.[clients,items]"],
+	});
+	if (row.enabled) {
+		await internalNginx.configure(proxyHostModel, "proxy_host", row);
+	}
+	return row;
+});
 
 export default internalProxyHost;

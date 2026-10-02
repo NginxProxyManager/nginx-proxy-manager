@@ -4,9 +4,12 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
 import errs from "../lib/error.js";
+import { withProxyHostLock } from "../lib/upstream-name-lock.js";
+import { prepareUpstreamServers } from "../lib/upstream-servers.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
 import accessListModel from "../models/access_list.js";
+import proxyHostModel from "../models/proxy_host.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -212,6 +215,9 @@ const internalNginx = {
 	generateConfig: (host_type, host_row) => {
 		// Prevent modifying the original object:
 		const host = JSON.parse(JSON.stringify(host_row));
+		if (host_type === "proxy_host" && Array.isArray(host.upstream_servers)) {
+			host.upstream_servers = prepareUpstreamServers(host.upstream_servers);
+		}
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
 		debug(logger, `Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));
@@ -436,6 +442,24 @@ const internalNginx = {
 		});
 
 		return Promise.all(promises);
+	},
+
+	bulkGenerateProxyHostConfigs: (hosts) => {
+		return Promise.all(
+			hosts.map((host) => {
+				// ACL and certificate operations may hold stale snapshots. Read again
+				// under the lifecycle lock so they cannot undo a rename or deletion.
+				return withProxyHostLock(async () => {
+					const current = await proxyHostModel
+						.query()
+						.where("id", host.id)
+						.withGraphFetched("[owner,certificate,access_list.[clients,items]]")
+						.first();
+					if (!current || current.is_deleted || !current.enabled) return;
+					return internalNginx.generateConfig("proxy_host", current);
+				})(null, host);
+			}),
+		);
 	},
 
 	/**

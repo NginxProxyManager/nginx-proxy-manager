@@ -16,6 +16,17 @@ import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
+export const getDestination = (value: ProxyHost) => {
+	if (value.forwardingMode !== "direct" && value.upstreamServers && value.upstreamServers.length > 0) {
+		const method = value.lbMethod || "round_robin";
+		return intl.formatMessage(
+			{ id: "upstream.destination" },
+			{ count: value.upstreamServers.length, method: intl.formatMessage({ id: `upstream.method.${method}` }) },
+		);
+	}
+	return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
+};
+
 interface Props {
 	data: ProxyHost[];
 	isFiltered?: boolean;
@@ -67,13 +78,13 @@ export default function Table({
 				id: "forwardHost",
 				header: intl.formatMessage({ id: "column.destination" }),
 				sortFn: (a, b) => {
-					const aVal = `${a.original.forwardHost}:${a.original.forwardPort}`;
-					const bVal = `${b.original.forwardHost}:${b.original.forwardPort}`;
+					const aVal = getDestination(a.original);
+					const bVal = getDestination(b.original);
 					return aVal.localeCompare(bVal);
 				},
 				cell: (info: any) => {
 					const value = info.getValue();
-					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
+					return getDestination(value);
 				},
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {
