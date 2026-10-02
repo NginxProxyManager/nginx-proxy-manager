@@ -641,11 +641,20 @@
 	"password.show": {
 		"defaultMessage": "Näita parooli"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Lubatud puhverserverid"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Kasutaja saab vaadata ja hallata ainult valitud puhverservereid (režiimis 'Ainult enda loodud')."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Peidetud"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Halda"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Ühtegi puhverserverit ei leitud"
 	},
 	"permissions.view": {
 		"defaultMessage": "Ainult vaatamine"
