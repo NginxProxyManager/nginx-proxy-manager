@@ -46,6 +46,15 @@
 								},
 								"html": {
 									"type": "string"
+								},
+								"certificate_id": {
+									"type": "integer",
+									"minimum": 0,
+									"description": "Certificate ID to use for SSL on the default site, or 0 for none"
+								},
+								"ssl_forced": {
+									"type": "boolean",
+									"description": "Whether to redirect HTTP to HTTPS on the default site"
 								}
 							},
 							"example": {

@@ -1,7 +1,49 @@
 import fs from "node:fs";
 import errs from "../lib/error.js";
+import certificateModel from "../models/certificate.js";
 import settingModel from "../models/setting.js";
 import internalNginx from "./nginx.js";
+
+/**
+ * Build the nginx render context for the default-site setting by
+ * resolving its SSL certificate (if any). Returns a NEW object so the
+ * underlying row sent back to the API client is not mutated with
+ * fields that aren't part of the setting-object schema.
+ *
+ * @param  {Object} row  The default-site setting row
+ * @returns {Promise<Object>} A row-like object with certificate/ssl fields
+ */
+const buildDefaultSiteRenderContext = async (row) => {
+	const certificateId = Number(row?.meta?.certificate_id) || 0;
+	let certificate = null;
+	let ssl_forced = !!row?.meta?.ssl_forced;
+	if (certificateId > 0) {
+		const cert = await certificateModel
+			.query()
+			.where("id", certificateId)
+			.andWhere("is_deleted", 0)
+			.first();
+		if (cert) {
+			// Drop PEM cert / private-key contents from `meta` before passing
+			// to the nginx template. The template renders paths based on
+			// `certificate_id` and only reads `certificate.provider`; the PEM
+			// material is on disk. Keeping `meta` here would leak the private
+			// key into `internalNginx.generateConfig`'s debug log. Destructure
+			// to avoid mutating the ORM result.
+			const { meta: _meta, ...safeCert } = cert;
+			certificate = safeCert;
+		} else {
+			// Certificate doesn't exist anymore, render without SSL
+			ssl_forced = false;
+		}
+	}
+	return {
+		...row,
+		certificate_id: certificate ? certificateId : 0,
+		ssl_forced,
+		certificate,
+	};
+};
 
 const internalSetting = {
 	/**
@@ -31,18 +73,20 @@ const internalSetting = {
 					id: data.id,
 				});
 			})
-			.then((row) => {
+			.then(async (row) => {
 				if (row.id === "default-site") {
 					// write the html if we need to
 					if (row.value === "html") {
 						fs.writeFileSync("/data/nginx/default_www/index.html", row.meta.html, { encoding: "utf8" });
 					}
 
+					const renderContext = await buildDefaultSiteRenderContext(row);
+
 					// Configure nginx
 					return internalNginx
 						.deleteConfig("default")
 						.then(() => {
-							return internalNginx.generateConfig("default", row);
+							return internalNginx.generateConfig("default", renderContext);
 						})
 						.then(() => {
 							return internalNginx.test();
@@ -122,4 +166,36 @@ const internalSetting = {
 	},
 };
 
+/**
+ * Regenerate the nginx config for the default-site setting based on
+ * its current DB state. Intended for callers outside the settings
+ * update flow (e.g. certificate.delete) that invalidate the rendered
+ * config without touching the setting row. Mirrors the test-before-
+ * reload pattern of the main update flow and falls back to a clean
+ * config if the regenerated one is invalid.
+ *
+ * @returns {Promise}
+ */
+const regenerateDefaultSiteConfig = async () => {
+	const row = await settingModel.query().where("id", "default-site").first();
+	if (!row) {
+		return;
+	}
+	const renderContext = await buildDefaultSiteRenderContext(row);
+	try {
+		await internalNginx.deleteConfig("default");
+		await internalNginx.generateConfig("default", renderContext);
+		await internalNginx.test();
+		await internalNginx.reload();
+	} catch (err) {
+		// Generated config is invalid — strip it and reload so nginx
+		// stays healthy even if the default-site is rendered empty.
+		await internalNginx.deleteConfig("default");
+		await internalNginx.test();
+		await internalNginx.reload();
+		throw err;
+	}
+};
+
+export { regenerateDefaultSiteConfig };
 export default internalSetting;
