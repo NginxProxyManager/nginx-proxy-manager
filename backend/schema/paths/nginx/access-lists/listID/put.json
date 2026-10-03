@@ -60,7 +60,8 @@
 					"clients": [
 						{
 							"directive": "allow",
-							"address": "192.168.0.0/24"
+							"address": "192.168.0.0/24",
+							"note": "note"
 						}
 					]
 				}
