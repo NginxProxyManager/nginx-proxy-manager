@@ -74,8 +74,7 @@
 			"$ref": "../common.json#/properties/certificate_id"
 		},
 		"meta": {
-			"type": "object",
-			"example": {}
+			"$ref": "../common.json#/properties/meta"
 		},
 		"certificate": {
 			"oneOf": [
