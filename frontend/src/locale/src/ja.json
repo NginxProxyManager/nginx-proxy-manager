@@ -116,6 +116,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "このプラグインはプロバイダーのAPIキーか認証情報を含む設定ファイルが必要です"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "新しい認証情報ファイルの内容（既存のものを置き換えます）"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "このデータはファイルとデータベースにプレーンテキストとして保存されます"
 	},
@@ -130,6 +133,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "このセクションはCertbotとそのDNSプラグインの知識が必要です。各プラグインのドキュメントを参照してください。"
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "DNS設定を編集"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "このドメインはNginx Proxy Managerではないサーバーを指しているようです。ドメインがこのNPMインスタンスを指していることを確認してください。"

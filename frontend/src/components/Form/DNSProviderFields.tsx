@@ -1,7 +1,7 @@
 import { IconAlertTriangle } from "@tabler/icons-react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import { Field, useFormikContext } from "formik";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Select, { type ActionMeta } from "react-select";
 import type { DNSProvider } from "src/api/backend";
 import { useDnsProviders } from "src/hooks";
@@ -16,11 +16,14 @@ interface DNSProviderOption {
 
 interface Props {
 	showBoundaryBox?: boolean;
+	/** When true (edit mode), credentials field is for new credentials only; existing credentials are never displayed */
+	editMode?: boolean;
 }
-export function DNSProviderFields({ showBoundaryBox = false }: Props) {
+export function DNSProviderFields({ showBoundaryBox = false, editMode = false }: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const { data: dnsProviders, isLoading } = useDnsProviders();
 	const [dnsProviderId, setDnsProviderId] = useState<string | null>(null);
+	const seededProviderId = useRef<string | null>(null);
 
 	const v: any = values || {};
 
@@ -28,6 +31,7 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 		setFieldValue("meta.dnsProvider", newValue?.value);
 		setFieldValue("meta.dnsProviderCredentials", newValue?.credentials);
 		setDnsProviderId(newValue?.value);
+		seededProviderId.current = newValue?.value ?? null;
 	};
 
 	const options: DNSProviderOption[] =
@@ -36,6 +40,19 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 			label: p.name,
 			credentials: p.credentials,
 		})) || [];
+
+	const selectedProviderId = v.meta?.dnsProvider ?? null;
+	const selectedOption = options.find((o) => o.value === selectedProviderId) ?? null;
+	const showCredentials = dnsProviderId ?? selectedProviderId;
+
+	// Seed the plugin template once per provider (both in create and edit mode).
+	// Do not depend on the credentials value — clearing the field must leave it empty.
+	useEffect(() => {
+		if (!selectedProviderId || !selectedOption?.credentials) return;
+		if (seededProviderId.current === selectedProviderId) return;
+		seededProviderId.current = selectedProviderId;
+		setFieldValue("meta.dnsProviderCredentials", selectedOption.credentials);
+	}, [selectedProviderId, selectedOption?.credentials, setFieldValue]);
 
 	return (
 		<div className={showBoundaryBox ? styles.dnsChallengeWarning : undefined}>
@@ -60,6 +77,7 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 							placeholder={intl.formatMessage({ id: "certificates.dns.provider.placeholder" })}
 							isLoading={isLoading}
 							isSearchable
+							value={selectedOption}
 							onChange={handleChange}
 							options={options}
 						/>
@@ -67,13 +85,13 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 				)}
 			</Field>
 
-			{dnsProviderId ? (
+			{showCredentials ? (
 				<>
 					<Field name="meta.dnsProviderCredentials">
 						{({ field }: any) => (
 							<div className="mt-3">
 								<label htmlFor="dnsProviderCredentials" className="form-label">
-									<T id="certificates.dns.credentials" />
+									<T id={editMode ? "certificates.dns.credentials-update" : "certificates.dns.credentials"} />
 								</label>
 								<CodeEditor
 									language="bash"

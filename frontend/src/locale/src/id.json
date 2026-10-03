@@ -128,6 +128,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Plugin ini memerlukan file konfigurasi yang berisi token API atau kredensial lain untuk penyedia Anda"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Konten file kredensial baru (menggantikan yang ada)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Data ini akan disimpan sebagai teks biasa di database dan dalam file!"
 	},
@@ -145,6 +148,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Bagian ini memerlukan pengetahuan tentang Certbot dan plugin DNS-nya. Silakan merujuk dokumentasi plugin terkait."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "Edit Pengaturan DNS"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Ada server yang ditemukan pada domain ini tetapi tampaknya bukan Nginx Proxy Manager. Pastikan domain Anda mengarah ke IP tempat instance NPM berjalan."
