@@ -33,7 +33,7 @@ export function DomainNamesField({
 
 	const handleChange = (v: MultiValue<SelectOption>, _actionMeta: ActionMeta<SelectOption>) => {
 		const doms = v?.map((i: SelectOption) => {
-			return i.value;
+			return i.value.trim();
 		});
 		setFieldValue(name, doms);
 		onChange?.(doms);
