@@ -16,9 +16,9 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@tabler/core": "^1.5.1",
-		"@tabler/icons-react": "^3.46.0",
-		"@tanstack/react-query": "^5.102.8",
+		"@tabler/core": "^1.6.0",
+		"@tabler/icons-react": "^3.48.0",
+		"@tanstack/react-query": "^5.103.2",
 		"@tanstack/react-table": "^9.2.4",
 		"@uiw/react-textarea-code-editor": "^3.1.1",
 		"classnames": "^2.5.1",
