@@ -5,7 +5,14 @@ import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import type { AccessList, AccessListClient, AccessListItem } from "src/api/backend";
-import { AccessClientFields, BasicAuthFields, Button, Loading } from "src/components";
+import {
+	AccessClientFields,
+	AccessTokenFields,
+	BasicAuthFields,
+	Button,
+	Loading,
+	SecurityKeyFields,
+} from "src/components";
 import { useAccessList, useSetAccessList } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
@@ -19,14 +26,14 @@ interface Props extends InnerModalProps {
 	id: number | "new";
 }
 const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
-	const { data, isLoading, error } = useAccessList(id, ["items", "clients"]);
+	const { data, isLoading, error } = useAccessList(id, ["items", "clients", "keys", "tokens"]);
 	const { mutate: setAccessList } = useSetAccessList();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const validate = (values: any): string | null => {
-		// either Auths or Clients must be defined
-		if (values.items?.length === 0 && values.clients?.length === 0) {
+		// at least one way in must be defined: users, security keys, tokens or rules
+		if (values.items?.length === 0 && values.clients?.length === 0 && !values.keyAuth && !data?.tokens?.length) {
 			return intl.formatMessage({ id: "error.access.at-least-one" });
 		}
 
@@ -86,7 +93,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const toggleEnabled = cn(toggleClasses, "bg-cyan");
 
 	return (
-		<Modal show={visible} onHide={remove}>
+		<Modal show={visible} onHide={remove} size="lg">
 			{!isLoading && error && (
 				<Alert variant="danger" className="m-3">
 					{error?.message || "Unknown error"}
@@ -100,6 +107,8 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							name: data?.name,
 							satisfyAny: data?.satisfyAny,
 							passAuth: data?.passAuth,
+							keyAuth: !!data?.keyAuth,
+							keySessionHours: data?.keySessionHours || 168,
 							items: data?.items || [],
 							clients: data?.clients || [],
 						} as AccessList
@@ -141,6 +150,30 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													role="tab"
 												>
 													<T id="column.authorizations" />
+												</a>
+											</li>
+											<li className="nav-item" role="presentation">
+												<a
+													href="#tab-keys"
+													className="nav-link"
+													data-bs-toggle="tab"
+													aria-selected="false"
+													tabIndex={-1}
+													role="tab"
+												>
+													<T id="access-list.tab.keys" />
+												</a>
+											</li>
+											<li className="nav-item" role="presentation">
+												<a
+													href="#tab-tokens"
+													className="nav-link"
+													data-bs-toggle="tab"
+													aria-selected="false"
+													tabIndex={-1}
+													role="tab"
+												>
+													<T id="access-list.tab.tokens" />
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -258,6 +291,16 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											</div>
 											<div className="tab-pane" id="tab-auth" role="tabpanel">
 												<BasicAuthFields initialValues={data?.items || []} />
+											</div>
+											<div className="tab-pane" id="tab-keys" role="tabpanel">
+												<SecurityKeyFields
+													listId={data?.id || 0}
+													savedKeyAuth={!!data?.keyAuth}
+													keys={data?.keys || []}
+												/>
+											</div>
+											<div className="tab-pane" id="tab-tokens" role="tabpanel">
+												<AccessTokenFields listId={data?.id || 0} tokens={data?.tokens || []} />
 											</div>
 											<div className="tab-pane" id="tab-rules" role="tabpanel">
 												<AccessClientFields initialValues={data?.clients || []} />

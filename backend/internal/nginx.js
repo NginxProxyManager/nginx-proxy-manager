@@ -187,6 +187,17 @@ const internalNginx = {
 						locationCopy.access_list = host.access_list;
 					}
 
+					// Lists using security keys or tokens need the sign-in locations on this server
+					if (locationCopy.access_list_id > 0 && locationCopy.access_list) {
+						locationCopy.access_list = {
+							...locationCopy.access_list,
+							gate_mode: accessListModel.isGateMode(locationCopy.access_list),
+						};
+						if (locationCopy.access_list.gate_mode) {
+							host.access_gate = true;
+						}
+					}
+
 					if (locationCopy.forward_host.indexOf("/") > -1) {
 						const splitted = locationCopy.forward_host.split("/");
 
@@ -275,6 +286,14 @@ const internalNginx = {
 
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
+
+			// Access lists using security keys or tokens are checked by the backend
+			if (host.access_list_id > 0 && host.access_list) {
+				host.access_list.gate_mode = accessListModel.isGateMode(host.access_list);
+				if (host.use_default_location && host.access_list.gate_mode) {
+					host.access_gate = true;
+				}
+			}
 
 			locationsPromise.then(() => {
 				renderEngine

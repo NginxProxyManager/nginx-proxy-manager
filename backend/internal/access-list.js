@@ -2,14 +2,20 @@ import fs from "node:fs";
 import batchflow from "batchflow";
 import _ from "lodash";
 import errs from "../lib/error.js";
-import { isMysql, isPostgres } from "../lib/config.js";
 import utils from "../lib/utils.js";
-import db from "../db.js";
 import { access as logger } from "../logger.js";
 import accessListModel from "../models/access_list.js";
 import accessListAuthModel from "../models/access_list_auth.js";
 import accessListClientModel from "../models/access_list_client.js";
+import accessListKeyModel from "../models/access_list_key.js";
+import accessListTokenModel from "../models/access_list_token.js";
 import proxyHostModel from "../models/proxy_host.js";
+import internalAccessGate from "./access-gate.js";
+import {
+	getProxyHostsForAccessList,
+	getProxyHostsUsingAccessListInLocations,
+	regenerateProxyHostsForAccessList,
+} from "./access-list-hosts.js";
 import internalAuditLog from "./audit-log.js";
 import internalNginx from "./nginx.js";
 
@@ -18,35 +24,16 @@ const omissions = () => {
 };
 
 /**
- * Find proxy hosts that reference an access list in their locations JSON.
+ * Loads a list the token's user may change, for managing its keys and tokens
  *
- * @param   {Integer}  accessListId
- * @returns {Promise<Array>}
+ * @param   {Access}  access
+ * @param   {Integer} listId
+ * @param   {Array}   [expand]
+ * @returns {Promise<Object>}
  */
-const getProxyHostsUsingAccessListInLocations = async (accessListId) => {
-	let result;
-	if (isMysql()) {
-		const searchObj = JSON.stringify([{ access_list_id: accessListId }]);
-		result = await db().raw(
-			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND JSON_CONTAINS(locations, ?, ?)",
-			[searchObj, "$"],
-		);
-	} else if (isPostgres()) {
-		result = await db().raw(
-			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations::jsonb @> ?::jsonb",
-			[JSON.stringify([{ access_list_id: accessListId }])],
-		);
-	} else {
-		result = await db().raw(
-			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations LIKE ?",
-			[`%"access_list_id":${accessListId}%`],
-		);
-	}
-	// knex raw() returns [rows, metadata] for MySQL, { rows } for Postgres and rows for SQLite
-	if (!Array.isArray(result)) {
-		return result?.rows || [];
-	}
-	return (Array.isArray(result[0]) ? result[0] : result) || [];
+const getListForUpdate = async (access, listId, expand) => {
+	await access.can("access_lists:update", listId);
+	return internalAccessList.get(access, { id: listId, expand });
 };
 
 const internalAccessList = {
@@ -63,6 +50,8 @@ const internalAccessList = {
 				name: data.name,
 				satisfy_any: data.satisfy_any,
 				pass_auth: data.pass_auth,
+				key_auth: data.key_auth === true,
+				key_session_hours: data.key_session_hours || 168,
 				owner_user_id: access.token.getUserId(1),
 			})
 			.then(utils.omitRow(omissions()));
@@ -92,6 +81,8 @@ const internalAccessList = {
 				directive: client.directive,
 			});
 		}
+
+		await internalAccessGate.refreshGateMeta(row.id);
 
 		// re-fetch with expansions
 		const freshRow = await internalAccessList.get(
@@ -147,6 +138,18 @@ const internalAccessList = {
 				satisfy_any: data.satisfy_any,
 				pass_auth: data.pass_auth,
 			});
+		}
+
+		// Security key settings
+		const keyPatch = {};
+		if (typeof data.key_auth !== "undefined") {
+			keyPatch.key_auth = data.key_auth;
+		}
+		if (typeof data.key_session_hours !== "undefined") {
+			keyPatch.key_session_hours = data.key_session_hours;
+		}
+		if (Object.keys(keyPatch).length) {
+			await accessListModel.query().where({ id: data.id }).patch(keyPatch);
 		}
 
 		// Check for items and add/update/remove them
@@ -207,6 +210,10 @@ const internalAccessList = {
 			meta: internalAccessList.maskItems(data),
 		});
 
+		// Users, pass_auth and the key settings decide how hosts check this list
+		await internalAccessGate.refreshGateMeta(data.id);
+		internalAccessGate.invalidate(data.id);
+
 		// re-fetch with expansions
 		const freshRow = await internalAccessList.get(
 			access,
@@ -218,28 +225,9 @@ const internalAccessList = {
 		);
 
 		await internalAccessList.build(freshRow);
-		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
-			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
-		}
 
-		// Also regenerate configs for proxy hosts that reference this access list in their locations
-		const locationHostRows = await getProxyHostsUsingAccessListInLocations(data.id);
-		if (locationHostRows?.length) {
-			const locationHostIds = locationHostRows.map((r) => r.id).filter((id) => {
-				// Exclude hosts already regenerated above
-				return !freshRow.proxy_hosts?.find((h) => h.id === id);
-			});
-			if (locationHostIds.length) {
-				const locationHosts = await proxyHostModel.query()
-					.where("is_deleted", 0)
-					.whereIn("id", locationHostIds)
-					.allowGraph(proxyHostModel.defaultAllowGraph)
-					.withGraphFetched("[owner, certificate, access_list.[clients,items]]");
-				await internalNginx.bulkGenerateConfigs("proxy_host", locationHosts);
-			}
-		}
-
-		await internalNginx.reload();
+		// Regenerate hosts using this list, for the whole host or in a location, then reload
+		await regenerateProxyHostsForAccessList(data.id);
 		return internalAccessList.maskItems(freshRow);
 	},
 
@@ -265,7 +253,7 @@ const internalAccessList = {
 			.where("access_list.is_deleted", 0)
 			.andWhere("access_list.id", thisData.id)
 			.groupBy("access_list.id")
-			.allowGraph("[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]")
+			.allowGraph("[owner,items,clients,keys,tokens,proxy_hosts.[certificate,access_list.[clients,items]]]")
 			.first();
 
 		if (accessData.permission_visibility !== "all") {
@@ -314,10 +302,11 @@ const internalAccessList = {
 		// 3. reconfigure those hosts
 		// 4. audit log
 
-		// 1. update row to be deleted
+		// 1. update row to be deleted, and remove its keys and tokens
 		await accessListModel.query().where("id", row.id).patch({
 			is_deleted: 1,
 		});
+		await internalAccessGate.deleteCredentials(row.id);
 
 		// 2. update any proxy hosts that were using it (ignoring permissions)
 		const affectedHostIds = new Set((row.proxy_hosts || []).map((h) => h.id));
@@ -390,7 +379,7 @@ const internalAccessList = {
 			})
 			.where("access_list.is_deleted", 0)
 			.groupBy("access_list.id")
-			.allowGraph("[owner,items,clients]")
+			.allowGraph("[owner,items,clients,keys,tokens]")
 			.orderBy("access_list.name", "ASC");
 
 		if (accessData.permission_visibility !== "all") {
@@ -418,6 +407,225 @@ const internalAccessList = {
 			});
 		}
 		return rows;
+	},
+
+	/**
+	 * Creates a one-time link for registering a security key on a list
+	 *
+	 * @param   {Access}  access
+	 * @param   {Integer} listId
+	 * @param   {Object}  data
+	 * @param   {String}  data.name
+	 * @returns {Promise<{expires_on: String, urls: Array}>}
+	 */
+	createKeyInvite: async (access, listId, data) => {
+		const list = await getListForUpdate(access, listId);
+		if (!list.key_auth) {
+			throw new errs.ValidationError("Enable security keys on this access list and save it first");
+		}
+
+		const { token, expiresOn } = internalAccessGate.createInviteToken(list.id, data.name);
+
+		// A link on each fixed domain using the list. Browsers only allow keys over https.
+		const urls = [];
+		const seen = new Set();
+		for (const host of await getProxyHostsForAccessList(list.id)) {
+			const secure = Number.parseInt(host.certificate_id, 10) > 0;
+			for (const domain of host.domain_names || []) {
+				const name = `${domain}`.toLowerCase();
+				if (name.includes("*") || seen.has(name)) {
+					continue;
+				}
+				seen.add(name);
+				urls.push({
+					domain: name,
+					secure,
+					url: `${secure ? "https" : "http"}://${name}/.npm-auth/enroll#${token}`,
+				});
+			}
+		}
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "access-list",
+			object_id: list.id,
+			meta: { security_key: { action: "invited", name: data.name } },
+		});
+
+		return { expires_on: expiresOn, urls };
+	},
+
+	/**
+	 * @param   {Access}  access
+	 * @param   {Integer} listId
+	 * @param   {Integer} keyId
+	 * @param   {Object}  data
+	 * @param   {String}  data.name
+	 * @returns {Promise<Object>}
+	 */
+	updateKey: async (access, listId, keyId, data) => {
+		const list = await getListForUpdate(access, listId, ["keys"]);
+		const key = list.keys.find((k) => k.id === keyId);
+		if (!key) {
+			throw new errs.ItemNotFoundError(keyId);
+		}
+
+		await accessListKeyModel.query().where("id", key.id).patch({ name: data.name });
+		internalAccessGate.invalidate(list.id);
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "access-list",
+			object_id: list.id,
+			meta: { security_key: { action: "renamed", id: key.id, name: data.name, previous_name: key.name } },
+		});
+
+		const fresh = await internalAccessList.get(access, { id: list.id, expand: ["keys"] });
+		return fresh.keys.find((k) => k.id === key.id);
+	},
+
+	/**
+	 * Removes a key. Sessions it started end straight away.
+	 *
+	 * @param   {Access}  access
+	 * @param   {Integer} listId
+	 * @param   {Integer} keyId
+	 * @returns {Promise<Boolean>}
+	 */
+	deleteKey: async (access, listId, keyId) => {
+		const list = await getListForUpdate(access, listId, ["keys"]);
+		const key = list.keys.find((k) => k.id === keyId);
+		if (!key) {
+			throw new errs.ItemNotFoundError(keyId);
+		}
+
+		await accessListKeyModel.query().delete().where("id", key.id);
+		internalAccessGate.invalidate(list.id);
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "access-list",
+			object_id: list.id,
+			meta: { security_key: { action: "removed", id: key.id, name: key.name } },
+		});
+		return true;
+	},
+
+	/**
+	 * Adds a header token. Only a digest of the value is kept.
+	 *
+	 * @param   {Access}  access
+	 * @param   {Integer} listId
+	 * @param   {Object}  data
+	 * @param   {String}  data.name
+	 * @param   {String}  data.header_name
+	 * @param   {String}  data.value
+	 * @param   {Boolean} [data.forward]
+	 * @returns {Promise<Object>}
+	 */
+	createToken: async (access, listId, data) => {
+		const list = await getListForUpdate(access, listId);
+		if (internalAccessGate.isReservedHeader(data.header_name)) {
+			throw new errs.ValidationError(`"${data.header_name}" can't be used as a token header`);
+		}
+
+		const tokenHash = internalAccessGate.hashToken(data.value);
+		const duplicate = await accessListTokenModel
+			.query()
+			.where("access_list_id", list.id)
+			.andWhere("token_hash", tokenHash)
+			.first();
+		if (duplicate) {
+			throw new errs.ValidationError("This token is already on this access list");
+		}
+
+		const row = await accessListTokenModel.query().insertAndFetch({
+			access_list_id: list.id,
+			name: data.name,
+			header_name: data.header_name,
+			token_hash: tokenHash,
+			forward: data.forward !== false,
+		});
+
+		// Tokens put the list in gate mode, and decide which headers nginx strips
+		await internalAccessGate.refreshGateMeta(list.id);
+		internalAccessGate.invalidate(list.id);
+		await regenerateProxyHostsForAccessList(list.id);
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "access-list",
+			object_id: list.id,
+			meta: { token: { action: "created", id: row.id, name: row.name, header_name: row.header_name } },
+		});
+
+		const fresh = await internalAccessList.get(access, { id: list.id, expand: ["tokens"] });
+		return fresh.tokens.find((t) => t.id === row.id);
+	},
+
+	/**
+	 * @param   {Access}  access
+	 * @param   {Integer} listId
+	 * @param   {Integer} tokenId
+	 * @param   {Object}  data
+	 * @param   {String}  [data.name]
+	 * @param   {Boolean} [data.forward]
+	 * @returns {Promise<Object>}
+	 */
+	updateToken: async (access, listId, tokenId, data) => {
+		const list = await getListForUpdate(access, listId, ["tokens"]);
+		const token = list.tokens.find((t) => t.id === tokenId);
+		if (!token) {
+			throw new errs.ItemNotFoundError(tokenId);
+		}
+
+		await accessListTokenModel
+			.query()
+			.where("id", token.id)
+			.patch(_.pick(data, ["name", "forward"]));
+		internalAccessGate.invalidate(list.id);
+
+		if (typeof data.forward !== "undefined" && data.forward !== token.forward) {
+			await internalAccessGate.refreshGateMeta(list.id);
+			await regenerateProxyHostsForAccessList(list.id);
+		}
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "access-list",
+			object_id: list.id,
+			meta: { token: { action: "updated", id: token.id, ..._.pick(data, ["name", "forward"]) } },
+		});
+
+		const fresh = await internalAccessList.get(access, { id: list.id, expand: ["tokens"] });
+		return fresh.tokens.find((t) => t.id === token.id);
+	},
+
+	/**
+	 * @param   {Access}  access
+	 * @param   {Integer} listId
+	 * @param   {Integer} tokenId
+	 * @returns {Promise<Boolean>}
+	 */
+	deleteToken: async (access, listId, tokenId) => {
+		const list = await getListForUpdate(access, listId, ["tokens"]);
+		const token = list.tokens.find((t) => t.id === tokenId);
+		if (!token) {
+			throw new errs.ItemNotFoundError(tokenId);
+		}
+
+		await accessListTokenModel.query().delete().where("id", token.id);
+		await internalAccessGate.refreshGateMeta(list.id);
+		internalAccessGate.invalidate(list.id);
+		await regenerateProxyHostsForAccessList(list.id);
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "access-list",
+			object_id: list.id,
+			meta: { token: { action: "deleted", id: token.id, name: token.name } },
+		});
+		return true;
 	},
 
 	/**

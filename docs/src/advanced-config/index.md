@@ -266,3 +266,29 @@ And you'll probably want to expose that port as well
 ```
 
 Then you'll be able to access admin UI at `http://localhost:8000`
+
+
+## Access Lists with security keys and tokens
+
+Besides usernames and passwords, an Access List can accept **security keys** (such as YubiKeys, over USB or NFC)
+and **header tokens**. A request that brings any one of these gets through, and the list's IP rules still apply
+as set by "Satisfy Any".
+
+- **Security keys:** turn on "Accept security keys" on the list, save it and use it on a proxy host. Then open the
+  list again and choose "Register a key". You get a one-time link (and QR code) to open on the device the key will be
+  used with. It's valid for 24 hours. Visitors without a session are sent to a sign-in page on the site itself,
+  where they tap their key. If the list also has users, the same page offers a username and password form. A sign-in
+  lasts for the time set on the list, and removing a key ends its sessions straight away.
+- **Header tokens:** requests sending a configured header with the right value get through without signing in,
+  which suits apps and scripts. Turn on "Forward to upstream" when the header is also the app's own credential,
+  for example the `X-Api-Key` header of Sonarr or Radarr. Otherwise NPM removes it before passing the request on.
+
+Some things to know:
+
+- Browsers only allow security keys over HTTPS, on a domain name (`localhost` also works). They don't work over
+  plain http or on IP addresses.
+- A key is registered for the site's domain and all its subdomains, e.g. a key registered on `app.example.com`
+  also works on `nas.example.com`. Hosts on a different domain need the key registered again from a link on that domain.
+- Signing in is per site: each host asks for a key once per session.
+- The sign-in pages live under `/.npm-auth/` on every host using such a list, so that path isn't passed to the upstream.
+- Apps that can't show a web page, like mobile apps, need a header token, basic auth credentials or an IP rule.

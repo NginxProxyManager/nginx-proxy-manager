@@ -37,10 +37,27 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 					<ValueWithDateFormatter value={info.getValue().name} createdOn={info.getValue().createdOn} />
 				),
 			}),
-			columnHelper.accessor((row: any) => row.items, {
+			columnHelper.accessor((row: any) => row, {
 				id: "items",
 				header: intl.formatMessage({ id: "column.authorization" }),
-				cell: (info: any) => <T id="access-list.auth-count" data={{ count: info.getValue().length }} />,
+				cell: (info: any) => {
+					const row: AccessList = info.getValue();
+					return (
+						<>
+							<T id="access-list.auth-count" data={{ count: row.items?.length || 0 }} />
+							{row.keyAuth ? (
+								<div className="text-secondary">
+									<T id="access-list.keys.count" data={{ count: row.keys?.length || 0 }} />
+								</div>
+							) : null}
+							{row.tokens?.length ? (
+								<div className="text-secondary">
+									<T id="access-list.tokens.count" data={{ count: row.tokens.length }} />
+								</div>
+							) : null}
+						</>
+					);
+				},
 			}),
 			columnHelper.accessor((row: any) => row.clients, {
 				id: "clients",
