@@ -9,10 +9,12 @@ import { ConfirmDeleteButton } from "./ConfirmDeleteButton";
 import { CopyField } from "./CopyField";
 import { InlineRename } from "./InlineRename";
 
+// "forward" is the default for the "Forward to upstream" switch. An API key header is
+// usually the app's own credential (e.g. Sonarr), the others usually a secret for NPM only.
 const HEADER_PRESETS = [
-	{ id: "bearer", label: "Authorization: Bearer", header: "Authorization", prefix: "Bearer " },
-	{ id: "x-api-key", label: "X-Api-Key", header: "X-Api-Key", prefix: "" },
-	{ id: "custom", label: "", header: "", prefix: "" },
+	{ id: "bearer", label: "Authorization: Bearer", header: "Authorization", prefix: "Bearer ", forward: false },
+	{ id: "x-api-key", label: "X-Api-Key", header: "X-Api-Key", prefix: "", forward: true },
+	{ id: "custom", label: "", header: "", prefix: "", forward: false },
 ];
 
 const HEADER_NAME_REGEX = /^[A-Za-z0-9-]{1,64}$/;
@@ -42,7 +44,7 @@ export function AccessTokenFields({ listId, tokens }: Props) {
 	const [preset, setPreset] = useState(HEADER_PRESETS[1].id);
 	const [customHeader, setCustomHeader] = useState("");
 	const [value, setValue] = useState("");
-	const [forward, setForward] = useState(true);
+	const [forward, setForward] = useState(HEADER_PRESETS[1].forward);
 	const [created, setCreated] = useState<{ header: string; value: string } | null>(null);
 
 	const presetDef = HEADER_PRESETS.find((p) => p.id === preset) || HEADER_PRESETS[1];
@@ -55,7 +57,7 @@ export function AccessTokenFields({ listId, tokens }: Props) {
 		setPreset(HEADER_PRESETS[1].id);
 		setCustomHeader("");
 		setValue("");
-		setForward(true);
+		setForward(HEADER_PRESETS[1].forward);
 	};
 
 	const add = async () => {
@@ -207,7 +209,10 @@ export function AccessTokenFields({ listId, tokens }: Props) {
 								id="tokenHeader"
 								className="form-select"
 								value={preset}
-								onChange={(e) => setPreset(e.target.value)}
+								onChange={(e) => {
+									setPreset(e.target.value);
+									setForward(!!HEADER_PRESETS.find((p) => p.id === e.target.value)?.forward);
+								}}
 							>
 								{HEADER_PRESETS.map((p) => (
 									<option key={p.id} value={p.id}>

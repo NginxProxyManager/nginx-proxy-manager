@@ -219,6 +219,27 @@ describe('Access Lists with security keys and tokens', () => {
 		});
 	});
 
+	it('Should refuse token forwarding that would pass on another credential', () => {
+		// The X-Api-Key token from the previous test is forwarded, so another one on that header must be too
+		cy.task('backendApiPost', {
+			token:         token,
+			path:          `/api/nginx/access-lists/${listId}/tokens`,
+			data:          { name: 'Hidden', header_name: 'X-Api-Key', value: `${apiKey}-other`, forward: false },
+			returnOnError: true,
+		}).then((res) => {
+			expect(res.error.code).to.equal(400);
+		});
+		// The list has users and doesn't pass auth on, so Authorization can't be forwarded
+		cy.task('backendApiPost', {
+			token:         token,
+			path:          `/api/nginx/access-lists/${listId}/tokens`,
+			data:          { name: 'Upstream bearer', header_name: 'Authorization', value: 'Bearer cypress-upstream-token-0123', forward: true },
+			returnOnError: true,
+		}).then((res) => {
+			expect(res.error.code).to.equal(400);
+		});
+	});
+
 	it('Should register security keys with one-time links', () => {
 		registerKey('Primary key').then(({ inviteToken, response, verify }) => {
 			expect(verify.status).to.equal(200);

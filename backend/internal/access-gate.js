@@ -435,6 +435,34 @@ const internalAccessGate = {
 	},
 
 	/**
+	 * Whether a header reaches the upstream is decided per header, not per request. Refuses
+	 * settings where one header would have to be both forwarded and stripped, which would
+	 * pass on a credential meant to stay with NPM.
+	 *
+	 * @param {Object}  list
+	 * @param {Array}   list.tokens     [{header_name, forward}]
+	 * @param {Integer} list.userCount
+	 * @param {Boolean} list.passAuth
+	 */
+	assertForwardingConsistent: ({ tokens, userCount, passAuth }) => {
+		const forwarded = new Map();
+		for (const token of tokens) {
+			const header = token.header_name.toLowerCase();
+			if (forwarded.has(header) && forwarded.get(header) !== !!token.forward) {
+				throw new errs.ValidationError(
+					`Tokens using the ${token.header_name} header must all be forwarded to the upstream, or none of them`,
+				);
+			}
+			forwarded.set(header, !!token.forward);
+		}
+		if (forwarded.get("authorization") === true && userCount > 0 && !passAuth) {
+			throw new errs.ValidationError(
+				`A token forwarding the Authorization header would also forward users' passwords. Turn on "Pass Auth to Upstream", or don't forward that token`,
+			);
+		}
+	},
+
+	/**
 	 * Tokens are stored as a digest of the full header value
 	 *
 	 * @param   {String} value

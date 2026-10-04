@@ -131,6 +131,18 @@ const internalAccessList = {
 			);
 		}
 
+		// Users and "Pass Auth to Upstream" decide which headers may reach the upstream
+		const tokens = await accessListTokenModel.query().where("access_list_id", data.id);
+		if (tokens.length) {
+			internalAccessGate.assertForwardingConsistent({
+				tokens,
+				userCount: Array.isArray(data.items)
+					? data.items.length
+					: await accessListAuthModel.query().where("access_list_id", data.id).resultSize(),
+				passAuth: data.name && typeof data.pass_auth !== "undefined" ? data.pass_auth : row.pass_auth,
+			});
+		}
+
 		// patch name if specified
 		if (typeof data.name !== "undefined" && data.name) {
 			await accessListModel.query().where({ id: data.id }).patch({
@@ -528,6 +540,15 @@ const internalAccessList = {
 		if (internalAccessGate.isReservedHeader(data.header_name)) {
 			throw new errs.ValidationError(`"${data.header_name}" can't be used as a token header`);
 		}
+		const forward = data.forward !== false;
+		internalAccessGate.assertForwardingConsistent({
+			tokens: [
+				...(await accessListTokenModel.query().where("access_list_id", list.id)),
+				{ header_name: data.header_name, forward },
+			],
+			userCount: await accessListAuthModel.query().where("access_list_id", list.id).resultSize(),
+			passAuth: list.pass_auth,
+		});
 
 		const tokenHash = internalAccessGate.hashToken(data.value);
 		const duplicate = await accessListTokenModel
@@ -544,7 +565,7 @@ const internalAccessList = {
 			name: data.name,
 			header_name: data.header_name,
 			token_hash: tokenHash,
-			forward: data.forward !== false,
+			forward,
 		});
 
 		// Tokens put the list in gate mode, and decide which headers nginx strips
@@ -577,6 +598,15 @@ const internalAccessList = {
 		const token = list.tokens.find((t) => t.id === tokenId);
 		if (!token) {
 			throw new errs.ItemNotFoundError(tokenId);
+		}
+
+		if (typeof data.forward !== "undefined") {
+			const tokens = await accessListTokenModel.query().where("access_list_id", list.id);
+			internalAccessGate.assertForwardingConsistent({
+				tokens: tokens.map((t) => (t.id === token.id ? { ...t, forward: data.forward } : t)),
+				userCount: await accessListAuthModel.query().where("access_list_id", list.id).resultSize(),
+				passAuth: list.pass_auth,
+			});
 		}
 
 		await accessListTokenModel

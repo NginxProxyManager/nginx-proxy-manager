@@ -282,6 +282,8 @@ as set by "Satisfy Any".
 - **Header tokens:** requests sending a configured header with the right value get through without signing in,
   which suits apps and scripts. Turn on "Forward to upstream" when the header is also the app's own credential,
   for example the `X-Api-Key` header of Sonarr or Radarr. Otherwise NPM removes it before passing the request on.
+  Tokens sharing a header must all be forwarded or all not, and forwarding a token on the `Authorization` header
+  needs "Pass Auth to Upstream" when the list also has users, as their passwords travel in that header too.
 
 Some things to know:
 
@@ -291,4 +293,5 @@ Some things to know:
   also works on `nas.example.com`. Hosts on a different domain need the key registered again from a link on that domain.
 - Signing in is per site: each host asks for a key once per session.
 - The sign-in pages live under `/.npm-auth/` on every host using such a list, so that path isn't passed to the upstream.
+- NPM's sign-in cookies (`npm_gate_*`) are never passed to an upstream, on any host.
 - Apps that can't show a web page, like mobile apps, need a header token, basic auth credentials or an IP rule.
