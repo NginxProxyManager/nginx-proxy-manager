@@ -13,7 +13,7 @@
 		"regenerate-config": "node scripts/regenerate-config"
 	},
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "^16.0.2",
+		"@apidevtools/json-schema-ref-parser": "^16.0.3",
 		"ajv": "^8.20.0",
 		"archiver": "^8.0.0",
 		"batchflow": "^0.4.0",
@@ -30,12 +30,12 @@
 		"liquidjs": "10.29.0",
 		"lodash": "^4.18.1",
 		"moment": "^2.31.0",
-		"mysql2": "^3.24.4",
+		"mysql2": "^3.24.5",
 		"node-rsa": "^2.0.0",
 		"objection": "3.1.5",
 		"otplib": "^13.5.0",
 		"path": "^0.12.7",
-		"pg": "^8.23.0",
+		"pg": "^8.23.1",
 		"proxy-agent": "^8.0.2",
 		"signale": "1.4.0",
 		"sqlite3": "^6.0.1",
