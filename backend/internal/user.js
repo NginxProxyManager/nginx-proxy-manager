@@ -34,6 +34,10 @@ const internalUser = {
 			data.is_disabled = data.is_disabled ? 1 : 0;
 		}
 
+		if (typeof data.email === "string") {
+			data.email = data.email.toLowerCase().trim();
+		}
+
 		await access.can("users:create", data);
 		data.avatar = gravatar.url(data.email, { default: "mm" });
 
