@@ -29,7 +29,7 @@
 		"knex": "3.3.0",
 		"liquidjs": "10.29.0",
 		"lodash": "^4.18.1",
-		"moment": "^2.30.1",
+		"moment": "^2.31.0",
 		"mysql2": "^3.24.4",
 		"node-rsa": "^2.0.0",
 		"objection": "3.1.5",
