@@ -34,13 +34,19 @@ describe('Access Lists with security keys and tokens', () => {
 		});
 	};
 
-	// nginx reloads are signalled and return immediately, so the old
-	// config can still be served for a moment after an API change.
+	// nginx reloads are signalled and return immediately, so the old config can
+	// still be served for a moment after an API change. While reloading, old and
+	// new workers both answer, so wait for a few matching answers in a row before
+	// relying on the new config.
 	const expectStatus = (host, path, headers, status) => {
-		cy.waitUntil(() => site(host, path, headers).then((res) => res.status === status), {
-			timeout:  15000,
-			interval: 500,
-			errorMsg: `${host}${path} did not return ${status}`,
+		let streak = 0;
+		cy.waitUntil(() => site(host, path, headers).then((res) => {
+			streak = res.status === status ? streak + 1 : 0;
+			return streak >= 3;
+		}), {
+			timeout:  20000,
+			interval: 300,
+			errorMsg: `${host}${path} did not keep returning ${status}`,
 		});
 	};
 
