@@ -6,13 +6,15 @@ import db from "../db.js";
 import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
 import AccessListAuth from "./access_list_auth.js";
 import AccessListClient from "./access_list_client.js";
+import AccessListKey from "./access_list_key.js";
+import AccessListToken from "./access_list_token.js";
 import now from "./now_helper.js";
 import ProxyHostModel from "./proxy_host.js";
 import User from "./user.js";
 
 Model.knex(db());
 
-const boolFields = ["is_deleted", "satisfy_any", "pass_auth"];
+const boolFields = ["is_deleted", "satisfy_any", "pass_auth", "key_auth"];
 
 class AccessList extends Model {
 	$beforeInsert() {
@@ -45,6 +47,20 @@ class AccessList extends Model {
 
 	static get name() {
 		return "AccessList";
+	}
+
+	/**
+	 * Lists using security keys or header tokens are checked by the backend via
+	 * auth_request, instead of nginx's own auth_basic.
+	 *
+	 * @param   {Object}  list
+	 * @returns {Boolean}
+	 */
+	static isGateMode(list) {
+		if (!list) {
+			return false;
+		}
+		return list.key_auth === true || list.key_auth === 1 || (list.meta?.gate?.tokens || 0) > 0;
 	}
 
 	static get tableName() {
@@ -82,6 +98,50 @@ class AccessList extends Model {
 				join: {
 					from: "access_list.id",
 					to: "access_list_client.access_list_id",
+				},
+			},
+			keys: {
+				relation: Model.HasManyRelation,
+				modelClass: AccessListKey,
+				join: {
+					from: "access_list.id",
+					to: "access_list_key.access_list_id",
+				},
+				modify: (qb) => {
+					// Never expose the credential material
+					qb.select(
+						"access_list_key.id",
+						"access_list_key.created_on",
+						"access_list_key.modified_on",
+						"access_list_key.access_list_id",
+						"access_list_key.name",
+						"access_list_key.rp_id",
+						"access_list_key.transports",
+						"access_list_key.last_used_on",
+						"access_list_key.meta",
+					).orderBy("access_list_key.id");
+				},
+			},
+			tokens: {
+				relation: Model.HasManyRelation,
+				modelClass: AccessListToken,
+				join: {
+					from: "access_list.id",
+					to: "access_list_token.access_list_id",
+				},
+				modify: (qb) => {
+					// Never expose the token hash
+					qb.select(
+						"access_list_token.id",
+						"access_list_token.created_on",
+						"access_list_token.modified_on",
+						"access_list_token.access_list_id",
+						"access_list_token.name",
+						"access_list_token.header_name",
+						"access_list_token.forward",
+						"access_list_token.last_used_on",
+						"access_list_token.meta",
+					).orderBy("access_list_token.id");
 				},
 			},
 			proxy_hosts: {

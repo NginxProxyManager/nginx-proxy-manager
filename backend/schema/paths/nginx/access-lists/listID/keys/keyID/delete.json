@@ -1,0 +1,52 @@
+{
+	"operationId": "deleteAccessListKey",
+	"summary": "Remove a security key",
+	"description": "Sessions started with the key end straight away.",
+	"tags": ["access-lists"],
+	"security": [
+		{
+			"bearerAuth": ["access_lists.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "listID",
+			"description": "Access List ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		},
+		{
+			"in": "path",
+			"name": "keyID",
+			"description": "Security Key ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 3
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

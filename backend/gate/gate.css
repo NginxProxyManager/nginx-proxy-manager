@@ -1,0 +1,171 @@
+:root {
+	color-scheme: light dark;
+	--bg: #f4f6fa;
+	--card: #ffffff;
+	--text: #1d273b;
+	--muted: #616876;
+	--border: #dce1e7;
+	--accent: #0e7c86;
+	--accent-text: #ffffff;
+	--error-bg: #fbeaea;
+	--error-text: #8a1c1c;
+	--ok-bg: #e7f6ec;
+	--ok-text: #1b5e34;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #151f2c;
+		--card: #1d2a3a;
+		--text: #e6e9ee;
+		--muted: #9aa3b1;
+		--border: #2c3a4d;
+		--accent: #2fb5c0;
+		--accent-text: #08262a;
+		--error-bg: #3d1d22;
+		--error-text: #f3b4b4;
+		--ok-bg: #173826;
+		--ok-text: #a7e3bd;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	background: var(--bg);
+	color: var(--text);
+	font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.card {
+	width: 100%;
+	max-width: 400px;
+	padding: 32px 28px;
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.brand {
+	margin: 0 0 20px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+h1 {
+	margin: 0 0 8px;
+	font-size: 22px;
+	line-height: 1.25;
+}
+
+.muted {
+	margin: 0 0 20px;
+	color: var(--muted);
+	overflow-wrap: anywhere;
+}
+
+.hint {
+	margin: 10px 0 0;
+	font-size: 13px;
+	color: var(--muted);
+}
+
+.status {
+	margin: 0 0 20px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	background: var(--error-bg);
+	color: var(--error-text);
+}
+
+.status.ok {
+	background: var(--ok-bg);
+	color: var(--ok-text);
+}
+
+.button {
+	display: block;
+	width: 100%;
+	padding: 11px 16px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: transparent;
+	color: var(--text);
+	font: inherit;
+	font-weight: 600;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.button.primary {
+	border-color: var(--accent);
+	background: var(--accent);
+	color: var(--accent-text);
+}
+
+.button:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.button:focus-visible,
+input:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.divider {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 24px 0;
+	color: var(--muted);
+	font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+	content: "";
+	flex: 1;
+	border-top: 1px solid var(--border);
+}
+
+form label {
+	display: block;
+	margin: 0 0 6px;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+form input {
+	display: block;
+	width: 100%;
+	margin: 0 0 14px;
+	padding: 10px 12px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: transparent;
+	color: var(--text);
+	font: inherit;
+}
+
+form .button {
+	margin-top: 6px;
+}
+
+[hidden] {
+	display: none !important;
+}

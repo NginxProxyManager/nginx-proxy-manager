@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex, nofollow" />
+		<title>Sign in</title>
+		<link rel="stylesheet" href="/.npm-auth/assets/gate.css" />
+		<script src="/.npm-auth/assets/gate.js" defer></script>
+	</head>
+	<body data-page="login">
+		<main class="card">
+			<p class="brand">Protected by Nginx Proxy Manager</p>
+			<h1 id="title">Sign in</h1>
+			<p id="subtitle" class="muted"></p>
+
+			<div id="status" class="status" role="status" aria-live="polite" hidden></div>
+			<p id="loading" class="muted">Loading…</p>
+
+			<section id="key-section" hidden>
+				<button id="key-button" type="button" class="button primary">Use security key</button>
+				<p id="key-hint" class="hint">Insert your key and touch it, or hold it to the back of your phone.</p>
+			</section>
+
+			<div id="divider" class="divider" hidden><span>or</span></div>
+
+			<form id="password-form" hidden>
+				<label for="username">Username</label>
+				<input id="username" name="username" autocomplete="username" autocapitalize="none" required />
+				<label for="password">Password</label>
+				<input id="password" name="password" type="password" autocomplete="current-password" required />
+				<button id="password-button" type="submit" class="button">Sign in with password</button>
+			</form>
+		</main>
+	</body>
+</html>

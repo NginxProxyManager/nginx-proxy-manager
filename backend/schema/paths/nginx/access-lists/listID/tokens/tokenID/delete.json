@@ -1,0 +1,51 @@
+{
+	"operationId": "deleteAccessListToken",
+	"summary": "Remove a header token",
+	"tags": ["access-lists"],
+	"security": [
+		{
+			"bearerAuth": ["access_lists.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "listID",
+			"description": "Access List ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		},
+		{
+			"in": "path",
+			"name": "tokenID",
+			"description": "Token ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 4
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}
