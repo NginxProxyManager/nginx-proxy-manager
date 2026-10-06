@@ -2,19 +2,12 @@
 # yarn lockfile v1
 
 
-"@apidevtools/json-schema-ref-parser@15.3.6":
-  version "15.3.6"
-  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-15.3.6.tgz#9e6360264d90b209eb09f9e4dc9a32316d86f4ea"
-  integrity sha512-oPFDSviRrreUmCZn09LCD4S9QQa6j7zfEwBM1pkGa/kXY0O4sXsEXn4emLP/Tt6tik2+BtgwKk2eldAeOWZ2Rw==
+"@apidevtools/json-schema-ref-parser@^16.0.2", "@apidevtools/json-schema-ref-parser@^16.0.3":
+  version "16.0.3"
+  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-16.0.3.tgz#d5a001c01ddf2309b8751c4cddc089489145cff2"
+  integrity sha512-7lZp4XCTZhU/AgiGpIG+j4uJeWPdGbpQ+8wqXrzuHy+tboKsjSacjGH9/kNThRDIFhMWHF3ba+ejS8J3PeSI1Q==
   dependencies:
-    js-yaml "^4.2.0"
-
-"@apidevtools/json-schema-ref-parser@^16.0.2":
-  version "16.0.2"
-  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-16.0.2.tgz#21f55458a55d1b02bc62f19c731913d8e74976b3"
-  integrity sha512-oCwWUyRdMtt/hnp6ONPudFZzF7tSqiHy46lLx5VsnsLTacs8TSU558VPAiOueFJ8WddCH30PINWDA8ByxhGHmQ==
-  dependencies:
-    js-yaml "^5.4.1"
+    js-yaml "^5.4.2"
     undici "^8.10.2"
 
 "@apidevtools/openapi-schemas@^2.1.0":
@@ -27,16 +20,16 @@
   resolved "https://registry.yarnpkg.com/@apidevtools/swagger-methods/-/swagger-methods-3.0.2.tgz#b789a362e055b0340d04712eafe7027ddc1ac267"
   integrity sha512-QAkD5kK2b1WfjDS/UQn/qQkbwF31uqRjPTrsCs5ZG9BQGAkjwvqGFjjPqAuzac/IYzpPtRzjCP1WrTuAIjMrXg==
 
-"@apidevtools/swagger-parser@^13.0.0":
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/@apidevtools/swagger-parser/-/swagger-parser-13.0.0.tgz#a8363c086cc2ae0005b270cfc241f353a741e49c"
-  integrity sha512-TcvnmBzJD7DBREkc/2qaxMqbKpttOaHhOFsYRYKdYAv6HGY+iNlWY2IUA209C2/NmvL9z8RBZhkrESqvGkjqmw==
+"@apidevtools/swagger-parser@^13.1.0":
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/@apidevtools/swagger-parser/-/swagger-parser-13.1.0.tgz#efc8ffcc573838e715d0bce83d917b79636ca172"
+  integrity sha512-dkCuqCWh5U7u0aurmmc/qvel2KeKDxHTwVtUdYonndIpD7mXV6AVaWNdvaja2HAy628z7FT/Qdz8sCgzwhgwKg==
   dependencies:
-    "@apidevtools/json-schema-ref-parser" "15.3.6"
+    "@apidevtools/json-schema-ref-parser" "^16.0.3"
     "@apidevtools/openapi-schemas" "^2.1.0"
     "@apidevtools/swagger-methods" "^3.0.2"
     "@types/json-schema" "^7.0.15"
-    ajv "^8.17.1"
+    ajv "^8.20.0"
     ajv-draft-04 "^1.0.0"
     call-me-maybe "^1.0.2"
 
@@ -1225,14 +1218,7 @@ isexe@^4.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-4.0.0.tgz#48f6576af8e87a18feb796b7ed5e2e5903b43dca"
   integrity sha512-FFUtZMpoZ8RqHS3XeXEmHWLA4thH+ZxCv2lOiPIn1Xc7CxrqhWzNSDzD+/chS/zbYezmiwWLdQC09JdQKmthOw==
 
-js-yaml@^4.2.0:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.3.2.tgz#8e44fb14a2643c59726bb15787b5f1512cb3d3fb"
-  integrity sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==
-  dependencies:
-    argparse "^2.0.1"
-
-js-yaml@^5.4.1:
+js-yaml@^5.4.2:
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-5.4.2.tgz#eebc7a57e0bbe1d6b6d9416a72e7463082c7da85"
   integrity sha512-m+aqu+LwO1O6sIopafj8HUVl5aawITwZQe/yHpMCKjaWBaA/d07B/QdMb3529REftiU+RMMHL3Vlsw3hON7vWg==
