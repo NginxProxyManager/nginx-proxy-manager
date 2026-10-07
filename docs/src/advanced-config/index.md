@@ -168,6 +168,46 @@ By default, NPM fetches IP ranges from CloudFront and Cloudflare during applicat
       IP_RANGES_FETCH_ENABLED: 'false'
 ```
 
+## Public HTTP and HTTPS ports
+
+Some networks block incoming connections to ports 80 and 443. NPM can be published
+on other ports using Docker port mappings or router forwarding, while its internal
+listeners remain on 80 and 443. Configure the public ports so Force SSL redirects
+and host links in the manager use the addresses clients can actually reach:
+
+```yml
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    ports:
+      - '232:80'
+      - '233:443'
+      - '81:81'
+    environment:
+      PUBLIC_HTTP_PORT: '232'
+      PUBLIC_HTTPS_PORT: '233'
+    # ...
+```
+
+`PUBLIC_HTTP_PORT` defaults to 80 and `PUBLIC_HTTPS_PORT` defaults to 443.
+Both must be decimal integers between 1 and 65535. They describe the client-facing
+ports; configure Docker or router mappings to match and recreate the container
+after changing them. These settings do not change internal listeners or ACME
+validation requirements.
+
+Force SSL redirects preserve their 301 status, path, and query, including the
+nonstandard HTTPS port. HTTP sent to an SSL listener redirects with 307 when the
+public HTTPS port is nonstandard; default 443 behavior is unchanged.
+
+Proxy, Redirection, and 404 Host links use HTTPS when a certificate is configured,
+and HTTP otherwise. Both the visible domain and link include nonstandard ports;
+standard 80/443 are omitted. Certificate-list links retain their existing behavior.
+The existing health API exposes the configured ports as `public_ports`.
+
+Explicit redirection destinations, upstream ports, and application-generated URLs
+remain separately configured. Remove any custom `error_page` rule that previously
+hardcoded a public port if it would override the new redirects.
+
 ## Custom Nginx Configurations
 
 If you are a more advanced user, you might be itching for extra Nginx customizability.
