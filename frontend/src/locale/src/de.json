@@ -71,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Beachten Sie, dass die Anweisungen „Erlauben“ und „Verbieten“ in der Reihenfolge ihrer Definition angewendet werden."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Vom Proxy Host übernehmen"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Verwendet die Zugriffsliste des Proxy Hosts"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Authentifizierung an Upstream weiterleiten"
 	},
@@ -101,6 +107,9 @@
 	"action.allow": {
 		"defaultMessage": "Erlauben"
 	},
+	"action.clear": {
+		"defaultMessage": "Leeren"
+	},
 	"action.close": {
 		"defaultMessage": "Schließen"
 	},
@@ -121,6 +130,9 @@
 	},
 	"action.enable": {
 		"defaultMessage": "Aktivieren"
+	},
+	"action.logs": {
+		"defaultMessage": "Logs"
 	},
 	"action.permissions": {
 		"defaultMessage": "Berechtigungen"
@@ -265,6 +277,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "E-Mail"
+	},
+	"column.error": {
+		"defaultMessage": "Fehler"
 	},
 	"column.event": {
 		"defaultMessage": "Ereignis"
@@ -461,6 +476,12 @@
 	"loading": {
 		"defaultMessage": "Laden…"
 	},
+	"location.advanced-config": {
+		"defaultMessage": "Hat eine eigene Nginx-Konfiguration"
+	},
+	"location.filter": {
+		"defaultMessage": "Nach Pfad oder Ziel filtern"
+	},
 	"login.2fa-code": {
 		"defaultMessage": "Verifizierungscode"
 	},
@@ -478,6 +499,51 @@
 	},
 	"login.title": {
 		"defaultMessage": "Anmelden"
+	},
+	"logs": {
+		"defaultMessage": "Logs"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Zugriff"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Fehler"
+	},
+	"logs.download": {
+		"defaultMessage": "Herunterladen"
+	},
+	"logs.empty": {
+		"defaultMessage": "Noch keine Log-Einträge."
+	},
+	"logs.level": {
+		"defaultMessage": "Level"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Alle Level"
+	},
+	"logs.lines": {
+		"defaultMessage": "Zeilen"
+	},
+	"logs.live": {
+		"defaultMessage": "Live"
+	},
+	"logs.paused": {
+		"defaultMessage": "Pausiert"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Aktualisieren"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Log durchsuchen…"
+	},
+	"logs.source": {
+		"defaultMessage": "Quelle"
+	},
+	"logs.source.system": {
+		"defaultMessage": "System"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Es wird nur der neueste Teil dieser Datei angezeigt."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Benutzerdefinierte Nginx Konfiguration"
