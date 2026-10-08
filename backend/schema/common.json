@@ -36,6 +36,32 @@
 				}
 			]
 		},
+		"access_directive": {
+			"description": "Access Directive",
+			"type": "string",
+			"enum": [
+				"allow",
+				"deny"
+			],
+			"example": "allow"
+		},
+		"authorization_username": {
+			"description": "Username",
+			"type": "string",
+			"minLength": 1,
+			"example": "admin"
+		},
+		"authorization_password": {
+			"description": "Password",
+			"type": "string",
+			"example": "pass"
+		},
+		"authorization_hint": {
+			"description": "Password Hint",
+			"type": "string",
+			"minLength": 1,
+			"example": "p***"
+		},
 		"created_on": {
 			"description": "Date and time of creation",
 			"readOnly": true,
@@ -86,7 +112,10 @@
 				"type": "string",
 				"pattern": "^[^&| @!#%^();:/\\\\}{=+?<>,~`'\"]+$"
 			},
-			"example": ["example.com", "www.example.com"]
+			"example": [
+				"example.com",
+				"www.example.com"
+			]
 		},
 		"enabled": {
 			"description": "Is Enabled",
@@ -136,7 +165,10 @@
 		},
 		"directive": {
 			"type": "string",
-			"enum": ["allow", "deny"],
+			"enum": [
+				"allow",
+				"deny"
+			],
 			"example": "allow"
 		},
 		"address": {
@@ -163,11 +195,10 @@
 				"additionalProperties": false,
 				"properties": {
 					"username": {
-						"type": "string",
-						"minLength": 1
+						"$ref": "#/properties/authorization_username"
 					},
 					"password": {
-						"type": "string"
+						"$ref": "#/properties/authorization_password"
 					}
 				},
 				"example": {
@@ -214,18 +245,24 @@
 					"schema": {
 						"type": "object",
 						"additionalProperties": false,
-						"required": ["certificate", "certificate_key"],
+						"required": [
+							"certificate",
+							"certificate_key"
+						],
 						"properties": {
 							"certificate": {
 								"type": "string",
+								"format": "binary",
 								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							},
 							"certificate_key": {
 								"type": "string",
+								"format": "binary",
 								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							},
 							"intermediate_certificate": {
 								"type": "string",
+								"format": "binary",
 								"example": "-----BEGIN CERTIFICATE-----\nMIID...-----END CERTIFICATE-----"
 							}
 						}
@@ -236,6 +273,11 @@
 					}
 				}
 			}
+		},
+		"meta": {
+			"description": "Meta Information",
+			"type": "object",
+			"example": {}
 		}
 	}
 }

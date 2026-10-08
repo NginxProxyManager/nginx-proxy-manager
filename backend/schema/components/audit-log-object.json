@@ -37,8 +37,7 @@
 			"example": "created"
 		},
 		"meta": {
-			"type": "object",
-			"example": {}
+			"$ref": "../common.json#/properties/meta"
 		},
 		"user": {
 			"$ref": "./user-object.json"
