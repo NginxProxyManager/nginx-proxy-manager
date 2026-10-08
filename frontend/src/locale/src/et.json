@@ -410,6 +410,12 @@
 	"error.invalid-email": {
 		"defaultMessage": "Vigane e-posti aadress"
 	},
+	"error.invalid-fail-timeout": {
+		"defaultMessage": "Kasuta täissekundeid või positiivset kestust ühikutega s, m, h või d."
+	},
+	"error.invalid-upstream-name": {
+		"defaultMessage": "Alusta tähe või alakriipsuga ning kasuta ainult tähti, numbreid, alakriipse või sidekriipse."
+	},
 	"error.max-character-length": {
 		"defaultMessage": "Maksimumpikkus on {max} {max, plural, one {tähemärk} other {tähemärki}}"
 	},
@@ -430,6 +436,18 @@
 	},
 	"error.required": {
 		"defaultMessage": "See on kohustuslik"
+	},
+	"error.upstream-invalid": {
+		"defaultMessage": "Kontrolli koormuse tasakaalustamise vahekaardil upstreami vigaseid seadeid."
+	},
+	"error.upstream-name-reserved": {
+		"defaultMessage": "Nimed, mis algavad npm-, on automaatselt loodud upstreamide jaoks reserveeritud."
+	},
+	"error.upstream-primary-required": {
+		"defaultMessage": "Vähemalt üks upstream-server ei tohi olla varuserver."
+	},
+	"error.upstream-required": {
+		"defaultMessage": "Lisa koormuse tasakaalustamisse vähemalt üks server."
 	},
 	"expires.on": {
 		"defaultMessage": "Aegub: {date}"
@@ -457,6 +475,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Skeem"
+	},
+	"host.forward-to": {
+		"defaultMessage": "Edasta sihtkohta"
+	},
+	"host.hostname-ip": {
+		"defaultMessage": "Hostinimi / IP"
+	},
+	"host.upstream": {
+		"defaultMessage": "Ülesvoolugrupp"
 	},
 	"hosts": {
 		"defaultMessage": "Hostid"
@@ -787,6 +814,81 @@
 	},
 	"update-available": {
 		"defaultMessage": "Uuendus saadaval: {latestVersion}"
+	},
+	"upstream.add-server": {
+		"defaultMessage": "Lisa upstream server"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Varuserver"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Märgib serveri backup serveriks. See saab päringuid ainult siis, kui kõik primaarsed serverid on kättesaamatud. Ei saa kasutada koos ip_hash-iga."
+	},
+	"upstream.configure": {
+		"defaultMessage": "Seadista"
+	},
+	"upstream.description": {
+		"defaultMessage": "Seadista serverid Details vahekaardil valitava ülesvoolugrupi jaoks."
+	},
+	"upstream.destination": {
+		"defaultMessage": "{count, plural, one {# taustaserver} other {# taustaserverit}} ({method})"
+	},
+	"upstream.down": {
+		"defaultMessage": "Maas"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Märgib serveri püsivalt kättesaamatuks. Kasulik serveri sujuvaks eemaldamiseks ilma konfiguratsiooni muutmata."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Tõrke ooteaeg"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Ajavahemik, mille jooksul peavad max_fails tõrked esinema, et märkida server kättesaamatuks, ning samuti aeg, mille nginx ootab enne serveri uuesti proovimist (nt 30s, 10s)."
+	},
+	"upstream.generated-on-save": {
+		"defaultMessage": "Luuakse salvestamisel"
+	},
+	"upstream.host": {
+		"defaultMessage": "Server"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Koormuse tasakaalustamine"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Maksimaalne tõrgete arv"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Ebaõnnestunud katsete arv fail_timeout perioodi jooksul, mis põhjustab serveri kättesaamatuks märkimise. Seadke 0-le, et keelata tervise kontroll."
+	},
+	"upstream.method": {
+		"defaultMessage": "Tasakaalustamise meetod"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: päringud jagatakse järjestikku (vaikimisi). Least Connections: päringud saadetakse serverile, millel on kõige vähem aktiivseid ühendusi. IP Hash: sama kliendi IP suunatakse alati samale serverile (sticky sessions)."
+	},
+	"upstream.method.ip_hash": {
+		"defaultMessage": "IP-räsi (püsiseansid)"
+	},
+	"upstream.method.least_conn": {
+		"defaultMessage": "Vähim ühendusi"
+	},
+	"upstream.method.round_robin": {
+		"defaultMessage": "Järjestikune jaotus"
+	},
+	"upstream.name": {
+		"defaultMessage": "Upstreami nimi"
+	},
+	"upstream.name.help": {
+		"defaultMessage": "Jäta tühjaks, et upstreami nimi loodaks automaatselt. Nimed peavad olema proxy-hostide vahel unikaalsed ja salvestatakse väiketähtedega."
+	},
+	"upstream.port": {
+		"defaultMessage": "Pordi number"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Kaal"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Suhteline weight round-robin jaotuse jaoks. Server, mille weight=2, saab kaks korda rohkem päringuid kui server, mille weight=1."
 	},
 	"user": {
 		"defaultMessage": "Kasutaja"

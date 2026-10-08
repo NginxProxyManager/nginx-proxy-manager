@@ -410,6 +410,12 @@
 	"error.invalid-email": {
 		"defaultMessage": "Invalid email address"
 	},
+	"error.invalid-fail-timeout": {
+		"defaultMessage": "Use whole seconds or a positive duration with s, m, h, or d."
+	},
+	"error.invalid-upstream-name": {
+		"defaultMessage": "Start with a letter or underscore; use only letters, numbers, underscores, or hyphens."
+	},
 	"error.max-character-length": {
 		"defaultMessage": "Maximum length is {max} character{max, plural, one {} other {s}}"
 	},
@@ -430,6 +436,18 @@
 	},
 	"error.required": {
 		"defaultMessage": "This is required"
+	},
+	"error.upstream-invalid": {
+		"defaultMessage": "Check the Load Balancing tab for invalid upstream settings."
+	},
+	"error.upstream-name-reserved": {
+		"defaultMessage": "Names beginning with npm- are reserved for automatically generated upstreams."
+	},
+	"error.upstream-primary-required": {
+		"defaultMessage": "At least one upstream server must not be a backup."
+	},
+	"error.upstream-required": {
+		"defaultMessage": "Add at least one server in Load Balancing."
 	},
 	"expires.on": {
 		"defaultMessage": "Expires: {date}"
@@ -457,6 +475,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Scheme"
+	},
+	"host.forward-to": {
+		"defaultMessage": "Forward to"
+	},
+	"host.hostname-ip": {
+		"defaultMessage": "Hostname / IP"
+	},
+	"host.upstream": {
+		"defaultMessage": "Upstream group"
 	},
 	"hosts": {
 		"defaultMessage": "Hosts"
@@ -787,6 +814,81 @@
 	},
 	"update-available": {
 		"defaultMessage": "Update Available: {latestVersion}"
+	},
+	"upstream.add-server": {
+		"defaultMessage": "Add Upstream Server"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Marks the server as a backup. It will only receive requests when all primary servers are unavailable. Cannot be used with ip_hash."
+	},
+	"upstream.configure": {
+		"defaultMessage": "Configure"
+	},
+	"upstream.description": {
+		"defaultMessage": "Configure servers for the Upstream group destination in Details."
+	},
+	"upstream.destination": {
+		"defaultMessage": "{count, plural, one {# upstream server} other {# upstream servers}} ({method})"
+	},
+	"upstream.down": {
+		"defaultMessage": "Down"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Permanently marks the server as unavailable. Useful for graceful removal without changing the configuration."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "The time period during which max_fails must occur to mark the server as unavailable, and also how long nginx waits before trying the server again (e.g. 30s, 10s)."
+	},
+	"upstream.generated-on-save": {
+		"defaultMessage": "Generated on save"
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Load Balancing"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Number of failed attempts within the fail_timeout period that causes the server to be marked as unavailable. Set to 0 to disable health checking."
+	},
+	"upstream.method": {
+		"defaultMessage": "Balancing Method"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: requests distributed sequentially (default). Least Connections: sent to the server with the fewest active connections. IP Hash: the same client IP always routes to the same server (sticky sessions)."
+	},
+	"upstream.method.ip_hash": {
+		"defaultMessage": "IP Hash (sticky sessions)"
+	},
+	"upstream.method.least_conn": {
+		"defaultMessage": "Least Connections"
+	},
+	"upstream.method.round_robin": {
+		"defaultMessage": "Round Robin"
+	},
+	"upstream.name": {
+		"defaultMessage": "Upstream Name"
+	},
+	"upstream.name.help": {
+		"defaultMessage": "Leave blank to generate an upstream name automatically. Names must be unique across proxy hosts and are saved in lowercase."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Relative weight for round-robin distribution. A server with weight=2 receives twice as many requests as a server with weight=1."
 	},
 	"user": {
 		"defaultMessage": "User"
