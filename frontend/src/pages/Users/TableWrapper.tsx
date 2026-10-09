@@ -105,14 +105,25 @@ export default function TableWrapper() {
 					onEditUser={(id: number) => showUserModal(id)}
 					onEditPermissions={(id: number) => showPermissionsModal(id)}
 					onSetPassword={(id: number) => showSetPasswordModal(id)}
-					onDeleteUser={(id: number) =>
+					onDeleteUser={(id: number) => {
+						const user = data?.find((u) => u.id === id);
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "user" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["users"], ["user", id]],
-							children: <T id="object.delete.content" tData={{ object: "user" }} />,
-						})
-					}
+							children: (
+								<>
+									<T id="object.delete.content" tData={{ object: "user" }} />
+									{user?.name ? (
+										<div className="mt-2 fw-bold text-break">{user.name}</div>
+									) : null}
+									{user?.email ? (
+										<div className="mt-1 text-muted small text-break">{user.email}</div>
+									) : null}
+								</>
+							),
+						});
+					}}
 					onDisableToggle={handleDisableToggle}
 					onNewUser={() => showUserModal("new")}
 					onLoginAs={handleLoginAs}
