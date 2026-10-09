@@ -1,3 +1,0 @@
-# Nginx Templates Help
-
-todo

@@ -1,5 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from "react";
-
+import { createContext, type ReactNode, useContext, useState } from "react";
 import { getLocale } from "src/locale";
 
 // Context
@@ -24,15 +23,13 @@ function LocaleProvider({ children }: Props) {
 
 	const value = { locale, setLocale };
 
-	return (
-		<LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
-	);
+	return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
 
 function useLocaleState() {
 	const context = useContext(LocaleContext);
 	if (!context) {
-		throw new Error(`useLocaleState must be used within a LocaleProvider`);
+		throw new Error("useLocaleState must be used within a LocaleProvider");
 	}
 	return context;
 }

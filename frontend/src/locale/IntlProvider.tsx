@@ -1,42 +1,80 @@
 import { createIntl, createIntlCache } from "react-intl";
-
+import langAz from "./lang/az.json";
+import langBg from "./lang/bg.json";
+import langCs from "./lang/cs.json";
 import langDe from "./lang/de.json";
 import langEn from "./lang/en.json";
+import langEs from "./lang/es.json";
+import langEt from "./lang/et.json";
 import langFa from "./lang/fa.json";
+import langFr from "./lang/fr.json";
+import langGa from "./lang/ga.json";
+import langHu from "./lang/hu.json";
+import langId from "./lang/id.json";
+import langIt from "./lang/it.json";
+import langJa from "./lang/ja.json";
+import langKo from "./lang/ko.json";
 import langList from "./lang/lang-list.json";
+import langNl from "./lang/nl.json";
+import langNo from "./lang/no.json";
+import langPl from "./lang/pl.json";
+import langPt from "./lang/pt.json";
+import langRu from "./lang/ru.json";
+import langSk from "./lang/sk.json";
+import langTr from "./lang/tr.json";
+import langUk from "./lang/uk.json";
+import langVi from "./lang/vi.json";
+import langZh from "./lang/zh.json";
 
 // first item of each array should be the language code,
 // not the country code
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
-	["en", "en-US"],
-	["de", "de-DE"],
-	["fa", "fa-IR"],
+	["en", "en-US", langEn],
+	["de", "de-DE", langDe],
+	["es", "es-ES", langEs],
+	["et", "et-EE", langEt],
+	["pt", "pt-PT", langPt],
+	["fr", "fr-FR", langFr],
+	["ga", "ga-IE", langGa],
+	["ja", "ja-JP", langJa],
+	["it", "it-IT", langIt],
+	["nl", "nl-NL", langNl],
+	["pl", "pl-PL", langPl],
+	["ru", "ru-RU", langRu],
+	["sk", "sk-SK", langSk],
+	["cs", "cs-CZ", langCs],
+	["vi", "vi-VN", langVi],
+	["zh", "zh-CN", langZh],
+	["ko", "ko-KR", langKo],
+	["bg", "bg-BG", langBg],
+	["id", "id-ID", langId],
+	["tr", "tr-TR", langTr],
+	["hu", "hu-HU", langHu],
+	["no", "no-NO", langNo],
+	["uk", "uk-UA", langUk],
+	["az", "az-AZ", langAz],
+	["fa", "fa-IR", langFa],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
-	locale = locale || "en";
-	switch (locale.slice(0, 2)) {
-		case "de":
-			return Object.assign({}, langList, langEn, langDe);
-		case "fa":
-			return Object.assign({}, langList, langEn, langFa);
-		default:
-			return Object.assign({}, langList, langEn);
+	const thisLocale = (locale || "en").slice(0, 2);
+
+	// ensure this lang exists in localeOptions above, otherwise fallback to en
+	if (thisLocale === "en" || !localeOptions.some(([code]) => code === thisLocale)) {
+		return Object.assign({}, langList, langEn);
 	}
+
+	return Object.assign({}, langList, langEn, localeOptions.find(([code]) => code === thisLocale)?.[2]);
 };
 
-const getFlagCodeForLocale = (locale?: string) => {
-	switch (locale) {
-		case "de-DE":
-		case "de":
-			return "DE";
-		case "fa-IR":
-		case "fa":
-			return "IR";
-		default:
-			return "US";
-	}
+const rtlLocales = ["fa"];
+
+const isRTLLocale = (locale?: string) => rtlLocales.includes((locale || "en").slice(0, 2));
+
+const applyDocumentLocale = (locale: string): void => {
+	document.documentElement.lang = locale;
+	document.documentElement.dir = isRTLLocale(locale) ? "rtl" : "ltr";
 };
 
 const getLocale = (short = false) => {
@@ -47,29 +85,57 @@ const getLocale = (short = false) => {
 	if (short) {
 		return loc.slice(0, 2);
 	}
+	// finally, fallback
+	if (!loc) {
+		loc = "en";
+	}
 	return loc;
 };
 
 const cache = createIntlCache();
 
 const initialMessages = loadMessages(getLocale());
-let intl = createIntl(
-	{ locale: getLocale(), messages: initialMessages },
-	cache,
-);
+applyDocumentLocale(getLocale());
+let intl = createIntl({ locale: getLocale(), messages: initialMessages }, cache);
 
 const changeLocale = (locale: string): void => {
 	const messages = loadMessages(locale);
 	intl = createIntl({ locale, messages }, cache);
 	window.localStorage.setItem("locale", locale);
-	document.documentElement.lang = locale;
+	applyDocumentLocale(locale);
 };
 
-export {
-	localeOptions,
-	getFlagCodeForLocale,
-	getLocale,
-	createIntl,
-	changeLocale,
-	intl,
+// This is a translation component that wraps the translation in a span with a data
+// attribute so devs can inspect the element to see the translation ID
+const T = ({
+	id,
+	data,
+	tData,
+}: {
+	id: string;
+	data?: Record<string, string | number | undefined>;
+	tData?: Record<string, string>;
+}) => {
+	const translatedData: Record<string, string> = {};
+	if (tData) {
+		// iterate over tData and translate each value
+		Object.entries(tData).forEach(([key, value]) => {
+			translatedData[key] = intl.formatMessage({ id: value });
+		});
+	}
+	return (
+		<span data-translation-id={id}>
+			{intl.formatMessage(
+				{ id },
+				{
+					...data,
+					...translatedData,
+				},
+			)}
+		</span>
+	);
 };
+
+//console.log("L:", localeOptions);
+
+export { changeLocale, createIntl, getLocale, intl, isRTLLocale, localeOptions, T };

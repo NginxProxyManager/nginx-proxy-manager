@@ -1,39 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
+import { type AccessList, type AccessListExpansion, getAccessLists } from "src/api/backend";
 
-import {
-	getAccessLists,
-	AccessListsResponse,
-	tableSortToAPI,
-	tableFiltersToAPI,
-} from "src/api/npm";
-
-const fetchAccessLists = (
-	offset = 0,
-	limit = 10,
-	sortBy?: any,
-	filters?: any,
-) => {
-	return getAccessLists(
-		offset,
-		limit,
-		tableSortToAPI(sortBy),
-		tableFiltersToAPI(filters),
-	);
+const fetchAccessLists = (expand?: AccessListExpansion[]) => {
+	return getAccessLists(expand);
 };
 
-const useAccessLists = (
-	offset = 0,
-	limit = 10,
-	sortBy?: any,
-	filters?: any,
-	options = {},
-) => {
-	return useQuery<AccessListsResponse, Error>({
-		queryKey: ["access-lists", { offset, limit, sortBy, filters }],
-		queryFn: () => fetchAccessLists(offset, limit, sortBy, filters),
-		staleTime: 15 * 1000, // 15 seconds
+const useAccessLists = (expand?: AccessListExpansion[], options = {}) => {
+	return useQuery<AccessList[], Error>({
+		queryKey: ["access-lists", { expand }],
+		queryFn: () => fetchAccessLists(expand),
+		staleTime: 60 * 1000,
 		...options,
 	});
 };
 
-export { useAccessLists };
+export { fetchAccessLists, useAccessLists };

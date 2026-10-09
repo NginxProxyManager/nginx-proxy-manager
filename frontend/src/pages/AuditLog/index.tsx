@@ -1,11 +1,13 @@
-import { Heading } from "@chakra-ui/react";
+import { HasPermission } from "src/components";
+import { ADMIN, VIEW } from "src/modules/Permissions";
+import TableWrapper from "./TableWrapper";
 
-import { intl } from "src/locale";
-
-function AuditLog() {
+const AuditLog = () => {
 	return (
-		<Heading mb={2}>{intl.formatMessage({ id: "audit-log.title" })}</Heading>
+		<HasPermission section={ADMIN} permission={VIEW} pageLoading loadingNoLogo>
+			<TableWrapper />
+		</HasPermission>
 	);
-}
+};
 
 export default AuditLog;

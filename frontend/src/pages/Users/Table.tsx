@@ -1,174 +1,245 @@
-import { useState, useEffect, useMemo } from "react";
-
-import { FiEdit, FiLock } from "react-icons/fi";
-import { useSortBy, useFilters, useTable, usePagination } from "react-table";
-
 import {
-	tableEvents,
-	ActionsFormatter,
-	CapabilitiesFormatter,
-	DisabledFormatter,
+	IconDotsVertical,
+	IconEdit,
+	IconLock,
+	IconLogin2,
+	IconPower,
+	IconShield,
+	IconTrash,
+} from "@tabler/icons-react";
+import { createColumnHelper, useTable } from "@tanstack/react-table";
+import { useMemo } from "react";
+import type { User } from "src/api/backend";
+import {
+	EmailFormatter,
+	EmptyData,
 	GravatarFormatter,
-	TableFilter,
-	TableLayout,
-	TablePagination,
-	TableSortBy,
-	TextFilter,
+	RolesFormatter,
+	TrueFalseFormatter,
+	ValueWithDateFormatter,
 } from "src/components";
-import { useUser } from "src/hooks";
-import { intl } from "src/locale";
-import { SetPasswordModal, UserEditModal } from "src/modals";
+import { type Features, features } from "src/components/Table/features";
+import { TableLayout } from "src/components/Table/TableLayout";
+import { intl, T } from "src/locale";
 
-export interface TableProps {
-	data: any;
-	pagination: TablePagination;
-	sortBy: TableSortBy[];
-	filters: TableFilter[];
-	onTableEvent: any;
+interface Props {
+	data: User[];
+	isFiltered?: boolean;
+	isFetching?: boolean;
+	currentUserId?: number;
+	onEditUser?: (id: number) => void;
+	onEditPermissions?: (id: number) => void;
+	onSetPassword?: (id: number) => void;
+	onDeleteUser?: (id: number) => void;
+	onDisableToggle?: (id: number, enabled: boolean) => void;
+	onNewUser?: () => void;
+	onLoginAs?: (id: number) => void;
 }
-function Table({
+export default function Table({
 	data,
-	pagination,
-	onTableEvent,
-	sortBy,
-	filters,
-}: TableProps) {
-	const { data: me } = useUser("me");
-	const [editId, setEditId] = useState(0);
-	const [setPasswordUserId, setSetPasswordUserId] = useState(0);
-	const [columns, tableData] = useMemo(() => {
-		const columns = [
-			{
-				accessor: "gravatarUrl",
-				className: "w-80",
-				Cell: GravatarFormatter(),
-			},
-			{
-				Header: intl.formatMessage({ id: "user.name" }),
-				accessor: "name",
-				sortable: true,
-				Filter: TextFilter,
-				Cell: DisabledFormatter(),
-			},
-			{
-				Header: intl.formatMessage({ id: "user.email" }),
-				accessor: "email",
-				sortable: true,
-				Filter: TextFilter,
-			},
-			{
-				Header: intl.formatMessage({ id: "user.capabilities" }),
-				accessor: "capabilities",
-				Cell: CapabilitiesFormatter(),
-			},
-			{
-				id: "actions",
-				accessor: "id",
-				className: "w-80",
-				Cell: ActionsFormatter([
-					{
-						title: intl.formatMessage({ id: "action.edit" }),
-						icon: <FiEdit />,
-						onClick: (_: any, { id }: any) => setEditId(id),
-						disabled: (data: any) => data.isSystem || data.id === me?.id,
-					},
-					{
-						title: intl.formatMessage({ id: "action.set-password" }),
-						icon: <FiLock />,
-						onClick: (_: any, { id }: any) => setSetPasswordUserId(id),
-						disabled: (data: any) => data.isSystem || data.id === me?.id,
-					},
-				]),
-			},
-		];
-		return [columns, data];
-	}, [data, me?.id]);
-
-	const tableInstance = useTable(
-		{
-			columns,
-			data: tableData,
-			initialState: {
-				pageIndex: Math.floor(pagination.offset / pagination.limit),
-				pageSize: pagination.limit,
-				sortBy,
-				filters,
-			},
-			// Tell the usePagination
-			// hook that we'll handle our own data fetching
-			// This means we'll also have to provide our own
-			// pageCount.
-			pageCount: Math.ceil(pagination.total / pagination.limit),
-			manualPagination: true,
-			// Sorting options
-			manualSortBy: true,
-			disableMultiSort: true,
-			disableSortRemove: true,
-			autoResetSortBy: false,
-			// Filter options
-			manualFilters: true,
-			autoResetFilters: false,
-		},
-		useFilters,
-		useSortBy,
-		usePagination,
+	isFiltered,
+	isFetching,
+	currentUserId,
+	onEditUser,
+	onEditPermissions,
+	onSetPassword,
+	onDeleteUser,
+	onDisableToggle,
+	onNewUser,
+	onLoginAs,
+}: Props) {
+	const columnHelper = createColumnHelper<Features, User>();
+	const columns = useMemo(
+		() => [
+			columnHelper.accessor((row: any) => row, {
+				id: "avatar",
+				cell: (info: any) => {
+					const value = info.getValue();
+					return <GravatarFormatter url={value.avatar} name={value.name} />;
+				},
+				meta: {
+					className: "w-1",
+				},
+			}),
+			columnHelper.accessor((row: any) => row, {
+				id: "name",
+				header: intl.formatMessage({ id: "column.name" }),
+				cell: (info: any) => {
+					const value = info.getValue();
+					// Hack to reuse domains formatter
+					return (
+						<ValueWithDateFormatter
+							value={value.name}
+							createdOn={value.createdOn}
+							disabled={value.isDisabled}
+						/>
+					);
+				},
+			}),
+			columnHelper.accessor((row: any) => row.email, {
+				id: "email",
+				header: intl.formatMessage({ id: "column.email" }),
+				cell: (info: any) => {
+					return <EmailFormatter email={info.getValue()} />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row.roles, {
+				id: "roles",
+				header: intl.formatMessage({ id: "column.roles" }),
+				cell: (info: any) => {
+					return <RolesFormatter roles={info.getValue()} />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row.isDisabled, {
+				id: "isDisabled",
+				header: intl.formatMessage({ id: "column.status" }),
+				cell: (info: any) => {
+					return <TrueFalseFormatter value={!info.getValue()} />;
+				},
+			}),
+			columnHelper.display({
+				id: "id",
+				cell: (info: any) => {
+					return (
+						<span className="dropdown">
+							<button
+								type="button"
+								className="btn dropdown-toggle btn-action btn-sm px-1"
+								data-bs-boundary="viewport"
+								data-bs-toggle="dropdown"
+							>
+								<IconDotsVertical />
+							</button>
+							<div className="dropdown-menu dropdown-menu-end">
+								<span className="dropdown-header">
+									<T
+										id="object.actions-title"
+										tData={{ object: "user" }}
+										data={{ id: info.row.original.id }}
+									/>
+								</span>
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onEditUser?.(info.row.original.id);
+									}}
+								>
+									<IconEdit size={16} />
+									<T id="action.edit" />
+								</a>
+								{currentUserId !== info.row.original.id ? (
+									<>
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onEditPermissions?.(info.row.original.id);
+											}}
+										>
+											<IconShield size={16} />
+											<T id="action.permissions" />
+										</a>
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onSetPassword?.(info.row.original.id);
+											}}
+										>
+											<IconLock size={16} />
+											<T id="user.set-password" />
+										</a>
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onDisableToggle?.(info.row.original.id, info.row.original.isDisabled);
+											}}
+										>
+											<IconPower size={16} />
+											<T id={info.row.original.isDisabled ? "action.enable" : "action.disable"} />
+										</a>
+										{info.row.original.isDisabled ? (
+											<div className="dropdown-item text-muted">
+												<IconLogin2 size={16} />
+												<T id="user.login-as" data={{ name: info.row.original.name }} />
+											</div>
+										) : (
+											<a
+												className="dropdown-item"
+												href="#"
+												onClick={(e) => {
+													e.preventDefault();
+													onLoginAs?.(info.row.original.id);
+												}}
+											>
+												<IconLogin2 size={16} />
+												<T id="user.login-as" data={{ name: info.row.original.name }} />
+											</a>
+										)}
+										<div className="dropdown-divider" />
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onDeleteUser?.(info.row.original.id);
+											}}
+										>
+											<IconTrash size={16} />
+											<T id="action.delete" />
+										</a>
+									</>
+								) : null}
+							</div>
+						</span>
+					);
+				},
+				meta: {
+					className: "text-end w-1",
+				},
+			}),
+		],
+		[
+			columnHelper,
+			currentUserId,
+			onEditUser,
+			onDisableToggle,
+			onDeleteUser,
+			onEditPermissions,
+			onSetPassword,
+			onLoginAs,
+		],
 	);
 
-	const { gotoPage } = tableInstance;
-
-	useEffect(() => {
-		onTableEvent({
-			type: tableEvents.PAGE_CHANGED,
-			payload: tableInstance.state.pageIndex,
-		});
-	}, [onTableEvent, tableInstance.state.pageIndex]);
-
-	useEffect(() => {
-		onTableEvent({
-			type: tableEvents.PAGE_SIZE_CHANGED,
-			payload: tableInstance.state.pageSize,
-		});
-	}, [gotoPage, onTableEvent, tableInstance.state.pageSize]);
-
-	useEffect(() => {
-		if (pagination.total) {
-			onTableEvent({
-				type: tableEvents.TOTAL_COUNT_CHANGED,
-				payload: pagination.total,
-			});
-		}
-	}, [pagination.total, onTableEvent]);
-
-	useEffect(() => {
-		onTableEvent({
-			type: tableEvents.SORT_CHANGED,
-			payload: tableInstance.state.sortBy,
-		});
-	}, [onTableEvent, tableInstance.state.sortBy]);
-
-	useEffect(() => {
-		onTableEvent({
-			type: tableEvents.FILTERS_CHANGED,
-			payload: tableInstance.state.filters,
-		});
-	}, [onTableEvent, tableInstance.state.filters]);
+	const tableInstance = useTable({
+		features,
+		columns,
+		data,
+		meta: {
+			isFetching,
+		},
+		enableSortingRemoval: false,
+	});
 
 	return (
-		<>
-			<TableLayout pagination={pagination} {...tableInstance} />
-			{editId ? (
-				<UserEditModal userId={editId} isOpen onClose={() => setEditId(0)} />
-			) : null}
-
-			{setPasswordUserId ? (
-				<SetPasswordModal
-					userId={setPasswordUserId}
-					isOpen
-					onClose={() => setSetPasswordUserId(0)}
+		<TableLayout
+			tableInstance={tableInstance}
+			emptyState={
+				<EmptyData
+					object="user"
+					objects="users"
+					tableInstance={tableInstance}
+					onNew={onNewUser}
+					isFiltered={isFiltered}
+					color="orange"
 				/>
-			) : null}
-		</>
+			}
+		/>
 	);
 }
-
-export default Table;

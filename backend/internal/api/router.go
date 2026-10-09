@@ -138,6 +138,10 @@ func applyRoutes(r chi.Router) chi.Router {
 				Post("/sse", handler.NewSSEToken())
 		})
 
+		// Version Check
+		r.With(middleware.EnforceSetup(), middleware.Enforce()).
+			Get("/version/check", handler.VersionCheck())
+
 		// Users
 		r.Route("/users", func(r chi.Router) {
 			// Create - can be done in Setup stage as well

@@ -1,37 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { type Certificate, type CertificateExpansion, getCertificates } from "src/api/backend";
 
-import {
-	getCertificates,
-	CertificatesResponse,
-	tableSortToAPI,
-	tableFiltersToAPI,
-} from "src/api/npm";
-
-const fetchCertificates = (
-	offset = 0,
-	limit = 10,
-	sortBy?: any,
-	filters?: any,
-) => {
-	return getCertificates(
-		offset,
-		limit,
-		tableSortToAPI(sortBy),
-		tableFiltersToAPI(filters),
-	);
+const fetchCertificates = (expand?: CertificateExpansion[]) => {
+	return getCertificates(expand);
 };
 
-const useCertificates = (
-	offset = 0,
-	limit = 10,
-	sortBy?: any,
-	filters?: any,
-	options = {},
-) => {
-	return useQuery<CertificatesResponse, Error>({
-		queryKey: ["certificates", { offset, limit, sortBy, filters }],
-		queryFn: () => fetchCertificates(offset, limit, sortBy, filters),
-		staleTime: 15 * 1000, // 15 seconds
+const useCertificates = (expand?: CertificateExpansion[], options = {}) => {
+	return useQuery<Certificate[], Error>({
+		queryKey: ["certificates", { expand }],
+		queryFn: () => fetchCertificates(expand),
+		staleTime: 60 * 1000,
 		...options,
 	});
 };

@@ -1,32 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
+import { getUsers, type User, type UserExpansion } from "src/api/backend";
 
-import {
-	getUsers,
-	UsersResponse,
-	tableSortToAPI,
-	tableFiltersToAPI,
-} from "src/api/npm";
-
-const fetchUsers = (offset = 0, limit = 10, sortBy?: any, filters?: any) => {
-	return getUsers(
-		offset,
-		limit,
-		tableSortToAPI(sortBy),
-		tableFiltersToAPI(filters),
-	);
+const fetchUsers = (expand?: UserExpansion[]) => {
+	return getUsers(expand);
 };
 
-const useUsers = (
-	offset = 0,
-	limit = 10,
-	sortBy?: any,
-	filters?: any,
-	options = {},
-) => {
-	return useQuery<UsersResponse, Error>({
-		queryKey: ["users", { offset, limit, sortBy, filters }],
-		queryFn: () => fetchUsers(offset, limit, sortBy, filters),
-		staleTime: 15 * 1000, // 15 seconds
+const useUsers = (expand?: UserExpansion[], options = {}) => {
+	return useQuery<User[], Error>({
+		queryKey: ["users", { expand }],
+		queryFn: () => fetchUsers(expand),
+		staleTime: 60 * 1000,
 		...options,
 	});
 };

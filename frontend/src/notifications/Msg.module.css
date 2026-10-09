@@ -1,0 +1,14 @@
+.toaster {
+	padding: 0;
+	background: transparent !important;
+	box-shadow: none !important;
+	border: none !important;
+
+	&.toast {
+		border-radius: 0;
+		box-shadow: none;
+		font-size: 14px;
+		padding: 16px 24px;
+		background: transparent;
+	}
+}

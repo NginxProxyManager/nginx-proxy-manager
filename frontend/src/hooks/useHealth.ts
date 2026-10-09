@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-
-import { getHealth, HealthResponse } from "src/api/npm";
+import { getHealth, type HealthResponse } from "src/api/backend";
 
 const fetchHealth = () => getHealth();
 

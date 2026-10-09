@@ -1,37 +1,32 @@
-# Certificates Help
+## Hilfe zu Zertifikaten
 
-## HTTP Certificate
+### HTTP-Zertifikat
 
-A HTTP validated certificate means that the Certificate Authority (CA) will
-attempt to reach your domains over HTTP (not HTTPS!) and if successful, the CA
-will issue your certificate.
+Ein HTTP-validiertes Zertifikat bedeutet, dass Let's Encrypt-Server
+versuchen, Ihre Domains über HTTP (nicht HTTPS!) zu erreichen, und wenn dies erfolgreich ist,
+stellen sie Ihr Zertifikat aus.
 
-For this method, you will have to have a _Host_ created for your domains(s) that
-is accessible with HTTP. After a certificate has been given, you can modify the
-_Host_ to also use this certificate for HTTPS connections. However, the _Host_
-will still need to be configured for HTTP access in order for the certificate to
-renew.
+Für diese Methode müssen Sie einen _Proxy-Host_ für Ihre Domain(s) erstellen, der
+über HTTP zugänglich ist und auf diese Nginx-Installation verweist. Nachdem ein Zertifikat
+ausgestellt wurde, können Sie den _Proxy-Host_ so ändern, dass dieses Zertifikat auch für HTTPS-Verbindungen
+verwendet wird. Der _Proxy-Host_ muss jedoch weiterhin für den HTTP-Zugriff konfiguriert sein,
+ damit das Zertifikat erneuert werden kann.
 
-## DNS Certificate
+Dieser Prozess unterstützt keine Wildcard-Domains.
 
-A DNS validated certificate requires you to create a DNS Provider. This DNS
-Provider will be used to create temporary records on your domain and then the CA
-will query those records to be sure you're the owner and if successful, the CA
-will issue your certificate.
+### DNS-Zertifikat
 
-You do not need a _Host_ to be created prior to requesting this type of
-certificate. Nor do you need to have your _Host_ configured for HTTP access.
+Für ein DNS-validiertes Zertifikat müssen Sie ein DNS-Provider-Plugin verwenden. Dieser DNS-
+Provider wird verwendet, um temporäre Einträge auf Ihrer Domain zu erstellen. Anschließend fragt Let's
+Encrypt diese Einträge ab, um sicherzustellen, dass Sie der Eigentümer sind. Bei Erfolg wird
+Ihr Zertifikat ausgestellt.
 
-## Custom Certificate
+Sie müssen vor der Beantragung dieser Art von Zertifikat keinen _Proxy-Host_ erstellen.
+Sie müssen Ihren _Proxy-Host_ auch nicht für den HTTP-Zugriff konfigurieren.
 
-Use this option to upload your own SSL Certificate, as provided by your own
-Certificate Authority.
+Dieser Prozess unterstützt Wildcard-Domains.
 
-## MKCert Certificate
+### Benutzerdefiniertes Zertifikat
 
-This option will create a self-signed Certificate for development use. When
-viewing a _Host_ that using a MKCert Certificate, the browser will show errors.
-
-## Choosing a Certificate Authority
-
-If you're not sure, use **ZeroSSL.**
+Verwenden Sie diese Option, um Ihr eigenes SSL-Zertifikat hochzuladen, das Ihnen von Ihrer eigenen
+Zertifizierungsstelle bereitgestellt wurde.

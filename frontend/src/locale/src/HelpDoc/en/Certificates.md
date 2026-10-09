@@ -1,37 +1,32 @@
-# Certificates Help
+## Certificates Help
 
-## HTTP Certificate
+### HTTP Certificate
 
-A HTTP validated certificate means that the Certificate Authority (CA) will
-attempt to reach your domains over HTTP (not HTTPS!) and if successful, the CA
+A HTTP validated certificate means Let's Encrypt servers will
+attempt to reach your domains over HTTP (not HTTPS!) and if successful, they
 will issue your certificate.
 
-For this method, you will have to have a _Host_ created for your domains(s) that
-is accessible with HTTP. After a certificate has been given, you can modify the
-_Host_ to also use this certificate for HTTPS connections. However, the _Host_
-will still need to be configured for HTTP access in order for the certificate to
-renew.
+For this method, you will have to have a _Proxy Host_ created for your domains(s) that
+is accessible with HTTP and pointing to this Nginx installation. After a certificate
+has been given, you can modify the _Proxy Host_ to also use this certificate for HTTPS
+connections. However, the _Proxy Host_ will still need to be configured for HTTP access
+in order for the certificate to renew.
 
-## DNS Certificate
+This process _does not_ support wildcard domains.
 
-A DNS validated certificate requires you to create a DNS Provider. This DNS
-Provider will be used to create temporary records on your domain and then the CA
-will query those records to be sure you're the owner and if successful, the CA
+### DNS Certificate
+
+A DNS validated certificate requires you to use a DNS Provider plugin. This DNS
+Provider will be used to create temporary records on your domain and then Let's
+Encrypt will query those records to be sure you're the owner and if successful, they
 will issue your certificate.
 
-You do not need a _Host_ to be created prior to requesting this type of
-certificate. Nor do you need to have your _Host_ configured for HTTP access.
+You do not need a _Proxy Host_ to be created prior to requesting this type of
+certificate. Nor do you need to have your _Proxy Host_ configured for HTTP access.
 
-## Custom Certificate
+This process _does_ support wildcard domains.
+
+### Custom Certificate
 
 Use this option to upload your own SSL Certificate, as provided by your own
 Certificate Authority.
-
-## MKCert Certificate
-
-This option will create a self-signed Certificate for development use. When
-viewing a _Host_ that using a MKCert Certificate, the browser will show errors.
-
-## Choosing a Certificate Authority
-
-If you're not sure, use **ZeroSSL.**

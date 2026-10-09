@@ -1,171 +1,202 @@
-import {
-	Box,
-	Center,
-	Flex,
-	FormControl,
-	FormErrorMessage,
-	FormLabel,
-	Input,
-	Stack,
-	useColorModeValue,
-	useToast,
-} from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
-import { useEffect, useRef } from "react";
-
-import { LocalePicker, PrettyButton, ThemeSwitcher } from "src/components";
+import { useEffect, useRef, useState } from "react";
+import Alert from "react-bootstrap/Alert";
+import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
-import { intl } from "src/locale";
+import { useHealth } from "src/hooks";
+import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
+import styles from "./index.module.css";
 
-// import logo from "../../img/logo-256.png";
-
-function Login() {
-	const toast = useToast();
-	const emailRef = useRef(null);
-	const { login } = useAuthState();
+function TwoFactorForm() {
+	const codeRef = useRef<HTMLInputElement>(null);
+	const [formErr, setFormErr] = useState("");
+	const { verifyTwoFactor, cancelTwoFactor } = useAuthState();
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
-		const showErr = (msg: string) => {
-			toast({
-				description: intl.formatMessage({
-					id: `error.${msg}`,
-				}),
-				status: "error",
-				position: "top",
-				duration: 3000,
-				isClosable: true,
-			});
-		};
-
+		setFormErr("");
 		try {
-			await login("local", values.email, values.password);
+			await verifyTwoFactor(values.code);
 		} catch (err) {
 			if (err instanceof Error) {
-				showErr(err.message);
+				setFormErr(err.message);
 			}
 		}
 		setSubmitting(false);
 	};
 
 	useEffect(() => {
-		// @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
-		emailRef.current.focus();
+		codeRef.current?.focus();
 	}, []);
 
 	return (
-		<Flex
-			minH="100vh"
-			w="100vw"
-			flexDir="column"
-			bg={useColorModeValue("gray.50", "gray.800")}
-		>
-			<Stack h={10} m={4} justify="end" direction="row">
-				<ThemeSwitcher />
-				<LocalePicker className="text-right" />
-			</Stack>
-			<Flex align="center" justify="center" flex="1">
-				<Stack spacing={8} mx="auto" maxW="md" w="full" py={4} px={6}>
-					<Box>
-						<Center>
-							<img src="/images/logo-256.png" width={100} alt="Logo" />
-						</Center>
-					</Box>
-					<Box
-						rounded="lg"
-						bg={useColorModeValue("white", "gray.700")}
-						boxShadow="lg"
-						p={8}
-					>
-						<Formik
-							initialValues={
-								{
-									email: "",
-									password: "",
-								} as any
-							}
-							onSubmit={onSubmit}
-						>
-							{({ isSubmitting }) => (
-								<Form>
-									<Stack spacing={4}>
-										<Field name="email" validate={validateEmail()}>
-											{({ field, form }: any) => (
-												<FormControl
-													isRequired
-													isInvalid={form.errors.email && form.touched.email}
-												>
-													<FormLabel htmlFor="email" fontWeight="bold">
-														{intl.formatMessage({ id: "user.email" })}
-													</FormLabel>
-													<Input
-														{...field}
-														ref={emailRef}
-														id="email"
-														type="email"
-														placeholder={intl.formatMessage({
-															id: "user.email",
-														})}
-													/>
-													<FormErrorMessage>
-														{form.errors.email}
-													</FormErrorMessage>
-												</FormControl>
-											)}
-										</Field>
-										<Field name="password" validate={validateString(8, 255)}>
-											{({ field, form }: any) => (
-												<FormControl
-													isRequired
-													isInvalid={
-														form.errors.password && form.touched.password
-													}
-												>
-													<FormLabel fontWeight="bold" htmlFor="password">
-														{intl.formatMessage({
-															id: "user.password",
-														})}
-													</FormLabel>
-													<Input
-														{...field}
-														id="password"
-														type="password"
-														placeholder={intl.formatMessage({
-															id: "user.password",
-														})}
-													/>
-													<FormErrorMessage>
-														{form.errors.password}
-													</FormErrorMessage>
-												</FormControl>
-											)}
-										</Field>
-										<Stack spacing={10}>
-											{/*
-									<Box textAlign="end">
-										<Link color="blue.400">
-											{intl.formatMessage({
-												id: "login.forgot",
-											})}
-										</Link>
-									</Box>
-									*/}
-											<PrettyButton mt={8} w="full" isLoading={isSubmitting}>
-												{intl.formatMessage({
-													id: "login.login",
-												})}
-											</PrettyButton>
-										</Stack>
-									</Stack>
-								</Form>
-							)}
-						</Formik>
-					</Box>
-				</Stack>
-			</Flex>
-			<Box h={10} m={4} />
-		</Flex>
+		<>
+			<h2 className="h2 text-center mb-4">
+				<T id="login.2fa-title" />
+			</h2>
+			<p className="text-secondary text-center mb-4">
+				<T id="login.2fa-description" />
+			</p>
+			{formErr !== "" && <Alert variant="danger">{formErr}</Alert>}
+			<Formik initialValues={{ code: "" }} onSubmit={onSubmit}>
+				{({ isSubmitting }) => (
+					<Form>
+						<div className="mb-3">
+							<Field name="code" validate={validateString(6, 20)}>
+								{({ field, form }: any) => (
+									<label className="form-label">
+										<T id="login.2fa-code" />
+										<input
+											{...field}
+											ref={codeRef}
+											type="text"
+											inputMode="numeric"
+											autoComplete="one-time-code"
+											required
+											maxLength={20}
+											className={`form-control ${form.errors.code && form.touched.code ? "is-invalid" : ""}`}
+											placeholder={intl.formatMessage({ id: "login.2fa-code-placeholder" })}
+										/>
+										<div className="invalid-feedback">{form.errors.code}</div>
+									</label>
+								)}
+							</Field>
+						</div>
+						<div className="form-footer d-flex gap-2">
+							<Button type="button" fullWidth onClick={cancelTwoFactor} disabled={isSubmitting}>
+								<T id="cancel" />
+							</Button>
+							<Button type="submit" fullWidth color="azure" isLoading={isSubmitting}>
+								<T id="login.2fa-verify" />
+							</Button>
+						</div>
+					</Form>
+				)}
+			</Formik>
+		</>
 	);
 }
 
-export default Login;
+function LoginForm() {
+	const emailRef = useRef<HTMLInputElement>(null);
+	const [formErr, setFormErr] = useState("");
+	const { login } = useAuthState();
+
+	const onSubmit = async (values: any, { setSubmitting }: any) => {
+		setFormErr("");
+		try {
+			await login("local", values.email, values.password);
+		} catch (err) {
+			if (err instanceof Error) {
+				setFormErr(err.message);
+			}
+		}
+		setSubmitting(false);
+	};
+
+	useEffect(() => {
+		emailRef.current?.focus();
+	}, []);
+
+	return (
+		<>
+			<h2 className="h2 text-center mb-4">
+				<T id="login.title" />
+			</h2>
+			{formErr !== "" && <Alert variant="danger">{formErr}</Alert>}
+			<Formik
+				initialValues={
+					{
+						email: "",
+						password: "",
+					} as any
+				}
+				onSubmit={onSubmit}
+			>
+				{({ isSubmitting }) => (
+					<Form>
+						<div className="mb-3">
+							<Field name="email" validate={validateEmail()}>
+								{({ field, form }: any) => (
+									<label className="form-label">
+										<T id="email-address" />
+										<input
+											{...field}
+											ref={emailRef}
+											type="email"
+											required
+											className={`form-control ${form.errors.email && form.touched.email ? " is-invalid" : ""}`}
+											placeholder={intl.formatMessage({ id: "email-address" })}
+										/>
+										<div className="invalid-feedback">{form.errors.email}</div>
+									</label>
+								)}
+							</Field>
+						</div>
+						<div className="mb-2">
+							<Field name="password" validate={validateString(8, 255)}>
+								{({ field, form }: any) => (
+									<>
+										<label className="form-label">
+											<T id="password" />
+											<input
+												{...field}
+												type="password"
+												autoComplete="current-password"
+												required
+												maxLength={255}
+												className={`form-control ${form.errors.password && form.touched.password ? " is-invalid" : ""}`}
+												placeholder={intl.formatMessage({ id: "password" })}
+											/>
+											<div className="invalid-feedback">{form.errors.password}</div>
+										</label>
+									</>
+								)}
+							</Field>
+						</div>
+						<div className="form-footer">
+							<Button type="submit" fullWidth color="azure" isLoading={isSubmitting}>
+								<T id="sign-in" />
+							</Button>
+						</div>
+					</Form>
+				)}
+			</Formik>
+		</>
+	);
+}
+
+export default function Login() {
+	const { twoFactorChallenge } = useAuthState();
+	const health = useHealth();
+
+	const getVersion = () => {
+		if (!health.data) {
+			return "";
+		}
+		const v = health.data.version;
+		return `v${v.major}.${v.minor}.${v.patch}`;
+	};
+
+	return (
+		<Page className="page page-center">
+			<div className="container container-tight py-4">
+				<div className="d-flex justify-content-between align-items-center mb-4 ps-4 pe-3">
+					<img
+						className={styles.logo}
+						src="/images/logo-text-horizontal-grey.png"
+						alt="Nginx Proxy Manager"
+					/>
+					<div className="d-flex align-items-center gap-1">
+						<LocalePicker />
+						<ThemeSwitcher />
+					</div>
+				</div>
+				<div className="card card-md">
+					<div className="card-body">{twoFactorChallenge ? <TwoFactorForm /> : <LoginForm />}</div>
+				</div>
+				<div className="text-center text-secondary mt-3">{getVersion()}</div>
+			</div>
+		</Page>
+	);
+}

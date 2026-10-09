@@ -1,63 +1,51 @@
-import {
-	Button,
-	Box,
-	Menu,
-	MenuButton,
-	MenuButtonProps,
-	MenuList,
-	MenuItem,
-} from "@chakra-ui/react";
-
-import { Flag } from "src/components";
+import cn from "classnames";
 import { useLocaleState } from "src/context";
-import {
-	changeLocale,
-	getFlagCodeForLocale,
-	intl,
-	localeOptions,
-} from "src/locale";
+import { useTheme } from "src/hooks";
+import { changeLocale, localeOptions, T } from "src/locale";
+import styles from "./LocalePicker.module.css";
 
-interface LocalPickerProps {
-	onChange?: any;
-	className?: string;
-	background?: "normal" | "transparent";
+interface Props {
+	menuAlign?: "start" | "end";
 }
 
-function LocalePicker({ onChange, className, background }: LocalPickerProps) {
+function LocalePicker({ menuAlign = "start" }: Props) {
 	const { locale, setLocale } = useLocaleState();
-
-	const additionalProps: Partial<MenuButtonProps> = {};
-	if (background === "transparent") {
-		additionalProps["backgroundColor"] = "transparent";
-	}
+	const { getTheme } = useTheme();
 
 	const changeTo = (lang: string) => {
 		changeLocale(lang);
 		setLocale(lang);
-		onChange && onChange(locale);
 		location.reload();
 	};
 
+	const classes = ["btn", "dropdown-toggle", "btn-sm", styles.btn];
+	const cns = cn(...classes, getTheme() === "dark" ? "btn-ghost-dark" : "btn-ghost-light");
+
 	return (
-		<Box className={className}>
-			<Menu>
-				<MenuButton as={Button} {...additionalProps}>
-					<Flag countryCode={getFlagCodeForLocale(locale)} />
-				</MenuButton>
-				<MenuList>
-					{localeOptions.map((item) => {
-						return (
-							<MenuItem
-								icon={<Flag countryCode={getFlagCodeForLocale(item[0])} />}
-								onClick={() => changeTo(item[0])}
-								key={`locale-${item[0]}`}>
-								<span>{intl.formatMessage({ id: `locale-${item[1]}` })}</span>
-							</MenuItem>
-						);
-					})}
-				</MenuList>
-			</Menu>
-		</Box>
+		<div className="dropdown">
+			<button type="button" className={cns} data-bs-toggle="dropdown">
+				{locale?.toUpperCase()}
+			</button>
+			<div
+				className={cn("dropdown-menu", {
+					"dropdown-menu-end": menuAlign === "end",
+				})}
+			>
+				{localeOptions.map((item: any) => (
+					<a
+						className="dropdown-item"
+						href={`/locale/${item[0]}`}
+						key={`locale-${item[0]}`}
+						onClick={(e) => {
+							e.preventDefault();
+							changeTo(item[0]);
+						}}
+					>
+						<T id={`locale-${item[1]}`} />
+					</a>
+				))}
+			</div>
+		</div>
 	);
 }
 

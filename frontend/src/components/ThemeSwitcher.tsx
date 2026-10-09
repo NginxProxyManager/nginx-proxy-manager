@@ -1,34 +1,40 @@
-import {
-	Icon,
-	IconButton,
-	IconButtonProps,
-	useColorMode,
-} from "@chakra-ui/react";
-import { FiSun, FiMoon } from "react-icons/fi";
+import { IconMoon, IconSun } from "@tabler/icons-react";
+import cn from "classnames";
+import { Button } from "src/components";
+import { useTheme } from "src/hooks";
+import styles from "./ThemeSwitcher.module.css";
 
-import { intl } from "src/locale";
-
-interface ThemeSwitcherProps {
-	background?: "normal" | "transparent";
+interface Props {
+	className?: string;
 }
-function ThemeSwitcher({ background }: ThemeSwitcherProps) {
-	const { colorMode, toggleColorMode } = useColorMode();
-	const additionalProps: Partial<IconButtonProps> = {};
-	if (background === "transparent") {
-		additionalProps["backgroundColor"] = "transparent";
-	}
+function ThemeSwitcher({ className }: Props) {
+	const { setTheme } = useTheme();
 
 	return (
-		<IconButton
-			onClick={toggleColorMode}
-			{...additionalProps}
-			aria-label={
-				colorMode === "light"
-					? intl.formatMessage({ id: "theme.to-dark" })
-					: intl.formatMessage({ id: "theme.to-light" })
-			}
-			icon={<Icon as={colorMode === "light" ? FiMoon : FiSun} />}
-		/>
+		<div className={cn("d-print-none", "d-inline-block", className)}>
+			<Button
+				size="sm"
+				className={cn("btn-ghost-dark", "hide-theme-dark", styles.lightBtn)}
+				data-bs-toggle="tooltip"
+				data-bs-placement="bottom"
+				aria-label="Enable dark mode"
+				data-bs-original-title="Enable dark mode"
+				onClick={() => setTheme("dark")}
+			>
+				<IconMoon width={24} />
+			</Button>
+			<Button
+				size="sm"
+				className={cn("btn-ghost-light", "hide-theme-light", styles.darkBtn)}
+				data-bs-toggle="tooltip"
+				data-bs-placement="bottom"
+				aria-label="Enable dark mode"
+				data-bs-original-title="Enable dark mode"
+				onClick={() => setTheme("light")}
+			>
+				<IconSun width={24} />
+			</Button>
+		</div>
 	);
 }
 

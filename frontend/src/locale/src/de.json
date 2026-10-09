@@ -1,345 +1,750 @@
 {
-	"access-list.create": {
-		"defaultMessage": "Create Access List"
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Verbleibende Backup-Codes: {count}"
 	},
-	"access-lists.title": {
+	"2fa.backup-warning": {
+		"defaultMessage": "Bewahre diese Backup-Codes an einem sicheren Ort auf. Jeder Code kann nur einmal verwendet werden."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Zwei-Faktor-Authentifizierung deaktivieren"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "2FA deaktivieren"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Das Deaktivieren der Zwei-Faktor-Authentifizierung macht dein Konto weniger sicher."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Deaktiviert"
+	},
+	"2fa.done": {
+		"defaultMessage": "Ich habe meine Backup-Codes gespeichert"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Zwei-Faktor-Authentifizierung aktivieren"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Aktiviert"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Verifizierungscode eingeben"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Verifizierungscode zum Deaktivieren eingeben"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Neu generieren"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Backup-Codes neu generieren"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Gib einen Verifizierungscode ein, um neue Backup-Codes zu generieren. Deine alten Codes werden dadurch ungültig."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Geheimer Schlüssel"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Scanne diesen QR-Code mit deiner Authenticator-App oder gib den geheimen Schlüssel manuell ein."
+	},
+	"2fa.status": {
+		"defaultMessage": "Status"
+	},
+	"2fa.title": {
+		"defaultMessage": "Zwei-Faktor-Authentifizierung"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verifizieren und aktivieren"
+	},
+	"access-list": {
+		"defaultMessage": "Zugriffsliste"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {Regel} other {Regeln}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {User} other {Users}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Wenn mindestens eine Regel vorhanden ist, wird diese Regel zum Ablehnen aller Anfragen als letzte hinzugefügt."
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Beachten Sie, dass die Anweisungen „Erlauben“ und „Verbieten“ in der Reihenfolge ihrer Definition angewendet werden."
+	},
+	"access-list.inherit": {
+		"defaultMessage": "Vom Proxy Host übernehmen"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Verwendet die Zugriffsliste des Proxy Hosts"
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Authentifizierung an Upstream weiterleiten"
+	},
+	"access-list.public": {
+		"defaultMessage": "Öffentlich"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Keine Authentifizierung erforderlich"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 oder 192.168.1.0/24 oder 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Satisfy Any"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Regel} other {Regeln}} - Erstellt: {date}"
+	},
+	"access-lists": {
 		"defaultMessage": "Zugriffslisten"
 	},
+	"action.add": {
+		"defaultMessage": "Hinzufügen"
+	},
+	"action.add-location": {
+		"defaultMessage": "Pfad hinzufügen"
+	},
+	"action.allow": {
+		"defaultMessage": "Erlauben"
+	},
+	"action.clear": {
+		"defaultMessage": "Leeren"
+	},
+	"action.close": {
+		"defaultMessage": "Schließen"
+	},
 	"action.delete": {
-		"defaultMessage": "Delete"
+		"defaultMessage": "Löschen"
+	},
+	"action.deny": {
+		"defaultMessage": "Verweigern"
+	},
+	"action.disable": {
+		"defaultMessage": "Deaktivieren"
 	},
 	"action.download": {
-		"defaultMessage": "Download"
+		"defaultMessage": "Herunterladen"
 	},
 	"action.edit": {
 		"defaultMessage": "Bearbeiten"
 	},
-	"action.nginx-config": {
-		"defaultMessage": "View Nginx Config"
+	"action.enable": {
+		"defaultMessage": "Aktivieren"
+	},
+	"action.logs": {
+		"defaultMessage": "Logs"
+	},
+	"action.permissions": {
+		"defaultMessage": "Berechtigungen"
 	},
 	"action.renew": {
-		"defaultMessage": "Renew"
+		"defaultMessage": "Erneuern"
 	},
-	"action.set-password": {
-		"defaultMessage": "Passwort festlegen"
+	"action.view-details": {
+		"defaultMessage": "Details anzeigen"
 	},
-	"audit-log.title": {
-		"defaultMessage": "Audit-Protokoll"
+	"auditlogs": {
+		"defaultMessage": "Protokolle"
 	},
-	"brand.name": {
-		"defaultMessage": "Nginx Proxy Manager"
+	"auto": {
+		"defaultMessage": "Automatisch"
 	},
-	"capability-count": {
-		"defaultMessage": "{count} Artikel"
+	"cancel": {
+		"defaultMessage": "Abbrechen"
 	},
-	"capability.full-admin": {
-		"defaultMessage": "Vollständiger Administrator"
+	"certificate": {
+		"defaultMessage": "Zertifikat"
 	},
-	"capability.hosts.view": {
-		"defaultMessage": "Gastgeber anzeigen"
+	"certificate.custom-certificate": {
+		"defaultMessage": "Zertifikat"
 	},
-	"capability.system": {
-		"defaultMessage": "System"
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Privater Schlüssel"
 	},
-	"capability.users.manage": {
-		"defaultMessage": "Benutzer verwalten"
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Zwischenzertifikat"
 	},
-	"certificate-authorities.title": {
-		"defaultMessage": "Zertifizierungsstellen"
+	"certificate.in-use": {
+		"defaultMessage": "In Benutzung"
 	},
-	"certificate-authority": {
-		"defaultMessage": "Certificate Authority"
+	"certificate.none.subtitle": {
+		"defaultMessage": "Kein Zertifikat zugewiesen"
 	},
-	"certificate-authority.acmesh-server": {
-		"defaultMessage": "ACME-Server"
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Dieser Host verwendet kein HTTPS."
 	},
-	"certificate-authority.ca-bundle": {
-		"defaultMessage": "CA-Zertifikatpaket"
+	"certificate.none.title": {
+		"defaultMessage": "Kein"
 	},
-	"certificate-authority.create": {
-		"defaultMessage": "Zertifizierungsstelle erstellen"
+	"certificate.not-in-use": {
+		"defaultMessage": "Nicht in Benutzung"
 	},
-	"certificate-authority.edit": {
-		"defaultMessage": "Zertifizierungsstelle bearbeiten"
+	"certificate.renew": {
+		"defaultMessage": "Zertifikat erneuern"
 	},
-	"certificate-authority.has-wildcard-support": {
-		"defaultMessage": "Hat Wildcard-Unterstützung"
-	},
-	"certificate-authority.max-domains": {
-		"defaultMessage": "Maximale Domains pro Zertifikat"
-	},
-	"certificate.create": {
-		"defaultMessage": "Zertifikat erstellen"
-	},
-	"certificate.deleted": {
-		"defaultMessage": "Certificate has been deleted"
-	},
-	"certificate.renewal-requested": {
-		"defaultMessage": "Renewal has been queued"
-	},
-	"certificates.title": {
+	"certificates": {
 		"defaultMessage": "Zertifikate"
 	},
-	"change-password": {
-		"defaultMessage": "Passwort ändern"
+	"certificates.custom": {
+		"defaultMessage": "Benutzerdefiniertes Zertifikat"
 	},
-	"column.acmesh-name": {
-		"defaultMessage": "Acme.sh-Plugin"
+	"certificates.custom.warning": {
+		"defaultMessage": "Mit einem Passwort geschützte Schlüsseldateien werden nicht unterstützt."
 	},
-	"column.description": {
-		"defaultMessage": "Beschreibung"
+	"certificates.dns.credentials": {
+		"defaultMessage": "Inhalt der Anmeldedaten-Datei"
 	},
-	"column.dns-sleep": {
-		"defaultMessage": "DNS-Schlaf"
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Dieses Plugin erfordert eine Konfigurationsdatei, die einen API-Token oder andere Anmeldedaten für Ihren Anbieter enthält."
 	},
-	"column.domain-names": {
-		"defaultMessage": "Domänen"
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Diese Daten werden als Klartext in der Datenbank und in einer Datei gespeichert!"
 	},
-	"column.id": {
-		"defaultMessage": "ICH WÜRDE"
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Wartezeit in Sekunden"
 	},
-	"column.max-domains": {
-		"defaultMessage": "Domänen pro Zertifikat"
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Leer lassen um die Standardwartezeit des Plugins zu nutzen"
 	},
-	"column.servers": {
-		"defaultMessage": "Servers"
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS Provider"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Anbieter auswählen..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Dieser Abschnitt erfordert einige Kenntnisse über Certbot und seine DNS-Plugins. Bitte konsultieren Sie die jeweilige Plugin-Dokumentation."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, aber es scheint sich nicht um Nginx Proxy Manager zu handeln. Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPM-Instanz ausgeführt wird."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Die Erreichbarkeit konnte aufgrund eines Kommunikationsfehlers mit site24x7.com nicht überprüft werden."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Unter dieser Domain ist kein Server verfügbar. Bitte stellen Sie sicher, dass Ihre Domain existiert und auf die IP-Adresse verweist, unter der Ihre NPM-Instanz läuft, und dass gegebenenfalls Port 80 in Ihrem Router weitergeleitet wird."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Ihr Server ist erreichbar und die Erstellung von Zertifikaten sollte möglich sein."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch einen unerwarteten Statuscode {code} zurückgegeben hat. Handelt es sich um den NPM-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPM-Instanz ausgeführt wird."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Unter dieser Domain wurde ein Server gefunden, der jedoch unerwartete Daten zurückgegeben hat. Handelt es sich um den NPM-Server? Bitte stellen Sie sicher, dass Ihre Domain auf die IP-Adresse verweist, unter der Ihre NPM-Instanz ausgeführt wird."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Testergebnisse"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Diese Domänen müssen bereits so konfiguriert sein, dass sie auf diese Installation verweisen."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Schlüsseltyp"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA ist weit verbreitet, ECDSA ist schneller und sicherer, wird aber möglicherweise von älteren Systemen nicht unterstützt"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "Über Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Anfordern eines neuen Zertifikates"
+	},
+	"column.access": {
+		"defaultMessage": "Zugriff"
+	},
+	"column.authorization": {
+		"defaultMessage": "Genehmigung"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Genehmigungen"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Benutzerdefinierte Pfade"
+	},
+	"column.destination": {
+		"defaultMessage": "Ziel"
+	},
+	"column.details": {
+		"defaultMessage": "Details"
+	},
+	"column.email": {
+		"defaultMessage": "E-Mail"
+	},
+	"column.error": {
+		"defaultMessage": "Fehler"
+	},
+	"column.event": {
+		"defaultMessage": "Ereignis"
+	},
+	"column.expires": {
+		"defaultMessage": "Verfällt am"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP Code"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Eingehender Port"
+	},
+	"column.name": {
+		"defaultMessage": "Name"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protokoll"
+	},
+	"column.provider": {
+		"defaultMessage": "Provider"
+	},
+	"column.roles": {
+		"defaultMessage": "Rollen"
+	},
+	"column.rules": {
+		"defaultMessage": "Regeln"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Satisfy"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Alle"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Jeder"
+	},
+	"column.scheme": {
+		"defaultMessage": "Schema"
+	},
+	"column.source": {
+		"defaultMessage": "Quelle"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
 	},
 	"column.status": {
 		"defaultMessage": "Status"
 	},
-	"column.type": {
-		"defaultMessage": "Art"
+	"created-on": {
+		"defaultMessage": "Erstelldatum: {date}"
 	},
-	"column.validation-type": {
-		"defaultMessage": "Validierung"
+	"dashboard": {
+		"defaultMessage": "Dashboard"
 	},
-	"column.wildcard-support": {
-		"defaultMessage": "Wildcard-Unterstützung"
+	"dead-host": {
+		"defaultMessage": "404 Host"
 	},
-	"create-access-list-title": {
-		"defaultMessage": "Create Access List"
+	"dead-hosts": {
+		"defaultMessage": "404 Hosts"
 	},
-	"create-certificate-title": {
-		"defaultMessage": "Es gibt keine Zertifikate"
-	},
-	"create-dns-provider": {
-		"defaultMessage": "Erstellen Sie einen DNS-Anbieter"
-	},
-	"create-dns-provider-title": {
-		"defaultMessage": "Es gibt keine DNS-Anbieter"
-	},
-	"create-hint": {
-		"defaultMessage": "Warum erstellen Sie nicht eine?"
-	},
-	"create-host-title": {
-		"defaultMessage": "Es gibt keine Proxy-Hosts"
-	},
-	"create-nginx-template": {
-		"defaultMessage": "Nginxvorlage erstellen"
-	},
-	"create-upstream-title": {
-		"defaultMessage": "There are no Upstreams"
-	},
-	"dashboard.title": {
-		"defaultMessage": "Armaturenbrett"
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hosts}}"
 	},
 	"disabled": {
 		"defaultMessage": "Deaktiviert"
 	},
-	"dns-provider": {
-		"defaultMessage": "DNS Provider"
-	},
-	"dns-provider.acmesh-name": {
-		"defaultMessage": "Acme.sh-Name"
-	},
-	"dns-provider.create": {
-		"defaultMessage": "Erstellen Sie einen DNS-Anbieter"
-	},
-	"dns-providers.empty": {
-		"defaultMessage": "No DNS Providers - Create one first"
-	},
-	"domain_names": {
+	"domain-names": {
 		"defaultMessage": "Domain Names"
 	},
-	"domain_names.max": {
-		"defaultMessage": "{count} domain names maximum"
+	"domain-names.max": {
+		"defaultMessage": "{count} Maximale Anzahl von Domainnamen"
 	},
-	"dns-providers.title": {
-		"defaultMessage": "DNS-Anbieter"
+	"domain-names.placeholder": {
+		"defaultMessage": "Eintragen der Domain..."
 	},
-	"error": {
-		"defaultMessage": "Fehler"
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Wildcards sind für diesen Typ nicht zulässig."
 	},
-	"error.ca-bundle-does-not-exist": {
-		"defaultMessage": "Datei existiert nicht auf dem Server"
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Wildcards werden für diese Zertifizierungsstelle nicht unterstützt."
 	},
-	"error.cannot-save-system-users": {
-		"defaultMessage": "Systembenutzer können nicht geändert werden"
+	"domains.advanced": {
+		"defaultMessage": "Erweitert"
 	},
-	"error.current-password-invalid": {
-		"defaultMessage": "Aktuelles Passwort ist ungültig"
+	"domains.force-ssl": {
+		"defaultMessage": "Erzwinge SSL"
 	},
-	"error.database-unavailable": {
-		"defaultMessage": "Datenbank ist nicht verfügbar"
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS aktiviert"
 	},
-	"error.email-already-exists": {
-		"defaultMessage": "Es existiert bereits ein Benutzer mit dieser E-Mail-Adresse"
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS Sub-domains"
 	},
-	"error.invalid-auth-type": {
-		"defaultMessage": "Invalid authentication type"
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2 Support"
 	},
-	"error.invalid-login-credentials": {
-		"defaultMessage": "Ungültige Login-Details"
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Upstream Forwarded-Proto-Header vertrauen"
 	},
-	"error.provider_not_found": {
-		"defaultMessage": "Provider not found"
+	"domains.use-dns": {
+		"defaultMessage": "Nutze DNS Challenge"
 	},
-	"error.request-failed-validation": {
-		"defaultMessage": "Back-End-Validierung fehlgeschlagen"
+	"email-address": {
+		"defaultMessage": "E-Mail-Adresse"
 	},
-	"error.user-disabled": {
-		"defaultMessage": "Konto ist deaktiviert"
+	"empty-search": {
+		"defaultMessage": "Keine Ergebnisse gefunden"
 	},
-	"filter.apply": {
-		"defaultMessage": "Anwenden"
+	"empty-subtitle": {
+		"defaultMessage": "Warum erstellen Sie nicht eine?"
 	},
-	"filter.clear": {
-		"defaultMessage": "Klar"
+	"enabled": {
+		"defaultMessage": "aktiviert"
 	},
-	"filter.contains": {
-		"defaultMessage": "Enthält"
+	"error.access.at-least-one": {
+		"defaultMessage": "Entweder eine Genehmigung oder eine Zugriffsregel ist erforderlich."
 	},
-	"filter.ends": {
-		"defaultMessage": "Endet mit"
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Autorisierung Benutzernamen müssen eindeutig sein"
 	},
-	"filter.exactly": {
-		"defaultMessage": "Exakt"
+	"error.invalid-auth": {
+		"defaultMessage": "Ungültige E-Mail-Adresse oder Passwort"
 	},
-	"filter.placeholder": {
-		"defaultMessage": "Suchbegriff eingeben"
+	"error.invalid-domain": {
+		"defaultMessage": "Ungültige Domain: {domain}"
 	},
-	"filter.starts": {
-		"defaultMessage": "Beginnt mit"
-	},
-	"footer.changelog": {
-		"defaultMessage": "Änderungen"
-	},
-	"footer.copyright": {
-		"defaultMessage": "Copyright © {year} jc21.com"
-	},
-	"footer.github": {
-		"defaultMessage": "Github"
-	},
-	"footer.userguide": {
-		"defaultMessage": "Handbuch"
-	},
-	"form.cancel": {
-		"defaultMessage": "Stornieren"
-	},
-	"form.invalid-email": {
+	"error.invalid-email": {
 		"defaultMessage": "Ungültige E-Mail-Adresse"
 	},
-	"form.max-int": {
-		"defaultMessage": "Das Maximum ist {count}"
+	"error.max-character-length": {
+		"defaultMessage": "Die maximale Länge beträgt {max} Zeichen{max, plural, one {} other {s}}"
 	},
-	"form.max-length": {
-		"defaultMessage": "Maximum length is {count, plural, one {# character} other {# characters}}"
+	"error.max-domains": {
+		"defaultMessage": "Zu viele Domains, maximal sind {max}"
 	},
-	"form.min-int": {
-		"defaultMessage": "Das Minimum ist {count}"
+	"error.maximum": {
+		"defaultMessage": "Maximum ist {max}"
 	},
-	"form.min-length": {
-		"defaultMessage": "Minimum length is {count, plural, one {# character} other {# characters}}"
+	"error.min-character-length": {
+		"defaultMessage": "Die minimale Länge beträgt {min} Zeichen{min, plural, one {} other {s}}"
 	},
-	"form.required": {
-		"defaultMessage": "Dies ist erforderlich"
+	"error.minimum": {
+		"defaultMessage": "Minimum ist {min}"
 	},
-	"form.save": {
-		"defaultMessage": "Speichern"
+	"error.passwords-must-match": {
+		"defaultMessage": "Passwörter müssen übereinstimmen"
 	},
-	"full-access": {
-		"defaultMessage": "Voller Zugriff"
+	"error.required": {
+		"defaultMessage": "Dies ist erforderlich."
 	},
-	"full-access.description": {
-		"defaultMessage": "Zugriff auf alle Funktionen"
+	"expires.on": {
+		"defaultMessage": "Ablauf am: {date}"
 	},
-	"general-settings.title": {
-		"defaultMessage": "Allgemeine Einstellungen"
+	"footer.github-fork": {
+		"defaultMessage": "Fork me on Github"
 	},
-	"host.create": {
-		"defaultMessage": "Host erstellen"
+	"host.flags.block-exploits": {
+		"defaultMessage": "Gängige Exploits blockieren"
 	},
-	"hosts.title": {
-		"defaultMessage": "Gastgeber"
+	"host.flags.cache-assets": {
+		"defaultMessage": "Cache Assets"
 	},
-	"http-https": {
-		"defaultMessage": "HTTP/HTTPS"
+	"host.flags.preserve-path": {
+		"defaultMessage": "Pfad beibehalten"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protokolle"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Websockets Support"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Forward Port"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Schema"
+	},
+	"hosts": {
+		"defaultMessage": "Hosts"
 	},
 	"http-only": {
-		"defaultMessage": "Nur HTTP"
+		"defaultMessage": "HTTP Only"
 	},
-	"https-only": {
-		"defaultMessage": "Nur HTTPS"
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
 	},
-	"is-ecc": {
-		"defaultMessage": "ECC Certificate"
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt via DNS"
 	},
-	"lets-go": {
-		"defaultMessage": "Lass uns gehen"
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt via HTTP"
 	},
-	"login.login": {
-		"defaultMessage": "Einloggen"
+	"loading": {
+		"defaultMessage": "Laden…"
 	},
-	"name": {
-		"defaultMessage": "Name"
+	"location.advanced-config": {
+		"defaultMessage": "Hat eine eigene Nginx-Konfiguration"
 	},
-	"navigation.close": {
-		"defaultMessage": "Navigation schließen"
+	"location.filter": {
+		"defaultMessage": "Nach Pfad oder Ziel filtern"
 	},
-	"navigation.open": {
-		"defaultMessage": "Navigation öffnen"
+	"login.2fa-code": {
+		"defaultMessage": "Verifizierungscode"
 	},
-	"nginx-config": {
-		"defaultMessage": "Nginx Config"
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Code eingeben"
 	},
-	"nginx-templates.title": {
-		"defaultMessage": "nginx-Vorlagen"
+	"login.2fa-description": {
+		"defaultMessage": "Gib den Code aus deiner Authenticator-App ein"
 	},
-	"no-access": {
-		"defaultMessage": "Kein Zugang"
+	"login.2fa-title": {
+		"defaultMessage": "Zwei-Faktor-Authentifizierung"
 	},
-	"password.confirm": {
-		"defaultMessage": "Bestätige neues Passwort"
+	"login.2fa-verify": {
+		"defaultMessage": "Verifizieren"
 	},
-	"password.current": {
-		"defaultMessage": "Aktuelles Passwort"
+	"login.title": {
+		"defaultMessage": "Anmelden"
 	},
-	"password.new": {
-		"defaultMessage": "Neues Kennwort"
+	"logs": {
+		"defaultMessage": "Logs"
 	},
-	"permissions.title": {
-		"defaultMessage": "Berechtigungen"
+	"logs.channel.access": {
+		"defaultMessage": "Zugriff"
 	},
-	"profile.logout": {
-		"defaultMessage": "Ausloggen"
+	"logs.channel.error": {
+		"defaultMessage": "Fehler"
 	},
-	"profile.title": {
-		"defaultMessage": "Profileinstellungen"
+	"logs.download": {
+		"defaultMessage": "Herunterladen"
 	},
-	"restricted-access": {
-		"defaultMessage": "Eingeschränkter Zugang"
+	"logs.empty": {
+		"defaultMessage": "Noch keine Log-Einträge."
 	},
-	"restricted-access.description": {
-		"defaultMessage": "Passen Sie die Berechtigungen für diesen Benutzer an"
+	"logs.level": {
+		"defaultMessage": "Level"
 	},
-	"seconds": {
-		"defaultMessage": "{seconds} Sekunden"
+	"logs.level.all": {
+		"defaultMessage": "Alle Level"
 	},
-	"set-password": {
-		"defaultMessage": "Passwort festlegen"
+	"logs.lines": {
+		"defaultMessage": "Zeilen"
 	},
-	"settings.title": {
+	"logs.live": {
+		"defaultMessage": "Live"
+	},
+	"logs.paused": {
+		"defaultMessage": "Pausiert"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Aktualisieren"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Log durchsuchen…"
+	},
+	"logs.source": {
+		"defaultMessage": "Quelle"
+	},
+	"logs.source.system": {
+		"defaultMessage": "System"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Es wird nur der neueste Teil dieser Datei angezeigt."
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Benutzerdefinierte Nginx Konfiguration"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Geben Sie hier Ihre benutzerdefinierte Nginx-Konfiguration auf eigene Gefahr ein!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Sie haben keinen Zugriff, um dies anzuzeigen."
+	},
+	"notfound.action": {
+		"defaultMessage": "Take me home"
+	},
+	"notfound.content": {
+		"defaultMessage": "Es tut uns leid, aber die gesuchte Seite wurde nicht gefunden"
+	},
+	"notfound.title": {
+		"defaultMessage": "Oops… You just found an error page"
+	},
+	"notification.error": {
+		"defaultMessage": "Error"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} wurde gelöscht"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} wurde deaktiviert"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} wurde aktiviert"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} wurde erneuert"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} wurde gespeichert"
+	},
+	"notification.success": {
+		"defaultMessage": "Erfolgreich"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "{object} hinzufügen"
+	},
+	"object.delete": {
+		"defaultMessage": "{object} löschen"
+	},
+	"object.delete.content": {
+		"defaultMessage": "{object} wirklich löschen?"
+	},
+	"object.edit": {
+		"defaultMessage": "{object} bearbeiten"
+	},
+	"object.empty": {
+		"defaultMessage": "Keine {objects} vorhanden"
+	},
+	"object.event.created": {
+		"defaultMessage": "{object} erstellt"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "{object} gelöscht"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "{object} deaktiviert"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "{object} aktiviert"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "{object} erneuert"
+	},
+	"object.event.updated": {
+		"defaultMessage": "{object} aktualisiert"
+	},
+	"offline": {
+		"defaultMessage": "Offline"
+	},
+	"online": {
+		"defaultMessage": "Online"
+	},
+	"options": {
+		"defaultMessage": "Optionen"
+	},
+	"password": {
+		"defaultMessage": "Passwort"
+	},
+	"password.generate": {
+		"defaultMessage": "Zufälliges Passwort generieren"
+	},
+	"password.hide": {
+		"defaultMessage": "Passwort verstecken"
+	},
+	"password.show": {
+		"defaultMessage": "Passwort anzeigen"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Versteckt"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Verwalten"
+	},
+	"permissions.view": {
+		"defaultMessage": "Nur anzeigen"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Alle Elemente"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Objektsichtbarkeit"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Nur erstellte Elemente"
+	},
+	"proxy-host": {
+		"defaultMessage": "Proxy Host"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Forward Hostname / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Proxy Hosts"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Hosts}}"
+	},
+	"public": {
+		"defaultMessage": "Öffentlich"
+	},
+	"redirection-host": {
+		"defaultMessage": "Redirection Host"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Forward Domain"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP Code"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Redirection Hosts"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Redirection Host} other {Redirection Hosts}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Mehrere Auswahlmöglichkeiten"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Dauerhaft verschoben"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Vorübergehend verschoben"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Siehe andere"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Temporäre Umleitung"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Permanente Umleitung"
+	},
+	"role.admin": {
+		"defaultMessage": "Administrator"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Standardbenutzer"
+	},
+	"save": {
+		"defaultMessage": "Speichern"
+	},
+	"setting": {
+		"defaultMessage": "Einstellung"
+	},
+	"settings": {
 		"defaultMessage": "Einstellungen"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Standardseite"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 Page"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "No Response (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Willkommensseite"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Was angezeigt wird, wenn der Nginx eine unbekannte Webseitenanfrage bekommt"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Benutzerdefinierte HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Geben Sie hier Ihren benutzerdefinierten HTML-Inhalt ein. -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Weiterleitung"
 	},
 	"setup-database.description": {
 		"defaultMessage": "Wählen Sie, wo Nginx Proxy Manager seine Daten speichern soll. Diese Einstellungen werden in db.conf im Datenordner gespeichert."
@@ -362,11 +767,11 @@
 	"setup-database.port": {
 		"defaultMessage": "Port"
 	},
-	"setup-database.sqlite-description": {
-		"defaultMessage": "SQLite speichert alles in einer einzigen Datei im Datenordner und benötigt keine weitere Konfiguration."
-	},
 	"setup-database.schema": {
 		"defaultMessage": "Schema"
+	},
+	"setup-database.sqlite-description": {
+		"defaultMessage": "SQLite speichert alles in einer einzigen Datei im Datenordner und benötigt keine weitere Konfiguration."
 	},
 	"setup-database.sslmode": {
 		"defaultMessage": "SSL-Modus"
@@ -380,121 +785,97 @@
 	"setup-database.username": {
 		"defaultMessage": "Benutzername"
 	},
-	"setup.create": {
-		"defaultMessage": "Registrieren"
+	"setup.preamble": {
+		"defaultMessage": "Beginnen Sie mit der Erstellung Ihres Administratorkontos."
 	},
 	"setup.title": {
-		"defaultMessage": "Erstelle deinen ersten Account"
+		"defaultMessage": "Willkommen!"
 	},
-	"ssl.title": {
-		"defaultMessage": "SSL"
+	"sign-in": {
+		"defaultMessage": "Login"
 	},
-	"status.failed": {
-		"defaultMessage": "Failed"
+	"ssl-certificate": {
+		"defaultMessage": "SSL-Zertifikate"
 	},
-	"status.ok": {
-		"defaultMessage": "OK"
-	},
-	"status.ready": {
-		"defaultMessage": "Bereit"
-	},
-	"tables.clear-all-filters": {
-		"defaultMessage": "{count, plural, one {Filter löschen} other {Löschen Sie # Filter}}"
-	},
-	"tables.no-items": {
-		"defaultMessage": "Es sind keine Artikel vorhandenThere are no items"
-	},
-	"tables.no-items-with-filters": {
-		"defaultMessage": "Es gibt keine Elemente, die {count, plural, one {diesem Filter} other {diesen Filtern}} entsprechen"
-	},
-	"tables.pagination-counts": {
-		"defaultMessage": "Showing {start} to {end} of {total, plural, =0 {no items} one {# item} other {# items}}"
-	},
-	"tables.pagination-next": {
-		"defaultMessage": "Nächste Seite"
-	},
-	"tables.pagination-previous": {
-		"defaultMessage": "Vorherige Seite"
-	},
-	"tables.pagination-select": {
-		"defaultMessage": "Wählen Sie eine Seite aus"
-	},
-	"theme.to-dark": {
-		"defaultMessage": "Wechseln Sie zum dunklen Design"
-	},
-	"theme.to-light": {
-		"defaultMessage": "Wechseln Sie zum Lichtdesign"
-	},
-	"type.custom": {
-		"defaultMessage": "Custom"
-	},
-	"type.dead": {
-		"defaultMessage": "404 Host"
-	},
-	"type.dns": {
-		"defaultMessage": "DNS"
-	},
-	"type.http": {
-		"defaultMessage": "HTTP"
-	},
-	"type.mkcert": {
-		"defaultMessage": "MKCert"
-	},
-	"type.proxy": {
-		"defaultMessage": "Proxy Host"
-	},
-	"type.redirect": {
-		"defaultMessage": "Redirection"
-	},
-	"type.stream": {
+	"stream": {
 		"defaultMessage": "Stream"
 	},
-	"type.upstream": {
-		"defaultMessage": "Upstream"
+	"stream.forward-host": {
+		"defaultMessage": "Forward Host"
 	},
-	"unhealthy.body": {
-		"defaultMessage": "Wir werden weiterhin den Zustand überprüfen und hoffen, bald wieder einsatzbereit zu sein!"
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com oder 10.0.0.1 oder 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
-	"unhealthy.title": {
-		"defaultMessage": "Nginx Proxy Manager ist fehlerhaft"
+	"stream.incoming-port": {
+		"defaultMessage": "Incoming Port"
 	},
-	"upstream.create": {
-		"defaultMessage": "Create Upstream"
+	"streams": {
+		"defaultMessage": "Streams"
 	},
-	"upstreams.title": {
-		"defaultMessage": "Upstreams"
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {Stream} other {Streams}}"
 	},
-	"user.capabilities": {
-		"defaultMessage": "Fähigkeiten"
+	"streams.tcp": {
+		"defaultMessage": "TCP"
 	},
-	"user.create": {
-		"defaultMessage": "Benutzer erstellen"
+	"streams.udp": {
+		"defaultMessage": "UDP"
 	},
-	"user.disabled": {
-		"defaultMessage": "Benutzer ist deaktiviert"
+	"test": {
+		"defaultMessage": "Test"
 	},
-	"user.edit": {
-		"defaultMessage": "Benutzer bearbeiten"
+	"update-available": {
+		"defaultMessage": "Update verfügbar: {latestVersion}"
 	},
-	"user.email": {
-		"defaultMessage": "E-Mail"
+	"user": {
+		"defaultMessage": "User"
 	},
-	"user.name": {
+	"user.change-password": {
+		"defaultMessage": "Passwort ändern"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Passwort wiederholen"
+	},
+	"user.current-password": {
+		"defaultMessage": "Aktuelles Passwort"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Profil bearbeiten"
+	},
+	"user.full-name": {
 		"defaultMessage": "Name"
 	},
-	"user.password": {
-		"defaultMessage": "Passwort"
+	"user.login-as": {
+		"defaultMessage": "Einloggen als {name}"
 	},
-	"users.title": {
+	"user.logout": {
+		"defaultMessage": "Ausloggen"
+	},
+	"user.new-password": {
+		"defaultMessage": "Neues Password"
+	},
+	"user.nickname": {
+		"defaultMessage": "Nickname"
+	},
+	"user.set-password": {
+		"defaultMessage": "Passwort setzen"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Berechtigungen für {name} setzen"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Zum Dark Mode wechseln"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Zum Light Mode wechseln"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Zwei-Faktor-Auth"
+	},
+	"username": {
+		"defaultMessage": "Benutzername"
+	},
+	"users": {
 		"defaultMessage": "Benutzer"
-	},
-	"view-only": {
-		"defaultMessage": "Nur anschauen"
-	},
-	"wildcards-not-permitted": {
-		"defaultMessage": "Wildcards not permitted for this type"
-	},
-	"wildcards-not-supported": {
-		"defaultMessage": "Wildcards not supported for this CA"
 	}
 }

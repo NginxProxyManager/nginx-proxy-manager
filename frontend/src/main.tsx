@@ -1,27 +1,21 @@
 import React from "react";
-
-import { ColorModeScript } from "@chakra-ui/react";
 import ReactDOM from "react-dom/client";
+import App from "src/App.tsx";
+import { getLocale, isRTLLocale } from "src/locale";
 
-import App from "./App";
-import "./index.scss";
-import customTheme from "./theme/customTheme";
+import "@tabler/core/dist/js/tabler.min.js";
+import "./App.css";
 
-declare global {
-	interface Function {
-		Item: React.FC<any>;
-		Link: React.FC<any>;
-		Header: React.FC<any>;
-		Main: React.FC<any>;
-		Options: React.FC<any>;
-		SubTitle: React.FC<any>;
-		Title: React.FC<any>;
-	}
-}
+const renderApp = () => {
+	ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+		<React.StrictMode>
+			<App />
+		</React.StrictMode>,
+	);
+};
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-	<React.StrictMode>
-		<ColorModeScript initialColorMode={customTheme.config.initialColorMode} />
-		<App />
-	</React.StrictMode>,
-);
+const tablerStyles = isRTLLocale(getLocale())
+	? import("@tabler/core/dist/css/tabler.rtl.min.css")
+	: import("@tabler/core/dist/css/tabler.min.css");
+
+void tablerStyles.then(renderApp);

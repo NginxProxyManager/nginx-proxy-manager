@@ -1,0 +1,662 @@
+{
+	"access-list": {
+		"defaultMessage": "通信规则"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} 条规则"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} 个用户"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "当至少存在1条规则时，此拒绝所有规则将被添加到最后"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": " 允许 (allow) 和禁止 (deny) 规则将按照它们定义的顺序执行。"
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "将认证传递给上游"
+	},
+	"access-list.public": {
+		"defaultMessage": "公开可访问"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "无需基本认证"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "满足任意条件"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} 个用户, {rules} 条规则 - 创建时间: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "通信规则"
+	},
+	"action.add": {
+		"defaultMessage": "添加"
+	},
+	"action.add-location": {
+		"defaultMessage": "添加路径规则(Location)"
+	},
+	"action.close": {
+		"defaultMessage": "关闭"
+	},
+	"action.delete": {
+		"defaultMessage": "删除"
+	},
+	"action.disable": {
+		"defaultMessage": "禁用"
+	},
+	"action.download": {
+		"defaultMessage": "下载"
+	},
+	"action.edit": {
+		"defaultMessage": "编辑"
+	},
+	"action.enable": {
+		"defaultMessage": "启用"
+	},
+	"action.permissions": {
+		"defaultMessage": "权限"
+	},
+	"action.renew": {
+		"defaultMessage": "续期"
+	},
+	"action.view-details": {
+		"defaultMessage": "查看详情"
+	},
+	"auditlogs": {
+		"defaultMessage": "审计日志"
+	},
+	"cancel": {
+		"defaultMessage": "取消"
+	},
+	"certificate": {
+		"defaultMessage": "证书"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "证书"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "证书密钥"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "中间证书"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "使用中"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "未分配证书"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "此主机将不使用 HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "无"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "未使用"
+	},
+	"certificate.renew": {
+		"defaultMessage": "续期证书"
+	},
+	"certificates": {
+		"defaultMessage": "证书列表"
+	},
+	"certificates.custom": {
+		"defaultMessage": "自定义证书"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "不支持受密码保护的密钥文件。"
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "凭据文件内容"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "此插件需要一个包含 API 令牌或提供商其他凭证的配置文件"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "此数据将以明文形式存储在数据库和文件中！"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "传播时间 (秒)"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "留空以使用插件默认值。等待DNS传播的秒数。"
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS 提供商"
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "本节需要您具备一些关于 Certbot 及其 DNS 插件的知识，请参阅相应插件的官方文档。"
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "在此域名下找到了一个服务器，但它似乎不是 Nginx 代理管理器。请确保您的域名指向 NPM 实例运行的 IP 地址。"
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "由于与site24x7.com通信错误，无法检查可达性。"
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "此域名下没有可用的服务器。请确保您的域名存在并指向NPM实例运行的 IP 地址，如有必要，请在路由器中转发 80 端口。"
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "您的服务器可以访问，应该可以创建证书。"
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "在此域名下找到了一个服务器，但它返回了意外的状态码 {code}。它是 NPM 服务器吗？请确保您的域名指向NPM实例运行的 IP 地址。"
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "在此域名下找到了一个服务器，但它返回了意外的数据。它是 NPM 服务器吗？请确保您的域名指向 NPM 实例运行的 IP 地址。"
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "测试结果"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "这些域名必须配置为指向本设备。"
+	},
+	"certificates.key-type": {
+		"defaultMessage": "密钥类型"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA 兼容性更好，ECDSA 更快更安全但旧系统可能不支持"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "使用 Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "申请新证书"
+	},
+	"column.access": {
+		"defaultMessage": "访问"
+	},
+	"column.authorization": {
+		"defaultMessage": "授权"
+	},
+	"column.authorizations": {
+		"defaultMessage": "授权列表"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "自定义路径规则 (Locations)"
+	},
+	"column.destination": {
+		"defaultMessage": "目标"
+	},
+	"column.details": {
+		"defaultMessage": "详情"
+	},
+	"column.email": {
+		"defaultMessage": "邮箱"
+	},
+	"column.event": {
+		"defaultMessage": "事件"
+	},
+	"column.expires": {
+		"defaultMessage": "过期时间"
+	},
+	"column.http-code": {
+		"defaultMessage": "访问"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "入站端口"
+	},
+	"column.name": {
+		"defaultMessage": "名称"
+	},
+	"column.protocol": {
+		"defaultMessage": "协议"
+	},
+	"column.provider": {
+		"defaultMessage": "提供商"
+	},
+	"column.roles": {
+		"defaultMessage": "角色"
+	},
+	"column.rules": {
+		"defaultMessage": "规则"
+	},
+	"column.satisfy": {
+		"defaultMessage": "满足"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "全部"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "任意"
+	},
+	"column.scheme": {
+		"defaultMessage": "协议"
+	},
+	"column.source": {
+		"defaultMessage": "来源"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "状态"
+	},
+	"created-on": {
+		"defaultMessage": "创建时间: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "仪表板"
+	},
+	"dead-host": {
+		"defaultMessage": "错误页面"
+	},
+	"dead-hosts": {
+		"defaultMessage": "错误页面列表"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} 个错误页面列表"
+	},
+	"disabled": {
+		"defaultMessage": "已禁用"
+	},
+	"domain-names": {
+		"defaultMessage": "域名"
+	},
+	"domain-names.max": {
+		"defaultMessage": "{count} 个最多域名数量"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "开始输入以添加域名..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "此类型不允许使用通配符"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "此 CA 不支持通配符"
+	},
+	"domains.advanced": {
+		"defaultMessage": "高级选项"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "强制 SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS 已启用"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS 子域名"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2 支持"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "信任上游代理传递的协议类型头"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "使用DNS验证"
+	},
+	"email-address": {
+		"defaultMessage": "邮箱地址"
+	},
+	"empty-search": {
+		"defaultMessage": "未找到结果"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "为什么不由您来创建一个呢？"
+	},
+	"enabled": {
+		"defaultMessage": "已启用"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "需要至少一个授权或访问规则"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "授权用户名必须唯一"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "无效的邮箱或密码"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "无效的域名: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "无效的邮箱地址"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "最大长度为 {max} 个字符"
+	},
+	"error.max-domains": {
+		"defaultMessage": "域名过多，最多为 {max} 个"
+	},
+	"error.maximum": {
+		"defaultMessage": "最大值为 {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "最小长度为 {min} 个字符"
+	},
+	"error.minimum": {
+		"defaultMessage": "最小值为 {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "密码必须匹配"
+	},
+	"error.required": {
+		"defaultMessage": "此项为必填项"
+	},
+	"expires.on": {
+		"defaultMessage": "过期时间: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "在 Github 上复刻 (Fork) 本项目"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "阻止常见攻击"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "缓存资源"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "保留路径"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "协议"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Websockets 支持"
+	},
+	"host.forward-port": {
+		"defaultMessage": "转发端口"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "协议"
+	},
+	"hosts": {
+		"defaultMessage": "主机列表"
+	},
+	"http-only": {
+		"defaultMessage": "仅 HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt DNS 验证"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt HTTP 验证"
+	},
+	"loading": {
+		"defaultMessage": "加载中···"
+	},
+	"login.title": {
+		"defaultMessage": "登录您的账户"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "自定义 Nginx 配置"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# 在此输入您的自定义 Nginx 配置，风险自负！"
+	},
+	"no-permission-error": {
+		"defaultMessage": "您无权查看此内容。"
+	},
+	"notfound.action": {
+		"defaultMessage": "返回首页"
+	},
+	"notfound.content": {
+		"defaultMessage": "很抱歉，您要查找的页面未找到"
+	},
+	"notfound.title": {
+		"defaultMessage": "糟糕...您刚刚找到了一个错误页面"
+	},
+	"notification.error": {
+		"defaultMessage": "错误"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} 已被删除"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} 已被禁用"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} 已被启用"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} 已续期"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} 已保存"
+	},
+	"notification.success": {
+		"defaultMessage": "成功"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "添加 {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "删除 {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "您确定要删除 {object} 吗？"
+	},
+	"object.edit": {
+		"defaultMessage": "编辑 {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "没有 {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "已创建 {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "已删除 {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "已禁用 {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "已启用 {object}"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "已续期 {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "已更新 {object}"
+	},
+	"offline": {
+		"defaultMessage": "离线"
+	},
+	"online": {
+		"defaultMessage": "在线"
+	},
+	"options": {
+		"defaultMessage": "选项"
+	},
+	"password": {
+		"defaultMessage": "密码"
+	},
+	"password.generate": {
+		"defaultMessage": "生成随机密码"
+	},
+	"password.hide": {
+		"defaultMessage": "隐藏密码"
+	},
+	"password.show": {
+		"defaultMessage": "显示密码"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "隐藏"
+	},
+	"permissions.manage": {
+		"defaultMessage": "管理"
+	},
+	"permissions.view": {
+		"defaultMessage": "仅查看"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "所有项目"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "项目可见性"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "仅创建的项目"
+	},
+	"proxy-host": {
+		"defaultMessage": "代理服务"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "转发主机名 / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "代理服务列表"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} 个代理服务"
+	},
+	"public": {
+		"defaultMessage": "公开"
+	},
+	"redirection-host": {
+		"defaultMessage": "重定向主机"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "转发域名"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP 状态码"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "重定向主机列表"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} 个重定向主机"
+	},
+	"role.admin": {
+		"defaultMessage": "管理员"
+	},
+	"role.standard-user": {
+		"defaultMessage": "标准用户"
+	},
+	"save": {
+		"defaultMessage": "保存"
+	},
+	"setting": {
+		"defaultMessage": "设置"
+	},
+	"settings": {
+		"defaultMessage": "设置列表"
+	},
+	"settings.default-site": {
+		"defaultMessage": "默认站点"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "错误页面"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "无响应 (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "欢迎页面"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "当 Nginx 遇到未知主机时显示什么"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "自定义 HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- 在此输入您的自定义 HTML 内容 -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "重定向"
+	},
+	"setup.preamble": {
+		"defaultMessage": "通过创建您的管理员账户开始使用。"
+	},
+	"setup.title": {
+		"defaultMessage": "欢迎！"
+	},
+	"sign-in": {
+		"defaultMessage": "登录"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL 证书"
+	},
+	"stream": {
+		"defaultMessage": "端口转发"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "转发主机"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "入站端口"
+	},
+	"streams": {
+		"defaultMessage": "端口转发列表"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} 个端口转发"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "测试"
+	},
+	"user": {
+		"defaultMessage": "用户"
+	},
+	"user.change-password": {
+		"defaultMessage": "修改密码"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "确认密码"
+	},
+	"user.current-password": {
+		"defaultMessage": "当前密码"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "编辑资料"
+	},
+	"user.full-name": {
+		"defaultMessage": "全名"
+	},
+	"user.login-as": {
+		"defaultMessage": "登录用户 {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "退出登录"
+	},
+	"user.new-password": {
+		"defaultMessage": "新密码"
+	},
+	"user.nickname": {
+		"defaultMessage": "昵称"
+	},
+	"user.set-password": {
+		"defaultMessage": "设置密码"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "为用户 {name} 设置权限"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "切换到深色模式"
+	},
+	"user.switch-light": {
+		"defaultMessage": "切换到浅色模式"
+	},
+	"username": {
+		"defaultMessage": "用户名"
+	},
+	"users": {
+		"defaultMessage": "用户列表"
+	}
+}

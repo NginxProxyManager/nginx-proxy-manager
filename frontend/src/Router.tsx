@@ -1,48 +1,39 @@
 import { lazy, Suspense } from "react";
-
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-import { TokenResponse } from "src/api/npm";
-import { SiteWrapper, SpinnerPage, Unhealthy } from "src/components";
-import { useAuthState, useLocaleState } from "src/context";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+	ErrorNotFound,
+	LoadingPage,
+	Page,
+	SiteContainer,
+	SiteFooter,
+	SiteHeader,
+	SiteMenu,
+	Unhealthy,
+} from "src/components";
+import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
 
-const AccessLists = lazy(() => import("src/pages/AccessLists"));
-const AuditLog = lazy(() => import("src/pages/AuditLog"));
-const Certificates = lazy(() => import("src/pages/Certificates"));
-const CertificateAuthorities = lazy(
-	() => import("src/pages/CertificateAuthorities"),
-);
-const Dashboard = lazy(() => import("src/pages/Dashboard"));
-const DNSProviders = lazy(() => import("src/pages/DNSProviders"));
-const Hosts = lazy(() => import("src/pages/Hosts"));
-const NginxTemplates = lazy(() => import("src/pages/NginxTemplates"));
+const SetupUser = lazy(() => import("src/pages/Setup/SetupUser"));
+const SetupDatabase = lazy(() => import("src/pages/Setup/SetupDatabase"));
 const Login = lazy(() => import("src/pages/Login"));
-const GeneralSettings = lazy(() => import("src/pages/Settings"));
-const Setup = lazy(() => import("src/pages/Setup"));
-const SetupDatabase = lazy(() => import("src/pages/SetupDatabase"));
-const Upstreams = lazy(() => import("src/pages/Upstreams"));
+const Dashboard = lazy(() => import("src/pages/Dashboard"));
+const Settings = lazy(() => import("src/pages/Settings"));
+const Certificates = lazy(() => import("src/pages/Certificates"));
+const Access = lazy(() => import("src/pages/Access"));
+const AuditLog = lazy(() => import("src/pages/AuditLog"));
+const Logs = lazy(() => import("src/pages/Logs"));
 const Users = lazy(() => import("src/pages/Users"));
+const ProxyHosts = lazy(() => import("src/pages/Nginx/ProxyHosts"));
+const RedirectionHosts = lazy(() => import("src/pages/Nginx/RedirectionHosts"));
+const DeadHosts = lazy(() => import("src/pages/Nginx/DeadHosts"));
+const Streams = lazy(() => import("src/pages/Nginx/Streams"));
 
 function Router() {
 	const health = useHealth();
-	const { authenticated, handleTokenUpdate } = useAuthState();
-	const { locale } = useLocaleState();
-	const Spinner = <SpinnerPage />;
-
-	// Load token from URL Query Params
-	const searchParams = new URLSearchParams(document.location.search);
-	const t = searchParams.get("token_response");
-	if (t) {
-		const tokenResponse: TokenResponse = JSON.parse(t);
-		handleTokenUpdate(tokenResponse);
-		window.location.href = "/";
-		return;
-	}
-	// End Load token from URL Query Params
+	const { authenticated } = useAuthState();
 
 	if (health.isLoading) {
-		return Spinner;
+		return <LoadingPage />;
 	}
 
 	if (health.isError || !health.data?.healthy) {
@@ -51,23 +42,19 @@ function Router() {
 
 	if (health.data?.healthy && !health.data?.dbSetup) {
 		return (
-			<Suspense fallback={Spinner}>
+			<Suspense fallback={<LoadingPage />}>
 				<SetupDatabase />
 			</Suspense>
 		);
 	}
 
-	if (health.data?.healthy && !health.data?.setup) {
-		return (
-			<Suspense fallback={Spinner}>
-				<Setup />
-			</Suspense>
-		);
+	if (!health.data?.setup) {
+		return <SetupUser />;
 	}
 
 	if (!authenticated) {
 		return (
-			<Suspense fallback={Spinner}>
+			<Suspense fallback={<LoadingPage />}>
 				<Login />
 			</Suspense>
 		);
@@ -75,29 +62,32 @@ function Router() {
 
 	return (
 		<BrowserRouter>
-			<SiteWrapper key={`locale-${locale}`}>
-				<Suspense fallback={Spinner}>
-					<Routes>
-						<Route path="/hosts" element={<Hosts />} />
-						<Route path="/upstreams" element={<Upstreams />} />
-						<Route path="/ssl/certificates" element={<Certificates />} />
-						<Route
-							path="/ssl/authorities"
-							element={<CertificateAuthorities />}
-						/>
-						<Route path="/ssl/dns-providers" element={<DNSProviders />} />
-						<Route path="/audit-log" element={<AuditLog />} />
-						<Route path="/access-lists" element={<AccessLists />} />
-						<Route path="/users" element={<Users />} />
-						<Route
-							path="/settings/nginx-templates"
-							element={<NginxTemplates />}
-						/>
-						<Route path="/settings/general" element={<GeneralSettings />} />
-						<Route path="/" element={<Dashboard />} />
-					</Routes>
-				</Suspense>
-			</SiteWrapper>
+			<Page>
+				<div>
+					<SiteHeader />
+					<SiteMenu />
+				</div>
+				<SiteContainer>
+					<Suspense fallback={<LoadingPage noLogo />}>
+						<Routes>
+							<Route path="*" element={<ErrorNotFound />} />
+							<Route path="/login" element={<Navigate to="/" replace />} />
+							<Route path="/certificates" element={<Certificates />} />
+							<Route path="/access" element={<Access />} />
+							<Route path="/audit-log" element={<AuditLog />} />
+							<Route path="/logs" element={<Logs />} />
+							<Route path="/settings" element={<Settings />} />
+							<Route path="/users" element={<Users />} />
+							<Route path="/nginx/proxy" element={<ProxyHosts />} />
+							<Route path="/nginx/redirection" element={<RedirectionHosts />} />
+							<Route path="/nginx/404" element={<DeadHosts />} />
+							<Route path="/nginx/stream" element={<Streams />} />
+							<Route path="/" element={<Dashboard />} />
+						</Routes>
+					</Suspense>
+				</SiteContainer>
+				<SiteFooter />
+			</Page>
 		</BrowserRouter>
 	);
 }

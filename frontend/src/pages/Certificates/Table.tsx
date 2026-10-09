@@ -1,212 +1,235 @@
-import { useEffect, useMemo, useState } from "react";
-
-import { FiDownload, FiEdit, FiRefreshCw, FiTrash2 } from "react-icons/fi";
-import { useFilters, usePagination, useSortBy, useTable } from "react-table";
-
+import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { createColumnHelper, useTable } from "@tanstack/react-table";
+import { useMemo } from "react";
+import type { Certificate } from "src/api/backend";
 import {
-	ActionsFormatter,
-	CertificateStatusFormatter,
-	CertificateTypeFormatter,
+	CertificateInUseFormatter,
+	DateFormatter,
 	DomainsFormatter,
+	EmptyData,
 	GravatarFormatter,
-	IDFormatter,
-	MonospaceFormatter,
-	tableEvents,
-	TableFilter,
-	TableLayout,
-	TablePagination,
-	TableSortBy,
-	TextFilter,
+	HasPermission,
 } from "src/components";
-import { intl } from "src/locale";
-import { CertificateEditModal } from "src/modals";
+import { type Features, features } from "src/components/Table/features";
+import { TableLayout } from "src/components/Table/TableLayout";
+import { intl, T } from "src/locale";
+import { showCustomCertificateModal, showDNSCertificateModal, showHTTPCertificateModal } from "src/modals";
+import { CERTIFICATES, MANAGE } from "src/modules/Permissions";
 
-export interface TableProps {
-	data: any;
-	pagination: TablePagination;
-	sortBy: TableSortBy[];
-	filters: TableFilter[];
-	onTableEvent: any;
-	onRenewal: (id: number) => void;
-	onDelete: (id: number) => void;
+interface Props {
+	data: Certificate[];
+	isFiltered?: boolean;
+	isFetching?: boolean;
+	onDelete?: (id: number) => void;
+	onRenew?: (id: number) => void;
+	onDownload?: (id: number) => void;
 }
-function Table({
-	data,
-	pagination,
-	onTableEvent,
-	sortBy,
-	filters,
-	onRenewal,
-	onDelete,
-}: TableProps) {
-	const [editId, setEditId] = useState(0);
-	const [columns, tableData] = useMemo(() => {
-		const columns = [
-			{
-				accessor: "user.gravatarUrl",
-				Cell: GravatarFormatter(),
-				className: "w-80",
-			},
-			{
-				Header: intl.formatMessage({ id: "column.id" }),
-				accessor: "id",
-				Cell: IDFormatter(),
-				className: "w-80",
-				sortable: true,
-			},
-			{
-				Header: intl.formatMessage({ id: "name" }),
-				accessor: "name",
-				sortable: true,
-				Filter: TextFilter,
-				Cell: MonospaceFormatter(),
-			},
-			{
-				Header: intl.formatMessage({ id: "column.domain-names" }),
-				accessor: "domainNames",
-				sortable: true,
-				Filter: TextFilter,
-				Cell: DomainsFormatter(),
-			},
-			{
-				Header: intl.formatMessage({ id: "column.type" }),
-				accessor: "type",
-				sortable: true,
-				Cell: CertificateTypeFormatter(),
-			},
-			{
-				Header: intl.formatMessage({ id: "column.status" }),
-				accessor: "status",
-				sortable: true,
-				Cell: CertificateStatusFormatter(),
-			},
-			{
-				id: "actions",
-				accessor: "id",
-				className: "w-80",
-				Cell: ActionsFormatter([
-					{
-						title: intl.formatMessage({
-							id: "action.edit",
-						}),
-						onClick: (_: any, { id }: any) => alert(id),
-						icon: <FiEdit />,
-						disabled: (data: any) =>
-							data.type === "dns" || data.type === "http",
-					},
-					{
-						title: intl.formatMessage({
-							id: "action.renew",
-						}),
-						onClick: (_: any, { id }: any) => onRenewal(id),
-						icon: <FiRefreshCw />,
-						disabled: (data: any) =>
-							data.type !== "dns" && data.type !== "http",
-					},
-					{
-						title: intl.formatMessage({
-							id: "action.download",
-						}),
-						onClick: (_: any, { id }: any) => alert(id),
-						icon: <FiDownload />,
-						disabled: (data: any) => data.isReadonly,
-					},
-					{
-						title: intl.formatMessage({
-							id: "action.delete",
-						}),
-						onClick: (_: any, { id }: any) => onDelete(id),
-						icon: <FiTrash2 />,
-						disabled: (data: any) => data.isReadonly,
-					},
-				]),
-			},
-		];
-		return [columns, data];
-	}, [data, onRenewal, onDelete]);
-
-	const tableInstance = useTable(
-		{
-			columns,
-			data: tableData,
-			initialState: {
-				pageIndex: Math.floor(pagination.offset / pagination.limit),
-				pageSize: pagination.limit,
-				sortBy,
-				filters,
-			},
-			// Tell the usePagination
-			// hook that we'll handle our own data fetching
-			// This means we'll also have to provide our own
-			// pageCount.
-			pageCount: Math.ceil(pagination.total / pagination.limit),
-			manualPagination: true,
-			// Sorting options
-			manualSortBy: true,
-			disableMultiSort: true,
-			disableSortRemove: true,
-			autoResetSortBy: false,
-			// Filter options
-			manualFilters: true,
-			autoResetFilters: false,
-		},
-		useFilters,
-		useSortBy,
-		usePagination,
+export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered }: Props) {
+	const columnHelper = createColumnHelper<Features, Certificate>();
+	const columns = useMemo(
+		() => [
+			columnHelper.accessor((row: any) => row.owner, {
+				id: "owner",
+				cell: (info: any) => {
+					const value = info.getValue();
+					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
+				},
+				meta: {
+					className: "w-1",
+				},
+			}),
+			columnHelper.accessor((row: any) => row, {
+				id: "domainNames",
+				header: intl.formatMessage({ id: "column.name" }),
+				cell: (info: any) => {
+					const value = info.getValue();
+					return (
+						<DomainsFormatter
+							domains={value.domainNames}
+							createdOn={value.createdOn}
+							niceName={value.niceName}
+							provider={value.provider || ""}
+						/>
+					);
+				},
+			}),
+			columnHelper.accessor((row: any) => row, {
+				id: "provider",
+				header: intl.formatMessage({ id: "column.provider" }),
+				cell: (info: any) => {
+					const r = info.getValue();
+					if (r.provider === "letsencrypt") {
+						if (r.meta?.dnsChallenge && r.meta?.dnsProvider) {
+							return (
+								<>
+									<T id="lets-encrypt" /> &ndash; {r.meta?.dnsProvider}
+								</>
+							);
+						}
+						return <T id="lets-encrypt" />;
+					}
+					if (r.provider === "other") {
+						return <T id="certificates.custom" />;
+					}
+					return <T id={r.provider} />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row.expiresOn, {
+				id: "expiresOn",
+				header: intl.formatMessage({ id: "column.expires" }),
+				cell: (info: any) => {
+					return <DateFormatter value={info.getValue()} highlightPast />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row, {
+				id: "proxyHosts",
+				header: intl.formatMessage({ id: "column.status" }),
+				cell: (info: any) => {
+					const r = info.getValue();
+					return (
+						<CertificateInUseFormatter
+							proxyHosts={r.proxyHosts}
+							redirectionHosts={r.redirectionHosts}
+							deadHosts={r.deadHosts}
+							streams={r.streams}
+						/>
+					);
+				},
+			}),
+			columnHelper.display({
+				id: "id",
+				cell: (info: any) => {
+					return (
+						<span className="dropdown">
+							<button
+								type="button"
+								className="btn dropdown-toggle btn-action btn-sm px-1"
+								data-bs-boundary="viewport"
+								data-bs-toggle="dropdown"
+							>
+								<IconDotsVertical />
+							</button>
+							<div className="dropdown-menu dropdown-menu-end">
+								<span className="dropdown-header">
+									<T
+										id="object.actions-title"
+										tData={{ object: "certificate" }}
+										data={{ id: info.row.original.id }}
+									/>
+								</span>
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onRenew?.(info.row.original.id);
+									}}
+								>
+									<IconRefresh size={16} />
+									<T id="action.renew" />
+								</a>
+								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onDownload?.(info.row.original.id);
+										}}
+									>
+										<IconDownload size={16} />
+										<T id="action.download" />
+									</a>
+									<div className="dropdown-divider" />
+									<a
+										className="dropdown-item"
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											onDelete?.(info.row.original.id);
+										}}
+									>
+										<IconTrash size={16} />
+										<T id="action.delete" />
+									</a>
+								</HasPermission>
+							</div>
+						</span>
+					);
+				},
+				meta: {
+					className: "text-end w-1",
+				},
+			}),
+		],
+		[columnHelper, onDelete, onRenew, onDownload],
 	);
 
-	const gotoPage = tableInstance.gotoPage;
+	const tableInstance = useTable({
+		features,
+		columns,
+		data,
+		meta: {
+			isFetching,
+		},
+		enableSortingRemoval: false,
+	});
 
-	useEffect(() => {
-		onTableEvent({
-			type: tableEvents.PAGE_CHANGED,
-			payload: tableInstance.state.pageIndex,
-		});
-	}, [onTableEvent, tableInstance.state.pageIndex]);
-
-	useEffect(() => {
-		onTableEvent({
-			type: tableEvents.PAGE_SIZE_CHANGED,
-			payload: tableInstance.state.pageSize,
-		});
-		gotoPage(0);
-	}, [gotoPage, onTableEvent, tableInstance.state.pageSize]);
-
-	useEffect(() => {
-		if (pagination.total) {
-			onTableEvent({
-				type: tableEvents.TOTAL_COUNT_CHANGED,
-				payload: pagination.total,
-			});
-		}
-	}, [pagination.total, onTableEvent]);
-
-	useEffect(() => {
-		onTableEvent({
-			type: tableEvents.SORT_CHANGED,
-			payload: tableInstance.state.sortBy,
-		});
-	}, [onTableEvent, tableInstance.state.sortBy]);
-
-	useEffect(() => {
-		onTableEvent({
-			type: tableEvents.FILTERS_CHANGED,
-			payload: tableInstance.state.filters,
-		});
-	}, [onTableEvent, tableInstance.state.filters]);
+	const customAddBtn = (
+		<div className="dropdown">
+			<button type="button" className="btn dropdown-toggle btn-pink my-3" data-bs-toggle="dropdown">
+				<T id="object.add" tData={{ object: "certificate" }} />
+			</button>
+			<div className="dropdown-menu">
+				<a
+					className="dropdown-item"
+					href="#"
+					onClick={(e) => {
+						e.preventDefault();
+						showHTTPCertificateModal();
+					}}
+				>
+					<T id="lets-encrypt-via-http" />
+				</a>
+				<a
+					className="dropdown-item"
+					href="#"
+					onClick={(e) => {
+						e.preventDefault();
+						showDNSCertificateModal();
+					}}
+				>
+					<T id="lets-encrypt-via-dns" />
+				</a>
+				<div className="dropdown-divider" />
+				<a
+					className="dropdown-item"
+					href="#"
+					onClick={(e) => {
+						e.preventDefault();
+						showCustomCertificateModal();
+					}}
+				>
+					<T id="certificates.custom" />
+				</a>
+			</div>
+		</div>
+	);
 
 	return (
-		<>
-			<TableLayout pagination={pagination} {...tableInstance} />
-			{editId ? (
-				<CertificateEditModal
-					isOpen
-					editId={editId}
-					onClose={() => setEditId(0)}
+		<TableLayout
+			tableInstance={tableInstance}
+			emptyState={
+				<EmptyData
+					object="certificate"
+					objects="certificates"
+					tableInstance={tableInstance}
+					isFiltered={isFiltered}
+					color="pink"
+					customAddBtn={customAddBtn}
+					permissionSection={CERTIFICATES}
 				/>
-			) : null}
-		</>
+			}
+		/>
 	);
 }
-
-export default Table;

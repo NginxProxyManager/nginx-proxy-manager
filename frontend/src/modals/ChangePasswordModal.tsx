@@ -1,181 +1,170 @@
-import {
-	Button,
-	FormControl,
-	FormErrorMessage,
-	FormLabel,
-	Input,
-	Modal,
-	ModalBody,
-	ModalCloseButton,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	ModalOverlay,
-	Stack,
-	useToast,
-} from "@chakra-ui/react";
+import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
-
-import { setAuth } from "src/api/npm";
-import { PrettyButton } from "src/components";
-import { intl } from "src/locale";
+import { type ReactNode, useState } from "react";
+import { Alert } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal";
+import { updateAuth } from "src/api/backend";
+import { Button } from "src/components";
+import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 
-interface ChangePasswordModalProps {
-	isOpen: boolean;
-	onClose: () => void;
-}
-function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProps) {
-	const toast = useToast();
+const showChangePasswordModal = (id: number | "me") => {
+	EasyModal.show(ChangePasswordModal, { id });
+};
 
-	const onSubmit = async (payload: any, { setSubmitting, setErrors }: any) => {
-		const showErr = (msg: string) => {
-			toast({
-				description: intl.formatMessage({
-					id: `error.${msg}`,
-				}),
-				status: "error",
-				position: "top",
-				duration: 3000,
-				isClosable: true,
-			});
-		};
+interface Props extends InnerModalProps {
+	id: number | "me";
+}
+const ChangePasswordModal = EasyModal.create(({ id, visible, remove }: Props) => {
+	const [error, setError] = useState<ReactNode | null>(null);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const onSubmit = async (values: any, { setSubmitting }: any) => {
+		if (values.new !== values.confirm) {
+			setError(<T id="error.passwords-must-match" />);
+			setSubmitting(false);
+			return;
+		}
+
+		if (isSubmitting) return;
+		setIsSubmitting(true);
+		setError(null);
 
 		try {
-			await setAuth("me", {
-				type: "local",
-				secret: payload.password,
-				currentSecret: payload.current,
-			});
-			onClose();
+			await updateAuth(id, values.new, values.current);
+			remove();
 		} catch (err: any) {
-			if (err.message === "current-password-invalid") {
-				setErrors({
-					current: intl.formatMessage({
-						id: `error.${err.message}`,
-					}),
-				});
-			} else {
-				showErr(err.message);
-			}
+			setError(<T id={err.message} />);
 		}
+		setIsSubmitting(false);
 		setSubmitting(false);
 	};
 
 	return (
-		<Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
-			<ModalOverlay />
-			<ModalContent>
-				<Formik
-					initialValues={{}}
-					onSubmit={onSubmit}
-					validate={(values: any) => {
-						const errors = {} as any;
-						if (values.password !== values.password2) {
-							errors.password2 = "New passwords do not match";
-						}
-						return errors;
-					}}>
-					{({ isSubmitting }: any) => (
-						<Form data-testid="change-password">
-							<ModalHeader>
-								{intl.formatMessage({ id: "change-password" })}
-							</ModalHeader>
-							<ModalCloseButton />
-							<ModalBody>
-								<Stack spacing={4}>
-									<Field name="current" validate={validateString(8, 100)}>
-										{({ field, form }: any) => (
-											<FormControl
-												isRequired
-												isInvalid={form.errors.current && form.touched.current}>
-												<FormLabel htmlFor="current">
-													{intl.formatMessage({ id: "password.current" })}
-												</FormLabel>
-												<Input
-													{...field}
-													id="current"
-													type="password"
-													placeholder={intl.formatMessage({
-														id: "password.current",
-													})}
-												/>
-												<FormErrorMessage>
-													{form.errors.current}
-												</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
-									<Field name="password" validate={validateString(8, 100)}>
-										{({ field, form }: any) => (
-											<FormControl
-												isRequired
-												isInvalid={
-													form.errors.password && form.touched.password
-												}>
-												<FormLabel htmlFor="password">
-													{intl.formatMessage({ id: "password.new" })}
-												</FormLabel>
-												<Input
-													{...field}
-													id="password"
-													type="password"
-													placeholder={intl.formatMessage({
-														id: "password.new",
-													})}
-												/>
-												<FormErrorMessage>
-													{form.errors.password}
-												</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
-									<Field name="password2" validate={validateString(8, 100)}>
-										{({ field, form }: any) => (
-											<FormControl
-												isRequired
-												isInvalid={
-													form.errors.password2 && form.touched.password2
-												}>
-												<FormLabel htmlFor="password2">
-													{intl.formatMessage({ id: "password.confirm" })}
-												</FormLabel>
-												<Input
-													{...field}
-													id="password2"
-													type="password"
-													placeholder={intl.formatMessage({
-														id: "password.confirm",
-													})}
-												/>
-												<FormErrorMessage>
-													{form.errors.password2}
-												</FormErrorMessage>
-											</FormControl>
-										)}
-									</Field>
-								</Stack>
-							</ModalBody>
-							<ModalFooter>
-								<PrettyButton
-									mr={3}
-									isLoading={isSubmitting}
-									data-testid="save">
-									{intl.formatMessage({ id: "form.save" })}
-								</PrettyButton>
-								<Button
-									onClick={onClose}
-									isLoading={isSubmitting}
-									data-testid="cancel">
-									{intl.formatMessage({ id: "form.cancel" })}
-								</Button>
-							</ModalFooter>
-						</Form>
-					)}
-				</Formik>
-			</ModalContent>
+		<Modal show={visible} onHide={remove}>
+			<Formik
+				initialValues={
+					{
+						current: "",
+						new: "",
+						confirm: "",
+					} as any
+				}
+				onSubmit={onSubmit}
+			>
+				{() => (
+					<Form>
+						<Modal.Header closeButton>
+							<Modal.Title>
+								<T id="user.change-password" />
+							</Modal.Title>
+						</Modal.Header>
+						<Modal.Body>
+							<Alert variant="danger" show={!!error} onClose={() => setError(null)} dismissible>
+								{error}
+							</Alert>
+							<div className="mb-3">
+								<Field name="current">
+									{({ field, form }: any) => (
+										<div className="form-floating mb-3">
+											<input
+												id="current"
+												type="password"
+												autoComplete="current-password"
+												required
+												className={`form-control ${form.errors.current && form.touched.current ? "is-invalid" : ""}`}
+												placeholder={intl.formatMessage({
+													id: "user.current-password",
+												})}
+												{...field}
+											/>
+											<label htmlFor="current">
+												<T id="user.current-password" />
+											</label>
+											{form.errors.name ? (
+												<div className="invalid-feedback">
+													{form.errors.current && form.touched.current
+														? form.errors.current
+														: null}
+												</div>
+											) : null}
+										</div>
+									)}
+								</Field>
+							</div>
+							<div className="mb-3">
+								<Field name="new" validate={validateString(8, 100)}>
+									{({ field, form }: any) => (
+										<div className="form-floating mb-3">
+											<input
+												id="new"
+												type="password"
+												autoComplete="new-password"
+												required
+												className={`form-control ${form.errors.new && form.touched.new ? "is-invalid" : ""}`}
+												placeholder={intl.formatMessage({ id: "user.new-password" })}
+												{...field}
+											/>
+											<label htmlFor="new">
+												<T id="user.new-password" />
+											</label>
+											{form.errors.new ? (
+												<div className="invalid-feedback">
+													{form.errors.new && form.touched.new ? form.errors.new : null}
+												</div>
+											) : null}
+										</div>
+									)}
+								</Field>
+							</div>
+							<div className="mb-3">
+								<Field name="confirm" validate={validateString(8, 100)}>
+									{({ field, form }: any) => (
+										<div className="form-floating mb-3">
+											<input
+												id="confirm"
+												type="password"
+												autoComplete="new-password"
+												required
+												className={`form-control ${form.errors.confirm && form.touched.confirm ? "is-invalid" : ""}`}
+												placeholder={intl.formatMessage({ id: "user.confirm-password" })}
+												{...field}
+											/>
+											{form.errors.confirm ? (
+												<div className="invalid-feedback">
+													{form.errors.confirm && form.touched.confirm
+														? form.errors.confirm
+														: null}
+												</div>
+											) : null}
+											<label htmlFor="confirm">
+												<T id="user.confirm-password" />
+											</label>
+										</div>
+									)}
+								</Field>
+							</div>
+						</Modal.Body>
+						<Modal.Footer>
+							<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
+								<T id="cancel" />
+							</Button>
+							<Button
+								type="submit"
+								actionType="primary"
+								className="ms-auto"
+								data-bs-dismiss="modal"
+								isLoading={isSubmitting}
+								disabled={isSubmitting}
+							>
+								<T id="save" />
+							</Button>
+						</Modal.Footer>
+					</Form>
+				)}
+			</Formik>
 		</Modal>
 	);
-}
+});
 
-export { ChangePasswordModal };
+export { showChangePasswordModal };

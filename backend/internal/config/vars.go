@@ -2,6 +2,8 @@ package config
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"npm/internal/logger"
 )
@@ -45,4 +47,29 @@ type acmesh struct {
 // GetWellknown returns the well known path
 func (a *acmesh) GetWellknown() string {
 	return fmt.Sprintf("%s/.well-known", a.Home)
+}
+
+// VersionSplit is a struct that holds the major, minor, and patch versions
+type VersionSplit struct {
+	Major uint `json:"major"`
+	Minor uint `json:"minor"`
+	Patch uint `json:"patch"`
+}
+
+// GetVersionSplit returns the major, minor, and patch versions
+func GetVersionSplit() VersionSplit {
+	bits := strings.Split(Version, ".")
+	if len(bits) != 3 {
+		return VersionSplit{Major: 0, Minor: 0, Patch: 0}
+	}
+	return VersionSplit{Major: parseUintOrZero(bits[0]), Minor: parseUintOrZero(bits[1]), Patch: parseUintOrZero(bits[2])}
+}
+
+// parseUintOrZero parses a string to a uint, returning zero on error
+func parseUintOrZero(s string) uint {
+	u, err := strconv.ParseUint(s, 10, 0)
+	if err != nil {
+		return 0
+	}
+	return uint(u)
 }

@@ -1,13 +1,11 @@
-import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import EasyModal from "ez-modal-react";
 import { RawIntlProvider } from "react-intl";
-
-import { AuthProvider, LocaleProvider } from "src/context";
-import { intl } from "src/locale";
-
-import Router from "./Router";
-import lightTheme from "./theme/customTheme";
+import { ToastContainer } from "react-toastify";
+import { AuthProvider, LocaleProvider, ThemeProvider } from "src/context";
+import { getLocale, intl, isRTLLocale } from "src/locale";
+import Router from "src/Router.tsx";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -16,14 +14,25 @@ function App() {
 	return (
 		<RawIntlProvider value={intl}>
 			<LocaleProvider>
-				<QueryClientProvider client={queryClient}>
-					<ChakraProvider theme={lightTheme}>
+				<ThemeProvider>
+					<QueryClientProvider client={queryClient}>
 						<AuthProvider>
-							<Router />
+							<EasyModal.Provider>
+								<Router />
+							</EasyModal.Provider>
+							<ToastContainer
+								position="top-right"
+								autoClose={5000}
+								hideProgressBar={true}
+								newestOnTop={true}
+								closeOnClick={true}
+								rtl={isRTLLocale(getLocale())}
+								closeButton={false}
+							/>
 						</AuthProvider>
-					</ChakraProvider>
-					<ReactQueryDevtools buttonPosition="bottom-right" position="right" />
-				</QueryClientProvider>
+						<ReactQueryDevtools buttonPosition="bottom-right" position="right" />
+					</QueryClientProvider>
+				</ThemeProvider>
 			</LocaleProvider>
 		</RawIntlProvider>
 	);

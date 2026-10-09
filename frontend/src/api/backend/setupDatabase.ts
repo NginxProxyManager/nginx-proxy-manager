@@ -1,0 +1,24 @@
+import * as api from "./base";
+
+export interface DatabaseConfig {
+	driver: string;
+	host?: string;
+	port?: number;
+	username?: string;
+	password?: string;
+	name?: string;
+	sslmode?: string;
+	schema?: string;
+}
+
+export async function setupDatabase(
+	data: DatabaseConfig
+): Promise<boolean> {
+	const { result } = await api.post(
+		{
+			url: "/setup/database",
+			data,
+		},
+	);
+	return result;
+}
