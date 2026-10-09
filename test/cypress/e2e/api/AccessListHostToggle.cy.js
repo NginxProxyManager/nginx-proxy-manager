@@ -192,7 +192,11 @@ describe('Access Lists across Proxy Host disable/enable', () => {
 			expect(data).to.be.equal(true);
 		});
 
+		// Each delete signals an nginx reload and returns immediately. A request
+		// made while the workers are being swapped can be reset by the nginx
+		// serving the API (502 from squid), so let each reload settle first.
 		[authListId, clientListId].forEach((id) => {
+			cy.wait(1500);
 			cy.task('backendApiDelete', {
 				token: token,
 				path:  `/api/nginx/access-lists/${id}`,
