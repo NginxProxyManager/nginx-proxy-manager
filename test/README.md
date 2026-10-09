@@ -1,5 +1,17 @@
 # Cypress Test Suite
 
+## Host Header Regression Test
+
+Run `python3 test/host-header-smoke.py <built-image>` from the repository root.
+The backend CI build runs this check against the image it builds. It creates a
+disposable NPM container and renders a proxy host through the backend's normal
+configuration generator, including a custom location. A synthetic HTTPS upstream
+checks that the forwarded Host matches Origin and Referer, and echoes the request
+method, path and body. Coverage includes HTTP and HTTPS, explicit default and
+nonstandard ports, mixed-case names, IPv6 authorities, and HTTP/1.0 without Host.
+All test traffic and published Docker ports use loopback; the container and its
+anonymous volumes are removed on completion.
+
 ## Running Locally
 
 ```
