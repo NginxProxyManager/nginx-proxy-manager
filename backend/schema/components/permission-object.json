@@ -43,6 +43,25 @@
 			"description": "Certificates Permissions",
 			"enum": ["hidden", "view", "manage"],
 			"example": "hidden"
+		},
+		"meta": {
+			"type": "object",
+			"description": "Permission metadata",
+			"example": {
+				"proxy_host_ids": [1]
+			},
+			"properties": {
+				"proxy_host_ids": {
+					"type": "array",
+					"description": "Allowed Proxy Host IDs",
+					"example": [1],
+					"items": {
+						"type": "integer",
+						"description": "Proxy Host ID",
+						"example": 1
+					}
+				}
+			}
 		}
 	}
 }
