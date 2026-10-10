@@ -5,7 +5,7 @@ import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import type { AccessList, AccessListClient, AccessListItem } from "src/api/backend";
-import { AccessClientFields, BasicAuthFields, Button, Loading } from "src/components";
+import { AccessClientFields, AccessProviderFields, BasicAuthFields, Button, Loading } from "src/components";
 import { useAccessList, useSetAccessList } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
@@ -102,6 +102,8 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							passAuth: data?.passAuth,
 							items: data?.items || [],
 							clients: data?.clients || [],
+							authProviderIds: data?.authProviderIds || [],
+							allowedGroups: data?.allowedGroups || [],
 						} as AccessList
 					}
 					onSubmit={onSubmit}
@@ -153,6 +155,18 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													role="tab"
 												>
 													<T id="column.rules" />
+												</a>
+											</li>
+											<li className="nav-item" role="presentation">
+												<a
+													href="#tab-providers"
+													className="nav-link"
+													data-bs-toggle="tab"
+													aria-selected="false"
+													tabIndex={-1}
+													role="tab"
+												>
+													<T id="access-list.providers" />
 												</a>
 											</li>
 										</ul>
@@ -261,6 +275,9 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											</div>
 											<div className="tab-pane" id="tab-rules" role="tabpanel">
 												<AccessClientFields initialValues={data?.clients || []} />
+											</div>
+											<div className="tab-pane" id="tab-providers" role="tabpanel">
+												<AccessProviderFields />
 											</div>
 										</div>
 									</div>

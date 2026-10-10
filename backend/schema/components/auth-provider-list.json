@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "Authentication Provider list",
+	"items": {
+		"$ref": "./auth-provider-object.json"
+	}
+}

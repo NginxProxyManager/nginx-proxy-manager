@@ -237,6 +237,119 @@ Setting these environment variables will create the default user on startup, ski
       INITIAL_ADMIN_PASSWORD: mypassword1
 ```
 
+## External Authentication
+
+LDAP, SAML and OAuth/OpenID Connect providers can be added in the admin
+interface under **Users → Authentication Providers**, or configured entirely
+through environment variables, which is usually what you want for a container
+deployed from a compose file.
+
+Providers configured this way are recreated from the environment on every start,
+appear in the interface as read only, and disappear when their variables are
+removed. At most one provider of each type can be configured this way; add more
+in the interface if you need them.
+
+See [Authentication Providers](/authentication/) for what these settings mean
+and how the pieces fit together.
+
+```yml
+    environment:
+      AUTH_LDAP_ENABLED: "true"
+      AUTH_LDAP_NAME: "Company Directory"
+      AUTH_LDAP_URL: "ldaps://ldap.example.com:636"
+      AUTH_LDAP_BIND_DN: "cn=readonly,dc=example,dc=com"
+      AUTH_LDAP_BIND_PASSWORD: "secret"
+      AUTH_LDAP_BASE_DN: "dc=example,dc=com"
+      AUTH_LDAP_ADMIN_GROUP: "cn=npm-admins,ou=groups,dc=example,dc=com"
+      AUTH_LDAP_AUTO_CREATE_USER: "true"
+```
+
+Any secret below can instead be supplied as a docker secret by appending
+`__FILE` to the variable name and pointing it at a file, for example
+`AUTH_LDAP_BIND_PASSWORD__FILE: /run/secrets/ldap_password`.
+
+### Global
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `AUTH_DISABLE_LOCAL` | `false` | Turn off email and password sign in. Overrides the setting stored in the interface, in both directions, so it is also the way back in if you lock yourself out. |
+| `AUTH_PUBLIC_URL` | derived from the request | The externally reachable base URL, used to build the redirect and callback URIs. Set this if the automatic value is wrong, for example behind another proxy. |
+
+### Common to every provider
+
+`<TYPE>` is one of `LDAP`, `SAML` or `OAUTH`.
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `AUTH_<TYPE>_ENABLED` | `false` | Whether to configure this provider at all |
+| `AUTH_<TYPE>_NAME` | the type | Display name shown on the login screen |
+| `AUTH_<TYPE>_AUTO_CREATE_USER` | `false` | Create a local account on first sign in. With this off, only people already linked to the provider can sign in. |
+| `AUTH_<TYPE>_LINK_BY_EMAIL` | `false` | Attach a first-time sign in to an existing account holding the same email address. Only enable this for a provider you trust to prove the address belongs to whoever signed in; for OAuth the provider must also return `email_verified: true`. |
+| `AUTH_<TYPE>_ADMIN_GROUP` | | Group or claim value that grants the admin role. Applied on every sign in, and revoked when somebody leaves the group. |
+| `AUTH_<TYPE>_DEFAULT_ROLES` | | Comma separated roles given to newly created accounts |
+
+### LDAP
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `AUTH_LDAP_URL` | | `ldap://host:389` or `ldaps://host:636` |
+| `AUTH_LDAP_BIND_DN` | | Read-only service account. Leave blank to search anonymously. |
+| `AUTH_LDAP_BIND_PASSWORD` | | |
+| `AUTH_LDAP_BASE_DN` | | Where to search from, e.g. `dc=example,dc=com` |
+| `AUTH_LDAP_USER_FILTER` | <code v-pre>(&#124;(uid={{username}})(mail={{username}}))</code> | <code v-pre>{{username}}</code> is replaced with whatever was typed into the login form |
+| `AUTH_LDAP_LOGIN_ATTRIBUTES` | | Comma separated attributes accepted at the login prompt, e.g. `uid,mail,sAMAccountName`. Ignored when a user filter is set. |
+| `AUTH_LDAP_EMAIL_ATTRIBUTE` | `mail` | Required. Somebody with no email address in the directory cannot sign in. |
+| `AUTH_LDAP_NAME_ATTRIBUTE` | `cn` | |
+| `AUTH_LDAP_NICKNAME_ATTRIBUTE` | `givenName` | |
+| `AUTH_LDAP_GROUP_ATTRIBUTE` | `memberOf` | Read from the user entry, for Active Directory or OpenLDAP with the memberof overlay |
+| `AUTH_LDAP_GROUP_BASE_DN` | the base DN | Where to search for groups |
+| `AUTH_LDAP_GROUP_FILTER` | | Used when the user entry carries no groups, e.g. <code v-pre>(&(objectClass=groupOfNames)(member={{dn}}))</code>. <code v-pre>{{dn}}</code> and <code v-pre>{{username}}</code> are substituted. |
+| `AUTH_LDAP_GROUP_NAME_ATTRIBUTE` | `dn` | |
+| `AUTH_LDAP_START_TLS` | `false` | Upgrade a plain connection with StartTLS |
+| `AUTH_LDAP_TLS_REJECT_UNAUTHORIZED` | `true` | Verify the server's certificate. Only turn this off for a self-signed certificate you trust. |
+| `AUTH_LDAP_TIMEOUT` | `10000` | Milliseconds |
+| `AUTH_LDAP_PAGE_SIZE` | `500` | Entries fetched per page, so directories past the server's result cap enumerate fully |
+| `AUTH_LDAP_SYNC_ENABLED` | `false` | Walk the directory on a schedule, creating accounts before anyone signs in |
+| `AUTH_LDAP_SYNC_INTERVAL` | `60` | Minutes between runs; five is the shortest allowed |
+| `AUTH_LDAP_SYNC_FILTER` | `(objectClass=person)` | Which directory entries sync considers |
+| `AUTH_LDAP_SYNC_GROUP` | | Only sync members of this group |
+| `AUTH_LDAP_SYNC_DISABLE_MISSING` | `false` | Disable accounts whose directory entry has gone away. The last administrator is never disabled, and a run returning nothing disables nobody. |
+
+### SAML
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `AUTH_SAML_ENTRY_POINT` | | The identity provider's sign-in URL |
+| `AUTH_SAML_ISSUER` | `nginx-proxy-manager` | The entity ID this instance advertises |
+| `AUTH_SAML_IDP_CERT` | | The identity provider's signing certificate |
+| `AUTH_SAML_SP_PRIVATE_KEY` | | Key used to sign requests, if your IdP requires it |
+| `AUTH_SAML_SIGNATURE_ALGORITHM` | `sha256` | |
+| `AUTH_SAML_WANT_ASSERTIONS_SIGNED` | `true` | |
+| `AUTH_SAML_WANT_AUTHN_RESPONSE_SIGNED` | `false` | Turn on if your IdP signs the response as well as the assertion |
+| `AUTH_SAML_EMAIL_ATTRIBUTE` | auto-detected | Common claim URIs and short names are tried automatically |
+| `AUTH_SAML_NAME_ATTRIBUTE` | auto-detected | |
+| `AUTH_SAML_NICKNAME_ATTRIBUTE` | auto-detected | |
+| `AUTH_SAML_GROUP_ATTRIBUTE` | auto-detected | |
+| `AUTH_SAML_IDENTIFIER_ATTRIBUTE` | | Attribute holding a lasting id for each person. Left blank the `NameID` is used, or the email address when the IdP issues a transient `NameID`. |
+
+### OAuth and OpenID Connect
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `AUTH_OAUTH_ISSUER_URL` | | Endpoints are discovered from here. Leave blank to configure them by hand. |
+| `AUTH_OAUTH_AUTHORIZATION_URL` | discovered | |
+| `AUTH_OAUTH_TOKEN_URL` | discovered | |
+| `AUTH_OAUTH_USERINFO_URL` | discovered | |
+| `AUTH_OAUTH_JWKS_URL` | discovered | Needed to verify ID tokens when there is no userinfo endpoint |
+| `AUTH_OAUTH_CLIENT_ID` | | |
+| `AUTH_OAUTH_CLIENT_SECRET` | | |
+| `AUTH_OAUTH_SCOPES` | `openid email profile` | |
+| `AUTH_OAUTH_EMAIL_CLAIM` | `email` | |
+| `AUTH_OAUTH_NAME_CLAIM` | `name` | |
+| `AUTH_OAUTH_NICKNAME_CLAIM` | `preferred_username` | |
+| `AUTH_OAUTH_GROUP_CLAIM` | `groups` | |
+| `AUTH_OAUTH_USE_BASIC_AUTH` | `false` | Send credentials in the Authorization header, for providers requiring `client_secret_basic` |
+
 ## Disable Nginx Resolver
 
 On startup, we generate a resolvers directive for Nginx unless this is defined:
