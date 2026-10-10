@@ -1,0 +1,43 @@
+{
+	"operationId": "verifyPasskeyAuth",
+	"summary": "Verify passkey authentication and get full token",
+	"tags": ["tokens"],
+	"requestBody": {
+		"description": "Passkey authentication response",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"additionalProperties": false,
+					"properties": {
+						"challenge_token": {
+							"minLength": 1,
+							"type": "string",
+							"example": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNzA3MjQwMDAwfQ.signature"
+						},
+						"credential": {
+							"minLength": 1,
+							"type": "string",
+							"description": "JSON-stringified WebAuthn credential response",
+							"example": "{\"id\":\"abc123\",\"rawId\":\"abc123\",\"type\":\"public-key\",\"response\":{\"authenticatorData\":\"data\",\"clientDataJSON\":\"json\",\"signature\":\"sig\"}}"
+						}
+					},
+					"required": ["challenge_token", "credential"],
+					"type": "object"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../../components/token-object.json"
+					}
+				}
+			},
+			"description": "200 response"
+		}
+	}
+}
