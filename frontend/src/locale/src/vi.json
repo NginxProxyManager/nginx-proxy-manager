@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Số mã dự phòng còn lại: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Hãy lưu các mã dự phòng này ở nơi an toàn. Mỗi mã chỉ dùng được một lần."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Tắt xác thực hai lớp"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Tắt 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Tắt xác thực hai lớp sẽ khiến tài khoản của bạn kém an toàn hơn."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"2fa.done": {
+		"defaultMessage": "Tôi đã lưu các mã dự phòng"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Bật xác thực hai lớp"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Đã bật"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Nhập mã xác minh"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Nhập mã xác minh để tắt"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Tạo lại"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Tạo lại mã dự phòng"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Nhập mã xác minh để tạo mã dự phòng mới. Các mã cũ sẽ không còn hiệu lực."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Khóa bí mật"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Quét mã QR này bằng ứng dụng xác thực, hoặc nhập khóa bí mật thủ công."
+	},
+	"2fa.status": {
+		"defaultMessage": "Trạng thái"
+	},
+	"2fa.title": {
+		"defaultMessage": "Xác thực hai lớp"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Xác minh và bật"
+	},
 	"access-list": {
 		"defaultMessage": "Danh sách truy cập"
 	},
@@ -9,19 +66,28 @@
 		"defaultMessage": "{count} người dùng"
 	},
 	"access-list.help-rules-last": {
-		"defaultMessage": "Quy tắc từ chối tất cả này sẽ được thêm vào cuối khi tồn tại ít nhất 1 quy tắc"
+		"defaultMessage": "Khi có ít nhất 1 quy tắc, quy tắc từ chối tất cả này sẽ được thêm vào cuối"
 	},
 	"access-list.help.rules-order": {
-		"defaultMessage": "Các quy tắc cho phép và từ chối sẽ được thực thi theo thứ tự được xác định."
+		"defaultMessage": "Lưu ý: các quy tắc cho phép và từ chối được áp dụng theo đúng thứ tự khai báo."
+	},
+	"access-list.inherit": {
+		"defaultMessage": "Kế thừa từ máy chủ proxy"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Sử dụng danh sách truy cập của máy chủ proxy"
 	},
 	"access-list.pass-auth": {
-		"defaultMessage": "Chuyển xác thực lên thượng nguồn"
+		"defaultMessage": "Chuyển tiếp thông tin xác thực tới máy chủ đích"
 	},
 	"access-list.public": {
 		"defaultMessage": "Có thể truy cập công khai"
 	},
 	"access-list.public.subtitle": {
 		"defaultMessage": "Không cần xác thực cơ bản"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 hoặc 192.168.1.0/24 hoặc 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Thỏa mãn điều kiện bất kỳ"
@@ -36,13 +102,22 @@
 		"defaultMessage": "Thêm"
 	},
 	"action.add-location": {
-		"defaultMessage": "Thêm Vị trí"
+		"defaultMessage": "Thêm đường dẫn"
+	},
+	"action.allow": {
+		"defaultMessage": "Cho phép"
+	},
+	"action.clear": {
+		"defaultMessage": "Xóa bộ lọc"
 	},
 	"action.close": {
 		"defaultMessage": "Đóng"
 	},
 	"action.delete": {
 		"defaultMessage": "Xóa"
+	},
+	"action.deny": {
+		"defaultMessage": "Từ chối"
 	},
 	"action.disable": {
 		"defaultMessage": "Tắt"
@@ -56,6 +131,9 @@
 	"action.enable": {
 		"defaultMessage": "Bật"
 	},
+	"action.logs": {
+		"defaultMessage": "Nhật ký"
+	},
 	"action.permissions": {
 		"defaultMessage": "Quyền"
 	},
@@ -63,10 +141,13 @@
 		"defaultMessage": "Gia hạn"
 	},
 	"action.view-details": {
-		"defaultMessage": "Xem Chi tiết"
+		"defaultMessage": "Xem chi tiết"
 	},
 	"auditlogs": {
-		"defaultMessage": "Nhật ký kiểm tra"
+		"defaultMessage": "Nhật ký hoạt động"
+	},
+	"auto": {
+		"defaultMessage": "Tự động"
 	},
 	"cancel": {
 		"defaultMessage": "Hủy"
@@ -75,19 +156,19 @@
 		"defaultMessage": "Chứng chỉ"
 	},
 	"certificate.custom-certificate": {
-		"defaultMessage": "Certificate (crt)"
+		"defaultMessage": "Chứng chỉ"
 	},
 	"certificate.custom-certificate-key": {
-		"defaultMessage": "Certificate Key"
+		"defaultMessage": "Khóa riêng của chứng chỉ"
 	},
 	"certificate.custom-intermediate": {
-		"defaultMessage": "Intermediate Certificate"
+		"defaultMessage": "Chứng chỉ trung gian"
 	},
 	"certificate.in-use": {
 		"defaultMessage": "Đang sử dụng"
 	},
 	"certificate.none.subtitle": {
-		"defaultMessage": "Không có chứng chỉ nào được chỉ định"
+		"defaultMessage": "Chưa gán chứng chỉ nào"
 	},
 	"certificate.none.subtitle.for-http": {
 		"defaultMessage": "Máy chủ này sẽ không sử dụng HTTPS"
@@ -96,19 +177,19 @@
 		"defaultMessage": "Không có"
 	},
 	"certificate.not-in-use": {
-		"defaultMessage": "Không được dùng"
+		"defaultMessage": "Chưa sử dụng"
 	},
 	"certificate.renew": {
-		"defaultMessage": "Gia hạn Chứng chỉ"
+		"defaultMessage": "Gia hạn chứng chỉ"
 	},
 	"certificates": {
-		"defaultMessage": "Danh sách chứng chỉ"
+		"defaultMessage": "Chứng chỉ"
 	},
 	"certificates.custom": {
 		"defaultMessage": "Chứng chỉ tùy chỉnh"
 	},
 	"certificates.custom.warning": {
-		"defaultMessage": "Các tệp chính được bảo vệ bằng cụm mật khẩu không được hỗ trợ."
+		"defaultMessage": "Không hỗ trợ tệp khóa có đặt cụm mật khẩu bảo vệ."
 	},
 	"certificates.dns.credentials": {
 		"defaultMessage": "Nội dung tệp thông tin xác thực"
@@ -120,40 +201,43 @@
 		"defaultMessage": "Dữ liệu này sẽ được lưu trữ dưới dạng bản rõ trong cơ sở dữ liệu và trong một tệp!"
 	},
 	"certificates.dns.propagation-seconds": {
-		"defaultMessage": "Thời gian lan truyền (Giây)"
+		"defaultMessage": "Thời gian lan truyền (giây)"
 	},
 	"certificates.dns.propagation-seconds-note": {
-		"defaultMessage": "Để trống để sử dụng giá trị mặc định của plugin. Số giây chờ truyền DNS."
+		"defaultMessage": "Để trống để dùng giá trị mặc định của plugin. Số giây chờ bản ghi DNS lan truyền."
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "Nhà cung cấp DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Chọn nhà cung cấp…"
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Phần này yêu cầu một số kiến thức về Certbot và các plugin DNS của nó. Vui lòng tham khảo tài liệu plugin tương ứng."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng có vẻ như nó không phải là NPM. Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+		"defaultMessage": "Tìm thấy một máy chủ tại tên miền này nhưng có vẻ không phải Nginx Proxy Manager. Vui lòng đảm bảo tên miền trỏ đến IP của máy đang chạy NPM."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Không thể kiểm tra khả năng truy cập do lỗi giao tiếp với site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Không có máy chủ có sẵn tại tên miền này. Vui lòng đảm bảo rằng miền của bạn tồn tại và trỏ đến IP nơi phiên bản NPM của bạn đang chạy và nếu cần, cổng 80 sẽ được chuyển tiếp trong bộ định tuyến của bạn."
+		"defaultMessage": "Không có máy chủ nào tại tên miền này. Vui lòng đảm bảo tên miền tồn tại, trỏ đến IP của máy đang chạy NPM và nếu cần, cổng 80 đã được chuyển tiếp (port forwarding) trên router."
 	},
 	"certificates.http.reachability-ok": {
-		"defaultMessage": "Máy chủ của bạn có thể truy cập được và có thể tạo chứng chỉ."
+		"defaultMessage": "Máy chủ của bạn truy cập được, có thể tiến hành tạo chứng chỉ."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về mã trạng thái không mong muốn {code}. Đây có phải là máy chủ NPM không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+		"defaultMessage": "Tìm thấy một máy chủ tại tên miền này nhưng nó trả về mã trạng thái không mong đợi {code}. Đây có phải máy chủ NPM không? Vui lòng đảm bảo tên miền trỏ đến IP của máy đang chạy NPM."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về một dữ liệu không mong muốn. Đây có phải là máy chủ NPM không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+		"defaultMessage": "Tìm thấy một máy chủ tại tên miền này nhưng nó trả về dữ liệu không mong đợi. Đây có phải máy chủ NPM không? Vui lòng đảm bảo tên miền trỏ đến IP của máy đang chạy NPM."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Kết quả kiểm tra"
 	},
 	"certificates.http.warning": {
-		"defaultMessage": "Các miền này phải được cấu hình sẵn để trỏ đến cài đặt này."
+		"defaultMessage": "Các tên miền này phải được cấu hình sẵn để trỏ đến máy chủ NPM này."
 	},
 	"certificates.key-type": {
 		"defaultMessage": "Loại khóa"
@@ -177,22 +261,25 @@
 		"defaultMessage": "Truy cập"
 	},
 	"column.authorization": {
-		"defaultMessage": "Ủy quyền"
+		"defaultMessage": "Xác thực"
 	},
 	"column.authorizations": {
-		"defaultMessage": "Danh sách ủy quyền"
+		"defaultMessage": "Xác thực"
 	},
 	"column.custom-locations": {
-		"defaultMessage": "Quy tắc đường dẫn tùy chỉnh (Vị trí)"
+		"defaultMessage": "Đường dẫn tùy chỉnh"
 	},
 	"column.destination": {
-		"defaultMessage": "Mục tiêu"
+		"defaultMessage": "Đích"
 	},
 	"column.details": {
 		"defaultMessage": "Chi tiết"
 	},
 	"column.email": {
 		"defaultMessage": "Email"
+	},
+	"column.error": {
+		"defaultMessage": "Lỗi"
 	},
 	"column.event": {
 		"defaultMessage": "Sự kiện"
@@ -201,10 +288,10 @@
 		"defaultMessage": "Hết hạn"
 	},
 	"column.http-code": {
-		"defaultMessage": "HTTP Code"
+		"defaultMessage": "Mã HTTP"
 	},
 	"column.incoming-port": {
-		"defaultMessage": "Cổng đến"
+		"defaultMessage": "Cổng vào"
 	},
 	"column.name": {
 		"defaultMessage": "Tên"
@@ -228,10 +315,10 @@
 		"defaultMessage": "Tất cả"
 	},
 	"column.satisfy-any": {
-		"defaultMessage": "Bất kì"
+		"defaultMessage": "Bất kỳ"
 	},
 	"column.scheme": {
-		"defaultMessage": "Scheme"
+		"defaultMessage": "Giao thức"
 	},
 	"column.source": {
 		"defaultMessage": "Nguồn"
@@ -243,7 +330,7 @@
 		"defaultMessage": "Trạng thái"
 	},
 	"created-on": {
-		"defaultMessage": "Đã tạo: {date}"
+		"defaultMessage": "Tạo lúc: {date}"
 	},
 	"dashboard": {
 		"defaultMessage": "Bảng điều khiển"
@@ -255,25 +342,28 @@
 		"defaultMessage": "Máy chủ 404"
 	},
 	"dead-hosts.count": {
-		"defaultMessage": "Số trang lỗi {count}"
+		"defaultMessage": "{count} máy chủ 404"
 	},
 	"disabled": {
 		"defaultMessage": "Đã tắt"
 	},
 	"domain-names": {
-		"defaultMessage": "Danh sách tên miền"
+		"defaultMessage": "Tên miền"
 	},
 	"domain-names.max": {
 		"defaultMessage": "Tối đa {count} tên miền"
 	},
 	"domain-names.placeholder": {
-		"defaultMessage": "Nhập tên miền vào đây..."
+		"defaultMessage": "Nhập để thêm tên miền…"
 	},
 	"domain-names.wildcards-not-permitted": {
 		"defaultMessage": "Ký tự đại diện không được phép cho loại này"
 	},
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Ký tự đại diện không được hỗ trợ cho CA này"
+	},
+	"domains.advanced": {
+		"defaultMessage": "Nâng cao"
 	},
 	"domains.force-ssl": {
 		"defaultMessage": "Bắt buộc SSL"
@@ -282,13 +372,16 @@
 		"defaultMessage": "Bật HSTS"
 	},
 	"domains.hsts-subdomains": {
-		"defaultMessage": "Tên miền phụ HSTS"
+		"defaultMessage": "HSTS cho tên miền con"
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Hỗ trợ HTTP/2"
 	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Tin cậy header X-Forwarded-Proto từ proxy phía trước"
+	},
 	"domains.use-dns": {
-		"defaultMessage": "Dùng thử thách DNS"
+		"defaultMessage": "Xác thực qua DNS"
 	},
 	"email-address": {
 		"defaultMessage": "Địa chỉ email"
@@ -297,19 +390,19 @@
 		"defaultMessage": "Không có kết quả nào"
 	},
 	"empty-subtitle": {
-		"defaultMessage": "Tại sao bạn không tạo một cái luôn?"
+		"defaultMessage": "Hãy bắt đầu bằng cách tạo mới."
 	},
 	"enabled": {
 		"defaultMessage": "Đã bật"
 	},
 	"error.access.at-least-one": {
-		"defaultMessage": "Yêu cầu ít nhất một quy tắc ủy quyền hoặc truy cập"
+		"defaultMessage": "Cần ít nhất một tài khoản xác thực hoặc một quy tắc truy cập"
 	},
 	"error.access.duplicate-usernames": {
-		"defaultMessage": "Tên người dùng được ủy quyền phải là duy nhất"
+		"defaultMessage": "Tên người dùng xác thực không được trùng nhau"
 	},
 	"error.invalid-auth": {
-		"defaultMessage": "Email hoặc Mật khẩu không hợp lệ"
+		"defaultMessage": "Email hoặc mật khẩu không hợp lệ"
 	},
 	"error.invalid-domain": {
 		"defaultMessage": "Tên miền không hợp lệ: {domain}"
@@ -336,7 +429,7 @@
 		"defaultMessage": "Mật khẩu phải khớp"
 	},
 	"error.required": {
-		"defaultMessage": "Điều này là bắt buộc"
+		"defaultMessage": "Trường này là bắt buộc"
 	},
 	"expires.on": {
 		"defaultMessage": "Hết hạn: {date}"
@@ -348,10 +441,10 @@
 		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
 	},
 	"host.flags.cache-assets": {
-		"defaultMessage": "Cache tài nguyên"
+		"defaultMessage": "Bộ nhớ đệm tài nguyên"
 	},
 	"host.flags.preserve-path": {
-		"defaultMessage": "Bảo toàn đường dẫn"
+		"defaultMessage": "Giữ nguyên đường dẫn"
 	},
 	"host.flags.protocols": {
 		"defaultMessage": "Giao thức"
@@ -360,16 +453,16 @@
 		"defaultMessage": "Hỗ trợ Websockets"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Chuyển tiếp cổng"
+		"defaultMessage": "Cổng đích"
 	},
 	"host.forward-scheme": {
-		"defaultMessage": "Scheme"
+		"defaultMessage": "Giao thức"
 	},
 	"hosts": {
 		"defaultMessage": "Máy chủ"
 	},
 	"http-only": {
-		"defaultMessage": "HTTP Only"
+		"defaultMessage": "Chỉ HTTP"
 	},
 	"lets-encrypt": {
 		"defaultMessage": "Let's Encrypt"
@@ -381,28 +474,94 @@
 		"defaultMessage": "Let's Encrypt qua HTTP"
 	},
 	"loading": {
-		"defaultMessage": "Đang tải..."
+		"defaultMessage": "Đang tải…"
+	},
+	"location.advanced-config": {
+		"defaultMessage": "Có cấu hình Nginx tùy chỉnh"
+	},
+	"location.filter": {
+		"defaultMessage": "Lọc theo đường dẫn hoặc đích"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Mã xác minh"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Nhập mã"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Nhập mã từ ứng dụng xác thực của bạn"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Xác thực hai lớp"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Xác minh"
 	},
 	"login.title": {
 		"defaultMessage": "Đăng nhập vào tài khoản của bạn"
+	},
+	"logs": {
+		"defaultMessage": "Nhật ký"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Truy cập"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Lỗi"
+	},
+	"logs.download": {
+		"defaultMessage": "Tải xuống"
+	},
+	"logs.empty": {
+		"defaultMessage": "Chưa có mục nhật ký nào."
+	},
+	"logs.level": {
+		"defaultMessage": "Mức độ"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Tất cả mức độ"
+	},
+	"logs.lines": {
+		"defaultMessage": "Số dòng"
+	},
+	"logs.live": {
+		"defaultMessage": "Trực tiếp"
+	},
+	"logs.paused": {
+		"defaultMessage": "Đã tạm dừng"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Làm mới"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Tìm trong nhật ký…"
+	},
+	"logs.source": {
+		"defaultMessage": "Nguồn"
+	},
+	"logs.source.system": {
+		"defaultMessage": "Hệ thống"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Chỉ hiển thị phần mới nhất của tệp này."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Cấu hình Nginx tùy chỉnh"
 	},
 	"nginx-config.placeholder": {
-		"defaultMessage": "# Nhập cấu hình Nginx tùy chỉnh của bạn vào đây và bạn phải tự chịu rủi ro!"
+		"defaultMessage": "# Nhập cấu hình Nginx tùy chỉnh tại đây, bạn tự chịu rủi ro!"
 	},
 	"no-permission-error": {
-		"defaultMessage": "Bạn không có quyền truy cập trang này."
+		"defaultMessage": "Bạn không có quyền xem nội dung này."
 	},
 	"notfound.action": {
 		"defaultMessage": "Về trang chủ"
 	},
 	"notfound.content": {
-		"defaultMessage": "Chúng tôi xin lỗi nhưng trang bạn đang tìm kiếm không được tìm thấy"
+		"defaultMessage": "Rất tiếc, không tìm thấy trang bạn yêu cầu"
 	},
 	"notfound.title": {
-		"defaultMessage": "Rất tiếc… Bạn vừa tìm thấy một trang lỗi"
+		"defaultMessage": "Ối… Bạn vừa lạc vào một trang lỗi"
 	},
 	"notification.error": {
 		"defaultMessage": "Lỗi"
@@ -417,7 +576,7 @@
 		"defaultMessage": "{object} đã được bật"
 	},
 	"notification.object-renewed": {
-		"defaultMessage": "{object} đã được làm mới"
+		"defaultMessage": "{object} đã được gia hạn"
 	},
 	"notification.object-saved": {
 		"defaultMessage": "{object} đã được lưu"
@@ -435,13 +594,13 @@
 		"defaultMessage": "Xóa {object}"
 	},
 	"object.delete.content": {
-		"defaultMessage": "Bạn có chắc muốn xóa {object} không?"
+		"defaultMessage": "Bạn có chắc muốn xóa {object} này không?"
 	},
 	"object.edit": {
 		"defaultMessage": "Chỉnh sửa {object}"
 	},
 	"object.empty": {
-		"defaultMessage": "Không có {objects}"
+		"defaultMessage": "Chưa có {objects} nào"
 	},
 	"object.event.created": {
 		"defaultMessage": "Đã tạo {object}"
@@ -477,10 +636,10 @@
 		"defaultMessage": "Tạo mật khẩu ngẫu nhiên"
 	},
 	"password.hide": {
-		"defaultMessage": "Ẩn Mật khẩu"
+		"defaultMessage": "Ẩn mật khẩu"
 	},
 	"password.show": {
-		"defaultMessage": "Hiện Mật khẩu"
+		"defaultMessage": "Hiện mật khẩu"
 	},
 	"permissions.hidden": {
 		"defaultMessage": "Ẩn"
@@ -495,16 +654,16 @@
 		"defaultMessage": "Tất cả các mục"
 	},
 	"permissions.visibility.title": {
-		"defaultMessage": "Khả năng hiển thị mục"
+		"defaultMessage": "Phạm vi hiển thị"
 	},
 	"permissions.visibility.user": {
-		"defaultMessage": "Chỉ các mục đã tạo"
+		"defaultMessage": "Chỉ các mục do mình tạo"
 	},
 	"proxy-host": {
 		"defaultMessage": "Máy chủ proxy"
 	},
 	"proxy-host.forward-host": {
-		"defaultMessage": "Chuyển tiếp Hostname / IP"
+		"defaultMessage": "Hostname / IP đích"
 	},
 	"proxy-hosts": {
 		"defaultMessage": "Máy chủ proxy"
@@ -516,25 +675,43 @@
 		"defaultMessage": "Công khai"
 	},
 	"redirection-host": {
-		"defaultMessage": "Redirection Host"
+		"defaultMessage": "Máy chủ chuyển hướng"
 	},
 	"redirection-host.forward-domain": {
-		"defaultMessage": "Chuyển tiếp Tên miền"
+		"defaultMessage": "Tên miền đích"
 	},
 	"redirection-host.forward-http-code": {
-		"defaultMessage": "HTTP Code"
+		"defaultMessage": "Mã HTTP"
 	},
 	"redirection-hosts": {
-		"defaultMessage": "Redirection Hosts"
+		"defaultMessage": "Máy chủ chuyển hướng"
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} máy chủ chuyển hướng"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Nhiều lựa chọn"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Chuyển hướng vĩnh viễn"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Chuyển hướng tạm thời"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Xem trang khác"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Chuyển hướng tạm thời (giữ phương thức)"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Chuyển hướng vĩnh viễn (giữ phương thức)"
 	},
 	"role.admin": {
 		"defaultMessage": "Quản trị viên"
 	},
 	"role.standard-user": {
-		"defaultMessage": "Người dùng bình thường"
+		"defaultMessage": "Người dùng thường"
 	},
 	"save": {
 		"defaultMessage": "Lưu"
@@ -555,10 +732,10 @@
 		"defaultMessage": "Không có phản hồi (444)"
 	},
 	"settings.default-site.congratulations": {
-		"defaultMessage": "Trang chào mừng"
+		"defaultMessage": "Trang chúc mừng"
 	},
 	"settings.default-site.description": {
-		"defaultMessage": "Hiển thị gì khi Nginx gặp phải Máy chủ không xác định"
+		"defaultMessage": "Nội dung hiển thị khi Nginx nhận yêu cầu tới tên miền không xác định"
 	},
 	"settings.default-site.html": {
 		"defaultMessage": "HTML tùy chỉnh"
@@ -582,19 +759,22 @@
 		"defaultMessage": "Chứng chỉ SSL"
 	},
 	"stream": {
-		"defaultMessage": "Stream"
+		"defaultMessage": "Luồng TCP/UDP"
 	},
 	"stream.forward-host": {
-		"defaultMessage": "Chuyển tiếp Host"
+		"defaultMessage": "Máy chủ đích"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com hoặc 10.0.0.1 hoặc 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Cổng vào"
 	},
 	"streams": {
-		"defaultMessage": "Danh sách các Stream"
+		"defaultMessage": "Luồng TCP/UDP"
 	},
 	"streams.count": {
-		"defaultMessage": "Số Stream {count}"
+		"defaultMessage": "{count} luồng TCP/UDP"
 	},
 	"streams.tcp": {
 		"defaultMessage": "TCP"
@@ -606,16 +786,16 @@
 		"defaultMessage": "Kiểm tra"
 	},
 	"update-available": {
-		"defaultMessage": "Cập nhật khả dụng: {latestVersion}"
+		"defaultMessage": "Đã có bản cập nhật: {latestVersion}"
 	},
 	"user": {
 		"defaultMessage": "Người dùng"
 	},
 	"user.change-password": {
-		"defaultMessage": "Đổi Mật khẩu"
+		"defaultMessage": "Đổi mật khẩu"
 	},
 	"user.confirm-password": {
-		"defaultMessage": "Xác nhận Mật khẩu"
+		"defaultMessage": "Xác nhận mật khẩu"
 	},
 	"user.current-password": {
 		"defaultMessage": "Mật khẩu hiện tại"
@@ -624,10 +804,10 @@
 		"defaultMessage": "Chỉnh sửa hồ sơ"
 	},
 	"user.full-name": {
-		"defaultMessage": "Tên"
+		"defaultMessage": "Họ và tên"
 	},
 	"user.login-as": {
-		"defaultMessage": "Đăng nhập bằng {name}"
+		"defaultMessage": "Đăng nhập với tư cách {name}"
 	},
 	"user.logout": {
 		"defaultMessage": "Đăng xuất"
@@ -639,7 +819,7 @@
 		"defaultMessage": "Tên hiển thị"
 	},
 	"user.set-password": {
-		"defaultMessage": "Đặt Mật khẩu"
+		"defaultMessage": "Đặt mật khẩu"
 	},
 	"user.set-permissions": {
 		"defaultMessage": "Đặt quyền cho {name}"
@@ -650,10 +830,13 @@
 	"user.switch-light": {
 		"defaultMessage": "Chuyển sang chế độ sáng"
 	},
+	"user.two-factor": {
+		"defaultMessage": "Xác thực hai lớp"
+	},
 	"username": {
 		"defaultMessage": "Tên người dùng"
 	},
 	"users": {
-		"defaultMessage": "Danh sách người dùng"
+		"defaultMessage": "Người dùng"
 	}
 }
