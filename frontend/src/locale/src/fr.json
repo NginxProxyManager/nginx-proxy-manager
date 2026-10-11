@@ -1,6 +1,6 @@
 {
 	"2fa.backup-codes-remaining": {
-		"defaultMessage": "Codes de secours restants : {count}"
+		"defaultMessage": "Codes de secours restants : {count}"
 	},
 	"2fa.backup-warning": {
 		"defaultMessage": "Sauvegardez ces codes de secours dans un endroit sûr. Chaque code ne peut être utilisé qu'une seule fois."
@@ -90,10 +90,10 @@
 		"defaultMessage": "192.168.1.100 ou 192.168.1.0/24 ou 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
-		"defaultMessage": "Valide n'importe quelle règle"
+		"defaultMessage": "Satisfaire au moins une condition"
 	},
 	"access-list.subtitle": {
-		"defaultMessage": "{utilisateurs} {utilisateurs, plural, one {Utilisateur} other {Utilisateurs}}, {règles} {règles, plural, one {Règle} other {Règles}} - Crée : {date}"
+		"defaultMessage": "{users} {users, plural, one {Utilisateur} other {Utilisateurs}}, {rules} {rules, plural, one {Règle} other {Règles}} - Créée le {date}"
 	},
 	"access-lists": {
 		"defaultMessage": "Listes d'accès"
@@ -102,7 +102,7 @@
 		"defaultMessage": "Ajouter"
 	},
 	"action.add-location": {
-		"defaultMessage": "Ajouter localisation"
+		"defaultMessage": "Ajouter un emplacement"
 	},
 	"action.allow": {
 		"defaultMessage": "Autoriser"
@@ -141,7 +141,7 @@
 		"defaultMessage": "Renouveler"
 	},
 	"action.view-details": {
-		"defaultMessage": "Voir les Détails"
+		"defaultMessage": "Voir les détails"
 	},
 	"auditlogs": {
 		"defaultMessage": "Journaux d'audit"
@@ -159,7 +159,7 @@
 		"defaultMessage": "Certificat"
 	},
 	"certificate.custom-certificate-key": {
-		"defaultMessage": "Clé du Certificat"
+		"defaultMessage": "Clé du certificat"
 	},
 	"certificate.custom-intermediate": {
 		"defaultMessage": "Certificat intermédiaire"
@@ -180,7 +180,7 @@
 		"defaultMessage": "Non utilisé"
 	},
 	"certificate.renew": {
-		"defaultMessage": "Renouveler Certificat"
+		"defaultMessage": "Renouveler le certificat"
 	},
 	"certificates": {
 		"defaultMessage": "Certificats"
@@ -201,7 +201,7 @@
 		"defaultMessage": "Ces données seront stockées en clair dans la base de données et dans un fichier !"
 	},
 	"certificates.dns.propagation-seconds": {
-		"defaultMessage": "Propagation Seconds"
+		"defaultMessage": "Délai de propagation (secondes)"
 	},
 	"certificates.dns.propagation-seconds-note": {
 		"defaultMessage": "Laisser vide pour utiliser la valeur par défaut du plugin. Nombre de secondes à attendre pour la propagation DNS."
@@ -228,10 +228,10 @@
 		"defaultMessage": "Votre serveur est accessible et la création de certificats devrait être possible."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé un code d'état inattendu {code}. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPM est exécutée."
+		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé un code d'état inattendu {code}. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPM est exécutée."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé des données inattendues. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPM est exécutée."
+		"defaultMessage": "Un serveur a été trouvé sur ce domaine, mais il a renvoyé des données inattendues. S'agit-il du serveur NPM ? Veuillez vérifier que votre domaine pointe bien vers l'adresse IP où votre instance NPM est exécutée."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Résultats du test"
@@ -267,7 +267,7 @@
 		"defaultMessage": "Autorisations"
 	},
 	"column.custom-locations": {
-		"defaultMessage": "Emplacement personnalisé"
+		"defaultMessage": "Emplacements personnalisés"
 	},
 	"column.destination": {
 		"defaultMessage": "Destination"
@@ -309,13 +309,13 @@
 		"defaultMessage": "Règles"
 	},
 	"column.satisfy": {
-		"defaultMessage": "Valide"
+		"defaultMessage": "Conditions requises"
 	},
 	"column.satisfy-all": {
-		"defaultMessage": "All"
+		"defaultMessage": "Toutes"
 	},
 	"column.satisfy-any": {
-		"defaultMessage": "Any"
+		"defaultMessage": "Au moins une"
 	},
 	"column.scheme": {
 		"defaultMessage": "Schéma"
@@ -330,7 +330,7 @@
 		"defaultMessage": "Statut"
 	},
 	"created-on": {
-		"defaultMessage": "Créé : {date}"
+		"defaultMessage": "Création : {date}"
 	},
 	"dashboard": {
 		"defaultMessage": "Tableau de bord"
@@ -357,10 +357,10 @@
 		"defaultMessage": "Commencez à écrire pour ajouter un domaine…"
 	},
 	"domain-names.wildcards-not-permitted": {
-		"defaultMessage": "Les Wildcards ne sont pas permises dans ce cas"
+		"defaultMessage": "Les wildcards ne sont pas permises dans ce cas"
 	},
 	"domain-names.wildcards-not-supported": {
-		"defaultMessage": "Les Wildcards ne sont pas prises en charge par cette autorité de certification."
+		"defaultMessage": "Les wildcards ne sont pas prises en charge par cette autorité de certification."
 	},
 	"domains.advanced": {
 		"defaultMessage": "Avancé"
@@ -390,7 +390,7 @@
 		"defaultMessage": "Aucun résultat trouvé"
 	},
 	"empty-subtitle": {
-		"defaultMessage": "Pourquoi n'en créez-vous pas un ?"
+		"defaultMessage": "Pourquoi n'en créez-vous pas un ?"
 	},
 	"enabled": {
 		"defaultMessage": "Activé"
@@ -405,7 +405,7 @@
 		"defaultMessage": "Adresse e-mail ou mot de passe invalide"
 	},
 	"error.invalid-domain": {
-		"defaultMessage": "Domaine invalide : {domain}"
+		"defaultMessage": "Domaine invalide : {domain}"
 	},
 	"error.invalid-email": {
 		"defaultMessage": "Adresse e-mail invalide"
@@ -432,16 +432,16 @@
 		"defaultMessage": "Ceci est obligatoire"
 	},
 	"expires.on": {
-		"defaultMessage": "Expire : {date}"
+		"defaultMessage": "Expire le {date}"
 	},
 	"footer.github-fork": {
-		"defaultMessage": "Forkez-moi sur Github"
+		"defaultMessage": "Forkez-moi sur GitHub"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Bloquer les exploits courants"
 	},
 	"host.flags.cache-assets": {
-		"defaultMessage": "Ressources du cache"
+		"defaultMessage": "Mise en cache des ressources"
 	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Préserver le chemin"
@@ -450,10 +450,10 @@
 		"defaultMessage": "Protocoles"
 	},
 	"host.flags.websockets-upgrade": {
-		"defaultMessage": "Prise en charge de Websockets"
+		"defaultMessage": "Prise en charge de WebSockets"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Port de redirection"
+		"defaultMessage": "Port de destination"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schéma"
@@ -549,7 +549,7 @@
 		"defaultMessage": "Configuration Nginx personnalisée"
 	},
 	"nginx-config.placeholder": {
-		"defaultMessage": "# Mettez ici votre configuration Nginx personnalisé à vos risques et périls !"
+		"defaultMessage": "# Mettez ici votre configuration Nginx personnalisée à vos risques et périls !"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Vous n'avez pas la permission de voir ce contenu."
@@ -663,7 +663,7 @@
 		"defaultMessage": "Hôte proxy"
 	},
 	"proxy-host.forward-host": {
-		"defaultMessage": "Nom d'hôte de redirection / IP"
+		"defaultMessage": "Nom d'hôte / IP de destination"
 	},
 	"proxy-hosts": {
 		"defaultMessage": "Hôtes proxy"
@@ -672,7 +672,7 @@
 		"defaultMessage": "{count} {count, plural, one {Hôte proxy} other {Hôtes proxy}}"
 	},
 	"public": {
-		"defaultMessage": "Publique"
+		"defaultMessage": "Public"
 	},
 	"redirection-host": {
 		"defaultMessage": "Hôte de redirection"
@@ -735,7 +735,7 @@
 		"defaultMessage": "Page de félicitations"
 	},
 	"settings.default-site.description": {
-		"defaultMessage": "ce qu'il faut afficher lorsqu'un hôte inconnu est détecté par Nginx"
+		"defaultMessage": "Ce qu'il faut afficher lorsqu'un hôte inconnu est détecté par Nginx"
 	},
 	"settings.default-site.html": {
 		"defaultMessage": "HTML personnalisé"
@@ -762,7 +762,7 @@
 		"defaultMessage": "Stream"
 	},
 	"stream.forward-host": {
-		"defaultMessage": "Hôte destinataire"
+		"defaultMessage": "Hôte de destination"
 	},
 	"stream.forward-host.placeholder": {
 		"defaultMessage": "example.com ou 10.0.0.1 ou 2001:db8:3333:4444:5555:6666:7777:8888"
@@ -786,7 +786,7 @@
 		"defaultMessage": "Test"
 	},
 	"update-available": {
-		"defaultMessage": "Mise à jour disponible : {latestVersion}"
+		"defaultMessage": "Mise à jour disponible : {latestVersion}"
 	},
 	"user": {
 		"defaultMessage": "Utilisateur"
@@ -825,10 +825,10 @@
 		"defaultMessage": "Définir les autorisations pour {name}"
 	},
 	"user.switch-dark": {
-		"defaultMessage": "Passer au mode Sombre"
+		"defaultMessage": "Passer au mode sombre"
 	},
 	"user.switch-light": {
-		"defaultMessage": "Passer au mode Lumineux"
+		"defaultMessage": "Passer au mode clair"
 	},
 	"user.two-factor": {
 		"defaultMessage": "Auth. à deux facteurs"
