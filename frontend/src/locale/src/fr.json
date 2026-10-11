@@ -71,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Notez que les directives autoriser et refuser seront appliquées dans l'ordre où elles sont définies."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Hériter de l'hôte proxy"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Utilise la liste d'accès de l'hôte proxy"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Transmettre l'authentification au serveur en amont"
 	},
@@ -101,6 +107,9 @@
 	"action.allow": {
 		"defaultMessage": "Autoriser"
 	},
+	"action.clear": {
+		"defaultMessage": "Effacer"
+	},
 	"action.close": {
 		"defaultMessage": "Fermer"
 	},
@@ -121,6 +130,9 @@
 	},
 	"action.enable": {
 		"defaultMessage": "Activer"
+	},
+	"action.logs": {
+		"defaultMessage": "Journaux"
 	},
 	"action.permissions": {
 		"defaultMessage": "Permissions"
@@ -265,6 +277,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "e-mail"
+	},
+	"column.error": {
+		"defaultMessage": "Erreurs"
 	},
 	"column.event": {
 		"defaultMessage": "Évènement"
@@ -461,6 +476,12 @@
 	"loading": {
 		"defaultMessage": "Chargement…"
 	},
+	"location.advanced-config": {
+		"defaultMessage": "Configuration Nginx personnalisée"
+	},
+	"location.filter": {
+		"defaultMessage": "Filtrer par chemin ou destination"
+	},
 	"login.2fa-code": {
 		"defaultMessage": "Code de vérification"
 	},
@@ -478,6 +499,51 @@
 	},
 	"login.title": {
 		"defaultMessage": "Connectez-vous à votre compte"
+	},
+	"logs": {
+		"defaultMessage": "Journaux"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Accès"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Erreurs"
+	},
+	"logs.download": {
+		"defaultMessage": "Télécharger"
+	},
+	"logs.empty": {
+		"defaultMessage": "Aucune entrée pour le moment."
+	},
+	"logs.level": {
+		"defaultMessage": "Niveau"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Tous les niveaux"
+	},
+	"logs.lines": {
+		"defaultMessage": "Lignes"
+	},
+	"logs.live": {
+		"defaultMessage": "En direct"
+	},
+	"logs.paused": {
+		"defaultMessage": "En pause"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Actualiser"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Rechercher dans les journaux…"
+	},
+	"logs.source": {
+		"defaultMessage": "Source"
+	},
+	"logs.source.system": {
+		"defaultMessage": "Système"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Seule la partie la plus récente de ce fichier est affichée."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Configuration Nginx personnalisée"
