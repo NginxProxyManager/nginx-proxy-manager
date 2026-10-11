@@ -29,6 +29,7 @@ export * from "./getHostsReport";
 export * from "./getLogSources";
 export * from "./getLogTail";
 export * from "./getProxyHost";
+export * from "./getProxyHostLogs";
 export * from "./getProxyHosts";
 export * from "./getRedirectionHost";
 export * from "./getRedirectionHosts";

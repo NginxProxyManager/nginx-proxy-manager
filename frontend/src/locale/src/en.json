@@ -71,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Note that the allow and deny directives will be applied in the order they are defined."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Inherit from Proxy Host"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Uses the proxy host's access list"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Pass Auth to Upstream"
 	},
@@ -124,6 +130,9 @@
 	},
 	"action.enable": {
 		"defaultMessage": "Enable"
+	},
+	"action.logs": {
+		"defaultMessage": "Logs"
 	},
 	"action.permissions": {
 		"defaultMessage": "Permissions"
@@ -268,6 +277,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "Email"
+	},
+	"column.error": {
+		"defaultMessage": "Error"
 	},
 	"column.event": {
 		"defaultMessage": "Event"

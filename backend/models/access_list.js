@@ -31,6 +31,10 @@ class AccessList extends Model {
 
 	$parseDatabaseJson(json) {
 		const thisJson = super.$parseDatabaseJson(json);
+		// Postgres returns COUNT() as a string
+		if (typeof thisJson.proxy_host_count === "string") {
+			thisJson.proxy_host_count = Number.parseInt(thisJson.proxy_host_count, 10);
+		}
 		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 

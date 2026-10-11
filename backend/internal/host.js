@@ -79,15 +79,18 @@ const internalHost = {
 			redirection_hosts: [],
 		};
 
-		const proxyRes = await proxyHostModel.query().where("is_deleted", 0);
+		const proxyRes = await proxyHostModel
+			.query()
+			.where("is_deleted", 0)
+			.withGraphFetched("[certificate, access_list.[clients,items]]");
 		responseObject.proxy_hosts = internalHost._getHostsWithDomains(proxyRes, domainNames);
 		responseObject.total_count += responseObject.proxy_hosts.length;
 
-		const redirRes = await redirectionHostModel.query().where("is_deleted", 0);
+		const redirRes = await redirectionHostModel.query().where("is_deleted", 0).withGraphFetched("[certificate]");
 		responseObject.redirection_hosts = internalHost._getHostsWithDomains(redirRes, domainNames);
 		responseObject.total_count += responseObject.redirection_hosts.length;
 
-		const deadRes = await deadHostModel.query().where("is_deleted", 0);
+		const deadRes = await deadHostModel.query().where("is_deleted", 0).withGraphFetched("[certificate]");
 		responseObject.dead_hosts = internalHost._getHostsWithDomains(deadRes, domainNames);
 		responseObject.total_count += responseObject.dead_hosts.length;
 

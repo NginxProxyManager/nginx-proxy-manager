@@ -6,6 +6,8 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
+import accessListModel from "../models/access_list.js";
+import certificateModel from "../models/certificate.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -168,6 +170,24 @@ const internalNginx = {
 						host.locations[i],
 					);
 
+					// A location with its own access list overrides the host's,
+					// otherwise it inherits the host's access list
+					let locationAccessList = null;
+					if (locationCopy.access_list_id > 0 && locationCopy.access_list_id !== host.access_list?.id) {
+						locationAccessList = await accessListModel
+							.query()
+							.where("is_deleted", 0)
+							.andWhere("id", locationCopy.access_list_id)
+							.withGraphFetched("[clients,items]")
+							.first();
+					}
+					if (locationAccessList) {
+						locationCopy.access_list = locationAccessList;
+					} else {
+						locationCopy.access_list_id = host.access_list_id;
+						locationCopy.access_list = host.access_list;
+					}
+
 					if (locationCopy.forward_host.indexOf("/") > -1) {
 						const splitted = locationCopy.forward_host.split("/");
 
@@ -179,7 +199,9 @@ const internalNginx = {
 				}
 			};
 
-			locationRendering().then(() => resolve(renderedLocations));
+			locationRendering()
+				.then(() => resolve(renderedLocations))
+				.catch(reject);
 		});
 	},
 
@@ -188,10 +210,12 @@ const internalNginx = {
 	 * @param   {Object}  host
 	 * @returns {Promise}
 	 */
-	generateConfig: (host_type, host_row) => {
+	generateConfig: async (host_type, host_row) => {
 		// Prevent modifying the original object:
 		const host = JSON.parse(JSON.stringify(host_row));
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
+
+		await internalNginx.loadRenderRelations(nice_host_type, host);
 
 		debug(logger, `Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));
 
@@ -271,8 +295,58 @@ const internalNginx = {
 						debug(logger, `Could not write ${filename}:`, err.message);
 						reject(new errs.ConfigurationError(err.message));
 					});
+			}).catch((err) => {
+				debug(logger, `Could not render locations for ${filename}:`, err.message);
+				reject(new errs.ConfigurationError(err.message));
 			});
 		});
+	},
+
+	/**
+	 * The templates rely on the certificate and access list relations being loaded.
+	 * Not every caller fetches them (or fetches them fully), and when they're missing
+	 * the config silently renders without SSL or without any access rules (#5919).
+	 * Load anything that is referenced but not loaded onto the given host object.
+	 *
+	 * @param   {String}  host_type
+	 * @param   {Object}  host
+	 * @returns {Promise}
+	 */
+	loadRenderRelations: async (host_type, host) => {
+		if (host.certificate_id > 0 && host.certificate?.id !== host.certificate_id) {
+			const certificate = await certificateModel
+				.query()
+				.where("is_deleted", 0)
+				.andWhere("id", host.certificate_id)
+				.first();
+			host.certificate = certificate ? JSON.parse(JSON.stringify(certificate)) : null;
+		}
+
+		if (host_type === "proxy_host" && host.access_list_id > 0) {
+			if (
+				host.access_list?.id !== host.access_list_id ||
+				!Array.isArray(host.access_list.clients) ||
+				!Array.isArray(host.access_list.items)
+			) {
+				const accessList = await accessListModel
+					.query()
+					.where("is_deleted", 0)
+					.andWhere("id", host.access_list_id)
+					.withGraphFetched("[clients,items]")
+					.first();
+				host.access_list = accessList ? JSON.parse(JSON.stringify(accessList)) : null;
+			}
+
+			if (!host.access_list) {
+				logger.warn(
+					`Proxy Host #${host.id} references Access List #${host.access_list_id} which does not exist`,
+				);
+			} else if (!host.access_list.clients.length && !host.access_list.items.length) {
+				logger.warn(
+					`Proxy Host #${host.id} uses Access List #${host.access_list_id} which has no clients or authorizations, no access restrictions will apply`,
+				);
+			}
+		}
 	},
 
 	/**

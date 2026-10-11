@@ -1,3 +1,4 @@
+import net from "node:net";
 import Ajv from "ajv/dist/2020.js";
 import errs from "../error.js";
 
@@ -8,6 +9,8 @@ const ajv = new Ajv({
 	strict: false,
 	coerceTypes: true,
 });
+
+ajv.addFormat("ipv6", { type: "string", validate: (value) => net.isIPv6(value) });
 
 /**
  * @param {Object} schema
