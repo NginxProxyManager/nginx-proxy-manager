@@ -46,7 +46,7 @@ function buildBody(data?: Record<string, any>): string | undefined {
 	}
 }
 
-async function processResponse(response: Response) {
+async function processResponse(response: Response, preserveResponseKeys = false) {
 	const payload = await response.json();
 	if (!response.ok) {
 		if (response.status === 401) {
@@ -59,7 +59,7 @@ async function processResponse(response: Response) {
 			typeof payload.error.messageI18n !== "undefined" ? payload.error.messageI18n : payload.error.message,
 		);
 	}
-	return camelizeKeys(payload) as any;
+	return (preserveResponseKeys ? payload : camelizeKeys(payload)) as any;
 }
 
 interface GetArgs {
@@ -97,9 +97,10 @@ interface PostArgs {
 	params?: queryString.StringifiableRecord;
 	data?: any;
 	noAuth?: boolean;
+	preserveResponseKeys?: boolean;
 }
 
-export async function post({ url, params, data, noAuth }: PostArgs, abortController?: AbortController) {
+export async function post({ url, params, data, noAuth, preserveResponseKeys }: PostArgs, abortController?: AbortController) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "POST";
 
@@ -126,7 +127,7 @@ export async function post({ url, params, data, noAuth }: PostArgs, abortControl
 
 	const signal = abortController?.signal;
 	const response = await fetch(apiUrl, { method, headers, body, signal });
-	return processResponse(response);
+	return processResponse(response, preserveResponseKeys);
 }
 
 interface PutArgs {
