@@ -30,3 +30,11 @@ as this is the standardized header meant for this kind of information. However h
 is not allowed in the [internet standard](https://www.rfc-editor.org/rfc/rfc7230#section-3.2.2) and almost all apps
 do not support multiple values in the `Authorization` header. Hence one of the two logins will be broken. This can
 only be fixed by either removing one of the logins or by changing the app to use other non-standard headers for authorization.
+
+## How do I disable Gravatar for privacy?
+
+Gravatar can be disabled by setting the `DISABLE_GRAVATAR` environment variable to `true`.
+
+```yaml
+environment:
+  DISABLE_GRAVATAR: 'true'
