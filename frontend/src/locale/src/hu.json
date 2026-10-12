@@ -347,6 +347,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Helyettesítő karakterek nem támogatottak ennél a CA-nál"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Haladó"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "SSL kényszerítése"
 	},
@@ -358,6 +361,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 támogatás"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "X-Forwarded-Proto fejlécek elfogadása"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge használata"
