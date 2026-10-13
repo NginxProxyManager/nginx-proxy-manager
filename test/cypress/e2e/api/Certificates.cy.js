@@ -35,6 +35,19 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
+	it('Unauthenticated user cannot validate custom certificate', () => {
+		cy.task('backendApiPostFiles', {
+			path:          '/api/nginx/certificates/validate',
+			files:         {
+				certificate:     certFile,
+				certificate_key: keyFile,
+			},
+			returnOnError: true,
+		}).then((data) => {
+			expect(data.error.code).to.equal(403);
+		});
+	});
+
 	it('Custom certificate lifecycle', () => {
 		// Create custom cert
 		cy.task('backendApiPost', {
