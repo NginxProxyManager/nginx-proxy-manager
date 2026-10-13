@@ -71,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Merk at tillat- og nekt-direktivene brukes i den rekkefølgen de er definert."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Arv fra proxyvert"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Bruker tilgangslisten til proxyverten"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Send autentisering til upstream"
 	},
@@ -84,7 +90,7 @@
 		"defaultMessage": "192.168.1.100 eller 192.168.1.0/24 eller 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
-		"defaultMessage": "Oppfyll en av kravene"
+		"defaultMessage": "Oppfyll ett av kravene"
 	},
 	"access-list.subtitle": {
 		"defaultMessage": "{users} {users, plural, one {bruker} other {brukere}}, {rules} {rules, plural, one {regel} other {regler}} - Opprettet: {date}"
@@ -100,6 +106,9 @@
 	},
 	"action.allow": {
 		"defaultMessage": "Tillat"
+	},
+	"action.clear": {
+		"defaultMessage": "Tøm"
 	},
 	"action.close": {
 		"defaultMessage": "Lukk"
@@ -121,6 +130,9 @@
 	},
 	"action.enable": {
 		"defaultMessage": "Aktiver"
+	},
+	"action.logs": {
+		"defaultMessage": "Logger"
 	},
 	"action.permissions": {
 		"defaultMessage": "Tillatelser"
@@ -144,13 +156,13 @@
 		"defaultMessage": "Sertifikat"
 	},
 	"certificate.custom-certificate": {
-		"defaultMessage": "Egendefinert Sertifikat"
+		"defaultMessage": "Egendefinert sertifikat"
 	},
 	"certificate.custom-certificate-key": {
-		"defaultMessage": "Egendefinert Sertifikat nøkkel"
+		"defaultMessage": "Egendefinert sertifikatnøkkel"
 	},
 	"certificate.custom-intermediate": {
-		"defaultMessage": "Egendefinert Intermediate Sertifikat"
+		"defaultMessage": "Mellomliggende sertifikat"
 	},
 	"certificate.in-use": {
 		"defaultMessage": "I bruk"
@@ -189,7 +201,7 @@
 		"defaultMessage": "Disse dataene vil bli lagret som ren tekst i databasen og i en fil!"
 	},
 	"certificates.dns.propagation-seconds": {
-		"defaultMessage": "Propageringsekunder"
+		"defaultMessage": "Sekunder for DNS-propagasjon"
 	},
 	"certificates.dns.propagation-seconds-note": {
 		"defaultMessage": "La stå tomt for å bruke pluginens standardverdi. Antall sekunder å vente på DNS-propagasjon."
@@ -266,6 +278,9 @@
 	"column.email": {
 		"defaultMessage": "E-post"
 	},
+	"column.error": {
+		"defaultMessage": "Feil"
+	},
 	"column.event": {
 		"defaultMessage": "Hendelse"
 	},
@@ -303,7 +318,7 @@
 		"defaultMessage": "Noen"
 	},
 	"column.scheme": {
-		"defaultMessage": "Skjema"
+		"defaultMessage": "Protokoll"
 	},
 	"column.source": {
 		"defaultMessage": "Kilde"
@@ -354,19 +369,19 @@
 		"defaultMessage": "Tving SSL"
 	},
 	"domains.hsts-enabled": {
-		"defaultMessage": "HSTS Aktivert"
+		"defaultMessage": "HSTS aktivert"
 	},
 	"domains.hsts-subdomains": {
-		"defaultMessage": "HSTS Underdomener"
+		"defaultMessage": "HSTS-underdomener"
 	},
 	"domains.http2-support": {
-		"defaultMessage": "HTTP/2 Støtte"
+		"defaultMessage": "HTTP/2-støtte"
 	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Stol på Upstream Forwarded Proto Headers"
 	},
 	"domains.use-dns": {
-		"defaultMessage": "Bruk DNS Utfordring"
+		"defaultMessage": "Bruk DNS-utfordring"
 	},
 	"email-address": {
 		"defaultMessage": "E-postadresse"
@@ -438,7 +453,7 @@
 		"defaultMessage": "Websockets-støtte"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Viderekoble Port"
+		"defaultMessage": "Videresendingsport"
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Skjema"
@@ -461,6 +476,12 @@
 	"loading": {
 		"defaultMessage": "Laster…"
 	},
+	"location.advanced-config": {
+		"defaultMessage": "Har egendefinert Nginx-konfigurasjon"
+	},
+	"location.filter": {
+		"defaultMessage": "Filtrer etter sti eller destinasjon"
+	},
 	"login.2fa-code": {
 		"defaultMessage": "Verifikasjonskode"
 	},
@@ -479,6 +500,51 @@
 	"login.title": {
 		"defaultMessage": "Logg på kontoen din"
 	},
+	"logs": {
+		"defaultMessage": "Logger"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Tilgang"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Feil"
+	},
+	"logs.download": {
+		"defaultMessage": "Last ned"
+	},
+	"logs.empty": {
+		"defaultMessage": "Ingen loggoppføringer ennå."
+	},
+	"logs.level": {
+		"defaultMessage": "Nivå"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Alle nivåer"
+	},
+	"logs.lines": {
+		"defaultMessage": "Linjer"
+	},
+	"logs.live": {
+		"defaultMessage": "Direkte"
+	},
+	"logs.paused": {
+		"defaultMessage": "Pauset"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Oppdater"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Søk i logg…"
+	},
+	"logs.source": {
+		"defaultMessage": "Kilde"
+	},
+	"logs.source.system": {
+		"defaultMessage": "System"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Bare den nyeste delen av denne filen vises."
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Egendefinert Nginx-konfigurasjon"
 	},
@@ -495,7 +561,7 @@
 		"defaultMessage": "Beklager, siden du leter etter ble ikke funnet"
 	},
 	"notfound.title": {
-		"defaultMessage": "Oops… Du har nettopp funnet en feilsiden"
+		"defaultMessage": "Ops… Du har nettopp funnet en feilsiden"
 	},
 	"notification.error": {
 		"defaultMessage": "Feil"
@@ -516,7 +582,7 @@
 		"defaultMessage": "{object} har blitt lagret"
 	},
 	"notification.success": {
-		"defaultMessage": "Suksess"
+		"defaultMessage": "Vellykket"
 	},
 	"object.actions-title": {
 		"defaultMessage": "{object} #{id}"
@@ -528,7 +594,7 @@
 		"defaultMessage": "Slett {object}"
 	},
 	"object.delete.content": {
-		"defaultMessage": "Er du sikker på at du vil slette dette {object}?"
+		"defaultMessage": "Er du sikker på at du vil slette {object}?"
 	},
 	"object.edit": {
 		"defaultMessage": "Rediger {object}"
@@ -588,7 +654,7 @@
 		"defaultMessage": "Alle elementer"
 	},
 	"permissions.visibility.title": {
-		"defaultMessage": "Element Synlighet"
+		"defaultMessage": "Elementenes synlighet"
 	},
 	"permissions.visibility.user": {
 		"defaultMessage": "Kun opprettede elementer"
@@ -597,7 +663,7 @@
 		"defaultMessage": "Proxy Host"
 	},
 	"proxy-host.forward-host": {
-		"defaultMessage": "Forward Hostname / IP"
+		"defaultMessage": "Videresendingsvertsnavn/-IP"
 	},
 	"proxy-hosts": {
 		"defaultMessage": "Proxy-verter"
