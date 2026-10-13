@@ -1,6 +1,7 @@
 export * from "./AccessClientFields";
 export * from "./AccessField";
 export * from "./BasicAuthFields";
+export * from "./CertificateMismatchWarning";
 export * from "./DNSProviderFields";
 export * from "./DomainNamesField";
 export * from "./LocationsFields";

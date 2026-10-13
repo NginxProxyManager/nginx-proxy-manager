@@ -8,6 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import {
 	AccessField,
 	Button,
+	CertificateMismatchWarning,
 	DomainNamesField,
 	HasPermission,
 	Loading,
@@ -164,6 +165,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
+												<CertificateMismatchWarning />
 												<div className="row">
 													<div className="col-md-3">
 														<Field name="forwardScheme">
@@ -340,6 +342,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													label="ssl-certificate"
 													allowNew
 												/>
+												<CertificateMismatchWarning />
 												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
 											</div>
 											<div className="tab-pane" id="tab-advanced" role="tabpanel">
