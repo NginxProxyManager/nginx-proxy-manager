@@ -53,4 +53,7 @@ configuration. It checks the live health response against the API schema, Force 
 and SSL-listener redirects, ACME/trusted-protocol exceptions, and generated proxy,
 redirection and 404 hosts with unrelated server-level error pages (custom and
 Let's Encrypt certificates). `scripts/ci/test-and-build` runs it after building
-that same image. Python 3 and a local Docker daemon are required.
+that same image. Requests run inside the tested container via `docker exec`, and
+`__FILE` inputs are copied into it before startup. This also works with a remote
+Docker daemon or a containerized CI agent; no published ports or shared temporary
+directory are needed. Python 3 and access to a Docker daemon are required.
