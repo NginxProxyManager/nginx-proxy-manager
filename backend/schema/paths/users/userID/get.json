@@ -1,10 +1,14 @@
 {
 	"operationId": "getUser",
 	"summary": "Get a user",
-	"tags": ["users"],
+	"tags": [
+		"users"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
 	"parameters": [
@@ -26,6 +30,17 @@
 			"required": true,
 			"description": "User ID or 'me' for yourself",
 			"example": 1
+		},
+		{
+			"in": "query",
+			"name": "expand",
+			"description": "Expansions",
+			"schema": {
+				"type": "string",
+				"enum": [
+					"permissions"
+				]
+			}
 		}
 	],
 	"responses": {
@@ -44,7 +59,9 @@
 								"name": "Jamie Curnow",
 								"nickname": "James",
 								"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-								"roles": ["admin"]
+								"roles": [
+									"admin"
+								]
 							}
 						}
 					},

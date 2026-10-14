@@ -1,7 +1,17 @@
 {
 	"type": "object",
 	"description": "Access List object",
-	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "meta", "satisfy_any", "pass_auth", "proxy_host_count"],
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"owner_user_id",
+		"name",
+		"meta",
+		"satisfy_any",
+		"pass_auth",
+		"proxy_host_count"
+	],
 	"properties": {
 		"id": {
 			"$ref": "../common.json#/properties/id"
@@ -21,8 +31,7 @@
 			"example": "My Access List"
 		},
 		"meta": {
-			"type": "object",
-			"example": {}
+			"$ref": "../common.json#/properties/meta"
 		},
 		"satisfy_any": {
 			"type": "boolean",
@@ -36,6 +45,116 @@
 			"type": "integer",
 			"minimum": 0,
 			"example": 3
+		},
+		"owner": {
+			"$ref": "./user-object.json"
+		},
+		"items": {
+			"type": "array",
+			"minItems": 0,
+			"items": {
+				"type": "object",
+				"required": [
+					"id",
+					"created_on",
+					"modified_on",
+					"access_list_id",
+					"username",
+					"password",
+					"hint",
+					"meta"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"$ref": "../common.json#/properties/id"
+					},
+					"created_on": {
+						"$ref": "../common.json#/properties/created_on"
+					},
+					"modified_on": {
+						"$ref": "../common.json#/properties/modified_on"
+					},
+					"access_list_id": {
+						"$ref": "../common.json#/properties/access_list_id"
+					},
+					"username": {
+						"$ref": "../common.json#/properties/authorization_username"
+					},
+					"password": {
+						"$ref": "../common.json#/properties/authorization_password"
+					},
+					"hint": {
+						"$ref": "../common.json#/properties/authorization_hint"
+					},
+					"meta": {
+						"$ref": "../common.json#/properties/meta"
+					}
+				}
+			},
+			"example": [
+				{
+					"id": 1,
+					"created_on": "2024-10-08T22:15:40.000Z",
+					"modified_on": "2024-10-08T22:15:40.000Z",
+					"access_list_id": 1,
+					"username": "admin",
+					"password": "",
+					"hint": "a****",
+					"meta": {}
+				}
+			]
+		},
+		"clients": {
+			"type": "array",
+			"minItems": 0,
+			"items": {
+				"type": "object",
+				"required": [
+					"id",
+					"created_on",
+					"modified_on",
+					"access_list_id",
+					"address",
+					"directive",
+					"meta"
+				],
+				"additionalProperties": false,
+				"properties": {
+					"id": {
+						"$ref": "../common.json#/properties/id"
+					},
+					"created_on": {
+						"$ref": "../common.json#/properties/created_on"
+					},
+					"modified_on": {
+						"$ref": "../common.json#/properties/modified_on"
+					},
+					"access_list_id": {
+						"$ref": "../common.json#/properties/access_list_id"
+					},
+					"address": {
+						"$ref": "../common.json#/properties/address"
+					},
+					"directive": {
+						"$ref": "../common.json#/properties/access_directive"
+					},
+					"meta": {
+						"$ref": "../common.json#/properties/meta"
+					}
+				}
+			},
+			"example": [
+				{
+					"id": 1,
+					"created_on": "2024-10-08T22:15:40.000Z",
+					"modified_on": "2024-10-08T22:15:40.000Z",
+					"access_list_id": 1,
+					"address": "127.0.0.1",
+					"directive": "allow",
+					"meta": {}
+				}
+			]
 		}
 	}
 }
