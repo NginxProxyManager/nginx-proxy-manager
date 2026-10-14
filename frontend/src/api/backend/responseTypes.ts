@@ -4,6 +4,7 @@ export interface HealthResponse {
 	status: string;
 	version: AppVersion;
 	setup: boolean;
+	publicPorts?: { http: number; https: number };
 }
 
 export interface TokenResponse {

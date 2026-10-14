@@ -1,6 +1,7 @@
 import cn from "classnames";
 import type { ReactNode } from "react";
 import { useLocaleState } from "src/context";
+import { useHealth } from "src/hooks/useHealth";
 import { formatDateTime, T } from "src/locale";
 
 interface Props {
@@ -9,9 +10,20 @@ interface Props {
 	niceName?: string;
 	provider?: string;
 	color?: string;
+	linkScheme?: "http" | "https";
 }
 
-const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
+const DomainLink = ({
+	domain,
+	color,
+	scheme,
+	suffix,
+}: {
+	domain?: string;
+	color?: string;
+	scheme: "http" | "https";
+	suffix: string;
+}) => {
 	// when domain contains a wildcard, make the link go nowhere.
 	// Apparently the domain can be null or undefined sometimes.
 	// This try is just a safeguard to prevent the whole formatter from breaking.
@@ -24,13 +36,14 @@ const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
 		return (
 			<a
 				key={domain}
-				href={`http://${domain}`}
+				href={`${scheme}://${domain}${suffix}`}
 				target="_blank"
 				rel="noopener"
 				onClick={onClick}
 				className={cn("badge", color ? `bg-${color}-lt` : null, "domain-name", "me-2")}
 			>
 				{domain}
+				{suffix}
 			</a>
 		);
 	} catch {
@@ -38,8 +51,13 @@ const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
 	}
 };
 
-export function DomainsFormatter({ domains, createdOn, niceName, provider, color }: Props) {
+export function DomainsFormatter({ domains, createdOn, niceName, provider, color, linkScheme }: Props) {
 	const { locale } = useLocaleState();
+	const health = useHealth();
+	const scheme = linkScheme ?? "http";
+	const defaultPort = scheme === "https" ? 443 : 80;
+	const port = linkScheme ? (health.data?.publicPorts?.[scheme] ?? defaultPort) : defaultPort;
+	const suffix = port === defaultPort ? "" : `:${port}`;
 	const elms: ReactNode[] = [];
 
 	if ((!domains || domains.length === 0) && !niceName) {
@@ -58,7 +76,9 @@ export function DomainsFormatter({ domains, createdOn, niceName, provider, color
 	}
 
 	if (domains) {
-		domains.map((domain: string) => elms.push(<DomainLink key={domain} domain={domain} color={color} />));
+		domains.map((domain: string) =>
+			elms.push(<DomainLink key={domain} domain={domain} color={color} scheme={scheme} suffix={suffix} />),
+		);
 	}
 
 	return (

@@ -41,6 +41,26 @@
 					"example": 1
 				}
 			}
+		},
+		"public_ports": {
+			"type": "object",
+			"description": "Public client-facing ports used by redirects and manager links",
+			"additionalProperties": false,
+			"required": ["http", "https"],
+			"properties": {
+				"http": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 65535,
+					"example": 80
+				},
+				"https": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 65535,
+					"example": 443
+				}
+			}
 		}
 	}
 }
