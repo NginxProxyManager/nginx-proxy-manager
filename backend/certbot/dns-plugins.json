@@ -224,12 +224,12 @@
 		"version": "~=0.1.2"
 	},
 	"edgedns": {
-		"credentials": "edgedns_client_secret = as3d1asd5d1a32sdfsdfs2d1asd5=\nedgedns_host = sdflskjdf-dfsdfsdf-sdfsdfsdf.luna.akamaiapis.net\nedgedns_access_token = kjdsi3-34rfsdfsdf-234234fsdfsdf\nedgedns_client_token = dkfjdf-342fsdfsd-23fsdfsdfsdf",
-		"dependencies": "",
-		"full_plugin_name": "edgedns",
-		"name": "Akamai Edge DNS",
-		"package_name": "certbot-plugin-edgedns",
-		"version": "~=0.1.0"
+  		"credentials": "client_token = YOUR_CLIENT_TOKEN\naccess_token = YOUR_ACCESS_TOKEN\nclient_secret = YOUR_CLIENT_SECRET\nhost = YOUR_HOST.luna.akamaiapis.net\n# Optional: account_key = YOUR_ACCOUNT_KEY",
+  		"dependencies": "",
+  		"full_plugin_name": "edgedns",
+  		"name": "Akamai Edge DNS",
+  		"package_name": "certbot-plugin-edgedns",
+  		"version": "==0.3.0"
 	},
 	"edgeone": {
 		"credentials": "dns_edgeone_secret_id = YOUR_TENCENTCLOUD_SECRET_ID\ndns_edgeone_secret_key = YOUR_TENCENTCLOUD_SECRET_KEY",
