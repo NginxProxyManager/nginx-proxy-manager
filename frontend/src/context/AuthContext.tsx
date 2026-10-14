@@ -2,12 +2,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createContext, type ReactNode, useContext, useState } from "react";
 import { useIntervalWhen } from "rooks";
 import {
+	exchangeSsoCode,
 	getToken,
 	isTwoFactorChallenge,
 	loginAsUser,
 	refreshToken,
-	verify2FA,
 	type TokenResponse,
+	verify2FA,
 } from "src/api/backend";
 import AuthStore from "src/modules/AuthStore";
 
@@ -21,6 +22,7 @@ export interface AuthContextType {
 	authenticated: boolean;
 	twoFactorChallenge: TwoFactorChallenge | null;
 	login: (username: string, password: string) => Promise<void>;
+	loginWithSsoCode: (code: string) => Promise<void>;
 	verifyTwoFactor: (code: string) => Promise<void>;
 	cancelTwoFactor: () => void;
 	loginAs: (id: number) => Promise<void>;
@@ -49,6 +51,20 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 
 	const login = async (identity: string, secret: string) => {
 		const response = await getToken(identity, secret);
+		if (isTwoFactorChallenge(response)) {
+			setTwoFactorChallenge({ challengeToken: response.challengeToken });
+			return;
+		}
+		handleTokenUpdate(response);
+	};
+
+	/**
+	 * Completes a SAML or OAuth login. The provider callback redirects back to
+	 * the app with a single use code, which is swapped for a real token here so
+	 * that the token itself never appears in a URL.
+	 */
+	const loginWithSsoCode = async (code: string) => {
+		const response = await exchangeSsoCode(code);
 		if (isTwoFactorChallenge(response)) {
 			setTwoFactorChallenge({ challengeToken: response.challengeToken });
 			return;
@@ -106,6 +122,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		authenticated,
 		twoFactorChallenge,
 		login,
+		loginWithSsoCode,
 		verifyTwoFactor,
 		cancelTwoFactor,
 		loginAs,

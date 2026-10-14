@@ -7,6 +7,9 @@ const estonian = et as Record<string, { defaultMessage: string }>;
 
 // Brand names, codes and ICU-only strings can stay the same as English.
 const allowedIdentical = new Set([
+	"auth-provider.type.ldap",
+	"auth-provider.type.oauth",
+	"auth-provider.type.saml",
 	"certificates.key-type-ecdsa",
 	"certificates.key-type-rsa",
 	"column.ssl",
