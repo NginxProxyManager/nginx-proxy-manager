@@ -1,4 +1,4 @@
-export type AccessListExpansion = "owner" | "items" | "clients";
+export type AccessListExpansion = "owner" | "items" | "clients" | "keys" | "tokens";
 export type AuditLogExpansion = "user";
 export type CertificateExpansion = "owner" | "proxy_hosts" | "redirection_hosts" | "dead_hosts" | "streams";
 export type HostExpansion = "owner" | "certificate";

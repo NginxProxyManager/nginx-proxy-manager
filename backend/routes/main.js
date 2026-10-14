@@ -4,6 +4,7 @@ import errs from "../lib/error.js";
 import logRequest from "../lib/express/log-request.js";
 import pjson from "../package.json" with { type: "json" };
 import { isSetup } from "../setup.js";
+import accessGateRoutes from "./access-gate.js";
 import auditLogRoutes from "./audit-log.js";
 import ciRoutes from "./ci.js";
 import logsRoutes from "./logs.js";
@@ -61,6 +62,7 @@ router.use("/nginx/dead-hosts", deadHostsRoutes);
 router.use("/nginx/streams", streamsRoutes);
 router.use("/nginx/access-lists", accessListsRoutes);
 router.use("/nginx/certificates", certificatesHostsRoutes);
+router.use("/access-gate", accessGateRoutes);
 
 // Only include CI routes if we're in a CI environment
 if (isCI()) {

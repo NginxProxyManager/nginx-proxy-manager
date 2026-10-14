@@ -114,6 +114,32 @@
 				"$ref": "./paths/nginx/access-lists/listID/delete.json"
 			}
 		},
+		"/nginx/access-lists/{listID}/keys/invites": {
+			"post": {
+				"$ref": "./paths/nginx/access-lists/listID/keys/invites/post.json"
+			}
+		},
+		"/nginx/access-lists/{listID}/keys/{keyID}": {
+			"put": {
+				"$ref": "./paths/nginx/access-lists/listID/keys/keyID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/access-lists/listID/keys/keyID/delete.json"
+			}
+		},
+		"/nginx/access-lists/{listID}/tokens": {
+			"post": {
+				"$ref": "./paths/nginx/access-lists/listID/tokens/post.json"
+			}
+		},
+		"/nginx/access-lists/{listID}/tokens/{tokenID}": {
+			"put": {
+				"$ref": "./paths/nginx/access-lists/listID/tokens/tokenID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/access-lists/listID/tokens/tokenID/delete.json"
+			}
+		},
 		"/nginx/certificates": {
 			"get": {
 				"$ref": "./paths/nginx/certificates/get.json"

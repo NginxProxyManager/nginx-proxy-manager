@@ -1,0 +1,82 @@
+{
+	"operationId": "updateAccessListKey",
+	"summary": "Rename a security key",
+	"tags": ["access-lists"],
+	"security": [
+		{
+			"bearerAuth": ["access_lists.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "listID",
+			"description": "Access List ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		},
+		{
+			"in": "path",
+			"name": "keyID",
+			"description": "Security Key ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 3
+		}
+	],
+	"requestBody": {
+		"description": "Security Key Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["name"],
+					"properties": {
+						"name": {
+							"$ref": "../../../../../../components/access-list-key-object.json#/properties/name"
+						}
+					}
+				},
+				"example": {
+					"name": "Backup YubiKey"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 3,
+								"created_on": "2026-10-04T08:00:00.000Z",
+								"modified_on": "2026-10-04T08:05:00.000Z",
+								"access_list_id": 2,
+								"name": "Backup YubiKey",
+								"rp_id": "example.com",
+								"transports": ["nfc", "usb"],
+								"last_used_on": null,
+								"meta": {}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../../../components/access-list-key-object.json"
+					}
+				}
+			}
+		}
+	}
+}

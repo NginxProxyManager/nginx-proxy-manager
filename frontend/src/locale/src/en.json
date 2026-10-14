@@ -77,6 +77,66 @@
 	"access-list.inherit.subtitle": {
 		"defaultMessage": "Uses the proxy host's access list"
 	},
+	"access-list.keys.add": {
+		"defaultMessage": "Register a key"
+	},
+	"access-list.keys.count": {
+		"defaultMessage": "{count} {count, plural, one {Key} other {Keys}}"
+	},
+	"access-list.keys.create-link": {
+		"defaultMessage": "Create registration link"
+	},
+	"access-list.keys.domain": {
+		"defaultMessage": "Domain"
+	},
+	"access-list.keys.empty": {
+		"defaultMessage": "No security keys registered yet."
+	},
+	"access-list.keys.enable": {
+		"defaultMessage": "Accept security keys"
+	},
+	"access-list.keys.enable.help": {
+		"defaultMessage": "Visitors sign in on a page on the site itself by tapping a registered key, over USB or NFC."
+	},
+	"access-list.keys.last-used": {
+		"defaultMessage": "Last used"
+	},
+	"access-list.keys.link.help": {
+		"defaultMessage": "Open this link on the device you'll use the key with, then insert or tap the key. The link works once and expires on {date}."
+	},
+	"access-list.keys.link.insecure": {
+		"defaultMessage": "This domain has no SSL certificate. Browsers only allow security keys over HTTPS."
+	},
+	"access-list.keys.link.none": {
+		"defaultMessage": "No proxy host with a fixed domain uses this list yet, so there's nowhere to register a key."
+	},
+	"access-list.keys.name": {
+		"defaultMessage": "Key name"
+	},
+	"access-list.keys.name.placeholder": {
+		"defaultMessage": "e.g. Backup YubiKey"
+	},
+	"access-list.keys.never": {
+		"defaultMessage": "Never"
+	},
+	"access-list.keys.registered": {
+		"defaultMessage": "\"{name}\" was registered."
+	},
+	"access-list.keys.save-first": {
+		"defaultMessage": "Turn on security keys, save this list and use it on a proxy host. Then open the list again to register keys."
+	},
+	"access-list.keys.session": {
+		"defaultMessage": "Stay signed in for"
+	},
+	"access-list.keys.session.days": {
+		"defaultMessage": "{count, plural, one {# day} other {# days}}"
+	},
+	"access-list.keys.session.hours": {
+		"defaultMessage": "{count, plural, one {# hour} other {# hours}}"
+	},
+	"access-list.keys.waiting": {
+		"defaultMessage": "Waiting for the key to be registered…"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Pass Auth to Upstream"
 	},
@@ -95,6 +155,60 @@
 	"access-list.subtitle": {
 		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}} - Created: {date}"
 	},
+	"access-list.tab.keys": {
+		"defaultMessage": "Security Keys"
+	},
+	"access-list.tab.tokens": {
+		"defaultMessage": "Tokens"
+	},
+	"access-list.tokens.add": {
+		"defaultMessage": "Add token"
+	},
+	"access-list.tokens.count": {
+		"defaultMessage": "{count} {count, plural, one {Token} other {Tokens}}"
+	},
+	"access-list.tokens.created": {
+		"defaultMessage": "Copy the token now. It won't be shown again."
+	},
+	"access-list.tokens.empty": {
+		"defaultMessage": "No tokens yet."
+	},
+	"access-list.tokens.forward": {
+		"defaultMessage": "Forward to upstream"
+	},
+	"access-list.tokens.forward.help": {
+		"defaultMessage": "Keep this on when the header is also the app's own credential, like Sonarr's X-Api-Key."
+	},
+	"access-list.tokens.generate": {
+		"defaultMessage": "Generate"
+	},
+	"access-list.tokens.header": {
+		"defaultMessage": "Header"
+	},
+	"access-list.tokens.header.custom": {
+		"defaultMessage": "Custom header"
+	},
+	"access-list.tokens.help": {
+		"defaultMessage": "Requests that send one of these headers get through without signing in. Use them for apps and scripts."
+	},
+	"access-list.tokens.last-used-on": {
+		"defaultMessage": "Last used: {date}"
+	},
+	"access-list.tokens.name.placeholder": {
+		"defaultMessage": "e.g. Overseerr"
+	},
+	"access-list.tokens.never-used": {
+		"defaultMessage": "Never used"
+	},
+	"access-list.tokens.save-first": {
+		"defaultMessage": "Save this list before adding tokens."
+	},
+	"access-list.tokens.value": {
+		"defaultMessage": "Value"
+	},
+	"access-list.tokens.value.help": {
+		"defaultMessage": "At least 16 characters. Paste an existing secret, such as the app's own API key, or generate a new one."
+	},
 	"access-lists": {
 		"defaultMessage": "Access Lists"
 	},
@@ -112,6 +226,12 @@
 	},
 	"action.close": {
 		"defaultMessage": "Close"
+	},
+	"action.copied": {
+		"defaultMessage": "Copied"
+	},
+	"action.copy": {
+		"defaultMessage": "Copy"
 	},
 	"action.delete": {
 		"defaultMessage": "Delete"
@@ -136,6 +256,9 @@
 	},
 	"action.permissions": {
 		"defaultMessage": "Permissions"
+	},
+	"action.rename": {
+		"defaultMessage": "Rename"
 	},
 	"action.renew": {
 		"defaultMessage": "Renew"

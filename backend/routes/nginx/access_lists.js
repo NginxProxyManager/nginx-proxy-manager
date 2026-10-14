@@ -152,4 +152,184 @@ router
 		}
 	});
 
+/**
+ * Security key enrollment links
+ *
+ * /api/nginx/access-lists/123/keys/invites
+ */
+router
+	.route("/:list_id/keys/invites")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * POST /api/nginx/access-lists/123/keys/invites
+	 *
+	 * Create a one-time link for registering a security key
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const payload = await apiValidator(
+				getValidationSchema("/nginx/access-lists/{listID}/keys/invites", "post"),
+				req.body,
+			);
+			const result = await internalAccessList.createKeyInvite(
+				res.locals.access,
+				Number.parseInt(req.params.list_id, 10),
+				payload,
+			);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * Specific security key
+ *
+ * /api/nginx/access-lists/123/keys/456
+ */
+router
+	.route("/:list_id/keys/:key_id")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * PUT /api/nginx/access-lists/123/keys/456
+	 *
+	 * Rename a security key
+	 */
+	.put(async (req, res, next) => {
+		try {
+			const payload = await apiValidator(
+				getValidationSchema("/nginx/access-lists/{listID}/keys/{keyID}", "put"),
+				req.body,
+			);
+			const result = await internalAccessList.updateKey(
+				res.locals.access,
+				Number.parseInt(req.params.list_id, 10),
+				Number.parseInt(req.params.key_id, 10),
+				payload,
+			);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
+	 * DELETE /api/nginx/access-lists/123/keys/456
+	 *
+	 * Remove a security key
+	 */
+	.delete(async (req, res, next) => {
+		try {
+			const result = await internalAccessList.deleteKey(
+				res.locals.access,
+				Number.parseInt(req.params.list_id, 10),
+				Number.parseInt(req.params.key_id, 10),
+			);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * Header tokens
+ *
+ * /api/nginx/access-lists/123/tokens
+ */
+router
+	.route("/:list_id/tokens")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * POST /api/nginx/access-lists/123/tokens
+	 *
+	 * Add a header token
+	 */
+	.post(async (req, res, next) => {
+		try {
+			const payload = await apiValidator(
+				getValidationSchema("/nginx/access-lists/{listID}/tokens", "post"),
+				req.body,
+			);
+			const result = await internalAccessList.createToken(
+				res.locals.access,
+				Number.parseInt(req.params.list_id, 10),
+				payload,
+			);
+			res.status(201).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * Specific header token
+ *
+ * /api/nginx/access-lists/123/tokens/456
+ */
+router
+	.route("/:list_id/tokens/:token_id")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * PUT /api/nginx/access-lists/123/tokens/456
+	 *
+	 * Rename a header token or change whether it's forwarded
+	 */
+	.put(async (req, res, next) => {
+		try {
+			const payload = await apiValidator(
+				getValidationSchema("/nginx/access-lists/{listID}/tokens/{tokenID}", "put"),
+				req.body,
+			);
+			const result = await internalAccessList.updateToken(
+				res.locals.access,
+				Number.parseInt(req.params.list_id, 10),
+				Number.parseInt(req.params.token_id, 10),
+				payload,
+			);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	})
+
+	/**
+	 * DELETE /api/nginx/access-lists/123/tokens/456
+	 *
+	 * Remove a header token
+	 */
+	.delete(async (req, res, next) => {
+		try {
+			const result = await internalAccessList.deleteToken(
+				res.locals.access,
+				Number.parseInt(req.params.list_id, 10),
+				Number.parseInt(req.params.token_id, 10),
+			);
+			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
 export default router;

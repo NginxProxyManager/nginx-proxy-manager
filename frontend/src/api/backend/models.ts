@@ -77,11 +77,39 @@ export interface AccessList {
 	meta: Record<string, any>;
 	satisfyAny: boolean;
 	passAuth: boolean;
+	keyAuth: boolean;
+	keySessionHours: number;
 	proxyHostCount?: number;
 	// Expansions:
 	owner?: User;
 	items?: AccessListItem[];
 	clients?: AccessListClient[];
+	keys?: AccessListKey[];
+	tokens?: AccessListToken[];
+}
+
+export interface AccessListKey {
+	id: number;
+	createdOn: string;
+	modifiedOn: string;
+	accessListId: number;
+	name: string;
+	rpId: string;
+	transports: string[];
+	lastUsedOn: string | null;
+	meta: Record<string, any>;
+}
+
+export interface AccessListToken {
+	id: number;
+	createdOn: string;
+	modifiedOn: string;
+	accessListId: number;
+	name: string;
+	headerName: string;
+	forward: boolean;
+	lastUsedOn: string | null;
+	meta: Record<string, any>;
 }
 
 export interface AccessListItem {
