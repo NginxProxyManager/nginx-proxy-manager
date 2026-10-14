@@ -161,7 +161,7 @@ router
 		}
 
 		try {
-			const result = await internalCertificate.validate({
+			const result = await internalCertificate.validate(res.locals.access, {
 				files: req.files,
 			});
 			res.status(200).send(result);

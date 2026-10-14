@@ -37,6 +37,7 @@ services:
           - website1.example.com
           - website2.example.com
           - website3.example.com
+          - website4.example.com
 
   examplesite:
     image: "${IMAGE}-examplesite:ci-${BUILD_NUMBER}"
