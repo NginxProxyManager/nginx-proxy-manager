@@ -1,0 +1,776 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Kvarvarande backup-koder: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Spara dessa backup-koder på en säker plats. Varje kod kan bara användas en gång."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Inaktivera tvåfaktorsautentisering"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Inaktivera 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Att inaktivera tvåfaktorsautentisering gör ditt konto mindre säkert."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Inaktiverad"
+	},
+	"2fa.done": {
+		"defaultMessage": "Jag har sparat mina backup-koder"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Aktivera tvåfaktorsautentisering"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Aktiverad"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Ange verifieringskod"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Ange verifieringskod för att inaktivera"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Förnya"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Generera nya backup-koder"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Ange en verifieringskod för att generera nya backup-koder. Dina gamla koder blir ogiltiga."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Hemlig nyckel"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Scanna den här QR-koden med din autenticator-app, eller skriv in nyckeln manuellt."
+	},
+	"2fa.status": {
+		"defaultMessage": "Status"
+	},
+	"2fa.title": {
+		"defaultMessage": "Tvåfaktorsautentisering"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verifiera och aktivera"
+	},
+	"access-list": {
+		"defaultMessage": "Tillgangslista"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {regel} other {regler}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {användare} other {användare}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "När minst en regel finns läggs den \"deny all\"-regeln till sist"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Var tillåt- och nek-direktiv används i den ordning de är definierade."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Skicka autentisering till upstream"
+	},
+	"access-list.public": {
+		"defaultMessage": "Offentlig tillgänglig"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Ingen grundläggande autentisering krävs"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 eller 192.168.1.0/24 eller 2001:db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Uppfyll ett krav"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {användare} other {användare}}, {rules} {rules, plural, one {regel} other {regler}} - Skapad: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Tillgångslister"
+	},
+	"action.add": {
+		"defaultMessage": "Lägg till"
+	},
+	"action.add-location": {
+		"defaultMessage": "Lägg till plats"
+	},
+	"action.allow": {
+		"defaultMessage": "Tillåt"
+	},
+	"action.close": {
+		"defaultMessage": "Stäng"
+	},
+	"action.delete": {
+		"defaultMessage": "Ta bort"
+	},
+	"action.deny": {
+		"defaultMessage": "Neka"
+	},
+	"action.disable": {
+		"defaultMessage": "Inaktivera"
+	},
+	"action.download": {
+		"defaultMessage": "Ladda ner"
+	},
+	"action.edit": {
+		"defaultMessage": "Redigera"
+	},
+	"action.enable": {
+		"defaultMessage": "Aktivera"
+	},
+	"action.permissions": {
+		"defaultMessage": "Tillstånd"
+	},
+	"action.renew": {
+		"defaultMessage": "Förnya"
+	},
+	"action.view-details": {
+		"defaultMessage": "Visa detaljer"
+	},
+	"auditlogs": {
+		"defaultMessage": "Granskningslogg"
+	},
+	"auto": {
+		"defaultMessage": "Auto"
+	},
+	"cancel": {
+		"defaultMessage": "Avbryt"
+	},
+	"certificate": {
+		"defaultMessage": "Certifikat"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Anpassat certifikat"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Anpassad certifikatnyckel"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Anstandscertifikat"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Används"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Ingt certifikat tilldelat"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Denna värd kommer inte att använda HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Ingen"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Inte i användning"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Förnya certifikat"
+	},
+	"certificates": {
+		"defaultMessage": "Certifikat"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Anpassat certifikat"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Nyckelfiler med lösenfras stöds inte."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Innehåll i autentiseringsfil"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Den här pluginen kräver en konfigurationsfil som innehåller en API-token eller andra äktestegenskaper för din leverantör"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Denna data kommer att lagras som ren text i databasen och i en fil!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "DNS-propageringssekunder"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Lämna tomt för att använda plugins standardvärde. Antal sekunder att vänta på DNS-propagering."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS-leverantör"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Välj en leverantör..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Denna sektion kräver kunskap om Certbot och dess DNS-plugin. Vänligen konsultera dokumentationen för respektive plugin."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Det finns en server på detta domän, men det ser inte ut att vara Nginx Proxy Manager. Se till att ditt domän pekar på IP-adressen där NPM-instansen körs."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Kunde inte kontrollera tillgänglighet på grund av kommunikationsfel med site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Det finns ingen server tillgänglig på detta domän. Se till att ditt domän finns och pekar på IP-adressen där NPM-instansen körs, och om nödvändigt att port 80 är forwarding i din router."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Din server är tillgänglig, och det bör vara möjligt att skapa certifikat."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Det finns en server på detta domän, men den returnerade en oväntad kod {code}. Är det NPM-servern? Se till att ditt domän pekar på IP-adressen där NPM-instansen körs."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Det finns en server på detta domän, men den returnerade oväntade data. Är det NPM-servern? Se till att ditt domän pekar på IP-adressen där NPM-instansen körs."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Testresultat"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": " Dessa domänerna måste redan konfigureras att peka mot den här installationen."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Nyckeltyp"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA är bredt kompatibel, ECDSA är snabbare och mer säker, men kanske inte stöds av äldre system"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "med Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Begär ett nytt certifikat"
+	},
+	"column.access": {
+		"defaultMessage": "Åtkomst"
+	},
+	"column.authorization": {
+		"defaultMessage": "Autorisering"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Autoriseringar"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Anpassade platser"
+	},
+	"column.destination": {
+		"defaultMessage": "Destination"
+	},
+	"column.details": {
+		"defaultMessage": "Detaljer"
+	},
+	"column.email": {
+		"defaultMessage": "E-post"
+	},
+	"column.event": {
+		"defaultMessage": "Händelse"
+	},
+	"column.expires": {
+		"defaultMessage": "Utgår"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP-kod"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Inkommande port"
+	},
+	"column.name": {
+		"defaultMessage": "Namn"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protokoll"
+	},
+	"column.provider": {
+		"defaultMessage": "Leverantör"
+	},
+	"column.roles": {
+		"defaultMessage": "Roller"
+	},
+	"column.rules": {
+		"defaultMessage": "Regler"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Uppfyll"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Alla"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Någon"
+	},
+	"column.scheme": {
+		"defaultMessage": "Schema"
+	},
+	"column.source": {
+		"defaultMessage": "Källa"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Status"
+	},
+	"created-on": {
+		"defaultMessage": "Skapad: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Instrumentpanel"
+	},
+	"dead-host": {
+		"defaultMessage": "404-tjänst inte funnen"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404-tjänster inte funna"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {404-tjänst} other {404-tjänster}}"
+	},
+	"disabled": {
+		"defaultMessage": "Inaktiverad"
+	},
+	"domain-names": {
+		"defaultMessage": "Domännamn"
+	},
+	"domain-names.max": {
+		"defaultMessage": "{count} domännamn maximalt"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Börja skriva för att lägga till domän..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Wildcards tillåts inte för den här typen"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Wildcards stöds inte för den här CA:n"
+	},
+	"domains.advanced": {
+		"defaultMessage": "Avancerad"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Zwång SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS aktiverat"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS underdomäner"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2-stöd"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Förtroende för upstream forwarded proto-huvuden"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Använd DNS-utmaning"
+	},
+	"email-address": {
+		"defaultMessage": "E-postadress"
+	},
+	"empty-search": {
+		"defaultMessage": "Inga resultat hittade"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Varför inte skapa en?"
+	},
+	"enabled": {
+		"defaultMessage": "Aktiv"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Antingen en autorisering eller en tillgångsregel krävs"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Autentiseringsanvändarnamnen måste vara unika"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Ogiltig e-post eller lösenord"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Ogiltigt domän: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Ogiltig e-postadress"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Maximal längd är {max} tecken"
+	},
+	"error.max-domains": {
+		"defaultMessage": "För många domännamn, max är {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Maximum är {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Minsta längd är {min} tecken"
+	},
+	"error.minimum": {
+		"defaultMessage": "Minimum är {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Lösenorden måste matcha"
+	},
+	"error.required": {
+		"defaultMessage": "Detta krävs"
+	},
+	"expires.on": {
+		"defaultMessage": "Utgår: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Fork mig på GitHub"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Blockera vanliga utnyttjanden"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Cacha resurser"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Bevara sökväg"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protokoll"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Websocket-stöd"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Vidarekoppla port"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Schema"
+	},
+	"hosts": {
+		"defaultMessage": "Värdar"
+	},
+	"http-only": {
+		"defaultMessage": "Endast HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt via DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt via HTTP"
+	},
+	"loading": {
+		"defaultMessage": "Laddar..."
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Verifieringskod"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Skriv in kod"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Skriv in koden från din autenticator-app"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Tvåfaktorsautentisering"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verifiera"
+	},
+	"login.title": {
+		"defaultMessage": "Logga in på ditt konto"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Anpassad Nginx-konfiguration"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Skriv in din anpassade Nginx-konfiguration här på egen risk!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Du har inte tillgång att se detta"
+	},
+	"notfound.action": {
+		"defaultMessage": "Tag mig hem"
+	},
+	"notfound.content": {
+		"defaultMessage": "Beklagar, sidan du sökte efter hittades inte"
+	},
+	"notfound.title": {
+		"defaultMessage": "Oops... du har precis hittat en fel-sida"
+	},
+	"notification.error": {
+		"defaultMessage": "Fel"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} har tagits bort"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} har inaktiverats"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} har aktiverats"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} har förnyats"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} har sparats"
+	},
+	"notification.success": {
+		"defaultMessage": "Lyckades"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Lägg till {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "Ta bort {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Är du säker på att du vill ta bort den här {object}?"
+	},
+	"object.edit": {
+		"defaultMessage": "Redigera {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "Ingen {objects}"
+	},
+	"object.event.created": {
+		"defaultMessage": "Skapad {object}"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "Raderad {object}"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "Inaktiverad {object}"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "Aktiviterad {object}"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "Förnyad {object}"
+	},
+	"object.event.updated": {
+		"defaultMessage": "Uppdaterad {object}"
+	},
+	"offline": {
+		"defaultMessage": "Offline"
+	},
+	"online": {
+		"defaultMessage": "Online"
+	},
+	"options": {
+		"defaultMessage": "Alternativ"
+	},
+	"password": {
+		"defaultMessage": "Lösenord"
+	},
+	"password.generate": {
+		"defaultMessage": "Generera slumpmässigt lösenord"
+	},
+	"password.hide": {
+		"defaultMessage": "Göm lösenord"
+	},
+	"password.show": {
+		"defaultMessage": "Visa lösenord"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Gölggt"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Hantera"
+	},
+	"permissions.view": {
+		"defaultMessage": "Endast visa"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Alla poster"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Synlighet för poster"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Endast skapade poster"
+	},
+	"proxy-host": {
+		"defaultMessage": "Proxy-värd"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Forward Hostname / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Proxy-värdar"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Proxy-värd} other {Proxy-värdar}}"
+	},
+	"public": {
+		"defaultMessage": "Offentlig"
+	},
+	"redirection-host": {
+		"defaultMessage": "Omdirigeringsvärd"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Forward domain"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP-kod"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Omdirigeringsvärdar"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Omdirigeringsvärd} other {Omdirigeringsvärdar}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Flera val"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Permanent omdirigering"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Tillfällig omdirigering"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Se annan"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Tillfällig omdirigering"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Permanent omdirigering"
+	},
+	"role.admin": {
+		"defaultMessage": "Administratör"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Standardanvändare"
+	},
+	"save": {
+		"defaultMessage": "Spara"
+	},
+	"setting": {
+		"defaultMessage": "Inställning"
+	},
+	"settings": {
+		"defaultMessage": "Inställningar"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Standardplats"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404-sida"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Ingen respons (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Grattis-sida"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Vad som ska visas när Nginx träffar en okänd värd"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Anpassad HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Skriv in ditt anpassade HTML-innehåll här -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Omdirigering"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Kom igång genom att skapa din administratörskonto."
+	},
+	"setup.title": {
+		"defaultMessage": "Välkommen!"
+	},
+	"sign-in": {
+		"defaultMessage": "Logga in"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL-certifikat"
+	},
+	"stream": {
+		"defaultMessage": "Ström"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Forward värd"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com eller 10.0.0.1 eller 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Inkommande port"
+	},
+	"streams": {
+		"defaultMessage": "Strömmar"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {Ström} other {Strömmar}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Test"
+	},
+	"update-available": {
+		"defaultMessage": "Uppdatering tillgänglig: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "Användare"
+	},
+	"user.change-password": {
+		"defaultMessage": "Ändra lösenord"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Bekräfta lösenord"
+	},
+	"user.current-password": {
+		"defaultMessage": "Nuvarande lösenord"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Redigera profil"
+	},
+	"user.full-name": {
+		"defaultMessage": "Fullständigt namn"
+	},
+	"user.login-as": {
+		"defaultMessage": "Logga in som {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "Logga ut"
+	},
+	"user.new-password": {
+		"defaultMessage": "Nytt lösenord"
+	},
+	"user.nickname": {
+		"defaultMessage": "Nickname"
+	},
+	"user.set-password": {
+		"defaultMessage": "Ange lösenord"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Ange behörigheter för {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Vänd till mörk läge"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Vänd till ljust läge"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Tvåfaktorsautentisering"
+	},
+	"username": {
+		"defaultMessage": "Användarnamn"
+	},
+	"users": {
+		"defaultMessage": "Användare"
+	}
+}
