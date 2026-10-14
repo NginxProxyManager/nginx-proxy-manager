@@ -61,7 +61,8 @@ export function BasicAuthFields({ initialValues, name = "items" }: Props) {
 					<div className="col-6">
 						<input
 							type="text"
-							autoComplete="off"
+							name={`${name}-username-${idx}`}
+							autoComplete="new-password"
 							className="form-control input-sm"
 							value={item.username}
 							onChange={(e) => handleChange(idx, "username", e.target.value)}
@@ -70,7 +71,8 @@ export function BasicAuthFields({ initialValues, name = "items" }: Props) {
 					<div className="col-5">
 						<input
 							type="password"
-							autoComplete="off"
+							name={`${name}-password-${idx}`}
+							autoComplete="new-password"
 							className="form-control"
 							value={item.password}
 							placeholder={
