@@ -13,7 +13,7 @@ import {
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
-import { useRedirectionHost, useSetRedirectionHost } from "src/hooks";
+import { useRedirectionHost, useSetRedirectionHost, useUser } from "src/hooks";
 import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
@@ -26,10 +26,13 @@ interface Props extends InnerModalProps {
 	id: number | "new";
 }
 const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
+	const { data: currentUser } = useUser("me");
 	const { data, isLoading, error } = useRedirectionHost(id);
 	const { mutate: setRedirectionHost } = useSetRedirectionHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const isAdmin = currentUser?.roles?.includes("admin");
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
@@ -40,6 +43,11 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 			id: id === "new" ? undefined : id,
 			...values,
 		};
+
+		if (!isAdmin) {
+			delete payload.advanced_config;
+			delete payload.advancedConfig;
+		}
 
 		setRedirectionHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
@@ -126,19 +134,21 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 													<T id="column.ssl" />
 												</a>
 											</li>
-											<li className="nav-item ms-auto" role="presentation">
-												<a
-													href="#tab-advanced"
-													className="nav-link"
-													title="Settings"
-													data-bs-toggle="tab"
-													aria-selected="false"
-													tabIndex={-1}
-													role="tab"
-												>
-													<IconSettings size={20} />
-												</a>
-											</li>
+											{isAdmin && (
+												<li className="nav-item ms-auto" role="presentation">
+													<a
+														href="#tab-advanced"
+														className="nav-link"
+														title="Settings"
+														data-bs-toggle="tab"
+														aria-selected="false"
+														tabIndex={-1}
+														role="tab"
+													>
+														<IconSettings size={20} />
+													</a>
+												</li>
+											)}
 										</ul>
 									</div>
 									<div className="card-body">
@@ -318,9 +328,11 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 												/>
 												<SSLOptionsFields color="bg-yellow" />
 											</div>
-											<div className="tab-pane" id="tab-advanced" role="tabpanel">
-												<NginxConfigField />
-											</div>
+											{isAdmin && (
+												<div className="tab-pane" id="tab-advanced" role="tabpanel">
+													<NginxConfigField />
+												</div>
+											)}
 										</div>
 									</div>
 								</div>

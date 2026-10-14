@@ -53,8 +53,13 @@ const internalRedirectionHost = {
 
 				// Fix for db field not having a default value
 				// for this optional field.
-				if (typeof data.advanced_config === "undefined") {
-					data.advanced_config = "";
+				if (typeof thisData.advanced_config === "undefined") {
+					thisData.advanced_config = "";
+				}
+
+				const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
+				if (!isAdmin && thisData.advanced_config && thisData.advanced_config.trim() !== "") {
+					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
 				}
 
 				return redirectionHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
@@ -182,6 +187,15 @@ const internalRedirectionHost = {
 				);
 
 				thisData = internalHost.cleanSslHstsData(thisData, row);
+
+				const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
+				if (
+					!isAdmin &&
+					typeof thisData.advanced_config !== "undefined" &&
+					thisData.advanced_config !== row.advanced_config
+				) {
+					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
+				}
 
 				return redirectionHostModel
 					.query()
