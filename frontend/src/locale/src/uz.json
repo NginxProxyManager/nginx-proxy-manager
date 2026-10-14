@@ -1,0 +1,794 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Qolgan zaxira kodlari: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Ushbu zaxira kodlarini xavfsiz joyda saqlang. Har bir koddan faqat bir marta foydalanish mumkin."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Ikki bosqichli autentifikatsiyani o'chirish"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "2FA ni o'chirish"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Ikki bosqichli autentifikatsiyani o'chirish hisobingiz xavfsizligini kamaytiradi."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "O'chirilgan"
+	},
+	"2fa.done": {
+		"defaultMessage": "Men zaxira kodlarimni saqlab qo'ydim"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Ikki bosqichli autentifikatsiyani yoqish"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Yoqilgan"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Tasdiqlash kodini kiriting"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "O'chirish uchun tasdiqlash kodini kiriting"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Qayta yaratish"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Zaxira kodlarini qayta yaratish"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Yangi zaxira kodlarini yaratish uchun tasdiqlash kodini kiriting. Eski kodlar bekor qilinadi."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Maxfiy kalit (Secret Key)"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Ushbu QR kodni autentifikator ilovangiz bilan skanerlang yoki maxfiy kalitni qo'lda kiriting."
+	},
+	"2fa.status": {
+		"defaultMessage": "Holati"
+	},
+	"2fa.title": {
+		"defaultMessage": "Ikki bosqichli autentifikatsiya (2FA)"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Tasdiqlash va yoqish"
+	},
+	"access-list": {
+		"defaultMessage": "Kirish ro'yxati"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {Qoida} other {Qoidalar}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {Foydalanuvchi} other {Foydalanuvchilar}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Kamida 1 ta qoida mavjud bo'lsa, barchasini rad etish qoidasi oxirida qo'shiladi"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "E'tibor bering, ruxsat berish (allow) va rad etish (deny) qoidalari belgilangan tartibda qo'llaniladi."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Autentifikatsiyani serverga (Upstream) uzatish"
+	},
+	"access-list.public": {
+		"defaultMessage": "Ommaviy ochiq"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Asosiy autentifikatsiya talab qilinmaydi"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 yoki 192.168.1.0/24 yoki 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Ixtiyoriy bittasiga mos kelish (Satisfy Any)"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {Foydalanuvchi} other {Foydalanuvchilar}}, {rules} {rules, plural, one {Qoida} other {Qoidalar}} - Yaratilgan: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Kirish ro'yxatlari"
+	},
+	"action.add": {
+		"defaultMessage": "Qo'shish"
+	},
+	"action.add-location": {
+		"defaultMessage": "Joylashuv (Location) qo'shish"
+	},
+	"action.allow": {
+		"defaultMessage": "Ruxsat berish"
+	},
+	"action.clear": {
+		"defaultMessage": "Tozalash"
+	},
+	"action.close": {
+		"defaultMessage": "Yopish"
+	},
+	"action.delete": {
+		"defaultMessage": "O'chirish"
+	},
+	"action.deny": {
+		"defaultMessage": "Rad etish"
+	},
+	"action.disable": {
+		"defaultMessage": "Faolsizlantirish"
+	},
+	"action.download": {
+		"defaultMessage": "Yuklab olish"
+	},
+	"action.edit": {
+		"defaultMessage": "Tahrirlash"
+	},
+	"action.enable": {
+		"defaultMessage": "Faollashtirish"
+	},
+	"action.permissions": {
+		"defaultMessage": "Ruxsatlar"
+	},
+	"action.renew": {
+		"defaultMessage": "Yangilash"
+	},
+	"action.view-details": {
+		"defaultMessage": "Tafsilotlarni ko'rish"
+	},
+	"auditlogs": {
+		"defaultMessage": "Audit jurnallari"
+	},
+	"auto": {
+		"defaultMessage": "Avto"
+	},
+	"cancel": {
+		"defaultMessage": "Bekor qilish"
+	},
+	"certificate": {
+		"defaultMessage": "Sertifikat"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Sertifikat"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Sertifikat kaliti (Key)"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Oraliq sertifikat (Intermediate Certificate)"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Ishlatilmoqda"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Sertifikat biriktirilmagan"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Ushbu host HTTPS dan foydalanmaydi"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Mavjud emas"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Ishlatilmayapti"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Sertifikatni yangilash"
+	},
+	"certificates": {
+		"defaultMessage": "Sertifikatlar"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Maxsus sertifikat"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Parol bilan himoyalangan kalit fayllari qo'llab-quvvatlanmaydi."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Kirish ma'lumotlari fayli tarkibi"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Ushbu plagin provayderingiz uchun API tokeni yoki boshqa ma'lumotlarni o'z ichiga olgan konfiguratsiya faylini talab qiladi"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Ushbu ma'lumotlar ma'lumotlar bazasida va faylda ochiq matn (plaintext) sifatida saqlanadi!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "DNS tarqalish vaqti (soniya)"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Plaginning standart qiymatidan foydalanish uchun bo'sh qoldiring. DNS tarqalishini kutish soniyalari."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS provayder"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Provayderni tanlang..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Ushbu bo'lim Certbot va uning DNS plaginlari haqida ma'lumot talab qiladi. Tegishli plaginlar hujjatlari bilan tanishing."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Ushbu domenda server topildi, lekin u Nginx Proxy Manager emasdek ko'rinadi. Domen NPM ishlayotgan IP-ga yo'naltirilganligiga ishonch hosil qiling."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "site24x7.com bilan aloqa xatosi tufayli tekshirish muvaffaqiyatsiz tugadi."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Ushbu domenda server mavjud emas. Domen mavjudligini va NPM ishlayotgan IP-ga yo'naltirilganligini hamda 80-port yo'naltirilganligini tekshiring."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Serveringiz ochiq va sertifikat yaratish imkoniyati mavjud."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Ushbu domenda server topildi, lekin kutilmagan holat kodi qaytdi: {code}. Bu NPM serverimi? Domen NPM IP-siga yo'naltirilganligiga ishonch hosil qiling."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Ushbu domenda server topildi, lekin kutilmagan ma'lumot qaytdi. Bu NPM serverimi? Domen NPM IP-siga yo'naltirilganligiga ishonch hosil qiling."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Sinov natijalari"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Ushbu domenlar ushbu o'rnatmaga yo'naltirilgan holda sozlangan bo'lishi kerak."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Kalit turi"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA keng moslikka ega, ECDSA tezroq va xavfsizroq, lekin eski tizimlarda qo'llab-quvvatlanmasligi mumkin"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "Let's Encrypt orqali"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Yangi sertifikat so'rash"
+	},
+	"column.access": {
+		"defaultMessage": "Kirish"
+	},
+	"column.authorization": {
+		"defaultMessage": "Avtorizatsiya"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Avtorizatsiyalar"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Maxsus joylashuvlar"
+	},
+	"column.destination": {
+		"defaultMessage": "Manzil"
+	},
+	"column.details": {
+		"defaultMessage": "Tafsilotlar"
+	},
+	"column.email": {
+		"defaultMessage": "Elektron pochta"
+	},
+	"column.event": {
+		"defaultMessage": "Hodisa"
+	},
+	"column.expires": {
+		"defaultMessage": "Muddati tugaydi"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP kodi"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Kiruvchi port"
+	},
+	"column.name": {
+		"defaultMessage": "Nomi"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protokol"
+	},
+	"column.provider": {
+		"defaultMessage": "Provayder"
+	},
+	"column.roles": {
+		"defaultMessage": "Rollar"
+	},
+	"column.rules": {
+		"defaultMessage": "Qoidalar"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Shart"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Barchasi"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Ixtiyoriy"
+	},
+	"column.scheme": {
+		"defaultMessage": "Sxema"
+	},
+	"column.source": {
+		"defaultMessage": "Manba"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Holati"
+	},
+	"created-on": {
+		"defaultMessage": "Yaratilgan: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Boshqaruv paneli"
+	},
+	"dead-host": {
+		"defaultMessage": "404 Host"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 Hostlar"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {404 Host} other {404 Hostlar}}"
+	},
+	"disabled": {
+		"defaultMessage": "O'chirilgan"
+	},
+	"domain-names": {
+		"defaultMessage": "Domen nomlari"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Maksimal {count} ta domen nomi"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Domen qo'shish uchun yozishni boshlang..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Ushbu tur uchun umumiy (wildcard) domenlarga ruxsat berilmaydi"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Ushbu CA uchun umumiy (wildcard) domenlar qo'llab-quvvatlanmaydi"
+	},
+	"domains.advanced": {
+		"defaultMessage": "Qo'shimcha sozlamalar"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "SSL-ni majburlash (Force SSL)"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS yoqilgan"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS quyi domenlar uchun"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2 qo'llab-quvvatlash"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Upstream Forwarded Proto sarlavhalariga ishonish"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "DNS Challenge dan foydalanish"
+	},
+	"email-address": {
+		"defaultMessage": "Elektron pochta manzili"
+	},
+	"empty-search": {
+		"defaultMessage": "Natijalar topilmadi"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Nega bittasini yaratmaysiz?"
+	},
+	"enabled": {
+		"defaultMessage": "Yoqilgan"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Kamida bitta Avtorizatsiya yoki Kirish qoidasi talab qilinadi"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Avtorizatsiya foydalanuvchi nomlari takrorlanmasligi kerak"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Elektron pochta yoki parol noto'g'ri"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Noto'g'ri domen: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Noto'g'ri elektron pochta manzili"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Maksimal uzunlik: {max} ta belgi"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Domenlar juda ko'p, maksimal: {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Maksimal qiymat: {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Minimal uzunlik: {min} ta belgi"
+	},
+	"error.minimum": {
+		"defaultMessage": "Minimal qiymat: {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Parollar mos kelishi kerak"
+	},
+	"error.required": {
+		"defaultMessage": "Ushbu maydon to'ldirilishi shart"
+	},
+	"expires.on": {
+		"defaultMessage": "Muddati: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Github-da fork qilish"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Hujumlarni bloklash"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Statik fayllarni keshlash"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Yo'lni saqlab qolish"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protokollar"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Websockets qo'llab-quvvatlash"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Yo'naltirish porti"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Sxema"
+	},
+	"hosts": {
+		"defaultMessage": "Hostlar"
+	},
+	"http-only": {
+		"defaultMessage": "Faqat HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt (DNS orqali)"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt (HTTP orqali)"
+	},
+	"loading": {
+		"defaultMessage": "Yuklanmoqda…"
+	},
+	"location.advanced-config": {
+		"defaultMessage": "Maxsus Nginx konfiguratsiyasiga ega"
+	},
+	"location.filter": {
+		"defaultMessage": "Yo'l yoki manzil bo'yicha filtrlash"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Tasdiqlash kodi"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Kodni kiriting"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Autentifikator ilovangizdagi kodni kiriting"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Ikki bosqichli autentifikatsiya"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Tasdiqlash"
+	},
+	"login.title": {
+		"defaultMessage": "Hisobingizga kiring"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Maxsus Nginx konfiguratsiyasi"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Maxsus Nginx konfiguratsiyangizni bu yerga kiriting (o'z javobgarligingizda)!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Sizda buni ko'rish uchun ruxsat yo'q."
+	},
+	"notfound.action": {
+		"defaultMessage": "Bosh sahifaga qaytish"
+	},
+	"notfound.content": {
+		"defaultMessage": "Kechirasiz, siz qidirayotgan sahifa topilmadi"
+	},
+	"notfound.title": {
+		"defaultMessage": "Voy… Sahifa topilmadi"
+	},
+	"notification.error": {
+		"defaultMessage": "Xatolik"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} o'chirildi"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} faolsizlantirildi"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} faollashtirildi"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} yangilandi"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} saqlandi"
+	},
+	"notification.success": {
+		"defaultMessage": "Muvaffaqiyatli"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "{object} qo'shish"
+	},
+	"object.delete": {
+		"defaultMessage": "{object}ni o'chirish"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Haqiqatan ham ushbu {object}ni o'chirmoqchimisiz?"
+	},
+	"object.edit": {
+		"defaultMessage": "{object}ni tahrirlash"
+	},
+	"object.empty": {
+		"defaultMessage": "{objects} mavjud emas"
+	},
+	"object.event.created": {
+		"defaultMessage": "{object} yaratildi"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "{object} o'chirildi"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "{object} faolsizlantirildi"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "{object} faollashtirildi"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "{object} yangilandi"
+	},
+	"object.event.updated": {
+		"defaultMessage": "{object} yangilandi"
+	},
+	"offline": {
+		"defaultMessage": "Oflayn"
+	},
+	"online": {
+		"defaultMessage": "Onlayn"
+	},
+	"options": {
+		"defaultMessage": "Parametrlar"
+	},
+	"password": {
+		"defaultMessage": "Parol"
+	},
+	"password.generate": {
+		"defaultMessage": "Tasodifiy parol yaratish"
+	},
+	"password.hide": {
+		"defaultMessage": "Parolni yashirish"
+	},
+	"password.show": {
+		"defaultMessage": "Parolni ko'rsatish"
+	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Ruxsat berilgan proksi hostlar"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Foydalanuvchi faqat belgilangan proksi hostlarni ko'rishi va boshqarishi mumkin ('Faqat o'zi yaratgan elementlar' rejimida)."
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Yashirin"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Boshqarish"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Proksi hostlar mavjud emas"
+	},
+	"permissions.view": {
+		"defaultMessage": "Faqat ko'rish"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Barcha elementlar"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Elementlar ko'rinishi"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Faqat o'zi yaratgan elementlar"
+	},
+	"proxy-host": {
+		"defaultMessage": "Proksi host"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Yo'naltirish hosti / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Proksi hostlar"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Proksi host} other {Proksi hostlar}}"
+	},
+	"public": {
+		"defaultMessage": "Ommaviy"
+	},
+	"redirection-host": {
+		"defaultMessage": "Qayta yo'naltirish hosti"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Yo'naltiriladigan domen"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP kodi"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Qayta yo'naltirish hostlari"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {Qayta yo'naltirish hosti} other {Qayta yo'naltirish hostlari}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Bir nechta tanlov"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Doimiy ko'chirilgan"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Vaqtincha ko'chirilgan"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Boshqasiga qarang"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Vaqtincha qayta yo'naltirish"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Doimiy qayta yo'naltirish"
+	},
+	"role.admin": {
+		"defaultMessage": "Administrator"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Standart foydalanuvchi"
+	},
+	"save": {
+		"defaultMessage": "Saqlash"
+	},
+	"setting": {
+		"defaultMessage": "Sozlama"
+	},
+	"settings": {
+		"defaultMessage": "Sozlamalar"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Birlamchi sayt"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 sahifasi"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Javobsiz (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Tabriklaymiz sahifasi"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Nginx noma'lum Host bilan chaqirilganda nima ko'rsatilsin"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Maxsus HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Maxsus HTML kodingizni shu yerga kiriting -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Qayta yo'naltirish"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Administrator hisobingizni yaratishdan boshlang."
+	},
+	"setup.title": {
+		"defaultMessage": "Xush kelibsiz!"
+	},
+	"sign-in": {
+		"defaultMessage": "Kirish"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL sertifikati"
+	},
+	"stream": {
+		"defaultMessage": "Oqim (Stream)"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Yo'naltiriladigan host"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com yoki 10.0.0.1 yoki 2001:db8::1"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Kiruvchi port"
+	},
+	"streams": {
+		"defaultMessage": "Oqimlar (Streams)"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {Oqim} other {Oqimlar}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Sinash"
+	},
+	"update-available": {
+		"defaultMessage": "Yangi versiya mavjud: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "Foydalanuvchi"
+	},
+	"user.change-password": {
+		"defaultMessage": "Parolni o'zgartirish"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Parolni tasdiqlang"
+	},
+	"user.current-password": {
+		"defaultMessage": "Joriy parol"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Profilni tahrirlash"
+	},
+	"user.full-name": {
+		"defaultMessage": "To'liq ism"
+	},
+	"user.login-as": {
+		"defaultMessage": "{name} sifatida kirish"
+	},
+	"user.logout": {
+		"defaultMessage": "Chiqish"
+	},
+	"user.new-password": {
+		"defaultMessage": "Yangi parol"
+	},
+	"user.nickname": {
+		"defaultMessage": "Taxallus (Nickname)"
+	},
+	"user.set-password": {
+		"defaultMessage": "Parol o'rnatish"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "{name} uchun ruxsatlarni o'rnatish"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Tungi rejimga o'tish"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Kunduzgi rejimga o'tish"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Ikki bosqichli autentifikatsiya"
+	},
+	"username": {
+		"defaultMessage": "Foydalanuvchi nomi"
+	},
+	"users": {
+		"defaultMessage": "Foydalanuvchilar"
+	}
+}

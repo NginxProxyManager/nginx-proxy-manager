@@ -24,6 +24,7 @@ import langNo from "./lang/no.json";
 import langUk from "./lang/uk.json";
 import langAz from "./lang/az.json";
 import langFa from "./lang/fa.json";
+import langUz from "./lang/uz.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
@@ -55,6 +56,7 @@ const localeOptions = [
 	["uk", "uk-UA", langUk],
 	["az", "az-AZ", langAz],
 	["fa", "fa-IR", langFa],
+	["uz", "uz-UZ", langUz],
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
