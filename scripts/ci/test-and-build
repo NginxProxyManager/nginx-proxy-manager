@@ -16,9 +16,10 @@ docker run --rm \
 echo -e "${BLUE}❯ ${GREEN}Testing Complete${RESET}"
 
 # Build
+BUILT_IMAGE="${IMAGE:-nginx-proxy-manager}:${BRANCH_LOWER:-unknown}-ci-${BUILD_NUMBER:-0000}"
 echo -e "${BLUE}❯ ${CYAN}Building ...${RESET}"
 docker build --pull --no-cache --compress \
-	-t "${IMAGE:-nginx-proxy-manager}:${BRANCH_LOWER:-unknown}-ci-${BUILD_NUMBER:-0000}" \
+	-t "${BUILT_IMAGE}" \
 	-f docker/Dockerfile \
 	--progress=plain \
 	--build-arg TARGETPLATFORM=linux/amd64 \
@@ -28,3 +29,6 @@ docker build --pull --no-cache --compress \
 	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
 	.
 echo -e "${BLUE}❯ ${GREEN}Building Complete${RESET}"
+
+# Exercise startup and redirects against the image that was just built.
+python3 test/public-ports-smoke.py "${BUILT_IMAGE}"

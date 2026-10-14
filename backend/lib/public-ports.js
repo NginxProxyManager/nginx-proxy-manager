@@ -26,3 +26,8 @@ export function renderPublicPortsConfig(ports) {
 		"",
 	].join("\n");
 }
+
+// Repeat the handler at server scope so unrelated server error pages cannot hide it.
+export function renderPublicPortsServerConfig(ports) {
+	return ports.https === 443 ? "" : "error_page 497 =307 https://$host$npm_public_https_port_suffix$request_uri;\n";
+}

@@ -44,3 +44,13 @@ The ESLint extension only works on JavaScript files by default, so add the follo
 	"editor.formatOnSave": false,
 },
 ```
+
+## Public-port image smoke test
+
+Run `python3 test/public-ports-smoke.py <built-image>` from the repository root.
+It starts disposable containers for standard ports, custom 232/233, and `__FILE`
+configuration. It checks the live health response against the API schema, Force SSL
+and SSL-listener redirects, ACME/trusted-protocol exceptions, and generated proxy,
+redirection and 404 hosts with unrelated server-level error pages (custom and
+Let's Encrypt certificates). `scripts/ci/test-and-build` runs it after building
+that same image. Python 3 and a local Docker daemon are required.

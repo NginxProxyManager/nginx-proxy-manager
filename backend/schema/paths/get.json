@@ -16,6 +16,10 @@
 									"major": 2,
 									"minor": 1,
 									"revision": 0
+								},
+								"public_ports": {
+									"http": 80,
+									"https": 443
 								}
 							}
 						}
