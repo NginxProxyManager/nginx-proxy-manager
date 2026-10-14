@@ -146,14 +146,27 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					onRenew={showRenewCertificateModal}
 					onDownload={handleDownload}
-					onDelete={(id: number) =>
+					onDelete={(id: number) => {
+						const cert = data?.find((c) => c.id === id);
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "certificate" }} />,
 							onConfirm: () => handleDelete(id),
 							invalidations: [["certificates"], ["certificate", id]],
-							children: <T id="object.delete.content" tData={{ object: "certificate" }} />,
-						})
-					}
+							children: (
+								<>
+									<T id="object.delete.content" tData={{ object: "certificate" }} />
+									{cert?.niceName ? (
+										<div className="mt-2 fw-bold text-break">{cert.niceName}</div>
+									) : null}
+									{cert?.domainNames?.length ? (
+										<div className="mt-1 text-muted small text-break">
+											{cert.domainNames.join(", ")}
+										</div>
+									) : null}
+								</>
+							),
+						});
+					}}
 				/>
 			</div>
 		</div>
