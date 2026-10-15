@@ -1,7 +1,7 @@
-## Proxy Host là gì?
+## Máy chủ proxy là gì?
 
-Proxy Host là điểm truy cập đầu vào cho một dịch vụ web mà bạn muốn chuyển tiếp.
+Máy chủ proxy là điểm tiếp nhận yêu cầu cho một dịch vụ web mà bạn muốn chuyển tiếp.
 
-Nó cung cấp khả năng kết thúc SSL (SSL termination) tùy chọn cho các dịch vụ vốn không hỗ trợ SSL tích hợp.
+Nó có thể đảm nhận phần mã hóa SSL (SSL termination) cho những dịch vụ không có sẵn hỗ trợ SSL.
 
-Proxy Host là loại cấu hình phổ biến nhất trong Nginx Proxy Manager.
+Máy chủ proxy là tính năng được dùng nhiều nhất trong Nginx Proxy Manager.

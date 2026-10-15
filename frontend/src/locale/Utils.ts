@@ -26,6 +26,7 @@ const DATE_LOCALE_BY_LANG: Record<string, string> = {
 
 const HOUR_CYCLE_BY_LANG: Record<string, "h12" | "h23"> = {
 	et: "h23",
+	vi: "h23",
 };
 
 const formatDateTime = (value: string | number, locale = "en-US"): string => {
