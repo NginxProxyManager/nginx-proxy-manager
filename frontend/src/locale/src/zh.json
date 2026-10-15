@@ -116,6 +116,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "此插件需要一个包含 API 令牌或提供商其他凭证的配置文件"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "新凭证文件内容（将替换现有内容）"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "此数据将以明文形式存储在数据库和文件中！"
 	},
@@ -130,6 +133,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "本节需要您具备一些关于 Certbot 及其 DNS 插件的知识，请参阅相应插件的官方文档。"
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "编辑 DNS 设置"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "在此域名下找到了一个服务器，但它似乎不是 Nginx 代理管理器。请确保您的域名指向 NPM 实例运行的 IP 地址。"

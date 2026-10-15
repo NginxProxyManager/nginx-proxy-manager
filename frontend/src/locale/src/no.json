@@ -185,6 +185,9 @@
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Denne pluginen krever en konfigurasjonsfil som inneholder en API-token eller andre legitimasjoner for leverandøren din"
 	},
+	"certificates.dns.credentials-update": {
+		"defaultMessage": "Nytt innhold for legitimasjonsfil (erstatter eksisterende)"
+	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Disse dataene vil bli lagret som ren tekst i databasen og i en fil!"
 	},
@@ -202,6 +205,9 @@
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Denne seksjonen krever noe kunnskap om Certbot og dets DNS-plugins. Vennligst konsulter dokumentasjonen for de respektive pluginene."
+	},
+	"certificates.edit-dns-settings": {
+		"defaultMessage": "Rediger DNS-innstillinger"
 	},
 	"certificates.http.reachability-404": {
 		"defaultMessage": "Det finnes en server på dette domenet, men det ser ikke ut til å være Nginx Proxy Manager. Vennligst sørg for at domenet ditt peker til IP-en der NPM-instansen kjører."
