@@ -17,10 +17,10 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
-import { showObjectSuccess } from "src/notifications";
+import { showError, showObjectSuccess } from "src/notifications";
 
 const showProxyHostModal = (id: number | "new") => {
 	EasyModal.show(ProxyHostModal, { id });
@@ -48,8 +48,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 
 		setProxyHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
-			onSuccess: () => {
-				showObjectSuccess("proxy-host", "saved");
+			onSuccess: (result: any) => {
+				if (result?.meta?.nginxOnline === false) {
+					showError(result.meta.nginxErr || intl.formatMessage({ id: "offline" }));
+				} else {
+					showObjectSuccess("proxy-host", "saved");
+				}
 				remove();
 			},
 			onSettled: () => {

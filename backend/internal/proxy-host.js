@@ -85,7 +85,8 @@ const internalProxyHost = {
 			})
 		.then(async (row) => {
 			// Configure nginx
-			return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
+			return internalNginx.configure(proxyHostModel, "proxy_host", row).then((new_meta) => {
+				row.meta = new_meta;
 				return row;
 			});
 		})

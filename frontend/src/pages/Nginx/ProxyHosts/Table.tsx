@@ -92,11 +92,15 @@ export default function Table({
 					return <AccessListFormatter access={info.getValue()} />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row.enabled, {
+			columnHelper.accessor((row: any) => row.enabled && row.meta?.nginxOnline !== false, {
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
+					return (
+						<span title={info.row.original.meta?.nginxErr || undefined}>
+							<TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />
+						</span>
+					);
 				},
 			}),
 			columnHelper.display({
