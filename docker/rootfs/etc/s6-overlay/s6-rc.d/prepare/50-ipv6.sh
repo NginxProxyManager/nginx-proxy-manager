@@ -8,10 +8,6 @@ set -e
 
 log_info 'IPv6 ...'
 
-is_mounted() {
-	awk -v p="$1" '$5 == p { found=1 } END { exit !found }' /proc/self/mountinfo
-}
-
 process_folder () {
 	FILES=$(find "$1" -type f -name "*.conf")
 	SED_REGEX=

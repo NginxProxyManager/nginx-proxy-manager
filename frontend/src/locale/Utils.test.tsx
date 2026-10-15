@@ -92,8 +92,23 @@ describe("getFlagCodeForLocale", () => {
 		expect(getFlagCodeForLocale("ga-IE")).toBe("IE");
 	});
 
+	it("returns EE (Estonia) for Estonian locale, not ET (Ethiopia)", () => {
+		expect(getFlagCodeForLocale("et")).toBe("EE");
+		expect(getFlagCodeForLocale("et-EE")).toBe("EE");
+	});
+
 	it("falls back to EN when no locale is provided", () => {
 		expect(getFlagCodeForLocale()).toBe("EN");
 		expect(getFlagCodeForLocale(undefined)).toBe("EN");
+	});
+});
+
+describe("formatDateTime Estonian locale", () => {
+	it("uses 24-hour clock for et and et-EE", () => {
+		const value = "2024-06-15T15:30:00.000Z";
+		for (const locale of ["et", "et-EE"]) {
+			const text = formatDateTime(value, locale);
+			expect(text.toLowerCase()).not.toMatch(/\b(am|pm)\b/);
+		}
 	});
 });

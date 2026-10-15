@@ -1,8 +1,8 @@
 import { IconArrowsSort, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-import { flexRender } from "@tanstack/react-table";
+import { flexRender, type RowData } from "@tanstack/react-table";
 import type { TableLayoutProps } from "src/components";
 
-function TableHeader<T>(props: TableLayoutProps<T>) {
+function TableHeader<T extends RowData>(props: TableLayoutProps<T>) {
 	const { tableInstance } = props;
 	const headerGroups = tableInstance.getHeaderGroups();
 

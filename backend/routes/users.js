@@ -58,11 +58,7 @@ router
 					query: typeof req.query.query === "string" ? req.query.query : null,
 				},
 			);
-			const users = await internalUser.getAll(
-				res.locals.access,
-				data.expand,
-				data.query,
-			);
+			const users = await internalUser.getAll(res.locals.access, data.expand, data.query);
 			res.status(200).json(users);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -89,10 +85,7 @@ router
 				body.is_disabled = false;
 			}
 
-			const payload = await apiValidator(
-				getValidationSchema("/users", "post"),
-				body,
-			);
+			const payload = await apiValidator(getValidationSchema("/users", "post"), body);
 
 			if (!setup) {
 				const roles = Array.isArray(payload.roles)
@@ -174,20 +167,14 @@ router
 				},
 				{
 					user_id: req.params.user_id,
-					expand:
-						typeof req.query.expand === "string"
-							? req.query.expand.split(",")
-							: null,
+					expand: typeof req.query.expand === "string" ? req.query.expand.split(",") : null,
 				},
 			);
 
 			const user = await internalUser.get(res.locals.access, {
 				id: data.user_id,
 				expand: data.expand,
-				omit: internalUser.getUserOmisionsByAccess(
-					res.locals.access,
-					data.user_id,
-				),
+				omit: internalUser.getUserOmisionsByAccess(res.locals.access, data.user_id),
 			});
 			res.status(200).json(user);
 		} catch (err) {
@@ -203,10 +190,7 @@ router
 	 */
 	.put(async (req, res, next) => {
 		try {
-			const payload = await apiValidator(
-				getValidationSchema("/users/{userID}", "put"),
-				req.body,
-			);
+			const payload = await apiValidator(getValidationSchema("/users/{userID}", "put"), req.body);
 			payload.id = req.params.user_id;
 			const result = await internalUser.update(res.locals.access, payload);
 			res.status(200).json(result);
@@ -253,10 +237,7 @@ router
 	 */
 	.put(async (req, res, next) => {
 		try {
-			const payload = await apiValidator(
-				getValidationSchema("/users/{userID}/auth", "put"),
-				req.body,
-			);
+			const payload = await apiValidator(getValidationSchema("/users/{userID}/auth", "put"), req.body);
 			payload.id = req.params.user_id;
 			const result = await internalUser.setPassword(res.locals.access, payload);
 			res.status(200).json(result);
@@ -286,15 +267,9 @@ router
 	 */
 	.put(async (req, res, next) => {
 		try {
-			const payload = await apiValidator(
-				getValidationSchema("/users/{userID}/permissions", "put"),
-				req.body,
-			);
+			const payload = await apiValidator(getValidationSchema("/users/{userID}/permissions", "put"), req.body);
 			payload.id = req.params.user_id;
-			const result = await internalUser.setPermissions(
-				res.locals.access,
-				payload,
-			);
+			const result = await internalUser.setPermissions(res.locals.access, payload);
 			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -413,10 +388,7 @@ router
 	 */
 	.post(async (req, res, next) => {
 		try {
-			const { code } = await apiValidator(
-				getValidationSchema("/users/{userID}/2fa/enable", "post"),
-				req.body,
-			);
+			const { code } = await apiValidator(getValidationSchema("/users/{userID}/2fa/enable", "post"), req.body);
 			const result = await internal2FA.enable(res.locals.access, req.params.user_id, code);
 			res.status(200).json(result);
 		} catch (err) {

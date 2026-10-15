@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Kalan yedek kod: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Bu yedek kodları güvenli bir yerde saklayın. Her kod yalnızca bir kez kullanılabilir."
+	},
+	"2fa.disable": {
+		"defaultMessage": "İki Adımlı Doğrulamayı Devre Dışı Bırak"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "2FA'yı Devre Dışı Bırak"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "İki adımlı doğrulamayı devre dışı bırakmak hesabınızın güvenliğini azaltır."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Devre Dışı"
+	},
+	"2fa.done": {
+		"defaultMessage": "Yedek kodlarımı kaydettim"
+	},
+	"2fa.enable": {
+		"defaultMessage": "İki Adımlı Doğrulamayı Etkinleştir"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Etkin"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Doğrulama kodunu girin"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Devre dışı bırakmak için doğrulama kodunu girin"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Yeniden Oluştur"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Yedek Kodları Yeniden Oluştur"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Yeni yedek kodlar oluşturmak için bir doğrulama kodu girin. Eski kodlarınız geçersiz olacaktır."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Gizli Anahtar"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Bu QR kodunu kimlik doğrulama uygulamanızla tarayın veya gizli anahtarı elle girin."
+	},
+	"2fa.status": {
+		"defaultMessage": "Durum"
+	},
+	"2fa.title": {
+		"defaultMessage": "İki Adımlı Doğrulama"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Doğrula ve Etkinleştir"
+	},
 	"access-list": {
 		"defaultMessage": "Erişim Listesi"
 	},
@@ -43,6 +100,9 @@
 	},
 	"action.allow": {
 		"defaultMessage": "İzin Ver"
+	},
+	"action.clear": {
+		"defaultMessage": "Temizle"
 	},
 	"action.close": {
 		"defaultMessage": "Kapat"
@@ -170,6 +230,18 @@
 	"certificates.http.warning": {
 		"defaultMessage": "Bu alan adları zaten bu kuruluma işaret edecek şekilde yapılandırılmış olmalıdır."
 	},
+	"certificates.key-type": {
+		"defaultMessage": "Anahtar Türü"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA yaygın olarak uyumludur; ECDSA daha hızlı ve daha güvenlidir ancak eski sistemler tarafından desteklenmeyebilir"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
 	"certificates.request.subtitle": {
 		"defaultMessage": "Let's Encrypt ile"
 	},
@@ -278,6 +350,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Bu CA için joker karakterler desteklenmiyor"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Gelişmiş"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "SSL'i Zorla"
 	},
@@ -289,6 +364,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "HTTP/2 Desteği"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Yukarı Akıştan Gelen Forwarded Proto Başlıklarına Güven"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "DNS Challenge Kullan"
@@ -385,6 +463,27 @@
 	},
 	"loading": {
 		"defaultMessage": "Yükleniyor…"
+	},
+	"location.advanced-config": {
+		"defaultMessage": "Özel Nginx yapılandırması var"
+	},
+	"location.filter": {
+		"defaultMessage": "Yol veya hedefe göre filtrele"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Doğrulama Kodu"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Kodu girin"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Kimlik doğrulama uygulamanızdaki kodu girin"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "İki Adımlı Doğrulama"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Doğrula"
 	},
 	"login.title": {
 		"defaultMessage": "Hesabınıza giriş yapın"
@@ -673,6 +772,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Açık moda geç"
+	},
+	"user.two-factor": {
+		"defaultMessage": "İki Adımlı Doğrulama"
 	},
 	"username": {
 		"defaultMessage": "Kullanıcı Adı"

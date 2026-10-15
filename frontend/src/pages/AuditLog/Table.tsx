@@ -1,7 +1,8 @@
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { AuditLog } from "src/api/backend";
 import { EventFormatter, GravatarFormatter } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 
@@ -11,11 +12,12 @@ interface Props {
 	onSelectItem?: (id: number) => void;
 }
 export default function Table({ data, isFetching, onSelectItem }: Props) {
-	const columnHelper = createColumnHelper<AuditLog>();
+	const columnHelper = createColumnHelper<Features, AuditLog>();
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor((row: AuditLog) => row.user, {
-				id: "user.avatar",
+			columnHelper.accessor((row: any) => row.user, {
+				id: "owner",
+				enableSorting: false,
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
@@ -24,9 +26,10 @@ export default function Table({ data, isFetching, onSelectItem }: Props) {
 					className: "w-1",
 				},
 			}),
-			columnHelper.accessor((row: AuditLog) => row, {
+			columnHelper.accessor((row: any) => row, {
 				id: "objectType",
 				header: intl.formatMessage({ id: "column.event" }),
+				enableSorting: false,
 				cell: (info: any) => {
 					return <EventFormatter row={info.getValue()} />;
 				},
@@ -55,11 +58,10 @@ export default function Table({ data, isFetching, onSelectItem }: Props) {
 		[columnHelper, onSelectItem],
 	);
 
-	const tableInstance = useReactTable<AuditLog>({
+	const tableInstance = useTable({
+		features,
 		columns,
 		data,
-		getCoreRowModel: getCoreRowModel(),
-		rowCount: data.length,
 		meta: {
 			isFetching,
 		},

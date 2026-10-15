@@ -17,9 +17,7 @@ const up = (knex) => {
 		.table("redirection_host", async (table) => {
 			// change the column default from $scheme to auto
 			await table.string("forward_scheme").notNull().defaultTo("auto").alter();
-			await knex('redirection_host')
-				.where('forward_scheme', '$scheme')
-				.update({ forward_scheme: 'auto' });
+			await knex("redirection_host").where("forward_scheme", "$scheme").update({ forward_scheme: "auto" });
 		})
 		.then(() => {
 			logger.info(`[${migrateName}] redirection_host Table altered`);
@@ -38,9 +36,7 @@ const down = (knex) => {
 	return knex.schema
 		.table("redirection_host", async (table) => {
 			await table.string("forward_scheme").notNull().defaultTo("$scheme").alter();
-			await knex('redirection_host')
-				.where('forward_scheme', 'auto')
-				.update({ forward_scheme: '$scheme' });
+			await knex("redirection_host").where("forward_scheme", "auto").update({ forward_scheme: "$scheme" });
 		})
 		.then(() => {
 			logger.info(`[${migrateName}] redirection_host Table altered`);

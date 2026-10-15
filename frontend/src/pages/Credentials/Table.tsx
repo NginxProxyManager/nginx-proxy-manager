@@ -1,8 +1,9 @@
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { StoredCredential } from "src/api/backend/getCredentials";
 import { EmptyData, HasPermission, ValueWithDateFormatter } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { CREDENTIALS, MANAGE } from "src/modules/Permissions";
@@ -18,24 +19,27 @@ interface Props {
 
 export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onNew }: Props) {
 	const columns = useMemo(() => {
-		const columnHelper = createColumnHelper<StoredCredential>();
+		const columnHelper = createColumnHelper<Features, StoredCredential>();
 		return [
-			columnHelper.accessor("name", {
+			columnHelper.accessor((row: any) => row.name, {
+				id: "name",
 				header: intl.formatMessage({ id: "column.name" }),
-				cell: (info) => (
+				cell: (info: any) => (
 					<ValueWithDateFormatter value={info.getValue()} createdOn={info.row.original.createdOn} />
 				),
 			}),
-			columnHelper.accessor("dnsProvider", {
+			columnHelper.accessor((row: any) => row.dnsProvider, {
+				id: "dnsProvider",
 				header: intl.formatMessage({ id: "certificates.dns.provider" }),
 			}),
-			columnHelper.accessor("lastUsedAt", {
+			columnHelper.accessor((row: any) => row.lastUsedAt, {
+				id: "lastUsedAt",
 				header: "Last used",
-				cell: (info) => info.getValue() || "—",
+				cell: (info: any) => info.getValue() || "—",
 			}),
 			columnHelper.display({
 				id: "actions",
-				cell: (info) => (
+				cell: (info: any) => (
 					<span className="dropdown">
 						<button
 							type="button"
@@ -66,11 +70,10 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 		];
 	}, [onDelete, onEdit]);
 
-	const tableInstance = useReactTable({
-		data,
+	const tableInstance = useTable({
+		features,
 		columns,
-		getCoreRowModel: getCoreRowModel(),
-		rowCount: data.length,
+		data,
 		meta: {
 			isFetching,
 		},

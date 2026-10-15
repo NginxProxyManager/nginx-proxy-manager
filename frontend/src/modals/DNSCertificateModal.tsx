@@ -70,11 +70,7 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 												<label htmlFor="keyType" className="form-label">
 													<T id="certificates.key-type" />
 												</label>
-												<select
-													id="keyType"
-													className="form-select"
-													{...field}
-												>
+												<select id="keyType" className="form-select" {...field}>
 													<option value="rsa">
 														<T id="certificates.key-type-rsa" />
 													</option>

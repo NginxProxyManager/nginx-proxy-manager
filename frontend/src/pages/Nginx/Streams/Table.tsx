@@ -1,11 +1,5 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
-import {
-	createColumnHelper,
-	getCoreRowModel,
-	getSortedRowModel,
-	type SortingState,
-	useReactTable,
-} from "@tanstack/react-table";
+import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import type { Stream } from "src/api/backend";
 import {
@@ -16,6 +10,7 @@ import {
 	TrueFalseFormatter,
 	ValueWithDateFormatter,
 } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { MANAGE, STREAMS } from "src/modules/Permissions";
@@ -30,7 +25,7 @@ interface Props {
 	onNew?: () => void;
 }
 export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onDisableToggle, onNew }: Props) {
-	const columnHelper = createColumnHelper<Stream>();
+	const columnHelper = createColumnHelper<Features, Stream>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
@@ -47,7 +42,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor((row: any) => row, {
 				id: "incomingPort",
 				header: intl.formatMessage({ id: "column.incoming-port" }),
-				sortingFn: (a, b) => (a.original.incomingPort ?? 0) - (b.original.incomingPort ?? 0),
+				sortFn: (a, b) => (a.original.incomingPort ?? 0) - (b.original.incomingPort ?? 0),
 				cell: (info: any) => {
 					const value = info.getValue();
 					return <ValueWithDateFormatter value={value.incomingPort} createdOn={value.createdOn} />;
@@ -56,7 +51,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor((row: any) => row, {
 				id: "forwardHttpCode",
 				header: intl.formatMessage({ id: "column.destination" }),
-				sortingFn: (a, b) => {
+				sortFn: (a, b) => {
 					const aVal = `${a.original.forwardingHost}:${a.original.forwardingPort}`;
 					const bVal = `${b.original.forwardingHost}:${b.original.forwardingPort}`;
 					return aVal.localeCompare(bVal);
@@ -174,14 +169,12 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 
 	const [sorting, setSorting] = useState<SortingState>([]);
 
-	const tableInstance = useReactTable<Stream>({
+	const tableInstance = useTable({
+		features,
 		columns,
 		data,
 		state: { sorting },
 		onSortingChange: setSorting,
-		getCoreRowModel: getCoreRowModel(),
-		getSortedRowModel: getSortedRowModel(),
-		rowCount: data.length,
 		meta: {
 			isFetching,
 		},

@@ -6,8 +6,8 @@ Only the latest stable release receives security updates. Older versions are not
 
 | Version | Supported |
 | ------- | --------- |
-| 2.15.x (latest) | :white_check_mark: |
-| < 2.15.0 | :x: |
+| 2.16.x (latest) | :white_check_mark: |
+| < 2.16.0 | :x: |
 
 Docker images: `jc21/nginx-proxy-manager:latest`, `jc21/nginx-proxy-manager:2`
 

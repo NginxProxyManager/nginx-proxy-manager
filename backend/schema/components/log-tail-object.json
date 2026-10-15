@@ -1,0 +1,30 @@
+{
+	"type": "object",
+	"description": "The last N lines of a log source",
+	"required": ["lines", "size", "truncated", "exists"],
+	"additionalProperties": false,
+	"properties": {
+		"lines": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"example": ["2026-01-01T00:00:00.000Z INFO    [Global   ] Backend PID 1 listening on port 3000 ..."]
+		},
+		"size": {
+			"type": "integer",
+			"description": "Size in bytes of the underlying log file",
+			"example": 4096
+		},
+		"truncated": {
+			"type": "boolean",
+			"description": "True when the file is larger than the maximum amount of data scanned per request",
+			"example": false
+		},
+		"exists": {
+			"type": "boolean",
+			"description": "False when the underlying log file does not exist yet",
+			"example": true
+		}
+	}
+}

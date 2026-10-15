@@ -4,7 +4,6 @@ import { castJsonIfNeed } from "../lib/helpers.js";
 import auditLogModel from "../models/audit-log.js";
 
 const internalAuditLog = {
-
 	/**
 	 * All logs
 	 *
@@ -47,11 +46,7 @@ const internalAuditLog = {
 	get: async (access, data) => {
 		await access.can("auditlog:list");
 
-		const query = auditLogModel
-			.query()
-			.andWhere("id", data.id)
-			.allowGraph("[user]")
-			.first();
+		const query = auditLogModel.query().andWhere("id", data.id).allowGraph("[user]").first();
 
 		if (typeof data.expand !== "undefined" && data.expand !== null) {
 			query.withGraphFetched(`[${data.expand.join(", ")}]`);

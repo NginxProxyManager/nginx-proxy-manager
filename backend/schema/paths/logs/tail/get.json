@@ -1,0 +1,100 @@
+{
+	"operationId": "getLogTail",
+	"summary": "Get the last N lines of a log source",
+	"tags": ["logs"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "type",
+			"required": true,
+			"description": "Which log source to read",
+			"schema": {
+				"type": "string",
+				"enum": ["system", "letsencrypt", "host"]
+			}
+		},
+		{
+			"in": "query",
+			"name": "host_type",
+			"description": "Required when type=host",
+			"schema": {
+				"type": "string",
+				"enum": ["proxy", "redirection", "dead", "stream"]
+			}
+		},
+		{
+			"in": "query",
+			"name": "host_id",
+			"description": "Required when type=host",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			}
+		},
+		{
+			"in": "query",
+			"name": "channel",
+			"description": "Required when type=host - which log file to read (not to be confused with host_type=stream)",
+			"schema": {
+				"type": "string",
+				"enum": ["access", "error"]
+			}
+		},
+		{
+			"in": "query",
+			"name": "lines",
+			"description": "Number of lines to return from the end of the file",
+			"schema": {
+				"type": "integer",
+				"minimum": 1,
+				"maximum": 1000,
+				"default": 200
+			}
+		},
+		{
+			"in": "query",
+			"name": "level",
+			"description": "Only applicable to type=system",
+			"schema": {
+				"type": "string",
+				"enum": ["INFO", "WARN", "ERROR", "DEBUG", "SUCCESS", "FATAL", "COMPLETE"]
+			}
+		},
+		{
+			"in": "query",
+			"name": "search",
+			"description": "Case-insensitive plain-text search",
+			"schema": {
+				"type": "string",
+				"maxLength": 200
+			}
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"lines": ["2026-01-01T00:00:00.000Z INFO    [Global   ] Backend PID 1 listening on port 3000 ..."],
+								"size": 4096,
+								"truncated": false,
+								"exists": true
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/log-tail-object.json"
+					}
+				}
+			}
+		}
+	}
+}

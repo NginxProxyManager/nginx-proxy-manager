@@ -124,6 +124,9 @@
 					},
 					"advanced_config": {
 						"type": "string"
+					},
+					"access_list_id": {
+						"$ref": "../common.json#/properties/access_list_id"
 					}
 				}
 			},
@@ -132,7 +135,8 @@
 					"path": "/app",
 					"forward_scheme": "http",
 					"forward_host": "example.com",
-					"forward_port": 80
+					"forward_port": 80,
+					"access_list_id": 0
 				}
 			]
 		},
