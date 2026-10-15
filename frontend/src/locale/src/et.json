@@ -143,6 +143,21 @@
 	"action.view-details": {
 		"defaultMessage": "Vaata üksikasju"
 	},
+	"api-key": {
+		"defaultMessage": "API võti"
+	},
+	"api-keys": {
+		"defaultMessage": "Automatiseerimise API võtmed"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Kopeerige see võti kohe — seda enam ei kuvata."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Tühistada see API võti? Seda kasutavad automatiseerimised lakkavad töötamast."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer tokenid (npmak_…) skriptidele ja CI-le. Ainult administraatoritele."
+	},
 	"auditlogs": {
 		"defaultMessage": "Auditilogid"
 	},
@@ -332,6 +347,117 @@
 	"created-on": {
 		"defaultMessage": "Loodud: {date}"
 	},
+	"credential": {
+		"defaultMessage": "Mandaat"
+	},
+	"credential-provider": {
+		"defaultMessage": "Mandaadi pakkuja"
+	},
+	"credential-providers": {
+		"defaultMessage": "Välised mandaadi hoidlad"
+	},
+	"credential-providers.aws.region": {
+		"defaultMessage": "AWS piirkond"
+	},
+	"credential-providers.aws.role-arn": {
+		"defaultMessage": "IAM rolli ARN"
+	},
+	"credential-providers.azure.tenant": {
+		"defaultMessage": "Rentniku ID"
+	},
+	"credential-providers.azure.vault-url": {
+		"defaultMessage": "Key Vaulti URL"
+	},
+	"credential-providers.field.name": {
+		"defaultMessage": "Nimi"
+	},
+	"credential-providers.field.type": {
+		"defaultMessage": "Tüüp"
+	},
+	"credential-providers.http.url-template": {
+		"defaultMessage": "URL-i mall"
+	},
+	"credential-providers.infisical.client-id": {
+		"defaultMessage": "Universal Auth kliendi ID"
+	},
+	"credential-providers.infisical.client-secret": {
+		"defaultMessage": "Universal Auth kliendi saladus"
+	},
+	"credential-providers.infisical.environment": {
+		"defaultMessage": "Keskkonna lühinimi"
+	},
+	"credential-providers.infisical.host": {
+		"defaultMessage": "Infisicali host"
+	},
+	"credential-providers.infisical.workspace-id": {
+		"defaultMessage": "Projekti ID (tööruum)"
+	},
+	"credential-providers.oidc.audience": {
+		"defaultMessage": "Sihtrühm (valikuline)"
+	},
+	"credential-providers.oidc.client-id": {
+		"defaultMessage": "Kliendi ID"
+	},
+	"credential-providers.oidc.client-secret": {
+		"defaultMessage": "Kliendi saladus"
+	},
+	"credential-providers.oidc.issuer": {
+		"defaultMessage": "OIDC väljastaja"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Saladuse tee"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Ühenda Vault, AWS Secrets Manager, Azure Key Vault või Infisical OIDC kaudu."
+	},
+	"credential-providers.test-auth": {
+		"defaultMessage": "Testi autentimist"
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Testi OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Testi lahendamist"
+	},
+	"credential-providers.vault.address": {
+		"defaultMessage": "Vaulti aadress"
+	},
+	"credential-providers.vault.mount": {
+		"defaultMessage": "Saladuste haakepunkt"
+	},
+	"credential-providers.vault.role": {
+		"defaultMessage": "Vaulti roll"
+	},
+	"credentials": {
+		"defaultMessage": "DNS mandaadid"
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migreeri pärand DNS mandaadid"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} sertifikaat(i) viiks sisseehitatud mandaadid seifi."
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Saladuse tee"
+	},
+	"credentials.source": {
+		"defaultMessage": "Mandaadi allikas"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Väline hoidla (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Salvestatud NPM seifis"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Sisesta käsitsi (ühekordne)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Salvestatud mandaat"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Krüpteeritud /data köidel, taaskasutatav DNS sertifikaatide jaoks."
+	},
 	"dashboard": {
 		"defaultMessage": "Töölaud"
 	},
@@ -346,6 +472,12 @@
 	},
 	"disabled": {
 		"defaultMessage": "Väljas"
+	},
+	"documentation": {
+		"defaultMessage": "Dokumentatsioon"
+	},
+	"documentation.open-new-tab": {
+		"defaultMessage": "Ava uuel vahelehel"
 	},
 	"domain-names": {
 		"defaultMessage": "Domeeninimed"
@@ -436,6 +568,9 @@
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Tee GitHubis fork"
+	},
+	"help.view-full-docs": {
+		"defaultMessage": "Vaata kogu dokumentatsiooni"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
@@ -838,5 +973,17 @@
 	},
 	"users": {
 		"defaultMessage": "Kasutajad"
+	},
+	"webhook": {
+		"defaultMessage": "Veebikonks"
+	},
+	"webhooks": {
+		"defaultMessage": "Veebikonksud"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Allkirja saladus (X-NPM-Signature kontrolliks)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Allkirjastatud HTTP tagasikutsumised hostide või sertifikaatide muutumisel."
 	}
 }

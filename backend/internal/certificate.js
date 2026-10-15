@@ -18,15 +18,18 @@ import userModel from "../models/user.js";
 import internalAuditLog from "./audit-log.js";
 import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
+import internalWebhook from "./webhook.js";
+import { materializeCertbotCredentials } from "../lib/secrets/resolve.js";
 
 const letsencryptConfig = "/etc/letsencrypt.ini";
 const certbotCommand = "certbot";
 const certbotLogsDir = "/data/logs";
 const certbotWorkDir = "/tmp/letsencrypt-lib";
 
-const omissions = () => {
-	return ["is_deleted", "owner.is_deleted", "meta.dns_provider_credentials", "meta.certificate_key"];
-};
+const omissions = () => ["is_deleted", "owner.is_deleted"];
+const metaOmissions = () => ["dns_provider_credentials", "certificate_key"];
+
+const omitCertificate = () => utils.omitRow(omissions(), metaOmissions());
 
 const internalCertificate = {
 	allowedSslFiles: ["certificate", "certificate_key", "intermediate_certificate"],
@@ -114,12 +117,30 @@ const internalCertificate = {
 	 * @param   {Object}  data
 	 * @returns {Promise}
 	 */
+	prepareMetaForStorage: (meta) => {
+		if (!meta || typeof meta !== "object") {
+			return meta;
+		}
+		const prepared = { ...meta };
+		if (
+			(prepared.credential_ref?.type === "internal" && prepared.credential_ref.id) ||
+			(prepared.credential_ref?.type === "external" && prepared.credential_ref.provider_id)
+		) {
+			delete prepared.dns_provider_credentials;
+		}
+		return prepared;
+	},
+
 	create: async (access, data) => {
 		await access.can("certificates:create", data);
 		data.owner_user_id = access.token.getUserId(1);
 
 		if (data.provider === "letsencrypt") {
 			data.nice_name = data.domain_names.join(", ");
+		}
+
+		if (data.meta) {
+			data.meta = internalCertificate.prepareMetaForStorage(data.meta);
 		}
 
 		// this command really should clean up and delete the cert if it can't fully succeed
@@ -197,7 +218,7 @@ const internalCertificate = {
 						.patchAndFetchById(certificate.id, {
 							expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
 						})
-						.then(utils.omitRow(omissions()));
+						.then(omitCertificate());
 
 					// Add cert data for audit log
 					savedRow.meta = _.assign({}, savedRow.meta, {
@@ -210,30 +231,44 @@ const internalCertificate = {
 				} catch (err) {
 					// Delete the certificate from the database if it was not created successfully
 					await certificateModel.query().deleteById(certificate.id);
+					void internalWebhook.dispatch("certificate.failed", {
+						id: certificate.id,
+						domain_names: certificate.domain_names,
+						error: err.message,
+					});
 					throw err;
 				}
 			}
 		} catch (err) {
 			// Delete the certificate here. This is a hard delete, since it never existed properly
-			await certificateModel.query().deleteById(certificate.id);
+			if (certificate?.id) {
+				await certificateModel.query().deleteById(certificate.id);
+				void internalWebhook.dispatch("certificate.failed", {
+					id: certificate.id,
+					domain_names: data.domain_names,
+					error: err.message,
+				});
+			}
 			throw err;
 		}
 
 		data.meta = _.assign({}, data.meta || {}, certificate.meta);
 
 		// Add to audit log
-		await internalCertificate.addCreatedAuditLog(access, certificate.id, utils.omitRow(omissions())(data));
+		await internalCertificate.addCreatedAuditLog(access, certificate.id, omitCertificate()(data));
 
-		return utils.omitRow(omissions())(certificate);
+		return omitCertificate()(certificate);
 	},
 
 	addCreatedAuditLog: async (access, certificate_id, meta) => {
+		const sanitized = omitCertificate()(meta);
 		await internalAuditLog.add(access, {
 			action: "created",
 			object_type: "certificate",
 			object_id: certificate_id,
-			meta: meta,
+			meta: sanitized,
 		});
+		void internalWebhook.dispatch("certificate.created", { id: certificate_id });
 	},
 
 	/**
@@ -255,10 +290,14 @@ const internalCertificate = {
 			);
 		}
 
+		if (data.meta) {
+			data.meta = internalCertificate.prepareMetaForStorage(data.meta);
+		}
+
 		const savedRow = await certificateModel
 			.query()
 			.patchAndFetchById(row.id, data)
-			.then(utils.omitRow(omissions()));
+			.then(omitCertificate());
 
 		savedRow.meta = internalCertificate.cleanMeta(savedRow.meta);
 		data.meta = internalCertificate.cleanMeta(data.meta);
@@ -275,6 +314,7 @@ const internalCertificate = {
 			object_id: row.id,
 			meta: _.omit(data, ["expires_on"]), // this prevents json circular reference because expires_on might be raw
 		});
+		void internalWebhook.dispatch("certificate.updated", { id: savedRow.id });
 
 		return savedRow;
 	},
@@ -304,7 +344,7 @@ const internalCertificate = {
 			query.withGraphFetched(`[${data.expand.join(", ")}]`);
 		}
 
-		const row = await query.then(utils.omitRow(omissions()));
+		const row = await query.then(omitCertificate());
 		if (!row?.id) {
 			throw new error.ItemNotFoundError(data.id);
 		}
@@ -412,8 +452,9 @@ const internalCertificate = {
 			action: "deleted",
 			object_type: "certificate",
 			object_id: row.id,
-			meta: _.omit(row, omissions()),
+			meta: omitCertificate()(row),
 		});
+		void internalWebhook.dispatch("certificate.deleted", { id: row.id });
 
 		if (row.provider === "letsencrypt") {
 			// Revoke the cert
@@ -455,7 +496,7 @@ const internalCertificate = {
 			query.withGraphFetched(`[${expand.join(", ")}]`);
 		}
 
-		const r = await query.then(utils.omitRows(omissions()));
+		const r = await query.then(utils.omitRows(omissions(), metaOmissions()));
 		for (let i = 0; i < r.length; i++) {
 			r[i] = internalCertificate.cleanExpansions(r[i]);
 		}
@@ -757,6 +798,9 @@ const internalCertificate = {
 	 * @returns {Object}
 	 */
 	cleanMeta: (meta, remove) => {
+		if (meta && typeof meta === "object") {
+			delete meta.dns_provider_credentials;
+		}
 		internalCertificate.allowedSslFiles.map((key) => {
 			if (typeof meta[key] !== "undefined" && meta[key]) {
 				if (remove) {
@@ -830,9 +874,7 @@ const internalCertificate = {
 			`Requesting LetsEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
 
-		const credentialsLocation = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
-		fs.mkdirSync("/etc/letsencrypt/credentials", { recursive: true });
-		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
+		const credentialsLocation = await materializeCertbotCredentials(certificate);
 
 		// Whether the plugin has a --<name>-credentials argument
 		const hasConfigArg = certificate.meta.dns_provider !== "route53";
@@ -929,8 +971,9 @@ const internalCertificate = {
 				action: "renewed",
 				object_type: "certificate",
 				object_id: updatedCertificate.id,
-				meta: updatedCertificate,
+				meta: omitCertificate()(updatedCertificate),
 			});
+			void internalWebhook.dispatch("certificate.renewed", { id: updatedCertificate.id });
 
 			return updatedCertificate;
 		}
@@ -1010,23 +1053,23 @@ const internalCertificate = {
 		// HTTPS. The exposure window should be one certbot run, not the life of the
 		// certificate.
 		//
-		// The value is not on the certificate object we were handed: renew() sources that from
-		// internalCertificate.get(), which pipes the row through utils.omitRow(omissions()) so
-		// meta.dns_provider_credentials can never travel out over the API. Read the row from
-		// the model directly to get at it.
+		// The credentials are not on the certificate object we were handed: renew() sources that
+		// from internalCertificate.get(), which strips meta.dns_provider_credentials so it can never
+		// travel out over the API. Resolve from the model row directly, which covers a credential_ref
+		// (internal vault or external store) as well as legacy inline credentials.
 		const row = await certificateModel.query().where("id", certificate.id).first();
-		const credentials = row?.meta?.dns_provider_credentials;
 		const credentialsLocation = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
+		let wroteCredentials = false;
 
-		if (credentials) {
-			fs.mkdirSync("/etc/letsencrypt/credentials", { recursive: true });
-			fs.writeFileSync(credentialsLocation, credentials, { mode: 0o600 });
-		} else {
-			// Nothing stored to write. A certificate issued under the previous behaviour may
+		try {
+			await materializeCertbotCredentials(row || certificate);
+			wroteCredentials = true;
+		} catch (err) {
+			// Nothing resolvable to write. A certificate issued under the previous behaviour may
 			// still have its file on disk; leave it be and let certbot decide. Throwing here
 			// would break a renewal that would otherwise have succeeded.
 			logger.warn(
-				`No stored DNS credentials for Cert #${certificate.id}; relying on any existing ${credentialsLocation}`,
+				`Could not resolve DNS credentials for Cert #${certificate.id} (${err.message}); relying on any existing ${credentialsLocation}`,
 			);
 		}
 
@@ -1062,11 +1105,11 @@ const internalCertificate = {
 			logger.info(result);
 			return result;
 		} finally {
-			// Only clean up a file we put there ourselves. If `credentials` came back empty we
+			// Only clean up a file we put there ourselves. If nothing resolved we
 			// wrote nothing, and an older file left on disk by the previous behaviour is the
 			// only thing keeping that certificate renewable - deleting it would break the next
 			// run for no gain.
-			if (credentials) {
+			if (wroteCredentials) {
 				fs.unlink(credentialsLocation, () => {});
 			}
 		}

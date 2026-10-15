@@ -1,12 +1,17 @@
 {
 	"operationId": "deleteDeadHost",
 	"summary": "Delete a 404 Host",
-	"tags": ["404-hosts"],
+	"tags": [
+		"404-hosts"
+	],
 	"security": [
 		{
-			"bearerAuth": ["dead_hosts.manage"]
+			"bearerAuth": [
+				"dead_hosts.manage"
+			]
 		}
 	],
+	"description": "Deletes a 404 host by id.",
 	"parameters": [
 		{
 			"in": "path",

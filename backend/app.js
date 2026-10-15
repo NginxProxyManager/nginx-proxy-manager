@@ -12,7 +12,14 @@ import mainRoutes from "./routes/main.js";
  * App
  */
 const app = express();
-app.use(fileUpload());
+app.use(
+	fileUpload({
+		limits: { fileSize: 50 * 1024 * 1024 },
+		abortOnLimit: true,
+		safeFileNames: true,
+		preserveExtension: true,
+	}),
+);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -71,7 +78,7 @@ app.use((err, req, res, _) => {
 		payload.error.message_i18n = err.message_i18n;
 	}
 
-	if (isDebugMode() || (req.baseUrl + req.path).includes("nginx/certificates")) {
+	if (isDebugMode()) {
 		payload.debug = {
 			stack: typeof err.stack !== "undefined" && err.stack ? err.stack.split("\n") : null,
 			previous: err.previous,
@@ -86,7 +93,7 @@ app.use((err, req, res, _) => {
 		}
 	}
 
-	res.status(err.status || 500).send(payload);
+	res.status(err.status || 500).json(payload);
 });
 
 export default app;

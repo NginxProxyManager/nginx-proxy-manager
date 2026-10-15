@@ -1,0 +1,26 @@
+{
+	"operationId": "listWebhooks",
+	"summary": "List webhook endpoints",
+	"tags": [
+		"webhooks"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"description": "Lists outbound webhook endpoints configured for automation events.",
+	"responses": {
+		"200": {
+			"description": "OK",
+			"content": {
+				"application/json": {
+					"example": [],
+					"schema": {
+						"$ref": "../../components/webhook-list.json"
+					}
+				}
+			}
+		}
+	}
+}

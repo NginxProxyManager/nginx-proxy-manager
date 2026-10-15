@@ -1,7 +1,9 @@
 {
 	"operationId": "getAuditLog",
 	"summary": "Get Audit Log Event",
-	"tags": ["audit-log"],
+	"tags": [
+		"audit-log"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Returns a single audit log entry by id.",
 	"parameters": [
 		{
 			"in": "path",

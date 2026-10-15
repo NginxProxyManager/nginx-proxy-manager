@@ -43,6 +43,12 @@
 			"description": "Certificates Permissions",
 			"enum": ["hidden", "view", "manage"],
 			"example": "hidden"
+		},
+		"credentials": {
+			"type": "string",
+			"description": "Stored DNS Credentials Permissions",
+			"enum": ["hidden", "view", "manage"],
+			"example": "manage"
 		}
 	}
 }

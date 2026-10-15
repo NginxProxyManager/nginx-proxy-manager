@@ -1,0 +1,39 @@
+# Example: host bundled VitePress docs and proxy /api to NPM for Swagger UI "Try it out".
+#
+# Requirements:
+# - Static files from frontend/dist (includes docs/ under /docs/)
+# - NPM admin API on port 81 (or upstream of your choice)
+# - TLS and authentication at the edge strongly recommended for production
+#
+# Adjust server_name, root, and proxy_pass to match your deployment.
+
+server {
+    listen 443 ssl http2;
+    server_name docs.example.com;
+
+    # ssl_certificate ...;
+    # ssl_certificate_key ...;
+
+    root /var/www/npm-frontend;
+    index index.html;
+
+    # VitePress build output (copied to dist/docs/)
+    location /docs/ {
+        try_files $uri $uri/ /docs/index.html;
+    }
+
+    # React admin SPA (optional if same host serves UI)
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Swagger UI in /docs/api-reference/swagger uses server URL /api
+    location /api/ {
+        proxy_pass http://127.0.0.1:81/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

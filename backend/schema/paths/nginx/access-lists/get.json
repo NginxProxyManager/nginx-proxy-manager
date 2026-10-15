@@ -1,7 +1,9 @@
 {
 	"operationId": "getAccessLists",
 	"summary": "Get all access lists",
-	"tags": ["access-lists"],
+	"tags": [
+		"access-lists"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Returns all access lists (HTTP authentication and access rules) configured in NPM.",
 	"parameters": [
 		{
 			"in": "query",

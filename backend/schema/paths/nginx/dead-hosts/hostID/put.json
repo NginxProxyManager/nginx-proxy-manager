@@ -1,12 +1,17 @@
 {
 	"operationId": "updateDeadHost",
 	"summary": "Update a 404 Host",
-	"tags": ["404-hosts"],
+	"tags": [
+		"404-hosts"
+	],
 	"security": [
 		{
-			"bearerAuth": ["dead_hosts.manage"]
+			"bearerAuth": [
+				"dead_hosts.manage"
+			]
 		}
 	],
+	"description": "Updates a 404 host domain names, forwarding, or enabled state.",
 	"parameters": [
 		{
 			"in": "path",
@@ -71,7 +76,9 @@
 								"created_on": "2024-10-09T01:38:52.000Z",
 								"modified_on": "2024-10-09T01:46:06.000Z",
 								"owner_user_id": 1,
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"certificate_id": 0,
 								"ssl_forced": false,
 								"advanced_config": "",
@@ -92,7 +99,9 @@
 									"name": "Administrator",
 									"nickname": "Admin",
 									"avatar": "",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								},
 								"certificate": null
 							}

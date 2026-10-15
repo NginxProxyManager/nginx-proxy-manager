@@ -1,4 +1,5 @@
 import { createIntl, createIntlCache } from "react-intl";
+import { getFlagCodeForLocale } from "./Utils";
 import langBg from "./lang/bg.json";
 import langDe from "./lang/de.json";
 import langPt from "./lang/pt.json";
@@ -66,28 +67,6 @@ const loadMessages = (locale?: string): typeof langList & typeof langEn => {
 	}
 
 	return Object.assign({}, langList, langEn, localeOptions.find(([code]) => code === thisLocale)?.[2]);
-};
-
-const getFlagCodeForLocale = (locale?: string) => {
-	const thisLocale = (locale || "en").slice(0, 2);
-
-	// only add to this if your flag is different from the locale code
-	const specialCases: Record<string, string> = {
-		ja: "jp", // Japan
-		zh: "cn", // China
-		vi: "vn", // Vietnam
-		ko: "kr", // Korea
-		cs: "cz", // Czechia
-		ga: "ie", // Ireland (Irish)
-		et: "ee", // Estonia (ISO 3166-1). "et" as a country code would be Ethiopia.
-		uk: "ua", // Ukraine
-		fa: "ir", // Iran (Persian)
-	};
-
-	if (specialCases[thisLocale]) {
-		return specialCases[thisLocale].toUpperCase();
-	}
-	return thisLocale.toUpperCase();
 };
 
 const rtlLocales = ["fa"];

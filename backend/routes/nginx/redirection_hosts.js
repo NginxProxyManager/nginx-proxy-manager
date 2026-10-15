@@ -47,7 +47,7 @@ router
 				},
 			);
 			const rows = await internalRedirectionHost.getAll(res.locals.access, data.expand, data.query);
-			res.status(200).send(rows);
+			res.status(200).json(rows);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -63,7 +63,7 @@ router
 		try {
 			const payload = await apiValidator(getValidationSchema("/nginx/redirection-hosts", "post"), req.body);
 			const result = await internalRedirectionHost.create(res.locals.access, payload);
-			res.status(201).send(result);
+			res.status(201).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -111,7 +111,7 @@ router
 				id: Number.parseInt(data.host_id, 10),
 				expand: data.expand,
 			});
-			res.status(200).send(row);
+			res.status(200).json(row);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -131,7 +131,7 @@ router
 			);
 			payload.id = Number.parseInt(req.params.host_id, 10);
 			const result = await internalRedirectionHost.update(res.locals.access, payload);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -148,7 +148,7 @@ router
 			const result = await internalRedirectionHost.delete(res.locals.access, {
 				id: Number.parseInt(req.params.host_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -175,7 +175,7 @@ router
 			const result = await internalRedirectionHost.enable(res.locals.access, {
 				id: Number.parseInt(req.params.host_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -202,7 +202,7 @@ router
 			const result = await internalRedirectionHost.disable(res.locals.access, {
 				id: Number.parseInt(req.params.host_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

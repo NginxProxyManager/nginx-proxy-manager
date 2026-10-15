@@ -1,0 +1,78 @@
+{
+	"operationId": "createApiKey",
+	"summary": "Create an API key",
+	"tags": [
+		"api-keys"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"description": "Creates a long-lived API key for automation. The raw key is returned once in the response and cannot be retrieved again.",
+	"requestBody": {
+		"description": "API key configuration",
+		"required": true,
+		"content": {
+			"application/json": {
+				"example": {
+					"name": "Cypress automation key",
+					"permissions": {
+						"proxy_hosts": "manage"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"required": [
+						"name"
+					],
+					"properties": {
+						"name": {
+							"type": "string",
+							"example": "Cypress automation key"
+						},
+						"permissions": {
+							"type": "object",
+							"example": {
+								"proxy_hosts": "manage"
+							}
+						},
+						"expires_on": {
+							"type": [
+								"string",
+								"null"
+							],
+							"example": null
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "Created",
+			"content": {
+				"application/json": {
+					"example": {
+						"id": 1,
+						"created_on": "2026-06-05T06:20:47.000Z",
+						"modified_on": "2026-06-05T06:20:47.000Z",
+						"owner_user_id": 1,
+						"name": "Cypress automation key",
+						"permissions": {
+							"proxy_hosts": "manage"
+						},
+						"expires_on": null,
+						"last_used_at": null,
+						"is_revoked": 0,
+						"key": "npmak_a1b2c3d4_base64urlsecret"
+					},
+					"schema": {
+						"$ref": "../../components/api-key-object.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,12 +1,17 @@
 {
 	"operationId": "updateSetting",
 	"summary": "Update a setting",
-	"tags": ["settings"],
+	"tags": [
+		"settings"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
+	"description": "Updates a single application setting value.",
 	"parameters": [
 		{
 			"in": "path",
@@ -14,7 +19,9 @@
 			"schema": {
 				"type": "string",
 				"minLength": 1,
-				"enum": ["default-site"]
+				"enum": [
+					"default-site"
+				]
 			},
 			"required": true,
 			"description": "Setting ID",
@@ -34,7 +41,13 @@
 						"value": {
 							"type": "string",
 							"minLength": 1,
-							"enum": ["congratulations", "404", "444", "redirect", "html"],
+							"enum": [
+								"congratulations",
+								"404",
+								"444",
+								"redirect",
+								"html"
+							],
 							"example": "html"
 						},
 						"meta": {

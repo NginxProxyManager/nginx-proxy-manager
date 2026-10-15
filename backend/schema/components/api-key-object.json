@@ -1,0 +1,57 @@
+{
+	"type": "object",
+	"description": "Automation API key metadata (secret hash is never returned)",
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "name", "permissions"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 255,
+			"example": "Cypress automation key"
+		},
+		"permissions": {
+			"type": "object",
+			"description": "Scoped permissions granted to this API key",
+			"additionalProperties": {
+				"type": "string"
+			},
+			"example": {
+				"proxy_hosts": "manage",
+				"certificates": "manage",
+				"credentials": "manage"
+			}
+		},
+		"expires_on": {
+			"type": ["string", "null"],
+			"example": null
+		},
+		"last_used_at": {
+			"type": ["string", "null"],
+			"example": null
+		},
+		"is_revoked": {
+			"type": "integer",
+			"enum": [0, 1],
+			"example": 0
+		},
+		"key": {
+			"type": "string",
+			"description": "Raw API key; returned only on create",
+			"pattern": "^npmak_",
+			"example": "npmak_a1b2c3d4_base64urlsecret"
+		}
+	}
+}

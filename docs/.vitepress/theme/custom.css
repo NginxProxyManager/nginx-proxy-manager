@@ -26,3 +26,15 @@
 	display: inline;
 	margin-right: 8px;
 }
+
+/* Full-width API reference viewers below VitePress content padding */
+.vp-doc .api-reference-redoc,
+.vp-doc .api-reference-swagger {
+	margin-left: calc(-1 * var(--vp-layout-content-padding, 24px));
+	margin-right: calc(-1 * var(--vp-layout-content-padding, 24px));
+	min-height: 75vh;
+}
+
+.vp-doc .api-reference-swagger .swagger-ui {
+	font-family: inherit;
+}

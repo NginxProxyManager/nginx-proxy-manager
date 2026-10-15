@@ -14,8 +14,8 @@ if [ "$DEVELOPMENT" = 'true' ]; then
 	chown -R "$PUID:$PGID" /frontend/dist
 
 	log_info 'Starting frontend ...'
-	s6-setuidgid "$PUID:$PGID" yarn install
-	exec s6-setuidgid "$PUID:$PGID" yarn dev
+	s6-setuidgid "$PUID:$PGID" npm install
+	exec s6-setuidgid "$PUID:$PGID" npm run dev
 else
 	exit 0
 fi

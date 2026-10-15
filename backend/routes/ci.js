@@ -24,7 +24,7 @@ router
 
 	// Return all certbot plugins
 	.get(async (_req, res, _next) => {
-		res.status(200).send(dnsPlugins);
+		res.status(200).json(dnsPlugins);
 	});
 
 /**
@@ -39,10 +39,9 @@ router
 	// Install a certbot plugin
 	.post(async (req, res, next) => {
 		try {
-			const pluginName = req.params.plugin;
-			// check if plugin exists
-			if (!dnsPlugins[pluginName]) {
-				return res.status(404).send({
+			const pluginName = String(req.params.plugin ?? "");
+			if (!/^[a-z0-9_-]+$/i.test(pluginName) || !Object.hasOwn(dnsPlugins, pluginName)) {
+				return res.status(404).json({
 					error: "Plugin not found",
 				});
 			}

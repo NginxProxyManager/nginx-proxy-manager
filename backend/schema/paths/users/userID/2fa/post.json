@@ -1,7 +1,10 @@
 {
 	"operationId": "setupUser2fa",
 	"summary": "Start 2FA setup, returns QR code URL",
-	"tags": ["users"],
+	"tags": [
+		"users"
+	],
+	"description": "Starts TOTP enrollment and returns QR code / secret material for the user.",
 	"parameters": [
 		{
 			"in": "path",
@@ -29,7 +32,10 @@
 					},
 					"schema": {
 						"type": "object",
-						"required": ["secret", "otpauth_url"],
+						"required": [
+							"secret",
+							"otpauth_url"
+						],
 						"additionalProperties": false,
 						"properties": {
 							"secret": {

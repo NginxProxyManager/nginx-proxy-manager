@@ -1,12 +1,15 @@
 {
 	"operationId": "reportsHosts",
 	"summary": "Report on Host Statistics",
-	"tags": ["reports"],
+	"tags": [
+		"reports"
+	],
 	"security": [
 		{
 			"bearerAuth": []
 		}
 	],
+	"description": "Returns reporting data about configured hosts for dashboards and diagnostics.",
 	"responses": {
 		"200": {
 			"description": "200 response",

@@ -1,4 +1,5 @@
 import { installPlugins } from "./lib/certbot.js";
+import { ensureCredentialDirs } from "./lib/secrets/storage.js";
 import utils from "./lib/utils.js";
 import { setup as logger } from "./logger.js";
 import authModel from "./models/auth.js";
@@ -58,6 +59,7 @@ const setupDefaultUser = async () => {
 			user_id: user.id,
 			visibility: "all",
 			proxy_hosts: "manage",
+			credentials: "manage",
 			redirection_hosts: "manage",
 			dead_hosts: "manage",
 			streams: "manage",
@@ -149,4 +151,10 @@ const setupLogrotation = () => {
 	return runLogrotate();
 };
 
-export default () => setupDefaultUser().then(setupDefaultSettings).then(setupCertbotPlugins).then(setupLogrotation);
+export default () => {
+	ensureCredentialDirs();
+	return setupDefaultUser()
+		.then(setupDefaultSettings)
+		.then(setupCertbotPlugins)
+		.then(setupLogrotation);
+};

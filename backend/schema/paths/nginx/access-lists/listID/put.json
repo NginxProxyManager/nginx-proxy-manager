@@ -1,12 +1,17 @@
 {
 	"operationId": "updateAccessList",
 	"summary": "Update a Access List",
-	"tags": ["access-lists"],
+	"tags": [
+		"access-lists"
+	],
 	"security": [
 		{
-			"bearerAuth": ["access_lists.manage"]
+			"bearerAuth": [
+				"access_lists.manage"
+			]
 		}
 	],
+	"description": "Updates an access list and its nested auth or access items.",
 	"parameters": [
 		{
 			"in": "path",
@@ -93,7 +98,9 @@
 									"name": "Administrator",
 									"nickname": "some guy",
 									"avatar": "//www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?default=mm",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								},
 								"items": [
 									{

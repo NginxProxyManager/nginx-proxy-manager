@@ -20,6 +20,7 @@ export default defineConfig({
 		},
 		env: {
 			swaggerBase: `{{baseUrl}}/api/schema?ts=${Date.now()}`,
+			VAULT_INTEGRATION: 0,
 		},
 		baseUrl: `http://fullstack:${adminPort}`,
 	}

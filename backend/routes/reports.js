@@ -22,7 +22,7 @@ router
 	.get(async (req, res, next) => {
 		try {
 			const data = await internalReport.getHostsReport(res.locals.access);
-			res.status(200).send(data);
+			res.status(200).json(data);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

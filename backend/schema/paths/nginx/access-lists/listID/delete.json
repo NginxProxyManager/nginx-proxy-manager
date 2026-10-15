@@ -1,12 +1,17 @@
 {
 	"operationId": "deleteAccessList",
 	"summary": "Delete a Access List",
-	"tags": ["access-lists"],
+	"tags": [
+		"access-lists"
+	],
 	"security": [
 		{
-			"bearerAuth": ["access_lists.manage"]
+			"bearerAuth": [
+				"access_lists.manage"
+			]
 		}
 	],
+	"description": "Deletes an access list. Hosts referencing it must be updated separately.",
 	"parameters": [
 		{
 			"in": "path",

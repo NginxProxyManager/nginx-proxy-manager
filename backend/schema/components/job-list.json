@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "Background job list",
+	"items": {
+		"$ref": "./job-object.json"
+	}
+}

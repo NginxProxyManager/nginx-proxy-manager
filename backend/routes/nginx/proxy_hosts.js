@@ -48,7 +48,7 @@ router
 				},
 			);
 			const rows = await internalProxyHost.getAll(res.locals.access, data.expand, data.query);
-			res.status(200).send(rows);
+			res.status(200).json(rows);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -64,7 +64,7 @@ router
 		try {
 			const payload = await apiValidator(getValidationSchema("/nginx/proxy-hosts", "post"), req.body);
 			const result = await internalProxyHost.create(res.locals.access, payload);
-			res.status(201).send(result);
+			res.status(201).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err} ${JSON.stringify(err.debug, null, 2)}`);
 			next(err);
@@ -112,7 +112,7 @@ router
 				id: Number.parseInt(data.host_id, 10),
 				expand: data.expand,
 			});
-			res.status(200).send(row);
+			res.status(200).json(row);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -129,7 +129,7 @@ router
 			const payload = await apiValidator(getValidationSchema("/nginx/proxy-hosts/{hostID}", "put"), req.body);
 			payload.id = Number.parseInt(req.params.host_id, 10);
 			const result = await internalProxyHost.update(res.locals.access, payload);
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -146,7 +146,7 @@ router
 			const result = await internalProxyHost.delete(res.locals.access, {
 				id: Number.parseInt(req.params.host_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -173,7 +173,7 @@ router
 			const result = await internalProxyHost.enable(res.locals.access, {
 				id: Number.parseInt(req.params.host_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
@@ -200,7 +200,7 @@ router
 			const result = await internalProxyHost.disable(res.locals.access, {
 				id: Number.parseInt(req.params.host_id, 10),
 			});
-			res.status(200).send(result);
+			res.status(200).json(result);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
