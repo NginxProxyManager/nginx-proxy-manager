@@ -4,6 +4,7 @@ export interface HealthResponse {
 	status: string;
 	version: AppVersion;
 	setup: boolean;
+	http3_disabled?: boolean;
 }
 
 export interface TokenResponse {

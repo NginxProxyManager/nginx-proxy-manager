@@ -9,7 +9,8 @@ services:
     ports:
       - 3080:80
       - 3081:81
-      - 3443:443
+      - "3443:443/tcp"
+      - "3443:443/udp" # HTTP/3 QUIC — required for UDP-based QUIC handshakes
     networks:
       nginx_proxy_manager:
         aliases:
