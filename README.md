@@ -74,6 +74,8 @@ services:
 
 This is the bare minimum configuration required. See the [documentation](https://nginxproxymanager.com/setup/) for more.
 
+If you plan on using `network_mode: host`, make sure not only port 80, 81 and 443 are not used but also port 3000, which serves the backend API.
+
 3. Bring up your stack by running
 
 ```bash
