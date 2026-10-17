@@ -916,7 +916,6 @@ const internalCertificate = {
 				: internalCertificate.renewLetsEncryptSsl;
 
 			await renewMethod(certificate);
-			await internalNginx.reload();
 			const certInfo = await internalCertificate.getCertificateInfoFromFile(
 				`${internalCertificate.getLiveCertPath(certificate.id)}/fullchain.pem`,
 			);
@@ -932,6 +931,8 @@ const internalCertificate = {
 				object_id: updatedCertificate.id,
 				meta: updatedCertificate,
 			});
+
+			await internalNginx.reload();
 
 			return updatedCertificate;
 		}
