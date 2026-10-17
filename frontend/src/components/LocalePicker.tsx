@@ -28,9 +28,10 @@ function LocalePicker({ menuAlign = "start" }: Props) {
 				<Flag countryCode={getFlagCodeForLocale(locale)} />
 			</button>
 			<div
-				className={cn("dropdown-menu", {
+				className={cn("dropdown-menu scroll-y", {
 					"dropdown-menu-end": menuAlign === "end",
 				})}
+				style={{ maxHeight: "50vh" }}
 			>
 				{localeOptions.map((item: any) => (
 					<a
