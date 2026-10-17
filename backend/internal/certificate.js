@@ -932,6 +932,8 @@ const internalCertificate = {
 				meta: updatedCertificate,
 			});
 
+			await internalNginx.reload();
+
 			return updatedCertificate;
 		}
 
