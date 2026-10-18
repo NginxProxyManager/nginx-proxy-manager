@@ -14,7 +14,11 @@ const isUnixTimestamp = (value: unknown): boolean => {
 const parseDate = (value: string | number): Date | null => {
 	if (typeof value !== "number" && typeof value !== "string") return null;
 	try {
-		return isUnixTimestamp(value) ? fromUnixTime(+value) : parseISO(`${value}`);
+		if (isUnixTimestamp(value)) {
+			const timestamp = +value;
+			return timestamp < 10000000000 ? fromUnixTime(timestamp) : new Date(timestamp);
+		}
+		return parseISO(`${value}`);
 	} catch {
 		return null;
 	}

@@ -1,5 +1,32 @@
-import { formatDateTime, getFlagCodeForLocale } from "src/locale";
+import { formatDateTime, getFlagCodeForLocale, parseDate } from "src/locale";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+
+describe("parseDate", () => {
+	it.each([1, 1700000000, 1700000000.123, 9999999999])("parses %s as Unix seconds", (value) => {
+		for (const input of [value, String(value)]) {
+			expect(parseDate(input)?.getTime()).toBe(value * 1000);
+		}
+	});
+
+	it.each([10000000000, 1700000000000, 1700000000123, 32503679999999])("parses %s as Unix milliseconds", (value) => {
+		for (const input of [value, String(value)]) {
+			expect(parseDate(input)?.getTime()).toBe(value);
+		}
+	});
+
+	it("parses ISO dates with an explicit timezone", () => {
+		expect(parseDate("2023-11-14T22:13:20.123Z")?.getTime()).toBe(1700000000123);
+	});
+
+	it.each([0, -100, -1700000000000, 32503680000000, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+		"keeps %s outside the supported Unix timestamp range",
+		(value) => {
+			for (const input of [value, String(value)]) {
+				expect(parseDate(input)?.getTime()).toBeNaN();
+			}
+		},
+	);
+});
 
 describe("DateFormatter", () => {
 	// Keep a reference to the real Intl to restore later
@@ -52,6 +79,10 @@ describe("DateFormatter", () => {
 		const value = "1762476112";
 		const text = formatDateTime(value);
 		expect(text).toBe("7 Nov 2025, 12:41:52 am");
+	});
+
+	it.each([1762476112000, "1762476112000"])("format date from millisecond timestamp %j", (value) => {
+		expect(formatDateTime(value)).toBe("7 Nov 2025, 12:41:52 am");
 	});
 
 	it("catch bad format from string", () => {
