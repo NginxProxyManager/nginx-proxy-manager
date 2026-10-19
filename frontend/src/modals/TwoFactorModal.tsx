@@ -223,7 +223,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<div className="row g-2">
 							{backupCodes.map((code, index) => (
 								<div key={index} className="col-6">
-									<code className="d-block p-2 bg-light rounded text-center">{code}</code>
+									<code className="d-block p-2 text-center">{code}</code>
 								</div>
 							))}
 						</div>
