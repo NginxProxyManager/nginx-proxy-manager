@@ -227,9 +227,10 @@ Authelia, Google, Entra ID, Okta and friends — you only need the issuer URL,
 a client ID and a client secret. Everything else is discovered.
 
 The authorization code flow is used with PKCE, a single-use `state` and a
-`nonce`. ID tokens are verified against the provider's JWKS, and the userinfo
-endpoint is consulted as well, because providers differ in which claims they
-put where.
+`nonce`. ID tokens are verified against the provider's JWKS, must carry that
+nonce back, and must be signed with RSA or ECDSA (`RS*`, `PS*` or `ES*`). The
+userinfo endpoint is consulted as well, because providers differ in which claims
+they put where. Where the two disagree, the signed ID token wins.
 
 Register this redirect URI with your OAuth application:
 

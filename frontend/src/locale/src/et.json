@@ -443,6 +443,12 @@
 	"auth-provider.sync-intro": {
 		"defaultMessage": "Käib kataloogi ajakava järgi läbi, et kontod oleksid olemas juba enne sisselogimist ja et grupimuudatused jõuaksid kohale sisselogimist ootamata."
 	},
+	"auth-provider.sync-max-disable": {
+		"defaultMessage": "Kõige rohkem väljalülitatavaid kontosid käivituse kohta"
+	},
+	"auth-provider.sync-max-disable-help": {
+		"defaultMessage": "Käivitus, mis lülitaks välja rohkem kontosid, ei lülita välja kedagi, sest tõenäolisemalt nägi see poolikut otsingut kui päriselt lahkunud inimesi. 0 eemaldab piirangu."
+	},
 	"auth-provider.sync-now": {
 		"defaultMessage": "Sünkrooni"
 	},

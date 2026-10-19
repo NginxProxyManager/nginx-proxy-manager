@@ -14,23 +14,26 @@ const ERROR_MESSAGE_INVALID_2FA = "Invalid verification code";
 const ERROR_MESSAGE_INVALID_2FA_I18N = "error.invalid-2fa";
 
 /**
- * Holds a failed sign in for one to three seconds.
+ * Holds a failed sign in until one to three seconds after it started.
  *
  * A local password check answers in milliseconds while an LDAP search and bind
  * takes hundreds, so without this the response time says whether a directory
- * knows the name. It also slows down guessing, which matters more than usual
- * here: every wrong password counts towards the directory's own lockout, which
- * would shut the person out of far more than this instance. Only failures wait,
- * so a correct sign in stays fast.
+ * knows the name. Padding to a total, rather than adding a delay on top, means
+ * the time spent checking no longer shows through. It also slows down guessing,
+ * which matters more than usual here: every wrong password counts towards the
+ * directory's own lockout, which would shut the person out of far more than
+ * this instance. Only failures wait, so a correct sign in stays fast.
  *
+ * @param   {Number} startedAt  when the attempt started, from Date.now()
  * @returns {Promise}
  */
-const delayFailedSignIn = () => {
+const delayFailedSignIn = (startedAt) => {
 	if (process.env.NODE_ENV === "test" || isCI()) {
 		return Promise.resolve();
 	}
-	const delayMs = 1000 + Math.floor(Math.random() * 2000);
-	return new Promise((resolve) => setTimeout(resolve, delayMs));
+	const totalMs = 1000 + Math.floor(Math.random() * 2000);
+	const remainingMs = Math.max(0, startedAt + totalMs - Date.now());
+	return new Promise((resolve) => setTimeout(resolve, remainingMs));
 };
 
 const internalToken = {
@@ -141,6 +144,7 @@ const internalToken = {
 	 * @returns {Promise}
 	 */
 	getTokenFromEmail: async (data, issuer) => {
+		const startedAt = Date.now();
 		const scope = data.scope || "user";
 		const expiry = data.expiry || "1d";
 
@@ -157,7 +161,7 @@ const internalToken = {
 		}
 
 		if (!user) {
-			await delayFailedSignIn();
+			await delayFailedSignIn(startedAt);
 			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH, ERROR_MESSAGE_INVALID_AUTH_I18N);
 		}
 
