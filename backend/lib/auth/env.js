@@ -72,6 +72,7 @@ const buildMeta = (type) => {
 				sync_filter: env("AUTH_LDAP_SYNC_FILTER"),
 				sync_group: env("AUTH_LDAP_SYNC_GROUP"),
 				sync_disable_missing: toBool(env("AUTH_LDAP_SYNC_DISABLE_MISSING"), false),
+				sync_max_disable: toInt(env("AUTH_LDAP_SYNC_MAX_DISABLE"), 5),
 			});
 
 		case SAML:

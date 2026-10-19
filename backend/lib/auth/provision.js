@@ -188,15 +188,30 @@ const resolveUser = async (provider, identity, options = {}) => {
 		}
 
 		// Keep roles in sync when the provider maps an admin group
-		const roles = resolveRoles(provider, identity, user.roles);
+		let roles = resolveRoles(provider, identity, user.roles);
+		const wasAdmin = (user.roles || []).includes("admin");
+
+		// Same rule as sync and provider removal: a group mapping that is wrong,
+		// or an administrator who left the group, must not leave nobody in charge
+		if (roles && wasAdmin && !roles.includes("admin") && !(await anotherAdminCanSignIn(user.id))) {
+			logger.warn(
+				`Not removing admin from ${email}: no other administrator could still sign in, despite them not being in the admin group of "${provider.name}"`,
+			);
+			roles = null;
+		}
+
 		if (roles && !sameRoles(roles, user.roles)) {
 			await userModel.query().where("id", user.id).patch({ roles });
 			logger.info(`Updated roles for ${email} from provider ${provider.name}: [${roles.join(", ")}]`);
 			user.roles = roles;
 
-			// Admins need to be able to see everything they administer
+			// Admins need to be able to see everything they administer, and
+			// somebody who stops being one must not keep that view of every
+			// other user's hosts and certificates
 			if (roles.includes("admin")) {
 				await userPermissionModel.query().where("user_id", user.id).patch({ visibility: "all" });
+			} else if (wasAdmin) {
+				await userPermissionModel.query().where("user_id", user.id).patch({ visibility: "user" });
 			}
 		}
 

@@ -29,6 +29,18 @@ const timers = new Map();
 
 const MIN_INTERVAL_MINUTES = 5;
 
+/** How many accounts one run may disable unless the provider says otherwise */
+const DEFAULT_MAX_DISABLE = 5;
+
+/**
+ * @param   {Object} provider
+ * @returns {Integer} the most accounts one run may disable, 0 meaning no limit
+ */
+const maxDisable = (provider) => {
+	const value = Number.parseInt(provider.meta?.sync_max_disable, 10);
+	return Number.isInteger(value) && value >= 0 ? value : DEFAULT_MAX_DISABLE;
+};
+
 /**
  * @param   {Object} provider
  * @returns {Boolean}
@@ -41,6 +53,10 @@ const isSyncable = (provider) => provider.type === "ldap" && !!provider.meta?.sy
  * Only accounts belonging to this provider are considered, and only when the
  * run actually saw something. A directory that returns nothing because of a
  * misconfiguration must not disable an entire organisation.
+ *
+ * Nor must one that returns only part of itself. A paged search cut short after
+ * the first page still "saw something", so the run also refuses to disable more
+ * than `sync_max_disable` accounts at once, and disables nobody when it would.
  *
  * @param   {Object}   provider
  * @param   {[String]} seenIdentifiers
@@ -60,7 +76,7 @@ const disableMissing = async (provider, seenIdentifiers) => {
 		.andWhere("is_deleted", 0)
 		.whereNotIn("identifier", seenIdentifiers);
 
-	const disabled = [];
+	const candidates = [];
 
 	for (const link of links) {
 		const user = await userModel
@@ -86,6 +102,20 @@ const disableMissing = async (provider, seenIdentifiers) => {
 			}
 		}
 
+		candidates.push(user);
+	}
+
+	const limit = maxDisable(provider);
+	if (limit && candidates.length > limit) {
+		logger.error(
+			`Sync for "${provider.name}" would disable ${candidates.length} accounts, more than the limit of ${limit}, ` +
+				"so nothing was disabled. If the directory really did lose them, raise the limit and sync again.",
+		);
+		return [];
+	}
+
+	const disabled = [];
+	for (const user of candidates) {
 		await userModel.query().where("id", user.id).patch({ is_disabled: 1 });
 		disabled.push({ id: user.id, email: user.email });
 		logger.info(`Disabled ${user.email}: no longer present in "${provider.name}"`);
@@ -120,6 +150,13 @@ const runSync = async (provider) => {
 		logger.info(`Starting directory sync for "${provider.name}"`);
 
 		const { seen, skipped } = await ldap.listDirectory(provider, async (identity) => {
+			// The directory returned this entry, so it is present whether or not
+			// provisioning it below succeeds. A transient database error must not
+			// get somebody disabled for being "missing".
+			if (identity.identifier) {
+				seenIdentifiers.push(identity.identifier);
+			}
+
 			try {
 				const before = await authModel
 					.query()
@@ -130,7 +167,6 @@ const runSync = async (provider) => {
 
 				await resolveUser(provider, identity, { forceCreate: true });
 
-				seenIdentifiers.push(identity.identifier);
 				if (before) {
 					updated++;
 				} else {

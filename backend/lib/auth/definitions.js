@@ -76,6 +76,10 @@ const DEFAULTS = {
 		sync_group: "",
 		// Disable local accounts whose directory entry has gone away
 		sync_disable_missing: false,
+		// The most accounts one run may disable. More than that looks like a
+		// truncated search rather than real departures, so nothing is disabled.
+		// 0 removes the limit.
+		sync_max_disable: 5,
 	},
 	[SAML]: {
 		...COMMON_DEFAULTS,

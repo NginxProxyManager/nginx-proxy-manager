@@ -287,6 +287,7 @@ export interface AuthProviderMeta {
 	syncFilter?: string;
 	syncGroup?: string;
 	syncDisableMissing?: boolean;
+	syncMaxDisable?: number;
 	startTls?: boolean;
 	tlsRejectUnauthorized?: boolean;
 	timeout?: number;

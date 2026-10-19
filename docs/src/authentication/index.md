@@ -140,6 +140,13 @@ still sign in, and a run that returns no entries at all disables nobody, so a
 broken filter or an unreachable server cannot switch off an entire
 organisation.
 
+A search that is cut short part way through, by a dropped connection or a
+server side size limit, does return entries, so a third guard covers it: a run
+that would disable more than **Most accounts disabled per run** (five by
+default) disables nobody and logs an error instead. If that many people really
+did leave, raise the limit, sync, and lower it again. An entry the directory
+returned is never treated as missing, even if provisioning it failed.
+
 Use the **Sync** button on the providers list to run one immediately rather than
 waiting for the schedule.
 
@@ -338,13 +345,18 @@ attempt is cached for thirty seconds only, and every cached decision for a list
 is discarded the moment that list is saved, so revoking somebody's access takes
 effect immediately.
 
-Two headers are passed to the proxied application on success, which saves it
-from asking the directory itself:
+With **Pass Auth to Upstream** turned on for the list, two headers are passed
+to the proxied application on success, which saves it from asking the directory
+itself:
 
 | Header | Contents |
 | ------ | -------- |
 | `X-Auth-User` | the username that was supplied |
 | `X-Auth-Email` | the email address on the directory entry |
+
+These only ever come from the check. Whatever a visitor sends under those names
+is dropped on every location where an access list asks for a password, so an application
+can trust them, and with **Pass Auth to Upstream** off it receives neither.
 
 If the directory is unreachable the request is refused. A protected site does
 not fall open because a server is down.
@@ -410,6 +422,7 @@ Directory sync, described under [Directory sync](#directory-sync):
 | `AUTH_LDAP_SYNC_FILTER` | `(objectClass=person)` | Which entries to consider |
 | `AUTH_LDAP_SYNC_GROUP` | | Only sync members of this group |
 | `AUTH_LDAP_SYNC_DISABLE_MISSING` | `false` | Disable accounts whose entry has gone away |
+| `AUTH_LDAP_SYNC_MAX_DISABLE` | `5` | The most accounts one run may disable; `0` removes the limit |
 
 ### SAML
 

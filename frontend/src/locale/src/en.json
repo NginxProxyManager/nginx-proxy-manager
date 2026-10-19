@@ -443,6 +443,12 @@
 	"auth-provider.sync-intro": {
 		"defaultMessage": "Walks the directory on a schedule so accounts exist before anyone signs in, and so group changes are picked up without waiting for a login."
 	},
+	"auth-provider.sync-max-disable": {
+		"defaultMessage": "Most accounts disabled per run"
+	},
+	"auth-provider.sync-max-disable-help": {
+		"defaultMessage": "A run that would disable more than this disables nobody, since it more likely saw a cut-off search than real departures. 0 removes the limit."
+	},
 	"auth-provider.sync-now": {
 		"defaultMessage": "Sync"
 	},

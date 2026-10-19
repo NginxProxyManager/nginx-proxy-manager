@@ -314,6 +314,7 @@ Any secret below can instead be supplied as a docker secret by appending
 | `AUTH_LDAP_SYNC_FILTER` | `(objectClass=person)` | Which directory entries sync considers |
 | `AUTH_LDAP_SYNC_GROUP` | | Only sync members of this group |
 | `AUTH_LDAP_SYNC_DISABLE_MISSING` | `false` | Disable accounts whose directory entry has gone away. The last administrator is never disabled, and a run returning nothing disables nobody. |
+| `AUTH_LDAP_SYNC_MAX_DISABLE` | `5` | The most accounts one run may disable. A run that would disable more disables nobody. `0` removes the limit. |
 
 ### SAML
 

@@ -56,6 +56,13 @@ describe("buildUserFilter", () => {
 		);
 	});
 
+	it("inserts a username literally, without expanding replacement patterns", () => {
+		// As a replacement string, $' would expand to the rest of the filter
+		expect(buildUserFilter({ user_filter: "(&(uid={{username}})(objectClass=person))" }, "a$'b$&c")).toBe(
+			"(&(uid=a$'b$&c)(objectClass=person))",
+		);
+	});
+
 	it("builds a single clause from one login attribute", () => {
 		expect(buildUserFilter({ login_attributes: "uid" }, "alice")).toBe("(uid=alice)");
 	});

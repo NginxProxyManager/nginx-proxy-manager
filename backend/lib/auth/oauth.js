@@ -122,6 +122,13 @@ const buildAuthorizationUrl = async (provider, flow, state) => {
 };
 
 /**
+ * The signing algorithms accepted on an ID token. Only asymmetric ones: the
+ * key comes from a public JWKS, and taking the algorithm from the token's own
+ * unverified header is how key confusion attacks start.
+ */
+const ID_TOKEN_ALGORITHMS = ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512"];
+
+/**
  * Verifies an ID token's signature against the provider's JWKS.
  *
  * @param   {Object} provider
@@ -154,7 +161,7 @@ const verifyIdToken = async (provider, endpoints, idToken, nonce) => {
 
 	const publicKey = crypto.createPublicKey({ key, format: "jwk" });
 	const verifyOptions = {
-		algorithms: [decoded.header.alg],
+		algorithms: ID_TOKEN_ALGORITHMS,
 		audience: meta.client_id,
 	};
 	if (endpoints.issuer) {
@@ -163,7 +170,9 @@ const verifyIdToken = async (provider, endpoints, idToken, nonce) => {
 
 	const claims = jwt.verify(idToken, publicKey, verifyOptions);
 
-	if (claims.nonce && nonce && claims.nonce !== nonce) {
+	// A nonce was sent with the request, so the token must carry it back.
+	// Accepting a token that simply leaves it out would defeat replay protection.
+	if (nonce && claims.nonce !== nonce) {
 		throw new errs.AuthError("The ID token nonce did not match the login request");
 	}
 
@@ -239,7 +248,17 @@ const completeAuthorization = async (provider, flow, code) => {
 		throw new errs.AuthError("The identity provider returned conflicting subjects for this sign in");
 	}
 
-	const claims = { ...(idClaims || {}), ...(userClaims || {}) };
+	// The ID token is signed and userinfo is not, so the ID token wins on any
+	// claim both carry. Groups are the exception worth handling: some providers
+	// put an empty list in the ID token and the real one in userinfo.
+	const groupClaim = meta.group_claim || "groups";
+	const idGroups = idClaims?.[groupClaim];
+	const hasIdGroups = Array.isArray(idGroups) ? idGroups.length > 0 : idGroups != null && idGroups !== "";
+	const claims = {
+		...(userClaims || {}),
+		...(idClaims || {}),
+		[groupClaim]: hasIdGroups ? idGroups : userClaims?.[groupClaim],
+	};
 
 	const email = claims[meta.email_claim || "email"];
 	if (!email) {
@@ -256,7 +275,7 @@ const completeAuthorization = async (provider, flow, code) => {
 		email_verified: claims.email_verified === true || claims.email_verified === "true",
 		name: claims[meta.name_claim || "name"] || String(email),
 		nickname: claims[meta.nickname_claim] || null,
-		groups: toArray(claims[meta.group_claim || "groups"]),
+		groups: toArray(claims[groupClaim]),
 	};
 };
 

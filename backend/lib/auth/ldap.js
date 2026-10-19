@@ -184,7 +184,9 @@ const buildUserFilter = (meta, username) => {
 	const escaped = escapeFilterValue(username);
 
 	if (meta.user_filter) {
-		return meta.user_filter.replace(/\{\{username\}\}/g, escaped);
+		// A replacer function, because a replacement string expands $& and $'
+		// and would let a username containing them rewrite the filter
+		return meta.user_filter.replace(/\{\{username\}\}/g, () => escaped);
 	}
 
 	const attributes = String(meta.login_attributes || "")

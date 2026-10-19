@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { isCI } from "../lib/config.js";
 import errs from "../lib/error.js";
 import { parseDatePeriod } from "../lib/helpers.js";
 import authModel from "../models/auth.js";
@@ -11,6 +12,26 @@ const ERROR_MESSAGE_INVALID_AUTH = "Invalid email or password";
 const ERROR_MESSAGE_INVALID_AUTH_I18N = "error.invalid-auth";
 const ERROR_MESSAGE_INVALID_2FA = "Invalid verification code";
 const ERROR_MESSAGE_INVALID_2FA_I18N = "error.invalid-2fa";
+
+/**
+ * Holds a failed sign in for one to three seconds.
+ *
+ * A local password check answers in milliseconds while an LDAP search and bind
+ * takes hundreds, so without this the response time says whether a directory
+ * knows the name. It also slows down guessing, which matters more than usual
+ * here: every wrong password counts towards the directory's own lockout, which
+ * would shut the person out of far more than this instance. Only failures wait,
+ * so a correct sign in stays fast.
+ *
+ * @returns {Promise}
+ */
+const delayFailedSignIn = () => {
+	if (process.env.NODE_ENV === "test" || isCI()) {
+		return Promise.resolve();
+	}
+	const delayMs = 1000 + Math.floor(Math.random() * 2000);
+	return new Promise((resolve) => setTimeout(resolve, delayMs));
+};
 
 const internalToken = {
 	/**
@@ -136,6 +157,7 @@ const internalToken = {
 		}
 
 		if (!user) {
+			await delayFailedSignIn();
 			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH, ERROR_MESSAGE_INVALID_AUTH_I18N);
 		}
 
@@ -185,13 +207,34 @@ const internalToken = {
 				throw new errs.AuthError(`Invalid expiry time: ${thisData.expiry}`);
 			}
 
+			// The account may have been disabled, deleted or demoted since this
+			// token was issued, by an administrator or by a directory sync.
+			// Refreshing from the old token's claims alone would keep a revoked
+			// session looking signed in, so check the account as it is now.
+			const user = await userModel
+				.query()
+				.where("id", access.token.getUserId(0))
+				.andWhere("is_deleted", 0)
+				.andWhere("is_disabled", 0)
+				.first();
+
+			if (!user) {
+				throw new errs.AuthError("User cannot be loaded for Token");
+			}
+
 			const token_attrs = {
-				id: access.token.getUserId(0),
+				id: user.id,
 			};
 
+			// Only keep the scopes the user still holds a role for
+			const roles = user.roles || [];
+			let scope = (access.token.get("scope") || []).filter((s) => s === "user" || roles.includes(s));
+			if (!scope.length) {
+				throw new errs.AuthError("User no longer holds the scope of this Token");
+			}
+
 			// Only admins can request otherwise scoped tokens
-			let scope = access.token.get("scope");
-			if (thisData.scope && access.token.hasScope("admin")) {
+			if (thisData.scope && scope.includes("admin")) {
 				scope = [thisData.scope];
 
 				if (thisData.scope === "job-board" || thisData.scope === "worker") {

@@ -515,6 +515,13 @@ function SyncFields({ disabled }: FieldsProps) {
 				help={<T id="auth-provider.sync-disable-missing-help" />}
 				disabled={disabled}
 			/>
+			<TextField
+				name="meta.syncMaxDisable"
+				label="auth-provider.sync-max-disable"
+				type="number"
+				help={<T id="auth-provider.sync-max-disable-help" />}
+				disabled={disabled}
+			/>
 		</>
 	);
 }
@@ -540,6 +547,7 @@ const TYPE_DEFAULTS: Record<AuthProviderType, Record<string, any>> = {
 		syncFilter: "(objectClass=person)",
 		syncGroup: "",
 		syncDisableMissing: false,
+		syncMaxDisable: 5,
 	},
 	saml: {
 		entryPoint: "",
@@ -595,7 +603,7 @@ const AuthProviderModal = EasyModal.create(({ provider, visible, remove }: Props
 		}
 
 		// Number inputs hand back strings
-		for (const key of ["pageSize", "syncInterval", "timeout"]) {
+		for (const key of ["pageSize", "syncInterval", "syncMaxDisable", "timeout"]) {
 			if (typeof meta[key] !== "undefined" && meta[key] !== "") {
 				meta[key] = Number(meta[key]);
 			}
