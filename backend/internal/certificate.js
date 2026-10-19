@@ -545,13 +545,15 @@ const internalCertificate = {
 
 	/**
 	 * Validates that the certs provided are good.
-	 * No access required here, nothing is changed or stored.
+	 * Nothing is changed or stored, but the files go through openssl, so it needs the same access as creating one.
 	 *
+	 * @param   {Access}  access
 	 * @param   {Object}  data
 	 * @param   {Object}  data.files
 	 * @returns {Promise}
 	 */
-	validate: (data) => {
+	validate: async (access, data) => {
+		await access.can("certificates:create");
 		// Put file contents into an object
 		const files = {};
 		_.map(data.files, (file, name) => {
@@ -600,7 +602,7 @@ const internalCertificate = {
 			throw new error.ValidationError("Cannot upload certificates for this type of provider");
 		}
 
-		const validations = await internalCertificate.validate(data);
+		const validations = await internalCertificate.validate(access, data);
 		if (typeof validations.certificate === "undefined") {
 			throw new error.ValidationError("Certificate file was not provided");
 		}
