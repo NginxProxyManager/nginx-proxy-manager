@@ -214,7 +214,8 @@ const internalToken = {
 			// The account may have been disabled, deleted or demoted since this
 			// token was issued, by an administrator or by a directory sync.
 			// Refreshing from the old token's claims alone would keep a revoked
-			// session looking signed in, so check the account as it is now.
+			// session looking signed in, so check the account as it is now. A 401
+			// is what makes the frontend sign out, rather than sit on an empty UI.
 			const user = await userModel
 				.query()
 				.where("id", access.token.getUserId(0))
@@ -223,7 +224,7 @@ const internalToken = {
 				.first();
 
 			if (!user) {
-				throw new errs.AuthError("User cannot be loaded for Token");
+				throw new errs.TokenRevokedError("User cannot be loaded for Token");
 			}
 
 			const token_attrs = {
@@ -234,7 +235,7 @@ const internalToken = {
 			const roles = user.roles || [];
 			let scope = (access.token.get("scope") || []).filter((s) => s === "user" || roles.includes(s));
 			if (!scope.length) {
-				throw new errs.AuthError("User no longer holds the scope of this Token");
+				throw new errs.TokenRevokedError("User no longer holds the scope of this Token");
 			}
 
 			// Only admins can request otherwise scoped tokens

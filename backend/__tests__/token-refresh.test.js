@@ -75,6 +75,12 @@ describe("getFreshToken", () => {
 		await expect(internalToken.getFreshToken(access(1, ["user"]))).rejects.toThrow(/cannot be loaded/);
 	});
 
+	it("answers a revoked session with a 401, which is what signs the frontend out", async () => {
+		addUser(1, [], { is_disabled: 1 });
+
+		await expect(internalToken.getFreshToken(access(1, ["user"]))).rejects.toMatchObject({ status: 401 });
+	});
+
 	it("refuses a deleted account", async () => {
 		addUser(1, [], { is_deleted: 1 });
 
