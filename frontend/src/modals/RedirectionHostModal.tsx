@@ -331,8 +331,8 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 								</Button>
 								<Button
 									type="submit"
-									actionType="primary"
-									className="ms-auto bg-yellow"
+									color="yellow"
+									className="ms-auto"
 									data-bs-dismiss="modal"
 									isLoading={isSubmitting}
 									disabled={isSubmitting}

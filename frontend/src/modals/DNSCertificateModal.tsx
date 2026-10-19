@@ -94,8 +94,8 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 							</Button>
 							<Button
 								type="submit"
-								actionType="primary"
-								className="ms-auto bg-pink"
+								color="pink"
+								className="ms-auto"
 								data-bs-dismiss="modal"
 								isLoading={isSubmitting}
 								disabled={isSubmitting}

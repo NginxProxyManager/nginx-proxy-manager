@@ -356,8 +356,8 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
 									<Button
 										type="submit"
-										actionType="primary"
-										className="ms-auto bg-lime"
+										color="lime"
+										className="ms-auto"
 										data-bs-dismiss="modal"
 										isLoading={isSubmitting}
 										disabled={isSubmitting}

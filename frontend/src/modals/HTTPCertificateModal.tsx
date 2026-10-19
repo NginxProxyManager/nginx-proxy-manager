@@ -194,8 +194,7 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 								</Button>
 								<Button
 									type="submit"
-									actionType="primary"
-									className="bg-pink"
+									color="pink"
 									data-bs-dismiss="modal"
 									isLoading={isSubmitting}
 									disabled={isSubmitting || isTesting}
