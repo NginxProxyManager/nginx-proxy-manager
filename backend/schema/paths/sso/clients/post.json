@@ -1,0 +1,73 @@
+{
+  "operationId": "createSingleSignOnClient",
+  "summary": "Create a Single Sign On Client",
+  "tags": ["sso-clients"],
+  "security": [
+    {
+      "bearerAuth": ["admin"]
+    }
+  ],
+  "requestBody": {
+    "description": "Single Sign On Client Payload",
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name",
+						"client_type",
+						"enabled"
+					],
+          "properties": {
+            "name": {
+              "$ref": "../../../components/sso-client-object.json#/properties/name"
+            },
+            "client_type": {
+              "$ref": "../../../components/sso-client-object.json#/properties/client_type"
+            },
+            "enabled": {
+              "$ref": "../../../components/sso-client-object.json#/properties/enabled"
+            },
+            "configuration": {
+        			"oneOf": [
+         				{
+         					"$ref": "../../../components/sso-client-openid.json"
+         				},
+         				{
+         					"$ref": "../../../components/sso-client-saml.json"
+         				}
+        			]
+        		},
+            "meta": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {},
+              "example": {
+                "html": "<p>hello world</p>"
+              }
+            }
+          }
+        },
+        "example": {
+          "value": "congratulations",
+          "meta": {}
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "description": "200 response",
+      "content": {
+        "application/json": {
+          "examples": {},
+          "schema": {
+            "$ref": "../../../components/sso-client-object.json"
+          }
+        }
+      }
+    }
+  }
+}

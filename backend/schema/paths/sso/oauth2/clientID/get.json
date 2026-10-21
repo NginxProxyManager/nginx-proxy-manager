@@ -1,0 +1,23 @@
+{
+  "operationId": "initializeOAuthAuthorizationFlow",
+  "summary": "Initialize OAuth Authorization flow",
+  "tags": ["sso"],
+  "parameters": [
+		{
+			"in": "path",
+			"name": "clientID",
+			"description": "The ID of the Client",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+  "responses": {
+    "200": {
+      "description": "200 response"
+    }
+  }
+}

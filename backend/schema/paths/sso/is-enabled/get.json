@@ -1,0 +1,22 @@
+{
+  "operationId": "getOpenIdMetadata",
+  "summary": "Retrieve metadata of configured Identity Providers",
+  "tags": ["sso"],
+  "responses": {
+    "200": {
+      "description": "200 response",
+      "content": {
+        "application/json": {
+          "examples": {
+            "default": {
+              "value": {
+                "enabled": true,
+                "configs": [{ "name": "Authentik", "id": 1 }]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

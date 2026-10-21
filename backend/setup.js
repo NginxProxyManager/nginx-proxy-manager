@@ -6,7 +6,6 @@ import certificateModel from "./models/certificate.js";
 import settingModel from "./models/setting.js";
 import userModel from "./models/user.js";
 import userPermissionModel from "./models/user_permission.js";
-import fs from "node:fs/promises";
 
 export const isSetup = async () => {
 	const row = await userModel.query().select("id").where("is_deleted", 0).first();
@@ -74,7 +73,7 @@ const setupDefaultUser = async () => {
  * @returns {Promise}
  */
 const setupDefaultSettings = async () => {
-	const row = await settingModel.query().select("id").where({ id: "default-site" }).first();
+  const row = await settingModel.query().select("id").where({ id: "default-site" }).first();
 
 	if (!row?.id) {
 		await settingModel.query().insert({

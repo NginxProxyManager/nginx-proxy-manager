@@ -7,7 +7,7 @@ export interface HealthResponse {
 }
 
 export interface TokenResponse {
-	expires: number;
+	expires: number | string;
 	token: string;
 }
 
