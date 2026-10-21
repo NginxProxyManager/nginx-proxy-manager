@@ -16,6 +16,13 @@ export interface ValidatedCertificateResponse {
 	certificateKey: boolean;
 }
 
+export interface UploadedCertificateResponse {
+	certificate: string;
+	// Not returned when only a new certificate is uploaded and the stored key is reused
+	certificateKey?: string;
+	intermediateCertificate?: string;
+}
+
 export interface LoginAsTokenResponse extends TokenResponse {
 	user: User;
 }

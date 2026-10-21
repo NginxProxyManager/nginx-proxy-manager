@@ -18,6 +18,7 @@ export default defineConfig({
 		},
 		env: {
 			swaggerBase: `{{baseUrl}}/api/schema?ts=${Date.now()}`,
+			httpsPort: 3443,
 		},
 		baseUrl: "http://127.0.0.1:3081",
 	}

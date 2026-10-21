@@ -140,6 +140,12 @@
 	"action.renew": {
 		"defaultMessage": "Renew"
 	},
+	"action.update": {
+		"defaultMessage": "Update"
+	},
+	"action.validate": {
+		"defaultMessage": "Validate"
+	},
 	"action.view-details": {
 		"defaultMessage": "View Details"
 	},
@@ -181,6 +187,27 @@
 	},
 	"certificate.renew": {
 		"defaultMessage": "Renew Certificate"
+	},
+	"certificate.update": {
+		"defaultMessage": "Update Certificate"
+	},
+	"certificate.update.cn-mismatch": {
+		"defaultMessage": "The common name of the new certificate ({cn}) does not match the current domains ({domains}). Please make sure the new certificate still covers every host that uses it."
+	},
+	"certificate.update.current-expires": {
+		"defaultMessage": "Current expiry"
+	},
+	"certificate.update.info": {
+		"defaultMessage": "Upload new files for {name}. Hosts using this certificate will keep their configuration and start using the new certificate."
+	},
+	"certificate.update.new-cn": {
+		"defaultMessage": "New common name"
+	},
+	"certificate.update.new-expires": {
+		"defaultMessage": "New expiry"
+	},
+	"certificate.update.validated": {
+		"defaultMessage": "The new certificate is valid. Review the details below and click Update to apply it."
 	},
 	"certificates": {
 		"defaultMessage": "Certificates"

@@ -28,6 +28,130 @@ const omissions = () => {
 	return ["is_deleted", "owner.is_deleted", "meta.dns_provider_credentials", "meta.certificate_key"];
 };
 
+const customCertFiles = ["fullchain.pem", "privkey.pem"];
+
+// Tail of the promise chain per certificate id, used to serialise custom certificate uploads
+const uploadQueues = new Map();
+
+/**
+ * @param   {Number}  id
+ * @returns {String}
+ */
+const getCustomCertDir = (id) => {
+	return `/data/custom_ssl/npm-${id}`;
+};
+
+/**
+ * Runs fn only after everything queued before it for the same id has settled.
+ *
+ * @param   {Number}    id
+ * @param   {Function}  fn
+ * @returns {Promise}
+ */
+const runExclusive = async (id, fn) => {
+	const previous = uploadQueues.get(id) || Promise.resolve();
+	let release;
+	const current = new Promise((resolve) => {
+		release = resolve;
+	});
+	const tail = previous.then(() => current);
+	uploadQueues.set(id, tail);
+
+	try {
+		await previous;
+		return await fn();
+	} finally {
+		release();
+		if (uploadQueues.get(id) === tail) {
+			uploadQueues.delete(id);
+		}
+	}
+};
+
+/**
+ * Writes to a temp file in the same directory and renames it over the target,
+ * so nginx never reads a partially written file.
+ *
+ * @param   {String}         filepath
+ * @param   {String|Buffer}  contents
+ * @param   {Number}         [mode]    Mode of the new file, defaults to 0o644
+ * @returns {Promise}
+ */
+const writeFileAtomic = async (filepath, contents, mode = 0o644) => {
+	const tmpPath = `${filepath}.tmp-${process.pid}-${Date.now()}`;
+	let renamed = false;
+	try {
+		await fs.promises.writeFile(tmpPath, contents, { mode });
+		await fs.promises.rename(tmpPath, filepath);
+		renamed = true;
+	} finally {
+		if (!renamed) {
+			await fs.promises.rm(tmpPath, { force: true });
+		}
+	}
+};
+
+/**
+ * @param   {String}  name  One of customCertFiles
+ * @returns {Number}
+ */
+const getCustomCertFileMode = (name) => {
+	return name === "privkey.pem" ? 0o600 : 0o644;
+};
+
+/**
+ * Reads the current custom certificate files, null for files that don't exist (yet).
+ *
+ * @param   {String}  dir
+ * @returns {Promise<Object>}
+ */
+const readCustomCertFiles = async (dir) => {
+	const contents = await Promise.all(
+		customCertFiles.map(async (name) => {
+			try {
+				return await fs.promises.readFile(`${dir}/${name}`);
+			} catch (err) {
+				if (err.code === "ENOENT") {
+					return null;
+				}
+				throw err;
+			}
+		}),
+	);
+	return _.zipObject(customCertFiles, contents);
+};
+
+/**
+ * Puts back the files returned by readCustomCertFiles, removing files that didn't exist before.
+ *
+ * @param   {String}  dir
+ * @param   {Object}  backup
+ * @returns {Promise}
+ */
+const restoreCustomCertFiles = async (dir, backup) => {
+	await Promise.all(
+		customCertFiles.map((name) => {
+			const filepath = `${dir}/${name}`;
+			if (backup[name] === null) {
+				return fs.promises.rm(filepath, { force: true });
+			}
+			return writeFileAtomic(filepath, backup[name], getCustomCertFileMode(name));
+		}),
+	);
+};
+
+/**
+ * The private key is omitted from everything get() returns, so read it directly.
+ * Access must already have been checked by the caller.
+ *
+ * @param   {Number}  id
+ * @returns {Promise<String|null>}
+ */
+const getStoredCertificateKey = async (id) => {
+	const row = await certificateModel.query().where("is_deleted", 0).andWhere("id", id).first();
+	return row?.meta?.certificate_key || null;
+};
+
 const internalCertificate = {
 	allowedSslFiles: ["certificate", "certificate_key", "intermediate_certificate"],
 	intervalTimeout: 1000 * 60 * 60, // 1 hour
@@ -481,52 +605,32 @@ const internalCertificate = {
 	},
 
 	/**
+	 * Writes fullchain.pem (certificate + intermediate) and privkey.pem (mode 0600) of a custom certificate.
+	 * Each file is written to a temp file first and renamed over the old one.
+	 *
 	 * @param   {Object} certificate
 	 * @returns {Promise}
 	 */
 	writeCustomCert: async (certificate) => {
-		logger.info("Writing Custom Certificate:", certificate);
+		logger.info(`Writing Custom Certificate #${certificate.id}`);
 
-		const dir = `/data/custom_ssl/npm-${certificate.id}`;
+		if (certificate.provider === "letsencrypt") {
+			throw new Error("Refusing to write letsencrypt certs here");
+		}
 
-		return new Promise((resolve, reject) => {
-			if (certificate.provider === "letsencrypt") {
-				reject(new Error("Refusing to write letsencrypt certs here"));
-				return;
-			}
+		let certData = certificate.meta.certificate;
+		if (typeof certificate.meta.intermediate_certificate !== "undefined") {
+			certData = `${certData}\n${certificate.meta.intermediate_certificate}`;
+		}
 
-			let certData = certificate.meta.certificate;
-			if (typeof certificate.meta.intermediate_certificate !== "undefined") {
-				certData = `${certData}\n${certificate.meta.intermediate_certificate}`;
-			}
-
-			try {
-				if (!fs.existsSync(dir)) {
-					fs.mkdirSync(dir);
-				}
-			} catch (err) {
-				reject(err);
-				return;
-			}
-
-			fs.writeFile(`${dir}/fullchain.pem`, certData, (err) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve();
-				}
-			});
-		}).then(() => {
-			return new Promise((resolve, reject) => {
-				fs.writeFile(`${dir}/privkey.pem`, certificate.meta.certificate_key, (err) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve();
-					}
-				});
-			});
-		});
+		const dir = getCustomCertDir(certificate.id);
+		await fs.promises.mkdir(dir, { recursive: true });
+		await writeFileAtomic(`${dir}/fullchain.pem`, certData, getCustomCertFileMode("fullchain.pem"));
+		await writeFileAtomic(
+			`${dir}/privkey.pem`,
+			certificate.meta.certificate_key,
+			getCustomCertFileMode("privkey.pem"),
+		);
 	},
 
 	/**
@@ -590,39 +694,202 @@ const internalCertificate = {
 	},
 
 	/**
+	 * Uploads the files of a custom certificate. Used for the first upload after creation
+	 * and to replace (renew) the files of an existing custom certificate in place.
+	 *
+	 * Uploads for the same certificate are serialised. Order of operations:
+	 * validate files -> check key matches certificate -> baseline nginx config test
+	 * -> write files (old contents kept in memory) -> nginx config test
+	 * -> on failure restore old files, database untouched
+	 * -> on success update database, write the audit log and reload nginx.
+	 * When the baseline test already fails, nginx is broken by something else: the files and database
+	 * are still updated but the post write test and reload are skipped.
+	 *
+	 * The intermediate certificate always follows the uploaded certificate: when it isn't part of the
+	 * upload, the previous one is removed. Only the private key can be reused: when it isn't uploaded,
+	 * the stored key must match the new certificate.
+	 *
 	 * @param   {Access}  access
 	 * @param   {Object}  data
 	 * @param   {Number}  data.id
-	 * @param   {Object}  data.files
-	 * @returns {Promise}
+	 * @param   {Object}  data.files  certificate (required), certificate_key, intermediate_certificate
+	 * @returns {Promise<Object>}      The uploaded files
+	 * @throws  {PermissionError}      Without certificates:update permission
+	 * @throws  {ValidationError}      Invalid files, key mismatch or the nginx config test failed
+	 * @throws  {ConfigurationError}   The certificate was saved but nginx failed to reload
 	 */
 	upload: async (access, data) => {
-		const row = await internalCertificate.get(access, { id: data.id });
-		if (row.provider !== "other") {
-			throw new error.ValidationError("Cannot upload certificates for this type of provider");
-		}
+		await access.can("certificates:update", data.id);
 
-		const validations = await internalCertificate.validate(access, data);
-		if (typeof validations.certificate === "undefined") {
-			throw new error.ValidationError("Certificate file was not provided");
-		}
-
-		_.map(data.files, (file, name) => {
-			if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
-				row.meta[name] = file.data.toString();
+		return runExclusive(data.id, async () => {
+			const row = await internalCertificate.get(access, { id: data.id });
+			if (row.provider !== "other") {
+				throw new error.ValidationError("Cannot upload certificates for this type of provider");
 			}
-		});
 
-		const certificate = await internalCertificate.update(access, {
-			id: data.id,
-			expires_on: moment(validations.certificate.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
-			domain_names: validations.certificate.cn ? [validations.certificate.cn] : [],
-			meta: _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
-		});
+			const validations = await internalCertificate.validate(access, data);
+			if (typeof validations.certificate === "undefined") {
+				throw new error.ValidationError("Certificate file was not provided");
+			}
 
-		certificate.meta = row.meta;
-		await internalCertificate.writeCustomCert(certificate);
-		return _.pick(row.meta, internalCertificate.allowedSslFiles);
+			const uploaded = {};
+			_.map(data.files, (file, name) => {
+				if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
+					uploaded[name] = file.data.toString();
+				}
+			});
+
+			// get() never returns the stored key, so read it directly when it wasn't uploaded
+			const certificateKey = uploaded.certificate_key || (await getStoredCertificateKey(row.id));
+			if (!certificateKey) {
+				throw new error.ValidationError("Certificate Key file was not provided");
+			}
+			await internalCertificate.checkKeyMatchesCertificate(uploaded.certificate, certificateKey);
+
+			// The previous intermediate belongs to the previous certificate, only the key may be reused
+			const meta = _.assign(_.omit(row.meta, ["intermediate_certificate"]), uploaded, {
+				certificate_key: certificateKey,
+			});
+			const dir = getCustomCertDir(row.id);
+
+			// If nginx is already failing, a failure after writing can't be blamed on this certificate
+			let nginxHealthy = true;
+			try {
+				await internalNginx.test();
+			} catch (err) {
+				nginxHealthy = false;
+				logger.warn(
+					`Nginx config test is already failing, skipping the config test and reload for certificate #${row.id}: ${err.message}`,
+				);
+			}
+
+			const previousFiles = await readCustomCertFiles(dir);
+			// Restores the previous files. Something else (another upload, a host change) may have reloaded
+			// nginx while the new files were on disk, so reload again after restoring to stop serving them.
+			// Best effort: failures are logged only and never replace the error that caused the rollback.
+			const rollback = async () => {
+				try {
+					await restoreCustomCertFiles(dir, previousFiles);
+				} catch (restoreErr) {
+					logger.error(`Could not restore files for certificate #${row.id}: ${restoreErr.message}`);
+					return false;
+				}
+				if (nginxHealthy) {
+					try {
+						await internalNginx.reload();
+					} catch (reloadErr) {
+						logger.error(
+							`Nginx reload after restoring certificate #${row.id} failed: ${reloadErr.message}`,
+						);
+					}
+				}
+				return true;
+			};
+
+			try {
+				await internalCertificate.writeCustomCert(_.assign({}, row, { meta }));
+			} catch (err) {
+				await rollback();
+				throw err;
+			}
+
+			if (nginxHealthy) {
+				try {
+					await internalNginx.test();
+				} catch (err) {
+					logger.error(`Nginx config test failed with new files for certificate #${row.id}: ${err.message}`);
+					const restored = await rollback();
+					throw new error.ValidationError(
+						restored
+							? "Nginx configuration test failed with the new certificate, the previous files were restored"
+							: "Nginx configuration test failed with the new certificate and the previous files could not be restored",
+						err,
+					);
+				}
+			}
+
+			// Patch directly instead of update() so a failing audit log doesn't trigger a file rollback
+			const changes = {
+				expires_on: moment(validations.certificate.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+				domain_names: validations.certificate.cn ? [validations.certificate.cn] : [],
+				meta: _.clone(meta),
+			};
+			try {
+				await certificateModel.query().patchAndFetchById(row.id, changes);
+			} catch (err) {
+				await rollback();
+				throw err;
+			}
+
+			try {
+				await internalAuditLog.add(access, {
+					action: "updated",
+					object_type: "certificate",
+					object_id: row.id,
+					meta: {
+						id: row.id,
+						domain_names: changes.domain_names,
+						meta: internalCertificate.cleanMeta(_.clone(meta)),
+						nice_name: row.nice_name,
+					},
+				});
+			} catch (err) {
+				logger.error(`Could not write the audit log for certificate #${row.id} upload: ${err.message}`);
+			}
+
+			if (nginxHealthy) {
+				try {
+					await internalNginx.reload();
+				} catch (err) {
+					logger.error(`Nginx reload failed after uploading certificate #${row.id}: ${err.message}`);
+					throw new error.ConfigurationError("The certificate was saved but Nginx failed to reload", err);
+				}
+			}
+
+			return _.pick(uploaded, internalCertificate.allowedSslFiles);
+		});
+	},
+
+	/**
+	 * Checks the private key belongs to the certificate by comparing their public keys (RSA and EC).
+	 * Nothing is stored, the temp files are always removed.
+	 *
+	 * @param   {String}  certificate  Entire certificate contents, the first certificate is used
+	 * @param   {String}  privateKey   Entire private key contents
+	 * @returns {Promise<Boolean>}
+	 * @throws  {ValidationError}      When the key doesn't match or either file can't be read
+	 */
+	checkKeyMatchesCertificate: async (certificate, privateKey) => {
+		const opts = { timeout: 10000 };
+		let certPath = null;
+		let keyPath = null;
+		let certPublicKey;
+		let keyPublicKey;
+
+		try {
+			certPath = await tempWrite(certificate);
+			keyPath = await tempWrite(privateKey);
+			certPublicKey = await utils.execFile("openssl", ["x509", "-in", certPath, "-pubkey", "-noout"], opts);
+			// Empty passin makes passphrase protected keys fail instead of waiting for input
+			keyPublicKey = await utils.execFile(
+				"openssl",
+				["pkey", "-in", keyPath, "-pubout", "-passin", "pass:"],
+				opts,
+			);
+		} catch (err) {
+			throw new error.ValidationError("Could not read the public key of the certificate or private key", err);
+		} finally {
+			for (const filepath of [certPath, keyPath]) {
+				if (filepath) {
+					fs.rmSync(filepath, { force: true });
+				}
+			}
+		}
+
+		if (!certPublicKey || certPublicKey !== keyPublicKey) {
+			throw new error.ValidationError("Certificate and private key do not match");
+		}
+		return true;
 	},
 
 	/**
