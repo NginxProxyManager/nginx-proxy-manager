@@ -140,6 +140,12 @@
 	"action.renew": {
 		"defaultMessage": "Uuenda"
 	},
+	"action.update": {
+		"defaultMessage": "Värskenda"
+	},
+	"action.validate": {
+		"defaultMessage": "Kontrolli"
+	},
 	"action.view-details": {
 		"defaultMessage": "Vaata üksikasju"
 	},
@@ -181,6 +187,27 @@
 	},
 	"certificate.renew": {
 		"defaultMessage": "Uuenda sertifikaati"
+	},
+	"certificate.update": {
+		"defaultMessage": "Värskenda sertifikaati"
+	},
+	"certificate.update.cn-mismatch": {
+		"defaultMessage": "Uue sertifikaadi üldnimi ({cn}) ei vasta praegustele domeenidele ({domains}). Veendu, et uus sertifikaat katab endiselt kõik seda kasutavad hostid."
+	},
+	"certificate.update.current-expires": {
+		"defaultMessage": "Praegune aegumine"
+	},
+	"certificate.update.info": {
+		"defaultMessage": "Laadi üles uued failid sertifikaadile {name}. Seda sertifikaati kasutavad hostid säilitavad oma seadistuse ja hakkavad kasutama uut sertifikaati."
+	},
+	"certificate.update.new-cn": {
+		"defaultMessage": "Uus üldnimi (CN)"
+	},
+	"certificate.update.new-expires": {
+		"defaultMessage": "Uus aegumine"
+	},
+	"certificate.update.validated": {
+		"defaultMessage": "Uus sertifikaat on kehtiv. Vaata allolevad andmed üle ja klõpsa rakendamiseks nuppu Värskenda."
 	},
 	"certificates": {
 		"defaultMessage": "Sertifikaadid"

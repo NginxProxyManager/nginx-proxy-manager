@@ -6,7 +6,12 @@ import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { type Certificate, createCertificate, uploadCertificate, validateCertificate } from "src/api/backend";
-import { Button } from "src/components";
+import {
+	Button,
+	CertificateFilesFields,
+	certificateFilesInitialValues,
+	certificateFilesToFormData,
+} from "src/components";
 import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
@@ -26,14 +31,8 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 		setErrorMsg(null);
 
 		try {
-			const { niceName, provider, certificate, certificateKey, intermediateCertificate } = values;
-			const formData = new FormData();
-
-			formData.append("certificate", certificate);
-			formData.append("certificate_key", certificateKey);
-			if (intermediateCertificate !== null) {
-				formData.append("intermediate_certificate", intermediateCertificate);
-			}
+			const { niceName, provider } = values;
+			const formData = certificateFilesToFormData(values);
 
 			// Validate
 			await validateCertificate(formData);
@@ -63,9 +62,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 					{
 						niceName: "",
 						provider: "other",
-						certificate: null,
-						certificateKey: null,
-						intermediateCertificate: null,
+						...certificateFilesInitialValues,
 					} as any
 				}
 				onSubmit={onSubmit}
@@ -111,99 +108,7 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 											</div>
 										)}
 									</Field>
-									<Field name="certificateKey">
-										{({ field, form }: any) => (
-											<div className="mb-3">
-												<label htmlFor="certificateKey" className="form-label">
-													<T id="certificate.custom-certificate-key" />
-												</label>
-												<input
-													id="certificateKey"
-													type="file"
-													required
-													autoComplete="off"
-													className="form-control"
-													onChange={(event) => {
-														form.setFieldValue(
-															field.name,
-															event.currentTarget.files?.length
-																? event.currentTarget.files[0]
-																: null,
-														);
-													}}
-												/>
-												{form.errors.certificateKey ? (
-													<div className="invalid-feedback">
-														{form.errors.certificateKey && form.touched.certificateKey
-															? form.errors.certificateKey
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
-									<Field name="certificate">
-										{({ field, form }: any) => (
-											<div className="mb-3">
-												<label htmlFor="certificate" className="form-label">
-													<T id="certificate.custom-certificate" />
-												</label>
-												<input
-													id="certificate"
-													type="file"
-													required
-													autoComplete="off"
-													className="form-control"
-													onChange={(event) => {
-														form.setFieldValue(
-															field.name,
-															event.currentTarget.files?.length
-																? event.currentTarget.files[0]
-																: null,
-														);
-													}}
-												/>
-												{form.errors.certificate ? (
-													<div className="invalid-feedback">
-														{form.errors.certificate && form.touched.certificate
-															? form.errors.certificate
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
-									<Field name="intermediateCertificate">
-										{({ field, form }: any) => (
-											<div className="mb-3">
-												<label htmlFor="intermediateCertificate" className="form-label">
-													<T id="certificate.custom-intermediate" />
-												</label>
-												<input
-													id="intermediateCertificate"
-													type="file"
-													autoComplete="off"
-													className="form-control"
-													onChange={(event) => {
-														form.setFieldValue(
-															field.name,
-															event.currentTarget.files?.length
-																? event.currentTarget.files[0]
-																: null,
-														);
-													}}
-												/>
-												{form.errors.intermediateCertificate ? (
-													<div className="invalid-feedback">
-														{form.errors.intermediateCertificate &&
-														form.touched.intermediateCertificate
-															? form.errors.intermediateCertificate
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
+									<CertificateFilesFields />
 								</div>
 							</div>
 						</Modal.Body>

@@ -16,6 +16,12 @@ export interface ValidatedCertificateResponse {
 	certificateKey: boolean;
 }
 
+export interface UploadedCertificateResponse {
+	certificate: string;
+	certificateKey: string;
+	intermediateCertificate?: string;
+}
+
 export interface LoginAsTokenResponse extends TokenResponse {
 	user: User;
 }
