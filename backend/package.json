@@ -1,6 +1,6 @@
 {
 	"name": "nginx-proxy-manager",
-	"version": "2.0.0",
+	"version": "2.16.0",
 	"description": "A beautiful interface for creating Nginx endpoints",
 	"author": "Jamie Curnow <jc@jc21.com>",
 	"license": "MIT",
@@ -33,6 +33,7 @@
 		"mysql2": "^3.24.4",
 		"node-rsa": "^2.0.0",
 		"objection": "3.1.5",
+		"openid-client": "^6.8.8",
 		"otplib": "^13.5.0",
 		"path": "^0.12.7",
 		"pg": "^8.23.0",

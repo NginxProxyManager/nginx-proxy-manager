@@ -1,0 +1,43 @@
+{
+  "operationId": "OAuth Authorization flow callback",
+  "summary": "Execute the callback phase of an OAuth Authroization Code flow",
+  "tags": ["sso"],
+  "parameters": [
+    {
+      "in": "path",
+      "name": "clientID",
+      "schema": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "required": true,
+      "description": "The Single Sign On Client ID",
+      "example": 1
+    },
+    {
+      "in": "query",
+      "name": "code",
+      "schema": {
+        "type": "string"
+      },
+      "required": true,
+      "description": "The OAuth Authorization grant code",
+      "example": "ffb6cf25d28a4e5881a9b408986bc169"
+    },
+    {
+      "in": "query",
+      "name": "state",
+      "schema": {
+        "type": "string"
+      },
+      "required": true,
+      "description": "The OAuth Authorization flow state",
+      "example": "ffb6cf25d28a4e5881a9b408986bc169"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "200 response"
+    }
+  }
+}

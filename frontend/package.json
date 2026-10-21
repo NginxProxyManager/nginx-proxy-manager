@@ -28,6 +28,7 @@
 		"formik": "^2.4.9",
 		"generate-password-browser": "^1.1.0",
 		"humps": "^2.0.1",
+		"universal-cookie": "^8.1.2",
 		"query-string": "^9.5.1",
 		"react": "^19.3.0",
 		"react-bootstrap": "^2.10.10",

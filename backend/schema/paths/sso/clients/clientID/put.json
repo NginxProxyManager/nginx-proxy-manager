@@ -1,0 +1,92 @@
+{
+  "operationId": "updateSingleSignOnClient",
+  "summary": "Update SSO Client configuration",
+  "tags": ["sso-clients"],
+  "security": [
+    {
+      "bearerAuth": ["admin"]
+    }
+  ],
+  "parameters": [
+		{
+			"in": "path",
+			"name": "clientID",
+			"description": "The ID of the Client",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+  "requestBody": {
+    "description": "SSO Client Payload",
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "name": {
+              "$ref": "../../../../components/sso-client-object.json#/properties/name"
+            },
+            "client_type": {
+              "$ref": "../../../../components/sso-client-object.json#/properties/client_type"
+            },
+            "enabled": {
+              "$ref": "../../../../components/sso-client-object.json#/properties/enabled"
+            },
+            "configuration": {
+        			"oneOf": [
+         				{
+    							"type": "object",
+               		"additionalProperties": false,
+                  "properties": {
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  }
+    						},
+        				{
+        					"$ref": "../../../../components/sso-client-openid.json"
+        				},
+        				{
+        					"$ref": "../../../../components/sso-client-saml.json"
+        				}
+        			]
+        		},
+            "meta": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {},
+              "example": {
+                "html": "<p>hello world</p>"
+              }
+            }
+          }
+        },
+        "example": {
+          "value": "congratulations",
+          "meta": {}
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "description": "200 response",
+      "content": {
+        "application/json": {
+          "examples": {},
+          "schema": {
+            "$ref": "../../../../components/sso-client-object.json"
+          }
+        }
+      }
+    }
+  }
+}

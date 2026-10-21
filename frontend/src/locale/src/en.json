@@ -755,8 +755,74 @@
 	"sign-in": {
 		"defaultMessage": "Sign in"
 	},
+	"sign-in-with": {
+		"defaultMessage": "Sign in with {name}"
+	},
+	"single-sign-on": {
+		"defaultMessage": "Single Sign On"
+	},
 	"ssl-certificate": {
 		"defaultMessage": "SSL Certificate"
+	},
+	"sso-client": {
+		"defaultMessage": "SSO Client"
+	},
+	"sso-client-oauth2-openid": {
+		"defaultMessage": "OAuth2/OpenID"
+	},
+	"sso-client-saml": {
+		"defaultMessage": "SAML"
+	},
+	"sso-clients": {
+		"defaultMessage": "SSO Clients"
+	},
+	"sso-clients.count": {
+		"defaultMessage": "{count} {count, plural, one {SSO Client} other {SSO Clients}}"
+	},
+	"sso.config.client_id.hint": {
+		"defaultMessage": "Client ID as provided by the IdP"
+	},
+	"sso.config.client_id.label": {
+		"defaultMessage": "Client ID"
+	},
+	"sso.config.client_secret.hint": {
+		"defaultMessage": "Leave empty to keep it unchanged"
+	},
+	"sso.config.client_secret.label": {
+		"defaultMessage": "Client Secret"
+	},
+	"sso.config.configuration_url.hint": {
+		"defaultMessage": "E.g. https://authentik.yourdomain.com/application/o/nginx-pm"
+	},
+	"sso.config.configuration_url.label": {
+		"defaultMessage": "OpenID Configuration Issuer URL"
+	},
+	"sso.config.enabled.label": {
+		"defaultMessage": "Enabled"
+	},
+	"sso.config.name.hint": {
+		"defaultMessage": "E.g. Authentik"
+	},
+	"sso.config.name.label": {
+		"defaultMessage": "Name"
+	},
+	"sso.config.protocol.label": {
+		"defaultMessage": "Protocol"
+	},
+	"sso.config.redirect_url.hint": {
+		"defaultMessage": "Leave the '{id}' bit in the generated URL and we'll replace it once the form is saved. Then you can copy the final URL to your IdP's allowed callbacks."
+	},
+	"sso.config.redirect_url.label": {
+		"defaultMessage": "Redirect URL"
+	},
+	"sso.config.saml_endpoint.hint": {
+		"defaultMessage": "SAML provider endpoint URL"
+	},
+	"sso.config.saml_endpoint.label": {
+		"defaultMessage": "SAML Endpoint"
+	},
+	"sso.menu.label": {
+		"defaultMessage": "Single Sign On"
 	},
 	"stream": {
 		"defaultMessage": "Stream"

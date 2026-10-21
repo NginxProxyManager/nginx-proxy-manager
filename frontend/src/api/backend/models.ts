@@ -234,3 +234,35 @@ export interface DNSProvider {
 	name: string;
 	credentials: string;
 }
+
+export enum SingleSignOnClientType {
+	OpenID = "OAuth2/OpenID",
+	SAML = "SAML",
+}
+
+export interface SingleSignOnClient {
+	id: number;
+	ownerUserId: number;
+	createdOn: string;
+	modifiedOn: string;
+	enabled: boolean;
+	name: string;
+	clientType: SingleSignOnClientType;
+	// Virtual property for frontend, holds the type specific expanded configuration
+	configuration?: OpenIDClientConfiguration | SAMLClientConfiguration;
+	// Expansions
+	configurationOpenid?: OpenIDClientConfiguration;
+	configurationSaml?: SAMLClientConfiguration;
+	user?: User;
+}
+
+export interface OpenIDClientConfiguration {
+	clientId: string;
+	clientSecret: string;
+	configurationUrl: string;
+	redirectUrl: string;
+}
+
+export interface SAMLClientConfiguration {
+	samlEndpoint: string;
+}
