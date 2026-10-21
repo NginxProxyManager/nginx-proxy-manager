@@ -764,20 +764,32 @@ const internalCertificate = {
 			}
 
 			const previousFiles = await readCustomCertFiles(dir);
-			const restoreFiles = async () => {
+			// Restores the previous files. Something else (another upload, a host change) may have reloaded
+			// nginx while the new files were on disk, so reload again after restoring to stop serving them.
+			// Best effort: failures are logged only and never replace the error that caused the rollback.
+			const rollback = async () => {
 				try {
 					await restoreCustomCertFiles(dir, previousFiles);
-					return true;
 				} catch (restoreErr) {
 					logger.error(`Could not restore files for certificate #${row.id}: ${restoreErr.message}`);
 					return false;
 				}
+				if (nginxHealthy) {
+					try {
+						await internalNginx.reload();
+					} catch (reloadErr) {
+						logger.error(
+							`Nginx reload after restoring certificate #${row.id} failed: ${reloadErr.message}`,
+						);
+					}
+				}
+				return true;
 			};
 
 			try {
 				await internalCertificate.writeCustomCert(_.assign({}, row, { meta }));
 			} catch (err) {
-				await restoreFiles();
+				await rollback();
 				throw err;
 			}
 
@@ -786,7 +798,7 @@ const internalCertificate = {
 					await internalNginx.test();
 				} catch (err) {
 					logger.error(`Nginx config test failed with new files for certificate #${row.id}: ${err.message}`);
-					const restored = await restoreFiles();
+					const restored = await rollback();
 					throw new error.ValidationError(
 						restored
 							? "Nginx configuration test failed with the new certificate, the previous files were restored"
@@ -805,7 +817,7 @@ const internalCertificate = {
 			try {
 				await certificateModel.query().patchAndFetchById(row.id, changes);
 			} catch (err) {
-				await restoreFiles();
+				await rollback();
 				throw err;
 			}
 

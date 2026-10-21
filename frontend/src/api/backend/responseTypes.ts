@@ -18,7 +18,8 @@ export interface ValidatedCertificateResponse {
 
 export interface UploadedCertificateResponse {
 	certificate: string;
-	certificateKey: string;
+	// Not returned when only a new certificate is uploaded and the stored key is reused
+	certificateKey?: string;
 	intermediateCertificate?: string;
 }
 

@@ -154,6 +154,58 @@ describe("UpdateCertificateModal", () => {
 		expect(api.uploadCertificate).not.toHaveBeenCalled();
 	});
 
+	it("ignores a validation response for files that are no longer selected", async () => {
+		const staleExpires = 1970000000;
+		let resolveStale: (value: unknown) => void = () => {};
+		api.validateCertificate.mockImplementationOnce(
+			() =>
+				new Promise((resolve) => {
+					resolveStale = resolve;
+				}),
+		);
+		await openModal();
+		selectRequiredFiles();
+		clickButton("Validate");
+		await waitFor(() => expect(api.validateCertificate).toHaveBeenCalledTimes(1));
+
+		// the user picks another certificate while the first one is still being validated
+		selectFile("Certificate", makeFile("other-cert.pem"));
+		await act(async () => {
+			resolveStale({
+				certificate: { cn: "stale.example.org", dates: { from: 1700000000, to: staleExpires } },
+				certificateKey: true,
+			});
+		});
+
+		expect(screen.queryByText("New common name")).not.toBeInTheDocument();
+		expect(screen.queryByText("stale.example.org")).not.toBeInTheDocument();
+		expect(screen.queryByText(formatDateTime(staleExpires, "en"))).not.toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Validate" })).toBeEnabled();
+		expect(screen.queryByRole("button", { name: "Update" })).not.toBeInTheDocument();
+	});
+
+	it("ignores a validation error for files that are no longer selected", async () => {
+		let rejectStale: (reason: unknown) => void = () => {};
+		api.validateCertificate.mockImplementationOnce(
+			() =>
+				new Promise((_resolve, reject) => {
+					rejectStale = reject;
+				}),
+		);
+		await openModal();
+		selectRequiredFiles();
+		clickButton("Validate");
+		await waitFor(() => expect(api.validateCertificate).toHaveBeenCalledTimes(1));
+
+		selectFile("Certificate", makeFile("other-cert.pem"));
+		await act(async () => {
+			rejectStale(new Error("Certificate is not valid"));
+		});
+
+		expect(screen.queryByText("Certificate is not valid")).not.toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Validate" })).toBeEnabled();
+	});
+
 	it("uploads to the same certificate id, refreshes queries and closes", async () => {
 		const { queryClient } = await openModal();
 		const invalidate = vi.spyOn(queryClient, "invalidateQueries");

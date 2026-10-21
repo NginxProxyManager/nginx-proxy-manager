@@ -2,7 +2,7 @@ import { IconAlertTriangle } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Form, Formik } from "formik";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { uploadCertificate, validateCertificate } from "src/api/backend";
@@ -38,6 +38,13 @@ const UpdateCertificateModal = EasyModal.create(({ id, visible, remove }: Props)
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [validated, setValidated] = useState<ValidatedInfo | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	// Bumped on every file change so a validation response for an older selection can be ignored
+	const selectionRef = useRef(0);
+
+	const onFilesChange = () => {
+		selectionRef.current += 1;
+		setValidated(null);
+	};
 
 	const domainNames = data?.domainNames ?? [];
 	const cnMismatch =
@@ -48,15 +55,20 @@ const UpdateCertificateModal = EasyModal.create(({ id, visible, remove }: Props)
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		setErrorMsg(null);
+		const isValidation = !validated;
+		const selection = selectionRef.current;
+		const isStale = () => selection !== selectionRef.current;
 
 		try {
 			const formData = certificateFilesToFormData(values);
-			if (!validated) {
+			if (isValidation) {
 				const result = await validateCertificate(formData);
-				setValidated({
-					cn: `${result.certificate?.cn ?? ""}`,
-					expiresOn: `${result.certificate?.dates?.to ?? ""}`,
-				});
+				if (!isStale()) {
+					setValidated({
+						cn: `${result.certificate?.cn ?? ""}`,
+						expiresOn: `${result.certificate?.dates?.to ?? ""}`,
+					});
+				}
 			} else {
 				await uploadCertificate(id, formData);
 				showObjectSuccess("certificate", "saved");
@@ -65,7 +77,10 @@ const UpdateCertificateModal = EasyModal.create(({ id, visible, remove }: Props)
 				remove();
 			}
 		} catch (err: any) {
-			setErrorMsg(<T id={err.message} />);
+			// A validation error for files that are no longer selected is not relevant anymore
+			if (!(isValidation && isStale())) {
+				setErrorMsg(<T id={err.message} />);
+			}
 		}
 
 		setIsSubmitting(false);
@@ -106,7 +121,7 @@ const UpdateCertificateModal = EasyModal.create(({ id, visible, remove }: Props)
 												<DateFormatter value={data.expiresOn} highlightPast />
 											</dd>
 										</dl>
-										<CertificateFilesFields onChange={() => setValidated(null)} />
+										<CertificateFilesFields onChange={onFilesChange} />
 										{validated && (
 											<>
 												<Alert variant="success">
