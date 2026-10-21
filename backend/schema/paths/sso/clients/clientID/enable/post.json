@@ -1,0 +1,80 @@
+{
+  "operationId": "enableSingleSignOnClient",
+  "summary": "Enable SSO Client configuration",
+  "tags": ["sso-clients"],
+  "security": [
+    {
+      "bearerAuth": ["admin"]
+    }
+  ],
+  "parameters": [
+		{
+			"in": "path",
+			"name": "clientID",
+			"description": "The ID of the Client",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+  "requestBody": {
+    "description": "SSO Client Payload",
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "enabled": {
+              "$ref": "../../../../../components/sso-client-object.json#/properties/enabled"
+            },
+            "configuration": {
+        			"oneOf": [
+         				{
+    							"type": "object",
+               		"additionalProperties": false,
+                  "properties": {
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  }
+    						}
+        			]
+        		},
+            "meta": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {},
+              "example": {
+                "html": "<p>hello world</p>"
+              }
+            }
+          }
+        },
+        "example": {
+          "value": "congratulations",
+          "meta": {}
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "description": "200 response",
+      "content": {
+        "application/json": {
+          "examples": {},
+          "schema": {
+            "$ref": "../../../../../components/sso-client-object.json"
+          }
+        }
+      }
+    }
+  }
+}

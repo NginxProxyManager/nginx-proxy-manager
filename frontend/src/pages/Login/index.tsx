@@ -7,6 +7,8 @@ import { useHealth } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import styles from "./index.module.css";
+import Cookies from "universal-cookie";
+import AuthStore from "src/modules/AuthStore";
 
 function TwoFactorForm() {
 	const codeRef = useRef<HTMLInputElement>(null);
@@ -77,10 +79,32 @@ function TwoFactorForm() {
 	);
 }
 
+interface SingleSignOnIntegration {
+	enabled?: boolean;
+	configs?: [{ name: string; id: number }];
+	error?: string;
+}
+
 function LoginForm() {
 	const emailRef = useRef<HTMLInputElement>(null);
 	const [formErr, setFormErr] = useState("");
 	const { login } = useAuthState();
+	const [isOAuthInit, setOAuthInit] = useState<boolean>(false);
+	const getSingleSignOnIntegration: SingleSignOnIntegration = {};
+
+	const [SSOConfig, setSSOConfig] = useState(getSingleSignOnIntegration);
+	useEffect(() => {
+		const checkSingleSignOnIntegration = async () => {
+			try {
+				const response = await fetch("/api/sso/is-enabled");
+				const data: SingleSignOnIntegration = await response.json();
+				setSSOConfig(data);
+			} catch {}
+		};
+		if (!("enabled" in SSOConfig)) {
+			checkSingleSignOnIntegration();
+		}
+	});
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		setFormErr("");
@@ -93,6 +117,36 @@ function LoginForm() {
 		}
 		setSubmitting(false);
 	};
+
+	const initializeOAuthFlow = async (client_id: number) => {
+		setFormErr("");
+		setOAuthInit(true);
+		try {
+			// Redirect to initiate OAuth flow
+			document.location.replace(`/api/sso/oauth2/${client_id}`);
+		} catch {
+			setOAuthInit(false);
+		}
+	};
+
+	const readOpenIdAuthenticationErrorFromCookie = async () => {
+		const cookies = new Cookies();
+		const error = cookies.get("npm_sso_error");
+		cookies.remove("npm_sso_error", { path: "/" });
+		if (error) {
+			SSOConfig.error = decodeURIComponent(error);
+		}
+	};
+
+	if (SSOConfig?.enabled && !AuthStore.hasActiveToken()) {
+		readOpenIdAuthenticationErrorFromCookie();
+	}
+
+	useEffect(() => {
+		if (SSOConfig?.error) {
+			setFormErr(SSOConfig?.error);
+		}
+	}, [SSOConfig]);
 
 	useEffect(() => {
 		emailRef.current?.focus();
@@ -155,9 +209,35 @@ function LoginForm() {
 							</Field>
 						</div>
 						<div className="form-footer">
-							<Button type="submit" fullWidth color="azure" isLoading={isSubmitting}>
+							<Button
+								type="submit"
+								fullWidth
+								color="azure"
+								isLoading={isSubmitting}
+								disabled={isOAuthInit}
+							>
 								<T id="sign-in" />
 							</Button>
+							{(SSOConfig.enabled &&
+								SSOConfig.configs?.length &&
+								SSOConfig.configs.map((config) => {
+									return (
+										<>
+											<hr className="my-3 mx-4" />
+											<Button
+												type="button"
+												fullWidth
+												color="azure"
+												disabled={isSubmitting}
+												isLoading={isOAuthInit}
+												onClick={() => initializeOAuthFlow(config.id)}
+											>
+												<T id="sign-in-with" data={{ name: config.name }} />
+											</Button>
+										</>
+									);
+								})) ||
+								null}
 						</div>
 					</Form>
 				)}

@@ -291,6 +291,47 @@
 				"$ref": "./paths/settings/get.json"
 			}
 		},
+		"/sso/clients/{clientID}": {
+			"get": {
+				"$ref": "./paths/sso/clients/clientID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/sso/clients/clientID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/sso/clients/clientID/delete.json"
+			}
+		},
+		"/sso/clients/{clientID}/enable" : {
+		  "post": {
+				"$ref": "./paths/sso/clients/clientID/enable/post.json"
+			}
+		},
+		"/sso/clients/{clientID}/disable" : {
+		  "post": {
+				"$ref": "./paths/sso/clients/clientID/disable/post.json"
+			}
+		},
+		"/sso/clients": {
+			"post": {
+				"$ref": "./paths/sso/clients/post.json"
+			}
+		},
+		"/sso/oauth2/{clientID}": {
+			"get": {
+				"$ref": "./paths/sso/oauth2/clientID/get.json"
+			}
+		},
+		"/sso/oauth2/{clientID}/callback": {
+			"get": {
+				"$ref": "./paths/sso/oauth2/clientID/callback/get.json"
+			}
+		},
+		"/sso/is-enabled": {
+			"get": {
+				"$ref": "./paths/sso/is-enabled/get.json"
+			}
+		},
 		"/settings/{settingID}": {
 			"get": {
 				"$ref": "./paths/settings/settingID/get.json"

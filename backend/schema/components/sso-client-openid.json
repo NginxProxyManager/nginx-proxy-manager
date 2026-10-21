@@ -1,0 +1,26 @@
+{
+	"type": "object",
+	"description": "OAuth2/OpenID Client or Application Configuration",
+	"additionalProperties": false,
+	"properties": {
+  	"id": {
+  		"$ref": "../common.json#/properties/id"
+  	},
+    "client_id": {
+      "type": "string"
+    },
+    "client_secret": {
+  	  "type": "string"
+  	},
+  	"configuration_url": {
+  	  "type": "string"
+  	},
+  	"redirect_url": {
+      "type": "string"
+    },
+    "meta": {
+  		"type": "object",
+  		"example": {}
+  	}
+  }
+}

@@ -1,0 +1,56 @@
+{
+	"type": "object",
+	"description": "Single Sign On Client or Application",
+	"required": [
+		"id",
+		"created_on",
+		"modified_on",
+		"owner_user_id",
+		"name",
+		"configuration",
+		"enabled",
+		"meta"
+	],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"name": {
+      "type": "string",
+      "minLength": 1
+		},
+		"client_type": {
+  		"type": "string"
+		},
+		"enabled": {
+			"$ref": "../common.json#/properties/enabled"
+		},
+		"meta": {
+			"type": "object",
+			"example": {}
+		},
+		"configuration": {
+			"oneOf": [
+				{
+					"$ref": "./sso-client-openid.json"
+				},
+				{
+					"$ref": "./sso-client-saml.json"
+				}
+			]
+		},
+		"owner": {
+			"$ref": "./user-object.json"
+		}
+	}
+}
