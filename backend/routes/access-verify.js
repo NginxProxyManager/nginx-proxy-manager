@@ -98,6 +98,14 @@ router
 			if (result.email) {
 				res.set("X-Auth-Email", result.email);
 			}
+
+			// With Pass Auth on, nginx forwards whatever this returns as the
+			// Authorization header. A password typed into the list itself is the
+			// list's to share, but a directory password must never reach the
+			// proxied app, so for provider matches nothing is returned.
+			if (result.from_list === true) {
+				res.set("X-Auth-Forward-Authorization", req.headers.authorization);
+			}
 			return res.status(204).send();
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);

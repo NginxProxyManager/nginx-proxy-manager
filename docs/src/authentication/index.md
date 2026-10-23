@@ -359,6 +359,12 @@ These only ever come from the check. Whatever a visitor sends under those names
 is dropped on every location where an access list asks for a password, so an application
 can trust them, and with **Pass Auth to Upstream** off it receives neither.
 
+**Pass Auth to Upstream** never passes on a directory password. For somebody the
+directory let in, the application receives the two headers above and no
+`Authorization` header. Credentials typed into the list itself are still passed
+on as before, so a list that mixes both forwards the header only for its own
+entries.
+
 If the directory is unreachable the request is refused. A protected site does
 not fall open because a server is down.
 

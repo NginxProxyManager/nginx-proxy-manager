@@ -1,8 +1,7 @@
-import { IconKey, IconShieldLock } from "@tabler/icons-react";
 import { Field, Form, Formik } from "formik";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
-import { type LoginOptions, type LoginProvider, providerLoginUrl } from "src/api/backend";
+import type { LoginOptions } from "src/api/backend";
 import { Button, Loading, LocalePicker, Page, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useHealth, useLoginOptions } from "src/hooks";
@@ -171,25 +170,9 @@ function LoginForm({ allowUsername }: LoginFormProps) {
 	);
 }
 
-interface ProviderButtonsProps {
-	providers: LoginProvider[];
-}
-function ProviderButtons({ providers }: ProviderButtonsProps) {
-	return (
-		<div className="d-grid gap-2">
-			{providers.map((provider) => (
-				<a key={provider.id} href={providerLoginUrl(provider.id)} className="btn btn-outline-azure w-100">
-					{provider.type === "saml" ? (
-						<IconShieldLock size={18} className="me-2" />
-					) : (
-						<IconKey size={18} className="me-2" />
-					)}
-					<T id="login.continue-with" data={{ name: provider.name }} />
-				</a>
-			))}
-		</div>
-	);
-}
+// Only fetched when there are providers to show, which keeps the brand icons
+// out of the bundle for password-only instances
+const ProviderButtons = lazy(() => import("./ProviderButtons"));
 
 /**
  * Reads the result of a redirect based login out of the URL, then strips it
@@ -271,7 +254,11 @@ export default function Login() {
 						{ssoErr}
 					</Alert>
 				)}
-				{hasProviders ? <ProviderButtons providers={options.providers} /> : null}
+				{hasProviders ? (
+					<Suspense fallback={null}>
+						<ProviderButtons providers={options.providers} />
+					</Suspense>
+				) : null}
 				{hasProviders && showPasswordForm ? (
 					<div className="hr-text text-secondary">
 						<T id="login.or" />

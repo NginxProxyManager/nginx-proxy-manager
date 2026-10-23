@@ -61,7 +61,7 @@ describe("check", () => {
 		const list = listWith({ items: [{ username: "local", password: "secret" }] });
 		const result = await check(list, [ldapProvider], "local", "secret");
 
-		expect(result).toMatchObject({ allowed: true, via: "list" });
+		expect(result).toMatchObject({ allowed: true, via: "list", from_list: true });
 		expect(authenticate).not.toHaveBeenCalled();
 	});
 
@@ -75,6 +75,15 @@ describe("check", () => {
 		const result = await check(listWith(), [ldapProvider], "alice", "pw");
 
 		expect(result).toMatchObject({ allowed: true, via: "Company LDAP", email: "alice@example.com" });
+		expect(result.from_list).toBeUndefined();
+	});
+
+	it('does not mistake a provider called "list" for an entry in the list', async () => {
+		authenticate.mockResolvedValue({ email: "alice@example.com", groups: [] });
+		const result = await check(listWith(), [{ ...ldapProvider, name: "list" }], "alice", "pw");
+
+		expect(result).toMatchObject({ allowed: true, via: "list" });
+		expect(result.from_list).toBeUndefined();
 	});
 
 	it("refuses a directory user outside the allowed groups", async () => {

@@ -107,7 +107,8 @@ const groupsAllow = (allowedGroups, userGroups) => {
  * @param   {[Object]} providers      the enabled providers this list accepts
  * @param   {String}   username
  * @param   {String}   password
- * @returns {Promise<Object>} { allowed, via, reason }
+ * @returns {Promise<Object>} { allowed, via, reason }, plus `from_list` when
+ *                            the match was a username typed into the list itself
  */
 const check = async (list, providers, username, password) => {
 	// An empty password would be an unauthenticated bind at the directory, and
@@ -118,7 +119,7 @@ const check = async (list, providers, username, password) => {
 
 	for (const item of list.items || []) {
 		if (item.username === username && item.password && item.password === password) {
-			return { allowed: true, via: "list" };
+			return { allowed: true, via: "list", from_list: true };
 		}
 	}
 
