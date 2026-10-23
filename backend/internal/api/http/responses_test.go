@@ -38,7 +38,7 @@ func TestResultResponseJSON(t *testing.T) {
 				Email: "me@example.com",
 				Name:  "John Doe",
 			},
-			want: "{\"result\":{\"id\":10,\"created_at\":0,\"updated_at\":0,\"name\":\"John Doe\",\"email\":\"me@example.com\",\"is_disabled\":false,\"password_login_enabled\":false,\"has_local_credential\":false,\"can_set_local_password\":false,\"gravatar_url\":\"\"}}",
+			want: "{\"result\":{\"id\":10,\"created_at\":0,\"updated_at\":0,\"name\":\"John Doe\",\"email\":\"me@example.com\",\"is_disabled\":false,\"password_login_enabled\":false,\"has_local_credential\":false,\"can_set_local_password\":false,\"gravatar_url\":\"\",\"capabilities\":[]}}",
 		},
 		{
 			name:   "error response",

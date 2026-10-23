@@ -89,7 +89,7 @@ export function SiteHeader() {
 									</div>
 									<div className="dropdown-divider" />
 								</div>
-								{currentUser?.hasLocalCredential ? <a
+								<a
 									href="?"
 									className="dropdown-item"
 									onClick={(e) => {
@@ -99,7 +99,7 @@ export function SiteHeader() {
 								>
 									<IconUser width={18} />
 									<T id="user.edit-profile" />
-								</a> : null}
+								</a>
 								{currentUser?.hasLocalCredential ? <a
 									href="?"
 									className="dropdown-item"

@@ -191,12 +191,7 @@ func (m *Model) PopulateAccessFieldsInTx(db *gorm.DB) error {
 	if err = db.Model(&auth.Model{}).
 		Where("user_id = ? AND type = ?", m.ID, auth.TypeLocal).
 		Count(&count).Error; err != nil {
-		// Some lightweight handler tests intentionally migrate only user policy
-		// tables. Production migrations always include auth; fail closed in the
-		// DTO instead of failing an otherwise valid profile response.
-		m.HasLocalCredential = false
-		m.CanSetLocalPassword = !m.IsSystem
-		return nil
+		return err
 	}
 	m.HasLocalCredential = count > 0
 	m.CanSetLocalPassword = !m.IsSystem

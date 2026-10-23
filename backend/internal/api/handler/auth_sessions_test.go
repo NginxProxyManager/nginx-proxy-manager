@@ -28,7 +28,7 @@ func authSessionFixture(t *testing.T) (*gorm.DB, string) {
 	t.Helper()
 	db, err := gorm.Open(sqlite.Open(filepath.Join(t.TempDir(), "auth.db")), &gorm.Config{})
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&user.Model{}, &user.HasCapabilityModel{}, &session.Model{}))
+	require.NoError(t, db.AutoMigrate(&user.Model{}, &user.HasCapabilityModel{}, &session.Model{}, &auth.Model{}))
 	require.NoError(t, db.Exec("CREATE TABLE auth_policy_fence (id INTEGER PRIMARY KEY, revision BIGINT NOT NULL)").Error)
 	require.NoError(t, db.Exec("INSERT INTO auth_policy_fence VALUES (1,1)").Error)
 	database.SetDB(db)

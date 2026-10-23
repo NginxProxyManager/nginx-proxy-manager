@@ -1,6 +1,7 @@
 package user
 
 import (
+	"encoding/json"
 	"strings"
 
 	"npm/internal/database"
@@ -15,6 +16,16 @@ import (
 	"github.com/rotisserie/eris"
 	"gorm.io/gorm"
 )
+
+// MarshalJSON keeps the public authorization contract stable: a user always
+// has a capabilities array, including when no grants exist.
+func (m Model) MarshalJSON() ([]byte, error) {
+	type modelAlias Model
+	if m.Capabilities == nil {
+		m.Capabilities = []string{}
+	}
+	return json.Marshal(modelAlias(m))
+}
 
 // Model is the model
 type Model struct {
@@ -32,7 +43,7 @@ type Model struct {
 	GravatarURL string `json:"gravatar_url" gorm:"-"`
 	// Expansions
 	Auth         *auth.Model `json:"auth,omitempty" gorm:"-"`
-	Capabilities []string    `json:"capabilities,omitempty" gorm:"-"`
+	Capabilities []string    `json:"capabilities" gorm:"-"`
 }
 
 // TableName overrides the table name used by gorm

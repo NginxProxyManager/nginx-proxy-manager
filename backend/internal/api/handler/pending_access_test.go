@@ -22,7 +22,7 @@ import (
 func TestOwnProfileContainsEmptyCapabilitiesWithoutExpansion(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open(filepath.Join(t.TempDir(), "profile.db")), &gorm.Config{})
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&user.Model{}, &user.HasCapabilityModel{}))
+	require.NoError(t, db.AutoMigrate(&user.Model{}, &user.HasCapabilityModel{}, &auth.Model{}))
 	database.SetDB(db)
 	t.Cleanup(func() { database.SetDB(nil) })
 	account := user.Model{Name: "Pending", Email: "pending@example.com"}

@@ -14,6 +14,7 @@ import (
 	"gorm.io/gorm"
 	"npm/internal/config"
 	"npm/internal/database"
+	"npm/internal/entity/auth"
 	"npm/internal/entity/session"
 	"npm/internal/entity/user"
 )
@@ -21,7 +22,7 @@ import (
 func TestFiveStreamsDoNotStarveAuthenticatedAPI(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open(filepath.Join(t.TempDir(), "router.db")), &gorm.Config{})
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&session.Model{}, &user.Model{}, &user.HasCapabilityModel{}))
+	require.NoError(t, db.AutoMigrate(&session.Model{}, &user.Model{}, &user.HasCapabilityModel{}, &auth.Model{}))
 	require.NoError(t, db.Exec("CREATE TABLE auth_policy_fence (id INTEGER PRIMARY KEY, revision BIGINT NOT NULL)").Error)
 	require.NoError(t, db.Exec("INSERT INTO auth_policy_fence VALUES (1,1)").Error)
 	require.NoError(t, db.Create(&user.Model{Name: "Admin", Email: "admin@example.com"}).Error)

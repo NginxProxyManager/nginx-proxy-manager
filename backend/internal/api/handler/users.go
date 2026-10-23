@@ -313,7 +313,7 @@ func CreateUser() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// newUser has been saved, now save their auth
-		if newUser.Auth.Secret != "" && newUser.Auth.ID == 0 {
+		if newUser.Auth != nil && newUser.Auth.Secret != "" && newUser.Auth.ID == 0 {
 			newUser.Auth.UserID = newUser.ID
 			if newUser.Auth.Type == auth.TypeLocal {
 				err = newUser.Auth.SetPassword(newUser.Auth.Secret)
@@ -333,6 +333,10 @@ func CreateUser() func(http.ResponseWriter, *http.Request) {
 		if !config.IsSetup {
 			config.IsSetup = true
 			logger.Info("A new user was created, leaving Setup Mode")
+		}
+		if err := newUser.PopulateAccessFieldsInTx(database.GetDB()); err != nil {
+			h.ResultErrorJSON(w, r, http.StatusInternalServerError, "Unable to load User", nil)
+			return
 		}
 
 		h.ResultResponseJSON(w, r, http.StatusOK, newUser)

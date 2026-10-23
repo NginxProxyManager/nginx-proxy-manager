@@ -170,7 +170,7 @@ func applyRoutes(r chi.Router) chi.Router {
 				// Update yourself, requires a login but no other permissions
 				r.With(
 					middleware.EnforceSessionOnly(),
-					middleware.EnforceRequestSchema(schema.UpdateUser()),
+					middleware.EnforceRequestSchema(schema.UpdateSelfUser()),
 				).Put("/{userID:me}", handler.UpdateUser())
 
 				r.With(middleware.Enforce(user.CapabilityUsersManage)).Route("/", func(r chi.Router) {
