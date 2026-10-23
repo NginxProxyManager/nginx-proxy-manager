@@ -2,18 +2,20 @@ package serverevents
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"sync"
+	"time"
 
-	"npm/internal/logger"
-
-	"github.com/jc21/go-sse"
+	"npm/internal/authpolicy"
+	"npm/internal/entity/session"
+	"npm/internal/entity/user"
 )
 
-var instance *sse.Server
-
 const defaultChannel = "changes"
+const queueSize = 32
 
-// Message is how we're going to send the data
+// Message preserves the frontend event format.
 type Message struct {
 	Lang       string            `json:"lang,omitempty"`
 	LangParams map[string]string `json:"lang_params,omitempty"`
@@ -21,55 +23,192 @@ type Message struct {
 	Affects    string            `json:"affects,omitempty"`
 }
 
-// Get will return a sse server
-func Get() *sse.Server {
-	if instance == nil {
-		instance = sse.NewServer(&sse.Options{
-			Logger: logger.Get(),
-			ChannelNameFunc: func(_ *http.Request) string {
-				return defaultChannel // This is the channel for all updates regardless of visibility
-			},
-		})
+type event struct {
+	message Message
+	data    []byte
+}
+type subscriber struct {
+	sessionID string
+	queue     chan event
+	done      chan struct{}
+	once      sync.Once
+}
+
+func (s *subscriber) close() { s.once.Do(func() { close(s.done) }) }
+
+type broker struct {
+	mu          sync.Mutex
+	subscribers map[*subscriber]struct{}
+}
+
+var instance = &broker{subscribers: make(map[*subscriber]struct{})}
+
+// Handler serves a bounded, non-replaying stream for an authenticated session.
+func Handler() http.Handler { return instance }
+
+// Get remains an alias for callers migrating to Handler.
+func Get() http.Handler { return Handler() }
+
+func Shutdown() { instance.shutdown() }
+func (b *broker) shutdown() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	for s := range b.subscribers {
+		s.close()
 	}
-	return instance
 }
-
-// Shutdown will shutdown the server
-func Shutdown() {
-	if instance != nil {
-		instance.Shutdown()
-	}
+func SendChange(affects string) { Send(Message{Affects: affects}, "") }
+func SendMessage(typ, lang string, params map[string]string) {
+	Send(Message{Type: typ, Lang: lang, LangParams: params}, "")
 }
-
-// SendChange will send a specific change
-func SendChange(affects string) {
-	Send(Message{Affects: affects}, "")
-}
-
-// SendMessage will construct a message for the UI
-func SendMessage(typ, lang string, langParams map[string]string) {
-	Send(Message{
-		Type:       typ,
-		Lang:       lang,
-		LangParams: langParams,
-	}, "")
-}
-
-// Send will send a message
 func Send(msg Message, channel string) {
-	if channel == "" {
-		channel = defaultChannel
+	if channel != "" && channel != defaultChannel {
+		return
 	}
-	logger.Debug("SSE Sending: %+v", msg)
-	if data, err := json.Marshal(msg); err != nil {
-		logger.Error("SSEError", err)
-	} else {
-		Get().SendMessage(channel, sse.SimpleMessage(string(data)))
+	data, err := json.Marshal(msg)
+	if err != nil {
+		return
+	}
+	// Copy through JSON so caller mutations cannot race with permission filtering.
+	var frozen Message
+	if json.Unmarshal(data, &frozen) != nil {
+		return
+	}
+	instance.send(event{message: frozen, data: data})
+}
+func (b *broker) send(e event) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	for s := range b.subscribers {
+		select {
+		case <-s.done:
+		case s.queue <- e:
+		default:
+			s.close()
+		}
 	}
 }
 
-// TODO: if we end up implementing user visibility,
-// then we'll have to subscribe people to their own
-// channels and publish to all or some depending on visibility.
-// This means using a specific ChannelNameFunc that revolves
-// around the user and their visibility.
+// Resource notifications require the same explicit capability as their read API.
+// Manage is not a substitute for a view capability.
+var resourceCapabilities = map[string]string{
+	"access-lists":            user.CapabilityAccessListsView,
+	"audit-log":               user.CapabilityAuditLogView,
+	"certificates":            user.CapabilityCertificatesView,
+	"certificate-authorities": user.CapabilityCertificateAuthoritiesView,
+	"dns-providers":           user.CapabilityDNSProvidersView,
+	"hosts":                   user.CapabilityHostsView,
+	"nginx-templates":         user.CapabilityNginxTemplatesView,
+	"settings":                user.CapabilitySettingsManage,
+	"streams":                 user.CapabilityStreamsView,
+	"users":                   user.CapabilityUsersManage,
+}
+
+func permitted(p session.Principal, m Message) bool {
+	required, known := resourceCapabilities[m.Affects]
+	if m.Affects == "" {
+		// Unscoped UI notifications may contain administrative details.
+		switch m.Type {
+		case "success", "error", "warning", "info":
+			required = user.CapabilityFullAdmin
+			known = true
+		}
+	} else if m.Type != "" {
+		return false
+	}
+	if !known {
+		return false
+	}
+	for _, c := range p.Capabilities {
+		if c == required || c == user.CapabilityFullAdmin {
+			return true
+		}
+	}
+	return false
+}
+
+func (b *broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	p, ok := session.CurrentPrincipal(r.Context())
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	changed, unsubscribe := authpolicy.SubscribeChanges()
+	defer unsubscribe()
+	p, err := session.Authorize(r.Context(), p.Session.ID, time.Now().UTC())
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	if len(p.Capabilities) == 0 {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
+	}
+	controller := http.NewResponseController(w)
+	// Unsupported transports fail closed: no protected write can outlive its fence.
+	if controller.SetWriteDeadline(time.Now().Add(session.DeliveryTimeout)) != nil {
+		http.Error(w, "Streaming unavailable", http.StatusInternalServerError)
+		return
+	}
+	s := &subscriber{sessionID: p.Session.ID, queue: make(chan event, queueSize), done: make(chan struct{})}
+	b.mu.Lock()
+	b.subscribers[s] = struct{}{}
+	b.mu.Unlock()
+	defer func() { s.close(); b.mu.Lock(); delete(b.subscribers, s); b.mu.Unlock() }()
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("X-Accel-Buffering", "no")
+	write := func(data []byte) error {
+		if err := controller.SetWriteDeadline(time.Now().Add(session.DeliveryTimeout)); err != nil {
+			return err
+		}
+		if _, err := w.Write(data); err != nil {
+			return err
+		}
+		return controller.Flush()
+	}
+	if write([]byte(": connected\n\n")) != nil {
+		return
+	}
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-r.Context().Done():
+			return
+		case <-s.done:
+			return
+		case <-changed:
+			current, err := session.Authorize(r.Context(), s.sessionID, time.Now().UTC())
+			if err != nil || len(current.Capabilities) == 0 {
+				return
+			}
+		case <-ticker.C:
+			current, err := session.Authorize(r.Context(), s.sessionID, time.Now().UTC())
+			if err != nil || len(current.Capabilities) == 0 {
+				return
+			}
+			if write([]byte(": heartbeat\n\n")) != nil {
+				return
+			}
+		case e := <-s.queue:
+			err := session.WithAuthorizedDelivery(r.Context(), s.sessionID, func(current session.Principal) error {
+				if len(current.Capabilities) == 0 {
+					return session.ErrUnauthorized
+				}
+				if !permitted(current, e.message) {
+					return nil
+				}
+				select {
+				case <-s.done:
+					return session.ErrUnauthorized
+				default:
+				}
+				return write([]byte(fmt.Sprintf("data: %s\n\n", e.data)))
+			})
+			if err != nil {
+				return
+			}
+		}
+	}
+}

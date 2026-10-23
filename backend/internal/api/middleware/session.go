@@ -12,10 +12,8 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
-type principalKey struct{}
-
 func CurrentPrincipal(ctx context.Context) (session.Principal, bool) {
-	p, ok := ctx.Value(principalKey{}).(session.Principal)
+	p, ok := session.CurrentPrincipal(ctx)
 	return p, ok
 }
 
@@ -44,7 +42,7 @@ func resolveSession(purpose string, next http.Handler) http.Handler {
 			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 			return
 		}
-		ctx := context.WithValue(r.Context(), principalKey{}, principal)
+		ctx := session.WithPrincipal(r.Context(), principal)
 		ctx = context.WithValue(ctx, c.UserIDCtxKey, principal.Session.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

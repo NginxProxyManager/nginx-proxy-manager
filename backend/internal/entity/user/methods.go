@@ -138,8 +138,9 @@ func List(pageInfo model.PageInfo, filters []model.Filter, expand []string) (ent
 }
 
 // DeleteAll will do just that, and should only be used for testing purposes.
-func DeleteAll() error {
-	db := database.GetDB()
+func DeleteAll() error { return DeleteAllInTx(database.GetDB()) }
+
+func DeleteAllInTx(db *gorm.DB) error {
 	result := db.Exec(
 		fmt.Sprintf(`DELETE FROM %s WHERE is_system = ?`, database.QuoteTableName("user")),
 		false,

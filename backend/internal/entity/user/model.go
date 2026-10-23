@@ -67,7 +67,10 @@ func (m *Model) LoadByEmail(email string) error {
 }
 
 // Save will save this model to the DB
-func (m *Model) Save() error {
+func (m *Model) Save() error { return m.SaveInTx(database.GetDB()) }
+
+// SaveInTx uses the caller's transaction; policy callers must hold the fence.
+func (m *Model) SaveInTx(db *gorm.DB) error {
 	if m.IsSystem {
 		return errors.ErrSystemUserReadonly
 	}
@@ -84,11 +87,11 @@ func (m *Model) Save() error {
 	}
 
 	// Check if an existing user with this email exists
-	if m2, err := GetByEmail(m.Email); err == nil && m.ID != m2.ID {
+	var m2 Model
+	if err := db.Where("email = ?", m.Email).Where("is_system = ?", false).First(&m2).Error; err == nil && m.ID != m2.ID {
 		return errors.ErrDuplicateEmailUser
 	}
 
-	db := database.GetDB()
 	result := db.Save(m)
 	return result.Error
 }
@@ -96,25 +99,31 @@ func (m *Model) Save() error {
 // Delete will mark a user as deleted
 func (m *Model) Delete() error {
 	if m.ID == 0 {
-		// Can't delete a new object
 		return eris.New("Unable to delete a new object")
 	}
-	db := database.GetDB()
-	return db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Model(m).Update("normalized_email", nil).Error; err != nil {
-			return err
-		}
-		return tx.Delete(m).Error
-	})
+	return database.GetDB().Transaction(func(tx *gorm.DB) error { return m.DeleteInTx(tx) })
+}
+
+func (m *Model) DeleteInTx(tx *gorm.DB) error {
+	if m.ID == 0 {
+		return eris.New("Unable to delete a new object")
+	}
+	if err := tx.Model(m).Update("normalized_email", nil).Error; err != nil {
+		return err
+	}
+	return tx.Delete(m).Error
 }
 
 // SetPermissions will wipe out any existing permissions and add new ones for this user
 func (m *Model) SetPermissions(permissions []string) error {
+	return m.setPermissionsInTx(database.GetDB(), permissions)
+}
+
+func (m *Model) setPermissionsInTx(db *gorm.DB, permissions []string) error {
 	if m.ID == 0 {
 		return eris.Errorf("Cannot set permissions without first saving the User")
 	}
 
-	db := database.GetDB()
 	// Wipe out previous permissions
 	if result := db.Where("user_id = ?", m.ID).Delete(&HasCapabilityModel{}); result.Error != nil {
 		return result.Error
@@ -154,7 +163,10 @@ func (m *Model) generateGravatar() {
 }
 
 // SaveCapabilities will save the capabilities of the user.
-func (m *Model) SaveCapabilities() error {
+func (m *Model) SaveCapabilities() error { return m.SaveCapabilitiesInTx(database.GetDB()) }
+
+// SaveCapabilitiesInTx validates and replaces permissions in the caller's transaction.
+func (m *Model) SaveCapabilitiesInTx(db *gorm.DB) error {
 	// m.Capabilities
 	if m.ID == 0 {
 		return eris.Errorf("Cannot save capabilities on unsaved user")
@@ -165,7 +177,6 @@ func (m *Model) SaveCapabilities() error {
 		return eris.New("At least 1 capability required for a user")
 	}
 
-	db := database.GetDB()
 	// Get a full list of capabilities
 	var capabilities []entity.Capability
 	if result := db.Find(&capabilities); result.Error != nil {
@@ -185,5 +196,5 @@ func (m *Model) SaveCapabilities() error {
 		}
 	}
 
-	return m.SetPermissions(m.Capabilities)
+	return m.setPermissionsInTx(db, m.Capabilities)
 }

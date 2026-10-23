@@ -186,7 +186,7 @@ func authorizationError(err error) error {
 }
 
 func Revoke(ctx context.Context, id string, now time.Time) error {
-	return authpolicy.WithWrite(ctx, func(tx *gorm.DB) error { return RevokeMatching(tx, RevocationFilter{SessionID: id}, now) })
+	return authpolicy.WithMutation(ctx, func(tx *gorm.DB) error { return RevokeMatching(tx, RevocationFilter{SessionID: id}, now) })
 }
 
 // RevokeMatching is called inside the same policy-fenced transaction as the

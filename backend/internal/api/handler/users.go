@@ -9,8 +9,10 @@ import (
 	c "npm/internal/api/context"
 	h "npm/internal/api/http"
 	"npm/internal/api/middleware"
+	"npm/internal/authpolicy"
 	"npm/internal/config"
 	"npm/internal/entity/auth"
+	"npm/internal/entity/session"
 	"npm/internal/entity/user"
 	"npm/internal/errors"
 	"npm/internal/logger"
@@ -129,24 +131,24 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 				return
 			}
 
-			if err = userObject.Save(); err != nil {
-				if err == errors.ErrDuplicateEmailUser || err == errors.ErrSystemUserReadonly {
+			var capabilityErr error
+			if err = authpolicy.WithMutation(r.Context(), func(tx *gorm.DB) error {
+				if err := userObject.SaveInTx(tx); err != nil {
+					return err
+				}
+				if !self {
+					capabilityErr = userObject.SaveCapabilitiesInTx(tx)
+					return capabilityErr
+				}
+				return nil
+			}); err != nil {
+				if capabilityErr != nil || err == errors.ErrDuplicateEmailUser || err == errors.ErrSystemUserReadonly {
 					h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 				} else {
-					logger.Error("UpdateUserError", err)
 					h.ResultErrorJSON(w, r, http.StatusInternalServerError, "Unable to save User", nil)
 				}
 				return
 			}
-
-			if !self {
-				err = userObject.SaveCapabilities()
-				if err != nil {
-					h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-					return
-				}
-			}
-
 			// nolint: errcheck,gosec
 			userObject.Expand(middleware.GetExpandFromContext(r))
 
@@ -179,7 +181,12 @@ func DeleteUser() func(http.ResponseWriter, *http.Request) {
 		case gorm.ErrRecordNotFound:
 			h.NotFound(w, r)
 		case nil:
-			if err := item.Delete(); err != nil {
+			if err := authpolicy.WithMutation(r.Context(), func(tx *gorm.DB) error {
+				if err := revokeUserSessions(tx, []uint{item.ID}); err != nil {
+					return err
+				}
+				return item.DeleteInTx(tx)
+			}); err != nil {
 				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			} else {
 				h.ResultResponseJSON(w, r, http.StatusOK, true)
@@ -259,7 +266,16 @@ func CreateUser() func(http.ResponseWriter, *http.Request) {
 // Route: DELETE /users
 func DeleteUsers() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := user.DeleteAll()
+		err := authpolicy.WithMutation(r.Context(), func(tx *gorm.DB) error {
+			var ids []uint
+			if err := tx.Model(&user.Model{}).Where("is_system = ?", false).Pluck("id", &ids).Error; err != nil {
+				return err
+			}
+			if err := revokeUserSessions(tx, ids); err != nil {
+				return err
+			}
+			return user.DeleteAllInTx(tx)
+		})
 		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		} else {
@@ -375,4 +391,23 @@ func SetAuth() func(http.ResponseWriter, *http.Request) {
 
 		h.ResultResponseJSON(w, r, http.StatusOK, userAuth)
 	}
+}
+
+// The caller holds the policy fence. Persist revocation before deletion so an
+// eventual reused database user ID cannot resurrect an old JWT/session.
+func revokeUserSessions(tx *gorm.DB, userIDs []uint) error {
+	if len(userIDs) == 0 {
+		return nil
+	}
+	var ids []string
+	if err := tx.Model(&session.Model{}).Where("user_id IN ?", userIDs).Pluck("id", &ids).Error; err != nil {
+		return err
+	}
+	now := time.Now().UTC()
+	for _, id := range ids {
+		if err := session.RevokeMatching(tx, session.RevocationFilter{SessionID: id}, now); err != nil {
+			return err
+		}
+	}
+	return nil
 }

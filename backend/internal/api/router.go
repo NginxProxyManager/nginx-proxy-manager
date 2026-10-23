@@ -89,7 +89,7 @@ func newBaseRouter(extra ...func(http.Handler) http.Handler) *chi.Mux {
 		// connecting address, so the last value is the only trusted one
 		chiMiddleware.ClientIPFromHeader("X-Forwarded-For"),
 		chiMiddleware.Recoverer,
-		chiMiddleware.Throttle(5),
+		restThrottle(5),
 		middleware.PrettyPrint,
 		middleware.Expansion,
 	)
@@ -117,7 +117,9 @@ func applyRoutes(r chi.Router) chi.Router {
 	// Exists inside /api but it's here so that we can skip the Timeout middleware
 	// that applies to other endpoints.
 	r.With(middleware.EnforceSetup(), middleware.SSEAuth).
-		Mount("/api/sse", serverevents.Get())
+		Get("/api/sse", serverevents.Handler().ServeHTTP)
+	r.With(middleware.EnforceSetup(), middleware.SSEAuth).
+		Get("/api/sse/", serverevents.Handler().ServeHTTP)
 
 	// API
 	r.With(chiMiddleware.Timeout(30*time.Second)).Route("/api", func(r chi.Router) {
@@ -368,4 +370,20 @@ func applyRoutes(r chi.Router) chi.Router {
 	})
 
 	return r
+}
+
+// Long-lived streams cannot consume all slots needed to administer/revoke them.
+// The SSE route still performs its normal session handshake and bounded delivery.
+func restThrottle(limit int) func(http.Handler) http.Handler {
+	throttle := chiMiddleware.Throttle(limit)
+	return func(next http.Handler) http.Handler {
+		limited := throttle(next)
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method == http.MethodGet && (r.URL.Path == "/api/sse" || r.URL.Path == "/api/sse/") {
+				next.ServeHTTP(w, r)
+				return
+			}
+			limited.ServeHTTP(w, r)
+		})
+	}
 }
