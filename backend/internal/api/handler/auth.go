@@ -178,15 +178,11 @@ func newTokenLDAP(w http.ResponseWriter, r *http.Request, payload tokenPayload) 
 			return
 		}
 
-		// Create auth record and attach to this user
-		authObj = auth.Model{
-			UserID:   foundUser.ID,
-			Type:     auth.TypeLDAP,
-			Identity: ldapUser.Username,
-		}
-		if err := authObj.Save(); err != nil {
-			logger.Error("auth.Save", err)
-			h.ResultErrorJSON(w, r, http.StatusInternalServerError, err.Error(), nil)
+		// Attach only after current policy and account origin are checked in
+		// the same fenced transaction as the credential write.
+		authObj, err = attachLDAPCredential(r.Context(), foundUser.ID, ldapUser.Username)
+		if err != nil {
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
 			return
 		}
 		logger.Info("Created LDAP auth for user: %s, %s", ldapUser.Username, foundUser.Email)

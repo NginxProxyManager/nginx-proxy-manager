@@ -12,6 +12,7 @@ import (
 	h "npm/internal/api/http"
 	"npm/internal/api/middleware"
 	"npm/internal/authpolicy"
+	"npm/internal/entity/auth"
 	"npm/internal/entity/session"
 	"npm/internal/entity/sso"
 	"npm/internal/entity/user"
@@ -44,21 +45,8 @@ func createLoginSession(ctx context.Context, account user.Model, source session.
 		if live.IsDisabled || live.IsSystem {
 			return session.ErrUnauthorized
 		}
-		policy, err := sso.GetPolicy(tx)
-		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		if err := checkPasswordAdmission(tx, live); err != nil {
 			return err
-		}
-		if policy.Mode == sso.SSOOnly {
-			if !live.AdminPasswordEnabled {
-				return session.ErrUnauthorized
-			}
-			var count int64
-			if err := tx.Model(&user.HasCapabilityModel{}).Where("user_id = ? AND capability_name = ?", live.ID, user.CapabilityFullAdmin).Count(&count).Error; err != nil {
-				return err
-			}
-			if count == 0 {
-				return session.ErrUnauthorized
-			}
 		}
 		return session.Create(tx, session.Model{ID: id, UserID: live.ID, Source: source, CreatedAt: now, ExpiresAt: now.Add(24 * time.Hour)})
 	})
@@ -66,6 +54,56 @@ func createLoginSession(ctx context.Context, account user.Model, source session.
 		return njwt.GeneratedResponse{}, err
 	}
 	return njwt.GenerateForSession(account.ID, id, false)
+}
+
+// Caller owns the policy fence and passes a user freshly loaded in that tx.
+func checkPasswordAdmission(tx *gorm.DB, account user.Model) error {
+	if account.CredentialOrigin == "sso" {
+		return session.ErrUnauthorized
+	}
+	policy, err := sso.GetPolicy(tx)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+	var adminCount int64
+	if err := tx.Model(&user.HasCapabilityModel{}).Where("user_id = ? AND capability_name = ?", account.ID, user.CapabilityFullAdmin).Count(&adminCount).Error; err != nil {
+		return err
+	}
+	isAdmin := adminCount > 0
+	if isAdmin && !account.AdminPasswordEnabled {
+		return session.ErrUnauthorized
+	}
+	if policy.Mode == sso.SSOOnly && !isAdmin {
+		return session.ErrUnauthorized
+	}
+	return nil
+}
+
+// LDAP identity attachment is admission, so check the live account and policy
+// in the same fenced transaction that creates its credential record.
+func attachLDAPCredential(ctx context.Context, userID uint, identity string) (auth.Model, error) {
+	var credential auth.Model
+	err := authpolicy.WithWrite(ctx, func(tx *gorm.DB) error {
+		var account user.Model
+		if err := tx.First(&account, userID).Error; err != nil {
+			return err
+		}
+		if account.IsDisabled || account.IsSystem {
+			return session.ErrUnauthorized
+		}
+		if err := checkPasswordAdmission(tx, account); err != nil {
+			return err
+		}
+		var existing auth.Model
+		if err := tx.Where("identity = ? AND type = ?", identity, auth.TypeLDAP).First(&existing).Error; err == nil {
+			return session.ErrUnauthorized
+		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+		credential = auth.Model{UserID: userID, Type: auth.TypeLDAP, Identity: identity}
+		return tx.Create(&credential).Error
+	})
+	return credential, err
 }
 
 func Logout() http.HandlerFunc {
