@@ -12,6 +12,7 @@ import (
 	h "npm/internal/api/http"
 	"npm/internal/api/middleware"
 	"npm/internal/authpolicy"
+	"npm/internal/database"
 	"npm/internal/entity/auth"
 	"npm/internal/entity/session"
 	"npm/internal/entity/sso"
@@ -108,6 +109,12 @@ func attachLDAPCredential(ctx context.Context, userID uint, identity string) (au
 
 func Logout() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Origin") != "" || r.Header.Get("Referer") != "" {
+			if policy, err := sso.GetPolicy(database.GetDB().WithContext(r.Context())); err == nil && sso.ValidatePublicURL(policy.PublicURL) == nil && !sameSSOOrigin(r) {
+				h.ResultErrorJSON(w, r, http.StatusForbidden, "sso_origin_denied", nil)
+				return
+			}
+		}
 		principal, ok := middleware.CurrentPrincipal(r.Context())
 		if !ok {
 			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)

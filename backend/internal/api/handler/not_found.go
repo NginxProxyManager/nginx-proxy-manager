@@ -25,6 +25,10 @@ func NotFound() func(http.ResponseWriter, *http.Request) {
 	assetsSub, _ = fs.Sub(embed.Assets, "assets")
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/login" {
+			w.Header().Set("Referrer-Policy", "no-referrer")
+			w.Header().Set("Cache-Control", "no-store")
+		}
 		defaultFile := "index.html"
 		path := strings.TrimLeft(r.URL.Path, "/")
 

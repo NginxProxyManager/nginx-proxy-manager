@@ -11,5 +11,5 @@ func OAuthLogin() http.HandlerFunc    { return legacyOAuthGone }
 func OAuthRedirect() http.HandlerFunc { return legacyOAuthGone }
 
 func legacyOAuthGone(w http.ResponseWriter, r *http.Request) {
-	h.ResultErrorJSON(w, r, http.StatusGone, "Legacy OAuth login is unavailable", nil)
+	h.ResultErrorJSON(w, r, http.StatusGone, "sso_legacy_oauth_retired", nil)
 }

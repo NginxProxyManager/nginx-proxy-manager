@@ -61,6 +61,22 @@ func TestLogoutInvalidatesOldJWT(t *testing.T) {
 	require.Equal(t, 401, authSessionRequest(t, id, Logout()))
 }
 
+func TestLogoutRejectsCrossOriginBrowserRequest(t *testing.T) {
+	db, id := authSessionFixture(t)
+	require.NoError(t, db.AutoMigrate(&sso.Policy{}))
+	require.NoError(t, db.Create(&sso.Policy{ID: 1, Mode: sso.Parallel, PublicURL: "https://npm.example", Revision: 1}).Error)
+	auth := jwtauth.New("HS256", []byte("test-only-secret"), nil)
+	_, token, err := auth.Encode(map[string]any{"uid": 1, "sid": id, "iss": "api"})
+	require.NoError(t, err)
+	r := httptest.NewRequest(http.MethodPost, "https://npm.example/api/auth/logout", nil)
+	r.Header.Set("Authorization", "Bearer "+token)
+	r.Header.Set("Origin", "https://attacker.example")
+	w := httptest.NewRecorder()
+	jwtauth.Verify(auth, jwtauth.TokenFromHeader)(middleware.EnforceSessionOnly()(Logout())).ServeHTTP(w, r)
+	require.Equal(t, http.StatusForbidden, w.Code)
+	require.Equal(t, 200, authSessionRequest(t, id, Logout()))
+}
+
 func TestExpiredSessionCannotRefresh(t *testing.T) {
 	db, id := authSessionFixture(t)
 	require.NoError(t, db.Model(&session.Model{}).Where("id = ?", id).Update("expires_at", time.Now().Add(-time.Second)).Error)

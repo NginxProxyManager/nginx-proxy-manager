@@ -253,6 +253,46 @@ func TestSAMLStartSigningAndMetadata(t *testing.T) {
 	_, err = f.adapter.Metadata(context.Background(), f.connection, "http://evil.test")
 	require.Error(t, err)
 }
+
+func TestSAMLRedirectEndpointQueryIsNotSigned(t *testing.T) {
+	f := newSAMLFixture(t)
+	f.config.SignRequests = true
+	f.config.IDPMetadataXML = strings.Replace(f.config.IDPMetadataXML, "https://idp.test/login", "https://idp.test/login?idpid=one%20two", 1)
+	f.save(t)
+	result, err := f.adapter.Start(context.Background(), f.connection, f.transaction)
+	require.NoError(t, err)
+	u, err := url.Parse(result.RedirectURL)
+	require.NoError(t, err)
+	require.Equal(t, "one two", u.Query().Get("idpid"))
+	start := strings.Index(u.RawQuery, "SAMLRequest=")
+	require.Positive(t, start)
+	end := strings.Index(u.RawQuery, "&Signature=")
+	require.Greater(t, end, start)
+	binding := u.RawQuery[start:end]
+	spMetadata, err := f.adapter.Metadata(context.Background(), f.connection, "https://npm.test")
+	require.NoError(t, err)
+	var metadata saml.EntityDescriptor
+	require.NoError(t, xml.Unmarshal(spMetadata, &metadata))
+	der, err := base64.StdEncoding.DecodeString(metadata.SPSSODescriptors[0].KeyDescriptors[0].KeyInfo.X509Data.X509Certificates[0].Data)
+	require.NoError(t, err)
+	cert, err := x509.ParseCertificate(der)
+	require.NoError(t, err)
+	sig, err := base64.StdEncoding.DecodeString(u.Query().Get("Signature"))
+	require.NoError(t, err)
+	sum := sha256.Sum256([]byte(binding))
+	require.NoError(t, rsa.VerifyPKCS1v15(cert.PublicKey.(*rsa.PublicKey), crypto.SHA256, sum[:], sig))
+	f.config.SignRequests = false
+	f.save(t)
+	unsigned, err := f.adapter.Start(context.Background(), f.connection, f.transaction)
+	require.NoError(t, err)
+	unsignedURL, err := url.Parse(unsigned.RedirectURL)
+	require.NoError(t, err)
+	require.Equal(t, "one two", unsignedURL.Query().Get("idpid"))
+	require.Empty(t, unsignedURL.Query().Get("Signature"))
+	for _, reserved := range []string{"SAMLRequest", "SAMLResponse", "RelayState", "SigAlg", "Signature"} {
+		require.False(t, samlEndpoint("https://idp.test/login?"+reserved+"=evil"), reserved)
+	}
+}
 func TestSAMLBoundedCallbackBeforeParsing(t *testing.T) {
 	req := httptest.NewRequest("POST", "https://npm.test", strings.NewReader("RelayState="+token("s")+"&padding="+strings.Repeat("x", 1<<20)))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")

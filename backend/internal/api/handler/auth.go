@@ -41,7 +41,13 @@ func GetAuthConfig() func(http.ResponseWriter, *http.Request) {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
 		}
-		h.ResultResponseJSON(w, r, http.StatusOK, val)
+		active := make([]string, 0, len(val))
+		for _, method := range val {
+			if method == "local" || method == "ldap" {
+				active = append(active, method)
+			}
+		}
+		h.ResultResponseJSON(w, r, http.StatusOK, active)
 	}
 }
 
@@ -66,7 +72,7 @@ func NewToken() func(http.ResponseWriter, *http.Request) {
 		} else if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
-		} else if !slices.Contains(authMethods, payload.Type) {
+		} else if (payload.Type != "local" && payload.Type != "ldap") || !slices.Contains(authMethods, payload.Type) {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidAuthType.Error(), nil)
 			return
 		}

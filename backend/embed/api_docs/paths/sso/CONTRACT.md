@@ -137,6 +137,42 @@ policy.PublicURL loaded from policy, never request Host. `Start` and `Complete`
 use `Transaction.PublicURL`. Public SP metadata advertises only POST ACS and
 signing certificates, with no encryption/Artifact/SLO endpoints.
 
+Browser handoff and legacy cutover (Task 11):
+
+- Anonymous `GET /api/auth/providers` returns `{result:{mode,
+  password_login_available,connections:[{id,name,protocol}]}}`; discovery
+  excludes disabled/invalid connections and exposes no config or secrets.
+- `GET /sso/{id}/start?return_path=<local path>` sets a distinct per-attempt
+  `__Host-npm-sso-attempt-<id>` cookie. OIDC/OAuth2 use `SameSite=Lax`;
+  SAML uses `SameSite=None`. Cookies have `Secure`, `HttpOnly`, `Path=/`,
+  no `Domain`, and a 300-second maximum age. The host prefix prevents a
+  sibling subdomain from planting a parent-domain cookie. Callback clears
+  only its own attempt cookie, then redirects to fixed `/login?sso_handoff=`
+  plus the opaque 60-second code. Its separate `__Host-npm-sso-handoff-<hash>`
+  cookie uses `SameSite=Lax`, `Secure`, `HttpOnly`, `Path=/`, no `Domain`,
+  and 60-second maximum age. Exchange clears that cookie.
+- `POST /api/auth/sso/exchange` accepts exactly `{code}` and the binding
+  cookie, plus matching `Origin` or `Referer` for the configured `public_url`.
+  It returns `{result:{expires,token}}`. Missing binding or changed policy
+  yields a generic `sso_login_denied`. Callback and exchange use `no-store`
+  and `no-referrer` headers. SAML ACS must accept cross-site provider POSTs.
+  Frontend should remove `sso_handoff` from the address bar immediately.
+- Callback failures redirect to `/login?sso_error=sso_login_denied`, except
+  fixed SAML unsupported-profile guidance code `sso_saml_unsupported_profile`.
+  No provider response body, account hint, token, or JWT enters a URL.
+- `GET /api/sso/legacy-status` yields only `conversion_available`. Explicit
+  `POST /api/sso/legacy-import` seals the server-side legacy client secret
+  into a **disabled** OAuth2 draft and clears the old plaintext in the same
+  fenced transaction. The operator reviews email mapping and enables only
+  after configuring shared allowlist and HTTPS public origin. Legacy
+  `/oauth/login` and `/oauth/redirect` return 410
+  `sso_legacy_oauth_retired`. The generic settings API cannot edit the
+  legacy `oauth-auth` or `auth-methods` rows.
+- An upgrade with legacy `auth-methods` set to OAuth only requires an
+  existing enabled local administrator/password login before migration;
+  otherwise the old login is gone and there is no authorized admin path to
+  review SSO settings. Pre-upgrade preparation is required.
+
 `Service.Complete` preserves only the fixed sentinel `sso.ErrSAMLUnsupported`
 for recognized unsupported SAML profiles. Handler 11 should map it to stable code
 `sso_saml_unsupported_profile` and localized copy: "Use SP-initiated Redirect/POST

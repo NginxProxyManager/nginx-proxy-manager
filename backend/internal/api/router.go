@@ -65,7 +65,7 @@ func newBaseRouter(extra ...func(http.Handler) http.Handler) *chi.Mux {
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-Requested-With"},
-		AllowCredentials: true,
+		AllowCredentials: false,
 		MaxAge:           300,
 	})
 
@@ -112,6 +112,12 @@ func applyRoutes(r chi.Router) chi.Router {
 		r.Get("/login", handler.OAuthLogin())
 		r.Get("/redirect", handler.OAuthRedirect())
 	})
+	r.Route("/sso/{id}", func(r chi.Router) {
+		r.Get("/start", handler.SSOStart())
+		r.Get("/callback", handler.SSOCallback())
+		r.Post("/acs", handler.SSOCallback())
+		r.Get("/metadata", handler.SSOMetadata())
+	})
 
 	// SSE - requires a sse token as the `jwt` get parameter
 	// Exists inside /api but it's here so that we can skip the Timeout middleware
@@ -130,6 +136,8 @@ func applyRoutes(r chi.Router) chi.Router {
 
 		// Auth
 		r.With(middleware.EnforceSetup()).Route("/auth", func(r chi.Router) {
+			r.Get("/providers", handler.SSOProviders())
+			r.Post("/sso/exchange", handler.SSOExchange())
 			r.Get("/", handler.GetAuthConfig())
 			r.With(middleware.EnforceRequestSchema(schema.GetToken())).
 				Post("/", handler.NewToken())
@@ -201,6 +209,8 @@ func applyRoutes(r chi.Router) chi.Router {
 
 		// Settings
 		r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilitySettingsManage)).Route("/sso", func(r chi.Router) {
+			r.Get("/legacy-status", handler.LegacySSOStatus())
+			r.Post("/legacy-import", handler.ImportLegacySSO())
 			r.With(middleware.EnforceRequestSchema(schema.SSOSAMLMetadataPreview())).Post("/saml/metadata-preview", handler.PreviewSSOSAMLMetadata())
 			r.Get("/policy", handler.GetSSOPolicy())
 			r.With(middleware.EnforceRequestSchema(schema.SSOPolicy())).Put("/policy", handler.UpdateSSOPolicy())

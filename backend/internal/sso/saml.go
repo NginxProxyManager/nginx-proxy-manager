@@ -52,7 +52,35 @@ func (a *SAMLAdapter) Start(ctx context.Context, c ssoconfig.Connection, t Trans
 		return StartResult{}, ErrDenied
 	}
 	req.ID = t.RequestID
-	redirect, err := req.Redirect(t.State, sp)
+	endpoint, _ := url.Parse(req.Destination)
+	var redirect *url.URL
+	if endpoint.RawQuery == "" {
+		redirect, err = req.Redirect(t.State, sp)
+	} else {
+		// crewjam signs the destination's pre-existing query too. The Redirect
+		// binding signs only SAMLRequest, RelayState and SigAlg; keep IdP routing
+		// parameters in the URL but outside the signed binding string.
+		signatureMethod := sp.SignatureMethod
+		sp.SignatureMethod = ""
+		redirect, err = req.Redirect(t.State, sp)
+		sp.SignatureMethod = signatureMethod
+		if err == nil && signatureMethod != "" {
+			prefix := endpoint.RawQuery + "&"
+			if !strings.HasPrefix(redirect.RawQuery, prefix) {
+				return StartResult{}, ErrDenied
+			}
+			binding := strings.TrimPrefix(redirect.RawQuery, prefix) + "&SigAlg=" + url.QueryEscape(signatureMethod)
+			ctx, signErr := saml.GetSigningContext(sp)
+			if signErr != nil {
+				return StartResult{}, ErrDenied
+			}
+			signature, signErr := ctx.SignString(binding)
+			if signErr != nil {
+				return StartResult{}, ErrDenied
+			}
+			redirect.RawQuery = prefix + binding + "&Signature=" + url.QueryEscape(base64.StdEncoding.EncodeToString(signature))
+		}
+	}
 	if err != nil {
 		return StartResult{}, ErrDenied
 	}
@@ -434,5 +462,18 @@ func (a *SAMLAdapter) Probe(ctx context.Context, c ssoconfig.Connection) error {
 }
 func samlEndpoint(raw string) bool {
 	u, err := url.Parse(raw)
-	return err == nil && u.Scheme == "https" && u.Hostname() != "" && u.User == nil && u.Fragment == "" && u.RawQuery == "" && u.Opaque == ""
+	if err != nil || u.Scheme != "https" || u.Hostname() == "" || u.User != nil || u.Fragment != "" || u.Opaque != "" {
+		return false
+	}
+	query, err := url.ParseQuery(u.RawQuery)
+	if err != nil {
+		return false
+	}
+	for key := range query {
+		switch strings.ToLower(key) {
+		case "samlrequest", "samlresponse", "relaystate", "sigalg", "signature":
+			return false
+		}
+	}
+	return true
 }

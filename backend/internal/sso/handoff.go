@@ -69,17 +69,17 @@ func (s *Service) Exchange(ctx context.Context, code, browserToken string) (sess
 	return result, nil
 }
 
-// Cookies are host-only. Never set Domain or widen Path: distinct names prevent
-// tabs from overwriting one another, including callbacks from cross-site SAML.
+// __Host- prevents a sibling subdomain from planting a parent-domain cookie.
+// Distinct names preserve independent browser attempts, including SAML POSTs.
 func AttemptCookie(attemptID, browserToken string, protocol ssoconfig.Protocol) *http.Cookie {
 	sameSite := http.SameSiteLaxMode
 	if protocol == ssoconfig.SAML {
 		sameSite = http.SameSiteNoneMode
 	}
-	return &http.Cookie{Name: "__Secure-npm-sso-attempt-" + attemptID, Value: browserToken, Path: "/sso", Secure: true, HttpOnly: true, SameSite: sameSite, MaxAge: 300}
+	return &http.Cookie{Name: "__Host-npm-sso-attempt-" + attemptID, Value: browserToken, Path: "/", Secure: true, HttpOnly: true, SameSite: sameSite, MaxAge: 300}
 }
 func HandoffCookie(code, browserToken string) *http.Cookie {
-	return &http.Cookie{Name: "__Secure-npm-sso-handoff-" + hash(code), Value: browserToken, Path: "/api/auth/sso/exchange", Secure: true, HttpOnly: true, SameSite: http.SameSiteLaxMode, MaxAge: 60}
+	return &http.Cookie{Name: "__Host-npm-sso-handoff-" + hash(code), Value: browserToken, Path: "/", Secure: true, HttpOnly: true, SameSite: http.SameSiteLaxMode, MaxAge: 60}
 }
 func DeleteCookie(cookie *http.Cookie) *http.Cookie {
 	v := *cookie

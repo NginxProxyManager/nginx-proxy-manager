@@ -1,0 +1,43 @@
+{
+  "operationId": "getSSOProviders",
+  "summary": "Discover enabled SSO connections and password login mode",
+  "tags": ["Auth"],
+  "security": [],
+  "responses": {
+    "200": {
+      "description": "Minimal public discovery envelope",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["result"],
+            "properties": {
+              "result": {
+                "type": "object",
+                "required": ["mode", "password_login_available", "connections"],
+                "properties": {
+                  "mode": {"type": "string", "enum": ["parallel", "sso_only"]},
+                  "password_login_available": {"type": "boolean"},
+                  "connections": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["id", "name", "protocol"],
+                      "properties": {
+                        "id": {"type": "string"},
+                        "name": {"type": "string"},
+                        "protocol": {"type": "string", "enum": ["oidc", "oauth2", "saml"]}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "403": {"description": "First local administrator not yet created"},
+    "503": {"description": "Configuration unavailable"}
+  }
+}

@@ -1,0 +1,1 @@
+{"operationId":"getLegacySSOStatus","summary":"Masked legacy OAuth conversion readiness","tags":["SSO Administration"],"security":[{"BearerAuth":[]}],"responses":{"200":{"description":"{result:{conversion_available:boolean}}"},"403":{"description":"Requires settings.manage or full-admin"}}}
