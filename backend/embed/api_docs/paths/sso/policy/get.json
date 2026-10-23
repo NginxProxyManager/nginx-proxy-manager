@@ -1,0 +1,1 @@
+{"operationId":"getSSOPolicy","summary":"Read SSO login policy","tags":["SSO Administration"],"security":[{"BearerAuth":[]}],"responses":{"200":{"description":"Policy with mode, public_url and revision"},"403":{"description":"Requires settings.manage or full-admin"}}}

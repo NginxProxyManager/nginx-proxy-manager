@@ -1,0 +1,1 @@
+{"operationId":"getSSOConnection","summary":"Read one connection with secrets masked","tags":["SSO Administration"],"security":[{"BearerAuth":[]}],"parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Connection view"},"404":{"description":"Unknown ID"}}}

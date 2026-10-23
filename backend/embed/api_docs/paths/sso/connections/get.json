@@ -1,0 +1,1 @@
+{"operationId":"listSSOConnections","summary":"List connections with secrets masked","tags":["SSO Administration"],"security":[{"BearerAuth":[]}],"responses":{"200":{"description":"Array of connection views; has_secret indicates stored encrypted credential"}}}

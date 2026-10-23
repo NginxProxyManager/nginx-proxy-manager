@@ -1,0 +1,1 @@
+{"operationId":"getSSOAllowlist","summary":"Read shared complete-email allowlist and policy revision","tags":["SSO Administration"],"security":[{"BearerAuth":[]}],"responses":{"200":{"description":"Emails and revision"}}}

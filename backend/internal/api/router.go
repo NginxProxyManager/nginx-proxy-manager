@@ -198,6 +198,20 @@ func applyRoutes(r chi.Router) chi.Router {
 		}
 
 		// Settings
+		r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilitySettingsManage)).Route("/sso", func(r chi.Router) {
+			r.Get("/policy", handler.GetSSOPolicy())
+			r.With(middleware.EnforceRequestSchema(schema.SSOPolicy())).Put("/policy", handler.UpdateSSOPolicy())
+			r.Get("/connections", handler.GetSSOConnections())
+			r.With(middleware.EnforceRequestSchema(schema.SSOConnectionCreate())).Post("/connections", handler.CreateSSOConnection())
+			r.Get("/connections/{id}", handler.GetSSOConnection())
+			r.With(middleware.EnforceRequestSchema(schema.SSOConnectionUpdate())).Put("/connections/{id}", handler.UpdateSSOConnection())
+			r.With(middleware.EnforceRequestSchema(schema.SSODelete())).Delete("/connections/{id}", handler.DeleteSSOConnection())
+			r.Post("/connections/{id}/test", handler.TestSSOConnection())
+			r.Get("/allowlist", handler.GetSSOAllowlist())
+			r.With(middleware.EnforceRequestSchema(schema.SSOAllowlist())).Put("/allowlist", handler.UpdateSSOAllowlist())
+		})
+
+		// Settings
 		r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilitySettingsManage)).Route("/settings", func(r chi.Router) {
 			// List
 			r.With(

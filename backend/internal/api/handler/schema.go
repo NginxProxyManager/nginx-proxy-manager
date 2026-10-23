@@ -75,6 +75,11 @@ func getSchema() []byte {
 
 func replaceIncomingSchemas(swaggerSchema []byte) []byte {
 	str := string(swaggerSchema)
+	str = strings.ReplaceAll(str, `"{{schema.SSOPolicy}}"`, schema.SSOPolicy())
+	str = strings.ReplaceAll(str, `"{{schema.SSOConnectionCreate}}"`, schema.SSOConnectionCreate())
+	str = strings.ReplaceAll(str, `"{{schema.SSOConnectionUpdate}}"`, schema.SSOConnectionUpdate())
+	str = strings.ReplaceAll(str, `"{{schema.SSODelete}}"`, schema.SSODelete())
+	str = strings.ReplaceAll(str, `"{{schema.SSOAllowlist}}"`, schema.SSOAllowlist())
 
 	// Remember to include the double quotes in the replacement!
 	str = strings.ReplaceAll(str, `"{{schema.SetAuth}}"`, schema.SetAuth())

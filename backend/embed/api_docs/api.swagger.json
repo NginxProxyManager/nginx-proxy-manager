@@ -5,6 +5,26 @@
 		"version": "{{VERSION}}"
 	},
 	"paths": {
+		"/sso/policy": {
+			"get": {"$ref": "file://./paths/sso/policy/get.json"},
+			"put": {"$ref": "file://./paths/sso/policy/put.json"}
+		},
+		"/sso/connections": {
+			"get": {"$ref": "file://./paths/sso/connections/get.json"},
+			"post": {"$ref": "file://./paths/sso/connections/post.json"}
+		},
+		"/sso/connections/{id}": {
+			"get": {"$ref": "file://./paths/sso/connections/id/get.json"},
+			"put": {"$ref": "file://./paths/sso/connections/id/put.json"},
+			"delete": {"$ref": "file://./paths/sso/connections/id/delete.json"}
+		},
+		"/sso/connections/{id}/test": {
+			"post": {"$ref": "file://./paths/sso/connections/id/test/post.json"}
+		},
+		"/sso/allowlist": {
+			"get": {"$ref": "file://./paths/sso/allowlist/get.json"},
+			"put": {"$ref": "file://./paths/sso/allowlist/put.json"}
+		},
 		"/": {
 			"get": {
 				"$ref": "file://./paths/get.json"
@@ -228,6 +248,7 @@
 		}
 	},
 	"components": {
+		"securitySchemes": {"BearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}},
 		"schemas": {
 			"AuthConfigObject": {
 				"$ref": "file://./components/AuthConfigObject.json"
