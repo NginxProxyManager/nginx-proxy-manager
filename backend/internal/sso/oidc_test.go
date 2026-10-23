@@ -21,7 +21,7 @@ import (
 )
 
 func TestOIDCValidAndInvalidClaims(t *testing.T) {
-	for _, scenario := range []string{"valid", "post", "signature", "issuer", "audience", "azp", "nonce", "expired", "userinfo_subject", "email_array", "email_missing"} {
+	for _, scenario := range []string{"valid", "post", "signature", "issuer", "audience", "azp", "azp_empty", "azp_null", "azp_wrong", "azp_wrong_type", "azp_matching", "azp_multi_matching", "nonce", "expired", "userinfo_subject", "email_array", "email_missing"} {
 		t.Run(scenario, func(t *testing.T) {
 			key, err := rsa.GenerateKey(rand.Reader, 2048)
 			require.NoError(t, err)
@@ -61,6 +61,19 @@ func TestOIDCValidAndInvalidClaims(t *testing.T) {
 						claims["aud"] = "other"
 					case "azp":
 						claims["aud"] = []string{"client", "other"}
+					case "azp_empty":
+						claims["azp"] = ""
+					case "azp_null":
+						claims["azp"] = nil
+					case "azp_wrong":
+						claims["azp"] = "other"
+					case "azp_wrong_type":
+						claims["azp"] = []string{"client"}
+					case "azp_matching":
+						claims["azp"] = "client"
+					case "azp_multi_matching":
+						claims["aud"] = []string{"client", "other"}
+						claims["azp"] = "client"
 					case "nonce":
 						claims["nonce"] = "wrong"
 					case "expired":
@@ -110,7 +123,7 @@ func TestOIDCValidAndInvalidClaims(t *testing.T) {
 			require.Equal(t, "openid email profile", auth.Query().Get("scope"))
 			callback := httptest.NewRequest("GET", "https://npm.example/api/auth/sso/oidc/one/callback?code=valid&state="+txn.State, nil)
 			identity, err := adapter.Complete(context.Background(), conn, txn, callback)
-			if scenario == "valid" || scenario == "post" {
+			if scenario == "valid" || scenario == "post" || scenario == "azp_matching" || scenario == "azp_multi_matching" {
 				require.NoError(t, err)
 				require.Equal(t, "subject-1", identity.Subject)
 				require.Equal(t, "allowed@example.com", identity.Email)

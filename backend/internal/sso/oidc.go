@@ -149,10 +149,11 @@ func (a *OIDCAdapter) Complete(ctx context.Context, c ssoconfig.Connection, tran
 		return Identity{}, ErrDenied
 	}
 	var azp string
-	if value, exists := claims["azp"]; exists && json.Unmarshal(value, &azp) != nil {
+	value, exists := claims["azp"]
+	if exists && (json.Unmarshal(value, &azp) != nil || azp == "" || azp != config.ClientID) {
 		return Identity{}, ErrDenied
 	}
-	if (len(idToken.Audience) > 1 || azp != "") && azp != config.ClientID {
+	if len(idToken.Audience) > 1 && !exists {
 		return Identity{}, ErrDenied
 	}
 	if config.UseUserinfo {
