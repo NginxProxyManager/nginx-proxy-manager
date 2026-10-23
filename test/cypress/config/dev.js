@@ -15,9 +15,6 @@ module.exports = defineConfig({
 			on('before:browser:launch', (browser, launchOptions) => {
 				if (browser.family === 'chromium' && process.env.SSO_HOST_RESOLVER_RULES) {
 					launchOptions.args.push(`--host-resolver-rules=${process.env.SSO_HOST_RESOLVER_RULES}`);
-					// Cypress normally proxies navigations through Node, whose DNS resolver
-					// cannot see the process-scoped Chromium fixture mappings.
-					launchOptions.args.push('--proxy-bypass-list=npm.test;idp-oidc.test;idp-oauth.test;idp-saml.test');
 				}
 				if (browser.family === 'chromium' && process.env.SSO_CERT_SPKI) {
 					// Process-scoped trust for the exact disposable fixture certificates.
