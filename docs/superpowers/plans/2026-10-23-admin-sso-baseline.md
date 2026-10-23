@@ -66,3 +66,9 @@ The UI advertises 2FA through SiteHeader, TwoFactorModal and Login/AuthContext. 
 ## Evidence and self-review
 
 Raw logs (ignored local execution evidence): `.superpowers/sdd/2026-10-23-admin-sso/baseline-{frontend-test,frontend-build,frontend-lint,locale,frontend-build-prepared,frontend-test-prepared,backend-test,backend-prepared}.log`. Reviewed router, auth/OAuth/users handlers, auth/setup/SSE middleware, JWT generator, resource routes, token/update schemas, auth entity, AuthContext, backend API clients and Cypress SetupLogin. Matrix reports source behavior, not an unperformed live access test. Changes are documentation only; no runtime/schema/dependency fixes, no destructive debug endpoint calls, original checkout untouched.
+
+## Supplemental environment evidence during implementation
+
+- Docker Desktop started for isolated test databases; its automatic restart completed with engine 29.9.2. Dedicated test containers carry label `codex.task=admin-sso`; no existing application container was changed.
+- Exact Go 1.27.1 Linux toolchain is available under ignored `.superpowers/tooling/linux/go`, invoked through Ubuntu-24.04 WSL. This avoids the pre-existing Windows SQLite compilation issue without dependency changes.
+- Frontend Vitest can run through ignored `frontend/node_modules/.cache/sso-vitest.config.ts`, which imports the real Vite config and excludes only the two locale watcher/server-start hooks. Locale assets were compiled first. Command from frontend: `node node_modules/vitest/vitest.mjs run --config node_modules/.cache/sso-vitest.config.ts`. Result: 3 files, 18 tests, 10 pass / 8 fail. Seven Router cases fail finding expected headings; Estonian coverage test reports 13 missing setup-database keys. This workaround does not make the normal command pass and is not a production configuration change. Evidence: `.superpowers/sdd/2026-10-23-admin-sso/baseline-frontend-test-workaround.log`.
