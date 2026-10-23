@@ -76,7 +76,36 @@ func Open(dataDir string) (*Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Store{aead: aead}, nil
+	store := &Store{aead: aead}
+	if err := store.validateExistingCiphertext(); err != nil {
+		return nil, err
+	}
+	return store, nil
+}
+
+func (s *Store) validateExistingCiphertext() error {
+	db := database.GetDB()
+	if db == nil {
+		return nil
+	}
+	for table, bindingPrefix := range map[string]string{"sso_connection": "connection:", "sso_transaction": "transaction:"} {
+		if !db.Migrator().HasTable(table) {
+			continue
+		}
+		var rows []struct {
+			ID               string
+			SecretCiphertext []byte
+		}
+		if err := db.Table(table).Select("id, secret_ciphertext").Where("secret_ciphertext IS NOT NULL AND LENGTH(secret_ciphertext) > 0").Find(&rows).Error; err != nil {
+			return fmt.Errorf("SSO encryption key validation: %w", err)
+		}
+		for _, row := range rows {
+			if _, err := s.Unseal(row.SecretCiphertext, bindingPrefix+row.ID); err != nil {
+				return fmt.Errorf("SSO encryption key cannot decrypt stored %s ciphertext: restore keys/sso.key with the database backup", table)
+			}
+		}
+	}
+	return nil
 }
 
 func hasCiphertext() (bool, error) {

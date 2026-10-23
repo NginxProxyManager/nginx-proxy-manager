@@ -31,13 +31,20 @@ func GetOrCreateSSO(tx *gorm.DB, email, name string) (Model, bool, error) {
 		return Model{}, false, err
 	}
 	var value Model
-	// Locking reads see the latest committed row under MySQL's default
-	// repeatable-read isolation, including a concurrent insert that won a
-	// duplicate-key race after this transaction established its snapshot.
-	lookup := func() error {
-		return tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("normalized_email = ?", normalized).First(&value).Error
+	lookup := func(lock bool) error {
+		query := tx.Where("normalized_email = ?", normalized)
+		if lock {
+			// A locking read sees a concurrent winner even under MySQL's
+			// repeatable-read snapshot. Only lock after a conflict: locking a
+			// missing key takes gap locks and deadlocks simultaneous inserts.
+			query = query.Clauses(clause.Locking{Strength: "UPDATE"})
+		}
+		return query.First(&value).Error
 	}
-	if err := lookup(); err == nil {
+	if err := lookup(false); err == nil {
+		if err := lookup(true); err != nil {
+			return Model{}, false, err
+		}
 		if value.IsDisabled {
 			return Model{}, false, fmt.Errorf("SSO user disabled")
 		}
@@ -52,7 +59,7 @@ func GetOrCreateSSO(tx *gorm.DB, email, name string) (Model, bool, error) {
 	}
 	created := result.RowsAffected == 1
 	if !created {
-		if err := lookup(); err != nil {
+		if err := lookup(true); err != nil {
 			return Model{}, false, err
 		}
 	}

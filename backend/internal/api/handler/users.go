@@ -183,6 +183,9 @@ func CreateUser() func(http.ResponseWriter, *http.Request) {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
 			return
 		}
+		if !config.IsSetup {
+			newUser.AdminPasswordEnabled = true
+		}
 
 		if err = newUser.Save(); err != nil {
 			if err == errors.ErrDuplicateEmailUser || err == errors.ErrSystemUserReadonly {

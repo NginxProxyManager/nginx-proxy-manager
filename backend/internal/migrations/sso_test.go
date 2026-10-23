@@ -68,6 +68,56 @@ func TestSSOExternalEngineMigration(t *testing.T) {
 			require.False(t, created)
 			require.Equal(t, "Race Winner", resolved.Name)
 			require.NoError(t, tx.Commit().Error)
+			staleTx := db.Begin()
+			require.NoError(t, staleTx.Error)
+			require.NoError(t, staleTx.Table("user").Where("id = ?", resolved.ID).Count(&count).Error)
+			require.NoError(t, db.Table("user").Where("id = ?", resolved.ID).Update("is_disabled", true).Error)
+			_, _, err = user.GetOrCreateSSO(staleTx, email, "Stale")
+			require.ErrorContains(t, err, "disabled")
+			require.NoError(t, staleTx.Rollback().Error)
+
+			concurrentEmail := fmt.Sprintf("simultaneous-%d@example.com", time.Now().UnixNano())
+			type outcome struct {
+				value   user.Model
+				created bool
+				err     error
+			}
+			ready := make(chan error, 2)
+			start := make(chan struct{})
+			results := make(chan outcome, 2)
+			for i := 0; i < 2; i++ {
+				go func() {
+					tx := db.Begin()
+					if tx.Error != nil {
+						ready <- tx.Error
+						return
+					}
+					var count int64
+					err := tx.Table("user").Where("normalized_email = ?", concurrentEmail).Count(&count).Error
+					ready <- err
+					<-start
+					if err != nil {
+						_ = tx.Rollback().Error
+						results <- outcome{err: err}
+						return
+					}
+					value, created, err := user.GetOrCreateSSO(tx, concurrentEmail, "Concurrent")
+					if err == nil {
+						err = tx.Commit().Error
+					} else {
+						_ = tx.Rollback().Error
+					}
+					results <- outcome{value: value, created: created, err: err}
+				}()
+			}
+			require.NoError(t, <-ready)
+			require.NoError(t, <-ready)
+			close(start)
+			first, second := <-results, <-results
+			require.NoError(t, first.err)
+			require.NoError(t, second.err)
+			require.Equal(t, first.value.ID, second.value.ID)
+			require.NotEqual(t, first.created, second.created)
 		})
 	}
 }
