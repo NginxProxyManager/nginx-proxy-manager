@@ -1,3 +1,4 @@
+export * from "./authProviders";
 export * from "./checkVersion";
 export * from "./createAccessList";
 export * from "./createCertificate";
@@ -53,6 +54,7 @@ export * from "./toggleProxyHost";
 export * from "./toggleRedirectionHost";
 export * from "./toggleStream";
 export * from "./toggleUser";
+export * from "./twoFactor";
 export * from "./updateAccessList";
 export * from "./updateAuth";
 export * from "./updateDeadHost";
@@ -63,4 +65,3 @@ export * from "./updateStream";
 export * from "./updateUser";
 export * from "./uploadCertificate";
 export * from "./validateCertificate";
-export * from "./twoFactor";

@@ -11,6 +11,7 @@ import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { User } from "src/api/backend";
 import {
+	AuthSourceFormatter,
 	EmailFormatter,
 	EmptyData,
 	GravatarFormatter,
@@ -88,6 +89,16 @@ export default function Table({
 				header: intl.formatMessage({ id: "column.roles" }),
 				cell: (info: any) => {
 					return <RolesFormatter roles={info.getValue()} />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row.authSources, {
+				id: "authSources",
+				header: intl.formatMessage({ id: "column.auth-source" }),
+				cell: (info: any) => {
+					return <AuthSourceFormatter sources={info.getValue()} />;
+				},
+				meta: {
+					className: "text-center",
 				},
 			}),
 			columnHelper.accessor((row: any) => row.isDisabled, {
