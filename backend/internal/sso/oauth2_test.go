@@ -18,7 +18,7 @@ import (
 )
 
 func TestOAuth2IdentityAndProviderFailures(t *testing.T) {
-	for _, scenario := range []string{"basic", "post", "missing_email", "array_email", "number_email", "duplicate_email", "missing_subject", "userinfo_401", "userinfo_nonjson", "userinfo_trailing", "large_body", "cross_origin", "invalid_path"} {
+	for _, scenario := range []string{"basic", "post", "bearer_lowercase", "bearer_mixedcase", "non_bearer", "missing_token_type", "missing_email", "array_email", "number_email", "duplicate_email", "missing_subject", "userinfo_401", "userinfo_nonjson", "userinfo_trailing", "large_body", "cross_origin", "invalid_path"} {
 		t.Run(scenario, func(t *testing.T) {
 			var origin, challenge string
 			server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +35,18 @@ func TestOAuth2IdentityAndProviderFailures(t *testing.T) {
 						http.Error(w, "bad exchange", 401)
 						return
 					}
-					_ = json.NewEncoder(w).Encode(map[string]string{"access_token": "access", "token_type": "Bearer"})
+					tokenType := "Bearer"
+					switch scenario {
+					case "bearer_lowercase":
+						tokenType = "bearer"
+					case "bearer_mixedcase":
+						tokenType = "bEaReR"
+					case "non_bearer":
+						tokenType = "MAC"
+					case "missing_token_type":
+						tokenType = ""
+					}
+					_ = json.NewEncoder(w).Encode(map[string]string{"access_token": "access", "token_type": tokenType})
 				case "/user":
 					if r.Header.Get("Authorization") != "Bearer access" {
 						http.Error(w, "bad bearer", 401)
@@ -112,7 +123,7 @@ func TestOAuth2IdentityAndProviderFailures(t *testing.T) {
 			challenge = auth.Query().Get("code_challenge")
 			request := httptest.NewRequest("GET", "https://attacker.example/sso/one/callback?state="+txn.State+"&code=code", nil)
 			identity, err := adapter.Complete(context.Background(), conn, txn, request)
-			if scenario == "basic" || scenario == "post" || scenario == "missing_subject" {
+			if scenario == "basic" || scenario == "post" || scenario == "bearer_lowercase" || scenario == "bearer_mixedcase" || scenario == "missing_subject" {
 				require.NoError(t, err)
 				require.Equal(t, "allowed@example.com", identity.Email)
 				require.Equal(t, "Allowed", identity.Name)

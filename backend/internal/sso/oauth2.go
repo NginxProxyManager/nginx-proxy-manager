@@ -110,7 +110,7 @@ func (a *OAuth2Adapter) Complete(ctx context.Context, c ssoconfig.Connection, tx
 	}
 	providerCtx := context.WithValue(ctx, oauth2.HTTPClient, a.client)
 	token, err := oauth.Exchange(providerCtx, request.URL.Query().Get("code"), oauth2.VerifierOption(txn.PKCEVerifier))
-	if err != nil || token == nil || !token.Valid() || token.TokenType != "Bearer" {
+	if err != nil || token == nil || !token.Valid() || !strings.EqualFold(token.TokenType, "Bearer") {
 		return Identity{}, ErrDenied
 	}
 	userinfoReq, err := http.NewRequestWithContext(ctx, http.MethodGet, cfg.UserinfoURL, nil)
