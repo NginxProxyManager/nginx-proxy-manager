@@ -97,6 +97,43 @@ func TestAuthorizeCurrentPolicy(t *testing.T) {
 	}
 }
 
+func TestRefreshKeepsIdentityAndRejectsExpiredOrRevoked(t *testing.T) {
+	for _, tc := range []struct {
+		name    string
+		source  Source
+		expiry  time.Time
+		revoked bool
+		allowed bool
+	}{
+		{"local active", Local, epoch.Add(time.Hour), false, true},
+		{"sso active", SSO, epoch.Add(time.Hour), false, true},
+		{"expired", Local, epoch, false, false},
+		{"revoked", Local, epoch.Add(time.Hour), true, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			db := fixture(t)
+			m := value("r", tc.source)
+			m.ExpiresAt = tc.expiry
+			if tc.revoked {
+				now := epoch
+				m.RevokedAt = &now
+			}
+			require.NoError(t, db.Create(&m).Error)
+			p, err := Refresh(context.Background(), m.ID, epoch)
+			if !tc.allowed {
+				require.ErrorIs(t, err, ErrUnauthorized)
+				return
+			}
+			require.NoError(t, err)
+			require.Equal(t, m.ID, p.Session.ID)
+			require.Equal(t, m.Source, p.Session.Source)
+			require.Equal(t, m.ConnectionID, p.Session.ConnectionID)
+			require.Equal(t, m.LoginEmail, p.Session.LoginEmail)
+			require.True(t, p.Session.ExpiresAt.After(m.ExpiresAt))
+		})
+	}
+}
+
 func TestCreateAndRevokeDescendants(t *testing.T) {
 	db := fixture(t)
 	root := value("a", SSO)
@@ -118,7 +155,7 @@ func TestCreateAndRevokeDescendants(t *testing.T) {
 }
 
 func TestAuthorizeRejectsBrokenAncestors(t *testing.T) {
-	for _, kind := range []string{"revoked", "expired", "disabled user", "missing", "cycle", "depth"} {
+	for _, kind := range []string{"revoked", "expired", "disabled user", "missing", "cycle", "depth", "parent lost impersonation grant"} {
 		t.Run(kind, func(t *testing.T) {
 			db := fixture(t)
 			parent := value("a", SSO)
@@ -135,6 +172,8 @@ func TestAuthorizeRejectsBrokenAncestors(t *testing.T) {
 				require.NoError(t, db.Model(&user.Model{}).Where("id = 1").Update("is_disabled", true).Error)
 			case "missing":
 				require.NoError(t, db.Delete(&parent).Error)
+			case "parent lost impersonation grant":
+				require.NoError(t, db.Where("user_id = ?", parent.UserID).Delete(&user.HasCapabilityModel{}).Error)
 			case "cycle":
 				require.NoError(t, db.Model(&parent).Updates(map[string]any{"source": Impersonation, "parent_id": child.ID}).Error)
 			case "depth":

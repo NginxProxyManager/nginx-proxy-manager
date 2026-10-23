@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"testing"
 
-	"npm/internal/entity/user"
 	"npm/internal/test"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -218,29 +217,8 @@ func (s *testsuite) TestGetPublicKey() {
 	require.NoError(s.T(), s.mock.ExpectationsWereMet())
 }
 
-func (s *testsuite) TestGenerate() {
-	// goleak is used to detect goroutine leaks
-	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
-
-	currentKeys = KeysModel{
-		ID:         10,
-		PrivateKey: s.privateKeyString,
-		PublicKey:  s.publicKeyString,
-	}
-
-	usr := user.Model{
-		ID: 10,
-	}
-
-	// test 1, user key
-	r, err := Generate(&usr, false)
-	require.NoError(s.T(), err)
-	assert.Greater(s.T(), len(r.Token), 20)
-
-	// test 2, sse key
-	r, err = Generate(&usr, true)
-	require.NoError(s.T(), err)
-	assert.Greater(s.T(), len(r.Token), 20)
-
-	require.NoError(s.T(), s.mock.ExpectationsWereMet())
+func (s *testsuite) TestGenerateForSessionRequiresProvenance() {
+	currentKeys = KeysModel{ID: 10, PrivateKey: s.privateKeyString, PublicKey: s.publicKeyString}
+	_, err := GenerateForSession(10, "", false)
+	require.Error(s.T(), err)
 }

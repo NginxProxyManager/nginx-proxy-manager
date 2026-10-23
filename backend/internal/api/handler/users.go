@@ -62,6 +62,19 @@ func GetUser() func(http.ResponseWriter, *http.Request) {
 		case nil:
 			// nolint: errcheck,gosec
 			item.Expand(middleware.GetExpandFromContext(r))
+			if chi.URLParam(r, "userID") == "me" {
+				if principal, ok := middleware.CurrentPrincipal(r.Context()); ok {
+					item.Capabilities = principal.Capabilities
+				}
+				if item.Capabilities == nil {
+					item.Capabilities = []string{}
+				}
+				h.ResultResponseJSON(w, r, http.StatusOK, struct {
+					user.Model
+					Capabilities []string `json:"capabilities"`
+				}{Model: item, Capabilities: item.Capabilities})
+				return
+			}
 			h.ResultResponseJSON(w, r, http.StatusOK, item)
 		default:
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
@@ -77,6 +90,12 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 		if userIDErr != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, userIDErr.Error(), nil)
 			return
+		}
+		if self {
+			if principal, ok := middleware.CurrentPrincipal(r.Context()); ok && len(principal.Capabilities) == 0 {
+				h.ResultErrorJSON(w, r, http.StatusForbidden, "Forbidden", nil)
+				return
+			}
 		}
 
 		userObject, err := user.GetByID(userID)
@@ -290,6 +309,12 @@ func SetAuth() func(http.ResponseWriter, *http.Request) {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, userIDErr.Error(), nil)
 			return
 		}
+		if isSelf {
+			if principal, ok := middleware.CurrentPrincipal(r.Context()); ok && len(principal.Capabilities) == 0 {
+				h.ResultErrorJSON(w, r, http.StatusForbidden, "Forbidden", nil)
+				return
+			}
+		}
 
 		// Load user
 		thisUser, thisUserErr := user.GetByID(userID)
@@ -303,6 +328,10 @@ func SetAuth() func(http.ResponseWriter, *http.Request) {
 
 		if thisUser.IsSystem {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, "Cannot set password for system user", nil)
+			return
+		}
+		if isSelf && thisUser.CredentialOrigin == "sso" {
+			h.ResultErrorJSON(w, r, http.StatusForbidden, "Forbidden", nil)
 			return
 		}
 

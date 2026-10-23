@@ -51,6 +51,39 @@ func Authorize(ctx context.Context, id string, now time.Time) (Principal, error)
 	return principal, err
 }
 
+// Refresh extends the rolling expiry inside the policy fence after validating
+// the existing session and all of its ancestors against current policy.
+func Refresh(ctx context.Context, id string, now time.Time) (Principal, error) {
+	var principal Principal
+	err := authpolicy.WithWrite(ctx, func(tx *gorm.DB) error {
+		var err error
+		principal, err = authorize(tx, id, now)
+		if err != nil {
+			return err
+		}
+		newExpiry := now.Add(24 * time.Hour)
+		if principal.Session.Source == Impersonation {
+			var parent Model
+			if err := tx.First(&parent, "id = ?", principal.Session.ParentID).Error; err != nil {
+				return authorizationError(err)
+			}
+			if newExpiry.After(parent.ExpiresAt) {
+				newExpiry = parent.ExpiresAt
+			}
+		}
+		updated := tx.Model(&Model{}).Where("id = ? AND revoked_at IS NULL AND expires_at > ?", id, now).Update("expires_at", newExpiry)
+		if updated.Error != nil {
+			return updated.Error
+		}
+		if updated.RowsAffected != 1 {
+			return ErrUnauthorized
+		}
+		principal.Session.ExpiresAt = newExpiry
+		return nil
+	})
+	return principal, err
+}
+
 func authorize(tx *gorm.DB, id string, now time.Time) (Principal, error) {
 	if !validID(id) {
 		return Principal{}, ErrUnauthorized
@@ -62,9 +95,16 @@ func authorize(tx *gorm.DB, id string, now time.Time) (Principal, error) {
 	return validate(tx, value, now)
 }
 
+// AuthorizeInTx is for callers that already own the policy fence. Never call
+// Authorize from inside such a transaction because it would nest the fence.
+func AuthorizeInTx(tx *gorm.DB, id string, now time.Time) (Principal, error) {
+	return authorize(tx, id, now)
+}
+
 func validate(tx *gorm.DB, value Model, now time.Time) (Principal, error) {
 	principal := Principal{Session: value, Capabilities: []string{}}
 	seen := map[string]bool{}
+	mustAuthorizeImpersonation := false
 	for depth := 0; ; depth++ {
 		if depth >= maxAncestors || seen[value.ID] || value.RevokedAt != nil || !value.ExpiresAt.After(now) {
 			return Principal{}, ErrUnauthorized
@@ -105,6 +145,17 @@ func validate(tx *gorm.DB, value Model, now time.Time) (Principal, error) {
 		if account.IsDisabled || account.IsSystem || value.UserID == 0 {
 			return Principal{}, ErrUnauthorized
 		}
+		if mustAuthorizeImpersonation {
+			var count int64
+			if err := tx.Model(&user.HasCapabilityModel{}).
+				Where("user_id = ? AND capability_name IN ?", value.UserID, []string{user.CapabilityUsersManage, user.CapabilityFullAdmin}).
+				Count(&count).Error; err != nil {
+				return Principal{}, err
+			}
+			if count == 0 {
+				return Principal{}, ErrUnauthorized
+			}
+		}
 		if depth == 0 {
 			if err := tx.Model(&user.HasCapabilityModel{}).Where("user_id = ?", value.UserID).Order("capability_name").Pluck("capability_name", &principal.Capabilities).Error; err != nil {
 				return Principal{}, err
@@ -113,6 +164,7 @@ func validate(tx *gorm.DB, value Model, now time.Time) (Principal, error) {
 		if value.Source != Impersonation {
 			return principal, nil
 		}
+		mustAuthorizeImpersonation = true
 		var parent Model
 		if err := tx.First(&parent, "id = ?", value.ParentID).Error; err != nil {
 			return Principal{}, authorizationError(err)

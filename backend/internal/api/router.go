@@ -104,7 +104,6 @@ func newBaseRouter(extra ...func(http.Handler) http.Handler) *chi.Mux {
 
 // applyRoutes is where the magic happens
 func applyRoutes(r chi.Router) chi.Router {
-	middleware.AuthCacheInit()
 	r.NotFound(handler.NotFound())
 	r.MethodNotAllowed(handler.NotAllowed())
 
@@ -124,7 +123,7 @@ func applyRoutes(r chi.Router) chi.Router {
 	r.With(chiMiddleware.Timeout(30*time.Second)).Route("/api", func(r chi.Router) {
 		r.Get("/", handler.Health())
 		r.Get("/schema", handler.Schema())
-		r.With(middleware.EnforceSetup(), middleware.Enforce()).
+		r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilitySettingsManage)).
 			Get("/config", handler.Config())
 
 		// Auth
@@ -132,8 +131,10 @@ func applyRoutes(r chi.Router) chi.Router {
 			r.Get("/", handler.GetAuthConfig())
 			r.With(middleware.EnforceRequestSchema(schema.GetToken())).
 				Post("/", handler.NewToken())
-			r.With(middleware.Enforce()).
+			r.With(middleware.EnforceSessionOnly()).
 				Post("/refresh", handler.RefreshToken())
+			r.With(middleware.EnforceSessionOnly()).
+				Post("/logout", handler.Logout())
 			r.With(middleware.Enforce()).
 				Post("/sse", handler.NewSSEToken())
 		})
@@ -153,16 +154,17 @@ func applyRoutes(r chi.Router) chi.Router {
 			// Requires Setup stage to be completed
 			r.With(middleware.EnforceSetup()).Route("/", func(r chi.Router) {
 				// Get yourself, requires a login but no other permissions
-				r.With(middleware.Enforce()).
+				r.With(middleware.EnforceSessionOnly()).
 					Get("/{userID:me}", handler.GetUser())
 
 				// Update yourself, requires a login but no other permissions
 				r.With(
-					middleware.Enforce(),
+					middleware.EnforceSessionOnly(),
 					middleware.EnforceRequestSchema(schema.UpdateUser()),
 				).Put("/{userID:me}", handler.UpdateUser())
 
 				r.With(middleware.Enforce(user.CapabilityUsersManage)).Route("/", func(r chi.Router) {
+					r.Post("/{userID:[0-9]+}/login", handler.Impersonate())
 					// List
 					r.With(middleware.ListQuery(user.Model{})).Get("/", handler.GetUsers())
 
@@ -177,7 +179,7 @@ func applyRoutes(r chi.Router) chi.Router {
 
 				// Auth - sets passwords
 				r.With(
-					middleware.Enforce(),
+					middleware.EnforceSessionOnly(),
 					middleware.EnforceRequestSchema(schema.SetAuth()),
 				).Post("/{userID:me}/auth", handler.SetAuth())
 				r.With(
@@ -190,9 +192,9 @@ func applyRoutes(r chi.Router) chi.Router {
 		// Only available in debug mode
 		if config.GetLogLevel() == logger.DebugLevel {
 			// delete users without auth
-			r.Delete("/users", handler.DeleteUsers())
+			r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilityFullAdmin)).Delete("/users", handler.DeleteUsers())
 			// SSE test endpoints
-			r.Post("/sse-notification", handler.TestSSENotification())
+			r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilityFullAdmin)).Post("/sse-notification", handler.TestSSENotification())
 		}
 
 		// Settings

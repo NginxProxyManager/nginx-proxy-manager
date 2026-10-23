@@ -8,8 +8,12 @@ import (
 
 	c "npm/internal/api/context"
 	h "npm/internal/api/http"
+	"npm/internal/api/middleware"
+	"npm/internal/database"
 	"npm/internal/entity/auth"
+	"npm/internal/entity/session"
 	"npm/internal/entity/setting"
+	"npm/internal/entity/sso"
 	"npm/internal/entity/user"
 	"npm/internal/errors"
 	njwt "npm/internal/jwt"
@@ -85,11 +89,6 @@ func newTokenLocal(w http.ResponseWriter, r *http.Request, payload tokenPayload)
 		return
 	}
 
-	if userObj.IsDisabled {
-		h.ResultErrorJSON(w, r, http.StatusUnauthorized, errors.ErrUserDisabled.Error(), nil)
-		return
-	}
-
 	// Get Auth
 	authObj, authErr := auth.GetByUserIDType(userObj.ID, payload.Type)
 	if authErr != nil {
@@ -107,9 +106,13 @@ func newTokenLocal(w http.ResponseWriter, r *http.Request, payload tokenPayload)
 		h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
 		return
 	}
+	if userObj.IsDisabled {
+		h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
+		return
+	}
 
-	if response, err := njwt.Generate(&userObj, false); err != nil {
-		h.ResultErrorJSON(w, r, http.StatusInternalServerError, err.Error(), nil)
+	if response, err := createLoginSession(r.Context(), userObj, session.Local); err != nil {
+		h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
 	} else {
 		h.ResultResponseJSON(w, r, http.StatusOK, response)
 	}
@@ -135,6 +138,20 @@ func newTokenLDAP(w http.ResponseWriter, r *http.Request, payload tokenPayload) 
 	// Get Auth by identity
 	authObj, authErr := auth.GetByIdenityType(ldapUser.Username, payload.Type)
 	if authErr == gorm.ErrRecordNotFound {
+		// SSO-only must not provision an LDAP account through a password
+		// alternative. Existing full administrators are checked at admission.
+		if policy, err := sso.GetPolicy(database.GetDB()); err == nil && policy.Mode == sso.SSOOnly {
+			candidate, lookupErr := user.GetByEmail(ldapUser.Email)
+			allowed := lookupErr == nil && candidate.AdminPasswordEnabled
+			if allowed {
+				capabilities, capErr := user.GetCapabilities(candidate.ID)
+				allowed = capErr == nil && slices.Contains(capabilities, user.CapabilityFullAdmin)
+			}
+			if !allowed {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
+				return
+			}
+		}
 		// Auth is not found for this identity. We can create it
 		if !ldapSettings.AutoCreateUser {
 			// LDAP Login was successful, but user does not have an auth record
@@ -190,8 +207,8 @@ func newTokenLDAP(w http.ResponseWriter, r *http.Request, payload tokenPayload) 
 		return
 	}
 
-	if response, err := njwt.Generate(&userObj, false); err != nil {
-		h.ResultErrorJSON(w, r, http.StatusInternalServerError, err.Error(), nil)
+	if response, err := createLoginSession(r.Context(), userObj, session.LDAP); err != nil {
+		h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
 	} else {
 		h.ResultResponseJSON(w, r, http.StatusOK, response)
 	}
@@ -201,24 +218,18 @@ func newTokenLDAP(w http.ResponseWriter, r *http.Request, payload tokenPayload) 
 // Route: POST /auth/refresh
 func RefreshToken() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID, ok := r.Context().Value(c.UserIDCtxKey).(uint)
+		principal, ok := middleware.CurrentPrincipal(r.Context())
 		if !ok {
 			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 			return
 		}
 
-		userObj, userErr := user.GetByID(userID)
+		principal, userErr := session.Refresh(r.Context(), principal.Session.ID, time.Now().UTC())
 		if userErr != nil {
 			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 			return
 		}
-
-		if userObj.IsDisabled {
-			h.ResultErrorJSON(w, r, http.StatusUnauthorized, errors.ErrUserDisabled.Error(), nil)
-			return
-		}
-
-		if response, err := njwt.Generate(&userObj, false); err != nil {
+		if response, err := njwt.GenerateForSession(principal.Session.UserID, principal.Session.ID, false); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusInternalServerError, err.Error(), nil)
 		} else {
 			h.ResultResponseJSON(w, r, http.StatusOK, response)
@@ -231,21 +242,12 @@ func RefreshToken() func(http.ResponseWriter, *http.Request) {
 // Route: POST /auth/sse
 func NewSSEToken() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
-
-		// Find user
-		userObj, userErr := user.GetByID(userID)
-		if userErr != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, errors.ErrInvalidLogin.Error(), nil)
+		principal, ok := middleware.CurrentPrincipal(r.Context())
+		if !ok {
+			h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
 			return
 		}
-
-		if userObj.IsDisabled {
-			h.ResultErrorJSON(w, r, http.StatusUnauthorized, errors.ErrUserDisabled.Error(), nil)
-			return
-		}
-
-		if response, err := njwt.Generate(&userObj, true); err != nil {
+		if response, err := njwt.GenerateForSession(principal.Session.UserID, principal.Session.ID, true); err != nil {
 			h.ResultErrorJSON(w, r, http.StatusInternalServerError, err.Error(), nil)
 		} else {
 			h.ResultResponseJSON(w, r, http.StatusOK, response)

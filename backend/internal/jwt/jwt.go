@@ -1,9 +1,11 @@
 package jwt
 
 import (
+	"context"
+	"errors"
 	"time"
 
-	"npm/internal/entity/user"
+	"npm/internal/entity/session"
 	"npm/internal/logger"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -12,8 +14,9 @@ import (
 
 // UserJWTClaims is the structure of a JWT for a User
 type UserJWTClaims struct {
-	UserID uint     `json:"uid"`
-	Roles  []string `json:"roles"`
+	UserID    uint     `json:"uid"`
+	SessionID string   `json:"sid"`
+	Roles     []string `json:"roles"`
 	jwt.RegisteredClaims
 }
 
@@ -23,21 +26,33 @@ type GeneratedResponse struct {
 	Token   string `json:"token"`
 }
 
-// Generate will create a JWT
-func Generate(userObj *user.Model, forSSE bool) (GeneratedResponse, error) {
+// GenerateForSession issues a token only for an authorized live session.
+func GenerateForSession(userID uint, sessionID string, forSSE bool) (GeneratedResponse, error) {
 	var response GeneratedResponse
+	principal, err := session.Authorize(context.Background(), sessionID, time.Now().UTC())
+	if err != nil || principal.Session.UserID != userID {
+		return response, errors.New("unauthorized session")
+	}
 
 	key, _ := GetPrivateKey()
-	expires := time.Now().AddDate(0, 0, 1) // 1 day
+	expires := time.Now().Add(24 * time.Hour)
 	issuer := "api"
 
 	if forSSE {
 		issuer = "sse"
+		expires = time.Now().Add(time.Minute)
+	}
+	if expires.After(principal.Session.ExpiresAt) {
+		expires = principal.Session.ExpiresAt
+	}
+	if !expires.After(time.Now()) {
+		return response, errors.New("expired session")
 	}
 
 	// Create the Claims
 	claims := UserJWTClaims{
-		userObj.ID,
+		userID,
+		sessionID,
 		[]string{"user"},
 		jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
