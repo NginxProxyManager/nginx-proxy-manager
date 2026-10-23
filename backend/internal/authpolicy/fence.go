@@ -139,3 +139,10 @@ func sqliteBusy(err error) bool {
 	var coded interface{ Code() int }
 	return errors.As(err, &coded) && (coded.Code()&255 == 5 || coded.Code()&255 == 6)
 }
+
+// WithDB applies the shared persistent fence to an explicitly supplied database.
+// Services using dependency injection must use this same database for policy,
+// admission and session storage. Callers must not nest fences.
+func WithDB(ctx context.Context, db *gorm.DB, fn func(*gorm.DB) error) error {
+	return withWrite(ctx, db, fn)
+}
