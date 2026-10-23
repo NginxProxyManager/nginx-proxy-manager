@@ -219,7 +219,7 @@ func TestMissingEncryptionKeyExplainsRestoreAction(t *testing.T) {
 	var conn sso.Connection
 	require.NoError(t, db.First(&conn).Error)
 	require.NoError(t, os.Remove(filepath.Join(config.Configuration.DataFolder, "keys", "sso.key")))
-	update := `{"revision":1,"protocol":"oidc","name":"Renamed","enabled":false,"config":{"issuer_url":"https://id.example","client_id":"npm","email_claim":"email"},"secret_action":"keep"}`
+	update := `{"revision":1,"protocol":"oidc","name":"Renamed","enabled":false,"config":{"issuer_url":"https://id.example","client_id":"npm","email_claim":"email"},"secret_action":"replace","secret_value":"replacement"}`
 	rec = adminRequestID("PUT", "/api/sso/connections/"+conn.ID, conn.ID, update, UpdateSSOConnection())
 	require.Equal(t, http.StatusServiceUnavailable, rec.Code)
 	require.Contains(t, rec.Body.String(), "sso_key_restore_required")

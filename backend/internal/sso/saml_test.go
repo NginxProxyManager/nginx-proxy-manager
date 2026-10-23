@@ -504,3 +504,47 @@ func TestSAMLUnsignedRequestMetadataHasUsableNameIDFormat(t *testing.T) {
 	require.NoError(t, xml.Unmarshal(raw, &metadata))
 	require.Equal(t, []saml.NameIDFormat{saml.UnspecifiedNameIDFormat}, metadata.SPSSODescriptors[0].NameIDFormats)
 }
+
+func TestSAMLRetainsExpiredOpaqueTrustButRefusesEnable(t *testing.T) {
+	f := newSAMLFixture(t)
+	plain, err := f.adapter.secrets.Unseal(f.connection.SecretCiphertext, "connection:"+f.connection.ID)
+	require.NoError(t, err)
+	var bundle samlBundle
+	require.NoError(t, json.Unmarshal(plain, &bundle))
+	bundle.Metadata = strings.Replace(bundle.Metadata, `entityID=`, `validUntil="2000-01-01T00:00:00Z" entityID=`, 1)
+	plain, _ = json.Marshal(bundle)
+	f.connection.SecretCiphertext, err = f.adapter.secrets.Seal(plain, "connection:"+f.connection.ID)
+	require.NoError(t, err)
+	for _, withoutKey := range []bool{false, true} {
+		t.Run(fmt.Sprint(withoutKey), func(t *testing.T) {
+			adapter := f.adapter
+			if withoutKey {
+				adapter = NewSAMLAdapter(nil, nil).(*SAMLAdapter)
+			}
+			old := f.connection
+			old.Enabled = true
+			next := old
+			next.Name = "Renamed"
+			cipher, err := adapter.PrepareConnection(context.Background(), &old, next, "")
+			require.NoError(t, err)
+			require.Equal(t, old.SecretCiphertext, cipher)
+			next.Enabled = false
+			cipher, err = adapter.PrepareConnection(context.Background(), &old, next, "")
+			require.NoError(t, err)
+			require.Equal(t, old.SecretCiphertext, cipher)
+			old.Enabled = false
+			next.Enabled = true
+			_, err = adapter.PrepareConnection(context.Background(), &old, next, "")
+			require.Error(t, err)
+			cfg := f.config
+			cfg.SignRequests = true
+			raw, _ := json.Marshal(cfg)
+			next.ConfigJSON = string(raw)
+			next.Enabled = false
+			_, err = adapter.PrepareConnection(context.Background(), &old, next, "")
+			require.Error(t, err)
+		})
+	}
+	_, err = f.adapter.Start(context.Background(), f.connection, f.transaction)
+	require.Error(t, err)
+}

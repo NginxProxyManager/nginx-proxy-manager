@@ -116,7 +116,7 @@ func (a *SAMLAdapter) PreviewMetadata(ctx context.Context, raw string) (ssoconfi
 // PrepareConnection runs inside the administration policy fence. With no token,
 // preserve bytes exactly and reject changed metadata sources/signing policy.
 func (a *SAMLAdapter) PrepareConnection(ctx context.Context, old *ssoconfig.Connection, next ssoconfig.Connection, token string) ([]byte, error) {
-	if a == nil || a.secrets == nil || next.Protocol != ssoconfig.SAML {
+	if a == nil || next.Protocol != ssoconfig.SAML {
 		return nil, ErrDenied
 	}
 	cfg, err := samlConfig(next.ConfigJSON)
@@ -124,19 +124,26 @@ func (a *SAMLAdapter) PrepareConnection(ctx context.Context, old *ssoconfig.Conn
 		return nil, err
 	}
 	if token == "" {
-		if old == nil || old.Protocol != ssoconfig.SAML {
+		if old == nil || old.Protocol != ssoconfig.SAML || old.ID != next.ID {
 			return nil, ErrDenied
 		}
-		previous, _, err := a.load(*old)
+		// Retention is not admission: expired or undecryptable trust must never
+		// prevent an administrator from disabling a connection or renaming it.
+		previous, err := samlConfig(old.ConfigJSON)
 		if err != nil {
 			return nil, ErrDenied
 		}
 		if previous.IDPMetadataURL != cfg.IDPMetadataURL || previous.IDPMetadataXML != cfg.IDPMetadataXML || previous.SignRequests != cfg.SignRequests {
 			return nil, ErrDenied
 		}
+		if !old.Enabled && next.Enabled {
+			if _, _, err := a.load(next); err != nil {
+				return nil, ErrDenied
+			}
+		}
 		return old.SecretCiphertext, nil
 	}
-	if len(token) > samlImportTokenLimit {
+	if a.secrets == nil || len(token) > samlImportTokenLimit {
 		return nil, ErrDenied
 	}
 	cipher, err := base64.RawURLEncoding.DecodeString(token)

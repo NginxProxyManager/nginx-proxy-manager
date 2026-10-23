@@ -146,3 +146,12 @@ Missing/invalid browser/state bindings and every other adapter failure remain
 `POST /connections/{id}/test` validates only the saved SAML snapshot, so it cannot
 replace trust or return an import token. Refresh/import is the separate explicit
 preview ? review ? Save flow above.
+
+Retention and revocation during recovery: name-only edits and disabling an existing
+SAML connection with `secret_action: keep` preserve opaque ciphertext without
+opening the installation key or validating snapshot freshness. They remain
+available after metadata expires or the key is lost/corrupted; disabling still
+revokes sessions and pending attempts atomically. Public metadata source/signing
+policy must remain unchanged without a reviewed token. Re-enabling requires a
+working key and valid, unexpired saved trust. Login always validates saved trust;
+a successful rename never authorizes expired or undecryptable metadata.

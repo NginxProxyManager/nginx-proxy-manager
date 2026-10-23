@@ -406,14 +406,9 @@ func UpdateSSOConnection() http.HandlerFunc {
 			ssoError(w, r, errSSOInvalid)
 			return
 		}
-		key, err := secretKey()
-		if err != nil {
-			ssoError(w, r, err)
-			return
-		}
 		id := chi.URLParam(r, "id")
 		var value sso.Connection
-		err = sso.WithPolicyWrite(r.Context(), func(tx *gorm.DB) error {
+		err := sso.WithPolicyWrite(r.Context(), func(tx *gorm.DB) error {
 			old, err := sso.GetConnection(tx, id)
 			if err != nil {
 				return err
@@ -430,6 +425,15 @@ func UpdateSSOConnection() http.HandlerFunc {
 			value.Enabled = input.Enabled
 			value.ConfigJSON = string(input.Config)
 			value.Revision++
+			// Keeping opaque ciphertext must not require a working installation
+			// key. In particular, loss of that key must not block revocation.
+			var key *secretstore.Store
+			if input.SecretAction == "replace" || input.SAMLImportToken != "" || (!old.Enabled && value.Enabled) {
+				key, err = secretKey()
+				if err != nil {
+					return err
+				}
+			}
 			if value.Protocol == sso.SAML {
 				value.SecretCiphertext, err = prepareSSOSAML(r.Context(), &old, value, input.SAMLImportToken)
 				if err != nil {
@@ -444,6 +448,11 @@ func UpdateSSOConnection() http.HandlerFunc {
 				}
 			case "clear":
 				value.SecretCiphertext = nil
+			}
+			if !old.Enabled && value.Enabled {
+				if _, err := key.Unseal(value.SecretCiphertext, "connection:"+id); err != nil {
+					return errSSOKey
+				}
 			}
 			if value.Enabled && len(value.SecretCiphertext) == 0 && value.Protocol != sso.SAML {
 				return errSSOInvalid
