@@ -6,21 +6,26 @@ import (
 	"npm/internal/database"
 	"npm/internal/entity"
 	"npm/internal/entity/auth"
+	"npm/internal/entity/sso"
 	"npm/internal/errors"
 	"npm/internal/model"
 	"npm/internal/util"
 
 	"github.com/drexedam/gravatar"
 	"github.com/rotisserie/eris"
+	"gorm.io/gorm"
 )
 
 // Model is the model
 type Model struct {
 	model.Base
-	Name       string `json:"name" gorm:"column:name" filter:"name,string"`
-	Email      string `json:"email" gorm:"column:email" filter:"email,email"`
-	IsDisabled bool   `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
-	IsSystem   bool   `json:"is_system,omitempty" gorm:"column:is_system" filter:"is_system,boolean"`
+	Name                 string  `json:"name" gorm:"column:name" filter:"name,string"`
+	Email                string  `json:"email" gorm:"column:email" filter:"email,email"`
+	IsDisabled           bool    `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
+	IsSystem             bool    `json:"is_system,omitempty" gorm:"column:is_system" filter:"is_system,boolean"`
+	NormalizedEmail      *string `json:"-" gorm:"column:normalized_email;size:254"`
+	AdminPasswordEnabled bool    `json:"admin_password_enabled" gorm:"column:admin_password_enabled"`
+	CredentialOrigin     string  `json:"-" gorm:"column:credential_origin;size:32"`
 	// Other
 	GravatarURL string `json:"gravatar_url" gorm:"-"`
 	// Expansions
@@ -69,6 +74,14 @@ func (m *Model) Save() error {
 
 	// Ensure email is nice
 	m.Email = strings.TrimSpace(strings.ToLower(m.Email))
+	normalized, err := sso.NormalizeEmail(m.Email)
+	if err != nil {
+		return err
+	}
+	m.NormalizedEmail = &normalized
+	if m.CredentialOrigin == "" {
+		m.CredentialOrigin = "local"
+	}
 
 	// Check if an existing user with this email exists
 	if m2, err := GetByEmail(m.Email); err == nil && m.ID != m2.ID {
@@ -87,8 +100,12 @@ func (m *Model) Delete() error {
 		return eris.New("Unable to delete a new object")
 	}
 	db := database.GetDB()
-	result := db.Delete(m)
-	return result.Error
+	return db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(m).Update("normalized_email", nil).Error; err != nil {
+			return err
+		}
+		return tx.Delete(m).Error
+	})
 }
 
 // SetPermissions will wipe out any existing permissions and add new ones for this user
@@ -144,7 +161,7 @@ func (m *Model) SaveCapabilities() error {
 	}
 
 	// there must be at least 1 capability
-	if len(m.Capabilities) == 0 {
+	if len(m.Capabilities) == 0 && m.CredentialOrigin != "sso" {
 		return eris.New("At least 1 capability required for a user")
 	}
 

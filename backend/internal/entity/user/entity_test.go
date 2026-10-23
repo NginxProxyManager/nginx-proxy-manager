@@ -176,7 +176,7 @@ func (s *testsuite) TestSave() {
 		WillReturnRows(s.singleRow)
 
 	s.mock.ExpectBegin()
-	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user" ("created_at","updated_at","is_deleted","name","email","is_disabled","is_system") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
+	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user" ("created_at","updated_at","is_deleted","name","email","is_disabled","is_system","normalized_email","admin_password_enabled","credential_origin") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING "id"`)).
 		WithArgs(
 			sqlmock.AnyArg(),
 			sqlmock.AnyArg(),
@@ -185,6 +185,9 @@ func (s *testsuite) TestSave() {
 			"sarah@example.com",
 			false,
 			false,
+			"sarah@example.com",
+			false,
+			"local",
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("11"))
 	s.mock.ExpectCommit()
@@ -215,6 +218,7 @@ func (s *testsuite) TestDelete() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.ExpectBegin()
+	s.mock.ExpectExec(regexp.QuoteMeta(`UPDATE "user" SET "normalized_email"=$1,"updated_at"=$2 WHERE "user"."is_deleted" = $3 AND "id" = $4`)).WithArgs(nil, sqlmock.AnyArg(), 0, 10).WillReturnResult(sqlmock.NewResult(0, 1))
 	s.mock.
 		ExpectExec(regexp.QuoteMeta(`UPDATE "user" SET "is_deleted"=$1 WHERE "user"."id" = $2 AND "user"."is_deleted" = $3`)).
 		WithArgs(1, 10, 0).

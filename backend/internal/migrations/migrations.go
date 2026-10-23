@@ -17,9 +17,11 @@ import (
 	"fmt"
 	"io/fs"
 
+	"gorm.io/gorm"
 	"npm/embed"
 	"npm/internal/config"
 	"npm/internal/database"
+	"npm/internal/entity/sso"
 	"npm/internal/logger"
 
 	polyschema "github.com/jc21/polyschema/v1"
@@ -62,6 +64,9 @@ func migrate(sqlDB *sql.DB) error {
 	if dialect == nil {
 		return fmt.Errorf("migrations: unsupported database driver %q", engine)
 	}
+	if err := preflightSSO(database.GetDB()); err != nil {
+		return err
+	}
 
 	files, err := fs.Sub(embed.MigrationFiles, "migrations")
 	if err != nil {
@@ -73,4 +78,39 @@ func migrate(sqlDB *sql.DB) error {
 		polyschema.WithLogger(newSlogLogger()),
 	)
 	return m.Up(context.Background(), files)
+}
+
+// Refuse ambiguous upgrades before any SSO schema change. Never merge accounts.
+func preflightSSO(db *gorm.DB) error {
+	if db == nil || !db.Migrator().HasTable("user") {
+		return nil
+	}
+	if db.Migrator().HasTable(historyTable) {
+		var count int64
+		if err := db.Table(historyTable).Where("version = ?", int64(20261023000000)).Count(&count).Error; err != nil {
+			return err
+		}
+		if count > 0 {
+			return nil
+		}
+	}
+	var users []struct {
+		ID    uint
+		Email string
+	}
+	if err := db.Table("user").Where("is_system = ? AND is_deleted = ?", false, 0).Order("id").Find(&users).Error; err != nil {
+		return err
+	}
+	seen := map[string]uint{}
+	for _, value := range users {
+		normalized, err := sso.NormalizeEmail(value.Email)
+		if err != nil {
+			return fmt.Errorf("SSO upgrade: user ID %d has an invalid email; resolve using a database backup before retrying", value.ID)
+		}
+		if previous, ok := seen[normalized]; ok {
+			return fmt.Errorf("SSO upgrade: conflicting user IDs %d and %d normalize to the same email; resolve using a database backup before retrying", previous, value.ID)
+		}
+		seen[normalized] = value.ID
+	}
+	return nil
 }

@@ -1,11 +1,15 @@
 package user
 
 import (
+	"errors"
 	"fmt"
 
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"npm/internal/database"
 	"npm/internal/entity"
 	"npm/internal/entity/auth"
+	"npm/internal/entity/sso"
 	"npm/internal/logger"
 	"npm/internal/model"
 )
@@ -16,6 +20,46 @@ func GetByID(id uint) (Model, error) {
 	err := m.LoadByID(id)
 	m.generateGravatar()
 	return m, err
+}
+
+// GetOrCreateSSO must run within the policy-fenced caller's transaction. The
+// unique nullable normalized identity resolves concurrent first logins without
+// creating a credential or granting capabilities.
+func GetOrCreateSSO(tx *gorm.DB, email, name string) (Model, bool, error) {
+	normalized, err := sso.NormalizeEmail(email)
+	if err != nil {
+		return Model{}, false, err
+	}
+	var value Model
+	// Locking reads see the latest committed row under MySQL's default
+	// repeatable-read isolation, including a concurrent insert that won a
+	// duplicate-key race after this transaction established its snapshot.
+	lookup := func() error {
+		return tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("normalized_email = ?", normalized).First(&value).Error
+	}
+	if err := lookup(); err == nil {
+		if value.IsDisabled {
+			return Model{}, false, fmt.Errorf("SSO user disabled")
+		}
+		return value, false, nil
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return Model{}, false, err
+	}
+	value = Model{Email: normalized, Name: name, NormalizedEmail: &normalized, CredentialOrigin: "sso", Capabilities: []string{}}
+	result := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&value)
+	if result.Error != nil {
+		return Model{}, false, result.Error
+	}
+	created := result.RowsAffected == 1
+	if !created {
+		if err := lookup(); err != nil {
+			return Model{}, false, err
+		}
+	}
+	if value.IsDisabled {
+		return Model{}, false, fmt.Errorf("SSO user disabled")
+	}
+	return value, created, nil
 }
 
 // GetByEmail finds a user by email

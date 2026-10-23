@@ -16,6 +16,7 @@ import (
 	"npm/internal/jwt"
 	"npm/internal/logger"
 	"npm/internal/migrations"
+	"npm/internal/secretstore"
 
 	// properly respect available cpu cores
 	_ "go.uber.org/automaxprocs"
@@ -77,6 +78,11 @@ func start() error {
 
 	if err := checkSetup(); err != nil {
 		return err
+	}
+	// Local bootstrap remains available, while a broken SSO restore is explicit
+	// in diagnostics. SSO services must require a successfully opened store.
+	if _, err := secretstore.Open(config.Configuration.DataFolder); err != nil {
+		logger.Error("SSOInitializationError", err)
 	}
 
 	// Internal Job Queue

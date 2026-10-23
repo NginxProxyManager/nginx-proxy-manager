@@ -62,7 +62,7 @@ func TestMigrateFreshDatabase(t *testing.T) {
 
 	var historyCount int64
 	require.NoError(t, db.Table(historyTable).Count(&historyCount).Error)
-	assert.EqualValues(t, 2, historyCount, "one history row per migration file")
+	assert.EqualValues(t, 3, historyCount, "one history row per migration file")
 }
 
 func TestMigrateIsIdempotent(t *testing.T) {

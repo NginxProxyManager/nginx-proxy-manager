@@ -1,0 +1,90 @@
+operations:
+  - addColumn: {table: user, column: {name: normalized_email, type: string, length: 254}}
+  - addColumn: {table: user, column: {name: admin_password_enabled, type: boolean, nullable: false, default: false}}
+  - addColumn: {table: user, column: {name: credential_origin, type: string, length: 32, nullable: false, default: local}}
+  - sql:
+      sqlite: 'UPDATE "user" SET normalized_email = LOWER(TRIM(email)) WHERE is_system = 0 AND is_deleted = 0'
+      postgres: 'UPDATE "user" SET normalized_email = LOWER(TRIM(email)) WHERE is_system = false AND is_deleted = 0'
+      mysql: 'UPDATE `user` SET normalized_email = LOWER(TRIM(email)) WHERE is_system = 0 AND is_deleted = 0'
+  - createIndex: {table: user, name: user_active_normalized_email, columns: [normalized_email], unique: true}
+  - sql:
+      sqlite: 'UPDATE "user" SET admin_password_enabled = 1 WHERE id IN (SELECT user_id FROM user_has_capability WHERE capability_name = ''full-admin'')'
+      postgres: 'UPDATE "user" SET admin_password_enabled = true WHERE id IN (SELECT user_id FROM user_has_capability WHERE capability_name = ''full-admin'')'
+      mysql: 'UPDATE `user` SET admin_password_enabled = 1 WHERE id IN (SELECT user_id FROM user_has_capability WHERE capability_name = ''full-admin'')'
+  - createTable:
+      name: sso_connection
+      columns:
+        - {name: id, type: string, length: 43, primaryKey: true}
+        - {name: protocol, type: string, length: 16, nullable: false}
+        - {name: name, type: string, length: 191, nullable: false}
+        - {name: enabled, type: boolean, nullable: false, default: false}
+        - {name: revision, type: bigint, nullable: false, default: 1}
+        - {name: config_json, type: text}
+        - {name: secret_ciphertext, type: binary}
+  - createTable:
+      name: sso_policy
+      columns:
+        - {name: id, type: bigint, primaryKey: true}
+        - {name: mode, type: string, length: 16, nullable: false}
+        - {name: public_url, type: text}
+        - {name: revision, type: bigint, nullable: false}
+  - insert: {table: sso_policy, rows: [{id: 1, mode: parallel, public_url: '', revision: 1}]}
+  - createTable:
+      name: sso_allowlist
+      columns:
+        - {name: email, type: string, length: 254, primaryKey: true}
+  - createTable:
+      name: auth_policy_fence
+      columns:
+        - {name: id, type: bigint, primaryKey: true}
+        - {name: revision, type: bigint, nullable: false}
+  - insert: {table: auth_policy_fence, rows: [{id: 1, revision: 1}]}
+  - createTable:
+      name: sso_transaction
+      columns:
+        - {name: id, type: string, length: 43, primaryKey: true}
+        - {name: connection_id, type: string, length: 43, nullable: false}
+        - {name: browser_hash, type: string, length: 64, nullable: false}
+        - {name: state_hash, type: string, length: 64, nullable: false}
+        - {name: secret_ciphertext, type: binary}
+        - {name: connection_revision, type: bigint, nullable: false}
+        - {name: return_path, type: text}
+        - {name: expires_at, type: timestamp, nullable: false}
+        - {name: consumed_at, type: timestamp}
+      indexes:
+        - {name: sso_transaction_state, columns: [state_hash], unique: true}
+        - {name: sso_transaction_expiry, columns: [expires_at]}
+  - createTable:
+      name: sso_replay
+      columns:
+        - {name: id, type: string, length: 64, primaryKey: true}
+        - {name: connection_id, type: string, length: 43, nullable: false}
+        - {name: expires_at, type: timestamp, nullable: false}
+  - createTable:
+      name: sso_handoff
+      columns:
+        - {name: code_hash, type: string, length: 64, primaryKey: true}
+        - {name: browser_hash, type: string, length: 64, nullable: false}
+        - {name: connection_id, type: string, length: 43, nullable: false}
+        - {name: connection_revision, type: bigint, nullable: false}
+        - {name: user_id, type: bigint, nullable: false}
+        - {name: login_email, type: string, length: 254, nullable: false}
+        - {name: expires_at, type: timestamp, nullable: false}
+        - {name: consumed_at, type: timestamp}
+  - createTable:
+      name: session
+      columns:
+        - {name: id, type: string, length: 43, primaryKey: true}
+        - {name: user_id, type: bigint, nullable: false}
+        - {name: source, type: string, length: 16, nullable: false}
+        - {name: connection_id, type: string, length: 43}
+        - {name: login_email, type: string, length: 254}
+        - {name: parent_id, type: string, length: 43}
+        - {name: created_at, type: timestamp, nullable: false}
+        - {name: expires_at, type: timestamp, nullable: false}
+        - {name: revoked_at, type: timestamp}
+      indexes:
+        - {name: session_user, columns: [user_id]}
+        - {name: session_connection, columns: [connection_id]}
+        - {name: session_email, columns: [login_email]}
+        - {name: session_parent, columns: [parent_id]}
