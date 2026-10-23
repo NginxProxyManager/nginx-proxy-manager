@@ -15,7 +15,7 @@ import (
 // deliberately independent of the request Host and forwarding headers.
 func ValidatePublicURL(raw string) error {
 	parsed, err := url.Parse(raw)
-	if err != nil || parsed == nil || parsed.Scheme != "https" || parsed.Hostname() == "" || parsed.User != nil || parsed.Path != "" || parsed.RawPath != "" || parsed.RawQuery != "" || parsed.Fragment != "" || parsed.Opaque != "" || parsed.String() != raw {
+	if err != nil || parsed == nil || parsed.Scheme != "https" || parsed.Hostname() == "" || parsed.User != nil || parsed.Path != "" || parsed.RawPath != "" || parsed.RawQuery != "" || parsed.ForceQuery || parsed.Fragment != "" || parsed.Opaque != "" || parsed.String() != raw {
 		return errors.New("public_url must be a canonical HTTPS origin")
 	}
 	return nil

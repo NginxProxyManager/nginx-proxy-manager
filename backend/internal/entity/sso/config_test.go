@@ -7,7 +7,7 @@ import (
 )
 
 func TestCanonicalPublicURL(t *testing.T) {
-	for _, value := range []string{"http://npm.example", "https://npm.example/path", "https://npm.example?x=1", "https://npm.example/#fragment", "https://user@npm.example", "https://npm.example/"} {
+	for _, value := range []string{"http://npm.example", "https://npm.example/path", "https://npm.example?x=1", "https://npm.example?", "https://npm.example/#fragment", "https://user@npm.example", "https://npm.example/"} {
 		require.Error(t, ValidatePublicURL(value), value)
 	}
 	require.NoError(t, ValidatePublicURL("https://npm.example:8443"))

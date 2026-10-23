@@ -137,18 +137,34 @@ func TestRemovingAllowlistEmailRevokesSSOSessionsAndPendingHandoffs(t *testing.T
 
 func TestNameOnlyEditKeepsPendingAttemptsAtNewRevision(t *testing.T) {
 	db := ssoAdminDB(t)
+	require.NoError(t, db.AutoMigrate(&session.Model{}))
 	id, _ := newSSOID()
+	sessionID, _ := newSSOID()
 	configJSON := `{"issuer_url":"https://id.example","client_id":"npm","email_claim":"email"}`
 	require.NoError(t, db.Create(&sso.Connection{ID: id, Protocol: sso.OIDC, Name: "Old", Revision: 1, ConfigJSON: configJSON}).Error)
+	require.NoError(t, db.Create(&session.Model{ID: sessionID, Source: session.SSO, ConnectionID: id, LoginEmail: "person@example.com", UserID: 1, ExpiresAt: time.Now().Add(time.Hour)}).Error)
 	require.NoError(t, db.Exec("INSERT INTO sso_transaction (id,connection_id,connection_revision) VALUES ('attempt',?,1)", id).Error)
 	require.NoError(t, db.Exec("INSERT INTO sso_handoff (code_hash,connection_id,connection_revision) VALUES ('handoff',?,1)", id).Error)
-	update := `{"revision":1,"protocol":"oidc","name":"New","enabled":false,"config":` + configJSON + `,"secret_action":"keep"}`
+	update := `{"revision":1,"protocol":"oidc","name":"New","enabled":false,"config":{"email_claim":"email", "client_id":"npm", "issuer_url":"https://id.example"},"secret_action":"keep"}`
 	rec := adminRequestID("PUT", "/api/sso/connections/"+id, id, update, UpdateSSOConnection())
 	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
 	for _, table := range []string{"sso_transaction", "sso_handoff"} {
 		var rev uint64
 		require.NoError(t, db.Table(table).Select("connection_revision").Where("connection_id = ?", id).Scan(&rev).Error)
 		require.Equal(t, uint64(2), rev, table)
+	}
+	var live session.Model
+	require.NoError(t, db.First(&live, "id = ?", sessionID).Error)
+	require.Nil(t, live.RevokedAt)
+	changed := `{"revision":2,"protocol":"oidc","name":"New","enabled":false,"config":{"issuer_url":"https://different.example","client_id":"npm","email_claim":"email"},"secret_action":"keep"}`
+	rec = adminRequestID("PUT", "/api/sso/connections/"+id, id, changed, UpdateSSOConnection())
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+	require.NoError(t, db.First(&live, "id = ?", sessionID).Error)
+	require.NotNil(t, live.RevokedAt)
+	for _, table := range []string{"sso_transaction", "sso_handoff"} {
+		var count int64
+		require.NoError(t, db.Table(table).Where("connection_id = ?", id).Count(&count).Error)
+		require.Zero(t, count)
 	}
 }
 

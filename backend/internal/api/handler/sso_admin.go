@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 	"slices"
 	"strings"
 	"sync"
@@ -133,6 +134,17 @@ func connectionView(value sso.Connection) ssoConnectionView {
 		config = json.RawMessage(value.ConfigJSON)
 	}
 	return ssoConnectionView{ID: value.ID, Protocol: value.Protocol, Name: value.Name, Enabled: value.Enabled, Revision: value.Revision, Config: config, HasSecret: len(value.SecretCiphertext) > 0}
+}
+
+func sameSSOConfig(protocol sso.Protocol, oldJSON, newJSON string) bool {
+	if sso.ValidateConfig(protocol, oldJSON) != nil {
+		return false
+	}
+	var oldValue, newValue any
+	if json.Unmarshal([]byte(oldJSON), &oldValue) != nil || json.Unmarshal([]byte(newJSON), &newValue) != nil {
+		return false
+	}
+	return reflect.DeepEqual(oldValue, newValue)
 }
 
 func validConnectionInput(input ssoConnectionInput, creating bool) error {
@@ -438,7 +450,7 @@ func UpdateSSOConnection() http.HandlerFunc {
 			if err := tx.Save(&value).Error; err != nil {
 				return err
 			}
-			if old.Protocol != value.Protocol || old.Enabled != value.Enabled || old.ConfigJSON != value.ConfigJSON || input.SecretAction != "keep" {
+			if old.Protocol != value.Protocol || old.Enabled != value.Enabled || !sameSSOConfig(value.Protocol, old.ConfigJSON, value.ConfigJSON) || input.SecretAction != "keep" {
 				if err := invalidateSSO(tx, id, "", time.Now().UTC()); err != nil {
 					return err
 				}
