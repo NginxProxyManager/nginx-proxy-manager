@@ -48,6 +48,7 @@ export * from "./renewCertificate";
 export * from "./responseTypes";
 export * from "./setPermissions";
 export * from "./setupDatabase";
+export * from "./sso";
 export * from "./testHttpCertificate";
 export * from "./toggleDeadHost";
 export * from "./toggleProxyHost";

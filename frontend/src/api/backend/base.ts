@@ -150,14 +150,17 @@ export async function put({ url, params, data, skipCamelize }: PutArgs) {
 interface DeleteArgs {
 	url: string;
 	params?: queryString.StringifiableRecord;
+	data?: Record<string, any>;
 	skipCamelize?: boolean;
 }
-export async function del({ url, params, skipCamelize }: DeleteArgs) {
+export async function del({ url, params, data, skipCamelize }: DeleteArgs) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "DELETE";
 	const headers = {
 		...buildAuthHeader(),
+		...(data ? { [contentTypeHeader]: "application/json" } : {}),
 	};
-	const response = await fetch(apiUrl, { method, headers });
+	const body = buildBody(data);
+	const response = await fetch(apiUrl, { method, headers, body });
 	return processResponse(response, skipCamelize);
 }

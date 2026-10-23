@@ -25,12 +25,17 @@ export default defineConfig({
 		{
 			name: 'run-on-start',
 			configureServer(_server) {
-				runLocaleScripts();
+				if (!process.env.VITEST) {
+					runLocaleScripts();
+				}
 			},
 		},
 		{
 			name: "trigger-on-reload",
 			configureServer(server) {
+				if (process.env.VITEST) {
+					return;
+				}
 				server.watcher.on("change", (file) => {
 					if (file.includes("locale/src")) {
 						console.log(`File changed: ${file}, running locale scripts...`);
@@ -40,10 +45,10 @@ export default defineConfig({
 			},
 		},
 		react(),
-		checker({
+		...(process.env.VITEST ? [] : [checker({
 			// e.g. use TypeScript check
 			typescript: true,
-		}),
+		})]),
 	],
 	resolve: {
 		tsconfigPaths: true,
