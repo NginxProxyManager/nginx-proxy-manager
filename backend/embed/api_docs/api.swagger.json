@@ -5,6 +5,9 @@
 		"version": "{{VERSION}}"
 	},
 	"paths": {
+		"/sso/saml/metadata-preview": {
+			"post": {"$ref": "file://./paths/sso/saml/metadata-preview/post.json"}
+		},
 		"/sso/policy": {
 			"get": {"$ref": "file://./paths/sso/policy/get.json"},
 			"put": {"$ref": "file://./paths/sso/policy/put.json"}

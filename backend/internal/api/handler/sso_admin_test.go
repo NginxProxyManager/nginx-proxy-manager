@@ -198,7 +198,7 @@ func TestSSOOpenAPISchemasResolve(t *testing.T) {
 		Paths map[string]map[string]json.RawMessage `json:"paths"`
 	}
 	require.NoError(t, json.Unmarshal(getSchema(), &document))
-	for _, path := range []string{"/sso/policy", "/sso/connections", "/sso/connections/{id}", "/sso/connections/{id}/test", "/sso/allowlist"} {
+	for _, path := range []string{"/sso/saml/metadata-preview", "/sso/policy", "/sso/connections", "/sso/connections/{id}", "/sso/connections/{id}/test", "/sso/allowlist"} {
 		require.NotEmpty(t, document.Paths[path], path)
 	}
 	require.NotContains(t, string(getSchema()), "{{schema.SSO")

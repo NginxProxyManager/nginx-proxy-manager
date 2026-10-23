@@ -45,7 +45,12 @@ func ssoConnection(update bool) string {
     "enabled":{"type":"boolean"},
     "config":` + ssoConfig + `,
     "secret_action":{"type":"string","enum":["keep","replace","clear"]},
-    "secret_value":{"type":"string","minLength":1}` + revision + `}}`
+    "secret_value":{"type":"string","minLength":1},
+    "saml_import_token":{"type":"string","minLength":1,"maxLength":524288}` + revision + `}}`
+}
+
+func SSOSAMLMetadataPreview() string {
+	return `{"type":"object","additionalProperties":false,"required":["config"],"properties":{"config":` + ssoConfig + `}}`
 }
 
 func SSOAllowlist() string {

@@ -199,6 +199,7 @@ func applyRoutes(r chi.Router) chi.Router {
 
 		// Settings
 		r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilitySettingsManage)).Route("/sso", func(r chi.Router) {
+			r.With(middleware.EnforceRequestSchema(schema.SSOSAMLMetadataPreview())).Post("/saml/metadata-preview", handler.PreviewSSOSAMLMetadata())
 			r.Get("/policy", handler.GetSSOPolicy())
 			r.With(middleware.EnforceRequestSchema(schema.SSOPolicy())).Put("/policy", handler.UpdateSSOPolicy())
 			r.Get("/connections", handler.GetSSOConnections())

@@ -69,3 +69,80 @@ all SSO connections. `POST /connections/{id}/test` is read-only and never
 creates a user, transaction or session. It reports `501` until the relevant
 protocol adapter registers a bounded probe; probe failures return a generic
 `502` without provider response content.
+
+SAML explicit import and save (Task 9):
+
+- `POST /api/sso/saml/metadata-preview` requires the same setup/current-session/
+  settings.manage guard as other administration routes. Input is exactly
+  `{config: <complete typed SAML config>}`. This is the only remote metadata-fetch
+  operation. Uploaded XML is validated here too. It does not write a connection,
+  create a login attempt/user/session, or change trusted keys.
+- Result is `{entity_id, sso_url, certificate_fingerprints, sign_requests,
+  sp_certificate?, import_token}`. Fingerprints are lowercase SHA-256 hex for
+  every trusted IdP signing certificate (including overlap keys). `sp_certificate`
+  is public PEM and exists when requests must be signed. Display these fields for
+  review before Save; compare them with the previous reviewed material. No raw
+  server-managed snapshot or private key is exposed. The administrator's original
+  `idp_metadata_xml` input remains a public config field.
+- Add optional top-level `saml_import_token` to connection POST/PUT, never inside
+  `config`. The opaque authenticated-encrypted token is bound to the complete
+  canonical typed configuration and expires after 10 minutes. Editing config
+  after preview requires another preview. Token/key material must not be logged,
+  persisted in browser local storage, or sent to provider endpoints.
+- A new SAML connection requires a successful preview token and `secret_action:
+  clear`. Existing SAML connections use `secret_action: keep`; omit the token
+  to retain the encrypted snapshot/key byte-for-byte. Changing the metadata URL,
+  uploaded XML or sign_requests requires another explicit preview. Name-only
+  saves, login, metadata rendering, and Test never fetch metadata remotely.
+- A token-bearing update is an explicit trust refresh even when config is
+  unchanged. Save increments the connection revision, replaces encrypted trust,
+  revokes that connection's sessions/descendants and invalidates pending attempts
+  and handoffs in the same policy-fenced transaction. A stale revision fails
+  before preparation. No private-key uploads are accepted.
+- Preview generates an RSA-3072 signing key when `sign_requests` is true or IdP
+  metadata requires signed requests; the public certificate is shown before Save.
+  The encrypted token temporarily carries the generated key; Save seals it with
+  the frozen validated XML into a JSON bundle using AAD `connection:<id>`. Preview
+  tokens have separate purpose AAD `saml-metadata-import:v1`. An explicit later
+  preview generates a new SP certificate when signing is enabled; arrange IdP
+  certificate overlap before saving that rotation.
+- HTTP JSON bodies remain capped at 1 MiB. Imported metadata is capped at 128 KiB
+  and opaque tokens at 512 KiB so config plus token can fit bounded admin requests;
+  unusually escape-heavy input can still hit the 1 MiB request limit. Callback
+  form bodies and decoded XML are each capped at 1 MiB before XML parsing.
+- Supported profile: one unencrypted assertion, SP-initiated HTTP-Redirect
+  AuthnRequest and HTTP-POST ACS. No Artifact, IdP-initiated login, encrypted
+  assertions, or SLO. Modern SHA-256/384/512 XML signatures only; Redirect requests
+  use RSA-SHA256. Email requires exactly one configured attribute value or explicit
+  email-format NameID. The library verifies signatures against the saved metadata;
+  local checks enforce two-minute maximum skew, a matching signed request binding,
+  recipient/audience/issuer and unambiguous consumed identity.
+
+Startup/UI handoff:
+
+```go
+adapter := sso.NewSAMLAdapter(client, secrets).(*sso.SAMLAdapter)
+handler.RegisterSSOSAML(adapter.PreviewMetadata, adapter.PrepareConnection)
+handler.RegisterSSOProbe(ssoconfig.SAML, adapter.Probe)
+// Include adapter in Service's protocol map.
+// Methods:
+PreviewMetadata(context.Context, string) (ssoconfig.SAMLMetadataPreview, error)
+PrepareConnection(context.Context, *ssoconfig.Connection, ssoconfig.Connection, string) ([]byte, error)
+Metadata(context.Context, ssoconfig.Connection, string) ([]byte, error)
+```
+
+The browser handlers expose `POST /sso/{id}/acs` and
+`GET /sso/{id}/metadata`; the final Metadata argument MUST be the validated
+policy.PublicURL loaded from policy, never request Host. `Start` and `Complete`
+use `Transaction.PublicURL`. Public SP metadata advertises only POST ACS and
+signing certificates, with no encryption/Artifact/SLO endpoints.
+
+`Service.Complete` preserves only the fixed sentinel `sso.ErrSAMLUnsupported`
+for recognized unsupported SAML profiles. Handler 11 should map it to stable code
+`sso_saml_unsupported_profile` and localized copy: "Use SP-initiated Redirect/POST
+with an unencrypted assertion." It remains a denial and consumes the attempt.
+Missing/invalid browser/state bindings and every other adapter failure remain
+`sso_login_denied`; never serialize the library's InvalidResponseError fields.
+`POST /connections/{id}/test` validates only the saved SAML snapshot, so it cannot
+replace trust or return an import token. Refresh/import is the separate explicit
+preview ? review ? Save flow above.

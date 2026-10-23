@@ -57,13 +57,14 @@ type ssoPolicyInput struct {
 	PublicURL string        `json:"public_url"`
 }
 type ssoConnectionInput struct {
-	Revision     uint64          `json:"revision"`
-	Protocol     sso.Protocol    `json:"protocol"`
-	Name         string          `json:"name"`
-	Enabled      bool            `json:"enabled"`
-	Config       json.RawMessage `json:"config"`
-	SecretAction string          `json:"secret_action"`
-	SecretValue  string          `json:"secret_value"`
+	Revision        uint64          `json:"revision"`
+	Protocol        sso.Protocol    `json:"protocol"`
+	Name            string          `json:"name"`
+	Enabled         bool            `json:"enabled"`
+	Config          json.RawMessage `json:"config"`
+	SecretAction    string          `json:"secret_action"`
+	SecretValue     string          `json:"secret_value"`
+	SAMLImportToken string          `json:"saml_import_token"`
 }
 type ssoAllowlistInput struct {
 	Revision uint64   `json:"revision"`
@@ -163,6 +164,9 @@ func validConnectionInput(input ssoConnectionInput, creating bool) error {
 	if input.Protocol == sso.SAML && input.SecretAction == "replace" {
 		return errSSOInvalid
 	}
+	if len(input.SAMLImportToken) > 512<<10 || (input.Protocol != sso.SAML && input.SAMLImportToken != "") || (input.Protocol == sso.SAML && !creating && input.SecretAction != "keep") {
+		return errSSOInvalid
+	}
 	if creating && input.SecretAction == "keep" {
 		return errSSOInvalid
 	}
@@ -232,7 +236,7 @@ func enabledValidConnection(tx *gorm.DB, excludeID string) (bool, error) {
 		return false, err
 	}
 	for _, connection := range enabled {
-		if sso.ValidateConfig(connection.Protocol, connection.ConfigJSON) == nil && (connection.Protocol == sso.SAML || len(connection.SecretCiphertext) > 0) {
+		if sso.ValidateConfig(connection.Protocol, connection.ConfigJSON) == nil && len(connection.SecretCiphertext) > 0 {
 			return true, nil
 		}
 	}
@@ -354,6 +358,13 @@ func CreateSSOConnection() http.HandlerFunc {
 			return
 		}
 		value := sso.Connection{ID: id, Protocol: input.Protocol, Name: input.Name, Enabled: input.Enabled, Revision: 1, ConfigJSON: string(input.Config)}
+		if value.Protocol == sso.SAML {
+			value.SecretCiphertext, err = prepareSSOSAML(r.Context(), nil, value, input.SAMLImportToken)
+			if err != nil {
+				ssoError(w, r, err)
+				return
+			}
+		}
 		if input.SecretAction == "replace" {
 			value.SecretCiphertext, err = sealClientSecret(key, id, input.SecretValue)
 			if err != nil {
@@ -410,7 +421,7 @@ func UpdateSSOConnection() http.HandlerFunc {
 			if old.Revision != input.Revision {
 				return errSSORevision
 			}
-			if old.Protocol != input.Protocol && input.SecretAction == "keep" && len(old.SecretCiphertext) > 0 {
+			if old.Protocol != input.Protocol && input.SecretAction == "keep" && len(old.SecretCiphertext) > 0 && !(input.Protocol == sso.SAML && input.SAMLImportToken != "") {
 				return errSSOInvalid
 			}
 			value = old
@@ -419,6 +430,12 @@ func UpdateSSOConnection() http.HandlerFunc {
 			value.Enabled = input.Enabled
 			value.ConfigJSON = string(input.Config)
 			value.Revision++
+			if value.Protocol == sso.SAML {
+				value.SecretCiphertext, err = prepareSSOSAML(r.Context(), &old, value, input.SAMLImportToken)
+				if err != nil {
+					return err
+				}
+			}
 			switch input.SecretAction {
 			case "replace":
 				value.SecretCiphertext, err = sealClientSecret(key, id, input.SecretValue)
@@ -450,7 +467,7 @@ func UpdateSSOConnection() http.HandlerFunc {
 			if err := tx.Save(&value).Error; err != nil {
 				return err
 			}
-			if old.Protocol != value.Protocol || old.Enabled != value.Enabled || !sameSSOConfig(value.Protocol, old.ConfigJSON, value.ConfigJSON) || input.SecretAction != "keep" {
+			if old.Protocol != value.Protocol || old.Enabled != value.Enabled || !sameSSOConfig(value.Protocol, old.ConfigJSON, value.ConfigJSON) || input.SecretAction != "keep" || input.SAMLImportToken != "" {
 				if err := invalidateSSO(tx, id, "", time.Now().UTC()); err != nil {
 					return err
 				}

@@ -3,6 +3,7 @@ package sso
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/url"
 	"strings"
@@ -125,11 +126,17 @@ func (s *Service) Begin(ctx context.Context, connectionID, browserToken, returnP
 }
 
 // CallbackState supports OAuth/OIDC query state and SAML POST RelayState.
-// Duplicate or conflicting bindings are denied. HTTP handlers must bound bodies
-// before parsing SAML POSTs; ParseForm itself applies the standard 10 MB limit.
+// Duplicate or conflicting bindings are denied. Bound POST bodies before parsing
+// even when called without the HTTP handler (which also applies MaxBytesReader).
 func CallbackState(r *http.Request) (string, error) {
 	if r == nil {
 		return "", ErrDenied
+	}
+	if r.Method == http.MethodPost && r.PostForm == nil {
+		if r.ContentLength > providerBodyLimit {
+			return "", ErrDenied
+		}
+		r.Body = http.MaxBytesReader(nil, r.Body, providerBodyLimit)
 	}
 	if err := r.ParseForm(); err != nil {
 		return "", ErrDenied
@@ -206,6 +213,10 @@ func (s *Service) Complete(ctx context.Context, connectionID, browserToken strin
 	transaction.PublicURL = publicURL
 	identity, err := s.adapters[connection.Protocol].Complete(ctx, connection, transaction, r)
 	if err != nil {
+		// Preserve only this fixed, non-provider diagnostic for localized UI copy.
+		if connection.Protocol == ssoconfig.SAML && errors.Is(err, ErrSAMLUnsupported) {
+			return "", ErrSAMLUnsupported
+		}
 		return "", ErrDenied
 	}
 	if connection.Protocol == ssoconfig.SAML && len(identity.ReplayIDs) == 0 {

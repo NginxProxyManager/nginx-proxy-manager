@@ -75,6 +75,7 @@ func getSchema() []byte {
 
 func replaceIncomingSchemas(swaggerSchema []byte) []byte {
 	str := string(swaggerSchema)
+	str = strings.ReplaceAll(str, `"{{schema.SSOSAMLMetadataPreview}}"`, schema.SSOSAMLMetadataPreview())
 	str = strings.ReplaceAll(str, `"{{schema.SSOPolicy}}"`, schema.SSOPolicy())
 	str = strings.ReplaceAll(str, `"{{schema.SSOConnectionCreate}}"`, schema.SSOConnectionCreate())
 	str = strings.ReplaceAll(str, `"{{schema.SSOConnectionUpdate}}"`, schema.SSOConnectionUpdate())

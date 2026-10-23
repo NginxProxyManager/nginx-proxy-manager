@@ -57,6 +57,7 @@ func TestSSOAdminRoutesRequireSettingsCapability(t *testing.T) {
 		method, path, body string
 		allowedStatus      int
 	}{
+		{"POST", "/api/sso/saml/metadata-preview", "{}", 400},
 		{"GET", "/api/sso/policy", "", 200}, {"PUT", "/api/sso/policy", "{}", 400},
 		{"GET", "/api/sso/connections", "", 200}, {"POST", "/api/sso/connections", "{}", 400},
 		{"GET", "/api/sso/connections/" + connectionID, "", 200}, {"PUT", "/api/sso/connections/" + connectionID, "{}", 400},

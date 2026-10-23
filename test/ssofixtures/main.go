@@ -16,6 +16,7 @@ import (
 	"math/big"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 )
@@ -25,11 +26,15 @@ func main() {
 	certOut := flag.String("cert-out", "", "write process-scoped CA certificate here")
 	keyOut := flag.String("key-out", "", "write process-scoped TLS private key here")
 	scenario := flag.String("case", "valid", "OIDC result: valid, signature, issuer, audience, azp, nonce, expired, userinfo_subject, email_array, email_missing, rotation")
-	protocol := flag.String("protocol", "oidc", "fixture protocol: oidc or oauth2")
+	protocol := flag.String("protocol", "oidc", "fixture protocol: oidc, oauth2 or saml")
+	canonicalIssuer := flag.String("issuer-url", "", "optional canonical HTTPS origin, e.g. https://idp.test:9443 (listener remains loopback)")
+	spEntityID := flag.String("sp-entity-id", "", "SAML SP entity URI")
+	acsURL := flag.String("acs-url", "", "SAML SP HTTPS ACS URL")
+	spCertPath := flag.String("sp-certificate", "", "SAML SP public PEM certificate; when set require signed Redirect requests")
 	clientID := flag.String("client-id", "", "OAuth client ID (random if omitted)")
 	clientSecret := flag.String("client-secret", "", "OAuth client secret (random if omitted)")
 	flag.Parse()
-	if (*protocol != "oidc" && *protocol != "oauth2") || (*protocol == "oidc" && !validCase(*scenario)) || (*protocol == "oauth2" && !validOAuth2Case(*scenario)) {
+	if (*protocol != "oidc" && *protocol != "oauth2" && *protocol != "saml") || (*protocol == "oidc" && !validCase(*scenario)) || (*protocol == "oauth2" && !validOAuth2Case(*scenario)) || (*protocol == "saml" && !validSAMLCase(*scenario)) {
 		fmt.Fprintln(os.Stderr, "unsupported --case")
 		os.Exit(2)
 	}
@@ -50,6 +55,16 @@ func main() {
 	if listener.Addr().(*net.TCPAddr).IP == nil || !listener.Addr().(*net.TCPAddr).IP.IsLoopback() {
 		panic("loopback listener required")
 	}
+	issuer := "https://" + listener.Addr().String()
+	dnsNames := []string{"localhost"}
+	if *canonicalIssuer != "" {
+		parsed, err := url.Parse(*canonicalIssuer)
+		if err != nil || parsed.Scheme != "https" || parsed.Hostname() == "" || parsed.User != nil || parsed.Path != "" || parsed.RawQuery != "" || parsed.Fragment != "" || parsed.Opaque != "" || parsed.ForceQuery {
+			panic("issuer-url must be a canonical HTTPS origin")
+		}
+		issuer = *canonicalIssuer
+		dnsNames = append(dnsNames, parsed.Hostname())
+	}
 	key, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		panic(err)
@@ -58,7 +73,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	certDER, err := x509.CreateCertificate(rand.Reader, &x509.Certificate{SerialNumber: serial, Subject: pkix.Name{CommonName: "npm-sso-fixture"}, NotBefore: time.Now().Add(-time.Minute), NotAfter: time.Now().Add(24 * time.Hour), DNSNames: []string{"localhost"}, IPAddresses: []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback}, KeyUsage: x509.KeyUsageDigitalSignature, ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}}, &x509.Certificate{SerialNumber: serial, Subject: pkix.Name{CommonName: "npm-sso-fixture"}, NotBefore: time.Now().Add(-time.Minute), NotAfter: time.Now().Add(24 * time.Hour), DNSNames: []string{"localhost"}, IPAddresses: []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback}, KeyUsage: x509.KeyUsageDigitalSignature, ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}}, &key.PublicKey, key)
+	certDER, err := x509.CreateCertificate(rand.Reader, &x509.Certificate{SerialNumber: serial, Subject: pkix.Name{CommonName: "npm-sso-fixture"}, NotBefore: time.Now().Add(-time.Minute), NotAfter: time.Now().Add(24 * time.Hour), DNSNames: dnsNames, IPAddresses: []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback}, KeyUsage: x509.KeyUsageDigitalSignature, ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}}, &x509.Certificate{SerialNumber: serial, Subject: pkix.Name{CommonName: "npm-sso-fixture"}, NotBefore: time.Now().Add(-time.Minute), NotAfter: time.Now().Add(24 * time.Hour), DNSNames: dnsNames, IPAddresses: []net.IP{net.IPv4(127, 0, 0, 1), net.IPv6loopback}, KeyUsage: x509.KeyUsageDigitalSignature, ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}}, &key.PublicKey, key)
 	if err != nil {
 		panic(err)
 	}
@@ -74,10 +89,36 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	issuer := "https://" + listener.Addr().String()
 	var handler http.Handler
 	startup := map[string]string{"issuer_url": issuer, "client_id": *clientID, "client_secret": *clientSecret, "ca_cert": *certOut, "case": *scenario, "protocol": *protocol}
-	if *protocol == "oauth2" {
+	if *protocol == "saml" {
+		entity, entityErr := url.Parse(*spEntityID)
+		acs, acsErr := url.Parse(*acsURL)
+		if entityErr != nil || entity.Scheme == "" || acsErr != nil || acs.Scheme != "https" || acs.Hostname() == "" || acs.User != nil || acs.Fragment != "" || acs.RawQuery != "" {
+			panic("SAML requires --sp-entity-id and --acs-url")
+		}
+		var spCert *x509.Certificate
+		if *spCertPath != "" {
+			raw, err := os.ReadFile(*spCertPath)
+			if err != nil {
+				panic(err)
+			}
+			block, _ := pem.Decode(raw)
+			if block == nil || block.Type != "CERTIFICATE" {
+				panic("public SP certificate required")
+			}
+			spCert, err = x509.ParseCertificate(block.Bytes)
+			if err != nil {
+				panic(err)
+			}
+		}
+		handler = newSAMLFixture(issuer, *spEntityID, *acsURL, *scenario, spCert).routes()
+		delete(startup, "client_id")
+		delete(startup, "client_secret")
+		startup["idp_metadata_url"] = issuer + "/metadata"
+		startup["sp_entity_id"] = *spEntityID
+		startup["acs_url"] = *acsURL
+	} else if *protocol == "oauth2" {
 		handler = newOAuth2Fixture(issuer, *clientID, *clientSecret, *scenario).routes()
 		startup["authorization_url"] = issuer + "/auth"
 		startup["token_url"] = issuer + "/token"
