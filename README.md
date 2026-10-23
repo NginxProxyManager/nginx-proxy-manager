@@ -109,3 +109,4 @@ Special thanks to [all of our contributors](https://github.com/NginxProxyManager
 1. [Found a bug?](https://github.com/NginxProxyManager/nginx-proxy-manager/issues)
 2. [Discussions](https://github.com/NginxProxyManager/nginx-proxy-manager/discussions)
 3. [Reddit](https://reddit.com/r/nginxproxymanager)
+   
