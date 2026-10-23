@@ -93,8 +93,8 @@ func (s *Store) validateExistingCiphertext() error {
 			continue
 		}
 		var rows []struct {
-			ID               string
-			SecretCiphertext []byte
+			ID               string `gorm:"column:id"`
+			SecretCiphertext []byte `gorm:"column:secret_ciphertext"`
 		}
 		if err := db.Table(table).Select("id, secret_ciphertext").Where("secret_ciphertext IS NOT NULL AND LENGTH(secret_ciphertext) > 0").Find(&rows).Error; err != nil {
 			return fmt.Errorf("SSO encryption key validation: %w", err)

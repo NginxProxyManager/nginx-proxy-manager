@@ -12,15 +12,15 @@ const (
 )
 
 type Model struct {
-	ID           string `gorm:"primaryKey;size:43"`
-	UserID       uint
-	Source       Source `gorm:"size:16"`
-	ConnectionID string `gorm:"size:43"`
-	LoginEmail   string `gorm:"size:254"`
-	ParentID     string `gorm:"size:43"`
-	CreatedAt    time.Time
-	ExpiresAt    time.Time
-	RevokedAt    *time.Time
+	ID           string     `gorm:"column:id;primaryKey;size:43"`
+	UserID       uint       `gorm:"column:user_id"`
+	Source       Source     `gorm:"column:source;size:16"`
+	ConnectionID string     `gorm:"column:connection_id;size:43"`
+	LoginEmail   string     `gorm:"column:login_email;size:254"`
+	ParentID     string     `gorm:"column:parent_id;size:43"`
+	CreatedAt    time.Time  `gorm:"column:created_at"`
+	ExpiresAt    time.Time  `gorm:"column:expires_at"`
+	RevokedAt    *time.Time `gorm:"column:revoked_at"`
 }
 
 func (Model) TableName() string { return "session" }

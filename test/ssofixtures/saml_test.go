@@ -70,6 +70,22 @@ func TestSAMLFixtureSignedPOSTAndRequestVerification(t *testing.T) {
 	}
 }
 
+func TestSAMLFixtureWildcardACSIsLimitedToConnectionRoutes(t *testing.T) {
+	f := newSAMLFixture("https://idp.test", "urn:npm:test", "https://npm.test/sso/*", "valid", nil)
+	if !f.acceptsACS("https://npm.test/sso/generated-id/acs") {
+		t.Fatal("generated connection ACS rejected")
+	}
+	for _, value := range []string{
+		"https://npm.test/sso/generated-id/callback",
+		"https://other.test/sso/generated-id/acs",
+		"https://npm.test/other/acs",
+	} {
+		if f.acceptsACS(value) {
+			t.Fatalf("unsafe ACS accepted: %s", value)
+		}
+	}
+}
+
 func mustURL(raw string) url.URL {
 	u, err := url.Parse(raw)
 	if err != nil {

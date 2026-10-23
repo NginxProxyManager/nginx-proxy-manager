@@ -23,6 +23,7 @@ import (
 
 func main() {
 	listen := flag.String("listen", "127.0.0.1:0", "loopback listen address")
+	allowNonLoopback := flag.Bool("allow-non-loopback", false, "allow container-network listeners (test environments only)")
 	certOut := flag.String("cert-out", "", "write process-scoped CA certificate here")
 	keyOut := flag.String("key-out", "", "write process-scoped TLS private key here")
 	scenario := flag.String("case", "valid", "OIDC result: valid, signature, issuer, audience, azp, nonce, expired, userinfo_subject, email_array, email_missing, rotation")
@@ -52,7 +53,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if listener.Addr().(*net.TCPAddr).IP == nil || !listener.Addr().(*net.TCPAddr).IP.IsLoopback() {
+	if !*allowNonLoopback && (listener.Addr().(*net.TCPAddr).IP == nil || !listener.Addr().(*net.TCPAddr).IP.IsLoopback()) {
 		panic("loopback listener required")
 	}
 	issuer := "https://" + listener.Addr().String()

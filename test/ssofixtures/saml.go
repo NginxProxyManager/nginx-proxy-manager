@@ -17,6 +17,7 @@ import (
 	"math/big"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"time"
 
@@ -125,11 +126,11 @@ func (f *samlFixture) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var request saml.AuthnRequest
-	if xml.Unmarshal(raw, &request) != nil || request.ID == "" || request.Issuer == nil || request.Issuer.Value != f.entityID || request.AssertionConsumerServiceURL != f.acs || request.Destination != f.issuer+"/sso" || request.ProtocolBinding != saml.HTTPPostBinding {
+	if xml.Unmarshal(raw, &request) != nil || request.ID == "" || request.Issuer == nil || request.Issuer.Value != f.entityID || !f.acceptsACS(request.AssertionConsumerServiceURL) || request.Destination != f.issuer+"/sso" || request.ProtocolBinding != saml.HTTPPostBinding {
 		fail()
 		return
 	}
-	response, err := f.response(request.ID)
+	response, err := f.response(request.ID, request.AssertionConsumerServiceURL)
 	if err != nil {
 		fail()
 		return
@@ -137,12 +138,19 @@ func (f *samlFixture) login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store")
 	page := template.Must(template.New("post").Parse(`<form method="post" action="{{.ACS}}"><input type="hidden" name="SAMLResponse" value="{{.Response}}"><input type="hidden" name="RelayState" value="{{.Relay}}"><button type="submit">Continue to NPM</button></form><script>document.forms[0].submit()</script>`))
-	_ = page.Execute(w, map[string]string{"ACS": f.acs, "Response": base64.StdEncoding.EncodeToString(response), "Relay": q.Get("RelayState")})
+	_ = page.Execute(w, map[string]string{"ACS": request.AssertionConsumerServiceURL, "Response": base64.StdEncoding.EncodeToString(response), "Relay": q.Get("RelayState")})
 }
-func (f *samlFixture) response(requestID string) ([]byte, error) {
+func (f *samlFixture) acceptsACS(value string) bool {
+	if strings.HasSuffix(f.acs, "/*") {
+		prefix := strings.TrimSuffix(f.acs, "*")
+		return strings.HasPrefix(value, prefix) && strings.HasSuffix(value, "/acs")
+	}
+	return value == f.acs
+}
+func (f *samlFixture) response(requestID, acs string) ([]byte, error) {
 	now := time.Now().UTC()
-	a := &saml.Assertion{ID: "_" + randomCredential(), Version: "2.0", IssueInstant: now, Issuer: saml.Issuer{Value: f.issuer}, Subject: &saml.Subject{NameID: &saml.NameID{Value: "allowed@example.com", Format: string(saml.EmailAddressNameIDFormat)}, SubjectConfirmations: []saml.SubjectConfirmation{{Method: "urn:oasis:names:tc:SAML:2.0:cm:bearer", SubjectConfirmationData: &saml.SubjectConfirmationData{Recipient: f.acs, InResponseTo: requestID, NotOnOrAfter: now.Add(5 * time.Minute)}}}}, Conditions: &saml.Conditions{NotBefore: now.Add(-time.Minute), NotOnOrAfter: now.Add(5 * time.Minute), AudienceRestrictions: []saml.AudienceRestriction{{Audience: saml.Audience{Value: f.entityID}}}}, AttributeStatements: []saml.AttributeStatement{{Attributes: []saml.Attribute{{Name: "mail", Values: []saml.AttributeValue{{Value: "allowed@example.com"}}}, {Name: "displayName", Values: []saml.AttributeValue{{Value: "Fixture User"}}}}}}}
-	response := &saml.Response{ID: "_" + randomCredential(), Version: "2.0", IssueInstant: now, Destination: f.acs, InResponseTo: requestID, Issuer: &saml.Issuer{Value: f.issuer}, Status: saml.Status{StatusCode: saml.StatusCode{Value: saml.StatusSuccess}}, Assertion: a}
+	a := &saml.Assertion{ID: "_" + randomCredential(), Version: "2.0", IssueInstant: now, Issuer: saml.Issuer{Value: f.issuer}, Subject: &saml.Subject{NameID: &saml.NameID{Value: "allowed@example.com", Format: string(saml.EmailAddressNameIDFormat)}, SubjectConfirmations: []saml.SubjectConfirmation{{Method: "urn:oasis:names:tc:SAML:2.0:cm:bearer", SubjectConfirmationData: &saml.SubjectConfirmationData{Recipient: acs, InResponseTo: requestID, NotOnOrAfter: now.Add(5 * time.Minute)}}}}, Conditions: &saml.Conditions{NotBefore: now.Add(-time.Minute), NotOnOrAfter: now.Add(5 * time.Minute), AudienceRestrictions: []saml.AudienceRestriction{{Audience: saml.Audience{Value: f.entityID}}}}, AttributeStatements: []saml.AttributeStatement{{Attributes: []saml.Attribute{{Name: "mail", Values: []saml.AttributeValue{{Value: "allowed@example.com"}}}, {Name: "displayName", Values: []saml.AttributeValue{{Value: "Fixture User"}}}}}}}
+	response := &saml.Response{ID: "_" + randomCredential(), Version: "2.0", IssueInstant: now, Destination: acs, InResponseTo: requestID, Issuer: &saml.Issuer{Value: f.issuer}, Status: saml.Status{StatusCode: saml.StatusCode{Value: saml.StatusSuccess}}, Assertion: a}
 	switch f.scenario {
 	case "issuer":
 		a.Issuer.Value = "https://other.test"

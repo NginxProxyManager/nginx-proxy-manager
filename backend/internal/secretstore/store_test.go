@@ -4,6 +4,7 @@ import (
 	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"npm/internal/database"
 	"os"
 	"path/filepath"
@@ -79,4 +80,22 @@ func TestWrongKeyWithOnlyTransactionCiphertextFailsOpen(t *testing.T) {
 	require.NoError(t, os.WriteFile(filepath.Join(dir, "keys", "sso.key"), make([]byte, 32), 0600))
 	_, err = Open(dir)
 	require.ErrorContains(t, err, "key")
+}
+
+func TestExistingCiphertextValidatesWithProductionNamingStrategy(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(filepath.Join(t.TempDir(), "db")), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{NoLowerCase: true},
+	})
+	require.NoError(t, err)
+	database.SetDB(db)
+	t.Cleanup(func() { database.SetDB(nil) })
+	require.NoError(t, db.Exec("CREATE TABLE sso_connection (id TEXT PRIMARY KEY, secret_ciphertext BLOB)").Error)
+	dir := t.TempDir()
+	store, err := Open(dir)
+	require.NoError(t, err)
+	ciphertext, err := store.Seal([]byte("provider-secret"), "connection:one")
+	require.NoError(t, err)
+	require.NoError(t, db.Exec("INSERT INTO sso_connection (id, secret_ciphertext) VALUES (?, ?)", "one", ciphertext).Error)
+	_, err = Open(dir)
+	require.NoError(t, err)
 }

@@ -17,13 +17,15 @@ import (
 )
 
 type transactionRow struct {
-	ID                                   string `gorm:"primaryKey"`
-	ConnectionID, BrowserHash, StateHash string
-	SecretCiphertext                     []byte
-	ConnectionRevision                   uint64
-	ReturnPath                           string
-	ExpiresAt                            time.Time
-	ConsumedAt                           *time.Time
+	ID                 string     `gorm:"column:id;primaryKey"`
+	ConnectionID       string     `gorm:"column:connection_id"`
+	BrowserHash        string     `gorm:"column:browser_hash"`
+	StateHash          string     `gorm:"column:state_hash"`
+	SecretCiphertext   []byte     `gorm:"column:secret_ciphertext"`
+	ConnectionRevision uint64     `gorm:"column:connection_revision"`
+	ReturnPath         string     `gorm:"column:return_path"`
+	ExpiresAt          time.Time  `gorm:"column:expires_at"`
+	ConsumedAt         *time.Time `gorm:"column:consumed_at"`
 }
 
 func (transactionRow) TableName() string { return "sso_transaction" }
@@ -264,9 +266,9 @@ func (s *Service) Complete(ctx context.Context, connectionID, browserToken strin
 }
 
 type replayRow struct {
-	ID           string `gorm:"primaryKey"`
-	ConnectionID string
-	ExpiresAt    time.Time
+	ID           string    `gorm:"column:id;primaryKey"`
+	ConnectionID string    `gorm:"column:connection_id"`
+	ExpiresAt    time.Time `gorm:"column:expires_at"`
 }
 
 func (replayRow) TableName() string { return "sso_replay" }

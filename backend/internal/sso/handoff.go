@@ -13,13 +13,14 @@ import (
 )
 
 type handoffRow struct {
-	CodeHash                  string `gorm:"primaryKey"`
-	BrowserHash, ConnectionID string
-	ConnectionRevision        uint64
-	UserID                    uint
-	LoginEmail                string
-	ExpiresAt                 time.Time
-	ConsumedAt                *time.Time
+	CodeHash           string     `gorm:"column:code_hash;primaryKey"`
+	BrowserHash        string     `gorm:"column:browser_hash"`
+	ConnectionID       string     `gorm:"column:connection_id"`
+	ConnectionRevision uint64     `gorm:"column:connection_revision"`
+	UserID             uint       `gorm:"column:user_id"`
+	LoginEmail         string     `gorm:"column:login_email"`
+	ExpiresAt          time.Time  `gorm:"column:expires_at"`
+	ConsumedAt         *time.Time `gorm:"column:consumed_at"`
 }
 
 func (handoffRow) TableName() string { return "sso_handoff" }
