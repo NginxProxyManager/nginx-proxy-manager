@@ -1,4 +1,14 @@
 package sso
 
-// Policy writes are serialized by internal/authpolicy; WithPolicyWrite is
-// implemented with that shared fence in the persistent-session task.
+import (
+	"context"
+
+	"gorm.io/gorm"
+	"npm/internal/authpolicy"
+)
+
+// WithPolicyWrite serializes policy edits and callback admission with session
+// revocation and protected delivery. The handler coordinates all mutations in tx.
+func WithPolicyWrite(ctx context.Context, fn func(tx *gorm.DB) error) error {
+	return authpolicy.WithWrite(ctx, fn)
+}
