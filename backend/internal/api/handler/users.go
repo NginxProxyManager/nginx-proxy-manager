@@ -88,112 +88,155 @@ func GetUser() func(http.ResponseWriter, *http.Request) {
 // Route: PUT /users/{userID}
 func UpdateUser() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userID, self, userIDErr := getUserIDFromRequest(r)
-		if userIDErr != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, userIDErr.Error(), nil)
+		userID, _, err := getUserIDFromRequest(r)
+		if err != nil {
+			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
 		}
-		if self {
-			if principal, ok := middleware.CurrentPrincipal(r.Context()); ok && len(principal.Capabilities) == 0 {
-				h.ResultErrorJSON(w, r, http.StatusForbidden, "Forbidden", nil)
-				return
-			}
-		}
-
-		userObject, err := user.GetByID(userID)
-		switch err {
-		case gorm.ErrRecordNotFound:
-			h.NotFound(w, r)
-		case nil:
-			// nolint: errcheck,gosec
-			userObject.Expand([]string{"capabilities"})
-			hadFullAdmin := slices.Contains(userObject.Capabilities, user.CapabilityFullAdmin)
-
-			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
-			err := json.Unmarshal(bodyBytes, &userObject)
+		var userObject user.Model
+		status, message := http.StatusInternalServerError, "Unable to save User"
+		err = authpolicy.WithMutation(r.Context(), func(tx *gorm.DB) error {
+			actor, code, err := currentUserMutationActor(tx, r)
 			if err != nil {
-				h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
-				return
+				status, message = code, "Unauthorised"
+				return err
 			}
-
-			if userObject.IsDisabled && self {
-				h.ResultErrorJSON(w, r, http.StatusBadRequest, "You cannot disable yourself!", nil)
-				return
+			if chi.URLParam(r, "userID") == "me" {
+				userID = actor.Session.UserID
 			}
-
-			// Only reachable via the admin (UpdateUserAdmin-schema'd) route,
-			// since the self-service schema never allows "capabilities" in
-			// the payload at all - but an admin can still target their own
-			// numeric id, so guard it explicitly rather than relying on
-			// that alone.
-			if self && hadFullAdmin && !slices.Contains(userObject.Capabilities, user.CapabilityFullAdmin) {
-				h.ResultErrorJSON(w, r, http.StatusBadRequest, "You cannot remove your own full-admin capability!", nil)
-				return
+			self := userID == actor.Session.UserID
+			if len(actor.Capabilities) == 0 || (!self && !canManageUsers(actor)) {
+				status, message = http.StatusForbidden, "Forbidden"
+				return session.ErrUnauthorized
 			}
-
-			var capabilityErr error
-			if err = authpolicy.WithMutation(r.Context(), func(tx *gorm.DB) error {
-				if err := userObject.SaveInTx(tx); err != nil {
+			userObject, err = user.GetByIDInTx(tx, userID)
+			if err != nil {
+				if err == gorm.ErrRecordNotFound {
+					status, message = http.StatusNotFound, "Not found"
+				}
+				return err
+			}
+			userObject.Capabilities, err = user.GetCapabilitiesInTx(tx, userID)
+			if err != nil {
+				return err
+			}
+			// Merge only mutable API fields into the freshly loaded record. Self-service
+			// cannot persist policy fields or echo requested capabilities as actual grants.
+			var patch struct {
+				Name         *string   `json:"name"`
+				Email        *string   `json:"email"`
+				IsDisabled   *bool     `json:"is_disabled"`
+				Capabilities *[]string `json:"capabilities"`
+			}
+			body, _ := r.Context().Value(c.BodyCtxKey).([]byte)
+			if err = json.Unmarshal(body, &patch); err != nil {
+				status, message = http.StatusBadRequest, h.ErrInvalidPayload.Error()
+				return err
+			}
+			if self && patch.IsDisabled != nil && *patch.IsDisabled {
+				status, message = http.StatusBadRequest, "You cannot disable yourself!"
+				return h.ErrInvalidPayload
+			}
+			if self && slices.Contains(userObject.Capabilities, user.CapabilityFullAdmin) && patch.Capabilities != nil && !slices.Contains(*patch.Capabilities, user.CapabilityFullAdmin) {
+				status, message = http.StatusBadRequest, "You cannot remove your own full-admin capability!"
+				return h.ErrInvalidPayload
+			}
+			if patch.Name != nil {
+				userObject.Name = *patch.Name
+			}
+			if patch.Email != nil {
+				userObject.Email = *patch.Email
+			}
+			if !self && patch.IsDisabled != nil {
+				userObject.IsDisabled = *patch.IsDisabled
+			}
+			if !self && patch.Capabilities != nil {
+				userObject.Capabilities = *patch.Capabilities
+			}
+			if err = userObject.SaveInTx(tx); err != nil {
+				if err == errors.ErrDuplicateEmailUser || err == errors.ErrSystemUserReadonly {
+					status, message = http.StatusBadRequest, err.Error()
+				}
+				return err
+			}
+			if !self && patch.Capabilities != nil {
+				if err = userObject.SaveCapabilitiesInTx(tx); err != nil {
+					status, message = http.StatusBadRequest, err.Error()
 					return err
 				}
-				if !self {
-					capabilityErr = userObject.SaveCapabilitiesInTx(tx)
-					return capabilityErr
-				}
-				return nil
-			}); err != nil {
-				if capabilityErr != nil || err == errors.ErrDuplicateEmailUser || err == errors.ErrSystemUserReadonly {
-					h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-				} else {
-					h.ResultErrorJSON(w, r, http.StatusInternalServerError, "Unable to save User", nil)
-				}
-				return
 			}
-			// nolint: errcheck,gosec
-			userObject.Expand(middleware.GetExpandFromContext(r))
-
-			h.ResultResponseJSON(w, r, http.StatusOK, userObject)
-		default:
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+			return nil
+		})
+		if err != nil {
+			h.ResultErrorJSON(w, r, status, message, nil)
+			return
 		}
+		h.ResultResponseJSON(w, r, http.StatusOK, userObject)
 	}
+}
+
+// Revalidate the middleware-authenticated actor inside the already-held fence.
+// A UID without a principal/session is never sufficient for a mutation.
+func currentUserMutationActor(tx *gorm.DB, r *http.Request) (session.Principal, int, error) {
+	supplied, ok := middleware.CurrentPrincipal(r.Context())
+	if !ok {
+		return session.Principal{}, http.StatusUnauthorized, session.ErrUnauthorized
+	}
+	current, err := session.AuthorizeInTx(tx, supplied.Session.ID, time.Now().UTC())
+	if err != nil || current.Session.UserID != supplied.Session.UserID {
+		return session.Principal{}, http.StatusUnauthorized, session.ErrUnauthorized
+	}
+	return current, http.StatusOK, nil
+}
+
+func canManageUsers(p session.Principal) bool {
+	return slices.Contains(p.Capabilities, user.CapabilityFullAdmin) || slices.Contains(p.Capabilities, user.CapabilityUsersManage)
 }
 
 // DeleteUser removes a user
 // Route: DELETE /users/{userID}
 func DeleteUser() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var userID uint
-		var err error
-		if userID, err = getURLParamInt(r, "userID"); err != nil {
+		userID, err := getURLParamInt(r, "userID")
+		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 			return
 		}
-
-		myUserID, _ := r.Context().Value(c.UserIDCtxKey).(uint)
-		if myUserID == userID {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, "You cannot delete yourself!", nil)
-			return
-		}
-
-		item, err := user.GetByID(userID)
-		switch err {
-		case gorm.ErrRecordNotFound:
-			h.NotFound(w, r)
-		case nil:
-			if err := authpolicy.WithMutation(r.Context(), func(tx *gorm.DB) error {
-				if err := revokeUserSessions(tx, []uint{item.ID}); err != nil {
-					return err
-				}
-				return item.DeleteInTx(tx)
-			}); err != nil {
-				h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
-			} else {
-				h.ResultResponseJSON(w, r, http.StatusOK, true)
+		status, message := http.StatusBadRequest, ""
+		err = authpolicy.WithMutation(r.Context(), func(tx *gorm.DB) error {
+			actor, code, err := currentUserMutationActor(tx, r)
+			if err != nil {
+				status, message = code, "Unauthorised"
+				return err
 			}
-		default:
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+			if !canManageUsers(actor) {
+				status, message = http.StatusForbidden, "Forbidden"
+				return session.ErrUnauthorized
+			}
+			if actor.Session.UserID == userID {
+				message = "You cannot delete yourself!"
+				return h.ErrInvalidPayload
+			}
+			item, err := user.GetByIDInTx(tx, userID)
+			if err != nil {
+				if err == gorm.ErrRecordNotFound {
+					status, message = http.StatusNotFound, "Not found"
+				}
+				return err
+			}
+			if err := revokeUserSessions(tx, []uint{item.ID}); err != nil {
+				return err
+			}
+			return item.DeleteInTx(tx)
+		})
+		if err != nil {
+			if message == "" {
+				message = err.Error()
+			}
+			h.ResultErrorJSON(w, r, status, message, nil)
+			return
 		}
+		h.ResultResponseJSON(w, r, http.StatusOK, true)
 	}
 }
 
@@ -266,7 +309,17 @@ func CreateUser() func(http.ResponseWriter, *http.Request) {
 // Route: DELETE /users
 func DeleteUsers() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		status, message := http.StatusBadRequest, ""
 		err := authpolicy.WithMutation(r.Context(), func(tx *gorm.DB) error {
+			actor, code, err := currentUserMutationActor(tx, r)
+			if err != nil {
+				status, message = code, "Unauthorised"
+				return err
+			}
+			if !slices.Contains(actor.Capabilities, user.CapabilityFullAdmin) {
+				status, message = http.StatusForbidden, "Forbidden"
+				return session.ErrUnauthorized
+			}
 			var ids []uint
 			if err := tx.Model(&user.Model{}).Where("is_system = ?", false).Pluck("id", &ids).Error; err != nil {
 				return err
@@ -277,7 +330,10 @@ func DeleteUsers() func(http.ResponseWriter, *http.Request) {
 			return user.DeleteAllInTx(tx)
 		})
 		if err != nil {
-			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
+			if message == "" {
+				message = err.Error()
+			}
+			h.ResultErrorJSON(w, r, status, message, nil)
 		} else {
 			// also change setup to true
 			config.IsSetup = false

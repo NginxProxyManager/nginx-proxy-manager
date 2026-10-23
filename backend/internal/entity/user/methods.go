@@ -15,9 +15,13 @@ import (
 )
 
 // GetByID finds a user by ID
-func GetByID(id uint) (Model, error) {
+func GetByID(id uint) (Model, error) { return GetByIDInTx(database.GetDB(), id) }
+
+// GetByIDInTx reads through the caller's transaction. Authorization-affecting
+// mutations must acquire the policy fence before loading the user.
+func GetByIDInTx(tx *gorm.DB, id uint) (Model, error) {
 	var m Model
-	err := m.LoadByID(id)
+	err := tx.First(&m, id).Error
 	m.generateGravatar()
 	return m, err
 }
@@ -159,9 +163,13 @@ func DeleteAllInTx(db *gorm.DB) error {
 
 // GetCapabilities gets capabilities for a user
 func GetCapabilities(userID uint) ([]string, error) {
+	return GetCapabilitiesInTx(database.GetDB(), userID)
+}
+
+// GetCapabilitiesInTx returns current permissions from the caller's transaction.
+func GetCapabilitiesInTx(db *gorm.DB, userID uint) ([]string, error) {
 	capabilities := make([]string, 0)
 	var hasCapabilities []HasCapabilityModel
-	db := database.GetDB()
 	if result := db.Where("user_id = ?", userID).Find(&hasCapabilities); result.Error != nil {
 		return nil, result.Error
 	}
