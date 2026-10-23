@@ -31,6 +31,14 @@ byte-for-byte for `keep`. For OIDC/OAuth2 the complete encrypted bundle is
 UTF-8 JSON `{"client_secret":"..."}` sealed with AAD `connection:<id>`.
 `has_secret` is the sole read indicator.
 
+Protocol adapters receive the configured `public_url` as transient
+`Transaction.PublicURL`, loaded and validated by the service inside its fenced
+policy read. OIDC uses `public_url + /sso/{connection_id}/callback` as its
+redirect URI; the request Host does not select the callback origin. The OIDC
+adapter's read-only `Probe(context, connection)` performs bounded discovery and
+can be registered through `handler.RegisterSSOProbe` at startup. A probe does
+not create a transaction, user, or session.
+
 `config` is strict and protocol-specific; unknown and cross-protocol fields
 are rejected. HTTPS provider endpoints may use private addresses. The
 following fields are the complete public input contract for adapters and UI:

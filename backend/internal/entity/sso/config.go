@@ -69,7 +69,7 @@ func ValidateConfig(protocol Protocol, raw string) error {
 		if err := decodeConfig(raw, &cfg); err != nil {
 			return err
 		}
-		if strings.TrimSpace(cfg.ClientID) == "" || strings.TrimSpace(cfg.EmailClaim) == "" || validateEndpoint(cfg.IssuerURL) != nil || !validTokenAuth(cfg.TokenAuthMethod, true) {
+		if strings.TrimSpace(cfg.ClientID) == "" || strings.TrimSpace(cfg.EmailClaim) == "" || validateEndpoint(cfg.IssuerURL) != nil || invalidIssuerQuery(cfg.IssuerURL) || !validTokenAuth(cfg.TokenAuthMethod, true) {
 			return errors.New("OIDC requires issuer_url, client_id and email_claim")
 		}
 		return validateScopes(cfg.Scopes)
@@ -94,6 +94,11 @@ func ValidateConfig(protocol Protocol, raw string) error {
 	default:
 		return fmt.Errorf("unsupported SSO protocol")
 	}
+}
+
+func invalidIssuerQuery(raw string) bool {
+	u, err := url.Parse(raw)
+	return err != nil || u.RawQuery != "" || u.ForceQuery || u.Fragment != ""
 }
 
 func validateEntityID(raw string) error {

@@ -28,13 +28,16 @@ type fakeAdapter struct {
 }
 
 func (a *fakeAdapter) Start(_ context.Context, _ ssoconfig.Connection, t Transaction) (StartResult, error) {
+	if t.PublicURL != "https://npm.example" {
+		return StartResult{}, ErrDenied
+	}
 	return StartResult{RedirectURL: "https://idp.example/auth?state=" + t.State}, nil
 }
 func (a *fakeAdapter) Complete(_ context.Context, _ ssoconfig.Connection, t Transaction, r *http.Request) (Identity, error) {
 	if a.barrier != nil {
 		a.barrier()
 	}
-	if a.fail || t.Nonce == "" || t.PKCEVerifier == "" || t.RequestID == "" {
+	if a.fail || t.PublicURL != "https://npm.example" || t.Nonce == "" || t.PKCEVerifier == "" || t.RequestID == "" {
 		return Identity{}, ErrDenied
 	}
 	return a.identity, nil
@@ -55,7 +58,7 @@ func token(c string) string {
 func fixture(t *testing.T) *testFixture {
 	t.Helper()
 	db := serviceTestDB(t)
-	require.NoError(t, db.AutoMigrate(&session.Model{}, &user.Model{}, &user.HasCapabilityModel{}, &ssoconfig.Connection{}, &ssoconfig.AllowlistEntry{}))
+	require.NoError(t, db.AutoMigrate(&session.Model{}, &user.Model{}, &user.HasCapabilityModel{}, &ssoconfig.Connection{}, &ssoconfig.AllowlistEntry{}, &ssoconfig.Policy{}))
 	for _, q := range []string{
 		"CREATE UNIQUE INDEX active_email ON " + db.Statement.Quote("user") + "(normalized_email)",
 		"CREATE TABLE auth_policy_fence (id INTEGER PRIMARY KEY, revision BIGINT NOT NULL)", "INSERT INTO auth_policy_fence VALUES(1,1)",
@@ -79,6 +82,7 @@ func fixture(t *testing.T) *testFixture {
 	require.NoError(t, err)
 	f := &testFixture{db: db, key: key, now: time.Now().UTC(), conn: token("c"), browser: token("b"), adapter: &fakeAdapter{identity: Identity{Email: "Allowed@Example.COM", Name: "Provider name"}}}
 	require.NoError(t, db.Create(&ssoconfig.Connection{ID: f.conn, Protocol: ssoconfig.OIDC, Enabled: true, Revision: 1, Name: "Provider"}).Error)
+	require.NoError(t, db.Create(&ssoconfig.Policy{ID: 1, Mode: ssoconfig.Parallel, PublicURL: "https://npm.example", Revision: 1}).Error)
 	require.NoError(t, db.Create(&ssoconfig.AllowlistEntry{Email: "allowed@example.com"}).Error)
 	f.service = NewService(db, key, map[ssoconfig.Protocol]Adapter{ssoconfig.OIDC: f.adapter}, WithClock(func() time.Time { return f.now }))
 	return f

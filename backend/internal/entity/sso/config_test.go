@@ -14,6 +14,13 @@ func TestCanonicalPublicURL(t *testing.T) {
 	require.NoError(t, ValidatePublicURL("https://127.0.0.1"))
 }
 
+func TestOIDCIssuerRejectsQueryAndFragment(t *testing.T) {
+	for _, issuer := range []string{"https://id.example/tenant?x=1", "https://id.example/tenant?", "https://id.example/tenant#frag"} {
+		require.Error(t, ValidateConfig(OIDC, `{"issuer_url":"`+issuer+`","client_id":"npm","email_claim":"email"}`), issuer)
+	}
+	require.NoError(t, ValidateConfig(OIDC, `{"issuer_url":"https://id.example/tenant","client_id":"npm","email_claim":"email"}`))
+}
+
 func TestProtocolConfigRejectsSecretAndMissingEndpoints(t *testing.T) {
 	for _, tc := range []struct {
 		protocol Protocol

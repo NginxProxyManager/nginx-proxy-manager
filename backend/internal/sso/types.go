@@ -22,6 +22,7 @@ type Identity struct {
 }
 type Transaction struct {
 	ID, ConnectionID, BrowserHash, StateHash, Nonce, PKCEVerifier, RequestID string
+	PublicURL                                                                string // Validated policy origin, transient only.
 	State                                                                    string // Outbound only; only its hash is persisted.
 	ConnectionRevision                                                       uint64
 	ReturnPath                                                               string

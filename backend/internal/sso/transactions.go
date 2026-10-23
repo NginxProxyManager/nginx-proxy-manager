@@ -95,8 +95,13 @@ func (s *Service) Begin(ctx context.Context, connectionID, browserToken, returnP
 	}
 	row.SecretCiphertext = cipher
 	var connection ssoconfig.Connection
+	var publicURL string
 	err = s.fence(ctx, func(tx *gorm.DB) error {
-		var err error
+		policy, err := ssoconfig.GetPolicy(tx)
+		if err != nil || ssoconfig.ValidatePublicURL(policy.PublicURL) != nil {
+			return ErrDenied
+		}
+		publicURL = policy.PublicURL
 		connection, err = s.connection(tx, connectionID, nil)
 		if err != nil {
 			return err
@@ -109,6 +114,7 @@ func (s *Service) Begin(ctx context.Context, connectionID, browserToken, returnP
 	}
 	transaction := row.transaction(material)
 	transaction.State = values[1]
+	transaction.PublicURL = publicURL
 	result, err := s.adapters[connection.Protocol].Start(ctx, connection, transaction)
 	if err != nil {
 		_ = s.fence(ctx, func(tx *gorm.DB) error { return tx.Delete(&transactionRow{}, "id = ?", row.ID).Error })
@@ -163,12 +169,17 @@ func (s *Service) Complete(ctx context.Context, connectionID, browserToken strin
 	}
 	var row transactionRow
 	var connection ssoconfig.Connection
+	var publicURL string
 	err = s.fence(ctx, func(tx *gorm.DB) error {
+		policy, err := ssoconfig.GetPolicy(tx)
+		if err != nil || ssoconfig.ValidatePublicURL(policy.PublicURL) != nil {
+			return ErrDenied
+		}
+		publicURL = policy.PublicURL
 		now := s.now()
 		if tx.Where("connection_id = ? AND state_hash = ? AND browser_hash = ? AND consumed_at IS NULL AND expires_at > ?", connectionID, hash(state), hash(browserToken), now).First(&row).Error != nil {
 			return ErrDenied
 		}
-		var err error
 		connection, err = s.connection(tx, connectionID, &row.ConnectionRevision)
 		if err != nil {
 			return err
@@ -191,7 +202,9 @@ func (s *Service) Complete(ctx context.Context, connectionID, browserToken strin
 	if json.Unmarshal(plain, &material) != nil {
 		return "", ErrDenied
 	}
-	identity, err := s.adapters[connection.Protocol].Complete(ctx, connection, row.transaction(material), r)
+	transaction := row.transaction(material)
+	transaction.PublicURL = publicURL
+	identity, err := s.adapters[connection.Protocol].Complete(ctx, connection, transaction, r)
 	if err != nil {
 		return "", ErrDenied
 	}
