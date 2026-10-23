@@ -1,6 +1,6 @@
 # Admin SSO design
 
-Status: Approved by the user on 2026-10-23. Implementation planning requested; product implementation has not started.
+Status: Approved by the user on 2026-10-23. Implementation is in progress under the approved implementation plan; release validation remains pending.
 
 ## Intent and agreed scope
 
