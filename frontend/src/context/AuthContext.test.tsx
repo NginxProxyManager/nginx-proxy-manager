@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthProvider, useAuthState } from "./AuthContext";
 import { TOKEN_KEY } from "src/modules/AuthStore";
@@ -32,11 +33,29 @@ function Probe() {
 	</div>;
 }
 
+function AccountSwitchProbe() {
+	const auth = useAuthState();
+	const client = useQueryClient();
+	const [result, setResult] = useState("waiting");
+	return <div>
+		<button type="button" onClick={async () => {
+			await auth.completeSSO("account-b-handoff");
+			setResult(
+				client.getQueryData(["user", "me"]) === undefined &&
+				client.getQueryData(["protected"]) === undefined
+					? "account-b-needs-refetch"
+					: "stale-account-a-cache",
+			);
+		}}>switch account</button>
+		<span>{result}</span>
+	</div>;
+}
+
 const token = (value: string) => ({ token: value, expires: Math.floor(Date.now() / 1000) + 3600 });
-const renderAuth = () => {
+const renderAuth = (children = <Probe />) => {
 	const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 	client.setQueryData(["protected"], { secret: true });
-	return { client, ...render(<QueryClientProvider client={client}><AuthProvider><Probe /></AuthProvider></QueryClientProvider>) };
+	return { client, ...render(<QueryClientProvider client={client}><AuthProvider>{children}</AuthProvider></QueryClientProvider>) };
 };
 
 describe("AuthProvider SSO and session lifecycle", () => {
@@ -56,6 +75,16 @@ describe("AuthProvider SSO and session lifecycle", () => {
 		await screen.findByText("authenticated");
 		expect(api.exchange).toHaveBeenCalledOnce();
 		expect(JSON.parse(localStorage.getItem(TOKEN_KEY) || "[]")).toEqual([exchanged]);
+	});
+
+	it("clears account A profile and protected cache before completing an SSO switch to account B", async () => {
+		localStorage.setItem(TOKEN_KEY, JSON.stringify([token("account-a")]));
+		api.exchange.mockResolvedValue(token("account-b"));
+		const { client } = renderAuth(<AccountSwitchProbe />);
+		client.setQueryData(["user", "me"], { id: 1, name: "Account A" });
+		fireEvent.click(screen.getByRole("button", { name: /switch account/i }));
+		expect(await screen.findByText("account-b-needs-refetch")).toBeVisible();
+		expect(JSON.parse(localStorage.getItem(TOKEN_KEY) || "[]")[0].token).toBe("account-b");
 	});
 
 	it("clears local auth and the real query cache when server logout is unconfirmed", async () => {

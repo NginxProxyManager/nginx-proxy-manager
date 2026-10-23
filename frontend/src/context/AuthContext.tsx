@@ -84,7 +84,14 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 
 	const completeSSO = async (code: string) => {
 		const response = await exchangeSSOHandoff(code);
-		handleTokenUpdate(response);
+		// A handoff can arrive while another account is authenticated. Install
+		// the new credential, clear every account-scoped query synchronously,
+		// and only then expose the authenticated shell to the new account.
+		AuthStore.set(response);
+		queryClient.clear();
+		setAuthenticated(true);
+		setTwoFactorChallenge(null);
+		setLogoutUnconfirmed(false);
 	};
 
 	const clearCurrentSession = () => {
