@@ -25,10 +25,11 @@ func main() {
 	certOut := flag.String("cert-out", "", "write process-scoped CA certificate here")
 	keyOut := flag.String("key-out", "", "write process-scoped TLS private key here")
 	scenario := flag.String("case", "valid", "OIDC result: valid, signature, issuer, audience, azp, nonce, expired, userinfo_subject, email_array, email_missing, rotation")
+	protocol := flag.String("protocol", "oidc", "fixture protocol: oidc or oauth2")
 	clientID := flag.String("client-id", "", "OAuth client ID (random if omitted)")
 	clientSecret := flag.String("client-secret", "", "OAuth client secret (random if omitted)")
 	flag.Parse()
-	if !validCase(*scenario) {
+	if (*protocol != "oidc" && *protocol != "oauth2") || (*protocol == "oidc" && !validCase(*scenario)) || (*protocol == "oauth2" && !validOAuth2Case(*scenario)) {
 		fmt.Fprintln(os.Stderr, "unsupported --case")
 		os.Exit(2)
 	}
@@ -74,9 +75,18 @@ func main() {
 		panic(err)
 	}
 	issuer := "https://" + listener.Addr().String()
-	fixture := newOIDCFixture(issuer, *clientID, *clientSecret, *scenario)
-	server := &http.Server{Handler: fixture.routes(), ReadHeaderTimeout: 5 * time.Second, TLSConfig: &tls.Config{Certificates: []tls.Certificate{cert}, MinVersion: tls.VersionTLS12}}
-	_ = json.NewEncoder(os.Stdout).Encode(map[string]string{"issuer_url": issuer, "client_id": *clientID, "client_secret": *clientSecret, "ca_cert": *certOut, "case": *scenario})
+	var handler http.Handler
+	startup := map[string]string{"issuer_url": issuer, "client_id": *clientID, "client_secret": *clientSecret, "ca_cert": *certOut, "case": *scenario, "protocol": *protocol}
+	if *protocol == "oauth2" {
+		handler = newOAuth2Fixture(issuer, *clientID, *clientSecret, *scenario).routes()
+		startup["authorization_url"] = issuer + "/auth"
+		startup["token_url"] = issuer + "/token"
+		startup["userinfo_url"] = issuer + "/user"
+	} else {
+		handler = newOIDCFixture(issuer, *clientID, *clientSecret, *scenario).routes()
+	}
+	server := &http.Server{Handler: handler, ReadHeaderTimeout: 5 * time.Second, TLSConfig: &tls.Config{Certificates: []tls.Certificate{cert}, MinVersion: tls.VersionTLS12}}
+	_ = json.NewEncoder(os.Stdout).Encode(startup)
 	if err := server.ServeTLS(listener, "", ""); err != nil && err != http.ErrServerClosed {
 		panic(err)
 	}
