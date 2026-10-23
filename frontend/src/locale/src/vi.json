@@ -729,6 +729,14 @@
 	"user.set-permissions": {
 		"defaultMessage": "Đặt quyền cho {name}"
 	},
+	"login.sso-administrator-password": { "defaultMessage": "Đăng nhập bằng mật khẩu quản trị viên" },
+	"login.sso-denied": { "defaultMessage": "Không thể hoàn tất đăng nhập một lần. Hãy liên hệ quản trị viên nếu bạn cần quyền truy cập." },
+	"login.sso-or": { "defaultMessage": "hoặc tiếp tục bằng đăng nhập một lần" },
+	"login.sso-unsupported-profile": { "defaultMessage": "Phản hồi từ nhà cung cấp danh tính dùng hồ sơ SAML chưa được hỗ trợ." },
+	"logout.unconfirmed": { "defaultMessage": "Bạn đã đăng xuất khỏi thiết bị này, nhưng máy chủ chưa xác nhận thu hồi phiên." },
+	"pending-access.description": { "defaultMessage": "Tài khoản đã được liên kết nhưng quản trị viên chưa cấp quyền. Trang này sẽ tự động cập nhật." },
+	"pending-access.profile-unavailable": { "defaultMessage": "Bạn đã đăng nhập nhưng không thể tải trạng thái truy cập. Hãy thử lại hoặc đăng xuất." },
+	"pending-access.title": { "defaultMessage": "Đang chờ cấp quyền" },
 	"user.switch-dark": {
 		"defaultMessage": "Chuyển sang chế độ tối"
 	},

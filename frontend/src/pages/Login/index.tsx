@@ -1,12 +1,15 @@
 import { Field, Form, Formik } from "formik";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
+import { getAuthProviders } from "src/api/backend";
 import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import styles from "./index.module.css";
+import SSOButtons from "./SSOButtons";
 
 function TwoFactorForm() {
 	const codeRef = useRef<HTMLInputElement>(null);
@@ -167,8 +170,17 @@ function LoginForm() {
 }
 
 export default function Login() {
-	const { twoFactorChallenge } = useAuthState();
+	const { logoutUnconfirmed, twoFactorChallenge } = useAuthState();
 	const health = useHealth();
+	const [administratorPassword, setAdministratorPassword] = useState(false);
+	const providers = useQuery({
+		queryKey: ["auth-providers"],
+		queryFn: getAuthProviders,
+		retry: false,
+	});
+	const errorCode = new URL(window.location.href).searchParams.get("sso_error");
+	const showPassword =
+		providers.isError || providers.data?.mode === "parallel" || administratorPassword;
 
 	const getVersion = () => {
 		if (!health.data) {
@@ -193,7 +205,38 @@ export default function Login() {
 					</div>
 				</div>
 				<div className="card card-md">
-					<div className="card-body">{twoFactorChallenge ? <TwoFactorForm /> : <LoginForm />}</div>
+					<div className="card-body">
+						{logoutUnconfirmed ? <Alert variant="warning"><T id="logout.unconfirmed" /></Alert> : null}
+						{errorCode ? (
+							<Alert variant="danger">
+								<T
+									id={
+										errorCode === "sso_saml_unsupported_profile"
+											? "login.sso-unsupported-profile"
+											: "login.sso-denied"
+									}
+								/>
+							</Alert>
+						) : null}
+						{twoFactorChallenge ? (
+							<TwoFactorForm />
+						) : (
+							<>
+								{showPassword ? <LoginForm /> : null}
+								{providers.data &&
+								(providers.data.connections.length > 0 ||
+									(providers.data.mode === "sso_only" && providers.data.passwordLoginAvailable)) ? (
+									<>
+										{showPassword ? <div className="hr-text"><T id="login.sso-or" /></div> : null}
+										<SSOButtons
+											providers={providers.data}
+											onAdministratorPassword={() => setAdministratorPassword(true)}
+										/>
+									</>
+								) : null}
+							</>
+						)}
+					</div>
 				</div>
 				<div className="text-center text-secondary mt-3">{getVersion()}</div>
 			</div>

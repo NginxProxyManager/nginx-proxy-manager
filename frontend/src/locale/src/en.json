@@ -957,6 +957,14 @@
 	"user.two-factor": {
 		"defaultMessage": "Two-Factor Auth"
 	},
+	"login.sso-administrator-password": { "defaultMessage": "Administrator password login" },
+	"login.sso-denied": { "defaultMessage": "Single sign-on could not be completed. Contact an administrator if you should have access." },
+	"login.sso-or": { "defaultMessage": "or continue with single sign-on" },
+	"login.sso-unsupported-profile": { "defaultMessage": "This identity provider response uses an unsupported SAML profile." },
+	"logout.unconfirmed": { "defaultMessage": "You are signed out on this device, but the server could not confirm session revocation." },
+	"pending-access.description": { "defaultMessage": "Your account is linked, but an administrator has not granted access yet. This page will update automatically." },
+	"pending-access.profile-unavailable": { "defaultMessage": "Your account is signed in, but its access status could not be loaded. Try again or sign out." },
+	"pending-access.title": { "defaultMessage": "Waiting for access" },
 	"username": {
 		"defaultMessage": "Username"
 	},

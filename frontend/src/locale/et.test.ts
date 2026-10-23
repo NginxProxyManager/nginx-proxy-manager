@@ -9,6 +9,14 @@ const estonian = et as Record<string, { defaultMessage: string }>;
 // source copy. Other locales intentionally use the established English fallback.
 const fallbackPrefixes = ["settings.sso."];
 const fallbackKeys = new Set([
+	"login.sso-administrator-password",
+	"login.sso-denied",
+	"login.sso-or",
+	"login.sso-unsupported-profile",
+	"logout.unconfirmed",
+	"pending-access.description",
+	"pending-access.profile-unavailable",
+	"pending-access.title",
 	"permissions.capabilities",
 	"permissions.certificate-authorities",
 	"permissions.dns-providers",

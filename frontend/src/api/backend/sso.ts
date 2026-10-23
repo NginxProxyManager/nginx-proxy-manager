@@ -1,4 +1,5 @@
 import * as api from "./base";
+import type { TokenResponse } from "./responseTypes";
 
 export type SSOProtocol = "oidc" | "oauth2" | "saml";
 export type SSOLoginMode = "parallel" | "sso_only";
@@ -83,6 +84,18 @@ export interface SSOLegacyStatus {
 	conversionAvailable: boolean;
 }
 
+export interface AuthProviderConnection {
+	id: string;
+	name: string;
+	protocol: SSOProtocol;
+}
+
+export interface AuthProviders {
+	mode: SSOLoginMode;
+	passwordLoginAvailable: boolean;
+	connections: AuthProviderConnection[];
+}
+
 const result = <T>(response: { result: T }): T => response.result;
 
 export async function getSSOPolicy(): Promise<SSOPolicy> {
@@ -132,4 +145,16 @@ export async function getSSOLegacyStatus(): Promise<SSOLegacyStatus> {
 
 export async function importLegacySSO(): Promise<SSOConnection> {
 	return result(await api.post({ url: "/sso/legacy-import", data: {} }));
+}
+
+export async function getAuthProviders(): Promise<AuthProviders> {
+	return result(await api.get({ url: "/auth/providers" }));
+}
+
+export async function exchangeSSOHandoff(code: string): Promise<TokenResponse> {
+	return result(await api.post({ url: "/auth/sso/exchange", data: { code }, noAuth: true }));
+}
+
+export async function logoutSession(): Promise<void> {
+	await api.post({ url: "/auth/logout", data: {}, suppressAuthInvalidation: true });
 }

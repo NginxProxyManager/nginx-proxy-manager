@@ -1,15 +1,18 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createContext, type ReactNode, useContext, useState } from "react";
+import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
 import { useIntervalWhen } from "rooks";
 import {
 	getToken,
+	exchangeSSOHandoff,
 	isTwoFactorChallenge,
 	loginAsUser,
+	logoutSession,
 	refreshToken,
 	type TokenResponse,
 	verify2FA,
 } from "src/api/backend";
-import AuthStore from "src/modules/AuthStore";
+import { AUTH_INVALIDATED_EVENT } from "src/api/backend/base";
+import AuthStore, { TOKEN_KEY } from "src/modules/AuthStore";
 
 // 2FA challenge state
 export interface TwoFactorChallenge {
@@ -24,7 +27,9 @@ export interface AuthContextType {
 	verifyTwoFactor: (code: string) => Promise<void>;
 	cancelTwoFactor: () => void;
 	loginAs: (id: number) => Promise<void>;
-	logout: () => void;
+	completeSSO: (code: string) => Promise<void>;
+	logout: () => Promise<void>;
+	logoutUnconfirmed: boolean;
 	token?: string;
 }
 
@@ -40,11 +45,13 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 	const queryClient = useQueryClient();
 	const [authenticated, setAuthenticated] = useState(AuthStore.hasActiveToken());
 	const [twoFactorChallenge, setTwoFactorChallenge] = useState<TwoFactorChallenge | null>(null);
+	const [logoutUnconfirmed, setLogoutUnconfirmed] = useState(false);
 
 	const handleTokenUpdate = (response: TokenResponse) => {
 		AuthStore.set(response);
 		setAuthenticated(true);
 		setTwoFactorChallenge(null);
+		setLogoutUnconfirmed(false);
 	};
 
 	const login = async (type: string, identity: string, secret: string) => {
@@ -75,11 +82,15 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		window.location.reload();
 	};
 
-	const logout = () => {
+	const completeSSO = async (code: string) => {
+		const response = await exchangeSSOHandoff(code);
+		handleTokenUpdate(response);
+	};
+
+	const clearCurrentSession = () => {
 		if (AuthStore.count() >= 2) {
 			AuthStore.drop();
 			queryClient.clear();
-			window.location.reload();
 			return;
 		}
 		AuthStore.clear();
@@ -87,20 +98,56 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		queryClient.clear();
 	};
 
+	const logout = async () => {
+		let failure: unknown;
+		try {
+			await logoutSession();
+		} catch (err) {
+			failure = err;
+		}
+		clearCurrentSession();
+		setAuthenticated(AuthStore.hasActiveToken());
+		if (failure) {
+			setLogoutUnconfirmed(true);
+			throw new Error("logout_unconfirmed");
+		}
+		setLogoutUnconfirmed(false);
+	};
+
 	const refresh = async () => {
 		const response = await refreshToken();
-		handleTokenUpdate(response);
+		AuthStore.replaceTop(response);
+		setAuthenticated(true);
 	};
 
 	useIntervalWhen(
 		() => {
 			if (authenticated) {
-				refresh();
+				void refresh().catch(() => undefined);
 			}
 		},
 		tokenRefreshInterval,
 		true,
 	);
+
+	useEffect(() => {
+		const invalidate = () => {
+			AuthStore.clear();
+			queryClient.clear();
+			setAuthenticated(false);
+		};
+		const syncStorage = (event: StorageEvent) => {
+			if (event.key !== TOKEN_KEY) return;
+			queryClient.clear();
+			setAuthenticated(AuthStore.hasActiveToken());
+		};
+		window.addEventListener(AUTH_INVALIDATED_EVENT, invalidate);
+		window.addEventListener("storage", syncStorage);
+		return () => {
+			window.removeEventListener(AUTH_INVALIDATED_EVENT, invalidate);
+			window.removeEventListener("storage", syncStorage);
+		};
+	}, [queryClient]);
 
 	const value = {
 		authenticated,
@@ -109,7 +156,9 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		verifyTwoFactor,
 		cancelTwoFactor,
 		loginAs,
+		completeSSO,
 		logout,
+		logoutUnconfirmed,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -70,6 +70,18 @@ export class AuthStore {
 		localStorage.setItem(TOKEN_KEY, JSON.stringify(t));
 	}
 
+	// Refresh only the active session. This preserves the parent token while
+	// an administrator is impersonating another user.
+	replaceTop({ token, expires }: TokenResponse) {
+		const t = this.tokens;
+		if (!t.length) {
+			this.set({ token, expires });
+			return;
+		}
+		t[t.length - 1] = { token, expires };
+		localStorage.setItem(TOKEN_KEY, JSON.stringify(t));
+	}
+
 	// Drop a token from the END of the stack
 	drop() {
 		const t = this.tokens;

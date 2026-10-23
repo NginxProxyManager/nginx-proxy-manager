@@ -1,10 +1,9 @@
-import { QueryClient } from "@tanstack/react-query";
 import { camelizeKeys, decamelize, decamelizeKeys } from "humps";
 import queryString, { type StringifiableRecord } from "query-string";
 import AuthStore from "src/modules/AuthStore";
 
-const queryClient = new QueryClient();
 const contentTypeHeader = "Content-Type";
+export const AUTH_INVALIDATED_EVENT = "npm:auth-invalidated";
 
 interface BuildUrlArgs {
 	url: string;
@@ -46,14 +45,14 @@ function buildBody(data?: Record<string, any>): string | undefined {
 	}
 }
 
-async function processResponse(response: Response, skipCamelize = false) {
+async function processResponse(response: Response, skipCamelize = false, invalidateAuth = true) {
 	const payload = await response.json();
 	if (!response.ok) {
-		if (response.status === 401) {
-			// Force logout user and reload the page if Unauthorized
+		if (response.status === 401 && invalidateAuth) {
+			// The AuthProvider owns the application's actual QueryClient. Notify it
+			// instead of clearing an unrelated client created in this module.
 			AuthStore.clear();
-			queryClient.clear();
-			window.location.reload();
+			window.dispatchEvent(new Event(AUTH_INVALIDATED_EVENT));
 		}
 		throw new Error(
 			typeof payload.error.messageI18n !== "undefined" ? payload.error.messageI18n : payload.error.message,
@@ -98,9 +97,10 @@ interface PostArgs {
 	data?: any;
 	noAuth?: boolean;
 	skipCamelize?: boolean;
+	suppressAuthInvalidation?: boolean;
 }
 
-export async function post({ url, params, data, noAuth, skipCamelize }: PostArgs) {
+export async function post({ url, params, data, noAuth, skipCamelize, suppressAuthInvalidation }: PostArgs) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "POST";
 
@@ -125,8 +125,8 @@ export async function post({ url, params, data, noAuth, skipCamelize }: PostArgs
 		body = buildBody(data);
 	}
 
-	const response = await fetch(apiUrl, { method, headers, body });
-	return processResponse(response, skipCamelize);
+	const response = await fetch(apiUrl, { method, headers, body, credentials: "same-origin" });
+	return processResponse(response, skipCamelize, !noAuth && !suppressAuthInvalidation);
 }
 
 interface PutArgs {
