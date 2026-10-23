@@ -7,6 +7,23 @@ import AllowlistForm from "./AllowlistForm";
 import ConnectionForm from "./ConnectionForm";
 import PolicyForm from "./PolicyForm";
 
+const errorMessages: Record<string, string> = {
+	sso_revision_conflict: "settings.sso.revisionConflict",
+	sso_invalid_configuration: "settings.sso.errorInvalidConfiguration",
+	sso_key_restore_required: "settings.sso.errorKeyRestoreRequired",
+	sso_configuration_unavailable: "settings.sso.errorUnavailable",
+	sso_probe_failed: "settings.sso.errorProbeFailed",
+	sso_oidc_probe_not_ready: "settings.sso.errorProbeNotReady",
+	sso_oauth2_probe_not_ready: "settings.sso.errorProbeNotReady",
+	sso_saml_probe_not_ready: "settings.sso.errorProbeNotReady",
+	sso_protocol_unavailable: "settings.sso.errorProtocolUnavailable",
+};
+
+const errorMessageID = (error: unknown) =>
+	error instanceof Error && errorMessages[error.message]
+		? errorMessages[error.message]
+		: "settings.sso.errorGeneric";
+
 export default function SSOSettings() {
 	const settings = useSSOSettings();
 	const [selectedID, setSelectedID] = useState<string>();
@@ -23,21 +40,20 @@ export default function SSOSettings() {
 		settings.importLegacy.isPending;
 	const selected = settings.connections.data?.find((connection) => connection.id === selectedID);
 
-	const perform = async (operation: () => Promise<unknown>, success?: string) => {
+	const perform = async <T,>(operation: () => Promise<T>, success?: string) => {
 		setMessage(undefined);
 		try {
-			await operation();
+			const value = await operation();
 			if (success) setMessage({ type: "success", id: success });
+			return { ok: true as const, value };
 		} catch (error) {
 			if (error instanceof Error && error.message === "sso_revision_conflict") {
 				await settings.refetchAll();
 				setMessage({ type: "danger", id: "settings.sso.revisionConflict" });
-				return;
+				return { ok: false as const };
 			}
-			setMessage({
-				type: "danger",
-				id: error instanceof Error ? error.message : "sso_configuration_unavailable",
-			});
+			setMessage({ type: "danger", id: errorMessageID(error) });
+			return { ok: false as const };
 		}
 	};
 
@@ -52,7 +68,9 @@ export default function SSOSettings() {
 	if (queryError || !settings.policy.data || !settings.allowlist.data || !settings.connections.data) {
 		return (
 			<div className="card-body">
-				<Alert variant="danger">{queryError?.message || "sso_configuration_unavailable"}</Alert>
+				<Alert variant="danger">
+					<T id={errorMessageID(queryError)} />
+				</Alert>
 			</div>
 		);
 	}
@@ -70,7 +88,9 @@ export default function SSOSettings() {
 			<PolicyForm
 				policy={settings.policy.data}
 				busy={busy}
-				onSave={(value) => perform(() => settings.updatePolicy.mutateAsync(value), "settings.sso.saved")}
+				onSave={async (value) => {
+					await perform(() => settings.updatePolicy.mutateAsync(value), "settings.sso.saved");
+				}}
 			/>
 
 			<section className="card mb-3">
@@ -115,17 +135,27 @@ export default function SSOSettings() {
 						publicUrl={settings.policy.data.publicUrl}
 						busy={busy}
 						onSave={async (value) => {
-							await perform(() => settings.saveConnection.mutateAsync(value), "settings.sso.saved");
-							setAdding(false);
+							const result = await perform(
+								() => settings.saveConnection.mutateAsync(value),
+								"settings.sso.saved",
+							);
+							if (result.ok) setAdding(false);
+							return result.ok;
 						}}
 						onDelete={async (value) => {
-							await perform(() => settings.deleteConnection.mutateAsync(value), "settings.sso.deleted");
-							setSelectedID(undefined);
+							const result = await perform(
+								() => settings.deleteConnection.mutateAsync(value),
+								"settings.sso.deleted",
+							);
+							if (result.ok) setSelectedID(undefined);
 						}}
-						onTest={(id) =>
-							perform(() => settings.testConnection.mutateAsync(id), "settings.sso.testPassed")
-						}
-						onPreview={(config) => settings.previewSAML.mutateAsync(config)}
+						onTest={async (id) => {
+							await perform(() => settings.testConnection.mutateAsync(id), "settings.sso.testPassed");
+						}}
+						onPreview={async (config) => {
+							const result = await perform(() => settings.previewSAML.mutateAsync(config));
+							return result.ok ? result.value : undefined;
+						}}
 					/>
 				)}
 			</section>
@@ -133,7 +163,9 @@ export default function SSOSettings() {
 			<AllowlistForm
 				allowlist={settings.allowlist.data}
 				busy={busy}
-				onSave={(value) => perform(() => settings.updateAllowlist.mutateAsync(value), "settings.sso.saved")}
+				onSave={async (value) => {
+					await perform(() => settings.updateAllowlist.mutateAsync(value), "settings.sso.saved");
+				}}
 			/>
 
 			{settings.legacyStatus.data?.conversionAvailable && (

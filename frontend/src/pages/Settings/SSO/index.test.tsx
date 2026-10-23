@@ -43,6 +43,7 @@ const { state } = vi.hoisted(() => ({
 			},
 		],
 		legacyStatus: { conversionAvailable: true },
+		queryError: null as Error | null,
 		updatePolicy: vi.fn(),
 		updateAllowlist: vi.fn(),
 		saveConnection: vi.fn(),
@@ -56,7 +57,7 @@ const { state } = vi.hoisted(() => ({
 
 vi.mock("src/hooks/useSSO", () => ({
 	useSSOSettings: () => ({
-		policy: { data: state.policy, isLoading: false, error: null },
+		policy: { data: state.policy, isLoading: false, error: state.queryError },
 		allowlist: { data: state.allowlist, isLoading: false, error: null },
 		connections: { data: state.connections, isLoading: false, error: null },
 		legacyStatus: { data: state.legacyStatus, isLoading: false, error: null },
@@ -138,6 +139,7 @@ function renderPage() {
 
 describe("SSO settings", () => {
 	beforeEach(() => {
+		state.queryError = null;
 		for (const mock of [
 			state.updatePolicy,
 			state.updateAllowlist,
@@ -257,6 +259,8 @@ describe("SSO settings", () => {
 
 		expect(await screen.findByText("Reviewed identity provider metadata")).toBeVisible();
 		expect(screen.getByText("aa11")).toBeVisible();
+		expect(screen.getByText("Effective request signing")).toBeVisible();
+		expect(screen.getByText("Required by identity provider metadata")).toBeVisible();
 		expect(screen.getByText(/BEGIN CERTIFICATE/)).toBeVisible();
 		fireEvent.click(
 			within(screen.getByRole("form", { name: "SSO connection" })).getByRole("button", { name: "Save" }),
@@ -271,6 +275,54 @@ describe("SSO settings", () => {
 				}),
 			),
 		);
+	});
+
+	it("clears a consumed SAML trust token only after a successful save", async () => {
+		state.previewSAML.mockResolvedValueOnce({
+			entityId: "https://idp.example.test/entity",
+			ssoUrl: "https://idp.example.test/sso",
+			certificateFingerprints: ["cc33"],
+			signRequests: true,
+			importToken: "single-use-review-token",
+		});
+		renderPage();
+		fireEvent.click(screen.getByText("Partner SAML"));
+		fireEvent.click(screen.getByRole("button", { name: "Preview metadata" }));
+		expect(await screen.findByText("cc33")).toBeVisible();
+		const form = screen.getByRole("form", { name: "SSO connection" });
+		fireEvent.click(within(form).getByRole("button", { name: "Save" }));
+		await waitFor(() => expect(state.saveConnection).toHaveBeenCalledTimes(1));
+		fireEvent.change(screen.getByLabelText("Display name"), { target: { value: "Renamed SAML" } });
+		fireEvent.click(within(form).getByRole("button", { name: "Save" }));
+		await waitFor(() => expect(state.saveConnection).toHaveBeenCalledTimes(2));
+		expect(state.saveConnection.mock.calls[0][0]).toHaveProperty("samlImportToken", "single-use-review-token");
+		expect(state.saveConnection.mock.calls[1][0]).not.toHaveProperty("samlImportToken");
+	});
+
+	it("localizes known initial and preview failures without exposing raw codes", async () => {
+		state.queryError = new Error("sso_key_restore_required");
+		const first = renderPage();
+		expect(screen.getByText(/restore the SSO installation key/i)).toBeVisible();
+		expect(screen.queryByText("sso_key_restore_required")).not.toBeInTheDocument();
+		first.unmount();
+
+		state.queryError = null;
+		state.previewSAML.mockRejectedValueOnce(new Error("sso_probe_failed"));
+		renderPage();
+		fireEvent.click(screen.getByText("Partner SAML"));
+		fireEvent.click(screen.getByRole("button", { name: "Preview metadata" }));
+		expect(await screen.findByText(/provider could not be reached/i)).toBeVisible();
+		expect(screen.queryByText("sso_probe_failed")).not.toBeInTheDocument();
+	});
+
+	it("uses a localized generic fallback for unknown backend errors", async () => {
+		state.updatePolicy.mockRejectedValueOnce(new Error("database provider secret detail"));
+		renderPage();
+		fireEvent.click(
+			within(screen.getByRole("form", { name: "Login policy" })).getByRole("button", { name: "Save" }),
+		);
+		expect(await screen.findByText(/unable to load or save SSO settings/i)).toBeVisible();
+		expect(screen.queryByText("database provider secret detail")).not.toBeInTheDocument();
 	});
 
 	it("invalidates reviewed SAML trust after a security-setting edit", async () => {
@@ -335,6 +387,25 @@ describe("SSO settings", () => {
 		fireEvent.click(screen.getByText("Partner SAML"));
 		fireEvent.click(screen.getByRole("button", { name: "Remove connection" }));
 		await waitFor(() => expect(state.deleteConnection).toHaveBeenCalledWith({ id: "saml-one", revision: 1 }));
+	});
+
+	it("keeps create and delete editors open when their mutation fails", async () => {
+		state.deleteConnection.mockRejectedValueOnce(new Error("sso_configuration_unavailable"));
+		renderPage();
+		fireEvent.click(screen.getByText("Partner SAML"));
+		fireEvent.click(screen.getByRole("button", { name: "Remove connection" }));
+		expect(await screen.findByDisplayValue("Partner SAML")).toBeVisible();
+
+		state.saveConnection.mockRejectedValueOnce(new Error("sso_invalid_configuration"));
+		fireEvent.click(screen.getByRole("button", { name: "Add connection" }));
+		fireEvent.change(screen.getByLabelText("Display name"), { target: { value: "Failed OIDC" } });
+		fireEvent.change(screen.getByLabelText("Issuer URL"), { target: { value: "https://idp.example.test" } });
+		fireEvent.change(screen.getByLabelText("Client ID"), { target: { value: "npm" } });
+		fireEvent.change(screen.getByLabelText("Client secret"), { target: { value: "temporary-secret" } });
+		fireEvent.click(
+			within(screen.getByRole("form", { name: "SSO connection" })).getByRole("button", { name: "Save" }),
+		);
+		expect(await screen.findByDisplayValue("Failed OIDC")).toBeVisible();
 	});
 
 	it("saves disabling as an explicit revisioned connection update", async () => {

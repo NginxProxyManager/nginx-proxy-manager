@@ -33,8 +33,12 @@ export default function PolicyForm({ policy, busy, onSave }: Props) {
 									value={values.mode}
 									onChange={handleChange}
 								>
-									<option value="parallel">Password and SSO</option>
-									<option value="sso_only">SSO only</option>
+									<option value="parallel">
+										{intl.formatMessage({ id: "settings.sso.modeParallel" })}
+									</option>
+									<option value="sso_only">
+										{intl.formatMessage({ id: "settings.sso.modeSSOOnly" })}
+									</option>
 								</select>
 							</div>
 							<div>

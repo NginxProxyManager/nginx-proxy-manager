@@ -161,10 +161,10 @@ interface Props {
 	connection?: SSOConnection;
 	publicUrl: string;
 	busy: boolean;
-	onSave: (value: SSOConnectionInput) => Promise<void>;
+	onSave: (value: SSOConnectionInput) => Promise<boolean>;
 	onDelete: (value: Pick<SSOConnection, "id" | "revision">) => Promise<void>;
 	onTest: (id: string) => Promise<void>;
-	onPreview: (config: SAMLConfig) => Promise<SSOMetadataPreview>;
+	onPreview: (config: SAMLConfig) => Promise<SSOMetadataPreview | undefined>;
 }
 
 export default function ConnectionForm({ connection, publicUrl, busy, onSave, onDelete, onTest, onPreview }: Props) {
@@ -207,7 +207,7 @@ export default function ConnectionForm({ connection, publicUrl, busy, onSave, on
 				if (values.secretAction === "replace" && values.protocol !== "saml")
 					input.secretValue = values.secretValue;
 				if (preview?.importToken && values.protocol === "saml") input.samlImportToken = preview.importToken;
-				await onSave(input);
+				if (await onSave(input)) setPreview(undefined);
 			}}
 		>
 			{({ values, handleChange, setFieldValue }) => {
@@ -537,9 +537,10 @@ export default function ConnectionForm({ connection, publicUrl, busy, onSave, on
 										</span>
 									</div>
 									<Button
-										onClick={async () =>
-											setPreview(await onPreview(configFrom(values) as SAMLConfig))
-										}
+										onClick={async () => {
+											const nextPreview = await onPreview(configFrom(values) as SAMLConfig);
+											if (nextPreview) setPreview(nextPreview);
+										}}
 										disabled={busy || !required(values)}
 									>
 										<T id="settings.sso.preview" />
@@ -551,6 +552,18 @@ export default function ConnectionForm({ connection, publicUrl, busy, onSave, on
 											</strong>
 											<div>{preview.entityId}</div>
 											<div>{preview.ssoUrl}</div>
+											<div>
+												<T id="settings.sso.effectiveSigning" />:{" "}
+												<strong>
+													<T
+														id={
+															preview.signRequests
+																? "settings.sso.signingRequired"
+																: "settings.sso.signingNotRequired"
+														}
+													/>
+												</strong>
+											</div>
 											{preview.certificateFingerprints.map((value) => (
 												<code className="d-block" key={value}>
 													{value}
