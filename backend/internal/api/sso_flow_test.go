@@ -93,6 +93,12 @@ func TestBrowserSSOFlowThroughRouter(t *testing.T) {
 	providers := request(http.MethodGet, "/api/auth/providers", "")
 	require.Equal(t, 200, providers.Code, providers.Body.String())
 	require.Contains(t, providers.Body.String(), `"password_login_available":true`)
+	require.NoError(t, db.Model(&ssoconfig.Policy{}).Where("id = ?", 1).Update("mode", ssoconfig.SSOOnly).Error)
+	adminRecovery := request(http.MethodGet, "/api/auth/providers", "")
+	require.Equal(t, 200, adminRecovery.Code, adminRecovery.Body.String())
+	require.Contains(t, adminRecovery.Body.String(), `"mode":"sso_only"`)
+	require.Contains(t, adminRecovery.Body.String(), `"password_login_available":true`)
+	require.NoError(t, db.Model(&ssoconfig.Policy{}).Where("id = ?", 1).Update("mode", ssoconfig.Parallel).Error)
 	require.NotContains(t, providers.Body.String(), "client_id")
 	require.Equal(t, 405, request(http.MethodPost, "/api/auth/providers", "").Code)
 	require.Equal(t, 405, request(http.MethodGet, "/api/auth/sso/exchange", "").Code)
@@ -110,6 +116,19 @@ func TestBrowserSSOFlowThroughRouter(t *testing.T) {
 	require.Equal(t, "/login?sso_error=sso_login_denied", missing.Header().Get("Location"))
 	callback := request(http.MethodGet, callbackPath, "", attempt)
 	require.Equal(t, 303, callback.Code, callback.Body.String())
+	attemptCleared := false
+	for _, cookie := range callback.Result().Cookies() {
+		if cookie.Name == attempt.Name {
+			attemptCleared = true
+			require.Equal(t, "/", cookie.Path)
+			require.True(t, cookie.Secure)
+			require.True(t, cookie.HttpOnly)
+			require.Equal(t, http.SameSiteLaxMode, cookie.SameSite)
+			require.Empty(t, cookie.Domain)
+			require.Negative(t, cookie.MaxAge)
+		}
+	}
+	require.True(t, attemptCleared)
 	require.Equal(t, "no-store", callback.Header().Get("Cache-Control"))
 	require.Equal(t, "no-referrer", callback.Header().Get("Referrer-Policy"))
 	require.NotContains(t, callback.Header().Get("Location"), "token")
@@ -138,6 +157,15 @@ func TestBrowserSSOFlowThroughRouter(t *testing.T) {
 	require.Equal(t, 403, crossResult.Code)
 	exchange := request(http.MethodPost, "/api/auth/sso/exchange", `{"code":"`+code+`"}`, handoff)
 	require.Equal(t, 200, exchange.Code, exchange.Body.String())
+	require.Len(t, exchange.Result().Cookies(), 1)
+	deletedHandoff := exchange.Result().Cookies()[0]
+	require.Equal(t, handoff.Name, deletedHandoff.Name)
+	require.Equal(t, "/", deletedHandoff.Path)
+	require.True(t, deletedHandoff.Secure)
+	require.True(t, deletedHandoff.HttpOnly)
+	require.Equal(t, http.SameSiteLaxMode, deletedHandoff.SameSite)
+	require.Empty(t, deletedHandoff.Domain)
+	require.Negative(t, deletedHandoff.MaxAge)
 	var envelope struct {
 		Result jwt.GeneratedResponse `json:"result"`
 	}
@@ -161,6 +189,18 @@ func TestBrowserSSOFlowThroughRouter(t *testing.T) {
 	acs := httptest.NewRecorder()
 	router.ServeHTTP(acs, acsRequest)
 	require.Equal(t, 303, acs.Code, acs.Body.String())
+	samlAttemptCleared := false
+	for _, cookie := range acs.Result().Cookies() {
+		if cookie.Name == samlStart.Result().Cookies()[0].Name {
+			samlAttemptCleared = true
+			require.Equal(t, "/", cookie.Path)
+			require.True(t, cookie.Secure)
+			require.True(t, cookie.HttpOnly)
+			require.Equal(t, http.SameSiteNoneMode, cookie.SameSite)
+			require.Negative(t, cookie.MaxAge)
+		}
+	}
+	require.True(t, samlAttemptCleared)
 	require.Contains(t, acs.Header().Get("Location"), "sso_handoff=")
 	require.Equal(t, 413, request(http.MethodPost, "/sso/"+samlID+"/acs", strings.Repeat("x", (1<<20)+1), samlStart.Result().Cookies()[0]).Code)
 	require.NoError(t, db.Model(&ssoconfig.Connection{}).Where("id = ?", samlID).Update("enabled", false).Error)

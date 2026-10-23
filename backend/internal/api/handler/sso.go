@@ -50,6 +50,8 @@ func SSOProviders() http.HandlerFunc {
 			h.ResultErrorJSON(w, r, http.StatusServiceUnavailable, "sso_configuration_unavailable", nil)
 			return
 		}
+		// SSO-only retains an administrator password escape hatch. Discovery
+		// advertises the option without revealing which accounts qualify.
 		out := struct {
 			Mode        ssoconfig.LoginMode `json:"mode"`
 			Password    bool                `json:"password_login_available"`
@@ -58,7 +60,7 @@ func SSOProviders() http.HandlerFunc {
 				Name     string             `json:"name"`
 				Protocol ssoconfig.Protocol `json:"protocol"`
 			} `json:"connections"`
-		}{Mode: policy.Mode, Password: policy.Mode != ssoconfig.SSOOnly, Connections: make([]struct {
+		}{Mode: policy.Mode, Password: true, Connections: make([]struct {
 			ID       string             `json:"id"`
 			Name     string             `json:"name"`
 			Protocol ssoconfig.Protocol `json:"protocol"`
@@ -149,7 +151,11 @@ func SSOCallback() http.HandlerFunc {
 			return
 		}
 		// A callback consumes its own attempt; another browser tab keeps its cookie.
-		http.SetCookie(w, protocols.DeleteCookie(cookie))
+		sameSite := http.SameSiteLaxMode
+		if r.Method == http.MethodPost {
+			sameSite = http.SameSiteNoneMode
+		}
+		http.SetCookie(w, protocols.DeleteCookie(cookie, sameSite))
 		code, err := service.Complete(r.Context(), id, cookie.Value, r)
 		if err != nil {
 			codeName := "sso_login_denied"
@@ -220,7 +226,7 @@ func SSOExchange() http.HandlerFunc {
 			h.ResultErrorJSON(w, r, http.StatusForbidden, "sso_login_denied", nil)
 			return
 		}
-		http.SetCookie(w, protocols.DeleteCookie(cookie))
+		http.SetCookie(w, protocols.DeleteCookie(cookie, http.SameSiteLaxMode))
 		model, err := service.Exchange(r.Context(), input.Code, cookie.Value)
 		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusForbidden, "sso_login_denied", nil)
@@ -235,8 +241,7 @@ func SSOExchange() http.HandlerFunc {
 	}
 }
 
-// A browser supplied Origin or Referer must match the trusted policy origin.
-// Non-browser Bearer clients can omit both headers.
+// Exchange requires an Origin or Referer matching the trusted policy origin.
 func sameSSOOrigin(r *http.Request) bool {
 	if database.GetDB() == nil {
 		return false

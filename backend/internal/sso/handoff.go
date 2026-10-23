@@ -81,10 +81,9 @@ func AttemptCookie(attemptID, browserToken string, protocol ssoconfig.Protocol) 
 func HandoffCookie(code, browserToken string) *http.Cookie {
 	return &http.Cookie{Name: "__Host-npm-sso-handoff-" + hash(code), Value: browserToken, Path: "/", Secure: true, HttpOnly: true, SameSite: http.SameSiteLaxMode, MaxAge: 60}
 }
-func DeleteCookie(cookie *http.Cookie) *http.Cookie {
-	v := *cookie
-	v.Value = ""
-	v.MaxAge = -1
-	v.Expires = time.Unix(1, 0).UTC()
-	return &v
+func DeleteCookie(cookie *http.Cookie, sameSite http.SameSite) *http.Cookie {
+	return &http.Cookie{
+		Name: cookie.Name, Value: "", Path: "/", Secure: true, HttpOnly: true,
+		SameSite: sameSite, MaxAge: -1, Expires: time.Unix(1, 0).UTC(),
+	}
 }

@@ -144,12 +144,19 @@ func TestCookieScopesAndIndependentNames(t *testing.T) {
 		require.True(t, cookie.HttpOnly)
 		require.Empty(t, cookie.Domain)
 		require.Equal(t, token("b"), cookie.Value)
-		deleted := DeleteCookie(cookie)
+		deleted := DeleteCookie(cookie, cookie.SameSite)
 		require.Equal(t, cookie.Path, deleted.Path)
 		require.Equal(t, cookie.Name, deleted.Name)
 		require.Equal(t, -1, deleted.MaxAge)
 		require.Empty(t, deleted.Value)
 	}
+	fromBrowser := &http.Cookie{Name: saml.Name, Value: saml.Value}
+	deleted := DeleteCookie(fromBrowser, http.SameSiteNoneMode)
+	require.Equal(t, "/", deleted.Path)
+	require.True(t, deleted.Secure)
+	require.True(t, deleted.HttpOnly)
+	require.Empty(t, deleted.Domain)
+	require.Equal(t, http.SameSiteNoneMode, deleted.SameSite)
 }
 func TestAttemptLookupAndCallbackState(t *testing.T) {
 	f := fixture(t)
