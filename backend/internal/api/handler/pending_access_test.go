@@ -36,6 +36,8 @@ func TestOwnProfileContainsEmptyCapabilitiesWithoutExpansion(t *testing.T) {
 	GetUser()(w, r.WithContext(ctx))
 	require.Equal(t, http.StatusOK, w.Code)
 	require.Contains(t, w.Body.String(), `"capabilities":[]`)
+	require.Contains(t, w.Body.String(), `"has_local_credential":false`)
+	require.Contains(t, w.Body.String(), `"can_set_local_password":true`)
 }
 
 func TestSSOOriginCannotCreateOwnPassword(t *testing.T) {

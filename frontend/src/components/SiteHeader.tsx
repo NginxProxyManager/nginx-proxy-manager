@@ -4,13 +4,13 @@ import { useAuthState } from "src/context";
 import { useUser } from "src/hooks";
 import { T } from "src/locale";
 import { showChangePasswordModal, showTwoFactorModal, showUserModal } from "src/modals";
+import { FULL_ADMIN, hasCapability } from "src/modules/Permissions";
 import styles from "./SiteHeader.module.css";
 
 export function SiteHeader() {
 	const { data: currentUser } = useUser("me");
-	const isAdmin = currentUser?.roles?.includes("admin");
+	const isAdmin = hasCapability(currentUser?.capabilities, FULL_ADMIN);
 	const { logout } = useAuthState();
-console.log("currentUser", currentUser);
 	return (
 		<header className="navbar navbar-expand-md d-print-none">
 			<div className="container-xl">
@@ -89,7 +89,7 @@ console.log("currentUser", currentUser);
 									</div>
 									<div className="dropdown-divider" />
 								</div>
-								<a
+								{currentUser?.hasLocalCredential ? <a
 									href="?"
 									className="dropdown-item"
 									onClick={(e) => {
@@ -99,8 +99,8 @@ console.log("currentUser", currentUser);
 								>
 									<IconUser width={18} />
 									<T id="user.edit-profile" />
-								</a>
-								<a
+								</a> : null}
+								{currentUser?.hasLocalCredential ? <a
 									href="?"
 									className="dropdown-item"
 									onClick={(e) => {
@@ -110,7 +110,7 @@ console.log("currentUser", currentUser);
 								>
 									<IconLock width={18} />
 									<T id="user.change-password" />
-								</a>
+								</a> : null}
 								<a
 									href="?"
 									className="dropdown-item"

@@ -24,8 +24,10 @@ type Model struct {
 	IsDisabled           bool    `json:"is_disabled" gorm:"column:is_disabled" filter:"is_disabled,boolean"`
 	IsSystem             bool    `json:"is_system,omitempty" gorm:"column:is_system" filter:"is_system,boolean"`
 	NormalizedEmail      *string `json:"-" gorm:"column:normalized_email;size:254"`
-	AdminPasswordEnabled bool    `json:"admin_password_enabled" gorm:"column:admin_password_enabled"`
+	AdminPasswordEnabled bool    `json:"password_login_enabled" gorm:"column:admin_password_enabled"`
 	CredentialOrigin     string  `json:"-" gorm:"column:credential_origin;size:32"`
+	HasLocalCredential   bool    `json:"has_local_credential" gorm:"-"`
+	CanSetLocalPassword  bool    `json:"can_set_local_password" gorm:"-"`
 	// Other
 	GravatarURL string `json:"gravatar_url" gorm:"-"`
 	// Expansions
@@ -170,11 +172,6 @@ func (m *Model) SaveCapabilitiesInTx(db *gorm.DB) error {
 	// m.Capabilities
 	if m.ID == 0 {
 		return eris.Errorf("Cannot save capabilities on unsaved user")
-	}
-
-	// there must be at least 1 capability
-	if len(m.Capabilities) == 0 && m.CredentialOrigin != "sso" {
-		return eris.New("At least 1 capability required for a user")
 	}
 
 	// Get a full list of capabilities

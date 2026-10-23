@@ -15,6 +15,7 @@ import { T } from "src/locale";
 import {
 	ACCESS_LISTS,
 	ADMIN,
+	AUDIT_LOG,
 	CERTIFICATES,
 	DEAD_HOSTS,
 	type MANAGE,
@@ -22,7 +23,10 @@ import {
 	REDIRECTION_HOSTS,
 	type Section,
 	STREAMS,
+	SETTINGS,
+	USERS,
 	VIEW,
+	capabilityFor,
 } from "src/modules/Permissions";
 
 interface MenuItem {
@@ -88,13 +92,13 @@ const menuItems: MenuItem[] = [
 		to: "/users",
 		icon: IconUser,
 		label: "users",
-		permissionSection: ADMIN,
+		permissionSection: USERS,
 	},
 	{
 		to: "/audit-log",
 		icon: IconBook,
 		label: "auditlogs",
-		permissionSection: ADMIN,
+		permissionSection: AUDIT_LOG,
 	},
 	{
 		to: "/logs",
@@ -106,7 +110,7 @@ const menuItems: MenuItem[] = [
 		to: "/settings",
 		icon: IconSettings,
 		label: "settings",
-		permissionSection: ADMIN,
+		permissionSection: SETTINGS,
 	},
 ];
 
@@ -143,6 +147,7 @@ const getMenuDropown = (item: MenuItem, onClick?: () => void) => {
 			key={`item-${item.label}`}
 			section={item.permissionSection}
 			permission={item.permission || VIEW}
+			anyOf={item.items?.map((subitem) => capabilityFor(subitem.permissionSection as Section, subitem.permission || VIEW))}
 			hideError
 		>
 			<li className={cns}>

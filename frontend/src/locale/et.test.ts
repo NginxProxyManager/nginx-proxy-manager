@@ -5,9 +5,16 @@ import et from "./src/et.json";
 const english = en as Record<string, { defaultMessage: string }>;
 const estonian = et as Record<string, { defaultMessage: string }>;
 
-// SSO ships with English and Vietnamese source copy. Other locales intentionally
-// use IntlProvider's established English fallback until translators add them.
+// SSO and its capability-management additions ship with English and Vietnamese
+// source copy. Other locales intentionally use the established English fallback.
 const fallbackPrefixes = ["settings.sso."];
+const fallbackKeys = new Set([
+	"permissions.capabilities",
+	"permissions.certificate-authorities",
+	"permissions.dns-providers",
+	"permissions.nginx-templates",
+	"user.password-login-enabled",
+]);
 
 // Brand names, codes and ICU-only strings can stay the same as English.
 const allowedIdentical = new Set([
@@ -23,7 +30,10 @@ const allowedIdentical = new Set([
 describe("Estonian UI locale", () => {
 	it("covers every English UI key", () => {
 		const missing = Object.keys(english).filter(
-			(key) => !(key in estonian) && !fallbackPrefixes.some((prefix) => key.startsWith(prefix)),
+			(key) =>
+				!(key in estonian) &&
+				!fallbackKeys.has(key) &&
+				!fallbackPrefixes.some((prefix) => key.startsWith(prefix)),
 		);
 		expect(missing).toEqual([]);
 	});

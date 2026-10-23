@@ -46,7 +46,6 @@ export * from "./models";
 export * from "./refreshToken";
 export * from "./renewCertificate";
 export * from "./responseTypes";
-export * from "./setPermissions";
 export * from "./setupDatabase";
 export * from "./sso";
 export * from "./testHttpCertificate";

@@ -488,8 +488,23 @@
 	"permissions.manage": {
 		"defaultMessage": "Quản lý"
 	},
+	"permissions.capabilities": {
+		"defaultMessage": "Quyền hạn"
+	},
+	"permissions.certificate-authorities": {
+		"defaultMessage": "Nhà cấp chứng chỉ"
+	},
+	"permissions.dns-providers": {
+		"defaultMessage": "Nhà cung cấp DNS"
+	},
+	"permissions.nginx-templates": {
+		"defaultMessage": "Mẫu Nginx"
+	},
 	"permissions.view": {
 		"defaultMessage": "Chỉ xem"
+	},
+	"user.password-login-enabled": {
+		"defaultMessage": "Cho phép quản trị viên đăng nhập bằng mật khẩu"
 	},
 	"permissions.visibility.all": {
 		"defaultMessage": "Tất cả các mục"

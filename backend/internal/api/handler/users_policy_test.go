@@ -226,7 +226,7 @@ func TestUserProfileMutationRechecksCommittedPolicy(t *testing.T) {
 func TestSelfUpdateCannotPersistOrEchoRequestedPolicy(t *testing.T) {
 	db, sid := authSessionFixture(t)
 	require.NoError(t, db.Model(&user.HasCapabilityModel{}).Where("user_id = ?", 1).Update("capability_name", "certificates.view").Error)
-	req := userMutationRequest(t, sid, "me", `{"name":"Renamed","capabilities":["full-admin"],"admin_password_enabled":true}`)
+	req := userMutationRequest(t, sid, "me", `{"name":"Renamed","capabilities":["full-admin"]}`)
 	w := httptest.NewRecorder()
 	UpdateUser()(w, req)
 	require.Equal(t, 200, w.Code)
@@ -235,6 +235,13 @@ func TestSelfUpdateCannotPersistOrEchoRequestedPolicy(t *testing.T) {
 	require.False(t, actor.AdminPasswordEnabled)
 	require.NotContains(t, w.Body.String(), "full-admin")
 	require.Contains(t, w.Body.String(), "certificates.view")
+
+	req = userMutationRequest(t, sid, "me", `{"password_login_enabled":true}`)
+	w = httptest.NewRecorder()
+	UpdateUser()(w, req)
+	require.Equal(t, http.StatusForbidden, w.Code)
+	require.NoError(t, db.First(&actor, 1).Error)
+	require.False(t, actor.AdminPasswordEnabled)
 }
 
 func mutationPrincipal(t *testing.T, sid string) session.Principal {
@@ -310,4 +317,55 @@ func TestSelfFullAdminRemovalGuardUsesFreshCapabilities(t *testing.T) {
 	p, err := session.Authorize(context.Background(), sid, time.Now())
 	require.NoError(t, err)
 	require.Equal(t, []string{"full-admin"}, p.Capabilities)
+}
+
+func TestPasswordLoginToggleRequiresFullAdminActorAndTarget(t *testing.T) {
+	db, sid := authSessionFixture(t)
+	target := user.Model{Name: "Target", Email: "target@example.com", CredentialOrigin: "sso"}
+	require.NoError(t, db.Create(&target).Error)
+
+	request := func(body string) *httptest.ResponseRecorder {
+		w := httptest.NewRecorder()
+		UpdateUser()(w, userMutationRequest(t, sid, "2", body))
+		return w
+	}
+
+	w := request(`{"password_login_enabled":true}`)
+	require.Equal(t, http.StatusForbidden, w.Code, "a non-full-admin target cannot receive the exception")
+
+	require.NoError(t, db.Create(&user.HasCapabilityModel{UserID: target.ID, CapabilityName: user.CapabilityFullAdmin}).Error)
+	require.NoError(t, db.Model(&user.HasCapabilityModel{}).Where("user_id = ?", 1).Update("capability_name", user.CapabilityUsersManage).Error)
+	w = request(`{"password_login_enabled":true}`)
+	require.Equal(t, http.StatusForbidden, w.Code, "users.manage cannot control the full-admin password exception")
+
+	require.NoError(t, db.Model(&user.HasCapabilityModel{}).Where("user_id = ?", 1).Update("capability_name", user.CapabilityFullAdmin).Error)
+	w = request(`{"password_login_enabled":true}`)
+	require.Equal(t, http.StatusOK, w.Code)
+	require.NoError(t, db.First(&target, target.ID).Error)
+	require.True(t, target.AdminPasswordEnabled)
+}
+
+func TestAdminProvisioningTransitionsSSOCredentialOrigin(t *testing.T) {
+	db, sid := authSessionFixture(t)
+	require.NoError(t, db.AutoMigrate(&auth.Model{}))
+	target := user.Model{Name: "Pending SSO", Email: "pending-sso@example.com", CredentialOrigin: "sso"}
+	require.NoError(t, db.Create(&target).Error)
+	route := chi.NewRouteContext()
+	route.URLParams.Add("userID", "2")
+	req := httptest.NewRequest(http.MethodPost, "/api/users/2/auth", nil)
+	ctx := context.WithValue(req.Context(), chi.RouteCtxKey, route)
+	ctx = context.WithValue(ctx, c.UserIDCtxKey, uint(1))
+	ctx = session.WithPrincipal(ctx, mutationPrincipal(t, sid))
+	ctx = context.WithValue(ctx, c.BodyCtxKey, []byte(`{"type":"local","secret":"strong-passphrase"}`))
+	w := httptest.NewRecorder()
+	SetAuth()(w, req.WithContext(ctx))
+	require.Equal(t, http.StatusOK, w.Code)
+	require.NoError(t, db.First(&target, target.ID).Error)
+	require.Equal(t, "local", target.CredentialOrigin)
+	require.NoError(t, target.PopulateAccessFieldsInTx(db))
+	require.True(t, target.HasLocalCredential)
+	require.True(t, target.CanSetLocalPassword)
+	localAuth, err := auth.GetByUserIDType(target.ID, auth.TypeLocal)
+	require.NoError(t, err)
+	require.NoError(t, localAuth.ValidateSecret("strong-passphrase"))
 }

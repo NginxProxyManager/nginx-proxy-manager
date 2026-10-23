@@ -11,6 +11,7 @@ import (
 	"npm/internal/api/middleware"
 	"npm/internal/authpolicy"
 	"npm/internal/config"
+	"npm/internal/database"
 	"npm/internal/entity/auth"
 	"npm/internal/entity/session"
 	"npm/internal/entity/user"
@@ -39,6 +40,17 @@ func GetUsers() func(http.ResponseWriter, *http.Request) {
 		}
 
 		users, err := user.List(pageInfo, middleware.GetFiltersFromContext(r), middleware.GetExpandFromContext(r))
+		if err == nil {
+			if items, ok := users.Items.([]user.Model); ok {
+				for idx := range items {
+					if populateErr := items[idx].PopulateAccessFieldsInTx(database.GetDB()); populateErr != nil {
+						err = populateErr
+						break
+					}
+				}
+				users.Items = items
+			}
+		}
 		if err != nil {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		} else {
@@ -63,7 +75,10 @@ func GetUser() func(http.ResponseWriter, *http.Request) {
 			h.NotFound(w, r)
 		case nil:
 			// nolint: errcheck,gosec
-			item.Expand(middleware.GetExpandFromContext(r))
+			if err := item.PopulateAccessFieldsInTx(database.GetDB()); err != nil {
+				h.ResultErrorJSON(w, r, http.StatusInternalServerError, "Unable to load User", nil)
+				return
+			}
 			if chi.URLParam(r, "userID") == "me" {
 				if principal, ok := middleware.CurrentPrincipal(r.Context()); ok {
 					item.Capabilities = principal.Capabilities
@@ -123,10 +138,11 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 			// Merge only mutable API fields into the freshly loaded record. Self-service
 			// cannot persist policy fields or echo requested capabilities as actual grants.
 			var patch struct {
-				Name         *string   `json:"name"`
-				Email        *string   `json:"email"`
-				IsDisabled   *bool     `json:"is_disabled"`
-				Capabilities *[]string `json:"capabilities"`
+				Name                 *string   `json:"name"`
+				Email                *string   `json:"email"`
+				IsDisabled           *bool     `json:"is_disabled"`
+				Capabilities         *[]string `json:"capabilities"`
+				PasswordLoginEnabled *bool     `json:"password_login_enabled"`
 			}
 			body, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 			if err = json.Unmarshal(body, &patch); err != nil {
@@ -141,6 +157,17 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 				status, message = http.StatusBadRequest, "You cannot remove your own full-admin capability!"
 				return h.ErrInvalidPayload
 			}
+			if patch.PasswordLoginEnabled != nil {
+				targetCapabilities := userObject.Capabilities
+				if !self && patch.Capabilities != nil {
+					targetCapabilities = *patch.Capabilities
+				}
+				if self || !slices.Contains(actor.Capabilities, user.CapabilityFullAdmin) || !slices.Contains(targetCapabilities, user.CapabilityFullAdmin) {
+					status, message = http.StatusForbidden, "Forbidden"
+					return session.ErrUnauthorized
+				}
+				userObject.AdminPasswordEnabled = *patch.PasswordLoginEnabled
+			}
 			if patch.Name != nil {
 				userObject.Name = *patch.Name
 			}
@@ -152,6 +179,9 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 			}
 			if !self && patch.Capabilities != nil {
 				userObject.Capabilities = *patch.Capabilities
+				if !slices.Contains(userObject.Capabilities, user.CapabilityFullAdmin) {
+					userObject.AdminPasswordEnabled = false
+				}
 			}
 			if err = userObject.SaveInTx(tx); err != nil {
 				if err == errors.ErrDuplicateEmailUser || err == errors.ErrSystemUserReadonly {
@@ -169,6 +199,10 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 		})
 		if err != nil {
 			h.ResultErrorJSON(w, r, status, message, nil)
+			return
+		}
+		if err := userObject.PopulateAccessFieldsInTx(database.GetDB()); err != nil {
+			h.ResultErrorJSON(w, r, http.StatusInternalServerError, "Unable to load User", nil)
 			return
 		}
 		h.ResultResponseJSON(w, r, http.StatusOK, userObject)
@@ -386,6 +420,63 @@ func SetAuth() func(http.ResponseWriter, *http.Request) {
 				h.ResultErrorJSON(w, r, http.StatusForbidden, "Forbidden", nil)
 				return
 			}
+		}
+		if !isSelf {
+			if newAuth.Type != auth.TypeLocal {
+				h.ResultErrorJSON(w, r, http.StatusBadRequest, "Only local credentials can be provisioned", nil)
+				return
+			}
+			var userAuth auth.Model
+			status, message := http.StatusInternalServerError, "Unable to save Authentication for User"
+			err = authpolicy.WithMutation(r.Context(), func(tx *gorm.DB) error {
+				actor, code, actorErr := currentUserMutationActor(tx, r)
+				if actorErr != nil {
+					status, message = code, "Unauthorised"
+					return actorErr
+				}
+				if !canManageUsers(actor) {
+					status, message = http.StatusForbidden, "Forbidden"
+					return session.ErrUnauthorized
+				}
+				target, targetErr := user.GetByIDInTx(tx, userID)
+				if targetErr != nil {
+					if targetErr == gorm.ErrRecordNotFound {
+						status, message = http.StatusNotFound, "Not found"
+					}
+					return targetErr
+				}
+				if target.IsSystem {
+					status, message = http.StatusBadRequest, "Cannot set password for system user"
+					return errors.ErrSystemUserReadonly
+				}
+				userAuth, targetErr = auth.GetByUserIDTypeInTx(tx, userID, auth.TypeLocal)
+				if targetErr == gorm.ErrRecordNotFound {
+					userAuth = auth.Model{UserID: userID, Type: auth.TypeLocal}
+				} else if targetErr != nil {
+					return targetErr
+				}
+				if targetErr = userAuth.SetPassword(newAuth.Secret); targetErr != nil {
+					status, message = http.StatusBadRequest, targetErr.Error()
+					return targetErr
+				}
+				if targetErr = userAuth.SaveInTx(tx); targetErr != nil {
+					return targetErr
+				}
+				if target.CredentialOrigin == "sso" {
+					target.CredentialOrigin = "local"
+					if targetErr = target.SaveInTx(tx); targetErr != nil {
+						return targetErr
+					}
+				}
+				return nil
+			})
+			if err != nil {
+				h.ResultErrorJSON(w, r, status, message, nil)
+				return
+			}
+			userAuth.Secret = ""
+			h.ResultResponseJSON(w, r, http.StatusOK, userAuth)
+			return
 		}
 
 		// Load user

@@ -1,17 +1,3 @@
-export interface UserPermissions {
-	id?: number;
-	createdOn?: string;
-	modifiedOn?: string;
-	userId?: number;
-	visibility: string;
-	proxyHosts: string;
-	redirectionHosts: string;
-	deadHosts: string;
-	streams: string;
-	accessLists: string;
-	certificates: string;
-}
-
 export interface UserAuth {
 	id: number;
 	userId: number;
@@ -33,9 +19,11 @@ export interface User {
 	email: string;
 	name: string;
 	gravatarUrl: string;
-	roles?: string[];
 	notifications?: Notification[];
-	capabilities?: string[];
+	capabilities: string[];
+	passwordLoginEnabled: boolean;
+	hasLocalCredential: boolean;
+	canSetLocalPassword: boolean;
 	auth?: UserAuth | NewAuth;
 }
 

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createUser, getUser, type User, updateUser } from "src/api/backend";
+import { createUser, getUser, type NewUser, type User, type UserUpdate, updateUser } from "src/api/backend";
 
 const fetchUser = (id: number | string) => {
 	if (id === "new") {
@@ -11,11 +11,16 @@ const fetchUser = (id: number | string) => {
 			email: "",
 			name: "",
 			capabilities: [],
+			passwordLoginEnabled: false,
+			hasLocalCredential: false,
+			canSetLocalPassword: true,
 			gravatarUrl: "",
 		} as User);
 	}
-	return getUser(id, ["permissions"]);
+	return getUser(id);
 };
+
+const useCurrentUser = (options = {}) => useUser("me", options);
 
 const useUser = (id: string | number, options = {}) => {
 	return useQuery<User, Error>({
@@ -29,9 +34,12 @@ const useUser = (id: string | number, options = {}) => {
 const useSetUser = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (values: User) => (values.id ? updateUser(values) : createUser(values)),
-		onMutate: (values: User) => {
-			if (!values.id) {
+		mutationFn: (values: UserUpdate | NewUser) => {
+			if ("id" in values && typeof values.id === "number") return updateUser(values);
+			return createUser(values as NewUser);
+		},
+		onMutate: (values: UserUpdate | NewUser) => {
+			if (!("id" in values) || !values.id) {
 				return;
 			}
 			const previousObject = queryClient.getQueryData(["user", values.id]);
@@ -50,4 +58,4 @@ const useSetUser = () => {
 	});
 };
 
-export { useSetUser, useUser };
+export { useCurrentUser, useSetUser, useUser };

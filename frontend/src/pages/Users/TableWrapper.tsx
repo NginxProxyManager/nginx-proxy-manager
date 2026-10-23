@@ -15,7 +15,7 @@ export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const { loginAs } = useAuthState();
 	const [search, setSearch] = useState("");
-	const { isFetching, isLoading, isError, error, data } = useUsers(["permissions"]);
+	const { isFetching, isLoading, isError, error, data } = useUsers();
 	const { data: currentUser } = useUser("me");
 
 	if (isLoading) {

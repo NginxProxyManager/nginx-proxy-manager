@@ -406,6 +406,20 @@ func (s *testsuite) TestSaveCapabilities() {
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	s.mock.ExpectCommit()
 
+	s.mock.
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "capability"`)).
+		WillReturnRows(sqlmock.NewRows([]string{"name"}).
+			AddRow("full-admin").
+			AddRow("hosts.view").
+			AddRow("hosts.manage"))
+
+	s.mock.ExpectBegin()
+	s.mock.
+		ExpectExec(regexp.QuoteMeta(`DELETE FROM "user_has_capability" WHERE user_id = $1`)).
+		WithArgs(10).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	s.mock.ExpectCommit()
+
 	s.mock.ExpectBegin()
 	s.mock.
 		ExpectExec(regexp.QuoteMeta(`INSERT INTO "user_has_capability" ("user_id","capability_name") VALUES ($1,$2),($3,$4)`)).
@@ -418,10 +432,10 @@ func (s *testsuite) TestSaveCapabilities() {
 	err := m.SaveCapabilities()
 	assert.Equal(s.T(), "Cannot save capabilities on unsaved user", err.Error())
 
-	// Empty model returns error
+	// An existing user may be cleared to zero capabilities.
 	m.ID = 10
 	err = m.SaveCapabilities()
-	assert.Equal(s.T(), "At least 1 capability required for a user", err.Error())
+	require.NoError(s.T(), err)
 
 	// With some caps
 	m.Capabilities = []string{"hosts.view", "hosts.manage"}

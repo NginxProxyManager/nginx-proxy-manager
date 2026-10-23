@@ -647,8 +647,23 @@
 	"permissions.manage": {
 		"defaultMessage": "Manage"
 	},
+	"permissions.capabilities": {
+		"defaultMessage": "Capabilities"
+	},
+	"permissions.certificate-authorities": {
+		"defaultMessage": "Certificate authorities"
+	},
+	"permissions.dns-providers": {
+		"defaultMessage": "DNS providers"
+	},
+	"permissions.nginx-templates": {
+		"defaultMessage": "Nginx templates"
+	},
 	"permissions.view": {
 		"defaultMessage": "View Only"
+	},
+	"user.password-login-enabled": {
+		"defaultMessage": "Allow administrator password login"
 	},
 	"permissions.visibility.all": {
 		"defaultMessage": "All Items"

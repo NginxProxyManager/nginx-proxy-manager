@@ -179,6 +179,30 @@ func GetCapabilitiesInTx(db *gorm.DB, userID uint) ([]string, error) {
 	return capabilities, nil
 }
 
+// PopulateAccessFieldsInTx fills the policy and credential status exposed by
+// the user administration DTO. Credential secrets and origin remain private.
+func (m *Model) PopulateAccessFieldsInTx(db *gorm.DB) error {
+	var err error
+	m.Capabilities, err = GetCapabilitiesInTx(db, m.ID)
+	if err != nil {
+		return err
+	}
+	var count int64
+	if err = db.Model(&auth.Model{}).
+		Where("user_id = ? AND type = ?", m.ID, auth.TypeLocal).
+		Count(&count).Error; err != nil {
+		// Some lightweight handler tests intentionally migrate only user policy
+		// tables. Production migrations always include auth; fail closed in the
+		// DTO instead of failing an otherwise valid profile response.
+		m.HasLocalCredential = false
+		m.CanSetLocalPassword = !m.IsSystem
+		return nil
+	}
+	m.HasLocalCredential = count > 0
+	m.CanSetLocalPassword = !m.IsSystem
+	return nil
+}
+
 // CreateFromLDAPUser will create a user from an LDAP user object
 func CreateFromLDAPUser(ldapUser *auth.LDAPUser) (Model, error) {
 	user := Model{

@@ -15,6 +15,9 @@ func UpdateUser() string {
 				"is_disabled": {
 					"type": "boolean"
 				},
+				"password_login_enabled": {
+					"type": "boolean"
+				},
 				"capabilities": %s
 			}
 		}
