@@ -10,7 +10,7 @@ Nginx Proxy Manager supports OpenID Connect (OIDC), OAuth 2.0 with a UserInfo en
 
 Create the first local full administrator through the normal setup flow. Then open **Settings > Single sign-on**. Keep a tested local administrator credential until every provider has been verified; an SSO-only policy still offers the administrator-password recovery entry only to full administrators whose password-login switch is enabled.
 
-A full administrator can change their own password-login switch through their entry in **Users**, including turning off the last enabled exception. The normal **Edit profile** action does not expose policy controls. Disabling every exception removes password recovery until an authorized SSO session enables one again.
+A full administrator can change their own password-login switch through their entry in **Users**, including turning off the last enabled exception. The normal **Edit profile** action does not expose policy controls. A still-valid administrator session can enable an exception again; if no such session remains, working SSO is needed to regain access. New full-administrator accounts created after bootstrap start with the exception disabled; configure it through the saved user's editor.
 
 Set **Public URL** to the canonical HTTPS origin used by browsers, for example `https://npm.example.com`. It must not contain a path, query, fragment, credentials, or a non-HTTPS scheme. Configure the provider with the URLs shown by the connection editor:
 

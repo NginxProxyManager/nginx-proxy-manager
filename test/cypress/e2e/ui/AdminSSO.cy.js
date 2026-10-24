@@ -141,6 +141,41 @@ describe('Admin SSO browser flow', () => {
 		});
 	});
 
+	it('saves an authorized SSO-only-credential user profile through the self endpoint', () => {
+		let admin, account;
+		adminToken().then((token) => {
+			admin = token;
+			return cy.task('backendApiGet', {token, path: '/api/users'});
+		}).then(({result}) => {
+			account = result.items.find(({email}) => email === 'allowed@example.com');
+			return cy.task('backendApiPut', {token: admin, path: `/api/users/${account.id}`, data: {capabilities: ['hosts.view']}});
+		}).then(() => {
+			cy.clearLocalStorage();
+			cy.visit('/login');
+			cy.contains('Fixture OIDC').click();
+			storedToken().then((token) => cy.task('backendApiGet', {token, path: '/api/users/me'}))
+				.its('result.has_local_credential').should('equal', false);
+			cy.get('[aria-label="Open user menu"]').click();
+			cy.get('[data-translation-id="user.edit-profile"]').click();
+			cy.intercept('PUT', '/api/users/me').as('selfProfile');
+			cy.get('[role="dialog"]').within(() => {
+				cy.get('#name').clear().type('Updated SSO Profile');
+				cy.get('#passwordLoginEnabled').should('not.exist');
+				cy.contains('button', 'Save').click();
+			});
+			cy.wait('@selfProfile').then(({request, response}) => {
+				expect(request.body).to.deep.equal({name: 'Updated SSO Profile', email: 'allowed@example.com'});
+				expect(response.statusCode).to.equal(200);
+				expect(response.body.result.id).to.equal(account.id);
+				expect(response.body.result.name).to.equal('Updated SSO Profile');
+				expect(response.body.result.capabilities).to.deep.equal(['hosts.view']);
+				expect(response.body.result.has_local_credential).to.equal(false);
+			});
+			cy.get('[role="dialog"]').should('not.exist');
+			return cy.task('backendApiPut', {token: admin, path: `/api/users/${account.id}`, data: {capabilities: []}});
+		});
+	});
+
 	it('denies an unlisted or inactive email and supports the SSO-only administrator escape', () => {
 		let admin;
 		adminToken().then((token) => {
@@ -195,38 +230,19 @@ describe('Admin SSO browser flow', () => {
 	});
 
 	it('captures the full-admin password-login switch from the real Users page', () => {
-		let admin;
-		let linked;
-		adminToken().then((token) => {
-			admin = token;
-			return cy.task('backendApiGet', {token: admin, path: '/api/users'});
-		}).then(({result}) => {
-			linked = result.items.find((user) => user.email === 'allowed@example.com');
-			expect(linked, 'linked SSO user').to.exist;
-			return cy.task('backendApiPut', {
-				token: admin,
-				path: `/api/users/${linked.id}`,
-				data: {capabilities: ['full-admin']},
-			});
-		}).then(() => {
+		cy.viewport(1280, 720);
+		adminAuthentication().then((authentication) => {
 			cy.visit('/login');
-			return adminAuthentication();
-		}).then((authentication) => {
 			cy.window().then((win) => win.localStorage.setItem('authentications', JSON.stringify([authentication])));
 			cy.visit('/users');
-			cy.contains('tr', 'allowed@example.com').should('be.visible').within(() => {
+			cy.contains('tr', 'cypress@example.com').should('be.visible').within(() => {
 				cy.get('button.dropdown-toggle').click();
 				cy.contains('Edit').click();
 			});
 			cy.get('#passwordLoginEnabled').should('be.visible').and('not.be.disabled');
 			cy.contains(/administrator password login/i).should('be.visible');
-			cy.viewport(1280, 720);
 			cy.screenshot('sso-admin-password-switch-desktop', {capture: 'viewport'});
-		}).then(() => cy.task('backendApiPut', {
-			token: admin,
-			path: `/api/users/${linked.id}`,
-			data: {capabilities: []},
-		}));
+		});
 	});
 
 	it('lets the sole administrator disable and restore their own password exception', () => {

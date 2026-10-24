@@ -174,7 +174,7 @@ export function UserEditor({ id, visible, remove }: Props) {
 													</span>
 												</label>
 											</div>
-											{hasCapability(currentUser.capabilities, FULL_ADMIN) ? (
+											{typeof id === "number" && hasCapability(currentUser.capabilities, FULL_ADMIN) ? (
 												<div>
 													<label className="row" htmlFor="passwordLoginEnabled">
 														<span className="col"><T id="user.password-login-enabled" /></span>

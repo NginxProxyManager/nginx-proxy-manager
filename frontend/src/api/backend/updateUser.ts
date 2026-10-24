@@ -1,7 +1,7 @@
 import * as api from "./base";
 import type { User } from "./models";
 
-export type UserUpdate = Pick<User, "id"> &
+export type UserUpdate = { id: User["id"] | "me" } &
 	Partial<Pick<User, "name" | "email" | "isDisabled" | "capabilities" | "passwordLoginEnabled">>;
 
 export async function updateUser(item: UserUpdate): Promise<User> {

@@ -35,7 +35,7 @@ const useSetUser = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: (values: UserUpdate | NewUser) => {
-			if ("id" in values && typeof values.id === "number") return updateUser(values);
+			if ("id" in values && (typeof values.id === "number" || values.id === "me")) return updateUser(values);
 			return createUser(values as NewUser);
 		},
 		onMutate: (values: UserUpdate | NewUser) => {
@@ -50,8 +50,9 @@ const useSetUser = () => {
 			return () => queryClient.setQueryData(["user", values.id], previousObject);
 		},
 		onError: (_, __, rollback: any) => rollback(),
-		onSuccess: async ({ id }: User) => {
+		onSuccess: async ({ id }: User, values) => {
 			queryClient.invalidateQueries({ queryKey: ["user", id] });
+			if ("id" in values && values.id === "me") queryClient.invalidateQueries({ queryKey: ["user", "me"] });
 			queryClient.invalidateQueries({ queryKey: ["users"] });
 			queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
 		},

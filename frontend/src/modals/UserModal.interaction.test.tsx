@@ -29,4 +29,9 @@ describe("explicit self administrator editor", () => {
 		render(<RawIntlProvider value={intl}><UserEditor {...({ id: "me", visible: true, remove: vi.fn() } as any)} /></RawIntlProvider>);
 		expect(screen.queryByLabelText(/administrator password login/i)).not.toBeInTheDocument();
 	});
+
+	it("does not display a password policy control ignored by new-user creation", () => {
+		render(<RawIntlProvider value={intl}><UserEditor {...({ id: "new", visible: true, remove: vi.fn() } as any)} /></RawIntlProvider>);
+		expect(screen.queryByLabelText(/administrator password login/i)).not.toBeInTheDocument();
+	});
 });

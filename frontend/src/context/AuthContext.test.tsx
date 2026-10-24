@@ -36,10 +36,11 @@ function Probe() {
 		<span>{auth.authenticated ? "authenticated" : "signed-out"}</span>
 		<span>{auth.logoutUnconfirmed ? "logout-unconfirmed" : "logout-confirmed"}</span>
 		<span>{auth.twoFactorChallenge ? "challenge-pending" : "no-challenge"}</span>
-		<button type="button" onClick={() => void auth.login("local", "account-a", "secret")}>login</button>
-		<button type="button" onClick={() => void auth.loginAs(2)}>impersonate</button>
-		<button type="button" onClick={() => void auth.verifyTwoFactor("123456")}>verify</button>
-		<button type="button" onClick={() => void auth.completeSSO("handoff-code")}>complete</button>
+		<button type="button" onClick={() => void auth.login("local", "account-a", "secret").catch(() => undefined)}>login</button>
+		<button type="button" onClick={() => void auth.loginAs(2).catch(() => undefined)}>impersonate</button>
+		<button type="button" onClick={() => void auth.verifyTwoFactor("123456").catch(() => undefined)}>verify</button>
+		<button type="button" onClick={auth.cancelTwoFactor}>cancel challenge</button>
+		<button type="button" onClick={() => void auth.completeSSO("handoff-code").catch(() => undefined)}>complete</button>
 		<button type="button" onClick={() => void auth.logout().catch(() => undefined)}>logout</button>
 	</div>;
 }
@@ -80,7 +81,7 @@ describe("AuthProvider SSO and session lifecycle", () => {
 		api.verify.mockReset();
 		api.intervals.length = 0;
 	});
-	afterEach(cleanup);
+	afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 	it("stores an SSO exchange in the existing token stack without a 2FA challenge", async () => {
 		const exchanged = token("sso-token");
@@ -220,5 +221,92 @@ describe("AuthProvider SSO and session lifecycle", () => {
 		await act(async () => finish(token("old-account-a-response")));
 		expect(AuthStore.token?.token).toBe("account-b");
 		expect(client.getQueryData(["user", "me"])).toEqual({ id: 2 });
+	});
+
+	it.each(["complete", "login", "verify", "impersonate", "logout"])("keeps explicit %s authoritative when a refresh tick occurs afterward", async (operation) => {
+		AuthStore.set(token("account-a"));
+		let finish!: (value?: ReturnType<typeof token>) => void;
+		const pending = new Promise((resolve) => { finish = resolve; });
+		api.exchange.mockReturnValue(pending);
+		api.login.mockReturnValue(pending);
+		api.verify.mockReturnValue(pending);
+		api.impersonate.mockReturnValue(pending);
+		api.logout.mockReturnValue(pending);
+		api.refresh.mockResolvedValue(token("refreshed-a"));
+		vi.spyOn(window.location, "reload").mockImplementation(() => undefined);
+		renderAuth();
+		if (operation === "verify") {
+			api.login.mockResolvedValue({ requires2fa: true, challengeToken: "challenge-a" });
+			fireEvent.click(screen.getByText("login"));
+			await screen.findByText("challenge-pending");
+		}
+		fireEvent.click(screen.getByText(operation));
+		await act(async () => api.intervals[api.intervals.length - 1]?.());
+		await act(async () => finish(operation === "logout" ? undefined : token("account-b")));
+		expect(AuthStore.token?.token ?? null).toBe(operation === "logout" ? null : "account-b");
+		expect(api.refresh).not.toHaveBeenCalled();
+		if (operation !== "logout") {
+			api.refresh.mockResolvedValue(token("refreshed-b"));
+			await act(async () => api.intervals[api.intervals.length - 1]?.());
+			expect(AuthStore.token?.token).toBe("refreshed-b");
+		}
+	});
+
+	it("does not let an older transition's finally release a newer pending transition", async () => {
+		AuthStore.set(token("account-a"));
+		let finishLogin!: (value: ReturnType<typeof token>) => void;
+		let finishSSO!: (value: ReturnType<typeof token>) => void;
+		api.login.mockImplementation(() => new Promise((resolve) => { finishLogin = resolve; }));
+		api.exchange.mockImplementation(() => new Promise((resolve) => { finishSSO = resolve; }));
+		api.refresh.mockResolvedValue(token("refreshed-a"));
+		renderAuth();
+		fireEvent.click(screen.getByText("login"));
+		fireEvent.click(screen.getByText("complete"));
+		await act(async () => finishLogin(token("obsolete-login")));
+		await act(async () => api.intervals[api.intervals.length - 1]?.());
+		await act(async () => finishSSO(token("account-b")));
+		expect(AuthStore.token?.token).toBe("account-b");
+		expect(api.refresh).not.toHaveBeenCalled();
+	});
+
+	it("releases refresh suppression when the owning transition fails", async () => {
+		AuthStore.set(token("account-a"));
+		api.exchange.mockRejectedValue(new Error("denied"));
+		api.refresh.mockResolvedValue(token("refreshed-a"));
+		renderAuth();
+		await act(async () => fireEvent.click(screen.getByText("complete")));
+		await act(async () => api.intervals[api.intervals.length - 1]?.());
+		expect(AuthStore.token?.token).toBe("refreshed-a");
+	});
+
+	it("lets the new tab's session refresh while the old tab's exchange is still pending", async () => {
+		AuthStore.set(token("account-a"));
+		let finish!: (value: ReturnType<typeof token>) => void;
+		api.exchange.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+		api.refresh.mockResolvedValue(token("refreshed-b"));
+		renderAuth();
+		fireEvent.click(screen.getByText("complete"));
+		AuthStore.set(token("account-b"));
+		act(() => window.dispatchEvent(new StorageEvent("storage", { key: TOKEN_KEY })));
+		await act(async () => api.intervals[api.intervals.length - 1]?.());
+		await act(async () => finish(token("obsolete-a-exchange")));
+		expect(AuthStore.token?.token).toBe("refreshed-b");
+	});
+
+	it("cancels pending verification without leaving refresh suppressed", async () => {
+		AuthStore.set(token("account-a"));
+		let finish!: (value: ReturnType<typeof token>) => void;
+		api.login.mockResolvedValue({ requires2fa: true, challengeToken: "challenge-a" });
+		api.verify.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+		api.refresh.mockResolvedValue(token("refreshed-a"));
+		renderAuth();
+		fireEvent.click(screen.getByText("login"));
+		await screen.findByText("challenge-pending");
+		fireEvent.click(screen.getByText("verify"));
+		fireEvent.click(screen.getByText("cancel challenge"));
+		await act(async () => api.intervals[api.intervals.length - 1]?.());
+		await act(async () => finish(token("cancelled-verification")));
+		expect(AuthStore.token?.token).toBe("refreshed-a");
+		expect(screen.getByText("no-challenge")).toBeVisible();
 	});
 });
