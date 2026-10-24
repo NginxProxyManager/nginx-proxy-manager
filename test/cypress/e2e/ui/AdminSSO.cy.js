@@ -138,6 +138,41 @@ describe('Admin SSO browser flow', () => {
 		cy.screenshot('sso-pending-mobile', {capture: 'viewport'});
 	});
 
+	it('captures the full-admin password-login switch from the real Users page', () => {
+		let admin;
+		let linked;
+		adminToken().then((token) => {
+			admin = token;
+			return cy.task('backendApiGet', {token: admin, path: '/api/users'});
+		}).then(({result}) => {
+			linked = result.items.find((user) => user.email === 'allowed@example.com');
+			expect(linked, 'linked SSO user').to.exist;
+			return cy.task('backendApiPut', {
+				token: admin,
+				path: `/api/users/${linked.id}`,
+				data: {capabilities: ['full-admin']},
+			});
+		}).then(() => {
+			cy.visit('/login');
+			return adminAuthentication();
+		}).then((authentication) => {
+			cy.window().then((win) => win.localStorage.setItem('authentications', JSON.stringify([authentication])));
+			cy.visit('/users');
+			cy.contains('tr', 'allowed@example.com').should('be.visible').within(() => {
+				cy.get('button.dropdown-toggle').click();
+				cy.contains('Edit').click();
+			});
+			cy.get('#passwordLoginEnabled').should('be.visible').and('not.be.disabled');
+			cy.contains(/administrator password login/i).should('be.visible');
+			cy.viewport(1280, 720);
+			cy.screenshot('sso-admin-password-switch-desktop', {capture: 'viewport'});
+		}).then(() => cy.task('backendApiPut', {
+			token: admin,
+			path: `/api/users/${linked.id}`,
+			data: {capabilities: []},
+		}));
+	});
+
 	it('creates OIDC, OAuth2 and SAML connections entirely through Settings', () => {
 		openSSOSettings();
 		cy.viewport(1280, 900);
