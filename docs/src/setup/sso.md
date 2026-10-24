@@ -64,6 +64,6 @@ The Settings page exposes an explicit legacy import when legacy values exist. Im
 
 ## Operational validation limits
 
-This release does not automatically prune expired or consumed SSO attempts, handoffs, replay markers, or expired/revoked sessions. Those rows accumulate with login traffic and abandoned login attempts; startup key validation also scans retained transaction ciphertext. Monitor database size and startup duration. Bounded retention maintenance is deferred to a separate change so session ancestry and replay protection are preserved.
+Each new SSO login attempt deletes expired SSO attempts, handoffs and replay markers. These rows are no longer usable once expired, so this does not weaken replay protection. Expired or revoked sessions are not pruned, which preserves session ancestry; monitor database size on busy installations.
 
 Local and LDAP authentication continue to use their existing admission paths. The SSO acceptance matrix covers local-password recovery, but does not include a live external LDAP-server browser test.

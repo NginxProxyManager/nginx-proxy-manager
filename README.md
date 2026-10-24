@@ -15,6 +15,7 @@ running at home or otherwise, including free SSL, without having to know too muc
 
 - [Quickest Setup](#quickest-setup)
 - [Administration SSO](#administration-sso)
+- [Upgrading to the SSO release](#upgrading-to-the-sso-release)
 - [Local SSO Demo](#local-sso-demo)
 - [Full Setup](https://nginxproxymanager.com/setup/)
 - [Screenshots](https://nginxproxymanager.com/screenshots/)
@@ -110,6 +111,24 @@ An Enabled checkbox alone is insufficient: login discovery requires a valid publ
 Add the expected provider email to Trusted emails. An empty list denies all SSO logins. An allowed email links directly to an existing account with that email and keeps its permissions; a new account starts without permissions and displays **Waiting for access** until an administrator grants them under Users. Any enabled provider can authenticate a trusted email, including an existing administrator email.
 
 Test sign-in in a separate browser session before switching to SSO only. That mode retains an administrator password login entry for full administrators whose password login is enabled. Back up `/data/keys/sso.key` together with the database: saved client secrets and SAML private material depend on that installation key.
+
+Two session behaviors to plan for:
+
+- Switching to **SSO only** blocks new password logins but does not end password sessions that are already signed in; they stay valid until they expire. Removing a trusted email or disabling a connection does revoke that email's or connection's SSO sessions immediately.
+- Use the administration UI through the public administration URL. Logout from a different origin, such as `http://<host>:81`, is rejected by the server, so the browser is signed out locally but the server-side session is not revoked.
+
+The full reference, including callback URLs, revocation rules and key restore, is in [docs/src/setup/sso.md](docs/src/setup/sso.md).
+
+## Upgrading to the SSO release
+
+This release changes how administrators sign in. Read this before running `docker compose pull`:
+
+1. **Back up first.** Back up the database (and `/data/keys/sso.key` once it exists). Deploy the frontend and backend from the same release together.
+2. **Every user is signed out.** Tokens issued by earlier releases have no server-side session and are rejected; users sign in again after the upgrade.
+3. **Legacy OAuth login is removed.** `/oauth/login` and `/oauth/redirect` return `410`. If you used it, create and test a local full-administrator password login before upgrading, then use **Import legacy OAuth** under the SSO connections settings to convert the old configuration into a disabled draft.
+4. **The upgrade can stop on duplicate or invalid emails.** Emails are now normalized (trimmed and lower-cased) and must be unique among active users. If two users normalize to the same address, for example `Admin@example.com` and `admin@example.com`, or an email is invalid, the database migration stops before changing anything, the admin UI does not load, and the backend logs a `MigrationError` containing `SSO upgrade: conflicting user IDs ...` or `SSO upgrade: user ID ... has an invalid email`. Fix or remove the affected users on the previous release (or in a restored backup), then upgrade again. No accounts are merged automatically.
+
+See [docs/src/upgrading/index.md](docs/src/upgrading/index.md) for the general upgrade procedure.
 
 ## Local SSO Demo
 
