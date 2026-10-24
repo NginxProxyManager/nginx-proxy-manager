@@ -383,8 +383,23 @@
 	"loading": {
 		"defaultMessage": "Đang tải..."
 	},
+	"login.sso-administrator-password": {
+		"defaultMessage": "Đăng nhập bằng mật khẩu quản trị viên"
+	},
+	"login.sso-denied": {
+		"defaultMessage": "Không thể hoàn tất đăng nhập một lần. Hãy liên hệ quản trị viên nếu bạn cần quyền truy cập."
+	},
+	"login.sso-or": {
+		"defaultMessage": "hoặc tiếp tục bằng đăng nhập một lần"
+	},
+	"login.sso-unsupported-profile": {
+		"defaultMessage": "Phản hồi từ nhà cung cấp danh tính dùng hồ sơ SAML chưa được hỗ trợ."
+	},
 	"login.title": {
 		"defaultMessage": "Đăng nhập vào tài khoản của bạn"
+	},
+	"logout.unconfirmed": {
+		"defaultMessage": "Bạn đã đăng xuất khỏi thiết bị này, nhưng máy chủ chưa xác nhận thu hồi phiên."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Cấu hình Nginx tùy chỉnh"
@@ -482,11 +497,14 @@
 	"password.show": {
 		"defaultMessage": "Hiện Mật khẩu"
 	},
-	"permissions.hidden": {
-		"defaultMessage": "Ẩn"
+	"pending-access.description": {
+		"defaultMessage": "Tài khoản đã được liên kết nhưng quản trị viên chưa cấp quyền. Trang này sẽ tự động cập nhật."
 	},
-	"permissions.manage": {
-		"defaultMessage": "Quản lý"
+	"pending-access.profile-unavailable": {
+		"defaultMessage": "Bạn đã đăng nhập nhưng không thể tải trạng thái truy cập. Hãy thử lại hoặc đăng xuất."
+	},
+	"pending-access.title": {
+		"defaultMessage": "Đang chờ cấp quyền"
 	},
 	"permissions.capabilities": {
 		"defaultMessage": "Quyền hạn"
@@ -497,14 +515,17 @@
 	"permissions.dns-providers": {
 		"defaultMessage": "Nhà cung cấp DNS"
 	},
+	"permissions.hidden": {
+		"defaultMessage": "Ẩn"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Quản lý"
+	},
 	"permissions.nginx-templates": {
 		"defaultMessage": "Mẫu Nginx"
 	},
 	"permissions.view": {
 		"defaultMessage": "Chỉ xem"
-	},
-	"user.password-login-enabled": {
-		"defaultMessage": "Cho phép quản trị viên đăng nhập bằng mật khẩu"
 	},
 	"permissions.visibility.all": {
 		"defaultMessage": "Tất cả các mục"
@@ -584,79 +605,219 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Chuyển hướng"
 	},
-	"settings.sso.acsUrl": { "defaultMessage": "URL tiếp nhận xác nhận (ACS)" },
-	"settings.sso.add": { "defaultMessage": "Thêm kết nối" },
-	"settings.sso.allowlist": { "defaultMessage": "Email tin cậy" },
-	"settings.sso.authorizationUrl": { "defaultMessage": "URL ủy quyền" },
-	"settings.sso.callbackUrl": { "defaultMessage": "URL gọi lại" },
-	"settings.sso.clientId": { "defaultMessage": "ID ứng dụng" },
-	"settings.sso.clientSecret": { "defaultMessage": "Mã bí mật ứng dụng" },
-	"settings.sso.connections": { "defaultMessage": "Kết nối" },
-	"settings.sso.delete": { "defaultMessage": "Xóa kết nối" },
-	"settings.sso.deleted": { "defaultMessage": "Đã xóa kết nối." },
-	"settings.sso.directLinkWarning": { "defaultMessage": "Mọi kết nối đang bật đều có thể đăng nhập bằng email tin cậy và liên kết trực tiếp với tài khoản hiện có cùng email." },
-	"settings.sso.disabled": { "defaultMessage": "Đã tắt" },
-	"settings.sso.emailAttribute": { "defaultMessage": "Thuộc tính email" },
-	"settings.sso.emailClaim": { "defaultMessage": "Claim hoặc đường dẫn JSON của email" },
-	"settings.sso.emailInvalid": { "defaultMessage": "Nhập một địa chỉ email đầy đủ trên mỗi dòng. Không chấp nhận tên miền, ký tự đại diện hoặc email trùng." },
-	"settings.sso.emailNameId": { "defaultMessage": "Dùng NameID định dạng email" },
-	"settings.sso.emails": { "defaultMessage": "Địa chỉ email" },
-	"settings.sso.enabled": { "defaultMessage": "Bật" },
-	"settings.sso.idpMetadataUrl": { "defaultMessage": "URL metadata IdP" },
-	"settings.sso.idpMetadataXml": { "defaultMessage": "XML metadata IdP" },
-	"settings.sso.importLegacy": { "defaultMessage": "Nhập OAuth cũ" },
-	"settings.sso.invalidConnection": { "defaultMessage": "Điền đủ trường bắt buộc. SAML cần đúng một nguồn metadata và một nguồn email." },
-	"settings.sso.issuerUrl": { "defaultMessage": "URL issuer" },
-	"settings.sso.legacyDescription": { "defaultMessage": "Có cấu hình OAuth cũ. Thao tác nhập chỉ tạo bản nháp đã tắt để kiểm tra; không bật đăng nhập hoặc thay đổi email tin cậy." },
-	"settings.sso.legacyImported": { "defaultMessage": "Đã nhập OAuth cũ thành bản nháp bị tắt." },
-	"settings.sso.metadataReviewed": { "defaultMessage": "Metadata nhà cung cấp danh tính đã kiểm tra" },
-	"settings.sso.metadataUrl": { "defaultMessage": "URL metadata SP" },
-	"settings.sso.mode": { "defaultMessage": "Chế độ đăng nhập" },
-	"settings.sso.modeParallel": { "defaultMessage": "Mật khẩu và SSO" },
-	"settings.sso.modeSSOOnly": { "defaultMessage": "Chỉ SSO" },
-	"settings.sso.name": { "defaultMessage": "Tên hiển thị" },
-	"settings.sso.nameAttribute": { "defaultMessage": "Thuộc tính tên" },
-	"settings.sso.nameClaim": { "defaultMessage": "Claim hoặc đường dẫn JSON của tên" },
-	"settings.sso.parallel": { "defaultMessage": "Mật khẩu và SSO" },
-	"settings.sso.pendingWarning": { "defaultMessage": "Tài khoản mới chưa có quyền và phải chờ quản trị viên cấp quyền truy cập." },
-	"settings.sso.policy": { "defaultMessage": "Chính sách đăng nhập" },
-	"settings.sso.preview": { "defaultMessage": "Xem trước metadata" },
-	"settings.sso.previewRequired": { "defaultMessage": "Hãy xem trước metadata lại và kiểm tra thông tin tin cậy trước khi lưu thay đổi bảo mật này." },
-	"settings.sso.protocol": { "defaultMessage": "Giao thức" },
-	"settings.sso.publicCertificate": { "defaultMessage": "Chứng chỉ công khai SP" },
+	"settings.sso.acsUrl": {
+		"defaultMessage": "URL tiếp nhận xác nhận (ACS)"
+	},
+	"settings.sso.add": {
+		"defaultMessage": "Thêm kết nối"
+	},
+	"settings.sso.allowlist": {
+		"defaultMessage": "Email tin cậy"
+	},
+	"settings.sso.authorizationUrl": {
+		"defaultMessage": "URL ủy quyền"
+	},
+	"settings.sso.callbackUrl": {
+		"defaultMessage": "URL gọi lại"
+	},
+	"settings.sso.clientId": {
+		"defaultMessage": "ID ứng dụng"
+	},
+	"settings.sso.clientSecret": {
+		"defaultMessage": "Mã bí mật ứng dụng"
+	},
+	"settings.sso.connections": {
+		"defaultMessage": "Kết nối"
+	},
+	"settings.sso.delete": {
+		"defaultMessage": "Xóa kết nối"
+	},
+	"settings.sso.deleted": {
+		"defaultMessage": "Đã xóa kết nối."
+	},
+	"settings.sso.directLinkWarning": {
+		"defaultMessage": "Mọi kết nối đang bật đều có thể đăng nhập bằng email tin cậy và liên kết trực tiếp với tài khoản hiện có cùng email."
+	},
+	"settings.sso.disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"settings.sso.effectiveSigning": {
+		"defaultMessage": "Trạng thái ký yêu cầu thực tế"
+	},
+	"settings.sso.emailAttribute": {
+		"defaultMessage": "Thuộc tính email"
+	},
+	"settings.sso.emailClaim": {
+		"defaultMessage": "Claim hoặc đường dẫn JSON của email"
+	},
+	"settings.sso.emailInvalid": {
+		"defaultMessage": "Nhập một địa chỉ email đầy đủ trên mỗi dòng. Không chấp nhận tên miền, ký tự đại diện hoặc email trùng."
+	},
+	"settings.sso.emailNameId": {
+		"defaultMessage": "Dùng NameID định dạng email"
+	},
+	"settings.sso.emails": {
+		"defaultMessage": "Địa chỉ email"
+	},
+	"settings.sso.enabled": {
+		"defaultMessage": "Bật"
+	},
+	"settings.sso.errorGeneric": {
+		"defaultMessage": "Không thể tải hoặc lưu cài đặt SSO. Hãy thử lại hoặc kiểm tra cấu hình."
+	},
+	"settings.sso.errorInvalidConfiguration": {
+		"defaultMessage": "Cấu hình SSO không hợp lệ. Hãy kiểm tra các trường rồi thử lại."
+	},
+	"settings.sso.errorKeyRestoreRequired": {
+		"defaultMessage": "Hãy khôi phục khóa cài đặt SSO trước khi thay đổi cấu hình này."
+	},
+	"settings.sso.errorProbeFailed": {
+		"defaultMessage": "Không thể kết nối với nhà cung cấp danh tính hoặc yêu cầu đã bị từ chối."
+	},
+	"settings.sso.errorProbeNotReady": {
+		"defaultMessage": "Hãy điền đủ cài đặt nhà cung cấp bắt buộc trước khi kiểm tra kết nối."
+	},
+	"settings.sso.errorProtocolUnavailable": {
+		"defaultMessage": "Giao thức SSO này hiện không khả dụng."
+	},
+	"settings.sso.errorUnavailable": {
+		"defaultMessage": "Cấu hình SSO tạm thời không khả dụng."
+	},
+	"settings.sso.idpMetadataUrl": {
+		"defaultMessage": "URL metadata IdP"
+	},
+	"settings.sso.idpMetadataXml": {
+		"defaultMessage": "XML metadata IdP"
+	},
+	"settings.sso.importLegacy": {
+		"defaultMessage": "Nhập OAuth cũ"
+	},
+	"settings.sso.invalidConnection": {
+		"defaultMessage": "Điền đủ trường bắt buộc. SAML cần đúng một nguồn metadata và một nguồn email."
+	},
+	"settings.sso.issuerUrl": {
+		"defaultMessage": "URL issuer"
+	},
+	"settings.sso.legacyDescription": {
+		"defaultMessage": "Có cấu hình OAuth cũ. Thao tác nhập chỉ tạo bản nháp đã tắt để kiểm tra; không bật đăng nhập hoặc thay đổi email tin cậy."
+	},
+	"settings.sso.legacyImported": {
+		"defaultMessage": "Đã nhập OAuth cũ thành bản nháp bị tắt."
+	},
+	"settings.sso.metadataReviewed": {
+		"defaultMessage": "Metadata nhà cung cấp danh tính đã kiểm tra"
+	},
+	"settings.sso.metadataUrl": {
+		"defaultMessage": "URL metadata SP"
+	},
+	"settings.sso.mode": {
+		"defaultMessage": "Chế độ đăng nhập"
+	},
+	"settings.sso.modeParallel": {
+		"defaultMessage": "Mật khẩu và SSO"
+	},
+	"settings.sso.modeSSOOnly": {
+		"defaultMessage": "Chỉ SSO"
+	},
+	"settings.sso.name": {
+		"defaultMessage": "Tên hiển thị"
+	},
+	"settings.sso.nameAttribute": {
+		"defaultMessage": "Thuộc tính tên"
+	},
+	"settings.sso.nameClaim": {
+		"defaultMessage": "Claim hoặc đường dẫn JSON của tên"
+	},
+	"settings.sso.parallel": {
+		"defaultMessage": "Mật khẩu và SSO"
+	},
+	"settings.sso.pendingWarning": {
+		"defaultMessage": "Tài khoản mới chưa có quyền và phải chờ quản trị viên cấp quyền truy cập."
+	},
+	"settings.sso.policy": {
+		"defaultMessage": "Chính sách đăng nhập"
+	},
+	"settings.sso.preview": {
+		"defaultMessage": "Xem trước metadata"
+	},
+	"settings.sso.previewRequired": {
+		"defaultMessage": "Hãy xem trước metadata lại và kiểm tra thông tin tin cậy trước khi lưu thay đổi bảo mật này."
+	},
+	"settings.sso.protocol": {
+		"defaultMessage": "Giao thức"
+	},
+	"settings.sso.publicCertificate": {
+		"defaultMessage": "Chứng chỉ công khai SP"
+	},
+	"settings.sso.publicUrl": {
+		"defaultMessage": "URL quản trị công khai"
+	},
 	"settings.sso.publicUrlInvalid": {
 		"defaultMessage": "URL qu?n tr? c?ng khai ph?i d?ng HTTPS v? ch? ch?a ??a ch? qu?n tr? Nginx Proxy Manager, kh?ng c? ???ng d?n, d?u / cu?i, truy v?n ho?c ph?n #. V? d?: https://npm.example.com"
 	},
-	"settings.sso.publicUrl": { "defaultMessage": "URL quản trị công khai" },
-	"settings.sso.revisionConflict": { "defaultMessage": "Cấu hình đã thay đổi trong phiên khác. Đã tải lại phiên bản mới nhất." },
-	"settings.sso.errorGeneric": { "defaultMessage": "Không thể tải hoặc lưu cài đặt SSO. Hãy thử lại hoặc kiểm tra cấu hình." },
-	"settings.sso.errorInvalidConfiguration": { "defaultMessage": "Cấu hình SSO không hợp lệ. Hãy kiểm tra các trường rồi thử lại." },
-	"settings.sso.errorKeyRestoreRequired": { "defaultMessage": "Hãy khôi phục khóa cài đặt SSO trước khi thay đổi cấu hình này." },
-	"settings.sso.errorProbeFailed": { "defaultMessage": "Không thể kết nối với nhà cung cấp danh tính hoặc yêu cầu đã bị từ chối." },
-	"settings.sso.errorProbeNotReady": { "defaultMessage": "Hãy điền đủ cài đặt nhà cung cấp bắt buộc trước khi kiểm tra kết nối." },
-	"settings.sso.errorProtocolUnavailable": { "defaultMessage": "Giao thức SSO này hiện không khả dụng." },
-	"settings.sso.errorUnavailable": { "defaultMessage": "Cấu hình SSO tạm thời không khả dụng." },
-	"settings.sso.save": { "defaultMessage": "Lưu" },
-	"settings.sso.saved": { "defaultMessage": "Đã lưu cấu hình SSO." },
-	"settings.sso.scopes": { "defaultMessage": "Scope (phân cách bằng khoảng trắng)" },
-	"settings.sso.secretClear": { "defaultMessage": "Xóa mã bí mật đã lưu" },
-	"settings.sso.secretConfigured": { "defaultMessage": "Mã bí mật ứng dụng đang được lưu an toàn." },
-	"settings.sso.secretKeep": { "defaultMessage": "Giữ mã bí mật đã lưu" },
-	"settings.sso.secretReplace": { "defaultMessage": "Thay mã bí mật" },
-	"settings.sso.signRequests": { "defaultMessage": "Ký yêu cầu xác thực" },
-	"settings.sso.effectiveSigning": { "defaultMessage": "Trạng thái ký yêu cầu thực tế" },
-	"settings.sso.signingNotRequired": { "defaultMessage": "Không bắt buộc" },
-	"settings.sso.signingRequired": { "defaultMessage": "Bắt buộc theo metadata của nhà cung cấp danh tính" },
-	"settings.sso.spEntityId": { "defaultMessage": "ID thực thể SP" },
-	"settings.sso.ssoOnly": { "defaultMessage": "Chỉ SSO (vẫn có lối khôi phục bằng mật khẩu quản trị viên)" },
-	"settings.sso.subjectClaim": { "defaultMessage": "Claim hoặc đường dẫn JSON của subject" },
-	"settings.sso.test": { "defaultMessage": "Kiểm tra kết nối đã lưu" },
-	"settings.sso.testPassed": { "defaultMessage": "Kết nối đã lưu vượt qua kiểm tra nhà cung cấp." },
-	"settings.sso.title": { "defaultMessage": "Đăng nhập một lần" },
-	"settings.sso.tokenAuthMethod": { "defaultMessage": "Xác thực endpoint token" },
-	"settings.sso.tokenUrl": { "defaultMessage": "URL token" },
-	"settings.sso.useUserinfo": { "defaultMessage": "Đọc danh tính từ UserInfo" },
-	"settings.sso.userinfoUrl": { "defaultMessage": "URL UserInfo" },
+	"settings.sso.revisionConflict": {
+		"defaultMessage": "Cấu hình đã thay đổi trong phiên khác. Đã tải lại phiên bản mới nhất."
+	},
+	"settings.sso.save": {
+		"defaultMessage": "Lưu"
+	},
+	"settings.sso.saved": {
+		"defaultMessage": "Đã lưu cấu hình SSO."
+	},
+	"settings.sso.scopes": {
+		"defaultMessage": "Scope (phân cách bằng khoảng trắng)"
+	},
+	"settings.sso.secretClear": {
+		"defaultMessage": "Xóa mã bí mật đã lưu"
+	},
+	"settings.sso.secretConfigured": {
+		"defaultMessage": "Mã bí mật ứng dụng đang được lưu an toàn."
+	},
+	"settings.sso.secretKeep": {
+		"defaultMessage": "Giữ mã bí mật đã lưu"
+	},
+	"settings.sso.secretReplace": {
+		"defaultMessage": "Thay mã bí mật"
+	},
+	"settings.sso.signRequests": {
+		"defaultMessage": "Ký yêu cầu xác thực"
+	},
+	"settings.sso.signingNotRequired": {
+		"defaultMessage": "Không bắt buộc"
+	},
+	"settings.sso.signingRequired": {
+		"defaultMessage": "Bắt buộc theo metadata của nhà cung cấp danh tính"
+	},
+	"settings.sso.spEntityId": {
+		"defaultMessage": "ID thực thể SP"
+	},
+	"settings.sso.ssoOnly": {
+		"defaultMessage": "Chỉ SSO (vẫn có lối khôi phục bằng mật khẩu quản trị viên)"
+	},
+	"settings.sso.subjectClaim": {
+		"defaultMessage": "Claim hoặc đường dẫn JSON của subject"
+	},
+	"settings.sso.test": {
+		"defaultMessage": "Kiểm tra kết nối đã lưu"
+	},
+	"settings.sso.testPassed": {
+		"defaultMessage": "Kết nối đã lưu vượt qua kiểm tra nhà cung cấp."
+	},
+	"settings.sso.title": {
+		"defaultMessage": "Đăng nhập một lần"
+	},
+	"settings.sso.tokenAuthMethod": {
+		"defaultMessage": "Xác thực endpoint token"
+	},
+	"settings.sso.tokenUrl": {
+		"defaultMessage": "URL token"
+	},
+	"settings.sso.useUserinfo": {
+		"defaultMessage": "Đọc danh tính từ UserInfo"
+	},
+	"settings.sso.userinfoUrl": {
+		"defaultMessage": "URL UserInfo"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Bắt đầu bằng cách tạo tài khoản quản trị viên."
 	},
@@ -726,20 +887,15 @@
 	"user.nickname": {
 		"defaultMessage": "Tên hiển thị"
 	},
+	"user.password-login-enabled": {
+		"defaultMessage": "Cho phép quản trị viên đăng nhập bằng mật khẩu"
+	},
 	"user.set-password": {
 		"defaultMessage": "Đặt Mật khẩu"
 	},
 	"user.set-permissions": {
 		"defaultMessage": "Đặt quyền cho {name}"
 	},
-	"login.sso-administrator-password": { "defaultMessage": "Đăng nhập bằng mật khẩu quản trị viên" },
-	"login.sso-denied": { "defaultMessage": "Không thể hoàn tất đăng nhập một lần. Hãy liên hệ quản trị viên nếu bạn cần quyền truy cập." },
-	"login.sso-or": { "defaultMessage": "hoặc tiếp tục bằng đăng nhập một lần" },
-	"login.sso-unsupported-profile": { "defaultMessage": "Phản hồi từ nhà cung cấp danh tính dùng hồ sơ SAML chưa được hỗ trợ." },
-	"logout.unconfirmed": { "defaultMessage": "Bạn đã đăng xuất khỏi thiết bị này, nhưng máy chủ chưa xác nhận thu hồi phiên." },
-	"pending-access.description": { "defaultMessage": "Tài khoản đã được liên kết nhưng quản trị viên chưa cấp quyền. Trang này sẽ tự động cập nhật." },
-	"pending-access.profile-unavailable": { "defaultMessage": "Bạn đã đăng nhập nhưng không thể tải trạng thái truy cập. Hãy thử lại hoặc đăng xuất." },
-	"pending-access.title": { "defaultMessage": "Đang chờ cấp quyền" },
 	"user.switch-dark": {
 		"defaultMessage": "Chuyển sang chế độ tối"
 	},
