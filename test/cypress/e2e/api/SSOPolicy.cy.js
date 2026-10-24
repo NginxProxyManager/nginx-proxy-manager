@@ -40,9 +40,11 @@ describe('SSO policy administration', () => {
 
 	it('lists all three named providers without returning secret material', () => {
 		cy.ssoAdminApi('get', '/connections', token).then(({result}) => {
-			expect(result.map(({protocol}) => protocol).sort()).to.deep.equal(['oauth2', 'oidc', 'saml']);
+			expect(result.filter(({name}) => name.startsWith('Fixture ')).map(({protocol}) => protocol).sort())
+				.to.deep.equal(['oauth2', 'oidc', 'saml']);
 			expect(result.map(({name}) => name)).to.include.members(['Fixture OIDC', 'Fixture OAuth2', 'Fixture SAML']);
-			expect(result.every(({enabled, has_secret}) => enabled && has_secret)).to.equal(true);
+			expect(result.filter(({name}) => name.startsWith('Fixture ')).every(({enabled, has_secret}) => enabled && has_secret))
+				.to.equal(true);
 			expect(JSON.stringify(result)).not.to.include('secret_value');
 		});
 	});

@@ -7,9 +7,20 @@ describe('Admin SSO browser flow', () => {
 		path: '/api/auth',
 		data: {type: 'local', identity: 'cypress@example.com', secret: 'changeme'},
 	}).its('result.token');
+	const adminAuthentication = () => cy.task('backendApiPost', {
+		path: '/api/auth',
+		data: {type: 'local', identity: 'cypress@example.com', secret: 'changeme'},
+	}).its('result');
 	const storedToken = () => cy.window().should((win) => {
 		expect(win.localStorage.getItem('authentications')).to.be.a('string');
 	}).then((win) => JSON.parse(win.localStorage.getItem('authentications'))[0].token);
+	const openSSOSettings = () => adminAuthentication().then((authentication) => {
+		cy.visit('/login');
+		cy.window().then((win) => win.localStorage.setItem('authentications', JSON.stringify([authentication])));
+		cy.visit('/settings');
+		cy.contains('Single sign-on').click();
+		cy.contains('h3', 'Single sign-on').should('be.visible');
+	});
 
 	const loginThrough = (provider) => {
 		cy.clearLocalStorage();
@@ -125,5 +136,50 @@ describe('Admin SSO browser flow', () => {
 		cy.viewport(390, 844);
 		loginThrough('Fixture OIDC');
 		cy.screenshot('sso-pending-mobile', {capture: 'viewport'});
+	});
+
+	it('creates OIDC, OAuth2 and SAML connections entirely through Settings', () => {
+		openSSOSettings();
+		cy.viewport(1280, 900);
+		cy.screenshot('sso-settings-desktop', {capture: 'viewport'});
+
+		const add = (protocol, name, fields) => {
+			cy.contains('button', 'Add connection').click();
+			cy.get('form[aria-label="SSO connection"]').within(() => {
+				cy.get('[aria-label="Display name"]').clear().type(name);
+				cy.get('[aria-label="Protocol"]').select(protocol);
+				for (const [label, value] of fields) cy.get(`[aria-label="${label}"]`).clear().type(value);
+				if (protocol !== 'saml') cy.get('[aria-label="Client secret"]').clear().type('acceptance-secret');
+			});
+			if (protocol === 'saml') {
+				cy.get('[aria-label="Use email-format NameID"]').check();
+				cy.contains('button', 'Preview metadata').click();
+				cy.contains('Reviewed identity provider metadata', {timeout: 30000}).should('be.visible');
+			}
+			if (protocol === 'oidc') cy.screenshot('sso-connection-form-desktop', {capture: 'viewport'});
+			cy.get('form[aria-label="SSO connection"]').within(() => cy.contains('button', 'Save').click());
+			cy.contains('SSO configuration saved.', {timeout: 30000}).should('be.visible');
+			cy.contains(name).should('be.visible');
+		};
+
+		add('oidc', 'UI OIDC', [
+			['Issuer URL', Cypress.env('oidcIssuer')], ['Client ID', 'ui-oidc'],
+		]);
+		add('oauth2', 'UI OAuth2', [
+			['Authorization URL', `${Cypress.env('oauthIssuer')}/auth`],
+			['Token URL', `${Cypress.env('oauthIssuer')}/token`],
+			['UserInfo URL', `${Cypress.env('oauthIssuer')}/user`], ['Client ID', 'ui-oauth'],
+		]);
+		add('saml', 'UI SAML', [
+			['IdP metadata URL', Cypress.env('samlMetadataUrl')],
+			['SP entity ID', 'https://host.docker.internal/sso/ui'],
+		]);
+
+		cy.viewport(390, 844);
+		cy.get('[aria-label="Login mode"]').scrollIntoView().should('be.visible');
+		cy.screenshot('sso-login-modes-mobile', {capture: 'viewport'});
+		adminToken().then((token) => cy.ssoAdminApi('get', '/connections', token)).its('result')
+			.then((connections) => expect(connections.filter(({name}) => name.startsWith('UI ')).map(({protocol}) => protocol).sort())
+				.to.deep.equal(['oauth2', 'oidc', 'saml']));
 	});
 });
