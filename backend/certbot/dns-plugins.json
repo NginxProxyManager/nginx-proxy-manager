@@ -600,7 +600,7 @@
 		"version": "~=0.3.0"
 	},
 	"simply": {
-		"credentials": "dns_simply_api_key = DsHJdsjh2812872sahj",
+		"credentials": "dns_simply_api_key = your_api_key",
 		"dependencies": "",
 		"full_plugin_name": "dns-simply",
 		"name": "Simply.com",
