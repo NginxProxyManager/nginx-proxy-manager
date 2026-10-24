@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"reflect"
 	"strings"
 )
 
@@ -93,6 +94,52 @@ func ValidateConfig(protocol Protocol, raw string) error {
 		return nil
 	default:
 		return fmt.Errorf("unsupported SSO protocol")
+	}
+}
+
+// EquivalentConfig reports whether two valid configurations behave the same
+// at login. It compares typed values with omitted defaults applied, so an
+// edit that only spells out a default is not treated as a security change.
+func EquivalentConfig(protocol Protocol, oldRaw, newRaw string) bool {
+	if ValidateConfig(protocol, oldRaw) != nil || ValidateConfig(protocol, newRaw) != nil {
+		return false
+	}
+	oldValue, oldErr := effectiveConfig(protocol, oldRaw)
+	newValue, newErr := effectiveConfig(protocol, newRaw)
+	return oldErr == nil && newErr == nil && reflect.DeepEqual(oldValue, newValue)
+}
+
+func effectiveConfig(protocol Protocol, raw string) (any, error) {
+	switch protocol {
+	case OIDC:
+		var cfg OIDCConfig
+		if err := decodeConfig(raw, &cfg); err != nil {
+			return nil, err
+		}
+		if cfg.TokenAuthMethod == "" {
+			cfg.TokenAuthMethod = "client_secret_basic"
+		}
+		if len(cfg.Scopes) == 0 {
+			cfg.Scopes = nil
+		}
+		return cfg, nil
+	case OAuth2:
+		var cfg OAuth2Config
+		if err := decodeConfig(raw, &cfg); err != nil {
+			return nil, err
+		}
+		if len(cfg.Scopes) == 0 {
+			cfg.Scopes = nil
+		}
+		return cfg, nil
+	case SAML:
+		var cfg SAMLConfig
+		if err := decodeConfig(raw, &cfg); err != nil {
+			return nil, err
+		}
+		return cfg, nil
+	default:
+		return nil, fmt.Errorf("unsupported SSO protocol")
 	}
 }
 

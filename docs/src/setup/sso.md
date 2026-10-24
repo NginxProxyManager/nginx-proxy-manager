@@ -40,7 +40,7 @@ Provide authorization, token and UserInfo URLs, client credentials, token authen
 
 ### SAML 2.0
 
-Load IdP metadata by HTTPS URL or paste metadata XML, never both. Preview metadata and review the entity ID, SSO URL, certificate fingerprints and effective request-signing decision before saving. The preview token is single use. Encrypted assertions, artifact binding and IdP-initiated login are intentionally rejected; use signed SP-initiated HTTP-Redirect requests and HTTP-POST responses.
+Load IdP metadata by HTTPS URL or paste metadata XML, never both. Preview metadata and review the entity ID, SSO URL, certificate fingerprints and effective request-signing decision before saving. The preview token is encrypted, bound to the exact SAML configuration that was previewed, and expires after ten minutes; it is not single use, so it can be submitted again for a matching configuration until it expires. Encrypted assertions, artifact binding and IdP-initiated login are intentionally rejected; use signed SP-initiated HTTP-Redirect requests and HTTP-POST responses.
 
 ## Sessions, changes and logout
 

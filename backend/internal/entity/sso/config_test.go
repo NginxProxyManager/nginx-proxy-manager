@@ -60,3 +60,20 @@ func TestProtocolSpecificMetadataAndAuthFields(t *testing.T) {
 		require.Error(t, ValidateConfig(tc.protocol, tc.config), tc.config)
 	}
 }
+
+func TestEquivalentConfigAppliesDefaults(t *testing.T) {
+	const oidcMinimal = `{"issuer_url":"https://id.example","client_id":"npm","email_claim":"email"}`
+	require.True(t, EquivalentConfig(OIDC, oidcMinimal, `{"issuer_url":"https://id.example","client_id":"npm","email_claim":"email","scopes":[],"use_userinfo":false,"token_auth_method":"client_secret_basic"}`))
+	require.False(t, EquivalentConfig(OIDC, oidcMinimal, `{"issuer_url":"https://id.example","client_id":"npm","email_claim":"email","token_auth_method":"client_secret_post"}`))
+	require.False(t, EquivalentConfig(OIDC, oidcMinimal, `{"issuer_url":"https://id.example","client_id":"npm","email_claim":"email","scopes":["openid"]}`))
+	require.False(t, EquivalentConfig(OIDC, oidcMinimal, `{"issuer_url":"https://id.example","client_id":"other","email_claim":"email"}`))
+
+	const oauth2Minimal = `{"authorization_url":"https://id.example/auth","token_url":"https://id.example/token","userinfo_url":"https://id.example/user","client_id":"npm","email_claim":"email","token_auth_method":"client_secret_basic"}`
+	require.True(t, EquivalentConfig(OAuth2, oauth2Minimal, `{"authorization_url":"https://id.example/auth","token_url":"https://id.example/token","userinfo_url":"https://id.example/user","client_id":"npm","email_claim":"email","token_auth_method":"client_secret_basic","scopes":[]}`))
+
+	const samlMinimal = `{"idp_metadata_url":"https://id.example/metadata","sp_entity_id":"urn:npm","email_attribute":"mail"}`
+	require.True(t, EquivalentConfig(SAML, samlMinimal, `{"idp_metadata_url":"https://id.example/metadata","sp_entity_id":"urn:npm","email_attribute":"mail","sign_requests":false}`))
+	require.False(t, EquivalentConfig(SAML, samlMinimal, `{"idp_metadata_url":"https://id.example/metadata","sp_entity_id":"urn:npm","email_attribute":"mail","sign_requests":true}`))
+
+	require.False(t, EquivalentConfig(OIDC, `{}`, `{}`))
+}

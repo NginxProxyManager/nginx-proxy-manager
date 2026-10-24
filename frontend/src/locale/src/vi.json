@@ -753,7 +753,7 @@
 		"defaultMessage": "URL quản trị công khai"
 	},
 	"settings.sso.publicUrlInvalid": {
-		"defaultMessage": "URL qu?n tr? c?ng khai ph?i d?ng HTTPS v? ch? ch?a ??a ch? qu?n tr? Nginx Proxy Manager, kh?ng c? ???ng d?n, d?u / cu?i, truy v?n ho?c ph?n #. V? d?: https://npm.example.com"
+		"defaultMessage": "URL quản trị công khai phải dùng HTTPS và chỉ chứa địa chỉ quản trị Nginx Proxy Manager, không có đường dẫn, dấu / cuối, truy vấn hoặc phần #. Ví dụ: https://npm.example.com"
 	},
 	"settings.sso.revisionConflict": {
 		"defaultMessage": "Cấu hình đã thay đổi trong phiên khác. Đã tải lại phiên bản mới nhất."

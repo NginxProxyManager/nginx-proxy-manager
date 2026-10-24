@@ -20,12 +20,15 @@ describe('Admin SSO browser flow', () => {
 	const storedToken = () => cy.window().should((win) => {
 		expect(win.localStorage.getItem('authentications')).to.be.a('string');
 	}).then((win) => JSON.parse(win.localStorage.getItem('authentications'))[0].token);
-	const openSSOSettings = () => adminAuthentication().then((authentication) => {
+	const openSSOSection = (section) => {
+		cy.contains('a', `SSO - ${section}`).click();
+		cy.contains('h3', section).should('be.visible');
+	};
+	const openSSOSettings = (section = 'Connections') => adminAuthentication().then((authentication) => {
 		cy.visit('/login');
 		cy.window().then((win) => win.localStorage.setItem('authentications', JSON.stringify([authentication])));
 		cy.visit('/settings');
-		cy.contains('Single sign-on').click();
-		cy.contains('h3', 'Single sign-on').should('be.visible');
+		openSSOSection(section);
 	});
 
 	const loginThrough = (provider) => {
@@ -314,6 +317,7 @@ describe('Admin SSO browser flow', () => {
 		]);
 
 		cy.viewport(390, 844);
+		openSSOSection('Login mode');
 		cy.get('[aria-label="Login mode"]').scrollIntoView().should('be.visible');
 		cy.screenshot('sso-login-modes-mobile', {capture: 'viewport'});
 		adminToken().then((token) => cy.ssoAdminApi('get', '/connections', token)).its('result')
