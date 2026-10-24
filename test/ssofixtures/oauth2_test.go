@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestOAuth2FixtureCodePKCEAndUserinfo(t *testing.T) {
@@ -20,7 +21,8 @@ func TestOAuth2FixtureCodePKCEAndUserinfo(t *testing.T) {
 	client.CheckRedirect = func(_ *http.Request, _ []*http.Request) error { return http.ErrUseLastResponse }
 	verifier := strings.Repeat("v", 43)
 	sum := sha256.Sum256([]byte(verifier))
-	query := url.Values{"client_id": {"client"}, "response_type": {"code"}, "redirect_uri": {"https://npm.example/sso/one/callback"}, "state": {"state"}, "code_challenge_method": {"S256"}, "code_challenge": {base64.RawURLEncoding.EncodeToString(sum[:])}}
+	query := url.Values{"client_id": {"client"}, "response_type": {"code"}, "redirect_uri": {"https://npm.example/sso/one/callback"}, "state": {"state"}, "code_challenge_method": {"S256"}, "code_challenge": {base64.RawURLEncoding.EncodeToString(sum[:])}, "delay_ms": {"10"}}
+	started := time.Now()
 	resp, err := client.Get(server.URL + "/auth?" + query.Encode())
 	if err != nil {
 		t.Fatal(err)
@@ -29,6 +31,7 @@ func TestOAuth2FixtureCodePKCEAndUserinfo(t *testing.T) {
 	if resp.StatusCode != http.StatusFound {
 		t.Fatalf("auth status %d", resp.StatusCode)
 	}
+	if time.Since(started) < 10*time.Millisecond { t.Fatal("authorization delay was not applied") }
 	redirect, err := url.Parse(resp.Header.Get("Location"))
 	if err != nil {
 		t.Fatal(err)

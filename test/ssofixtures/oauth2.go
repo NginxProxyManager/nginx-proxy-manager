@@ -7,7 +7,9 @@ import (
 	"encoding/base64"
 	"net/http"
 	"net/url"
+	"strconv"
 	"sync"
+	"time"
 )
 
 type oauth2Fixture struct {
@@ -36,6 +38,9 @@ func (f *oauth2Fixture) routes() http.Handler {
 			return
 		}
 		q := r.URL.Query()
+		if delay, err := strconv.Atoi(q.Get("delay_ms")); err == nil && delay > 0 && delay <= 5000 {
+			time.Sleep(time.Duration(delay) * time.Millisecond)
+		}
 		redirect, err := url.Parse(q.Get("redirect_uri"))
 		if err != nil || redirect.Scheme != "https" || redirect.Host == "" || q.Get("client_id") != f.clientID || q.Get("response_type") != "code" || q.Get("state") == "" || q.Get("code_challenge_method") != "S256" || q.Get("code_challenge") == "" {
 			http.Error(w, "invalid authorization request", 400)

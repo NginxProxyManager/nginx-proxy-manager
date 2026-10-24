@@ -52,6 +52,35 @@ describe('Admin SSO browser flow', () => {
 		loginThrough('Fixture SAML');
 	});
 
+	it('keeps two simultaneous real browser targets independent when callbacks finish out of order', () => {
+		if (Cypress.env('stack') !== 'postgres') {
+			cy.log('Real simultaneous-tab coverage runs once in the Postgres browser matrix');
+			return;
+		}
+		const ids = {};
+		cy.request('/api/auth/providers').its('body.result.connections').then((connections) => {
+			ids.slow = connections.find(({protocol}) => protocol === 'oauth2').id;
+			ids.fast = connections.find(({protocol}) => protocol === 'oidc').id;
+			return Cypress.automation('remote:debugger:protocol', {command:'Target.createTarget', params:{url:`${Cypress.config('baseUrl')}/sso/${ids.slow}/start`}});
+		}).then(({targetId}) => {
+			ids.slowTarget = targetId;
+			return cy.wait(250);
+		}).then(() => Cypress.automation('remote:debugger:protocol', {command:'Target.createTarget', params:{url:`${Cypress.config('baseUrl')}/sso/${ids.fast}/start`}}))
+			.then(({targetId}) => { ids.fastTarget = targetId; return cy.wait(12000); })
+			.then(() => Cypress.automation('remote:debugger:protocol', {command:'Target.getTargets', params:{}}))
+			.then((targets) => {
+				const callbacks = targets.targetInfos.filter(({type,url}) => type === 'page' && url === `${Cypress.config('baseUrl')}/login`);
+				return cy.wrap(callbacks).each(({targetId}) => Cypress.automation('remote:debugger:protocol', {command:'Target.activateTarget', params:{targetId}}));
+			}).then(() => cy.wait(3000)).then(() => cy.task('ssoPostgresAttemptEvidence')).then((db) => {
+				const rows = db.split('\n').map((line) => line.split('\t'));
+				const handoffs = rows.filter(([kind]) => kind === 'handoff');
+				const sessions = rows.filter(([kind]) => kind === 'session');
+				expect(handoffs.map(([,connection]) => connection)).to.include.members([ids.fast, ids.slow]);
+				expect(new Set(handoffs.map(([, ,user]) => user)).size).to.equal(1);
+				expect(sessions.map(([,connection]) => connection)).to.include.members([ids.fast, ids.slow]);
+			});
+	});
+
 	it('NPM logout does not log the browser out of the provider', () => {
 		loginThrough('Fixture OIDC');
 		cy.contains('button', /log\s*out/i).click();

@@ -1,5 +1,6 @@
 const logger = require('./logger');
 const Client = require('./client');
+const {execFileSync} = require('node:child_process');
 
 module.exports = function (config) {
 	const backendConfig = Object.assign({}, config, {
@@ -12,6 +13,11 @@ module.exports = function (config) {
 	}));
 
 	return {
+		ssoPostgresAttemptEvidence: () => {
+			if (config.env.stack !== 'postgres') return '';
+			const sql = `SELECT 'tx',connection_id,id,CASE WHEN consumed_at IS NULL THEN 'open' ELSE 'consumed' END FROM sso_transaction UNION ALL SELECT 'handoff',connection_id,user_id::text,CASE WHEN consumed_at IS NULL THEN 'open' ELSE 'consumed' END FROM sso_handoff UNION ALL SELECT 'session',connection_id,user_id::text,CASE WHEN revoked_at IS NULL THEN 'open' ELSE 'revoked' END FROM session WHERE source='sso' ORDER BY 1,2,3`;
+			return execFileSync('docker', ['exec','npm-sso-postgres-postgres-1','psql','-U','npm','-d','npm','-A','-F','\t','-t','-c',sql], {encoding:'utf8'}).trim();
+		},
 
 		/**
 		 * @param   {object}    options
