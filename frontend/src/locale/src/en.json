@@ -801,6 +801,9 @@
 	"settings.sso.previewRequired": { "defaultMessage": "Preview metadata again and review the trust details before saving this security change." },
 	"settings.sso.protocol": { "defaultMessage": "Protocol" },
 	"settings.sso.publicCertificate": { "defaultMessage": "SP public certificate" },
+	"settings.sso.publicUrlInvalid": {
+		"defaultMessage": "Public administration URL must use HTTPS and contain only the Nginx Proxy Manager administration address, with no path, trailing slash, query, or fragment. Example: https://npm.example.com"
+	},
 	"settings.sso.publicUrl": { "defaultMessage": "Public administration URL" },
 	"settings.sso.revisionConflict": { "defaultMessage": "This configuration changed in another session. The latest version has been reloaded." },
 	"settings.sso.errorGeneric": { "defaultMessage": "Unable to load or save SSO settings. Try again or review the configuration." },

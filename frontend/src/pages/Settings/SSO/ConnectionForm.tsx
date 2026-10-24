@@ -213,8 +213,8 @@ export default function ConnectionForm({ connection, publicUrl, busy, onSave, on
 			{({ values, handleChange, setFieldValue }) => {
 				const clearPreview = () => setPreview(undefined);
 				return (
-					<Form aria-label="SSO connection">
-						<div className="card-body border-top">
+					<Form aria-label="SSO connection" className="border rounded p-3 mt-3">
+						<div>
 							{invalid && (
 								<div className="alert alert-danger">
 									<T
@@ -262,15 +262,16 @@ export default function ConnectionForm({ connection, publicUrl, busy, onSave, on
 							<div className="form-check mb-3">
 								<input
 									aria-label={intl.formatMessage({ id: "settings.sso.enabled" })}
+									id="sso-connection-enabled"
 									name="enabled"
 									type="checkbox"
 									className="form-check-input"
 									checked={values.enabled}
 									onChange={handleChange}
 								/>
-								<span className="form-check-label">
+								<label className="form-check-label" htmlFor="sso-connection-enabled">
 									<T id="settings.sso.enabled" />
-								</span>
+								</label>
 							</div>
 
 							{values.protocol === "oidc" && (
@@ -601,7 +602,7 @@ export default function ConnectionForm({ connection, publicUrl, busy, onSave, on
 								</div>
 							)}
 						</div>
-						<div className="card-footer d-flex gap-2 justify-content-end">
+						<div className="d-flex gap-2 justify-content-end mt-3">
 							{connection && (
 								<Button
 									actionType="danger"

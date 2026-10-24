@@ -26,12 +26,7 @@ interface Props {
 export default function AllowlistForm({ allowlist, busy, onSave }: Props) {
 	const [invalid, setInvalid] = useState(false);
 	return (
-		<section className="card mb-3">
-			<div className="card-header">
-				<h3 className="card-title">
-					<T id="settings.sso.allowlist" />
-				</h3>
-			</div>
+		<section className="mb-3">
 			<Formik
 				initialValues={{ emails: allowlist.emails.join("\n") }}
 				enableReinitialize
@@ -47,7 +42,7 @@ export default function AllowlistForm({ allowlist, busy, onSave }: Props) {
 			>
 				{({ values, handleChange }) => (
 					<Form aria-label="Trusted emails">
-						<div className="card-body">
+						<div className="mb-3">
 							<p>
 								<T id="settings.sso.directLinkWarning" />
 							</p>
@@ -72,7 +67,7 @@ export default function AllowlistForm({ allowlist, busy, onSave }: Props) {
 								</div>
 							)}
 						</div>
-						<div className="card-footer text-end">
+						<div className="text-end">
 							<Button type="submit" actionType="primary" disabled={busy} isLoading={busy}>
 								<T id="settings.sso.save" />
 							</Button>

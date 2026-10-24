@@ -11,16 +11,29 @@ interface Props {
 
 export default function PolicyForm({ policy, busy, onSave }: Props) {
 	return (
-		<section className="card mb-3">
-			<div className="card-header">
-				<h3 className="card-title">
-					<T id="settings.sso.policy" />
-				</h3>
-			</div>
-			<Formik initialValues={policy} enableReinitialize onSubmit={onSave}>
-				{({ values, handleChange }) => (
+		<section className="mb-3">
+			<Formik
+				initialValues={policy}
+				enableReinitialize
+				validate={({ publicUrl }) => {
+					try {
+						const url = new URL(publicUrl);
+						if (
+							url.protocol === "https:" &&
+							url.hostname &&
+							!url.username &&
+							!url.password &&
+							/^https:\/\/[^/?#\s]+$/.test(publicUrl)
+						)
+							return {};
+					} catch {}
+					return { publicUrl: "settings.sso.publicUrlInvalid" };
+				}}
+				onSubmit={onSave}
+			>
+				{({ values, handleChange, handleBlur, errors, touched }) => (
 					<Form aria-label="Login policy">
-						<div className="card-body">
+						<div className="mb-3">
 							<div className="mb-3">
 								<div className="form-label">
 									<T id="settings.sso.mode" />
@@ -51,14 +64,24 @@ export default function PolicyForm({ policy, busy, onSave }: Props) {
 									name="publicUrl"
 									type="url"
 									required
-									className="form-control"
+									className={`form-control ${touched.publicUrl && errors.publicUrl ? "is-invalid" : ""}`}
+									aria-invalid={!!(touched.publicUrl && errors.publicUrl)}
+									aria-describedby={
+										touched.publicUrl && errors.publicUrl ? "sso-public-url-error" : undefined
+									}
 									value={values.publicUrl}
 									onChange={handleChange}
+									onBlur={handleBlur}
 									placeholder="https://npm.example.com"
 								/>
+								{touched.publicUrl && errors.publicUrl && (
+									<div id="sso-public-url-error" className="invalid-feedback">
+										<T id={errors.publicUrl} />
+									</div>
+								)}
 							</div>
 						</div>
-						<div className="card-footer text-end">
+						<div className="text-end">
 							<Button type="submit" actionType="primary" disabled={busy} isLoading={busy}>
 								<T id="settings.sso.save" />
 							</Button>

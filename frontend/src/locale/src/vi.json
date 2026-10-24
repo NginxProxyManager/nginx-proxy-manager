@@ -624,6 +624,9 @@
 	"settings.sso.previewRequired": { "defaultMessage": "Hãy xem trước metadata lại và kiểm tra thông tin tin cậy trước khi lưu thay đổi bảo mật này." },
 	"settings.sso.protocol": { "defaultMessage": "Giao thức" },
 	"settings.sso.publicCertificate": { "defaultMessage": "Chứng chỉ công khai SP" },
+	"settings.sso.publicUrlInvalid": {
+		"defaultMessage": "URL qu?n tr? c?ng khai ph?i d?ng HTTPS v? ch? ch?a ??a ch? qu?n tr? Nginx Proxy Manager, kh?ng c? ???ng d?n, d?u / cu?i, truy v?n ho?c ph?n #. V? d?: https://npm.example.com"
+	},
 	"settings.sso.publicUrl": { "defaultMessage": "URL quản trị công khai" },
 	"settings.sso.revisionConflict": { "defaultMessage": "Cấu hình đã thay đổi trong phiên khác. Đã tải lại phiên bản mới nhất." },
 	"settings.sso.errorGeneric": { "defaultMessage": "Không thể tải hoặc lưu cài đặt SSO. Hãy thử lại hoặc kiểm tra cấu hình." },

@@ -20,11 +20,17 @@ const errorMessages: Record<string, string> = {
 };
 
 const errorMessageID = (error: unknown) =>
-	error instanceof Error && errorMessages[error.message]
-		? errorMessages[error.message]
-		: "settings.sso.errorGeneric";
+	error instanceof Error && errorMessages[error.message] ? errorMessages[error.message] : "settings.sso.errorGeneric";
 
-export default function SSOSettings() {
+export type SSOSection = "mode" | "connections" | "emails";
+
+export const ssoSectionLabels: Record<SSOSection, string> = {
+	mode: "settings.sso.mode",
+	connections: "settings.sso.connections",
+	emails: "settings.sso.allowlist",
+};
+
+export default function SSOSettings({ section }: { section: SSOSection }) {
 	const settings = useSSOSettings();
 	const [selectedID, setSelectedID] = useState<string>();
 	const [adding, setAdding] = useState(false);
@@ -75,29 +81,45 @@ export default function SSOSettings() {
 		);
 	}
 
-	return (
-		<div className="card-body">
-			<h3>
-				<T id="settings.sso.title" />
-			</h3>
-			{message && (
-				<Alert variant={message.type} dismissible onClose={() => setMessage(undefined)}>
-					<T id={message.id} />
-				</Alert>
-			)}
-			<PolicyForm
-				policy={settings.policy.data}
+	const editor =
+		selected || adding ? (
+			<ConnectionForm
+				key={selected?.id || "new"}
+				connection={selected}
+				publicUrl={settings.policy.data.publicUrl}
 				busy={busy}
 				onSave={async (value) => {
-					await perform(() => settings.updatePolicy.mutateAsync(value), "settings.sso.saved");
+					const result = await perform(
+						() => settings.saveConnection.mutateAsync(value),
+						"settings.sso.saved",
+					);
+					if (result.ok) setAdding(false);
+					return result.ok;
+				}}
+				onDelete={async (value) => {
+					const result = await perform(
+						() => settings.deleteConnection.mutateAsync(value),
+						"settings.sso.deleted",
+					);
+					if (result.ok) setSelectedID(undefined);
+				}}
+				onTest={async (id) => {
+					await perform(() => settings.testConnection.mutateAsync(id), "settings.sso.testPassed");
+				}}
+				onPreview={async (config) => {
+					const result = await perform(() => settings.previewSAML.mutateAsync(config));
+					return result.ok ? result.value : undefined;
 				}}
 			/>
+		) : null;
 
-			<section className="card mb-3">
-				<div className="card-header d-flex justify-content-between">
-					<h3 className="card-title">
-						<T id="settings.sso.connections" />
-					</h3>
+	return (
+		<div className="card-body">
+			<div className="d-flex align-items-center justify-content-between gap-3 mb-3">
+				<h3 className="mb-0">
+					<T id={ssoSectionLabels[section]} />
+				</h3>
+				{section === "connections" && (
 					<Button
 						onClick={() => {
 							setAdding(true);
@@ -106,71 +128,68 @@ export default function SSOSettings() {
 					>
 						<T id="settings.sso.add" />
 					</Button>
-				</div>
-				<div className="list-group list-group-flush">
-					{settings.connections.data.map((connection) => (
-						<button
-							type="button"
-							className={`list-group-item list-group-item-action ${selectedID === connection.id ? "active" : ""}`}
-							key={connection.id}
-							onClick={() => {
-								setSelectedID(connection.id);
-								setAdding(false);
-							}}
-						>
-							<span className="fw-bold">{connection.name}</span>{" "}
-							<span className="badge ms-2">{connection.protocol.toUpperCase()}</span>
-							{!connection.enabled && (
-								<span className="badge bg-secondary ms-2">
-									<T id="settings.sso.disabled" />
-								</span>
-							)}
-						</button>
-					))}
-				</div>
-				{(selected || adding) && (
-					<ConnectionForm
-						key={selected?.id || "new"}
-						connection={selected}
-						publicUrl={settings.policy.data.publicUrl}
-						busy={busy}
-						onSave={async (value) => {
-							const result = await perform(
-								() => settings.saveConnection.mutateAsync(value),
-								"settings.sso.saved",
-							);
-							if (result.ok) setAdding(false);
-							return result.ok;
-						}}
-						onDelete={async (value) => {
-							const result = await perform(
-								() => settings.deleteConnection.mutateAsync(value),
-								"settings.sso.deleted",
-							);
-							if (result.ok) setSelectedID(undefined);
-						}}
-						onTest={async (id) => {
-							await perform(() => settings.testConnection.mutateAsync(id), "settings.sso.testPassed");
-						}}
-						onPreview={async (config) => {
-							const result = await perform(() => settings.previewSAML.mutateAsync(config));
-							return result.ok ? result.value : undefined;
-						}}
-					/>
 				)}
-			</section>
+			</div>
+			{message && (
+				<Alert variant={message.type} dismissible onClose={() => setMessage(undefined)}>
+					<T id={message.id} />
+				</Alert>
+			)}
+			{section === "mode" && (
+				<PolicyForm
+					policy={settings.policy.data}
+					busy={busy}
+					onSave={async (value) => {
+						await perform(() => settings.updatePolicy.mutateAsync(value), "settings.sso.saved");
+					}}
+				/>
+			)}
 
-			<AllowlistForm
-				allowlist={settings.allowlist.data}
-				busy={busy}
-				onSave={async (value) => {
-					await perform(() => settings.updateAllowlist.mutateAsync(value), "settings.sso.saved");
-				}}
-			/>
+			{section === "connections" && (
+				<section className="mb-3">
+					<div className="d-flex flex-column gap-2">
+						{adding && editor}
+						{settings.connections.data.map((connection) => (
+							<div key={connection.id}>
+								<button
+									type="button"
+									className={`list-group-item list-group-item-action border rounded p-3 ${selectedID === connection.id ? "active" : ""}`}
+									aria-expanded={selectedID === connection.id}
+									onClick={() => {
+										setSelectedID((current) =>
+											current === connection.id ? undefined : connection.id,
+										);
+										setAdding(false);
+									}}
+								>
+									<span className="fw-bold">{connection.name}</span>{" "}
+									<span className="badge ms-2">{connection.protocol.toUpperCase()}</span>
+									{!connection.enabled && (
+										<span className="badge bg-secondary ms-2">
+											<T id="settings.sso.disabled" />
+										</span>
+									)}
+								</button>
+								{selectedID === connection.id && editor}
+							</div>
+						))}
+					</div>
+				</section>
+			)}
 
-			{settings.legacyStatus.data?.conversionAvailable && (
-				<section className="card mb-3">
-					<div className="card-body">
+			{section === "emails" && (
+				<AllowlistForm
+					allowlist={settings.allowlist.data}
+					busy={busy}
+					onSave={async (value) => {
+						await perform(() => settings.updateAllowlist.mutateAsync(value), "settings.sso.saved");
+					}}
+				/>
+			)}
+
+			{section === "connections" && settings.legacyStatus.data?.conversionAvailable && (
+				<section className="mb-3">
+					<div>
 						<p>
 							<T id="settings.sso.legacyDescription" />
 						</p>

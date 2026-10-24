@@ -69,6 +69,21 @@ func TestSSOPolicyRejectsStaleRevisionAndInvalidOnlyMode(t *testing.T) {
 	require.Equal(t, http.StatusConflict, rec.Code, rec.Body.String())
 }
 
+func TestSSOPolicyPublicURLChangeWithConnections(t *testing.T) {
+	db := ssoAdminDB(t)
+	require.NoError(t, db.AutoMigrate(&session.Model{}))
+	for _, protocol := range []sso.Protocol{sso.OIDC, sso.OAuth2, sso.SAML} {
+		id, err := newSSOID()
+		require.NoError(t, err)
+		require.NoError(t, db.Create(&sso.Connection{ID: id, Protocol: protocol, Name: string(protocol), Revision: 1}).Error)
+	}
+	rec := adminRequest("PUT", "/api/sso/policy", `{"revision":1,"mode":"parallel","public_url":"https://npm.example"}`, UpdateSSOPolicy())
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+	var policy sso.Policy
+	require.NoError(t, db.First(&policy, 1).Error)
+	require.Equal(t, "https://npm.example", policy.PublicURL)
+}
+
 func TestSSOAllowlistNormalizesAndRejectsInvalid(t *testing.T) {
 	db := ssoAdminDB(t)
 	rec := adminRequest("PUT", "/api/sso/allowlist", `{"revision":1,"emails":["team.example"]}`, UpdateSSOAllowlist())

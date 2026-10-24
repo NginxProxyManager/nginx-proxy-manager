@@ -4,6 +4,9 @@ import { RawIntlProvider } from "react-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createIntl } from "src/locale";
 import SSOSettings from ".";
+import Layout from "../Layout";
+
+vi.mock("../DefaultSite", () => ({ default: () => <div>Default site content</div> }));
 
 const { state } = vi.hoisted(() => ({
 	state: {
@@ -129,10 +132,10 @@ const intl = createIntl({
 	},
 });
 
-function renderPage() {
+function renderPage(section: "mode" | "connections" | "emails" = "connections") {
 	return render(
 		<RawIntlProvider value={intl}>
-			<SSOSettings />
+			<SSOSettings section={section} />
 		</RawIntlProvider>,
 	);
 }
@@ -157,12 +160,102 @@ describe("SSO settings", () => {
 
 	afterEach(cleanup);
 
-	it("shows every saved connection and explains shared direct email linking", () => {
+	it("explains invalid administration URLs next to the field without submitting", async () => {
+		renderPage("mode");
+		const input = screen.getByLabelText("Public administration URL");
+		fireEvent.change(input, { target: { value: "http://google.com" } });
+		fireEvent.submit(screen.getByRole("form", { name: "Login policy" }));
+		expect(await screen.findByText(/must use HTTPS/i)).toBeVisible();
+		expect(input).toHaveAttribute("aria-invalid", "true");
+		expect(state.updatePolicy).not.toHaveBeenCalled();
+		fireEvent.change(input, { target: { value: "https://npm.example.test" } });
+		fireEvent.submit(screen.getByRole("form", { name: "Login policy" }));
+		await waitFor(() => expect(state.updatePolicy).toHaveBeenCalled());
+	});
+
+	it("places the editor below its connection and the add form above the list", () => {
+		renderPage();
+		fireEvent.click(screen.getByText("Company OIDC"));
+		const first = screen.getByText("Company OIDC").closest("button")!;
+		const second = screen.getByText("Partner SAML").closest("button")!;
+		const editForm = screen.getByRole("form", { name: "SSO connection" });
+		expect(first.compareDocumentPosition(editForm) & 4).toBeTruthy();
+		expect(editForm.compareDocumentPosition(second) & 4).toBeTruthy();
+		fireEvent.click(screen.getByRole("button", { name: "Add connection" }));
+		const addForm = screen.getByRole("form", { name: "SSO connection" });
+		expect(addForm.compareDocumentPosition(first) & 4).toBeTruthy();
+	});
+
+	it("toggles the selected connection editor and switches to another connection", () => {
+		renderPage();
+		fireEvent.click(screen.getByText("Company OIDC"));
+		expect(screen.getByRole("form", { name: "SSO connection" })).toBeVisible();
+		fireEvent.click(screen.getByText("Company OIDC"));
+		expect(screen.queryByRole("form", { name: "SSO connection" })).not.toBeInTheDocument();
+		fireEvent.click(screen.getByText("Company OIDC"));
+		fireEvent.click(screen.getByText("Partner SAML"));
+		expect(screen.getByRole("form", { name: "SSO connection" })).toBeVisible();
+		expect(screen.getByLabelText("Display name")).toHaveValue("Partner SAML");
+		fireEvent.click(screen.getByText("Partner SAML"));
+		expect(screen.queryByRole("form", { name: "SSO connection" })).not.toBeInTheDocument();
+	});
+
+	it("toggles enabled in both directions when clicking its visible label", () => {
+		renderPage();
+		fireEvent.click(screen.getByText("Company OIDC"));
+		const checkbox = screen.getByRole("checkbox", { name: "Enabled" });
+		expect(checkbox).toBeChecked();
+		fireEvent.click(screen.getByText("Enabled", { selector: ".form-check-label span" }));
+		expect(checkbox).not.toBeChecked();
+		fireEvent.click(screen.getByText("Enabled", { selector: ".form-check-label span" }));
+		expect(checkbox).toBeChecked();
+		expect(state.saveConnection).not.toHaveBeenCalled();
+	});
+
+	it("navigates between three independent settings menus", () => {
+		render(
+			<RawIntlProvider value={intl}>
+				<Layout />
+			</RawIntlProvider>,
+		);
+		expect(screen.getByText("Default site content")).toBeVisible();
+		for (const [label, form] of [
+			["Login mode", "Login policy"],
+			["Trusted emails", "Trusted emails"],
+		]) {
+			fireEvent.click(screen.getByRole("link", { name: `SSO - ${label}` }));
+			expect(screen.getByRole("link", { name: `SSO - ${label}` })).toHaveAttribute("aria-current", "page");
+			expect(screen.getByRole("form", { name: form })).toBeVisible();
+			expect(screen.queryByText("Company OIDC")).not.toBeInTheDocument();
+		}
+		fireEvent.click(screen.getByRole("link", { name: "SSO - Connections" }));
+		expect(screen.getByText("Company OIDC")).toBeVisible();
+		expect(screen.queryByRole("form", { name: "Login policy" })).not.toBeInTheDocument();
+		expect(screen.queryByRole("form", { name: "Trusted emails" })).not.toBeInTheDocument();
+		expect(screen.queryByRole("link", { name: "Single sign-on" })).not.toBeInTheDocument();
+	});
+
+	it("shows saved connections separately from login mode and trusted emails", () => {
 		renderPage();
 		expect(screen.getByText("Company OIDC")).toBeVisible();
 		expect(screen.getByText("Partner SAML")).toBeVisible();
+		expect(screen.queryByRole("form", { name: "Login policy" })).not.toBeInTheDocument();
+		expect(screen.queryByRole("form", { name: "Trusted emails" })).not.toBeInTheDocument();
+	});
+
+	it("shows trusted email warnings separately from connection management", () => {
+		renderPage("emails");
 		expect(screen.getByText(/links directly to an existing account/i)).toBeVisible();
 		expect(screen.getByText(/wait for an administrator/i)).toBeVisible();
+		expect(screen.queryByText("Company OIDC")).not.toBeInTheDocument();
+		expect(screen.queryByRole("form", { name: "Login policy" })).not.toBeInTheDocument();
+	});
+
+	it("shows login mode separately from connections and trusted emails", () => {
+		renderPage("mode");
+		expect(screen.getByRole("form", { name: "Login policy" })).toBeVisible();
+		expect(screen.queryByText("Company OIDC")).not.toBeInTheDocument();
+		expect(screen.queryByRole("form", { name: "Trusted emails" })).not.toBeInTheDocument();
 	});
 
 	it("keeps a stored client secret masked and unchanged unless replace or clear is explicit", async () => {
@@ -212,7 +305,7 @@ describe("SSO settings", () => {
 	});
 
 	it("normalizes a complete shared email list and rejects duplicates or domain rules", async () => {
-		renderPage();
+		renderPage("emails");
 		const emails = screen.getByLabelText("Email addresses");
 		fireEvent.change(emails, { target: { value: " Admin@Example.test \nUSER@example.test" } });
 		fireEvent.click(
@@ -235,7 +328,7 @@ describe("SSO settings", () => {
 
 	it("reloads all revisioned forms after a 409 conflict", async () => {
 		state.updatePolicy.mockRejectedValueOnce(new Error("sso_revision_conflict"));
-		renderPage();
+		renderPage("mode");
 		fireEvent.click(
 			within(screen.getByRole("form", { name: "Login policy" })).getByRole("button", { name: "Save" }),
 		);
@@ -317,7 +410,7 @@ describe("SSO settings", () => {
 
 	it("uses a localized generic fallback for unknown backend errors", async () => {
 		state.updatePolicy.mockRejectedValueOnce(new Error("database provider secret detail"));
-		renderPage();
+		renderPage("mode");
 		fireEvent.click(
 			within(screen.getByRole("form", { name: "Login policy" })).getByRole("button", { name: "Save" }),
 		);
