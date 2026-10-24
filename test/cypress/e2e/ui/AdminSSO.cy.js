@@ -2,6 +2,12 @@
 
 describe('Admin SSO browser flow', () => {
 	before(() => cy.requireSSOEnvironment());
+	const createdTargets = [];
+	afterEach(() => {
+		for (const targetId of createdTargets.splice(0)) {
+			cy.then(() => Cypress.automation('remote:debugger:protocol', {command:'Target.closeTarget',params:{targetId}}).catch(() => null));
+		}
+	});
 
 	const adminToken = () => cy.task('backendApiPost', {
 		path: '/api/auth',
@@ -48,37 +54,58 @@ describe('Admin SSO browser flow', () => {
 		loginThrough('Fixture OAuth2');
 	});
 
-	it('performs a real cross-origin SAML POST handoff', () => {
+	it('performs a signed SAML handoff through a genuinely cross-site POST', () => {
+		cy.intercept('GET', `${new URL(Cypress.env('samlMetadataUrl')).origin}/sso*`).as('signedRequest');
+		cy.intercept('POST', '**/sso/*/acs').as('crossSiteACS');
 		loginThrough('Fixture SAML');
+		cy.wait('@crossSiteACS').then(({request, response}) => {
+			expect(request.headers['sec-fetch-site']).to.equal('cross-site');
+			expect(request.headers.cookie).to.contain('__Host-npm-sso-attempt-');
+			expect(response.statusCode).to.equal(303);
+		});
+		cy.wait('@signedRequest').then(({request}) => {
+			expect(new URL(request.url).searchParams.has('Signature')).to.equal(true);
+			return cy.task('ssoSAMLRejectsUnsigned', {signedURL:request.url}, {log:false});
+		}).should('deep.equal', {unsigned:400, invalid:400});
 	});
 
 	it('keeps two simultaneous real browser targets independent when callbacks finish out of order', () => {
-		if (Cypress.env('stack') !== 'postgres') {
-			cy.log('Real simultaneous-tab coverage runs once in the Postgres browser matrix');
-			return;
-		}
 		const ids = {};
+		let before;
+		adminToken().then((token) => cy.task('backendApiGet',{token,path:'/api/users'})).then(({result}) => {
+			ids.expectedUser=result.items.find(({email}) => email === 'allowed@example.com').id;
+		});
+		cy.task('ssoAttemptEvidence').then((rows) => { before = new Set(rows.map(({kind,id}) => `${kind}:${id}`)); });
 		cy.request('/api/auth/providers').its('body.result.connections').then((connections) => {
 			ids.slow = connections.find(({protocol}) => protocol === 'oauth2').id;
 			ids.fast = connections.find(({protocol}) => protocol === 'oidc').id;
 			return Cypress.automation('remote:debugger:protocol', {command:'Target.createTarget', params:{url:`${Cypress.config('baseUrl')}/sso/${ids.slow}/start`}});
 		}).then(({targetId}) => {
 			ids.slowTarget = targetId;
+			createdTargets.push(targetId);
 			return cy.wait(250);
 		}).then(() => Cypress.automation('remote:debugger:protocol', {command:'Target.createTarget', params:{url:`${Cypress.config('baseUrl')}/sso/${ids.fast}/start`}}))
-			.then(({targetId}) => { ids.fastTarget = targetId; return cy.wait(12000); })
+			.then(({targetId}) => { ids.fastTarget = targetId; createdTargets.push(targetId); return cy.wait(12000); })
 			.then(() => Cypress.automation('remote:debugger:protocol', {command:'Target.getTargets', params:{}}))
 			.then((targets) => {
 				const callbacks = targets.targetInfos.filter(({type,url}) => type === 'page' && url === `${Cypress.config('baseUrl')}/login`);
 				return cy.wrap(callbacks).each(({targetId}) => Cypress.automation('remote:debugger:protocol', {command:'Target.activateTarget', params:{targetId}}));
-			}).then(() => cy.wait(3000)).then(() => cy.task('ssoPostgresAttemptEvidence')).then((db) => {
-				const rows = db.split('\n').map((line) => line.split('\t'));
-				const handoffs = rows.filter(([kind]) => kind === 'handoff');
-				const sessions = rows.filter(([kind]) => kind === 'session');
-				expect(handoffs.map(([,connection]) => connection)).to.include.members([ids.fast, ids.slow]);
-				expect(new Set(handoffs.map(([, ,user]) => user)).size).to.equal(1);
-				expect(sessions.map(([,connection]) => connection)).to.include.members([ids.fast, ids.slow]);
-			});
+			}).then(() => cy.wait(3000)).then(() => cy.task('ssoAttemptEvidence')).then((db) => {
+				const rows = db.filter(({kind,id}) => !before.has(`${kind}:${id}`));
+				const handoffs = rows.filter(({kind}) => kind === 'handoff');
+				const sessions = rows.filter(({kind,status}) => kind === 'session' && status === 'open');
+				expect(handoffs, 'exactly two NEW handoffs').to.have.length(2);
+				expect(sessions, 'exactly two NEW live sessions').to.have.length(2);
+				for (const values of [handoffs, sessions]) {
+					expect(values.map(({connection_id}) => connection_id).sort()).to.deep.equal([ids.fast,ids.slow].sort());
+					expect(new Set(values.map(({user_id}) => String(user_id))).size).to.equal(1);
+					expect(values.every(({user_id}) => Number(user_id) === ids.expectedUser), 'both new attempts use the intended account').to.equal(true);
+				}
+				const fast = handoffs.find(({connection_id}) => connection_id === ids.fast);
+				const slow = handoffs.find(({connection_id}) => connection_id === ids.slow);
+				expect(new Date(fast.observed_at).getTime(), 'OIDC completes before delayed OAuth2').to.be.lessThan(new Date(slow.observed_at).getTime());
+			}).then(() => Cypress.automation('remote:debugger:protocol', {command:'Target.closeTarget', params:{targetId:ids.fastTarget}}))
+			.then(() => Cypress.automation('remote:debugger:protocol', {command:'Target.closeTarget', params:{targetId:ids.slowTarget}}));
 	});
 
 	it('NPM logout does not log the browser out of the provider', () => {

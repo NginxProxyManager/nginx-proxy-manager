@@ -68,6 +68,13 @@ func TestCancellationDoesNotReleaseOngoingCallback(t *testing.T) {
 func TestFenceNeverRetriesCallback(t *testing.T) {
 	db, _ := fenceDB(t)
 	calls := 0
-	require.Error(t, withWrite(context.Background(), db, func(tx *gorm.DB) error { calls++; return errors.New("database is locked") }))
+	busy := callbackBusyError{}
+	require.True(t, sqliteBusy(busy))
+	require.ErrorIs(t, withWrite(context.Background(), db, func(tx *gorm.DB) error { calls++; return busy }), busy)
 	require.Equal(t, 1, calls)
 }
+
+type callbackBusyError struct{}
+
+func (callbackBusyError) Error() string { return "database is locked" }
+func (callbackBusyError) Code() int     { return 5 }

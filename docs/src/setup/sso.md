@@ -52,6 +52,8 @@ Back up the database and `<DataFolder>/keys/sso.key` together. The key is an ind
 
 Restoring only the database is not enough. Restore the matching key with restrictive file permissions, restart every NPM instance sharing the database, and test each connection. Secret replacement, SAML metadata refresh and other sensitive edits require users to authenticate again.
 
+For a new shared database, complete bootstrap on one NPM instance before starting additional instances. The existing JWT signing-key initializer does not coordinate simultaneous empty-database bootstraps. After scaling, verify that a token issued by the first instance works on the others before routing user traffic to them.
+
 ## Legacy OAuth migration
 
 Before upgrading an OAuth-only installation, prepare and test a local full-administrator account and ensure local login is enabled. Deploy frontend and backend together. Legacy `/oauth/login` and `/oauth/redirect` endpoints return `410` and never issue tokens; old JWTs without a server session ID are rejected.

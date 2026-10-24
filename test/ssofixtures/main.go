@@ -98,22 +98,12 @@ func main() {
 		if entityErr != nil || entity.Scheme == "" || acsErr != nil || acs.Scheme != "https" || acs.Hostname() == "" || acs.User != nil || acs.Fragment != "" || acs.RawQuery != "" {
 			panic("SAML requires --sp-entity-id and --acs-url")
 		}
-		var spCert *x509.Certificate
-		if *spCertPath != "" {
-			raw, err := os.ReadFile(*spCertPath)
-			if err != nil {
-				panic(err)
-			}
-			block, _ := pem.Decode(raw)
-			if block == nil || block.Type != "CERTIFICATE" {
-				panic("public SP certificate required")
-			}
-			spCert, err = x509.ParseCertificate(block.Bytes)
-			if err != nil {
-				panic(err)
-			}
-		}
-		handler = newSAMLFixture(issuer, *spEntityID, *acsURL, *scenario, spCert).routes()
+		fixture := newSAMLFixture(issuer, *spEntityID, *acsURL, *scenario, nil)
+		// The SP certificate is public trust material published after metadata
+		// preview creates NPM's signing key. Require signatures from startup and
+		// load this file for every request; an absent/invalid file fails closed.
+		fixture.spCertificatePath = *spCertPath
+		handler = fixture.routes()
 		delete(startup, "client_id")
 		delete(startup, "client_secret")
 		startup["idp_metadata_url"] = issuer + "/metadata"

@@ -75,7 +75,19 @@ func Refresh(ctx context.Context, id string, now time.Time) (Principal, error) {
 		if updated.Error != nil {
 			return updated.Error
 		}
-		if updated.RowsAffected != 1 {
+		if updated.RowsAffected == 0 {
+			// MySQL reports changed rows: refreshing within the persisted
+			// timestamp's precision can match a live row without changing it.
+			// Re-check the exact predicate under this same policy fence rather
+			// than confusing an unchanged expiry with a missing/revoked session.
+			var matches int64
+			if err := tx.Model(&Model{}).Where("id = ? AND revoked_at IS NULL AND expires_at > ?", id, now).Count(&matches).Error; err != nil {
+				return err
+			}
+			if matches != 1 {
+				return ErrUnauthorized
+			}
+		} else if updated.RowsAffected != 1 {
 			return ErrUnauthorized
 		}
 		principal.Session.ExpiresAt = newExpiry

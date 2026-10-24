@@ -11,12 +11,14 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/base64"
+	"encoding/pem"
 	"encoding/xml"
 	"html/template"
 	"io"
 	"math/big"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"time"
@@ -33,6 +35,7 @@ type samlFixture struct {
 	secondKey                       *rsa.PrivateKey
 	secondCert                      *x509.Certificate
 	spCertificate                   *x509.Certificate
+	spCertificatePath               string
 }
 
 func fixtureSAMLKey() (*rsa.PrivateKey, *x509.Certificate) {
@@ -76,7 +79,7 @@ func (f *samlFixture) metadata() *saml.EntityDescriptor {
 	for _, cert := range certs {
 		keys = append(keys, saml.KeyDescriptor{Use: "signing", KeyInfo: saml.KeyInfo{X509Data: saml.X509Data{X509Certificates: []saml.X509Certificate{{Data: base64.StdEncoding.EncodeToString(cert.Raw)}}}}})
 	}
-	signed := f.spCertificate != nil
+	signed := f.spCertificate != nil || f.spCertificatePath != ""
 	return &saml.EntityDescriptor{EntityID: f.issuer, IDPSSODescriptors: []saml.IDPSSODescriptor{{SSODescriptor: saml.SSODescriptor{RoleDescriptor: saml.RoleDescriptor{ProtocolSupportEnumeration: "urn:oasis:names:tc:SAML:2.0:protocol", KeyDescriptors: keys}}, WantAuthnRequestsSigned: &signed, SingleSignOnServices: []saml.Endpoint{{Binding: saml.HTTPRedirectBinding, Location: f.issuer + "/sso"}}}}}
 }
 func (f *samlFixture) routes() http.Handler {
@@ -99,8 +102,26 @@ func (f *samlFixture) login(w http.ResponseWriter, r *http.Request) {
 		fail()
 		return
 	}
-	if f.spCertificate != nil {
-		key, ok := f.spCertificate.PublicKey.(*rsa.PublicKey)
+	spCertificate := f.spCertificate
+	if f.spCertificatePath != "" {
+		raw, err := os.ReadFile(f.spCertificatePath)
+		if err != nil {
+			fail()
+			return
+		}
+		block, _ := pem.Decode(raw)
+		if block == nil || block.Type != "CERTIFICATE" {
+			fail()
+			return
+		}
+		spCertificate, err = x509.ParseCertificate(block.Bytes)
+		if err != nil {
+			fail()
+			return
+		}
+	}
+	if spCertificate != nil {
+		key, ok := spCertificate.PublicKey.(*rsa.PublicKey)
 		if !ok || q.Get("SigAlg") != dsig.RSASHA256SignatureMethod || len(q["Signature"]) != 1 || len(q["SigAlg"]) != 1 {
 			fail()
 			return

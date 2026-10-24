@@ -1,4 +1,9 @@
 services:
+  evidence:
+    image: alpine:3.22
+    command: ["sh", "-ec", "apk add --no-cache sqlite >/dev/null; exec sleep infinity"]
+    volumes: ["npm-data:/data:ro"]
+
   postgres:
     image: postgres:17-alpine
     environment:
@@ -44,7 +49,7 @@ services:
     image: npm-sso-fixture:task15
     user: "0:0"
     build: ../../test/ssofixtures
-    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9445", "--protocol", "saml", "--issuer-url", "https://host.docker.internal:9445", "--sp-entity-id", "https://host.docker.internal/sso/sp", "--acs-url", "https://host.docker.internal:8443/sso/*", "--cert-out", "/certs/saml.crt", "--key-out", "/certs/saml.key"]
+    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9445", "--protocol", "saml", "--issuer-url", "https://host.docker.internal:9445", "--sp-entity-id", "https://host.docker.internal/sso/sp", "--acs-url", "https://localhost:8443/sso/*", "--sp-certificate", "/certs/sp.crt", "--cert-out", "/certs/saml.crt", "--key-out", "/certs/saml.key"]
     volumes: ["fixture-certs:/certs"]
     ports: ["9445:9445"]
 
@@ -57,7 +62,7 @@ services:
       - >-
         for f in oidc.crt oauth.crt saml.crt; do until test -s /certs/$$f; do sleep 1; done; done;
         cat /certs/oidc.crt /certs/oauth.crt /certs/saml.crt > /certs/provider-ca-bundle.pem;
-        openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=host.docker.internal -addext subjectAltName=DNS:host.docker.internal -keyout /certs/npm.key -out /certs/npm.crt
+        openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=localhost -addext subjectAltName=DNS:localhost -keyout /certs/npm.key -out /certs/npm.crt
 
   npm1: &npm
     image: npm-sso-task15

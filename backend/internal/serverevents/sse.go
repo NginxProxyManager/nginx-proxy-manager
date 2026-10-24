@@ -2,6 +2,7 @@ package serverevents
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"sync"
@@ -39,6 +40,97 @@ func (s *subscriber) close() { s.once.Do(func() { close(s.done) }) }
 type broker struct {
 	mu          sync.Mutex
 	subscribers map[*subscriber]struct{}
+	testGates   map[string]*deliveryGate
+}
+
+type deliveryGate struct {
+	reached chan struct{}
+	release chan struct{}
+	once    sync.Once
+	timer   *time.Timer
+}
+
+// TestDeliveryGate is reachable only through the debug-only full-admin test
+// notification handler. Pausing occurs before authorization, never inside the
+// policy fence; releasing a queued event still requires current authorization.
+func TestDeliveryGate(id, action string) (bool, error) {
+	if id == "" || len(id) != 43 {
+		return false, errors.New("invalid session")
+	}
+	b := instance
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	if b.testGates == nil {
+		b.testGates = map[string]*deliveryGate{}
+	}
+	g := b.testGates[id]
+	switch action {
+	case "pause":
+		if g != nil {
+			return false, errors.New("gate exists")
+		}
+		if len(b.testGates) >= 32 {
+			return false, errors.New("gate limit")
+		}
+		g = &deliveryGate{reached: make(chan struct{}), release: make(chan struct{})}
+		b.testGates[id] = g
+		g.timer = time.AfterFunc(5*time.Second, func() {
+			b.mu.Lock()
+			defer b.mu.Unlock()
+			if b.testGates[id] == g {
+				close(g.release)
+				delete(b.testGates, id)
+			}
+		})
+		return false, nil
+	case "status", "release":
+		if g == nil {
+			return false, errors.New("gate missing")
+		}
+		reached := false
+		select {
+		case <-g.reached:
+			reached = true
+		default:
+		}
+		if action == "release" {
+			g.timer.Stop()
+			close(g.release)
+			delete(b.testGates, id)
+		}
+		return reached, nil
+	default:
+		return false, errors.New("invalid action")
+	}
+}
+
+func (b *broker) waitTestGate(r *http.Request, id string) error {
+	b.mu.Lock()
+	g := b.testGates[id]
+	b.mu.Unlock()
+	if g == nil {
+		return nil
+	}
+	defer func() {
+		b.mu.Lock()
+		defer b.mu.Unlock()
+		if b.testGates[id] == g {
+			g.timer.Stop()
+			close(g.release)
+			delete(b.testGates, id)
+		}
+	}()
+	g.once.Do(func() { close(g.reached) })
+	timer := time.NewTimer(5 * time.Second)
+	defer timer.Stop()
+	select {
+	case <-g.release:
+		return nil
+	case <-r.Context().Done():
+		return r.Context().Err()
+	case <-timer.C:
+		return errors.New("test gate timeout")
+	}
 }
 
 var instance = &broker{subscribers: make(map[*subscriber]struct{})}
@@ -192,6 +284,9 @@ func (b *broker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		case e := <-s.queue:
+			if b.waitTestGate(r, s.sessionID) != nil {
+				return
+			}
 			err := session.WithAuthorizedDelivery(r.Context(), s.sessionID, func(current session.Principal) error {
 				if len(current.Capabilities) == 0 {
 					return session.ErrUnauthorized

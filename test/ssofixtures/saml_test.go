@@ -2,11 +2,14 @@ package main
 
 import (
 	"encoding/base64"
+	"encoding/pem"
 	"github.com/crewjam/saml"
 	dsig "github.com/russellhaering/goxmldsig"
 	"html"
 	"net/http/httptest"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -61,6 +64,26 @@ func TestSAMLFixtureSignedPOSTAndRequestVerification(t *testing.T) {
 	f.routes().ServeHTTP(response, httptest.NewRequest("GET", target.String(), nil))
 	if response.Code != 200 {
 		t.Fatal("signed request rejected")
+	}
+	// Runtime fixture trusts only the public certificate NPM publishes after
+	// metadata preview. Missing trust must never downgrade to unsigned mode.
+	f.spCertificate = nil
+	f.spCertificatePath = filepath.Join(t.TempDir(), "sp.crt")
+	if !*f.metadata().IDPSSODescriptors[0].WantAuthnRequestsSigned {
+		t.Fatal("signed metadata required before certificate publication")
+	}
+	response = httptest.NewRecorder()
+	f.routes().ServeHTTP(response, httptest.NewRequest("GET", target.String(), nil))
+	if response.Code != 400 {
+		t.Fatal("missing public certificate did not fail closed")
+	}
+	if err := os.WriteFile(f.spCertificatePath, pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw}), 0600); err != nil {
+		t.Fatal(err)
+	}
+	response = httptest.NewRecorder()
+	f.routes().ServeHTTP(response, httptest.NewRequest("GET", target.String(), nil))
+	if response.Code != 200 {
+		t.Fatal("runtime public certificate rejected valid signature")
 	}
 	target.RawQuery = strings.Replace(target.RawQuery, "RelayState=relay", "RelayState=evil", 1)
 	response = httptest.NewRecorder()

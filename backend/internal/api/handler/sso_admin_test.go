@@ -224,3 +224,47 @@ func TestMissingEncryptionKeyExplainsRestoreAction(t *testing.T) {
 	require.Equal(t, http.StatusServiceUnavailable, rec.Code)
 	require.Contains(t, rec.Body.String(), "sso_key_restore_required")
 }
+
+func TestAllowlistReadKeepsRevisionAndEmailsInOnePolicySnapshot(t *testing.T) {
+	db := ssoAdminDB(t)
+	require.NoError(t, db.Create(&sso.AllowlistEntry{Email: "old@example.com"}).Error)
+	readPolicy, releaseRead := make(chan struct{}), make(chan struct{})
+	require.NoError(t, db.Callback().Query().After("gorm:query").Register("test:pause_policy_read", func(tx *gorm.DB) {
+		if tx.Statement.Table == "sso_policy" {
+			select {
+			case <-readPolicy:
+			default:
+				close(readPolicy)
+				<-releaseRead
+			}
+		}
+	}))
+	defer db.Callback().Query().Remove("test:pause_policy_read")
+	readDone := make(chan *httptest.ResponseRecorder, 1)
+	go func() { readDone <- adminRequest("GET", "/api/sso/allowlist", "", GetSSOAllowlist()) }()
+	<-readPolicy
+	writeEntered, writeDone := make(chan struct{}), make(chan error, 1)
+	go func() {
+		writeDone <- sso.WithPolicyWrite(context.Background(), func(tx *gorm.DB) error {
+			close(writeEntered)
+			if err := tx.Model(&sso.Policy{}).Where("id = ?", 1).Update("revision", 2).Error; err != nil {
+				return err
+			}
+			return tx.Model(&sso.AllowlistEntry{}).Where("email = ?", "old@example.com").Update("email", "new@example.com").Error
+		})
+	}()
+	select {
+	case <-writeEntered:
+		t.Fatal("writer entered between revision and email reads")
+	case <-time.After(30 * time.Millisecond):
+	}
+	close(releaseRead)
+	rec := <-readDone
+	require.Equal(t, http.StatusOK, rec.Code)
+	require.Contains(t, rec.Body.String(), `"revision":1`)
+	require.Contains(t, rec.Body.String(), "old@example.com")
+	require.NoError(t, <-writeDone)
+	rec = adminRequest("GET", "/api/sso/allowlist", "", GetSSOAllowlist())
+	require.Contains(t, rec.Body.String(), `"revision":2`)
+	require.Contains(t, rec.Body.String(), "new@example.com")
+}

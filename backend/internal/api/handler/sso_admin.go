@@ -18,6 +18,7 @@ import (
 
 	c "npm/internal/api/context"
 	h "npm/internal/api/http"
+	"npm/internal/authpolicy"
 	"npm/internal/config"
 	"npm/internal/database"
 	"npm/internal/entity/session"
@@ -544,17 +545,23 @@ func DeleteSSOConnection() http.HandlerFunc {
 
 func GetSSOAllowlist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		policy, err := sso.GetPolicy(database.GetDB())
+		var emails []string
+		var revision uint64
+		// The revision and list are one optimistic-concurrency snapshot. Share
+		// the mutation fence so READ COMMITTED cannot mix two policy versions.
+		err := authpolicy.WithWrite(r.Context(), func(tx *gorm.DB) error {
+			policy, err := sso.GetPolicy(tx)
+			if err != nil {
+				return err
+			}
+			revision = policy.Revision
+			return tx.Model(&sso.AllowlistEntry{}).Order("email").Pluck("email", &emails).Error
+		})
 		if err != nil {
 			ssoError(w, r, err)
 			return
 		}
-		var emails []string
-		if err := database.GetDB().Model(&sso.AllowlistEntry{}).Order("email").Pluck("email", &emails).Error; err != nil {
-			ssoError(w, r, err)
-			return
-		}
-		h.ResultResponseJSON(w, r, http.StatusOK, map[string]any{"revision": policy.Revision, "emails": emails})
+		h.ResultResponseJSON(w, r, http.StatusOK, map[string]any{"revision": revision, "emails": emails})
 	}
 }
 

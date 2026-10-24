@@ -7,7 +7,7 @@ const BackendApi = function(config, token) {
 };
 
 const safeJSON = (value) => JSON.stringify(value, (key, nested) => {
-	if (['token', 'secret', 'secret_value', 'client_secret', 'current_secret'].includes(key)) {
+	if (['token', 'secret', 'secret_value', 'client_secret', 'current_secret', 'session_id'].includes(key)) {
 		return '[redacted]';
 	}
 	return nested;

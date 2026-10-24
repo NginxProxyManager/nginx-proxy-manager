@@ -97,6 +97,33 @@ func TestAuthorizeCurrentPolicy(t *testing.T) {
 	}
 }
 
+func TestRefreshAcceptsUnchangedLiveRowsButNeverMissingRows(t *testing.T) {
+	for _, missing := range []bool{false, true} {
+		t.Run(fmt.Sprintf("missing=%v", missing), func(t *testing.T) {
+			db := fixture(t)
+			m := value("a", Local)
+			require.NoError(t, db.Create(&m).Error)
+			// MySQL's default affected-row count is changed rows, not matched
+			// rows. A same-second rolling expiry update can legitimately report 0.
+			require.NoError(t, db.Callback().Update().After("gorm:update").Register("test:mysql_unchanged", func(tx *gorm.DB) {
+				if tx.Statement.Table != "session" {
+					return
+				}
+				if missing {
+					require.NoError(t, tx.Session(&gorm.Session{NewDB: true}).Exec("DELETE FROM session WHERE id = ?", m.ID).Error)
+				}
+				tx.RowsAffected = 0
+			}))
+			_, err := Refresh(context.Background(), m.ID, epoch)
+			if missing {
+				require.ErrorIs(t, err, ErrUnauthorized)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
 func TestRefreshKeepsIdentityAndRejectsExpiredOrRevoked(t *testing.T) {
 	for _, tc := range []struct {
 		name    string
