@@ -399,6 +399,14 @@
 		"package_name": "certbot-dns-ionos",
 		"version": "==2022.11.24"
 	},
+	"ip-projects": {
+		"credentials": "dns_ipp_acme_api_key = <API key>",
+		"dependencies": "",
+		"full_plugin_name": "dns-ipp",
+		"name": "ip-projects.de",
+		"package_name": "certbot-dns-ipp",
+		"version": "~=1.0.0"
+	},
 	"ispconfig": {
 		"credentials": "dns_ispconfig_username = myremoteuser\ndns_ispconfig_password = verysecureremoteuserpassword\ndns_ispconfig_endpoint = https://localhost:8080",
 		"dependencies": "",
