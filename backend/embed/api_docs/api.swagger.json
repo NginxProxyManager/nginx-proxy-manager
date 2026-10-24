@@ -5,6 +5,38 @@
 		"version": "{{VERSION}}"
 	},
 	"paths": {
+		"/auth/providers": {"get": {"$ref": "file://./paths/auth/providers/get.json"}},
+		"/auth/sso/exchange": {"post": {"$ref": "file://./paths/auth/sso/exchange/post.json"}},
+		"/auth/logout": {"post": {"$ref": "file://./paths/auth/logout/post.json"}},
+		"/sso/legacy-status": {"get": {"$ref": "file://./paths/sso/legacy-status/get.json"}},
+		"/sso/legacy-import": {"post": {"$ref": "file://./paths/sso/legacy-import/post.json"}},
+		"/sso/{id}/start": {"get": {"$ref": "file://./paths/sso/browser/start/get.json"}},
+		"/sso/{id}/callback": {"get": {"$ref": "file://./paths/sso/browser/callback/get.json"}},
+		"/sso/{id}/acs": {"post": {"$ref": "file://./paths/sso/browser/acs/post.json"}},
+		"/sso/{id}/metadata": {"get": {"$ref": "file://./paths/sso/browser/metadata/get.json"}},
+		"/sso/saml/metadata-preview": {
+			"post": {"$ref": "file://./paths/sso/saml/metadata-preview/post.json"}
+		},
+		"/sso/policy": {
+			"get": {"$ref": "file://./paths/sso/policy/get.json"},
+			"put": {"$ref": "file://./paths/sso/policy/put.json"}
+		},
+		"/sso/connections": {
+			"get": {"$ref": "file://./paths/sso/connections/get.json"},
+			"post": {"$ref": "file://./paths/sso/connections/post.json"}
+		},
+		"/sso/connections/{id}": {
+			"get": {"$ref": "file://./paths/sso/connections/id/get.json"},
+			"put": {"$ref": "file://./paths/sso/connections/id/put.json"},
+			"delete": {"$ref": "file://./paths/sso/connections/id/delete.json"}
+		},
+		"/sso/connections/{id}/test": {
+			"post": {"$ref": "file://./paths/sso/connections/id/test/post.json"}
+		},
+		"/sso/allowlist": {
+			"get": {"$ref": "file://./paths/sso/allowlist/get.json"},
+			"put": {"$ref": "file://./paths/sso/allowlist/put.json"}
+		},
 		"/": {
 			"get": {
 				"$ref": "file://./paths/get.json"
@@ -228,6 +260,7 @@
 		}
 	},
 	"components": {
+		"securitySchemes": {"BearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}},
 		"schemas": {
 			"AuthConfigObject": {
 				"$ref": "file://./components/AuthConfigObject.json"

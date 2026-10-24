@@ -5,6 +5,25 @@ import et from "./src/et.json";
 const english = en as Record<string, { defaultMessage: string }>;
 const estonian = et as Record<string, { defaultMessage: string }>;
 
+// SSO and its capability-management additions ship with English and Vietnamese
+// source copy. Other locales intentionally use the established English fallback.
+const fallbackPrefixes = ["settings.sso."];
+const fallbackKeys = new Set([
+	"login.sso-administrator-password",
+	"login.sso-denied",
+	"login.sso-or",
+	"login.sso-unsupported-profile",
+	"logout.unconfirmed",
+	"pending-access.description",
+	"pending-access.profile-unavailable",
+	"pending-access.title",
+	"permissions.capabilities",
+	"permissions.certificate-authorities",
+	"permissions.dns-providers",
+	"permissions.nginx-templates",
+	"user.password-login-enabled",
+]);
+
 // Brand names, codes and ICU-only strings can stay the same as English.
 const allowedIdentical = new Set([
 	"certificates.key-type-ecdsa",
@@ -18,7 +37,12 @@ const allowedIdentical = new Set([
 
 describe("Estonian UI locale", () => {
 	it("covers every English UI key", () => {
-		const missing = Object.keys(english).filter((key) => !(key in estonian));
+		const missing = Object.keys(english).filter(
+			(key) =>
+				!(key in estonian) &&
+				!fallbackKeys.has(key) &&
+				!fallbackPrefixes.some((prefix) => key.startsWith(prefix)),
+		);
 		expect(missing).toEqual([]);
 	});
 

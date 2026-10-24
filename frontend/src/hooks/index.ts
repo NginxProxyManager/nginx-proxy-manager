@@ -18,6 +18,7 @@ export * from "./useProxyHosts";
 export * from "./useRedirectionHost";
 export * from "./useRedirectionHosts";
 export * from "./useSetting";
+export * from "./useSSO";
 export * from "./useStream";
 export * from "./useStreams";
 export * from "./useTheme";

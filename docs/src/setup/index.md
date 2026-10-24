@@ -6,6 +6,8 @@ outline: deep
 
 ## Running the App
 
+For administrator identity-provider configuration, see [Administrator single sign-on](./sso.md).
+
 Create a `docker-compose.yml` file:
 
 ```yml

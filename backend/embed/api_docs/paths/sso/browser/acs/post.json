@@ -1,0 +1,1 @@
+{"operationId":"completeSAMLACS","summary":"SAML HTTP-POST assertion consumer","tags":["Auth"],"servers":[{"url":"/"}],"security":[],"parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"string"}}],"responses":{"303":{"description":"Fixed /login handoff or localized denial redirect"}}}

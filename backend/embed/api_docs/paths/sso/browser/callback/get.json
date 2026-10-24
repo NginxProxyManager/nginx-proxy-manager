@@ -1,0 +1,1 @@
+{"operationId":"completeSSOCallback","summary":"OIDC or OAuth2 callback","tags":["Auth"],"servers":[{"url":"/"}],"security":[],"parameters":[{"in":"path","name":"id","required":true,"schema":{"type":"string"}}],"responses":{"303":{"description":"Fixed /login handoff or localized denial redirect; no JWT in URL"}}}

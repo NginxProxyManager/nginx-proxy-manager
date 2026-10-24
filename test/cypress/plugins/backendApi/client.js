@@ -6,6 +6,13 @@ const BackendApi = function(config, token) {
 	this.token  = token;
 };
 
+const safeJSON = (value) => JSON.stringify(value, (key, nested) => {
+	if (['token', 'secret', 'secret_value', 'client_secret', 'current_secret', 'session_id'].includes(key)) {
+		return '[redacted]';
+	}
+	return nested;
+}, 2);
+
 /**
  * @param {string} token
  */
@@ -29,7 +36,7 @@ BackendApi.prototype.get = function(path, returnOnError) {
 				},
 			})
 			.on('complete', function(data, response) {
-				logger('Response data:', JSON.stringify(data, null, 2));
+				logger('Response data:', safeJSON(data));
 				if (!returnOnError && data instanceof Error) {
 					reject(data);
 				} else if (!returnOnError && response.statusCode != 200) {
@@ -61,7 +68,7 @@ BackendApi.prototype.delete = function(path, returnOnError) {
 				},
 			})
 			.on('complete', function(data, response) {
-				logger('Response data:', JSON.stringify(data, null, 2));
+				logger('Response data:', safeJSON(data));
 				if (!returnOnError && data instanceof Error) {
 					reject(data);
 				} else if (!returnOnError && response.statusCode != 200) {
@@ -84,7 +91,7 @@ BackendApi.prototype.delete = function(path, returnOnError) {
  * @returns {Promise<object>}
  */
 BackendApi.prototype.postJson = function(path, data, returnOnError) {
-	logger('POST Request:', this.config.baseUrl + path, JSON.stringify(data, null, 2));
+	logger('POST Request:', this.config.baseUrl + path, safeJSON(data));
 	return this._putPostJson('postJson', path, data, returnOnError);
 };
 
@@ -95,7 +102,7 @@ BackendApi.prototype.postJson = function(path, data, returnOnError) {
  * @returns {Promise<object>}
  */
 BackendApi.prototype.putJson = function(path, data, returnOnError) {
-	logger('PUT Request:', this.config.baseUrl + path, JSON.stringify(data, null, 2));
+	logger('PUT Request:', this.config.baseUrl + path, safeJSON(data));
 	return this._putPostJson('putJson', path, data, returnOnError);
 };
 
@@ -113,7 +120,7 @@ BackendApi.prototype._putPostJson = function(fn, path, data, returnOnError) {
 				Authorization: 'Bearer ' + this.token,
 			},
 		}).on('complete', function(data, response) {
-			logger('Response data:', JSON.stringify(data, null, 2));
+			logger('Response data:', safeJSON(data));
 			if (!returnOnError && data instanceof Error) {
 				reject(data);
 			} else if (!returnOnError && response.statusCode != 200) {

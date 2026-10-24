@@ -7,7 +7,29 @@ import { Button, Loading } from "src/components";
 import { useSetUser, useUser } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
+import { FULL_ADMIN, hasCapability } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
+
+export function buildUserPayload(id: number | "me" | "new", data: any, currentUser: any, values: any) {
+	const payload: any = { id: id === "new" ? undefined : id, name: values.name, email: values.email };
+	if (id === "new") {
+		payload.isDisabled = values.isDisabled;
+		payload.capabilities = values.isAdmin ? [FULL_ADMIN] : [];
+	} else if (data?.id !== currentUser?.id) {
+		payload.isDisabled = values.isDisabled;
+		const wasAdmin = data?.capabilities?.includes(FULL_ADMIN) ?? false;
+		if (values.isAdmin !== wasAdmin) {
+			payload.capabilities = values.isAdmin
+				? Array.from(new Set([...(data?.capabilities ?? []), FULL_ADMIN]))
+				: (data?.capabilities ?? []).filter((capability: string) => capability !== FULL_ADMIN);
+		}
+	}
+	if (typeof id === "number" && hasCapability(currentUser?.capabilities, FULL_ADMIN) &&
+		values.isAdmin && values.passwordLoginEnabled !== data?.passwordLoginEnabled) {
+		payload.passwordLoginEnabled = values.passwordLoginEnabled;
+	}
+	return payload;
+}
 
 const showUserModal = (id: number | "me" | "new") => {
 	EasyModal.show(UserModal, { id });
@@ -16,7 +38,7 @@ const showUserModal = (id: number | "me" | "new") => {
 interface Props extends InnerModalProps {
 	id: number | "me" | "new";
 }
-const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
+export function UserEditor({ id, visible, remove }: Props) {
 	const { data, isLoading, error } = useUser(id);
 	const { data: currentUser, isLoading: currentIsLoading } = useUser("me");
 	const { mutate: setUser } = useSetUser();
@@ -28,22 +50,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
-		const { ...payload } = {
-			id: id === "new" ? undefined : id,
-			roles: [],
-			...values,
-		};
-
-		if (data?.id === currentUser?.id) {
-			// Prevent user from locking themselves out
-			delete payload.isDisabled;
-			delete payload.roles;
-		} else if (payload.isAdmin) {
-			payload.roles = ["admin"];
-		}
-
-		// this isn't a real field, just for the form
-		delete payload.isAdmin;
+		const payload = buildUserPayload(id, data, currentUser, values);
 
 		setUser(payload, {
 			onError: (err: any) => setErrorMsg(err.message),
@@ -72,7 +79,8 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						{
 							name: data?.name,
 							email: data?.email,
-							isAdmin: data?.roles?.includes("admin"),
+							isAdmin: data?.capabilities?.includes(FULL_ADMIN),
+							passwordLoginEnabled: data?.passwordLoginEnabled ?? false,
 							isDisabled: data?.isDisabled,
 						} as any
 					}
@@ -138,7 +146,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										)}
 									</Field>
 								</div>
-								{currentUser && data && currentUser?.id !== data?.id ? (
+								{currentUser && data && id !== "me" ? (
 									<div className="my-3">
 										<h4 className="py-2">
 											<T id="options" />
@@ -156,6 +164,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	<input
 																		{...field}
 																		id="isAdmin"
+																		disabled={currentUser.id === data.id}
 																		className="form-check-input"
 																		type="checkbox"
 																	/>
@@ -165,6 +174,14 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													</span>
 												</label>
 											</div>
+											{typeof id === "number" && hasCapability(currentUser.capabilities, FULL_ADMIN) ? (
+												<div>
+													<label className="row" htmlFor="passwordLoginEnabled">
+														<span className="col"><T id="user.password-login-enabled" /></span>
+												<span className="col-auto"><Field name="passwordLoginEnabled" type="checkbox">{({ field, form }: any) => <span className="form-check form-check-single form-switch"><input {...field} id="passwordLoginEnabled" className="form-check-input" type="checkbox" disabled={!form.values.isAdmin} /></span>}</Field></span>
+													</label>
+												</div>
+											) : null}
 											<div>
 												<label className="row" htmlFor="isDisabled">
 													<span className="col">
@@ -177,6 +194,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	<input
 																		{...field}
 																		id="isDisabled"
+																		disabled={currentUser.id === data.id}
 																		className="form-check-input"
 																		type="checkbox"
 																	/>
@@ -210,6 +228,8 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			)}
 		</Modal>
 	);
-});
+}
+
+const UserModal = EasyModal.create(UserEditor);
 
 export { showUserModal };

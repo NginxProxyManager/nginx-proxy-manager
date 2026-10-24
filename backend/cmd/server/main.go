@@ -1,21 +1,26 @@
 package main
 
 import (
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"npm/internal/api"
+	"npm/internal/api/handler"
 	"npm/internal/config"
 	"npm/internal/database"
 	"npm/internal/entity/certificate"
 	"npm/internal/entity/host"
+	ssoconfig "npm/internal/entity/sso"
 	"npm/internal/entity/user"
 	"npm/internal/errors"
 	"npm/internal/jobqueue"
 	"npm/internal/jwt"
 	"npm/internal/logger"
 	"npm/internal/migrations"
+	"npm/internal/secretstore"
+	"npm/internal/sso"
 
 	// properly respect available cpu cores
 	_ "go.uber.org/automaxprocs"
@@ -78,6 +83,28 @@ func start() error {
 	if err := checkSetup(); err != nil {
 		return err
 	}
+	// Local bootstrap remains available, while a broken SSO restore is explicit
+	// in diagnostics. SSO services must require a successfully opened store.
+	secrets, err := secretstore.Open(config.Configuration.DataFolder)
+	if err != nil {
+		logger.Error("SSOInitializationError", err)
+	}
+	oidc := sso.NewOIDCAdapter(nil, secrets).(*sso.OIDCAdapter)
+	oauth2 := sso.NewOAuth2Adapter(nil, secrets).(*sso.OAuth2Adapter)
+	saml := sso.NewSAMLAdapter(nil, secrets).(*sso.SAMLAdapter)
+	handler.RegisterSSOProbe(ssoconfig.OIDC, oidc.Probe)
+	handler.RegisterSSOProbe(ssoconfig.OAuth2, oauth2.Probe)
+	handler.RegisterSSOProbe(ssoconfig.SAML, saml.Probe)
+	handler.RegisterSSOSAML(saml.PreviewMetadata, saml.PrepareConnection)
+	var browserService *sso.Service
+	if secrets != nil {
+		browserService = sso.NewService(database.GetDB(), secrets, map[ssoconfig.Protocol]sso.Adapter{
+			ssoconfig.OIDC: oidc, ssoconfig.OAuth2: oauth2, ssoconfig.SAML: saml,
+		})
+	}
+	handler.RegisterBrowserSSO(browserService, func(r *http.Request, conn ssoconfig.Connection, origin string) ([]byte, error) {
+		return saml.Metadata(r.Context(), conn, origin)
+	})
 
 	// Internal Job Queue
 	jobqueue.Start()

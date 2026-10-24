@@ -6,6 +6,9 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/alexflint/go-arg v1.6.1
 	github.com/aymerick/raymond v2.0.3-0.20180322193309-b565731e1464+incompatible
+	github.com/beevik/etree v1.6.0
+	github.com/coreos/go-oidc/v3 v3.21.0
+	github.com/crewjam/saml v0.5.1
 	github.com/drexedam/gravatar v0.0.0-20210327211422-e94eea8c338e
 	github.com/fatih/color v1.19.0
 	github.com/glebarez/sqlite v1.11.0
@@ -17,9 +20,11 @@ require (
 	github.com/jc21/go-sse v1.7.0
 	github.com/jc21/jsref v0.0.0-20250501111625-0ce4620b7d96
 	github.com/jc21/polyschema v0.0.0-20260925050705-5d30b3cbbc99
+	github.com/mattermost/xml-roundtrip-validator v0.1.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/rotisserie/eris v0.5.4
+	github.com/russellhaering/goxmldsig v1.6.0
 	github.com/stretchr/testify v1.12.1
 	github.com/vrischmann/envconfig v1.4.1
 	go.uber.org/automaxprocs v1.6.0
@@ -41,6 +46,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/glebarez/go-sqlite v1.23.0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.8 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
 	github.com/go-sql-driver/mysql v1.10.1 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -50,6 +56,7 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jonboulle/clockwork v0.5.0 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.3 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
 	github.com/lestrrat-go/httprc/v3 v3.0.0-beta2 // indirect

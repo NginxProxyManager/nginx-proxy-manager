@@ -28,7 +28,8 @@ func List(pageInfo model.PageInfo, filters []model.Filter) (entity.ListResponse,
 		Direction: "ASC",
 	}
 
-	dbo := entity.ListQueryBuilder(&pageInfo, filters, entity.GetFilterMap(Model{}, true))
+	dbo := entity.ListQueryBuilder(&pageInfo, filters, entity.GetFilterMap(Model{}, true)).
+		Where("LOWER(name) NOT IN ? AND LOWER(name) NOT LIKE ?", []string{"oauth-auth", "auth-methods"}, "sso%")
 
 	// Get count of items in this search
 	var totalRows int64

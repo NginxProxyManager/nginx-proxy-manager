@@ -14,7 +14,6 @@ import {
 	EmailFormatter,
 	EmptyData,
 	GravatarFormatter,
-	RolesFormatter,
 	TrueFalseFormatter,
 	ValueWithDateFormatter,
 } from "src/components";
@@ -83,12 +82,10 @@ export default function Table({
 					return <EmailFormatter email={info.getValue()} />;
 				},
 			}),
-			columnHelper.accessor((row: any) => row.roles, {
-				id: "roles",
-				header: intl.formatMessage({ id: "column.roles" }),
-				cell: (info: any) => {
-					return <RolesFormatter roles={info.getValue()} />;
-				},
+			columnHelper.accessor((row: any) => row.capabilities, {
+				id: "capabilities",
+				header: intl.formatMessage({ id: "permissions.capabilities" }),
+				cell: (info: any) => (info.getValue() as string[]).join(", ") || "—",
 			}),
 			columnHelper.accessor((row: any) => row.isDisabled, {
 				id: "isDisabled",
@@ -142,7 +139,7 @@ export default function Table({
 											<IconShield size={16} />
 											<T id="action.permissions" />
 										</a>
-										<a
+										{info.row.original.canSetLocalPassword ? <a
 											className="dropdown-item"
 											href="#"
 											onClick={(e) => {
@@ -152,7 +149,7 @@ export default function Table({
 										>
 											<IconLock size={16} />
 											<T id="user.set-password" />
-										</a>
+										</a> : null}
 										<a
 											className="dropdown-item"
 											href="#"

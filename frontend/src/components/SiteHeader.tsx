@@ -2,15 +2,23 @@ import { IconLock, IconLogout, IconShieldLock, IconUser } from "@tabler/icons-re
 import { LocalePicker, NavLink, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useUser } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { showChangePasswordModal, showTwoFactorModal, showUserModal } from "src/modals";
+import { FULL_ADMIN, hasCapability } from "src/modules/Permissions";
+import { showError } from "src/notifications";
 import styles from "./SiteHeader.module.css";
 
 export function SiteHeader() {
 	const { data: currentUser } = useUser("me");
-	const isAdmin = currentUser?.roles?.includes("admin");
+	const isAdmin = hasCapability(currentUser?.capabilities, FULL_ADMIN);
 	const { logout } = useAuthState();
-console.log("currentUser", currentUser);
+	const onLogout = async () => {
+		try {
+			await logout();
+		} catch {
+			showError(intl.formatMessage({ id: "logout.unconfirmed" }));
+		}
+	};
 	return (
 		<header className="navbar navbar-expand-md d-print-none">
 			<div className="container-xl">
@@ -100,7 +108,7 @@ console.log("currentUser", currentUser);
 									<IconUser width={18} />
 									<T id="user.edit-profile" />
 								</a>
-								<a
+								{currentUser?.hasLocalCredential ? <a
 									href="?"
 									className="dropdown-item"
 									onClick={(e) => {
@@ -110,7 +118,7 @@ console.log("currentUser", currentUser);
 								>
 									<IconLock width={18} />
 									<T id="user.change-password" />
-								</a>
+								</a> : null}
 								<a
 									href="?"
 									className="dropdown-item"
@@ -128,7 +136,7 @@ console.log("currentUser", currentUser);
 									className="dropdown-item"
 									onClick={(e) => {
 										e.preventDefault();
-										logout();
+										void onLogout();
 									}}
 								>
 									<IconLogout width={18} />

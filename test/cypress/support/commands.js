@@ -138,3 +138,14 @@ Cypress.Commands.add('waitForCertificateStatus', (token, certID, expected, timeo
 		interval: 5000
 	});
 });
+
+Cypress.Commands.add('ssoAdminApi', (method, path, token, data, returnOnError = false) => {
+	const task = `backendApi${method[0].toUpperCase()}${method.slice(1).toLowerCase()}`;
+	return cy.task(task, {token, path: `/api/sso${path}`, data, returnOnError});
+});
+
+Cypress.Commands.add('requireSSOEnvironment', () => {
+	for (const key of ['ssoPublicUrl', 'oidcIssuer', 'oauthIssuer', 'samlMetadataUrl']) {
+		if (!Cypress.env(key)) throw new Error(`Task 15 SSO environment is missing ${key}; tests must not silently skip protocols`);
+	}
+});

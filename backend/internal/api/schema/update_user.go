@@ -15,8 +15,27 @@ func UpdateUser() string {
 				"is_disabled": {
 					"type": "boolean"
 				},
+				"password_login_enabled": {
+					"type": "boolean"
+				},
 				"capabilities": %s
 			}
 		}
 	`, stringMinMax(2, 50), stringMinMax(5, 150), capabilties())
+}
+
+// UpdateSelfUser deliberately excludes every policy and credential-origin
+// field. Self-service is limited to ordinary profile data.
+func UpdateSelfUser() string {
+	return fmt.Sprintf(`
+		{
+			"type": "object",
+			"additionalProperties": false,
+			"minProperties": 1,
+			"properties": {
+				"name": %s,
+				"email": %s
+			}
+		}
+	`, stringMinMax(2, 50), stringMinMax(5, 150))
 }

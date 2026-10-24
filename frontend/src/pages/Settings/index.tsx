@@ -1,10 +1,10 @@
 import { HasPermission } from "src/components";
-import { ADMIN, VIEW } from "src/modules/Permissions";
+import { SETTINGS, VIEW } from "src/modules/Permissions";
 import Layout from "./Layout";
 
 const Settings = () => {
 	return (
-		<HasPermission section={ADMIN} permission={VIEW} pageLoading loadingNoLogo>
+		<HasPermission section={SETTINGS} permission={VIEW} pageLoading loadingNoLogo>
 			<Layout />
 		</HasPermission>
 	);

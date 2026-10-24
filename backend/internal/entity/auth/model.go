@@ -6,6 +6,7 @@ import (
 
 	"github.com/rotisserie/eris"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // Auth types
@@ -38,7 +39,11 @@ func (m *Model) LoadByID(id int) error {
 
 // Save will save this model to the DB
 func (m *Model) Save() error {
-	db := database.GetDB()
+	return m.SaveInTx(database.GetDB())
+}
+
+// SaveInTx persists an authentication method in the caller's transaction.
+func (m *Model) SaveInTx(db *gorm.DB) error {
 	result := db.Save(m)
 	return result.Error
 }

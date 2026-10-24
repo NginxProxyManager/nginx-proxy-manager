@@ -1,10 +1,9 @@
-import { QueryClient } from "@tanstack/react-query";
 import { camelizeKeys, decamelize, decamelizeKeys } from "humps";
 import queryString, { type StringifiableRecord } from "query-string";
-import AuthStore from "src/modules/AuthStore";
+import AuthStore, { type AuthSnapshot } from "src/modules/AuthStore";
 
-const queryClient = new QueryClient();
 const contentTypeHeader = "Content-Type";
+export const AUTH_INVALIDATED_EVENT = "npm:auth-invalidated";
 
 interface BuildUrlArgs {
 	url: string;
@@ -46,14 +45,14 @@ function buildBody(data?: Record<string, any>): string | undefined {
 	}
 }
 
-async function processResponse(response: Response, skipCamelize = false) {
+async function processResponse(response: Response, skipCamelize = false, authentication?: AuthSnapshot) {
 	const payload = await response.json();
 	if (!response.ok) {
-		if (response.status === 401) {
-			// Force logout user and reload the page if Unauthorized
+		if (response.status === 401 && authentication?.stored && AuthStore.isCurrent(authentication)) {
+			// The AuthProvider owns the application's actual QueryClient. Notify it
+			// instead of clearing an unrelated client created in this module.
 			AuthStore.clear();
-			queryClient.clear();
-			window.location.reload();
+			window.dispatchEvent(new Event(AUTH_INVALIDATED_EVENT));
 		}
 		throw new Error(
 			typeof payload.error.messageI18n !== "undefined" ? payload.error.messageI18n : payload.error.message,
@@ -71,13 +70,15 @@ interface GetArgs {
 async function baseGet({ url, params }: GetArgs) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "GET";
+	const authentication = AuthStore.snapshot();
 	const headers = buildAuthHeader();
 	const response = await fetch(apiUrl, { method, headers });
-	return response;
+	return { response, authentication };
 }
 
 export async function get(args: GetArgs) {
-	return processResponse(await baseGet(args), args.skipCamelize);
+	const { response, authentication } = await baseGet(args);
+	return processResponse(response, args.skipCamelize, authentication);
 }
 
 export async function download({ url, params }: GetArgs, filename = "download.file") {
@@ -98,9 +99,11 @@ interface PostArgs {
 	data?: any;
 	noAuth?: boolean;
 	skipCamelize?: boolean;
+	suppressAuthInvalidation?: boolean;
 }
 
-export async function post({ url, params, data, noAuth, skipCamelize }: PostArgs) {
+export async function post({ url, params, data, noAuth, skipCamelize, suppressAuthInvalidation }: PostArgs) {
+	const authentication = noAuth || suppressAuthInvalidation ? undefined : AuthStore.snapshot();
 	const apiUrl = buildUrl({ url, params });
 	const method = "POST";
 
@@ -125,8 +128,8 @@ export async function post({ url, params, data, noAuth, skipCamelize }: PostArgs
 		body = buildBody(data);
 	}
 
-	const response = await fetch(apiUrl, { method, headers, body });
-	return processResponse(response, skipCamelize);
+	const response = await fetch(apiUrl, { method, headers, body, credentials: "same-origin" });
+	return processResponse(response, skipCamelize, authentication);
 }
 
 interface PutArgs {
@@ -136,6 +139,7 @@ interface PutArgs {
 	skipCamelize?: boolean;
 }
 export async function put({ url, params, data, skipCamelize }: PutArgs) {
+	const authentication = AuthStore.snapshot();
 	const apiUrl = buildUrl({ url, params });
 	const method = "PUT";
 	const headers = {
@@ -144,20 +148,24 @@ export async function put({ url, params, data, skipCamelize }: PutArgs) {
 	};
 	const body = buildBody(data);
 	const response = await fetch(apiUrl, { method, headers, body });
-	return processResponse(response, skipCamelize);
+	return processResponse(response, skipCamelize, authentication);
 }
 
 interface DeleteArgs {
 	url: string;
 	params?: queryString.StringifiableRecord;
+	data?: Record<string, any>;
 	skipCamelize?: boolean;
 }
-export async function del({ url, params, skipCamelize }: DeleteArgs) {
+export async function del({ url, params, data, skipCamelize }: DeleteArgs) {
+	const authentication = AuthStore.snapshot();
 	const apiUrl = buildUrl({ url, params });
 	const method = "DELETE";
 	const headers = {
 		...buildAuthHeader(),
+		...(data ? { [contentTypeHeader]: "application/json" } : {}),
 	};
-	const response = await fetch(apiUrl, { method, headers });
-	return processResponse(response, skipCamelize);
+	const body = buildBody(data);
+	const response = await fetch(apiUrl, { method, headers, body });
+	return processResponse(response, skipCamelize, authentication);
 }
