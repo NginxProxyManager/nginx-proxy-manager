@@ -15,6 +15,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"npm/embed"
 	"npm/internal/config"
 	"npm/internal/database"
@@ -140,6 +141,7 @@ func baselineDatabase(t *testing.T) {
 
 func TestSSOUpgradeRejectsDuplicateNormalizedEmailsBeforeSchemaChange(t *testing.T) {
 	db := openTestDB(t)
+	db.Config.NamingStrategy = schema.NamingStrategy{SingularTable: true, NoLowerCase: true}
 	database.SetDB(db)
 	baselineDatabase(t)
 	for _, email := range []string{" User@Example.com ", "user@example.COM"} {
@@ -159,16 +161,17 @@ func TestSSOUpgradeRejectsDuplicateNormalizedEmailsBeforeSchemaChange(t *testing
 
 func TestSSOUpgradePreservesUsersAndSeedsAdminPasswordPolicy(t *testing.T) {
 	db := openTestDB(t)
+	db.Config.NamingStrategy = schema.NamingStrategy{SingularTable: true, NoLowerCase: true}
 	database.SetDB(db)
 	baselineDatabase(t)
 	require.NoError(t, db.Exec(`INSERT INTO "user" (id,name,email,is_deleted,is_system,is_disabled) VALUES (42,'Admin','Admin@Example.com',0,0,0),(43,'Pending','pending@example.com',0,0,0)`).Error)
 	require.NoError(t, db.Exec(`INSERT INTO user_has_capability (user_id,capability_name) VALUES (42,'full-admin')`).Error)
 	require.True(t, Migrate(func() {}))
 	var rows []struct {
-		ID                   uint
-		NormalizedEmail      *string
-		AdminPasswordEnabled bool
-		CredentialOrigin     string
+		ID                   uint    `gorm:"column:id"`
+		NormalizedEmail      *string `gorm:"column:normalized_email"`
+		AdminPasswordEnabled bool    `gorm:"column:admin_password_enabled"`
+		CredentialOrigin     string  `gorm:"column:credential_origin"`
 	}
 	require.NoError(t, db.Table("user").Where("id IN ?", []uint{42, 43}).Order("id").Find(&rows).Error)
 	require.Len(t, rows, 2)
@@ -177,4 +180,48 @@ func TestSSOUpgradePreservesUsersAndSeedsAdminPasswordPolicy(t *testing.T) {
 	require.False(t, rows[1].AdminPasswordEnabled)
 	require.Equal(t, "local", rows[0].CredentialOrigin)
 	require.Error(t, db.Exec(`INSERT INTO "user" (name,email,normalized_email,is_deleted,is_system,is_disabled,admin_password_enabled,credential_origin) VALUES ('Duplicate','ADMIN@example.com','admin@example.com',0,0,0,0,'sso')`).Error)
+}
+
+// Temporary tables shadow only this test connection's user/history tables.
+// They reproduce production scans without mutating an existing engine fixture.
+func TestSSOProductionNamingExternalPreflight(t *testing.T) {
+	for _, engine := range []struct {
+		name string
+		env  string
+		open func(string) gorm.Dialector
+	}{
+		{"postgres", "SSO_TEST_POSTGRES_DSN", func(dsn string) gorm.Dialector { return postgres.Open(dsn) }},
+		{"mysql", "SSO_TEST_MYSQL_DSN", func(dsn string) gorm.Dialector { return mysql.Open(dsn) }},
+	} {
+		t.Run(engine.name, func(t *testing.T) {
+			dsn := os.Getenv(engine.env)
+			if dsn == "" {
+				t.Skip(engine.env + " not set")
+			}
+			db, err := gorm.Open(engine.open(dsn), &gorm.Config{NamingStrategy: schema.NamingStrategy{SingularTable: true, NoLowerCase: true}})
+			require.NoError(t, err)
+			config.Configuration.DB.Driver = engine.name
+			database.SetDB(db)
+			require.True(t, Migrate(func() {}))
+			quote := "\""
+			if engine.name == "mysql" {
+				quote = "`"
+			}
+			require.NoError(t, db.Connection(func(conn *gorm.DB) error {
+				conn = conn.Session(&gorm.Session{NewDB: true})
+				userTable := quote + "user" + quote
+				history := quote + historyTable + quote
+				require.NoError(t, conn.Exec("CREATE TEMPORARY TABLE "+userTable+" (id INTEGER PRIMARY KEY, email VARCHAR(254), is_system BOOLEAN, is_deleted INTEGER)").Error)
+				defer conn.Exec("DROP TABLE " + userTable)
+				require.NoError(t, conn.Exec("CREATE TEMPORARY TABLE "+history+" (version BIGINT)").Error)
+				defer conn.Exec("DROP TABLE " + history)
+				require.NoError(t, conn.Exec("INSERT INTO "+userTable+" (id,email,is_system,is_deleted) VALUES (?,?,?,?)", 42, "Admin@Example.com", false, 0).Error)
+				require.NoError(t, preflightSSO(conn))
+				require.NoError(t, conn.Exec("INSERT INTO "+userTable+" (id,email,is_system,is_deleted) VALUES (?,?,?,?)", 43, " admin@example.COM ", false, 0).Error)
+				err := preflightSSO(conn)
+				require.ErrorContains(t, err, "conflicting user IDs 42 and 43")
+				return nil
+			}))
+		})
+	}
 }

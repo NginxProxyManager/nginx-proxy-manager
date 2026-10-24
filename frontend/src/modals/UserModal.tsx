@@ -23,13 +23,10 @@ export function buildUserPayload(id: number | "me" | "new", data: any, currentUs
 				? Array.from(new Set([...(data?.capabilities ?? []), FULL_ADMIN]))
 				: (data?.capabilities ?? []).filter((capability: string) => capability !== FULL_ADMIN);
 		}
-		if (
-			hasCapability(currentUser?.capabilities, FULL_ADMIN) &&
-			values.isAdmin &&
-			values.passwordLoginEnabled !== data?.passwordLoginEnabled
-		) {
-			payload.passwordLoginEnabled = values.passwordLoginEnabled;
-		}
+	}
+	if (typeof id === "number" && hasCapability(currentUser?.capabilities, FULL_ADMIN) &&
+		values.isAdmin && values.passwordLoginEnabled !== data?.passwordLoginEnabled) {
+		payload.passwordLoginEnabled = values.passwordLoginEnabled;
 	}
 	return payload;
 }
@@ -41,7 +38,7 @@ const showUserModal = (id: number | "me" | "new") => {
 interface Props extends InnerModalProps {
 	id: number | "me" | "new";
 }
-const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
+export function UserEditor({ id, visible, remove }: Props) {
 	const { data, isLoading, error } = useUser(id);
 	const { data: currentUser, isLoading: currentIsLoading } = useUser("me");
 	const { mutate: setUser } = useSetUser();
@@ -149,7 +146,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										)}
 									</Field>
 								</div>
-								{currentUser && data && currentUser?.id !== data?.id ? (
+								{currentUser && data && id !== "me" ? (
 									<div className="my-3">
 										<h4 className="py-2">
 											<T id="options" />
@@ -167,6 +164,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	<input
 																		{...field}
 																		id="isAdmin"
+																		disabled={currentUser.id === data.id}
 																		className="form-check-input"
 																		type="checkbox"
 																	/>
@@ -196,6 +194,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	<input
 																		{...field}
 																		id="isDisabled"
+																		disabled={currentUser.id === data.id}
 																		className="form-check-input"
 																		type="checkbox"
 																	/>
@@ -229,6 +228,8 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			)}
 		</Modal>
 	);
-});
+}
+
+const UserModal = EasyModal.create(UserEditor);
 
 export { showUserModal };

@@ -345,6 +345,21 @@ func TestPasswordLoginToggleRequiresFullAdminActorAndTarget(t *testing.T) {
 	require.True(t, target.AdminPasswordEnabled)
 }
 
+func TestSoleFullAdminCanControlOwnExceptionThroughAdminOperation(t *testing.T) {
+	db, sid := authSessionFixture(t)
+	for _, enabled := range []bool{false, true} {
+		w := httptest.NewRecorder()
+		UpdateUser()(w, userMutationRequest(t, sid, "1", fmt.Sprintf(`{"password_login_enabled":%t}`, enabled)))
+		require.Equal(t, http.StatusOK, w.Code, w.Body.String())
+		var actor user.Model
+		require.NoError(t, db.First(&actor, 1).Error)
+		require.Equal(t, enabled, actor.AdminPasswordEnabled)
+		capabilities, err := user.GetCapabilitiesInTx(db, 1)
+		require.NoError(t, err)
+		require.Equal(t, []string{user.CapabilityFullAdmin}, capabilities)
+	}
+}
+
 func TestAdminProvisioningTransitionsSSOCredentialOrigin(t *testing.T) {
 	db, sid := authSessionFixture(t)
 	require.NoError(t, db.AutoMigrate(&auth.Model{}))

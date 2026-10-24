@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 import { buildUserPayload } from "./UserModal";
 
 describe("UserModal update payload", () => {
+	it("allows the sole full-admin to disable their own exception only in the explicit admin editor", () => {
+		const admin = { id: 1, capabilities: ["full-admin"], passwordLoginEnabled: true };
+		const values = { name: "Admin", email: "admin@example.com", isAdmin: true, passwordLoginEnabled: false };
+		expect(buildUserPayload(1, admin, admin, values).passwordLoginEnabled).toBe(false);
+		expect(buildUserPayload("me", admin, admin, values)).not.toHaveProperty("passwordLoginEnabled");
+	});
 	it("does not resend stale policy fields during a profile edit", () => {
 		const payload = buildUserPayload(
 			2,

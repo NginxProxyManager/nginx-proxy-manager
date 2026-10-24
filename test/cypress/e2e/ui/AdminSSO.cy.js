@@ -229,6 +229,37 @@ describe('Admin SSO browser flow', () => {
 		}));
 	});
 
+	it('lets the sole administrator disable and restore their own password exception', () => {
+		adminAuthentication().then((authentication) => {
+			cy.visit('/login');
+			cy.window().then((win) => win.localStorage.setItem('authentications', JSON.stringify([authentication])));
+			cy.visit('/users');
+			const openOwnEditor = () => cy.contains('tr', 'cypress@example.com').within(() => {
+				cy.get('button.dropdown-toggle').click();
+				cy.contains('Edit').click();
+			});
+			cy.intercept('PUT', '/api/users/*').as('selfPasswordPolicy');
+			openOwnEditor();
+			cy.get('#isAdmin').should('be.disabled').and('be.checked');
+			cy.get('#passwordLoginEnabled').should('not.be.disabled').uncheck();
+			cy.get('[role="dialog"]').contains('button', 'Save').click();
+			cy.wait('@selfPasswordPolicy').its('response.statusCode').should('equal', 200);
+			cy.request({method: 'POST', url: '/api/auth', failOnStatusCode: false, body: {
+				type: 'local', identity: 'cypress@example.com', secret: 'changeme',
+			}}).then(({status, body}) => {
+				expect(status).to.equal(400);
+				expect(body.error.message).to.equal('invalid-login-credentials');
+			});
+			openOwnEditor();
+			cy.get('#passwordLoginEnabled').should('not.be.checked').check();
+			cy.get('[role="dialog"]').contains('button', 'Save').click();
+			cy.wait('@selfPasswordPolicy').its('response.statusCode').should('equal', 200);
+			cy.request({method: 'POST', url: '/api/auth', body: {
+				type: 'local', identity: 'cypress@example.com', secret: 'changeme',
+			}}).its('status').should('equal', 200);
+		});
+	});
+
 	it('creates OIDC, OAuth2 and SAML connections entirely through Settings', () => {
 		openSSOSettings();
 		cy.viewport(1280, 900);

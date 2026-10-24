@@ -46,16 +46,23 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 	const [authenticated, setAuthenticated] = useState(AuthStore.hasActiveToken());
 	const [twoFactorChallenge, setTwoFactorChallenge] = useState<TwoFactorChallenge | null>(null);
 	const [logoutUnconfirmed, setLogoutUnconfirmed] = useState(false);
+	const beginAuthenticationChange = () => {
+		AuthStore.invalidatePending();
+		return AuthStore.snapshot();
+	};
 
 	const handleTokenUpdate = (response: TokenResponse) => {
 		AuthStore.set(response);
+		queryClient.clear();
 		setAuthenticated(true);
 		setTwoFactorChallenge(null);
 		setLogoutUnconfirmed(false);
 	};
 
 	const login = async (type: string, identity: string, secret: string) => {
+		const authentication = beginAuthenticationChange();
 		const response = await getToken({ type, identity, secret });
+		if (!AuthStore.isCurrent(authentication)) return;
 		if (isTwoFactorChallenge(response)) {
 			setTwoFactorChallenge({ challengeToken: response.challengeToken });
 			return;
@@ -67,23 +74,30 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		if (!twoFactorChallenge) {
 			throw new Error("No 2FA challenge pending");
 		}
+		const authentication = beginAuthenticationChange();
 		const response = await verify2FA(twoFactorChallenge.challengeToken, code);
+		if (!AuthStore.isCurrent(authentication)) return;
 		handleTokenUpdate(response);
 	};
 
 	const cancelTwoFactor = () => {
+		AuthStore.invalidatePending();
 		setTwoFactorChallenge(null);
 	};
 
 	const loginAs = async (id: number) => {
+		const authentication = beginAuthenticationChange();
 		const response = await loginAsUser(id);
+		if (!AuthStore.isCurrent(authentication)) return;
 		AuthStore.add(response);
 		queryClient.clear();
 		window.location.reload();
 	};
 
 	const completeSSO = async (code: string) => {
+		const authentication = beginAuthenticationChange();
 		const response = await exchangeSSOHandoff(code);
+		if (!AuthStore.isCurrent(authentication)) return;
 		// A handoff can arrive while another account is authenticated. Install
 		// the new credential, clear every account-scoped query synchronously,
 		// and only then expose the authenticated shell to the new account.
@@ -106,12 +120,14 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 	};
 
 	const logout = async () => {
+		const authentication = beginAuthenticationChange();
 		let failure: unknown;
 		try {
 			await logoutSession();
 		} catch (err) {
 			failure = err;
 		}
+		if (!AuthStore.isCurrent(authentication)) return;
 		clearCurrentSession();
 		setAuthenticated(AuthStore.hasActiveToken());
 		if (failure) {
@@ -122,7 +138,9 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 	};
 
 	const refresh = async () => {
+		const authentication = AuthStore.snapshot();
 		const response = await refreshToken();
+		if (!AuthStore.isCurrent(authentication)) return;
 		AuthStore.replaceTop(response);
 		setAuthenticated(true);
 	};
@@ -142,11 +160,14 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 			AuthStore.clear();
 			queryClient.clear();
 			setAuthenticated(false);
+			setTwoFactorChallenge(null);
 		};
 		const syncStorage = (event: StorageEvent) => {
 			if (event.key !== TOKEN_KEY) return;
+			AuthStore.invalidatePending();
 			queryClient.clear();
 			setAuthenticated(AuthStore.hasActiveToken());
+			setTwoFactorChallenge(null);
 		};
 		window.addEventListener(AUTH_INVALIDATED_EVENT, invalidate);
 		window.addEventListener("storage", syncStorage);

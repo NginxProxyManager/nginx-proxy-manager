@@ -162,7 +162,7 @@ func UpdateUser() func(http.ResponseWriter, *http.Request) {
 				if !self && patch.Capabilities != nil {
 					targetCapabilities = *patch.Capabilities
 				}
-				if self || !slices.Contains(actor.Capabilities, user.CapabilityFullAdmin) || !slices.Contains(targetCapabilities, user.CapabilityFullAdmin) {
+				if chi.URLParam(r, "userID") == "me" || !slices.Contains(actor.Capabilities, user.CapabilityFullAdmin) || !slices.Contains(targetCapabilities, user.CapabilityFullAdmin) {
 					status, message = http.StatusForbidden, "Forbidden"
 					return session.ErrUnauthorized
 				}

@@ -1,6 +1,6 @@
 import { camelizeKeys, decamelize, decamelizeKeys } from "humps";
 import queryString, { type StringifiableRecord } from "query-string";
-import AuthStore from "src/modules/AuthStore";
+import AuthStore, { type AuthSnapshot } from "src/modules/AuthStore";
 
 const contentTypeHeader = "Content-Type";
 export const AUTH_INVALIDATED_EVENT = "npm:auth-invalidated";
@@ -45,10 +45,10 @@ function buildBody(data?: Record<string, any>): string | undefined {
 	}
 }
 
-async function processResponse(response: Response, skipCamelize = false, invalidateAuth = true) {
+async function processResponse(response: Response, skipCamelize = false, authentication?: AuthSnapshot) {
 	const payload = await response.json();
 	if (!response.ok) {
-		if (response.status === 401 && invalidateAuth) {
+		if (response.status === 401 && authentication?.stored && AuthStore.isCurrent(authentication)) {
 			// The AuthProvider owns the application's actual QueryClient. Notify it
 			// instead of clearing an unrelated client created in this module.
 			AuthStore.clear();
@@ -70,13 +70,15 @@ interface GetArgs {
 async function baseGet({ url, params }: GetArgs) {
 	const apiUrl = buildUrl({ url, params });
 	const method = "GET";
+	const authentication = AuthStore.snapshot();
 	const headers = buildAuthHeader();
 	const response = await fetch(apiUrl, { method, headers });
-	return response;
+	return { response, authentication };
 }
 
 export async function get(args: GetArgs) {
-	return processResponse(await baseGet(args), args.skipCamelize);
+	const { response, authentication } = await baseGet(args);
+	return processResponse(response, args.skipCamelize, authentication);
 }
 
 export async function download({ url, params }: GetArgs, filename = "download.file") {
@@ -101,6 +103,7 @@ interface PostArgs {
 }
 
 export async function post({ url, params, data, noAuth, skipCamelize, suppressAuthInvalidation }: PostArgs) {
+	const authentication = noAuth || suppressAuthInvalidation ? undefined : AuthStore.snapshot();
 	const apiUrl = buildUrl({ url, params });
 	const method = "POST";
 
@@ -126,7 +129,7 @@ export async function post({ url, params, data, noAuth, skipCamelize, suppressAu
 	}
 
 	const response = await fetch(apiUrl, { method, headers, body, credentials: "same-origin" });
-	return processResponse(response, skipCamelize, !noAuth && !suppressAuthInvalidation);
+	return processResponse(response, skipCamelize, authentication);
 }
 
 interface PutArgs {
@@ -136,6 +139,7 @@ interface PutArgs {
 	skipCamelize?: boolean;
 }
 export async function put({ url, params, data, skipCamelize }: PutArgs) {
+	const authentication = AuthStore.snapshot();
 	const apiUrl = buildUrl({ url, params });
 	const method = "PUT";
 	const headers = {
@@ -144,7 +148,7 @@ export async function put({ url, params, data, skipCamelize }: PutArgs) {
 	};
 	const body = buildBody(data);
 	const response = await fetch(apiUrl, { method, headers, body });
-	return processResponse(response, skipCamelize);
+	return processResponse(response, skipCamelize, authentication);
 }
 
 interface DeleteArgs {
@@ -154,6 +158,7 @@ interface DeleteArgs {
 	skipCamelize?: boolean;
 }
 export async function del({ url, params, data, skipCamelize }: DeleteArgs) {
+	const authentication = AuthStore.snapshot();
 	const apiUrl = buildUrl({ url, params });
 	const method = "DELETE";
 	const headers = {
@@ -162,5 +167,5 @@ export async function del({ url, params, data, skipCamelize }: DeleteArgs) {
 	};
 	const body = buildBody(data);
 	const response = await fetch(apiUrl, { method, headers, body });
-	return processResponse(response, skipCamelize);
+	return processResponse(response, skipCamelize, authentication);
 }

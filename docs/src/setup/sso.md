@@ -10,6 +10,8 @@ Nginx Proxy Manager supports OpenID Connect (OIDC), OAuth 2.0 with a UserInfo en
 
 Create the first local full administrator through the normal setup flow. Then open **Settings > Single sign-on**. Keep a tested local administrator credential until every provider has been verified; an SSO-only policy still offers the administrator-password recovery entry only to full administrators whose password-login switch is enabled.
 
+A full administrator can change their own password-login switch through their entry in **Users**, including turning off the last enabled exception. The normal **Edit profile** action does not expose policy controls. Disabling every exception removes password recovery until an authorized SSO session enables one again.
+
 Set **Public URL** to the canonical HTTPS origin used by browsers, for example `https://npm.example.com`. It must not contain a path, query, fragment, credentials, or a non-HTTPS scheme. Configure the provider with the URLs shown by the connection editor:
 
 - OIDC/OAuth2 callback: `https://npm.example.com/sso/<connection-id>/callback`
@@ -59,3 +61,9 @@ For a new shared database, complete bootstrap on one NPM instance before startin
 Before upgrading an OAuth-only installation, prepare and test a local full-administrator account and ensure local login is enabled. Deploy frontend and backend together. Legacy `/oauth/login` and `/oauth/redirect` endpoints return `410` and never issue tokens; old JWTs without a server session ID are rejected.
 
 The Settings page exposes an explicit legacy import when legacy values exist. Import creates a **disabled** OAuth2 draft with a masked secret and does not populate the shared allowlist. Review URLs, mapping and trust, add exact emails, test, then enable it. The plaintext legacy secret is removed only after the conversion transaction succeeds.
+
+## Operational validation limits
+
+This release does not automatically prune expired or consumed SSO attempts, handoffs, replay markers, or expired/revoked sessions. Those rows accumulate with login traffic and abandoned login attempts; startup key validation also scans retained transaction ciphertext. Monitor database size and startup duration. Bounded retention maintenance is deferred to a separate change so session ancestry and replay protection are preserved.
+
+Local and LDAP authentication continue to use their existing admission paths. The SSO acceptance matrix covers local-password recovery, but does not include a live external LDAP-server browser test.

@@ -95,8 +95,8 @@ func preflightSSO(db *gorm.DB) error {
 		}
 	}
 	var users []struct {
-		ID    uint
-		Email string
+		ID    uint   `gorm:"column:id"`
+		Email string `gorm:"column:email"`
 	}
 	if err := db.Table("user").Where("is_system = ? AND is_deleted = ?", false, 0).Order("id").Find(&users).Error; err != nil {
 		return err

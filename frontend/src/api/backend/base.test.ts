@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AuthStore, { TOKEN_KEY } from "src/modules/AuthStore";
-import { AUTH_INVALIDATED_EVENT, get, post } from "./base";
+import { AUTH_INVALIDATED_EVENT, del, get, post, put } from "./base";
 
 const response = (status: number) => ({
 	ok: status >= 200 && status < 300,
@@ -33,6 +33,20 @@ describe("API authorization failures", () => {
 		await expect(get({ url: "/forbidden" })).rejects.toThrow("Forbidden");
 		expect(AuthStore.token?.token).toBe("live");
 		expect(invalidated).not.toHaveBeenCalled();
+	});
+
+	it.each([get, post, put, del])("ignores a delayed 401 sent with the previous account credential (%#)", async (request) => {
+		let finish!: (value: Response) => void;
+		vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>((resolve) => { finish = resolve; })));
+		const invalidated = vi.fn();
+		window.addEventListener(AUTH_INVALIDATED_EVENT, invalidated);
+		const pending = request({ url: "/users/me" });
+		AuthStore.set({ token: "account-b", expires: 9999999999 });
+		finish(response(401));
+		await expect(pending).rejects.toThrow("Unauthorised");
+		expect(AuthStore.token?.token).toBe("account-b");
+		expect(invalidated).not.toHaveBeenCalled();
+		window.removeEventListener(AUTH_INVALIDATED_EVENT, invalidated);
 	});
 
 	it("does not destroy another session for an anonymous handoff or explicit logout 401", async () => {
