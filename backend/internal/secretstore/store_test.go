@@ -99,3 +99,34 @@ func TestExistingCiphertextValidatesWithProductionNamingStrategy(t *testing.T) {
 	_, err = Open(dir)
 	require.NoError(t, err)
 }
+
+func TestDatabaseAndKeyBackupRestore(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open(filepath.Join(t.TempDir(), "restored.db")), &gorm.Config{})
+	require.NoError(t, err)
+	database.SetDB(db)
+	t.Cleanup(func() { database.SetDB(nil) })
+	require.NoError(t, db.Exec("CREATE TABLE sso_connection (id TEXT PRIMARY KEY, secret_ciphertext BLOB)").Error)
+
+	originalDir := t.TempDir()
+	original, err := Open(originalDir)
+	require.NoError(t, err)
+	ciphertext, err := original.Seal([]byte("provider-secret"), "connection:one")
+	require.NoError(t, err)
+	require.NoError(t, db.Exec("INSERT INTO sso_connection (id, secret_ciphertext) VALUES (?, ?)", "one", ciphertext).Error)
+	backupKey, err := os.ReadFile(filepath.Join(originalDir, "keys", "sso.key"))
+	require.NoError(t, err)
+
+	restoreDir := t.TempDir()
+	_, err = Open(restoreDir)
+	require.ErrorContains(t, err, "restore")
+	require.NoError(t, os.MkdirAll(filepath.Join(restoreDir, "keys"), 0700))
+	require.NoError(t, os.WriteFile(filepath.Join(restoreDir, "keys", "sso.key"), make([]byte, 32), 0600))
+	_, err = Open(restoreDir)
+	require.ErrorContains(t, err, "cannot decrypt")
+	require.NoError(t, os.WriteFile(filepath.Join(restoreDir, "keys", "sso.key"), backupKey, 0600))
+	restored, err := Open(restoreDir)
+	require.NoError(t, err)
+	plain, err := restored.Unseal(ciphertext, "connection:one")
+	require.NoError(t, err)
+	require.Equal(t, "provider-secret", string(plain))
+}
