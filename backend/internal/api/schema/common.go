@@ -33,7 +33,6 @@ func stringMinMax(minLength, maxLength int) string {
 func capabilties() string {
 	return `{
 		"type": "array",
-		"minItems": 1,
 		"items": {
 			"type": "string",
 			"minLength": 1

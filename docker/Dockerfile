@@ -22,6 +22,7 @@ ENV BUILD_COMMIT="${BUILD_COMMIT:-dev}" \
 	GOPROXY="${GOPROXY:-}"
 
 COPY scripts /scripts
+RUN find /scripts -type f -exec sed -i 's/\r$//' {} +
 COPY backend /app
 WORKDIR /app
 
@@ -64,7 +65,9 @@ RUN apt-get update \
 # s6 overlay
 ARG TARGETPLATFORM
 COPY scripts/install-s6 /tmp/install-s6
-RUN /tmp/install-s6 "${TARGETPLATFORM}" && rm -rf /tmp/*
+RUN sed -i 's/\r$//' /tmp/install-s6 \
+	&& /tmp/install-s6 "${TARGETPLATFORM}" \
+	&& rm -rf /tmp/*
 
 EXPOSE 80/tcp 81/tcp 443/tcp
 
@@ -72,7 +75,9 @@ COPY docker/rootfs /
 
 # Remove frontend service not required for prod, dev nginx config as well
 # and remove any other cruft
-RUN rm -rf /etc/services.d/frontend \
+RUN find /etc/s6-overlay /etc/nginx -type f -exec sed -i 's/\r$//' {} + \
+	&& sed -i 's/\r$//' /usr/bin/common.sh /usr/bin/healthcheck.sh \
+	&& rm -rf /etc/services.d/frontend \
 	/etc/nginx/conf.d/dev.conf \
 	/var/cache/* \
 	/var/log/* \

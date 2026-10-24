@@ -35,19 +35,16 @@ if [ "${1:-}" = "--inside-docker" ]; then
 		chown -R 1000:1000 "$DIR/../../test/results"
 	}
 
-	mkdir -p /workspace
 	echo -e "${BLUE}❯ ${CYAN}govulncheck setup${RESET}"
-	cd /workspace
-	cp /app/backend/go.mod /app/backend/go.sum .
+	cd /app/backend
 	go mod download
 
 	echo -e "${BLUE}❯ ${CYAN}govulncheck testing${RESET}"
 	govulncheck ./...
-	rm -rf /workspace
 
 	echo -e "${BLUE}❯ ${CYAN}Testing backend code${RESET}"
 	cd /app/backend
-	[ -z "$(go tool fix -diff ./internal)" ]
+	[ -z "$(go fix -diff ./internal/...)" ]
 	go test -json -cover -coverprofile="/tmp/coverage.out" ./... | tparse
 	mkdir -p "$DIR/../../test/results/html-reports" "$DIR/../../test/results/junit"
 	go tool cover -html="/tmp/coverage.out" -o "$DIR/../../test/results/html-reports/backend-coverage.html"

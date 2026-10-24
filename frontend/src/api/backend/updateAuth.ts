@@ -1,18 +1,16 @@
 import * as api from "./base";
-import type { User } from "./models";
+import type { UserAuth } from "./models";
 
-export async function updateAuth(userId: number | "me", newPassword: string, current?: string): Promise<User> {
+export async function updateAuth(userId: number | "me", newPassword: string, current?: string): Promise<UserAuth> {
 	const data = {
-		type: "password",
-		current: current,
+		type: "local",
+		currentSecret: current,
 		secret: newPassword,
 	};
-	if (userId === "me") {
-		data.current = current;
-	}
 
-	return await api.put({
+	const { result } = await api.post({
 		url: `/users/${userId}/auth`,
 		data,
 	});
+	return result;
 }

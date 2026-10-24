@@ -65,7 +65,7 @@ func newBaseRouter(extra ...func(http.Handler) http.Handler) *chi.Mux {
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-Requested-With"},
-		AllowCredentials: true,
+		AllowCredentials: false,
 		MaxAge:           300,
 	})
 
@@ -89,7 +89,7 @@ func newBaseRouter(extra ...func(http.Handler) http.Handler) *chi.Mux {
 		// connecting address, so the last value is the only trusted one
 		chiMiddleware.ClientIPFromHeader("X-Forwarded-For"),
 		chiMiddleware.Recoverer,
-		chiMiddleware.Throttle(5),
+		restThrottle(5),
 		middleware.PrettyPrint,
 		middleware.Expansion,
 	)
@@ -104,7 +104,6 @@ func newBaseRouter(extra ...func(http.Handler) http.Handler) *chi.Mux {
 
 // applyRoutes is where the magic happens
 func applyRoutes(r chi.Router) chi.Router {
-	middleware.AuthCacheInit()
 	r.NotFound(handler.NotFound())
 	r.MethodNotAllowed(handler.NotAllowed())
 
@@ -113,27 +112,39 @@ func applyRoutes(r chi.Router) chi.Router {
 		r.Get("/login", handler.OAuthLogin())
 		r.Get("/redirect", handler.OAuthRedirect())
 	})
+	r.Route("/sso/{id}", func(r chi.Router) {
+		r.Get("/start", handler.SSOStart())
+		r.Get("/callback", handler.SSOCallback())
+		r.Post("/acs", handler.SSOCallback())
+		r.Get("/metadata", handler.SSOMetadata())
+	})
 
 	// SSE - requires a sse token as the `jwt` get parameter
 	// Exists inside /api but it's here so that we can skip the Timeout middleware
 	// that applies to other endpoints.
 	r.With(middleware.EnforceSetup(), middleware.SSEAuth).
-		Mount("/api/sse", serverevents.Get())
+		Get("/api/sse", serverevents.Handler().ServeHTTP)
+	r.With(middleware.EnforceSetup(), middleware.SSEAuth).
+		Get("/api/sse/", serverevents.Handler().ServeHTTP)
 
 	// API
 	r.With(chiMiddleware.Timeout(30*time.Second)).Route("/api", func(r chi.Router) {
 		r.Get("/", handler.Health())
 		r.Get("/schema", handler.Schema())
-		r.With(middleware.EnforceSetup(), middleware.Enforce()).
+		r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilitySettingsManage)).
 			Get("/config", handler.Config())
 
 		// Auth
 		r.With(middleware.EnforceSetup()).Route("/auth", func(r chi.Router) {
+			r.Get("/providers", handler.SSOProviders())
+			r.Post("/sso/exchange", handler.SSOExchange())
 			r.Get("/", handler.GetAuthConfig())
 			r.With(middleware.EnforceRequestSchema(schema.GetToken())).
 				Post("/", handler.NewToken())
-			r.With(middleware.Enforce()).
+			r.With(middleware.EnforceSessionOnly()).
 				Post("/refresh", handler.RefreshToken())
+			r.With(middleware.EnforceSessionOnly()).
+				Post("/logout", handler.Logout())
 			r.With(middleware.Enforce()).
 				Post("/sse", handler.NewSSEToken())
 		})
@@ -153,16 +164,17 @@ func applyRoutes(r chi.Router) chi.Router {
 			// Requires Setup stage to be completed
 			r.With(middleware.EnforceSetup()).Route("/", func(r chi.Router) {
 				// Get yourself, requires a login but no other permissions
-				r.With(middleware.Enforce()).
+				r.With(middleware.EnforceSessionOnly()).
 					Get("/{userID:me}", handler.GetUser())
 
 				// Update yourself, requires a login but no other permissions
 				r.With(
-					middleware.Enforce(),
-					middleware.EnforceRequestSchema(schema.UpdateUser()),
+					middleware.EnforceSessionOnly(),
+					middleware.EnforceRequestSchema(schema.UpdateSelfUser()),
 				).Put("/{userID:me}", handler.UpdateUser())
 
 				r.With(middleware.Enforce(user.CapabilityUsersManage)).Route("/", func(r chi.Router) {
+					r.Post("/{userID:[0-9]+}/login", handler.Impersonate())
 					// List
 					r.With(middleware.ListQuery(user.Model{})).Get("/", handler.GetUsers())
 
@@ -177,7 +189,7 @@ func applyRoutes(r chi.Router) chi.Router {
 
 				// Auth - sets passwords
 				r.With(
-					middleware.Enforce(),
+					middleware.EnforceSessionOnly(),
 					middleware.EnforceRequestSchema(schema.SetAuth()),
 				).Post("/{userID:me}/auth", handler.SetAuth())
 				r.With(
@@ -190,10 +202,27 @@ func applyRoutes(r chi.Router) chi.Router {
 		// Only available in debug mode
 		if config.GetLogLevel() == logger.DebugLevel {
 			// delete users without auth
-			r.Delete("/users", handler.DeleteUsers())
+			r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilityFullAdmin)).Delete("/users", handler.DeleteUsers())
 			// SSE test endpoints
-			r.Post("/sse-notification", handler.TestSSENotification())
+			r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilityFullAdmin)).Post("/sse-notification", handler.TestSSENotification())
 		}
+
+		// Settings
+		r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilitySettingsManage)).Route("/sso", func(r chi.Router) {
+			r.Get("/legacy-status", handler.LegacySSOStatus())
+			r.Post("/legacy-import", handler.ImportLegacySSO())
+			r.With(middleware.EnforceRequestSchema(schema.SSOSAMLMetadataPreview())).Post("/saml/metadata-preview", handler.PreviewSSOSAMLMetadata())
+			r.Get("/policy", handler.GetSSOPolicy())
+			r.With(middleware.EnforceRequestSchema(schema.SSOPolicy())).Put("/policy", handler.UpdateSSOPolicy())
+			r.Get("/connections", handler.GetSSOConnections())
+			r.With(middleware.EnforceRequestSchema(schema.SSOConnectionCreate())).Post("/connections", handler.CreateSSOConnection())
+			r.Get("/connections/{id}", handler.GetSSOConnection())
+			r.With(middleware.EnforceRequestSchema(schema.SSOConnectionUpdate())).Put("/connections/{id}", handler.UpdateSSOConnection())
+			r.With(middleware.EnforceRequestSchema(schema.SSODelete())).Delete("/connections/{id}", handler.DeleteSSOConnection())
+			r.Post("/connections/{id}/test", handler.TestSSOConnection())
+			r.Get("/allowlist", handler.GetSSOAllowlist())
+			r.With(middleware.EnforceRequestSchema(schema.SSOAllowlist())).Put("/allowlist", handler.UpdateSSOAllowlist())
+		})
 
 		// Settings
 		r.With(middleware.EnforceSetup(), middleware.Enforce(user.CapabilitySettingsManage)).Route("/settings", func(r chi.Router) {
@@ -351,4 +380,20 @@ func applyRoutes(r chi.Router) chi.Router {
 	})
 
 	return r
+}
+
+// Long-lived streams cannot consume all slots needed to administer/revoke them.
+// The SSE route still performs its normal session handshake and bounded delivery.
+func restThrottle(limit int) func(http.Handler) http.Handler {
+	throttle := chiMiddleware.Throttle(limit)
+	return func(next http.Handler) http.Handler {
+		limited := throttle(next)
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method == http.MethodGet && (r.URL.Path == "/api/sse" || r.URL.Path == "/api/sse/") {
+				next.ServeHTTP(w, r)
+				return
+			}
+			limited.ServeHTTP(w, r)
+		})
+	}
 }

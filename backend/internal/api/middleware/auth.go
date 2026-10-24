@@ -1,12 +1,9 @@
 package middleware
 
 import (
-	"context"
-	"fmt"
 	"net/http"
 	"slices"
 
-	c "npm/internal/api/context"
 	h "npm/internal/api/http"
 	"npm/internal/config"
 	"npm/internal/entity/user"
@@ -36,72 +33,37 @@ func DecodeAuth() func(http.Handler) http.Handler {
 // jwtauth.Verifier middleware request context values. The Authenticator sends a 401 Unauthorised
 // response for any unverified tokens and passes the good ones through.
 func Enforce(permissions ...string) func(http.Handler) http.Handler {
+	return enforce(false, permissions...)
+}
+
+// EnforceSessionOnly allows a pending principal on the minimal self routes.
+func EnforceSessionOnly() func(http.Handler) http.Handler { return enforce(true) }
+
+func enforce(pendingAllowed bool, permissions ...string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx := r.Context()
-
-			if config.IsSetup {
-				token, claims, err := jwtauth.FromContext(ctx)
-
-				if err != nil {
-					h.ResultErrorJSON(w, r, http.StatusUnauthorized, err.Error(), nil)
+			if !config.IsSetup {
+				next.ServeHTTP(w, r)
+				return
+			}
+			ResolveSession(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				principal, _ := CurrentPrincipal(r.Context())
+				if len(principal.Capabilities) == 0 && !pendingAllowed {
+					h.ResultErrorJSON(w, r, http.StatusForbidden, "Forbidden", nil)
 					return
 				}
-
-				uidClaim, ok := claims["uid"].(float64)
-				if token == nil || !ok {
-					h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
-					return
-				}
-
-				userID := uint(uidClaim)
-				_, enabled, _ := user.IsEnabled(userID)
-				if !enabled {
-					h.ResultErrorJSON(w, r, http.StatusUnauthorized, "Unauthorised", nil)
-					return
-				}
-
-				// Check if permissions exist for this user
 				if len(permissions) > 0 {
-					// Since the permission that we require is not on the token, we have to get it from the DB
-					// So we don't go crazy with hits, we will use a memory cache
-					cacheKey := fmt.Sprintf("userCapabilties.%v", userID)
-					cacheItem, found := AuthCache.Get(cacheKey)
-
-					var userCapabilities []string
-					if found {
-						userCapabilities, _ = cacheItem.([]string)
-					} else {
-						// Get from db and store it
-						userCapabilities, err = user.GetCapabilities(userID)
-						if err != nil {
-							AuthCacheSet(cacheKey, userCapabilities)
-						}
-					}
-
-					// Now check that they have the permission in their admin capabilities
-					// full-admin can do anything
-					hasOnePermission := false
+					allowed := slices.Contains(principal.Capabilities, user.CapabilityFullAdmin)
 					for _, permission := range permissions {
-						if slices.Contains(userCapabilities, user.CapabilityFullAdmin) || slices.Contains(userCapabilities, permission) {
-							hasOnePermission = true
-						}
+						allowed = allowed || slices.Contains(principal.Capabilities, permission)
 					}
-
-					if !hasOnePermission {
-						// Access denied
-						logger.Debug("Enforce Failed: User has %v but needs %v", userCapabilities, permissions)
+					if !allowed {
 						h.ResultErrorJSON(w, r, http.StatusForbidden, "Forbidden", nil)
 						return
 					}
 				}
-
-				// Add claims to context
-				ctx = context.WithValue(ctx, c.UserIDCtxKey, userID)
-			}
-
-			// Token is authenticated, continue as normal
-			next.ServeHTTP(w, r.WithContext(ctx))
+				next.ServeHTTP(w, r)
+			})).ServeHTTP(w, r)
 		})
 	}
 }

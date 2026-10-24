@@ -1,0 +1,1 @@
+{"operationId":"logoutSession","summary":"Revoke the current NPM session","tags":["Auth"],"security":[{"BearerAuth":[]}],"responses":{"200":{"description":"{result:true}"},"401":{"description":"Missing, expired, revoked, or pre-upgrade JWT"},"403":{"description":"Cross-origin browser request"}}}

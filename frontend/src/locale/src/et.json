@@ -746,6 +746,45 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Ümbersuunamine"
 	},
+	"setup-database.description": {
+		"defaultMessage": "Vali, kuhu Nginx Proxy Manager oma andmed salvestab. Need seaded salvestatakse andmekausta faili db.conf."
+	},
+	"setup-database.driver": {
+		"defaultMessage": "Andmebaasi tüüp"
+	},
+	"setup-database.error": {
+		"defaultMessage": "Andmebaasiga ühenduse loomine ebaõnnestus"
+	},
+	"setup-database.host": {
+		"defaultMessage": "Server"
+	},
+	"setup-database.name": {
+		"defaultMessage": "Andmebaasi nimi"
+	},
+	"setup-database.password": {
+		"defaultMessage": "Parool"
+	},
+	"setup-database.port": {
+		"defaultMessage": "Pordi number"
+	},
+	"setup-database.schema": {
+		"defaultMessage": "Skeem"
+	},
+	"setup-database.sqlite-description": {
+		"defaultMessage": "SQLite hoiab kõiki andmeid andmekaustas ühes failis ega vaja täiendavat seadistamist."
+	},
+	"setup-database.sslmode": {
+		"defaultMessage": "SSL-režiim"
+	},
+	"setup-database.submit": {
+		"defaultMessage": "Jätka"
+	},
+	"setup-database.title": {
+		"defaultMessage": "Seadista andmebaas"
+	},
+	"setup-database.username": {
+		"defaultMessage": "Kasutajanimi"
+	},
 	"setup.preamble": {
 		"defaultMessage": "Alustuseks loo endale administraatori konto."
 	},

@@ -1,0 +1,35 @@
+services:
+  oidc:
+    image: npm-sso-fixture:task15
+    user: "0:0"
+    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9443", "--protocol", "oidc", "--issuer-url", "https://host.docker.internal:9443", "--client-id", "npm-demo-oidc", "--client-secret", "demo-oidc-secret", "--cert-out", "/certs/oidc.crt", "--key-out", "/certs/oidc.key"]
+    volumes: ["certs:/certs"]
+    ports: ["9443:9443"]
+  oauth2:
+    image: npm-sso-fixture:task15
+    user: "0:0"
+    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9444", "--protocol", "oauth2", "--issuer-url", "https://host.docker.internal:9444", "--client-id", "npm-demo-oauth2", "--client-secret", "demo-oauth2-secret", "--cert-out", "/certs/oauth2.crt", "--key-out", "/certs/oauth2.key"]
+    volumes: ["certs:/certs"]
+    ports: ["9444:9444"]
+  saml:
+    image: npm-sso-fixture:task15
+    user: "0:0"
+    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9445", "--protocol", "saml", "--issuer-url", "https://host.docker.internal:9445", "--sp-entity-id", "https://localhost:8443/sso/sp", "--acs-url", "https://localhost:8443/sso/*", "--cert-out", "/certs/saml.crt", "--key-out", "/certs/saml.key"]
+    volumes: ["certs:/certs"]
+    ports: ["9445:9445"]
+  certificate:
+    image: alpine/openssl:3.5.4
+    entrypoint: ["/bin/sh", "-ec"]
+    command: ["openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=localhost -addext subjectAltName=DNS:localhost -keyout /certs/npm.key -out /certs/npm.crt"]
+    volumes: ["certs:/certs"]
+  edge:
+    image: nginx:1.29-alpine
+    depends_on:
+      certificate:
+        condition: service_completed_successfully
+    volumes:
+      - certs:/certs:ro
+      - ./sso-demo-nginx.conf:/etc/nginx/nginx.conf:ro
+    ports: ["8443:443"]
+volumes:
+  certs:

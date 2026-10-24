@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import {
 	ErrorNotFound,
@@ -11,7 +11,7 @@ import {
 	Unhealthy,
 } from "src/components";
 import { useAuthState } from "src/context";
-import { useHealth } from "src/hooks";
+import { useCurrentUser, useHealth } from "src/hooks";
 
 const SetupUser = lazy(() => import("src/pages/Setup/SetupUser"));
 const SetupDatabase = lazy(() => import("src/pages/Setup/SetupDatabase"));
@@ -27,10 +27,45 @@ const ProxyHosts = lazy(() => import("src/pages/Nginx/ProxyHosts"));
 const RedirectionHosts = lazy(() => import("src/pages/Nginx/RedirectionHosts"));
 const DeadHosts = lazy(() => import("src/pages/Nginx/DeadHosts"));
 const Streams = lazy(() => import("src/pages/Nginx/Streams"));
+const PendingAccess = lazy(() => import("src/pages/PendingAccess"));
+
+function takeSSOHandoff(): string | null {
+	const url = new URL(window.location.href);
+	if (!url.searchParams.has("sso_handoff")) return null;
+	const code = url.searchParams.get("sso_handoff") ?? "";
+	url.searchParams.delete("sso_handoff");
+	window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+	return code;
+}
 
 function Router() {
 	const health = useHealth();
-	const { authenticated } = useAuthState();
+	const { authenticated, completeSSO } = useAuthState();
+	const [handoffCode] = useState(takeSSOHandoff);
+	const [handoffPending, setHandoffPending] = useState(handoffCode !== null);
+	const handoffStarted = useRef(false);
+	const currentUser = useCurrentUser({
+		enabled:
+			authenticated &&
+			!handoffPending &&
+			Boolean(health.data?.healthy && health.data?.dbSetup && health.data?.setup),
+		retry: false,
+		refetchOnWindowFocus: true,
+		refetchInterval: (query: any) =>
+			query.state.data?.capabilities?.length === 0 ? 5000 : false,
+	});
+
+	useEffect(() => {
+		if (handoffCode === null || handoffStarted.current) return;
+		handoffStarted.current = true;
+		void completeSSO(handoffCode)
+			.catch(() => {
+				const url = new URL(window.location.href);
+				url.searchParams.set("sso_error", "sso_login_denied");
+				window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+			})
+			.finally(() => setHandoffPending(false));
+	}, [completeSSO, handoffCode]);
 
 	if (health.isLoading) {
 		return <LoadingPage />;
@@ -52,10 +87,29 @@ function Router() {
 		return <SetupUser />;
 	}
 
+	if (handoffPending) {
+		return <LoadingPage />;
+	}
+
 	if (!authenticated) {
 		return (
 			<Suspense fallback={<LoadingPage />}>
 				<Login />
+			</Suspense>
+		);
+	}
+
+	if (currentUser.isLoading) {
+		return <LoadingPage />;
+	}
+
+	// A failed background refetch keeps the last profile; only a missing profile
+	// replaces the authenticated shell.
+	const profileUnavailable = currentUser.isError && !currentUser.data;
+	if (profileUnavailable || !currentUser.data?.capabilities.length) {
+		return (
+			<Suspense fallback={<LoadingPage />}>
+				<PendingAccess profileUnavailable={profileUnavailable} />
 			</Suspense>
 		);
 	}
@@ -93,3 +147,4 @@ function Router() {
 }
 
 export default Router;
+export { takeSSOHandoff };

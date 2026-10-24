@@ -2,6 +2,8 @@ package auth
 
 import (
 	"npm/internal/database"
+
+	"gorm.io/gorm"
 )
 
 // GetByID finds a auth by ID
@@ -13,8 +15,12 @@ func GetByID(id int) (Model, error) {
 
 // GetByUserIDType finds a user by id and type
 func GetByUserIDType(userID uint, authType string) (Model, error) {
+	return GetByUserIDTypeInTx(database.GetDB(), userID, authType)
+}
+
+// GetByUserIDTypeInTx reads an authentication method in the caller's transaction.
+func GetByUserIDTypeInTx(db *gorm.DB, userID uint, authType string) (Model, error) {
 	var auth Model
-	db := database.GetDB()
 	result := db.
 		Where("user_id = ?", userID).
 		Where("type = ?", authType).

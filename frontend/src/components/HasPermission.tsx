@@ -1,29 +1,31 @@
 import type { ReactNode } from "react";
-// import Alert from "react-bootstrap/Alert";
+import Alert from "react-bootstrap/Alert";
 import { Loading, LoadingPage } from "src/components";
 import { useUser } from "src/hooks";
-// import { T } from "src/locale";
-import type { ADMIN, /*hasPermission,*/ Permission, Section } from "src/modules/Permissions";
+import { T } from "src/locale";
+import { hasCapability, hasPermission, type Permission, type Section } from "src/modules/Permissions";
 
 interface Props {
-	section?: Section | typeof ADMIN;
+	section?: Section;
 	permission: Permission;
 	hideError?: boolean;
 	children?: ReactNode;
 	pageLoading?: boolean;
 	loadingNoLogo?: boolean;
+	anyOf?: readonly string[];
 }
 function HasPermission({
 	section,
-	// permission,
+	permission,
 	children,
 	hideError = false,
 	pageLoading = false,
 	loadingNoLogo = false,
+	anyOf,
 }: Props) {
-	const { /*data,*/ isLoading } = useUser("me");
+	const { data, isLoading } = useUser("me");
 
-	if (!section) {
+	if (!section && !anyOf?.length) {
 		return <>{children}</>;
 	}
 
@@ -37,10 +39,9 @@ function HasPermission({
 		return <Loading noLogo={loadingNoLogo} />;
 	}
 
-	return <>{children}</>;
-	// TODO:
-	/*
-	const allowed = hasPermission(section, permission, data?.permissions, data?.roles);
+	const allowed = anyOf?.length
+		? anyOf.some((capability) => hasCapability(data?.capabilities, capability))
+		: hasPermission(section as Section, permission, data?.capabilities);
 	if (allowed) {
 		return <>{children}</>;
 	}
@@ -50,7 +51,6 @@ function HasPermission({
 			<T id="no-permission-error" />
 		</Alert>
 	) : null;
-	*/
 }
 
 export { HasPermission };

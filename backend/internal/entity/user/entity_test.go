@@ -176,7 +176,7 @@ func (s *testsuite) TestSave() {
 		WillReturnRows(s.singleRow)
 
 	s.mock.ExpectBegin()
-	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user" ("created_at","updated_at","is_deleted","name","email","is_disabled","is_system") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
+	s.mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user" ("created_at","updated_at","is_deleted","name","email","is_disabled","is_system","normalized_email","admin_password_enabled","credential_origin") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING "id"`)).
 		WithArgs(
 			sqlmock.AnyArg(),
 			sqlmock.AnyArg(),
@@ -185,6 +185,9 @@ func (s *testsuite) TestSave() {
 			"sarah@example.com",
 			false,
 			false,
+			"sarah@example.com",
+			false,
+			"local",
 		).
 		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow("11"))
 	s.mock.ExpectCommit()
@@ -215,6 +218,7 @@ func (s *testsuite) TestDelete() {
 	defer goleak.VerifyNone(s.T(), goleak.IgnoreAnyFunction("database/sql.(*DB).connectionOpener"))
 
 	s.mock.ExpectBegin()
+	s.mock.ExpectExec(regexp.QuoteMeta(`UPDATE "user" SET "normalized_email"=$1,"updated_at"=$2 WHERE "user"."is_deleted" = $3 AND "id" = $4`)).WithArgs(nil, sqlmock.AnyArg(), 0, 10).WillReturnResult(sqlmock.NewResult(0, 1))
 	s.mock.
 		ExpectExec(regexp.QuoteMeta(`UPDATE "user" SET "is_deleted"=$1 WHERE "user"."id" = $2 AND "user"."is_deleted" = $3`)).
 		WithArgs(1, 10, 0).
@@ -402,6 +406,20 @@ func (s *testsuite) TestSaveCapabilities() {
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	s.mock.ExpectCommit()
 
+	s.mock.
+		ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "capability"`)).
+		WillReturnRows(sqlmock.NewRows([]string{"name"}).
+			AddRow("full-admin").
+			AddRow("hosts.view").
+			AddRow("hosts.manage"))
+
+	s.mock.ExpectBegin()
+	s.mock.
+		ExpectExec(regexp.QuoteMeta(`DELETE FROM "user_has_capability" WHERE user_id = $1`)).
+		WithArgs(10).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	s.mock.ExpectCommit()
+
 	s.mock.ExpectBegin()
 	s.mock.
 		ExpectExec(regexp.QuoteMeta(`INSERT INTO "user_has_capability" ("user_id","capability_name") VALUES ($1,$2),($3,$4)`)).
@@ -414,10 +432,10 @@ func (s *testsuite) TestSaveCapabilities() {
 	err := m.SaveCapabilities()
 	assert.Equal(s.T(), "Cannot save capabilities on unsaved user", err.Error())
 
-	// Empty model returns error
+	// An existing user may be cleared to zero capabilities.
 	m.ID = 10
 	err = m.SaveCapabilities()
-	assert.Equal(s.T(), "At least 1 capability required for a user", err.Error())
+	require.NoError(s.T(), err)
 
 	// With some caps
 	m.Capabilities = []string{"hosts.view", "hosts.manage"}

@@ -62,7 +62,7 @@ func TestMigrateFreshDatabase(t *testing.T) {
 
 	var historyCount int64
 	require.NoError(t, db.Table(historyTable).Count(&historyCount).Error)
-	assert.EqualValues(t, 2, historyCount, "one history row per migration file")
+	assert.EqualValues(t, 3, historyCount, "one history row per migration file")
 }
 
 func TestMigrateIsIdempotent(t *testing.T) {
@@ -82,6 +82,9 @@ func TestMigrateIsIdempotent(t *testing.T) {
 }
 
 func TestMigrateNoDB(t *testing.T) {
+	original := config.Configuration.DB
+	t.Cleanup(func() { config.Configuration.DB = original })
+	config.Configuration.DB = config.DBConfig{}
 	database.SetDB(nil)
 	assert.False(t, Migrate(func() {
 		t.Error("followup should not be called")

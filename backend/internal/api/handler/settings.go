@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	c "npm/internal/api/context"
 	h "npm/internal/api/http"
@@ -38,6 +39,10 @@ func GetSettings() func(http.ResponseWriter, *http.Request) {
 func GetSetting() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		name := chi.URLParam(r, "name")
+		if ssoOwnedSetting(name) {
+			h.ResultErrorJSON(w, r, http.StatusForbidden, "sso_setting_owned", nil)
+			return
+		}
 
 		item, err := setting.GetByName(name)
 		switch err {
@@ -63,6 +68,10 @@ func CreateSetting() func(http.ResponseWriter, *http.Request) {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
 			return
 		}
+		if ssoOwnedSetting(newSetting.Name) {
+			h.ResultErrorJSON(w, r, http.StatusForbidden, "sso_setting_owned", nil)
+			return
+		}
 
 		// Check if the setting already exists
 		if _, err := setting.GetByName(newSetting.Name); err == nil {
@@ -85,6 +94,10 @@ func CreateSetting() func(http.ResponseWriter, *http.Request) {
 func UpdateSetting() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		settingName := chi.URLParam(r, "name")
+		if ssoOwnedSetting(settingName) {
+			h.ResultErrorJSON(w, r, http.StatusForbidden, "sso_setting_owned", nil)
+			return
+		}
 
 		setting, err := setting.GetByName(settingName)
 		switch err {
@@ -94,6 +107,10 @@ func UpdateSetting() func(http.ResponseWriter, *http.Request) {
 			bodyBytes, _ := r.Context().Value(c.BodyCtxKey).([]byte)
 			if err := json.Unmarshal(bodyBytes, &setting); err != nil {
 				h.ResultErrorJSON(w, r, http.StatusBadRequest, h.ErrInvalidPayload.Error(), nil)
+				return
+			}
+			if ssoOwnedSetting(setting.Name) {
+				h.ResultErrorJSON(w, r, http.StatusForbidden, "sso_setting_owned", nil)
 				return
 			}
 
@@ -107,4 +124,9 @@ func UpdateSetting() func(http.ResponseWriter, *http.Request) {
 			h.ResultErrorJSON(w, r, http.StatusBadRequest, err.Error(), nil)
 		}
 	}
+}
+
+func ssoOwnedSetting(name string) bool {
+	name = strings.ToLower(strings.TrimSpace(name))
+	return name == "oauth-auth" || name == "auth-methods" || strings.HasPrefix(name, "sso")
 }
