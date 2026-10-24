@@ -36,8 +36,8 @@ func fixture(t *testing.T) *gorm.DB {
 
 func seed(t *testing.T, db *gorm.DB) {
 	t.Helper()
-	u := user.Model{Name: "Admin", Email: "admin@example.com"}
-	u.ID = 1
+	u := user.Model{Name: "Admin", Email: "admin@example.com",
+		ID: 1}
 	require.NoError(t, db.Create(&u).Error)
 	require.NoError(t, db.Create(&user.HasCapabilityModel{UserID: 1, CapabilityName: "full-admin"}).Error)
 	require.NoError(t, db.Create(&sso.Connection{ID: sid("c"), Name: "Provider", Protocol: sso.OIDC, Enabled: true, Revision: 1}).Error)
@@ -177,7 +177,7 @@ func TestAuthorizeRejectsBrokenAncestors(t *testing.T) {
 			case "cycle":
 				require.NoError(t, db.Model(&parent).Updates(map[string]any{"source": Impersonation, "parent_id": child.ID}).Error)
 			case "depth":
-				for i := 0; i < 40; i++ {
+				for i := range 40 {
 					next := value("f", Impersonation)
 					next.ID = fmt.Sprintf("%043d", i)
 					next.ParentID = child.ID

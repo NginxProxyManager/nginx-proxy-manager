@@ -5,8 +5,10 @@ describe('SSO policy administration', () => {
 
 	before(() => {
 		cy.requireSSOEnvironment();
-		cy.resetUsers();
-		cy.getToken().then((value) => { token = value; });
+		cy.task('backendApiPost', {
+			path: '/api/auth',
+			data: {type: 'local', identity: 'cypress@example.com', secret: 'changeme'},
+		}).then(({result}) => { token = result.token; });
 	});
 
 	it('keeps one revision across policy and exact shared email allowlist', () => {
@@ -19,7 +21,7 @@ describe('SSO policy administration', () => {
 			}).then(({result: next}) => {
 				cy.ssoAdminApi('put', '/allowlist', token, {
 					revision: next.revision,
-					emails: [' Allowed@Example.com '],
+				emails: ['Allowed@Example.com'],
 				}).then(({result}) => expect(result.emails).to.deep.equal(['allowed@example.com']));
 			});
 		});

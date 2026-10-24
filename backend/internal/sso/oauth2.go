@@ -36,7 +36,7 @@ func validClaimPath(path string, required bool) bool {
 	if path == "" {
 		return !required
 	}
-	for _, part := range strings.Split(path, ".") {
+	for part := range strings.SplitSeq(path, ".") {
 		if part == "" || strings.TrimSpace(part) != part || strings.ContainsAny(part, "[]\t\r\n") {
 			return false
 		}

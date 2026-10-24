@@ -85,7 +85,7 @@ func TestSSOExternalEngineMigration(t *testing.T) {
 			ready := make(chan error, 2)
 			start := make(chan struct{})
 			results := make(chan outcome, 2)
-			for i := 0; i < 2; i++ {
+			for range 2 {
 				go func() {
 					tx := db.Begin()
 					if tx.Error != nil {

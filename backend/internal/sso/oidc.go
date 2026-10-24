@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"slices"
 	"strings"
 
 	"github.com/coreos/go-oidc/v3/oidc"
@@ -86,12 +87,7 @@ func oidcOAuthConfig(c ssoconfig.Connection, transaction Transaction, config sso
 }
 
 func containsScope(scopes []string, expected string) bool {
-	for _, scope := range scopes {
-		if scope == expected {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(scopes, expected)
 }
 
 func (a *OIDCAdapter) Start(ctx context.Context, c ssoconfig.Connection, transaction Transaction) (StartResult, error) {

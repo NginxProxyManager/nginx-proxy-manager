@@ -30,13 +30,13 @@ seed() {
 	local token revision preview
 	token="$(api POST /auth '' '{"type":"local","identity":"cypress@example.com","secret":"changeme"}' | jq -er .result.token)"
 	revision="$(api GET /sso/policy "$token" | jq -er .result.revision)"
-	api PUT /sso/policy "$token" "{\"revision\":$revision,\"mode\":\"parallel\",\"public_url\":\"https://npm.test:8443\"}" >/dev/null
+	api PUT /sso/policy "$token" "{\"revision\":$revision,\"mode\":\"parallel\",\"public_url\":\"https://host.docker.internal:8443\"}" >/dev/null
 	revision="$(api GET /sso/policy "$token" | jq -er .result.revision)"
 	api PUT /sso/allowlist "$token" "{\"revision\":$revision,\"emails\":[\"allowed@example.com\"]}" >/dev/null
-	api POST /sso/connections "$token" '{"protocol":"oidc","name":"Fixture OIDC","enabled":true,"config":{"issuer_url":"https://idp-oidc.test:9443","client_id":"npm-oidc","email_claim":"email","scopes":["openid","email"]},"secret_action":"replace","secret_value":"oidc-secret"}' >/dev/null
-	api POST /sso/connections "$token" '{"protocol":"oauth2","name":"Fixture OAuth2","enabled":true,"config":{"authorization_url":"https://idp-oauth.test:9444/auth","token_url":"https://idp-oauth.test:9444/token","userinfo_url":"https://idp-oauth.test:9444/user","client_id":"npm-oauth","email_claim":"email","scopes":["email"],"token_auth_method":"client_secret_basic"},"secret_action":"replace","secret_value":"oauth-secret"}' >/dev/null
-	preview="$(api POST /sso/saml/metadata-preview "$token" '{"config":{"idp_metadata_url":"https://idp-saml.test:9445/metadata","sp_entity_id":"https://npm.test/sso/sp","email_name_id":true,"sign_requests":false}}')"
-	api POST /sso/connections "$token" "$(jq -cn --arg import "$(jq -er .result.import_token <<<"$preview")" '{protocol:"saml",name:"Fixture SAML",enabled:true,config:{idp_metadata_url:"https://idp-saml.test:9445/metadata",sp_entity_id:"https://npm.test/sso/sp",email_name_id:true,sign_requests:false},secret_action:"clear",saml_import_token:$import}')" >/dev/null
+	api POST /sso/connections "$token" '{"protocol":"oidc","name":"Fixture OIDC","enabled":true,"config":{"issuer_url":"https://host.docker.internal:9443","client_id":"npm-oidc","email_claim":"email","scopes":["openid","email"]},"secret_action":"replace","secret_value":"oidc-secret"}' >/dev/null
+	api POST /sso/connections "$token" '{"protocol":"oauth2","name":"Fixture OAuth2","enabled":true,"config":{"authorization_url":"https://host.docker.internal:9444/auth","token_url":"https://host.docker.internal:9444/token","userinfo_url":"https://host.docker.internal:9444/user","client_id":"npm-oauth","email_claim":"email","scopes":["email"],"token_auth_method":"client_secret_basic"},"secret_action":"replace","secret_value":"oauth-secret"}' >/dev/null
+	preview="$(api POST /sso/saml/metadata-preview "$token" '{"config":{"idp_metadata_url":"https://host.docker.internal:9445/metadata","sp_entity_id":"https://host.docker.internal/sso/sp","email_name_id":true,"sign_requests":false}}')"
+	api POST /sso/connections "$token" "$(jq -cn --arg import "$(jq -er .result.import_token <<<"$preview")" '{protocol:"saml",name:"Fixture SAML",enabled:true,config:{idp_metadata_url:"https://host.docker.internal:9445/metadata",sp_entity_id:"https://host.docker.internal/sso/sp",email_name_id:true,sign_requests:false},secret_action:"clear",saml_import_token:$import}')" >/dev/null
 }
 
 for matrix in "${MATRICES[@]}"; do
@@ -52,19 +52,24 @@ for matrix in "${MATRICES[@]}"; do
 	cleanup
 	"$DOCKER" compose -p "$project" -f "$COMPOSE" up -d --build postgres mysql oidc oauth2 saml cert-bundle npm1 npm2 edge
 	seed
+	# npm2 may finish its one-time setup check before npm1 creates the bootstrap
+	# administrator. Restart it against the now-initialized shared database so
+	# cross-instance authorization assertions exercise normal runtime routes.
+	"$DOCKER" compose -p "$project" -f "$COMPOSE" restart npm2 >/dev/null
+	until curl -fsS http://127.0.0.1:3082/api/ | jq -e '.result.setup == true' >/dev/null; do sleep 1; done
 
 	volume="${project}_fixture-certs"
-	spki="$($DOCKER run --rm -v "$volume:/certs:ro" alpine/openssl:3.5.4 sh -ec '
+	spki="$($DOCKER run --rm --entrypoint sh -v "$volume:/certs:ro" alpine/openssl:3.5.4 -ec '
 		for cert in npm.crt oidc.crt oauth.crt saml.crt; do
 			openssl x509 -in /certs/$cert -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl base64 -A
 		done' | paste -sd, -)"
 	export SSO_CERT_SPKI="$spki"
-	export SSO_HOST_RESOLVER_RULES='MAP npm.test 127.0.0.1,MAP idp-oidc.test 127.0.0.1,MAP idp-oauth.test 127.0.0.1,MAP idp-saml.test 127.0.0.1'
 	(
 		cd test
-		BASE_URL=http://127.0.0.1:3081 corepack yarn cypress:headless --browser chrome \
+		node node_modules/cypress/bin/cypress run --config-file=cypress/config/dev.js \
+			--config baseUrl=https://host.docker.internal:8443 --browser chrome \
 			--spec 'cypress/e2e/ui/AdminSSO.cy.js,cypress/e2e/api/SSOPolicy.cy.js,cypress/e2e/api/SessionRevocation.cy.js' \
-			--env "stack=$matrix,ssoPublicUrl=https://npm.test:8443,oidcIssuer=https://idp-oidc.test:9443,oauthIssuer=https://idp-oauth.test:9444,samlMetadataUrl=https://idp-saml.test:9445/metadata"
+			--env "stack=$matrix,backendApiUrl=http://127.0.0.1:3081,swaggerBase=http://127.0.0.1:3081/api/schema,ssoPublicUrl=https://host.docker.internal:8443,oidcIssuer=https://host.docker.internal:9443,oauthIssuer=https://host.docker.internal:9444,samlMetadataUrl=https://host.docker.internal:9445/metadata"
 	)
 	cleanup
 	trap - EXIT

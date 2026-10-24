@@ -117,8 +117,8 @@ func TestAdmission(t *testing.T) {
 			}
 			if kind == "existing" || kind == "disabled" || kind == "system" {
 				mail := "allowed@example.com"
-				u := user.Model{Name: "Keep name", Email: "Allowed@Example.com", NormalizedEmail: &mail, IsDisabled: kind == "disabled", IsSystem: kind == "system"}
-				u.ID = 9
+				u := user.Model{Name: "Keep name", Email: "Allowed@Example.com", NormalizedEmail: &mail, IsDisabled: kind == "disabled", IsSystem: kind == "system",
+					ID: 9}
 				require.NoError(t, f.db.Create(&u).Error)
 				require.NoError(t, f.db.Create(&user.HasCapabilityModel{UserID: 9, CapabilityName: "full-admin"}).Error)
 			}

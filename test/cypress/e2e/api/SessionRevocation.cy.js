@@ -3,19 +3,24 @@
 describe('SSO session revocation boundaries', () => {
 	let adminToken;
 	let connectionID;
+	const storedToken = () => cy.window().should((win) => {
+		expect(win.localStorage.getItem('authentications')).to.be.a('string');
+	}).then((win) => JSON.parse(win.localStorage.getItem('authentications'))[0].token);
 
 	const loginThroughOIDC = () => {
 		cy.clearLocalStorage();
 		cy.visit('/login');
 		cy.contains('Fixture OIDC').click();
-		cy.contains('Waiting for access', {timeout: 30000}).should('be.visible');
-		return cy.window().then((win) => JSON.parse(win.localStorage.getItem('authentications'))[0].token);
+		return storedToken();
 	};
 
 	before(() => {
 		cy.requireSSOEnvironment();
-		cy.getToken().then((value) => {
-			adminToken = value;
+		cy.task('backendApiPost', {
+			path: '/api/auth',
+			data: {type: 'local', identity: 'cypress@example.com', secret: 'changeme'},
+		}).then(({result: auth}) => {
+			adminToken = auth.token;
 			cy.ssoAdminApi('get', '/connections', adminToken).then(({result}) => {
 				connectionID = result.find((item) => item.name === 'Fixture OIDC')?.id;
 				expect(connectionID, 'Fixture OIDC connection').to.be.a('string');
@@ -26,7 +31,7 @@ describe('SSO session revocation boundaries', () => {
 	it('revokes an SSO session when its shared email is removed and re-add does not revive it', () => {
 		loginThroughOIDC().then((sessionToken) => cy.ssoAdminApi('get', '/allowlist', adminToken).then(({result}) => {
 			return cy.ssoAdminApi('put', '/allowlist', adminToken, {revision: result.revision, emails: []}).then(({result: removed}) => {
-				return cy.task('backendApiGet', {token: sessionToken, path: '/api/users/me', returnOnError: true})
+				return cy.task('backendApiGet', {baseUrl: 'http://127.0.0.1:3082', token: sessionToken, path: '/api/users/me', returnOnError: true})
 					.its('error.code').should('equal', 401);
 			}).then(() => cy.ssoAdminApi('get', '/allowlist', adminToken)).then(({result: current}) =>
 				cy.ssoAdminApi('put', '/allowlist', adminToken, {revision: current.revision, emails: ['allowed@example.com']})).then(() => {
@@ -34,6 +39,19 @@ describe('SSO session revocation boundaries', () => {
 						.its('error.code').should('equal', 401);
 			});
 		}));
+	});
+
+	it('revokes across the second backend on a sensitive edit without affecting local login', () => {
+		loginThroughOIDC().then((token) => cy.ssoAdminApi('get', `/connections/${connectionID}`, adminToken).then(({result}) =>
+			cy.ssoAdminApi('put', `/connections/${connectionID}`, adminToken, {
+				revision: result.revision, protocol: result.protocol, name: result.name,
+				enabled: result.enabled, config: result.config,
+				secret_action: 'replace', secret_value: 'oidc-secret',
+			})).then(() => cy.task('backendApiGet', {
+			baseUrl: 'http://127.0.0.1:3082', token, path: '/api/users/me', returnOnError: true,
+		})).its('error.code').should('equal', 401).then(() => cy.task('backendApiGet', {
+			token: adminToken, path: '/api/users/me',
+		})).its('result.email').should('equal', 'cypress@example.com'));
 	});
 
 	it('display-name edit preserves a session but disabling its provider revokes it', () => {

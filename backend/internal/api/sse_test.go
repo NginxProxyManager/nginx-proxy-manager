@@ -41,7 +41,7 @@ func TestFiveStreamsDoNotStarveAuthenticatedAPI(t *testing.T) {
 	// Exact production routes and common middleware; only the signing key is test-local.
 	srv := httptest.NewServer(applyRoutes(newBaseRouter(jwtauth.Verify(auth, jwtauth.TokenFromHeader, jwtauth.TokenFromQuery))))
 	defer srv.Close()
-	for i := 0; i < 5; i++ {
+	for range 5 {
 		resp, err := http.Get(srv.URL + "/api/sse?jwt=" + sseToken)
 		require.NoError(t, err)
 		defer resp.Body.Close()

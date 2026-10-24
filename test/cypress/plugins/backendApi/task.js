@@ -2,8 +2,14 @@ const logger = require('./logger');
 const Client = require('./client');
 
 module.exports = function (config) {
+	const backendConfig = Object.assign({}, config, {
+		baseUrl: config.env.backendApiUrl || config.baseUrl,
+	});
 
-	logger('Client Ready using', config.baseUrl);
+	logger('Client Ready using', backendConfig.baseUrl);
+	const clientFor = (options) => new Client(Object.assign({}, backendConfig, {
+		baseUrl: options.baseUrl || backendConfig.baseUrl,
+	}));
 
 	return {
 
@@ -15,7 +21,7 @@ module.exports = function (config) {
 		 * @returns {string}
 		 */
 		backendApiGet: (options) => {
-			const api = new Client(config);
+			const api = clientFor(options);
 			api.setToken(options.token);
 			return api.get(options.path, options.returnOnError || false);
 		},
@@ -29,7 +35,7 @@ module.exports = function (config) {
 		 * @returns {string}
 		 */
 		backendApiPost: (options) => {
-			const api = new Client(config);
+			const api = clientFor(options);
 			api.setToken(options.token);
 			return api.postJson(options.path, options.data, options.returnOnError || false);
 		},
@@ -43,7 +49,7 @@ module.exports = function (config) {
 		 * @returns {string}
 		 */
 		backendApiPut: (options) => {
-			const api = new Client(config);
+			const api = clientFor(options);
 			api.setToken(options.token);
 			return api.putJson(options.path, options.data, options.returnOnError || false);
 		},
@@ -56,7 +62,7 @@ module.exports = function (config) {
 		 * @returns {string}
 		 */
 		backendApiDelete: (options) => {
-			const api = new Client(config);
+			const api = clientFor(options);
 			api.setToken(options.token);
 			return api.delete(options.path, options.returnOnError || false);
 		}

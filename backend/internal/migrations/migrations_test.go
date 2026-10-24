@@ -82,6 +82,9 @@ func TestMigrateIsIdempotent(t *testing.T) {
 }
 
 func TestMigrateNoDB(t *testing.T) {
+	original := config.Configuration.DB
+	t.Cleanup(func() { config.Configuration.DB = original })
+	config.Configuration.DB = config.DBConfig{}
 	database.SetDB(nil)
 	assert.False(t, Migrate(func() {
 		t.Error("followup should not be called")

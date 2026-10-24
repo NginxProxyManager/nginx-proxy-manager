@@ -28,34 +28,25 @@ services:
     image: npm-sso-fixture:task15
     user: "0:0"
     build: ../../test/ssofixtures
-    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9443", "--protocol", "oidc", "--issuer-url", "https://idp-oidc.test:9443", "--client-id", "npm-oidc", "--client-secret", "oidc-secret", "--cert-out", "/certs/oidc.crt", "--key-out", "/certs/oidc.key"]
+    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9443", "--protocol", "oidc", "--issuer-url", "https://host.docker.internal:9443", "--client-id", "npm-oidc", "--client-secret", "oidc-secret", "--cert-out", "/certs/oidc.crt", "--key-out", "/certs/oidc.key"]
     volumes: ["fixture-certs:/certs"]
     ports: ["9443:9443"]
-    networks:
-      default:
-        aliases: ["idp-oidc.test"]
 
   oauth2:
     image: npm-sso-fixture:task15
     user: "0:0"
     build: ../../test/ssofixtures
-    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9444", "--protocol", "oauth2", "--issuer-url", "https://idp-oauth.test:9444", "--client-id", "npm-oauth", "--client-secret", "oauth-secret", "--cert-out", "/certs/oauth.crt", "--key-out", "/certs/oauth.key"]
+    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9444", "--protocol", "oauth2", "--issuer-url", "https://host.docker.internal:9444", "--client-id", "npm-oauth", "--client-secret", "oauth-secret", "--cert-out", "/certs/oauth.crt", "--key-out", "/certs/oauth.key"]
     volumes: ["fixture-certs:/certs"]
     ports: ["9444:9444"]
-    networks:
-      default:
-        aliases: ["idp-oauth.test"]
 
   saml:
     image: npm-sso-fixture:task15
     user: "0:0"
     build: ../../test/ssofixtures
-    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9445", "--protocol", "saml", "--issuer-url", "https://idp-saml.test:9445", "--sp-entity-id", "https://npm.test/sso/sp", "--acs-url", "https://npm.test:8443/sso/*", "--cert-out", "/certs/saml.crt", "--key-out", "/certs/saml.key"]
+    command: ["--allow-non-loopback", "--listen", "0.0.0.0:9445", "--protocol", "saml", "--issuer-url", "https://host.docker.internal:9445", "--sp-entity-id", "https://host.docker.internal/sso/sp", "--acs-url", "https://host.docker.internal:8443/sso/*", "--cert-out", "/certs/saml.crt", "--key-out", "/certs/saml.key"]
     volumes: ["fixture-certs:/certs"]
     ports: ["9445:9445"]
-    networks:
-      default:
-        aliases: ["idp-saml.test"]
 
   cert-bundle:
     image: alpine/openssl:3.5.4
@@ -66,7 +57,7 @@ services:
       - >-
         for f in oidc.crt oauth.crt saml.crt; do until test -s /certs/$$f; do sleep 1; done; done;
         cat /certs/oidc.crt /certs/oauth.crt /certs/saml.crt > /certs/provider-ca-bundle.pem;
-        openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=npm.test -addext subjectAltName=DNS:npm.test -keyout /certs/npm.key -out /certs/npm.crt
+        openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=host.docker.internal -addext subjectAltName=DNS:host.docker.internal -keyout /certs/npm.key -out /certs/npm.crt
 
   npm1: &npm
     image: npm-sso-task15
@@ -107,9 +98,6 @@ services:
       - fixture-certs:/certs:ro
       - ./sso-nginx.conf:/etc/nginx/nginx.conf:ro
     ports: ["8443:443"]
-    networks:
-      default:
-        aliases: ["npm.test"]
 
 volumes:
   fixture-certs:

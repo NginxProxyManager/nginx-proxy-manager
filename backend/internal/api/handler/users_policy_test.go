@@ -120,8 +120,8 @@ func TestDebugDeleteCannotReviveSessionsWhenUserIDIsReused(t *testing.T) {
 	w := httptest.NewRecorder()
 	DeleteUsers()(w, req.WithContext(session.WithPrincipal(req.Context(), mutationPrincipal(t, sid))))
 	require.Equal(t, 200, w.Code)
-	replacement := user.Model{Name: "Replacement", Email: "replacement@example.com"}
-	replacement.ID = 1
+	replacement := user.Model{Name: "Replacement", Email: "replacement@example.com",
+		ID: 1}
 	require.NoError(t, db.Create(&replacement).Error)
 	_, err := session.Authorize(context.Background(), sid, time.Now())
 	require.ErrorIs(t, err, session.ErrUnauthorized)

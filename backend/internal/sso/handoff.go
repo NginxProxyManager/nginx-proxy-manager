@@ -19,8 +19,8 @@ type handoffRow struct {
 	ConnectionRevision uint64     `gorm:"column:connection_revision"`
 	UserID             uint       `gorm:"column:user_id"`
 	LoginEmail         string     `gorm:"column:login_email"`
-	ExpiresAt          time.Time  `gorm:"column:expires_at"`
-	ConsumedAt         *time.Time `gorm:"column:consumed_at"`
+	ExpiresAt          time.Time  `gorm:"column:expires_at;type:timestamp;serializer:session_timestamp"`
+	ConsumedAt         *time.Time `gorm:"column:consumed_at;type:timestamp;serializer:session_timestamp"`
 }
 
 func (handoffRow) TableName() string { return "sso_handoff" }

@@ -18,9 +18,9 @@ type Model struct {
 	ConnectionID string     `gorm:"column:connection_id;size:43"`
 	LoginEmail   string     `gorm:"column:login_email;size:254"`
 	ParentID     string     `gorm:"column:parent_id;size:43"`
-	CreatedAt    time.Time  `gorm:"column:created_at"`
-	ExpiresAt    time.Time  `gorm:"column:expires_at"`
-	RevokedAt    *time.Time `gorm:"column:revoked_at"`
+	CreatedAt    time.Time  `gorm:"column:created_at;type:timestamp;serializer:session_timestamp"`
+	ExpiresAt    time.Time  `gorm:"column:expires_at;type:timestamp;serializer:session_timestamp"`
+	RevokedAt    *time.Time `gorm:"column:revoked_at;type:timestamp;serializer:session_timestamp"`
 }
 
 func (Model) TableName() string { return "session" }

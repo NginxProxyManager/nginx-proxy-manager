@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"io"
+	"maps"
 	"sync"
 	"time"
 
@@ -47,9 +48,7 @@ func WithEntropy(r io.Reader) Option {
 }
 func NewService(db *gorm.DB, secrets *secretstore.Store, adapters map[ssoconfig.Protocol]Adapter, options ...Option) *Service {
 	s := &Service{db: db, secrets: secrets, adapters: make(map[ssoconfig.Protocol]Adapter), now: func() time.Time { return time.Now().UTC() }, entropy: rand.Reader}
-	for k, v := range adapters {
-		s.adapters[k] = v
-	}
+	maps.Copy(s.adapters, adapters)
 	for _, option := range options {
 		if option != nil {
 			option(s)

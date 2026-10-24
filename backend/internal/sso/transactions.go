@@ -24,8 +24,8 @@ type transactionRow struct {
 	SecretCiphertext   []byte     `gorm:"column:secret_ciphertext"`
 	ConnectionRevision uint64     `gorm:"column:connection_revision"`
 	ReturnPath         string     `gorm:"column:return_path"`
-	ExpiresAt          time.Time  `gorm:"column:expires_at"`
-	ConsumedAt         *time.Time `gorm:"column:consumed_at"`
+	ExpiresAt          time.Time  `gorm:"column:expires_at;type:timestamp;serializer:session_timestamp"`
+	ConsumedAt         *time.Time `gorm:"column:consumed_at;type:timestamp;serializer:session_timestamp"`
 }
 
 func (transactionRow) TableName() string { return "sso_transaction" }
@@ -50,7 +50,7 @@ func ValidateReturnPath(raw string) error {
 		return ErrDenied
 	}
 	value := raw
-	for i := 0; i < 8; i++ {
+	for range 8 {
 		if !strings.HasPrefix(value, "/") || strings.HasPrefix(value, "//") || strings.Contains(value, "\\") || strings.IndexFunc(value, unicode.IsControl) >= 0 {
 			return ErrDenied
 		}
@@ -58,7 +58,7 @@ func ValidateReturnPath(raw string) error {
 		if err != nil || u.IsAbs() || u.Host != "" || u.User != nil || u.Opaque != "" {
 			return ErrDenied
 		}
-		for _, part := range strings.Split(u.Path, "/") {
+		for part := range strings.SplitSeq(u.Path, "/") {
 			if part == "." || part == ".." {
 				return ErrDenied
 			}
@@ -268,7 +268,7 @@ func (s *Service) Complete(ctx context.Context, connectionID, browserToken strin
 type replayRow struct {
 	ID           string    `gorm:"column:id;primaryKey"`
 	ConnectionID string    `gorm:"column:connection_id"`
-	ExpiresAt    time.Time `gorm:"column:expires_at"`
+	ExpiresAt    time.Time `gorm:"column:expires_at;type:timestamp;serializer:session_timestamp"`
 }
 
 func (replayRow) TableName() string { return "sso_replay" }

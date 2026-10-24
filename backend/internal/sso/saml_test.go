@@ -244,7 +244,7 @@ func TestSAMLStartSigningAndMetadata(t *testing.T) {
 	require.NoError(t, err)
 	cert, err := x509.ParseCertificate(der)
 	require.NoError(t, err)
-	signedQuery := strings.Split(u.RawQuery, "&Signature=")[0]
+	signedQuery, _, _ := strings.Cut(u.RawQuery, "&Signature=")
 	sig, err := base64.StdEncoding.DecodeString(u.Query().Get("Signature"))
 	require.NoError(t, err)
 	sum := sha256.Sum256([]byte(signedQuery))
@@ -456,7 +456,7 @@ func TestSAMLServiceRecordsSignedReplayAndRejectsReuseAcrossRequests(t *testing.
 	require.NoError(t, service.db.Model(&ssoconfig.Policy{}).Where("id = 1").Update("public_url", "https://npm.test").Error)
 	require.NoError(t, service.db.Create(&ssoconfig.AllowlistEntry{Email: "alice@example.com"}).Error)
 	svc := NewService(service.db, service.key, map[ssoconfig.Protocol]Adapter{ssoconfig.SAML: f.adapter})
-	for attempt := 0; attempt < 2; attempt++ {
+	for attempt := range 2 {
 		start, err := svc.Begin(context.Background(), service.conn, service.browser, "/")
 		require.NoError(t, err)
 		u, err := url.Parse(start.RedirectURL)
