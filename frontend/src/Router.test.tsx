@@ -62,6 +62,19 @@ describe("Router", () => {
 		},
 	);
 
+	it("keeps the authenticated shell when a background refetch fails", async () => {
+		userState.isError = true;
+		render(<Router />);
+		expect(await screen.findByRole("heading", { name: "Dashboard" })).toBeVisible();
+	});
+
+	it("shows pending access when the profile cannot be loaded at all", async () => {
+		userState.isError = true;
+		(userState as any).data = undefined;
+		render(<Router />);
+		expect(await screen.findByRole("heading", { name: "Waiting for access" })).toBeVisible();
+	});
+
 	it("shows the login form when signed out and redirects after sign-in", async () => {
 		authState.authenticated = false;
 		window.history.replaceState(null, "", "/login");

@@ -243,3 +243,25 @@ func TestZeroRevisionCannotBypassRevalidation(t *testing.T) {
 		})
 	}
 }
+func TestBeginPrunesExpiredRows(t *testing.T) {
+	f := fixture(t)
+	f.adapter.identity.ReplayIDs = []ReplayID{{ID: "assertion-id", ExpiresAt: f.now.Add(time.Minute)}}
+	f.begin(t, f.browser) // abandoned attempt
+	f.complete(t)         // handoff never exchanged
+	count := func(table string) int64 {
+		var n int64
+		require.NoError(t, f.db.Table(table).Count(&n).Error)
+		return n
+	}
+	require.EqualValues(t, 1, count("sso_transaction"))
+	require.EqualValues(t, 1, count("sso_handoff"))
+	require.EqualValues(t, 1, count("sso_replay"))
+
+	f.now = f.now.Add(10 * time.Minute)
+	v, _ := f.begin(t, f.browser)
+	var ids []string
+	require.NoError(t, f.db.Table("sso_transaction").Pluck("id", &ids).Error)
+	require.Equal(t, []string{v.AttemptID}, ids)
+	require.Zero(t, count("sso_handoff"))
+	require.Zero(t, count("sso_replay"))
+}

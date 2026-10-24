@@ -103,10 +103,13 @@ function Router() {
 		return <LoadingPage />;
 	}
 
-	if (currentUser.isError || !currentUser.data?.capabilities.length) {
+	// A failed background refetch keeps the last profile; only a missing profile
+	// replaces the authenticated shell.
+	const profileUnavailable = currentUser.isError && !currentUser.data;
+	if (profileUnavailable || !currentUser.data?.capabilities.length) {
 		return (
 			<Suspense fallback={<LoadingPage />}>
-				<PendingAccess profileUnavailable={currentUser.isError} />
+				<PendingAccess profileUnavailable={profileUnavailable} />
 			</Suspense>
 		);
 	}

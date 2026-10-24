@@ -110,6 +110,9 @@ func (s *Service) Begin(ctx context.Context, connectionID, browserToken, returnP
 			return err
 		}
 		row.ConnectionRevision = connection.Revision
+		if err := pruneExpired(tx, s.now()); err != nil {
+			return err
+		}
 		return tx.Create(&row).Error
 	})
 	if err != nil {
@@ -263,6 +266,19 @@ func (s *Service) Complete(ctx context.Context, connectionID, browserToken strin
 		return "", ErrDenied
 	}
 	return code, nil
+}
+
+// pruneExpired removes abandoned attempts, unexchanged handoffs and stale replay
+// markers. Every reader already requires expires_at > now, so expired rows carry
+// no authority; without this they accumulate from anonymous /start requests and
+// are all decrypted again by secretstore validation.
+func pruneExpired(tx *gorm.DB, now time.Time) error {
+	for _, model := range []any{&transactionRow{}, &handoffRow{}, &replayRow{}} {
+		if err := tx.Where("expires_at <= ?", now).Delete(model).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 type replayRow struct {

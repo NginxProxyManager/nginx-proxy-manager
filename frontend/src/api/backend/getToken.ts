@@ -23,8 +23,9 @@ export async function getToken(payload: Payload): Promise<LoginResponse> {
 }
 
 export async function verify2FA(challengeToken: string, code: string): Promise<TokenResponse> {
-	return await api.post({
+	const { result } = await api.post({
 		url: "/auth/2fa",
 		data: { challengeToken, code },
 	});
+	return result;
 }

@@ -110,7 +110,13 @@ export class AuthStore {
 		this.invalidatePending();
 		const t = this.tokens;
 		t.splice(-1, 1);
-		localStorage.setItem(TOKEN_KEY, JSON.stringify(t));
+		// An empty stack is no session: remove the key so snapshots read null and
+		// a 401 from an unauthenticated request is not treated as a revocation.
+		if (t.length) {
+			localStorage.setItem(TOKEN_KEY, JSON.stringify(t));
+		} else {
+			localStorage.removeItem(TOKEN_KEY);
+		}
 	}
 
 	clear() {
