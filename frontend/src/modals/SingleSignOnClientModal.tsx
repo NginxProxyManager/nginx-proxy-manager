@@ -146,7 +146,7 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 												(letter) => `_${letter.toLowerCase()}`,
 											);
 											const isNew = !data?.id;
-											const isSecret = field_name.includes("Secret");
+											const isSecret = field_name.toLocaleLowerCase().includes("secret");
 											const type = isSecret ? "password" : "text";
 											const minLength = isSecret && !isNew ? 0 : 1;
 											return (

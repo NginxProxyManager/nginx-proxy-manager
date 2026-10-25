@@ -54,7 +54,7 @@ export default function TableWrapper() {
 											showSingleSignOnClientModal("new_openid", SingleSignOnClientType.OpenID)
 										}
 									>
-										<T id="object.add" tData={{ object: "sso-client-oauth2-openid" }} />
+										{SingleSignOnClientType.OpenID}
 									</Button>
 
 									<Button
@@ -64,7 +64,7 @@ export default function TableWrapper() {
 											showSingleSignOnClientModal("new_saml", SingleSignOnClientType.SAML)
 										}
 									>
-										<T id="object.add" tData={{ object: "sso-client-saml" }} />
+										{SingleSignOnClientType.SAML}
 									</Button>
 								</div>
 							</div>
