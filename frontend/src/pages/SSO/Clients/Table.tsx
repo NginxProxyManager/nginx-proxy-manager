@@ -148,7 +148,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 						showSingleSignOnClientModal("new_openid", SingleSignOnClientType.OpenID);
 					}}
 				>
-					<T id="sso-client-oauth2-openid" />
+					{SingleSignOnClientType.OpenID}
 				</a>
 				<a
 					className="dropdown-item"
@@ -158,7 +158,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 						showSingleSignOnClientModal("new_saml", SingleSignOnClientType.SAML);
 					}}
 				>
-					<T id="sso-client-saml" />
+					{SingleSignOnClientType.SAML}
 				</a>
 			</div>
 		</div>

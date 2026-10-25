@@ -767,12 +767,6 @@
 	"sso-client": {
 		"defaultMessage": "SSO Client"
 	},
-	"sso-client-oauth2-openid": {
-		"defaultMessage": "OAuth2/OpenID"
-	},
-	"sso-client-saml": {
-		"defaultMessage": "SAML"
-	},
 	"sso-clients": {
 		"defaultMessage": "SSO Clients"
 	},

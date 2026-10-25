@@ -755,8 +755,68 @@
 	"sign-in": {
 		"defaultMessage": "Logi sisse"
 	},
+	"sign-in-with": {
+		"defaultMessage": "Logi sisse teenusega {name}"
+	},
+	"single-sign-on": {
+		"defaultMessage": "Ühekordne sisselogimine"
+	},
 	"ssl-certificate": {
 		"defaultMessage": "SSL-sertifikaat"
+	},
+	"sso-client": {
+		"defaultMessage": "SSO klient"
+	},
+	"sso-clients": {
+		"defaultMessage": "SSO kliendid"
+	},
+	"sso-clients.count": {
+		"defaultMessage": "{count} {count, plural, one {SSO klient} other {SSO klienti}}"
+	},
+	"sso.config.client_id.hint": {
+		"defaultMessage": "Kliendi ID, mille andis identiteedipakkuja (IdP)"
+	},
+	"sso.config.client_id.label": {
+		"defaultMessage": "Kliendi ID"
+	},
+	"sso.config.client_secret.hint": {
+		"defaultMessage": "Selle muutmata jätmiseks jäta tühjaks"
+	},
+	"sso.config.client_secret.label": {
+		"defaultMessage": "Kliendi salavõti"
+	},
+	"sso.config.configuration_url.hint": {
+		"defaultMessage": "Nt https://authentik.yourdomain.com/application/o/nginx-pm"
+	},
+	"sso.config.configuration_url.label": {
+		"defaultMessage": "OpenID konfiguratsiooni väljastaja URL"
+	},
+	"sso.config.enabled.label": {
+		"defaultMessage": "Lubatud"
+	},
+	"sso.config.name.hint": {
+		"defaultMessage": "Nt Authentik"
+	},
+	"sso.config.name.label": {
+		"defaultMessage": "Nimi"
+	},
+	"sso.config.protocol.label": {
+		"defaultMessage": "Protokoll"
+	},
+	"sso.config.redirect_url.hint": {
+		"defaultMessage": "Jäta genereeritud URL-is osa „{id}” alles — asendame selle pärast vormi salvestamist. Seejärel saad kopeerida lõpliku URL-i oma identiteedipakkuja lubatud tagasikutse-URL-ide hulka."
+	},
+	"sso.config.redirect_url.label": {
+		"defaultMessage": "Ümbersuunamise URL"
+	},
+	"sso.config.saml_endpoint.hint": {
+		"defaultMessage": "SAML-i pakkuja lõpp-punkti URL"
+	},
+	"sso.config.saml_endpoint.label": {
+		"defaultMessage": "SAML-i lõpp-punkt"
+	},
+	"sso.menu.label": {
+		"defaultMessage": "Ühekordne sisselogimine"
 	},
 	"stream": {
 		"defaultMessage": "Voog"

@@ -683,8 +683,68 @@
 	"sign-in": {
 		"defaultMessage": "Bejelentkezés"
 	},
+	"sign-in-with": {
+		"defaultMessage": "Bejelentkezés {name} használatával"
+	},
+	"single-sign-on": {
+		"defaultMessage": "Központi hitelesítés"
+	},
 	"ssl-certificate": {
 		"defaultMessage": "SSL tanúsítvány"
+	},
+	"sso-client": {
+		"defaultMessage": "SSO Kliens"
+	},
+	"sso-clients": {
+		"defaultMessage": "SSO Kliensek"
+	},
+	"sso-clients.count": {
+		"defaultMessage": "{count} {count, plural, one {SSO Kliens} other {SSO Kliensek}}"
+	},
+	"sso.config.client_id.hint": {
+		"defaultMessage": "A Hitelesítéskezelő által adott Kliens Azonosító (Client ID)"
+	},
+	"sso.config.client_id.label": {
+		"defaultMessage": "Applikáció azonosító (ClientID)"
+	},
+	"sso.config.client_secret.hint": {
+		"defaultMessage": "Hagyja üresen, hogy változatlan maradjon"
+	},
+	"sso.config.client_secret.label": {
+		"defaultMessage": "Applicáció Titkos Kulcs (Client Secret)"
+	},
+	"sso.config.configuration_url.hint": {
+		"defaultMessage": "Pl. https://authentik.yourdomain.com/application/o/nginx-pm"
+	},
+	"sso.config.configuration_url.label": {
+		"defaultMessage": "OpenID Konfiguráció Kibocsátó URL"
+	},
+	"sso.config.enabled.label": {
+		"defaultMessage": "Engedélyezve"
+	},
+	"sso.config.name.hint": {
+		"defaultMessage": "Pl. Authentik"
+	},
+	"sso.config.name.label": {
+		"defaultMessage": "Név"
+	},
+	"sso.config.protocol.label": {
+		"defaultMessage": "Protokol"
+	},
+	"sso.config.redirect_url.hint": {
+		"defaultMessage": "Hagyja az '{id}' részt változatlanul a generált URL-ben, és mentéskor kicseréljük. Az így kapott végső URL-t kell megadnia mint callback URL az IdP-nél."
+	},
+	"sso.config.redirect_url.label": {
+		"defaultMessage": "Átirányítási URL"
+	},
+	"sso.config.saml_endpoint.hint": {
+		"defaultMessage": "SAML szolgáltató végpont URL"
+	},
+	"sso.config.saml_endpoint.label": {
+		"defaultMessage": "SAML Végpont"
+	},
+	"sso.menu.label": {
+		"defaultMessage": "Köztponti Hitelesítés"
 	},
 	"stream": {
 		"defaultMessage": "Stream"
