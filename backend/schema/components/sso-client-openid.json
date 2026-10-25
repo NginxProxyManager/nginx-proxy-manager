@@ -1,6 +1,6 @@
 {
 	"type": "object",
-	"description": "OAuth2/OpenID Client or Application Configuration",
+	"description": "OpenID Client or Application Configuration",
 	"additionalProperties": false,
 	"properties": {
   	"id": {
@@ -13,10 +13,10 @@
   	  "type": "string"
   	},
   	"configuration_url": {
-  	  "type": "string"
+  	  "$ref": "../common.json#/properties/secure_host"
   	},
   	"redirect_url": {
-      "type": "string"
+      "$ref": "../common.json#/properties/secure_or_local_host"
     },
     "meta": {
   		"type": "object",

@@ -35,7 +35,7 @@ describe("Router", () => {
 		vi.restoreAllMocks();
 	});
 
-	it.each(["/login", "/login/", "/login?next=/users#form"])(
+	it.each(["/login", "/login/", "/login?next=/users#form", "/sso/oauth2", "/sso/oauth2/success"])(
 		"redirects an authenticated visit to %s to the dashboard",
 		async (path) => {
 			window.history.replaceState(null, "", path);

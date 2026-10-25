@@ -6,7 +6,7 @@ Model.knex(db());
 
 const boolFields = ["is_deleted"];
 
-export class OpenIDClientConfiguration extends Model {
+class OpenIDClientConfiguration extends Model {
 	$beforeInsert() {
 		// Default for meta
 		if (typeof this.meta === "undefined") {

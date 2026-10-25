@@ -55,6 +55,12 @@
 				"type": "string"
 			}
 		},
+		"auth_type": {
+		  "type": "string",
+			"description": "Whether the user authenticated using password login or single-sign-on",
+			"example": "password",
+			"pattern": "^(password|sso-npm|sso-idp)$"
+		},
 		"permissions": {
 			"type": "object",
 			"description": "Permissions if expanded in request",

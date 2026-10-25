@@ -1,5 +1,5 @@
 {
-  "operationId": "getOpenIdMetadata",
+  "operationId": "checkSingleSignOnIntegrationState",
   "summary": "Retrieve metadata of configured Identity Providers",
   "tags": ["sso"],
   "responses": {
@@ -11,7 +11,7 @@
             "default": {
               "value": {
                 "enabled": true,
-                "configs": [{ "name": "Authentik", "id": 1 }]
+                "configs": [{ "name": "Authentik", "id": 1, "type": "OpenID", "label": "Authentik" }]
               }
             }
           }

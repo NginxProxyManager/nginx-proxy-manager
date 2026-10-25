@@ -33,16 +33,21 @@ router
 			const data = await ssoClientModel
 				.query()
 				.whereIn("client_type", SingleSignOnClient.enabledProtocols)
-				.andWhere({ is_deleted: 0, enabled: true });
+				.andWhere({ is_deleted: 0, is_disabled: 0 });
 
 			const response = {
-				enabled: !!data,
-				configs: data?.map((client) => ({ name: client.name, id: client.id })),
+				enabled: data.length > 0,
+				configs: data?.map((client) => ({
+					name: client.name,
+					id: client.id,
+					type: client.client_type,
+					label: client.button_text,
+				})),
 			};
 
 			res.status(200).send(response);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});

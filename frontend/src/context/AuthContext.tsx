@@ -79,9 +79,11 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 	const loginSingleSignOnUser = async (token: string, expiry: number) => {
 		if (AuthStore.hasActiveToken() || !token || !expiry) return;
 		const expires = new Date(expiry).toISOString();
+		const returnTo = localStorage.getItem("returnTo");
 		AuthStore.add({ token, expires });
 		queryClient.clear();
-		window.location.replace("/");
+		localStorage.removeItem("returnTo");
+		window.location.replace(returnTo ?? "/");
 	};
 
 	const logout = () => {

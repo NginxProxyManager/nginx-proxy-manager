@@ -1,14 +1,25 @@
 {
-  "operationId": "OAuth Authorization flow callback",
+  "operationId": "OAuthAuthorizationFlowCallback",
   "summary": "Execute the callback phase of an OAuth Authroization Code flow",
   "tags": ["sso"],
   "parameters": [
-    {
+  	{
+			"in": "path",
+			"name": "clientType",
+			"description": "the lowercase Client type",
+			"schema": {
+				"type": "string"
+			},
+			"required": true,
+			"example": "openid"
+		},
+		{
       "in": "path",
       "name": "clientID",
       "schema": {
         "type": "integer",
-        "minimum": 1
+        "minimum": 1,
+		"example": 123
       },
       "required": true,
       "description": "The Single Sign On Client ID",

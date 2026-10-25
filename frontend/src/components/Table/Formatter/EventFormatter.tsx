@@ -25,9 +25,9 @@ const getEventValue = (event: AuditLog) => {
 		case "stream":
 			return event.meta?.incomingPort || "N/A";
 		case "certificate":
-      return event.meta?.domainNames?.join(", ") || event.meta?.niceName || "N/A";
+			return event.meta?.domainNames?.join(", ") || event.meta?.niceName || "N/A";
 		case "sso-client":
-      return `${event.meta?.name}`;
+			return `${event.meta?.name}`;
 		default:
 			return `UNKNOWN EVENT TYPE: ${event.objectType}`;
 	}

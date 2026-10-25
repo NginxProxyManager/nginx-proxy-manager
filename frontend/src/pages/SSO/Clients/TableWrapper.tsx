@@ -1,11 +1,13 @@
+import { IconBrandAuth0, IconBrandGithub, IconBrandOauth, IconHelp } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import Alert from "react-bootstrap/Alert";
 import { deleteSingleSignOnClient, SingleSignOnClientType, toggleSingleSignOnClient } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useSingleSignOnClients, useUser } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { showDeleteConfirmModal, showSingleSignOnClientModal } from "src/modals";
-import { showObjectSuccess } from "src/notifications";
+import { showFancyHelpModal } from "src/modals/FancyHelpModal";
+import { showError, showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -27,15 +29,19 @@ export default function TableWrapper() {
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
-		await toggleSingleSignOnClient(id, enabled);
-		queryClient.invalidateQueries({ queryKey: ["sso-clients"] });
-		queryClient.invalidateQueries({ queryKey: ["sso-client", id] });
-		showObjectSuccess("sso-client", enabled ? "enabled" : "disabled");
+		try {
+			await toggleSingleSignOnClient(id, enabled);
+			queryClient.invalidateQueries({ queryKey: ["sso-clients"] });
+			queryClient.invalidateQueries({ queryKey: ["sso-client", id] });
+			showObjectSuccess("sso-client", enabled ? "enabled" : "disabled");
+		} catch (_error) {
+			showError(intl.formatMessage({ id: "sso.error.default" }));
+		}
 	};
 
 	return (
 		<div className="card mt-4">
-			<div className="card-status-top bg-teal" />
+			<div className="card-status-top bg-indigo" />
 			<div className="card-table">
 				<div className="card-header">
 					<div className="row w-full">
@@ -44,31 +50,51 @@ export default function TableWrapper() {
 								<T id="single-sign-on" />
 							</h2>
 						</div>
-						{data?.length ? (
-							<div className="col-md-auto col-sm-12">
-								<div className="ms-auto d-flex flex-wrap btn-list">
-									<Button
-										size="sm"
-										className="py-2 btn-teal"
-										onClick={() =>
-											showSingleSignOnClientModal("new_openid", SingleSignOnClientType.OpenID)
-										}
-									>
-										<T id="object.add" tData={{ object: "sso-client-oauth2-openid" }} />
-									</Button>
 
-									<Button
-										size="sm"
-										className="py-2 btn-teal"
-										onClick={() =>
-											showSingleSignOnClientModal("new_saml", SingleSignOnClientType.SAML)
-										}
-									>
-										<T id="object.add" tData={{ object: "sso-client-saml" }} />
-									</Button>
-								</div>
+						<div className="col-md-auto col-sm-12">
+							<div className="ms-auto d-flex flex-wrap btn-list">
+								{data?.length ? (
+									<>
+										<Button
+											size="sm"
+											className="py-2 btn-indigo"
+											onClick={() =>
+												showSingleSignOnClientModal("new_auth0", SingleSignOnClientType.Auth0)
+											}
+										>
+											<IconBrandAuth0 height={20} />
+											&nbsp;
+											<T id="sso.action.add" data={{ type: SingleSignOnClientType.Auth0 }} />
+										</Button>
+										<Button
+											size="sm"
+											className="py-2 btn-indigo"
+											onClick={() =>
+												showSingleSignOnClientModal("new_github", SingleSignOnClientType.GitHub)
+											}
+										>
+											<IconBrandGithub height={20} />
+											&nbsp;
+											<T id="sso.action.add" data={{ type: SingleSignOnClientType.GitHub }} />
+										</Button>
+										<Button
+											size="sm"
+											className="py-2 btn-indigo"
+											onClick={() =>
+												showSingleSignOnClientModal("new_openid", SingleSignOnClientType.OpenID)
+											}
+										>
+											<IconBrandOauth height={20} />
+											&nbsp;
+											<T id="sso.action.add" data={{ type: SingleSignOnClientType.OpenID }} />
+										</Button>
+									</>
+								) : null}
+								<Button size="sm" onClick={() => showFancyHelpModal("SingleSignOn", "teal", "lg")}>
+									<IconHelp size={20} />
+								</Button>
 							</div>
-						) : null}
+						</div>
 					</div>
 				</div>
 				<Table

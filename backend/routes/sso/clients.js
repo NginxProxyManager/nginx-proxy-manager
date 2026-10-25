@@ -1,10 +1,10 @@
 import express from "express";
-import { debug, sso as logger } from "../../logger.js";
 import internalSingleSignOnClient from "../../internal/sso-client.js";
+import jwtDecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
+import { debug, sso as logger } from "../../logger.js";
 import { getValidationSchema } from "../../schema/index.js";
-import jwtDecode from "../../lib/express/jwt-decode.js";
 
 const router = express.Router({
 	caseSensitive: true,
@@ -115,6 +115,7 @@ router
 				id: Number.parseInt(data.client_id, 10),
 				expand: req.query.expand?.split?.(","),
 			});
+
 			res.status(200).send(row);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
@@ -129,8 +130,23 @@ router
 	 */
 	.put(async (req, res, next) => {
 		try {
+			const data = await validator(
+				{
+					required: ["client_id"],
+					additionalProperties: false,
+					properties: {
+						client_id: {
+							$ref: "common#/properties/id",
+						},
+					},
+				},
+				{
+					client_id: req.params.client_id,
+				},
+			);
+
 			const payload = await apiValidator(getValidationSchema("/sso/clients/{clientID}", "put"), req.body);
-			payload.id = Number.parseInt(req.params.client_id, 10);
+			payload.id = Number.parseInt(data.client_id, 10);
 			const result = await internalSingleSignOnClient.update(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {
@@ -146,8 +162,23 @@ router
 	 */
 	.delete(async (req, res, next) => {
 		try {
+			const data = await validator(
+				{
+					required: ["client_id"],
+					additionalProperties: false,
+					properties: {
+						client_id: {
+							$ref: "common#/properties/id",
+						},
+					},
+				},
+				{
+					client_id: req.params.client_id,
+				},
+			);
+
 			const result = await internalSingleSignOnClient.delete(res.locals.access, {
-				id: Number.parseInt(req.params.client_id, 10),
+				id: Number.parseInt(data.client_id, 10),
 			});
 			res.status(200).send(result);
 		} catch (err) {
@@ -169,8 +200,23 @@ router
 	.all(jwtDecode())
 	.post(async (req, res, next) => {
 		try {
+			const data = await validator(
+				{
+					required: ["client_id"],
+					additionalProperties: false,
+					properties: {
+						client_id: {
+							$ref: "common#/properties/id",
+						},
+					},
+				},
+				{
+					client_id: req.params.client_id,
+				},
+			);
+
 			const result = await internalSingleSignOnClient.disable(res.locals.access, {
-				id: Number.parseInt(req.params.client_id, 10),
+				id: Number.parseInt(data.client_id, 10),
 			});
 			res.status(200).send(result);
 		} catch (err) {
@@ -192,8 +238,23 @@ router
 	.all(jwtDecode())
 	.post(async (req, res, next) => {
 		try {
+			const data = await validator(
+				{
+					required: ["client_id"],
+					additionalProperties: false,
+					properties: {
+						client_id: {
+							$ref: "common#/properties/id",
+						},
+					},
+				},
+				{
+					client_id: req.params.client_id,
+				},
+			);
+
 			const result = await internalSingleSignOnClient.enable(res.locals.access, {
-				id: Number.parseInt(req.params.client_id, 10),
+				id: Number.parseInt(data.client_id, 10),
 			});
 			res.status(200).send(result);
 		} catch (err) {

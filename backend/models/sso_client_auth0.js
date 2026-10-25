@@ -6,7 +6,7 @@ Model.knex(db());
 
 const boolFields = ["is_deleted"];
 
-export class SAMLClientConfiguration extends Model {
+class Auth0ClientConfiguration extends Model {
 	$beforeInsert() {
 		// Default for meta
 		if (typeof this.meta === "undefined") {
@@ -25,11 +25,11 @@ export class SAMLClientConfiguration extends Model {
 	}
 
 	static get name() {
-		return "SAMLClientConfiguration";
+		return "Auth0ClientConfiguration";
 	}
 
 	static get tableName() {
-		return "sso_client_saml";
+		return "sso_client_auth0";
 	}
 
 	static get jsonAttributes() {
@@ -41,4 +41,4 @@ export class SAMLClientConfiguration extends Model {
 	}
 }
 
-export default SAMLClientConfiguration;
+export default Auth0ClientConfiguration;

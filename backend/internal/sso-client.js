@@ -1,22 +1,31 @@
 import _ from "lodash";
+import db from "../db.js";
+import { encryptRSA } from "../lib/encrypt.js";
 import errs from "../lib/error.js";
-import { castJsonIfNeed } from "../lib/helpers.js";
 import utils from "../lib/utils.js";
+import {
+	default as SingleSignOnClient,
+	SingleSignOnClientType,
+	default as ssoClientModel,
+} from "../models/sso_client.js";
+import auth0ClientConfigModel from "../models/sso_client_auth0.js";
+import githubConfigModel from "../models/sso_client_github.js";
 import openIDClientConfigModel from "../models/sso_client_openid.js";
-import samlClientConfigModel from "../models/sso_client_saml.js";
-import ssoClientModel, { SingleSignOnClientType } from "../models/sso_client.js";
 import internalAuditLog from "./audit-log.js";
 
 const omissions = () => {
 	return [
 		"is_deleted",
 		"owner.is_deleted",
+		"configuration_auth0.id",
+		"configuration_auth0.sso_client_id",
+		"configuration_auth0.meta",
 		"configuration_openid.id",
 		"configuration_openid.sso_client_id",
 		"configuration_openid.meta",
-		"configuration_saml.id",
-		"configuration_saml.sso_client_id",
-		"configuration_saml.meta",
+		"configuration_github.id",
+		"configuration_github.sso_client_id",
+		"configuration_github.meta",
 	];
 };
 
@@ -26,7 +35,7 @@ const internalSsoClientConfig = {
 	 * @param   {Object}  data
 	 * @returns {Promise}
 	 */
-	create: (access, data) => {
+	create: async (access, data) => {
 		const create_client = data?.id === "new";
 
 		if (create_client && data?.id) {
@@ -41,41 +50,56 @@ const internalSsoClientConfig = {
 					data.meta = {};
 				}
 
-				// Detach type specific config and save in next phase
+				// Create client and config in transaction
 				const client = structuredClone(data);
 				const config = client.configuration;
 				delete client.configuration;
 
-				return ssoClientModel
-					.query()
-					.insertAndFetch(client)
-					.then(utils.omitRow(omissions()))
-					.then((row) => [row, config]);
+				return ssoClientModel.transaction((trx) => {
+					return ssoClientModel
+						.query()
+						.insertAndFetch(client)
+						.transacting(trx)
+						.then(utils.omitRow(omissions()))
+						.then((row) => {
+							config.sso_client_id = row.id;
+							switch (row.client_type) {
+								case SingleSignOnClientType.Auth0:
+									config.redirect_url = (config.redirect_url || "").replace("/{id}/", `/${row.id}/`);
+									config.client_secret = encryptRSA(config.client_secret);
+									return auth0ClientConfigModel
+										.query()
+										.insertAndFetch(config)
+										.transacting(trx)
+										.then(() => row);
+								case SingleSignOnClientType.GitHub:
+									config.redirect_url = (config.redirect_url || "").replace("/{id}/", `/${row.id}/`);
+									config.client_secret = encryptRSA(config.client_secret);
+									return githubConfigModel
+										.query()
+										.insertAndFetch(config)
+										.transacting(trx)
+										.then(() => row);
+								case SingleSignOnClientType.OpenID:
+									config.redirect_url = (config.redirect_url || "").replace("/{id}/", `/${row.id}/`);
+									config.client_secret = encryptRSA(config.client_secret);
+									return openIDClientConfigModel
+										.query()
+										.insertAndFetch(config)
+										.transacting(trx)
+										.then(() => row);
+								default:
+									throw new errs.InternalValidationError("Unknown SSO Client client_type");
+							}
+						});
+				});
 			})
-			.then(([row, config]) => {
-				config.sso_client_id = row.id;
-				switch (row.client_type) {
-					case SingleSignOnClientType.OpenID:
-						config.redirect_url = (config.redirect_url || "").replace("{id}", row.id);
-						return openIDClientConfigModel
-							.query()
-							.insertAndFetch(config)
-							.then(() => row);
-					case SingleSignOnClientType.SAML:
-						return samlClientConfigModel
-							.query()
-							.insertAndFetch(config)
-							.then(() => row);
-					default:
-						throw errs.InternalValidationError("Unknown SSO Client client_type");
-				}
-			})
-			.then((row) => {
-				const expand = row.client_type === "SAML" ? ["configuration_saml"] : ["configuration_openid"];
+			.then(async (row) => {
+				const expand = SingleSignOnClient.configByType(row.client_type);
 				// Re-fetch with config
 				return internalSsoClientConfig.get(access, { id: row.id, expand });
 			})
-			.then((row) => {
+			.then(async (row) => {
 				// Don't leave sensitive info in the audit trail
 				if (data.configuration?.client_secret) {
 					data.configuration.client_secret = "**************";
@@ -98,7 +122,7 @@ const internalSsoClientConfig = {
 	 * @param  {Number}  data.id
 	 * @return {Promise}
 	 */
-	update: (access, data) => {
+	update: async (access, data) => {
 		const thisData = data;
 		const thisConfig = data.configuration;
 
@@ -118,42 +142,62 @@ const internalSsoClientConfig = {
 				return row;
 			})
 			.then((row) => {
+				if (thisData.client_type !== undefined && thisData.client_type !== row.client_type) {
+					throw new errs.InternalValidationError("SSO Client type cannot be changed");
+				}
 				const config = thisData.configuration;
 				delete thisData.configuration;
-				return ssoClientModel
-					.query()
-					.patchAndFetchById(row.id, thisData)
-					.then(utils.omitRow(omissions()))
-					.then((row) => [row, config]);
+
+				return ssoClientModel.transaction((trx) => {
+					return ssoClientModel
+						.query()
+						.patchAndFetchById(row.id, thisData)
+						.transacting(trx)
+						.then(utils.omitRow(omissions()))
+						.then((row) => {
+							// only update secrets when value provided in request
+							if ("client_secret" in config && config.client_secret === "") {
+								delete config.client_secret;
+							} else if (config.client_secret) {
+								config.client_secret = encryptRSA(config.client_secret);
+							}
+							// update type specific configuration
+							switch (row.client_type) {
+								case SingleSignOnClientType.Auth0:
+									return auth0ClientConfigModel
+										.query()
+										.where({ sso_client_id: row.id })
+										.patch(config)
+										.transacting(trx)
+										.then(() => row);
+								case SingleSignOnClientType.GitHub:
+									return githubConfigModel
+										.query()
+										.where({ sso_client_id: row.id })
+										.patch(config)
+										.transacting(trx)
+										.then(() => row);
+								case SingleSignOnClientType.OpenID:
+									return openIDClientConfigModel
+										.query()
+										.where({ sso_client_id: row.id })
+										.patch(config)
+										.transacting(trx)
+										.then(() => row);
+								default:
+									throw new errs.InternalValidationError("Unknown SSO Client client_type");
+							}
+						})
+						.then(trx.commit)
+						.then(() => row)
+						.catch(trx.rollback);
+				});
 			})
-			.then(([row, config]) => {
-				// only update secrets when value provided in request
-				if ("client_secret" in config && config.client_secret === "") {
-					delete config.client_secret;
-				}
-				// update type specific configuration
-				switch (row.client_type) {
-					case SingleSignOnClientType.OpenID:
-						return openIDClientConfigModel
-							.query()
-							.where({ sso_client_id: row.id })
-							.patch(config)
-							.then(() => row);
-					case SingleSignOnClientType.SAML:
-						return samlClientConfigModel
-							.query()
-							.where({ sso_client_id: row.id })
-							.patch(config)
-							.then(() => row);
-					default:
-						throw errs.InternalValidationError("Unknown SSO Client client_type");
-				}
+			.then(async (row) => {
+				const expand = SingleSignOnClient.configByType(row.client_type);
+				return internalSsoClientConfig.get(access, { id: row.id, expand }).then((saved_row) => saved_row);
 			})
-			.then((row) => {
-				const expand = row.client_type === "SAML" ? ["configuration_saml"] : ["configuration_openid"];
-				return internalSsoClientConfig.get(access, { id: row.id, expand });
-			})
-			.then((saved_row) => {
+			.then(async (saved_row) => {
 				// remove sensitive info
 				if ("client_secret" in saved_row.configuration) {
 					saved_row.configuration.client_secret = thisConfig.client_secret ? "****************" : "";
@@ -164,7 +208,7 @@ const internalSsoClientConfig = {
 						action: "updated",
 						object_type: "sso-client",
 						object_id: thisData.id,
-						meta: { ...saved_row },
+						meta: { ...thisData, configuration: saved_row.configuration },
 					})
 					.then(() => {
 						return saved_row;
@@ -180,7 +224,7 @@ const internalSsoClientConfig = {
 	 * @param  {Array}    [data.omit]
 	 * @return {Promise}
 	 */
-	get: (access, data) => {
+	get: async (access, data) => {
 		const thisData = data || {};
 		return access
 			.can("settings:get", thisData.id)
@@ -204,6 +248,12 @@ const internalSsoClientConfig = {
 				}
 
 				// The API only sends the name of the Client Secret's field w/o the value
+				if (thisRow.configuration_auth0?.client_secret) {
+					thisRow.configuration_auth0.client_secret = "";
+				}
+				if (thisRow.configuration_github?.client_secret) {
+					thisRow.configuration_github.client_secret = "";
+				}
 				if (thisRow.configuration_openid?.client_secret) {
 					thisRow.configuration_openid.client_secret = "";
 				}
@@ -212,8 +262,20 @@ const internalSsoClientConfig = {
 					return _.omit(thisRow, thisData.omit);
 				}
 
-				thisRow.configuration = thisRow.configuration_openid || thisRow.configuration_saml;
-				delete thisRow.configuration_saml;
+				switch (thisRow.client_type) {
+					case SingleSignOnClientType.Auth0:
+						thisRow.configuration = thisRow.configuration_auth0;
+						break;
+					case SingleSignOnClientType.GitHub:
+						thisRow.configuration = thisRow.configuration_github;
+						break;
+					case SingleSignOnClientType.OpenID:
+						thisRow.configuration = thisRow.configuration_openid;
+						break;
+				}
+
+				delete thisRow.configuration_auth0;
+				delete thisRow.configuration_github;
 				delete thisRow.configuration_openid;
 
 				return thisRow;
@@ -227,41 +289,57 @@ const internalSsoClientConfig = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	delete: (access, data) => {
+	delete: async (access, data) => {
 		return access
 			.can("settings:update", data.id)
 			.then(() => {
 				return internalSsoClientConfig.get(access, { id: data.id });
 			})
-			.then((row) => {
+			.then(async (row) => {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
 
 				return ssoClientModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						is_deleted: 1,
-					})
-					.then(() => {
-						// Remove configuration values when the SSO Client is soft deleted
-						switch (row.client_type) {
-							case SingleSignOnClientType.OpenID:
-								return openIDClientConfigModel
-									.query()
-									.where({ sso_client_id: row.id })
-									.patch({ client_id: "", client_secret: "", configuration_url: "" })
-									.then(() => row);
-							case SingleSignOnClientType.SAML:
-								return samlClientConfigModel
-									.query()
-									.where({ sso_client_id: row.id })
-									.patch({ saml_endpoint: "" })
-									.then(() => row);
-							default:
-								throw errs.InternalValidationError("Unknown SSO Client client_type");
-						}
+					.transaction(async (trx) => {
+						return ssoClientModel
+							.query()
+							.where("id", row.id)
+							.patch({
+								is_deleted: 1,
+							})
+							.transacting(trx)
+							.then(async () => {
+								// Remove configuration values when the SSO Client is soft deleted
+								switch (row.client_type) {
+									case SingleSignOnClientType.Auth0:
+										return auth0ClientConfigModel
+											.query()
+											.where({ sso_client_id: row.id })
+											.patch({ client_id: "", client_secret: "", domain: "" })
+											.transacting(trx)
+											.then(() => row);
+									case SingleSignOnClientType.GitHub:
+										return githubConfigModel
+											.query()
+											.where({ sso_client_id: row.id })
+											.patch({ github_client_id: "", client_secret: "" })
+											.transacting(trx)
+											.then(() => row);
+									case SingleSignOnClientType.OpenID:
+										return openIDClientConfigModel
+											.query()
+											.where({ sso_client_id: row.id })
+											.patch({ client_id: "", client_secret: "", configuration_url: "" })
+											.transacting(trx)
+											.then(() => row);
+									default:
+										throw new errs.InternalValidationError("Unknown SSO Client client_type");
+								}
+							})
+							.then(trx.commit)
+							.then(() => row)
+							.catch(trx.rollback);
 					})
 					.then((row) => {
 						// Add to audit log
@@ -297,17 +375,17 @@ const internalSsoClientConfig = {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
-				if (row.enabled) {
+				if (!row.is_disabled) {
 					throw new errs.ValidationError("SSO Client is already enabled");
 				}
 
-				row.enabled = 1;
+				row.is_disabled = 0;
 
 				return ssoClientModel
 					.query()
 					.where("id", row.id)
 					.patch({
-						enabled: 1,
+						is_disabled: 0,
 					})
 					.then(() => {
 						// Add to audit log
@@ -341,17 +419,17 @@ const internalSsoClientConfig = {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
-				if (!row.enabled) {
+				if (row.is_disabled) {
 					throw new errs.ValidationError("SSO Client is already disabled");
 				}
 
-				row.enabled = 0;
+				row.is_disabled = 1;
 
 				return ssoClientModel
 					.query()
 					.where("id", row.id)
 					.patch({
-						enabled: 0,
+						is_disabled: 1,
 					})
 					.then(() => {
 						// Add to audit log
@@ -373,21 +451,36 @@ const internalSsoClientConfig = {
 	 *
 	 * @param   {Access}  access
 	 * @param   {Array}   [expand]
-	 * @param   {String}  [search_query]
 	 * @returns {Promise}
 	 */
-	getAll: (access, _expand, search_query) => {
-		return access.can("streams:list").then((/*access_data*/) => {
-			const query = ssoClientModel.query().where("is_deleted", 0).groupBy("id").orderBy("name", "ASC");
+	getAll: (access, _expand) => {
+		return access.can("settings:list").then(async (/*access_data*/) => {
+			const query = ssoClientModel
+				.query()
+				.select("sso_client.*")
+				.leftJoin("sso_auth AS a", "a.sso_client_id", "sso_client.id")
+				.select(db().raw("MAX(a.last_login_at) AS accessed"))
+				.select(
+					db().raw("COUNT(CASE WHEN ?? = ? THEN ?? END) AS ??", [
+						"a.auth_type",
+						"sso-idp",
+						"a.id",
+						"provisioned_users",
+					]),
+					db().raw("COUNT(CASE WHEN ?? = ? THEN ?? END) AS ??", [
+						"a.auth_type",
+						"sso-npm",
+						"a.id",
+						"internal_users",
+					]),
+				)
+				.where("sso_client.is_deleted", 0)
+				.groupBy("sso_client.id")
+				.orderBy("sso_client.name");
 
-			// Query is used for searching
-			if (typeof search_query === "string" && search_query.length > 0) {
-				query.where(function () {
-					this.where(castJsonIfNeed("name"), "like", `%${search_query}%`);
-				});
-			}
-
-			return query.then(utils.omitRows(omissions()));
+			return query.then((result) => {
+				return (Array.isArray(result[0]) ? result[0] : result) || [];
+			});
 		});
 	},
 

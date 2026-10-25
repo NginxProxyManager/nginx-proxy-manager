@@ -14,7 +14,8 @@
 			"description": "The ID of the Client",
 			"schema": {
 				"type": "integer",
-				"minimum": 1
+				"minimum": 1,
+				"example": 123
 			},
 			"required": true,
 			"example": 2
@@ -28,7 +29,7 @@
         "schema": {
           "type": "object",
           "additionalProperties": false,
-          "minProperties": 1,
+          "minProperties": 11,
           "properties": {
             "name": {
               "$ref": "../../../../components/sso-client-object.json#/properties/name"
@@ -36,8 +37,38 @@
             "client_type": {
               "$ref": "../../../../components/sso-client-object.json#/properties/client_type"
             },
-            "enabled": {
-              "$ref": "../../../../components/sso-client-object.json#/properties/enabled"
+            "is_disabled": {
+              "$ref": "../../../../components/sso-client-object.json#/properties/is_disabled"
+            },
+            "allow_internal": {
+          		"$ref": "../../../../components/sso-client-object.json#/properties/allow_internal"
+        		},
+        		"button_text": {
+          		"$ref": "../../../../components/sso-client-object.json#/properties/button_text"
+        		},
+        		"require_verified_email": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_verified_email"
+        		},
+        		"allow_internal_if_admin": {
+          		"$ref": "../../../../components/sso-client-object.json#/properties/allow_internal_if_admin"
+        		},
+        		"require_group": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_group"
+        		},
+        		"require_group_name": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_group_name"
+        		},
+        		"provision_users": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/provision_users"
+        		},
+        		"require_provision_group": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_provision_group"
+        		},
+        		"require_provision_group_name": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_provision_group_name"
+        		},
+        		"provision_role_map": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/provision_role_map"
             },
             "configuration": {
         			"oneOf": [
@@ -47,30 +78,72 @@
                   "properties": {
                     "meta": {
                       "type": "object",
-                      "additionalProperties": {}
+                      "minProperties": 0
                     }
                   }
     						},
         				{
-        					"$ref": "../../../../components/sso-client-openid.json"
+        					"$ref": "../../../../components/sso-client-auth0.json"
         				},
         				{
-        					"$ref": "../../../../components/sso-client-saml.json"
+         					"$ref": "../../../../components/sso-client-github.json"
+        				},
+        				{
+         					"$ref": "../../../../components/sso-client-openid.json"
         				}
-        			]
+        			],
+              "example": {
+                "client_id": "123",
+                "client_secret":"",
+                "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
+                "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
+              }
         		},
             "meta": {
               "type": "object",
               "additionalProperties": false,
-              "properties": {},
+              "properties": {
+                "role_map": {
+                  "type": "array",
+                  "minItems": 0,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "group": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                }
+              },
               "example": {
-                "html": "<p>hello world</p>"
+                "role_map": []
               }
             }
           }
         },
         "example": {
-          "value": "congratulations",
+          "name": "Authentik",
+          "client_type": "OpenID",
+          "is_disabled": false,
+          "allow_internal": true,
+          "allow_internal_if_admin": false,
+          "require_group": false,
+          "provision_users": false,
+          "require_provision_group": false,
+          "provision_role_map": [],
+          "configuration": {
+            "client_id": "abc123",
+            "client_secret":"slicent-secret",
+            "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
+            "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
+          },
           "meta": {}
         }
       }
@@ -81,7 +154,34 @@
       "description": "200 response",
       "content": {
         "application/json": {
-          "examples": {},
+          "examples": {
+            "default": {
+              "value": {
+                "id": 1,
+                "created_on": "2026-10-25 13:51:09",
+                "modified_on": "2026-10-25 13:51:09",
+                "owner_user_id": 1,
+                "client_type": "OpenID",
+                "name": "Authentik",
+                "is_disabled": false,
+                "allow_internal": true,
+                "allow_internal_if_admin": false,
+                "require_group": false,
+                "require_group_name": "",
+                "provision_users": false,
+                "require_provision_group": false,
+                "require_provision_group_name": "",
+                "provision_role_map": [],
+                "meta": {},
+                "configuration": {
+                  "client_id": "abc123",
+                  "client_secret":"client-secret",
+                  "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
+                  "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
+                }
+              }
+            }
+          },
           "schema": {
             "$ref": "../../../../components/sso-client-object.json"
           }

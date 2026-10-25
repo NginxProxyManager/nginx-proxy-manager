@@ -10,14 +10,14 @@
   "parameters": [
     {
       "in": "path",
-      "name": "clientType",
+      "name": "clientID",
       "schema": {
-        "type": "string",
-        "minLength": 1
+        "type": "integer",
+        "minimum": 1,
+        "example": 123
       },
       "required": true,
-      "description": "SSO Client type",
-      "example": "OAuth2/OpenID"
+      "description": "SSO Client ID"
     }
   ],
   "responses": {
@@ -25,7 +25,34 @@
       "description": "200 response",
       "content": {
         "application/json": {
-          "examples": {},
+          "examples": {
+            "default": {
+              "value": {
+                "id": 1,
+                "created_on": "2026-10-25 13:51:09",
+                "modified_on": "2026-10-25 13:51:09",
+                "owner_user_id": 1,
+                "client_type": "OpenID",
+                "name":"Authentik",
+                "is_disabled": false,
+                "allow_internal": true,
+                "allow_internal_if_admin": false,
+                "require_group": false,
+                "require_group_name": "",
+                "provision_users": false,
+                "require_provision_group": false,
+                "require_provision_group_name": "",
+                "provision_role_map": [],
+                "meta": {},
+                "configuration": {
+                  "client_id": "abcd1234",
+                  "client_secret":"client-secret",
+                  "configuration_url": "https://keycloak.org/realms/some-realm",
+                  "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
+                }
+              }
+            }
+          },
           "schema": {
             "$ref": "../../../../components/sso-client-object.json"
           }

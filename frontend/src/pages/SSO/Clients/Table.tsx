@@ -1,10 +1,21 @@
-import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
+import {
+	IconAlertTriangle,
+	IconDotsVertical,
+	IconEdit,
+	IconForbid2,
+	IconPower,
+	IconTrash,
+	IconUserCheck,
+	IconUserPlus,
+} from "@tabler/icons-react";
 import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { type SingleSignOnClient, SingleSignOnClientType } from "src/api/backend";
-import { EmptyData, TrueFalseFormatter, ValueWithDateFormatter } from "src/components";
+import { EmptyData, TrueFalseFormatter } from "src/components";
 import { type Features, features } from "src/components/Table/features";
+import { BooleanAsIconWithCountFormatter } from "src/components/Table/Formatter/BooleanAndCountFormatter";
 import { SingleSignOnProtocolFormatter } from "src/components/Table/Formatter/SingleSignOnProtocolFormatter";
+import { ValueAndDateFormatter } from "src/components/Table/Formatter/ValueAndDateFormatter";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { showSingleSignOnClientModal } from "src/modals";
@@ -23,12 +34,14 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 	const columnHelper = createColumnHelper<Features, SingleSignOnClient>();
 	const columns = useMemo(
 		() => [
-			columnHelper.accessor((row: any) => row.clientType, {
+			columnHelper.accessor((row: any) => row, {
 				id: "protocol",
+				header: intl.formatMessage({ id: "column.type" }),
+				sortFn: (a: any, b: any) => (a.original.clientType > b.original.clientType ? 1 : -1),
 				cell: (info: any) => {
 					const value = info.getValue();
 
-					return <SingleSignOnProtocolFormatter protocol={value} />;
+					return <SingleSignOnProtocolFormatter protocol={value.clientType} disabled={value.is_disabled} />;
 				},
 				meta: {
 					className: "w-1",
@@ -37,23 +50,90 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 			columnHelper.accessor((row: any) => row, {
 				id: "name",
 				header: intl.formatMessage({ id: "column.name" }),
+				sortFn: (a: any, b: any) => (a.original.name > b.original.name ? 1 : -1),
 				cell: (info: any) => {
 					const value = info.getValue();
-					// Hack to reuse domains formatter
+
 					return (
-						<ValueWithDateFormatter
+						<ValueAndDateFormatter
 							value={value.name}
-							createdOn={value.createdOn}
+							date={value.accessed}
 							disabled={value.isDisabled}
+							langKey={"sso.stats.accessed"}
+							langKeyNoDate={"sso.stats.never-accessed"}
 						/>
 					);
 				},
 			}),
-			columnHelper.accessor((row: any) => row.enabled, {
-				id: "enabled",
+			columnHelper.accessor((row: any) => row, {
+				id: "allowInternal",
+				header: intl.formatMessage({ id: "sso.column.internal" }),
+				sortFn: (a: any, b: any) => (a.original.internalUsers > b.original.internalUsers ? 1 : -1),
+				cell: (info: any) => {
+					const value = info.getValue();
+					return (
+						<BooleanAsIconWithCountFormatter
+							value={value.allowInternal}
+							count={value.internalUsers}
+							disabled={value.isDisabled}
+							translationKey="sso.info.internal-users-count"
+							translationData={{ users: value.internalUsers }}
+							enabledIcon={
+								<IconUserCheck
+									height={20}
+									className={!value.isDisabled ? "text-lime opacity-85" : "opacity-30"}
+								/>
+							}
+							disabledIcon={
+								<IconForbid2 height={20} className={!value.isDisabled ? "opacity-65" : "opacity-30"} />
+							}
+						/>
+					);
+				},
+			}),
+			columnHelper.accessor((row: any) => row, {
+				id: "provisionUsers",
+				header: intl.formatMessage({ id: "sso.column.provision" }),
+				sortFn: (a: any, b: any) => (a.original.provisionedUsers > b.original.provisionedUsers ? 1 : -1),
+				cell: (info: any) => {
+					const value = info.getValue();
+					return (
+						<BooleanAsIconWithCountFormatter
+							value={value.provisionUsers}
+							count={value.provisionedUsers}
+							disabled={value.isDisabled}
+							translationKey="sso.info.provisioned-users-count"
+							translationData={{ users: value.provisionedUsers }}
+							enabledIcon={
+								<IconUserPlus
+									height={20}
+									className={!value.isDisabled ? "text-lime opacity-85" : "opacity-30"}
+								/>
+							}
+							disabledIcon={
+								<IconForbid2 height={20} className={!value.isDisabled ? "opacity-65" : "opacity-30"} />
+							}
+						/>
+					);
+				},
+			}),
+			columnHelper.accessor((row: any) => row.isDisabled, {
+				id: "isDisabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return <TrueFalseFormatter value={!!info.getValue()} />;
+					if (!info.row.original.allowInternal && !info.row.original.provisionUsers && info.getValue()) {
+						return (
+							<>
+								<IconAlertTriangle
+									size={20}
+									className="me-1 text-yellow cursor-pointer"
+									title={intl.formatMessage({ id: "sso.warning.partial-access" })}
+								/>
+								<TrueFalseFormatter value={!info.getValue()} trueColor="yellow" />
+							</>
+						);
+					}
+					return <TrueFalseFormatter value={!info.getValue()} />;
 				},
 			}),
 			columnHelper.display({
@@ -94,11 +174,11 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 									href="#"
 									onClick={(e) => {
 										e.preventDefault();
-										onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
+										onDisableToggle?.(info.row.original.id, info.row.original.isDisabled);
 									}}
 								>
 									<IconPower size={16} />
-									<T id={info.row.original.enabled ? "action.disable" : "action.enable"} />
+									<T id={!info.row.original.isDisabled ? "action.disable" : "action.enable"} />
 								</a>
 								<div className="dropdown-divider" />
 								<a
@@ -131,12 +211,12 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 		meta: {
 			isFetching,
 		},
-		enableSortingRemoval: false,
+		enableSortingRemoval: true,
 	});
 
 	const customAddBtn = (
 		<div className="dropdown">
-			<button type="button" className="btn dropdown-toggle btn-teal my-3" data-bs-toggle="dropdown">
+			<button type="button" className="btn dropdown-toggle btn-indigo my-3" data-bs-toggle="dropdown">
 				<T id="object.add" tData={{ object: "sso-client" }} />
 			</button>
 			<div className="dropdown-menu">
@@ -145,20 +225,30 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 					href="#"
 					onClick={(e) => {
 						e.preventDefault();
-						showSingleSignOnClientModal("new_openid", SingleSignOnClientType.OpenID);
+						showSingleSignOnClientModal("new_auth0", SingleSignOnClientType.Auth0);
 					}}
 				>
-					<T id="sso-client-oauth2-openid" />
+					{SingleSignOnClientType.Auth0}
 				</a>
 				<a
 					className="dropdown-item"
 					href="#"
 					onClick={(e) => {
 						e.preventDefault();
-						showSingleSignOnClientModal("new_saml", SingleSignOnClientType.SAML);
+						showSingleSignOnClientModal("new_github", SingleSignOnClientType.GitHub);
 					}}
 				>
-					<T id="sso-client-saml" />
+					{SingleSignOnClientType.GitHub}
+				</a>
+				<a
+					className="dropdown-item"
+					href="#"
+					onClick={(e) => {
+						e.preventDefault();
+						showSingleSignOnClientModal("new_openid", SingleSignOnClientType.OpenID);
+					}}
+				>
+					{SingleSignOnClientType.OpenID}
 				</a>
 			</div>
 		</div>
@@ -174,7 +264,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 					tableInstance={tableInstance}
 					customAddBtn={customAddBtn}
 					isFiltered={isFiltered}
-					color="teal"
+					color="indigo"
 				/>
 			}
 		/>
