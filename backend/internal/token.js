@@ -35,13 +35,13 @@ export default {
 			.first();
 
 		if (!user) {
-			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH, ERROR_MESSAGE_INVALID_AUTH_I18N);
 		}
 
 		const auth = await authModel.query().where("user_id", "=", user.id).where("type", "=", "password").first();
 
 		if (!auth) {
-			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH, ERROR_MESSAGE_INVALID_AUTH_I18N);
 		}
 
 		const valid = await auth.verifyPassword(data.secret);
