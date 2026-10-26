@@ -1,5 +1,5 @@
 {
-  "operationId": "OAuth Authorization flow callback",
+  "operationId": "OAuthAuthorizationFlowCallback",
   "summary": "Execute the callback phase of an OAuth Authroization Code flow",
   "tags": ["sso"],
   "parameters": [
