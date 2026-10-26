@@ -36,7 +36,7 @@ router
 				.andWhere({ is_deleted: 0, enabled: true });
 
 			const response = {
-				enabled: !!data,
+				enabled: data.length > 0,
 				configs: data?.map((client) => ({ name: client.name, id: client.id })),
 			};
 

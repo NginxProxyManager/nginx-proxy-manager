@@ -99,7 +99,10 @@ function LoginForm() {
 				const response = await fetch("/api/sso/is-enabled");
 				const data: SingleSignOnIntegration = await response.json();
 				setSSOConfig(data);
-			} catch {}
+				setSSOConfig(data);
+			} catch {
+				setSSOConfig({ enabled: false })
+			}
 		};
 		if (!("enabled" in SSOConfig)) {
 			checkSingleSignOnIntegration();
@@ -118,12 +121,12 @@ function LoginForm() {
 		setSubmitting(false);
 	};
 
-	const initializeOAuthFlow = async (client_id: number) => {
+	const initializeOAuthFlow = async (clientId: number) => {
 		setFormErr("");
 		setOAuthInit(true);
 		try {
 			// Redirect to initiate OAuth flow
-			document.location.replace(`/api/sso/oauth2/${client_id}`);
+			document.location.replace(`/api/sso/oauth2/${clientId}`);
 		} catch {
 			setOAuthInit(false);
 		}
@@ -148,9 +151,11 @@ function LoginForm() {
 		}
 	}, [SSOConfig]);
 
-	useEffect(() => {
-		emailRef.current?.focus();
-	}, []);
+  useEffect(() => {
+    if ("enabled" in SSOConfig && !SSOConfig.enabled) {
+      emailRef.current?.focus();
+    }
+	}, [SSOConfig]);
 
 	return (
 		<>
