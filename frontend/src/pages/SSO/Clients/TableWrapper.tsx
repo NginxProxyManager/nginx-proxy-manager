@@ -54,9 +54,8 @@ export default function TableWrapper() {
 											showSingleSignOnClientModal("new_openid", SingleSignOnClientType.OpenID)
 										}
 									>
-										{SingleSignOnClientType.OpenID}
+										<T id="sso.action.add" data={ { type: SingleSignOnClientType.OpenID } } />
 									</Button>
-
 									<Button
 										size="sm"
 										className="py-2 btn-teal"
@@ -64,7 +63,7 @@ export default function TableWrapper() {
 											showSingleSignOnClientModal("new_saml", SingleSignOnClientType.SAML)
 										}
 									>
-										{SingleSignOnClientType.SAML}
+										<T id="sso.action.add" data={ { type: SingleSignOnClientType.SAML } } />
 									</Button>
 								</div>
 							</div>
