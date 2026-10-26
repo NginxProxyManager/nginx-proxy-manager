@@ -701,17 +701,20 @@
 	"sso-clients.count": {
 		"defaultMessage": "{count} {count, plural, one {SSO Kliens} other {SSO Kliensek}}"
 	},
+	"sso.action.add": {
+		"defaultMessage": "Új {type}"
+	},
 	"sso.config.client_id.hint": {
 		"defaultMessage": "A Hitelesítéskezelő által adott Kliens Azonosító (Client ID)"
 	},
 	"sso.config.client_id.label": {
-		"defaultMessage": "Applikáció azonosító (ClientID)"
+		"defaultMessage": "Applikáció azonosító (Client ID)"
 	},
 	"sso.config.client_secret.hint": {
 		"defaultMessage": "Hagyja üresen, hogy változatlan maradjon"
 	},
 	"sso.config.client_secret.label": {
-		"defaultMessage": "Applicáció Titkos Kulcs (Client Secret)"
+		"defaultMessage": "Applicáció titkos kulcs (Client Secret)"
 	},
 	"sso.config.configuration_url.hint": {
 		"defaultMessage": "Pl. https://authentik.yourdomain.com/application/o/nginx-pm"

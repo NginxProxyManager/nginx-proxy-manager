@@ -773,6 +773,9 @@
 	"sso-clients.count": {
 		"defaultMessage": "{count} {count, plural, one {SSO Client} other {SSO Clients}}"
 	},
+	"sso.action.add": {
+		"defaultMessage": "New {type}"
+	},
 	"sso.config.client_id.hint": {
 		"defaultMessage": "Client ID as provided by the IdP"
 	},
