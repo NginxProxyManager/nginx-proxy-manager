@@ -67,6 +67,14 @@
 		{
 			"name": "users",
 			"description": "Endpoints for managing users"
+		},
+		{
+			"name": "sso-clients",
+			"description": "Endpoints for managing Single Sign On client configurations"
+		},
+		{
+			"name": "sso",
+			"description": "Endpoints for executing Single Sign On authorization flows"
 		}
 	],
 	"paths": {

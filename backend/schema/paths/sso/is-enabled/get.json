@@ -1,5 +1,5 @@
 {
-  "operationId": "getOpenIdMetadata",
+  "operationId": "checkSingleSignOnIntegrationState",
   "summary": "Retrieve metadata of configured Identity Providers",
   "tags": ["sso"],
   "responses": {
