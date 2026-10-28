@@ -110,6 +110,29 @@ label.row {
 	position: static;
 }
 
+/* Host folders: collapsible group rows in the host tables */
+.table-folder > td {
+	padding: 0;
+	background-color: var(--tblr-bg-surface-secondary);
+}
+
+.table-folder-toggle {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+	padding: 0.5rem 0.75rem;
+	border: 0;
+	background: none;
+	color: inherit;
+	text-align: start;
+}
+
+/* Marks the hosts belonging to the folder above them */
+.table-folder-item > td:first-child {
+	box-shadow: inset 3px 0 0 rgba(var(--tblr-secondary-rgb), 0.4);
+}
+
 /* Fix for Tabler scrollbar compensation */
 @media (min-width: 992px) {
   :host, :root {
