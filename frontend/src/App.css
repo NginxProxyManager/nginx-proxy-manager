@@ -110,10 +110,20 @@ label.row {
 	position: static;
 }
 
-/* Host folders: collapsible group rows in the host tables */
-.table-folder > td {
+/*
+ * Host folders: each folder is its own tinted row group, with its hosts
+ * indented. Selectors go through .card-table to beat Tabler's first-child
+ * cell rules (padding, rounded corner) and its tbody border resets.
+ */
+.card-table .table-folder-group {
+	border-top: var(--tblr-border-width) solid var(--tblr-border-color);
+	background-color: rgba(var(--tblr-secondary-rgb), 0.06);
+}
+
+.card-table .table-folder > td:first-child {
 	padding: 0;
-	background-color: var(--tblr-bg-surface-secondary);
+	border-radius: 0;
+	background-color: rgba(var(--tblr-secondary-rgb), 0.14);
 }
 
 .table-folder-toggle {
@@ -121,16 +131,17 @@ label.row {
 	align-items: center;
 	gap: 0.5rem;
 	width: 100%;
-	padding: 0.5rem 0.75rem;
+	padding: 0.75rem 1.25rem;
 	border: 0;
 	background: none;
 	color: inherit;
 	text-align: start;
 }
 
-/* Marks the hosts belonging to the folder above them */
-.table-folder-item > td:first-child {
-	box-shadow: inset 3px 0 0 rgba(var(--tblr-secondary-rgb), 0.4);
+/* Lines the hosts up with the folder name */
+.card-table .table-folder-item > td:first-child {
+	padding-inline-start: 4.25rem;
+	border-radius: 0;
 }
 
 /* Fix for Tabler scrollbar compensation */

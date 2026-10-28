@@ -1,6 +1,6 @@
 import { IconChevronDown, IconChevronRight, IconFolder } from "@tabler/icons-react";
 import { flexRender, type Row, type RowData } from "@tanstack/react-table";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import type { TableLayoutProps } from "src/components";
 import { intl } from "src/locale";
 import { EmptyRow } from "./EmptyRow";
@@ -66,9 +66,10 @@ function TableBody<T extends RowData>(props: TableLayoutProps<T>) {
 		setOpenFolders((state) => ({ ...state, [mode]: { ...state[mode], [folder]: !isOpen(folder) } }));
 	const colSpan = tableInstance.getVisibleFlatColumns().length;
 
+	// Each folder is its own row group, so it can be styled as one block
 	return (
-		<tbody className="table-tbody">
-			{ungrouped.map((row) => renderRow(row))}
+		<>
+			{ungrouped.length ? <tbody className="table-tbody">{ungrouped.map((row) => renderRow(row))}</tbody> : null}
 			{[...grouped.keys()]
 				.sort((a, b) => a.localeCompare(b))
 				.map((folder) => {
@@ -77,7 +78,7 @@ function TableBody<T extends RowData>(props: TableLayoutProps<T>) {
 					const enabledCount = folderRows.filter((row) => folders.isEnabled(row.original)).length;
 					const disabledCount = folderRows.length - enabledCount;
 					return (
-						<Fragment key={`folder:${folder}`}>
+						<tbody key={`folder:${folder}`} className="table-tbody table-folder-group">
 							<tr className="table-folder">
 								<td colSpan={colSpan}>
 									<button
@@ -109,10 +110,10 @@ function TableBody<T extends RowData>(props: TableLayoutProps<T>) {
 								</td>
 							</tr>
 							{open ? folderRows.map((row) => renderRow(row, "table-folder-item")) : null}
-						</Fragment>
+						</tbody>
 					);
 				})}
-		</tbody>
+		</>
 	);
 }
 
