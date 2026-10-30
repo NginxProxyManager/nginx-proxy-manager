@@ -1,0 +1,17 @@
+{
+	"type": "object",
+	"description": "SAML Client or Application Configuration",
+	"additionalProperties": false,
+	"properties": {
+  	"id": {
+  		"$ref": "../common.json#/properties/id"
+  	},
+    "saml_endpoint": {
+      "type": "string"
+    },
+    "meta": {
+  		"type": "object",
+  		"example": {}
+  	}
+  }
+}

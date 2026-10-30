@@ -11,7 +11,7 @@
             "default": {
               "value": {
                 "enabled": true,
-                "configs": [{ "name": "Authentik", "id": 1 }]
+                "configs": [{ "name": "Authentik", "id": 1, "type": "OpenID", "label": "Authentik" }]
               }
             }
           }

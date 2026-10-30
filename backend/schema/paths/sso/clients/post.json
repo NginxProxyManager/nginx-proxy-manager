@@ -30,9 +30,45 @@
             "enabled": {
               "$ref": "../../../components/sso-client-object.json#/properties/enabled"
             },
+            "allow_internal": {
+          		"$ref": "../../../components/sso-client-object.json#/properties/allow_internal"
+        		},
+        		"button_text": {
+          		"$ref": "../../../components/sso-client-object.json#/properties/button_text"
+        		},
+        		"require_verified_email": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_verified_email"
+        		},
+        		"allow_internal_if_admin": {
+          		"$ref": "../../../components/sso-client-object.json#/properties/allow_internal_if_admin"
+        		},
+        		"require_group": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_group"
+        		},
+        		"require_group_name": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_group_name"
+        		},
+        		"provision_users": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/provision_users"
+        		},
+        		"require_provision_group": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_provision_group"
+        		},
+        		"require_provision_group_name": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_provision_group_name"
+        		},
+        		"provision_role_map": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/provision_role_map"
+            },
             "configuration": {
         			"oneOf": [
          				{
+         					"$ref": "../../../components/sso-client-auth0.json"
+         				},
+                {
+         					"$ref": "../../../components/sso-client-github.json"
+         				},
+                {
          					"$ref": "../../../components/sso-client-openid.json"
          				},
          				{
@@ -42,10 +78,21 @@
         		},
             "meta": {
               "type": "object",
-              "additionalProperties": false,
-              "properties": {},
+              "properties": {
+                "role_map": {
+                  "type": "array",
+                  "minItems": 0,
+                  "items": {
+                    "role": "string",
+                    "group": "string"
+                  }
+                }
+              },
               "example": {
-                "html": "<p>hello world</p>"
+                "role_map": {
+                  "role": "user",
+                  "group": "NginxProxyManager-access"
+                }
               }
             }
           }

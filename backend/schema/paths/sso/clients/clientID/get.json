@@ -17,7 +17,7 @@
       },
       "required": true,
       "description": "SSO Client type",
-      "example": "OAuth2/OpenID"
+      "example": "OpenID"
     }
   ],
   "responses": {
@@ -31,7 +31,7 @@
               "created_on": "2026-10-25 13:51:09",
               "modified_on": "2026-10-25 13:51:09",
               "owner_user_id": 1,
-              "client_type": "OAuth2/OpenID",
+              "client_type": "OpenID",
               "name":"Authentik",
               "enabled": true,
               "meta": {},

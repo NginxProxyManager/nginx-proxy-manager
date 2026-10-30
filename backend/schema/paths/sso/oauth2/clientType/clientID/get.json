@@ -5,6 +5,16 @@
   "parameters": [
 		{
 			"in": "path",
+			"name": "clientType",
+			"description": "the lowercase Client type",
+			"schema": {
+				"type": "string"
+			},
+			"required": true,
+			"example": "openid"
+		},
+		{
+			"in": "path",
 			"name": "clientID",
 			"description": "The ID of the Client",
 			"schema": {

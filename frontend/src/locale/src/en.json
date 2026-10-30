@@ -329,6 +329,9 @@
 	"column.status": {
 		"defaultMessage": "Status"
 	},
+	"column.type": {
+		"defaultMessage": "type"
+	},
 	"created-on": {
 		"defaultMessage": "Created: {date}"
 	},
@@ -776,6 +779,45 @@
 	"sso.action.add": {
 		"defaultMessage": "New {type}"
 	},
+	"sso.column.internal": {
+		"defaultMessage": "User access"
+	},
+	"sso.column.provision": {
+		"defaultMessage": "Provisioning"
+	},
+	"sso.config.access.allow-internal-if-admin.hint": {
+		"defaultMessage": "The existing user must be an Administrator to allow log in."
+	},
+	"sso.config.access.allow-internal-if-admin.label": {
+		"defaultMessage": "Only if admin"
+	},
+	"sso.config.access.allow-internal.hint": {
+		"defaultMessage": "Allow log in to an active internal user account with matching email address."
+	},
+	"sso.config.access.allow-internal.label": {
+		"defaultMessage": "Existing users"
+	},
+	"sso.config.access.label": {
+		"defaultMessage": "Control who can access Nginx Proxy Manager following successful authentication and authorization by the IdP."
+	},
+	"sso.config.access.provision-user.hint": {
+		"defaultMessage": "Provision new user accounts in Nginx Proxy Manager."
+	},
+	"sso.config.access.provision-user.label": {
+		"defaultMessage": "Provision new users"
+	},
+	"sso.config.access.require-group.hint": {
+		"defaultMessage": "Require that the IdP sends the groups claim, and it includes the specified group."
+	},
+	"sso.config.access.require-group.label": {
+		"defaultMessage": "Require group membership"
+	},
+	"sso.config.access.role-map.hint": {
+		"defaultMessage": "Map group names sent by the IdP to the Nginx Proxy Manager role the new user should be provisioned in."
+	},
+	"sso.config.access.role-map.label": {
+		"defaultMessage": "Map groups to roles"
+	},
 	"sso.config.client_id.hint": {
 		"defaultMessage": "Client ID as provided by the IdP"
 	},
@@ -794,14 +836,32 @@
 	"sso.config.configuration_url.label": {
 		"defaultMessage": "OpenID Configuration Issuer URL"
 	},
+	"sso.config.domain.hint": {
+		"defaultMessage": "Auth0 Application Domain, e.g. dev-foo123.us.auth0.com"
+	},
+	"sso.config.domain.label": {
+		"defaultMessage": "Domain"
+	},
 	"sso.config.enabled.label": {
 		"defaultMessage": "Enabled"
+	},
+	"sso.config.github_client_id.hint": {
+		"defaultMessage": "Client ID of the GitHub OAuth application"
+	},
+	"sso.config.github_client_id.label": {
+		"defaultMessage": "Client ID"
 	},
 	"sso.config.name.hint": {
 		"defaultMessage": "E.g. Authentik"
 	},
 	"sso.config.name.label": {
 		"defaultMessage": "Name"
+	},
+	"sso.config.placeholder.group-name": {
+		"defaultMessage": "Group name"
+	},
+	"sso.config.protocol-disabled": {
+		"defaultMessage": "The {protocol} protocol is not implemented. This client configuration will not be used."
 	},
 	"sso.config.protocol.label": {
 		"defaultMessage": "Protocol"
@@ -818,8 +878,116 @@
 	"sso.config.saml_endpoint.label": {
 		"defaultMessage": "SAML Endpoint"
 	},
+	"sso.config.settings.button-preview.label": {
+		"defaultMessage": "Button preview"
+	},
+	"sso.config.settings.button-text.hint": {
+		"defaultMessage": "You can override the login button label or the SSO Client name will be used in a translated context."
+	},
+	"sso.config.settings.button-text.label": {
+		"defaultMessage": "Button text"
+	},
+	"sso.config.settings.require-verified-email.hint": {
+		"defaultMessage": "Require that the IdP sends the 'email_verified' claim with a value of true. This will only be checked before a user successfully logs in using this IdP."
+	},
+	"sso.config.settings.require-verified-email.label": {
+		"defaultMessage": "Require verified email"
+	},
+	"sso.config.tabs.idp": {
+		"defaultMessage": "Identity Provider"
+	},
+	"sso.config.tabs.provisioning": {
+		"defaultMessage": "Provisioning"
+	},
+	"sso.config.tabs.settings": {
+		"defaultMessage": "Settings"
+	},
+	"sso.config.tabs.users": {
+		"defaultMessage": "User access"
+	},
+	"sso.error.config.group-reqired": {
+		"defaultMessage": "Invalid configuration, group name or role mapping required (4)"
+	},
+	"sso.error.default": {
+		"defaultMessage": "Unexpected error, please try again later."
+	},
+	"sso.error.email-claim-required": {
+		"defaultMessage": "The Identity Provider didn't send the 'email' claim."
+	},
+	"sso.error.group-or-role-map": {
+		"defaultMessage": "Either this or 'Map groups to roles' is required."
+	},
+	"sso.error.login.group-required": {
+		"defaultMessage": "Login not permitted by group membership (14)"
+	},
+	"sso.error.login.not-found": {
+		"defaultMessage": "No relevant user found for the email claimed by the IdP (11)"
+	},
+	"sso.error.login.not-permitted": {
+		"defaultMessage": "Login not permitted by policy (10)"
+	},
+	"sso.error.login.not-permitted-2": {
+		"defaultMessage": "Not permitted by policy (12)"
+	},
+	"sso.error.login.verified-email": {
+		"defaultMessage": "Login not permitted with unverified email (17)"
+	},
+	"sso.error.no-groups-claim": {
+		"defaultMessage": "The IdP didn't send the 'groups' claim or it was empty (13)"
+	},
+	"sso.error.no-groups-claim-2": {
+		"defaultMessage": "The IdP didn't send the 'groups' claim or it was empty. (5)"
+	},
+	"sso.error.not-permitted": {
+		"defaultMessage": "Not permitted by policy (2)"
+	},
+	"sso.error.signup.group-required": {
+		"defaultMessage": "Signup not permitted by group membership (6)"
+	},
+	"sso.error.signup.group-required-2": {
+		"defaultMessage": "Signup not permitted by group membership (7)"
+	},
+	"sso.error.signup.group-required-3": {
+		"defaultMessage": "Signup not permitted by group membership (8)"
+	},
+	"sso.error.signup.group-required-4": {
+		"defaultMessage": "Signup not permitted by group membership (9)"
+	},
+	"sso.error.signup.not-permitted": {
+		"defaultMessage": "Signup not permitted by policy (1)"
+	},
+	"sso.error.signup.not-permitted-2": {
+		"defaultMessage": "Signup not permitted by policy (3)"
+	},
+	"sso.error.signup.unique-email": {
+		"defaultMessage": "The email address claimed by the IdP is already registered (15)"
+	},
+	"sso.error.signup.verified-email": {
+		"defaultMessage": "Signup not permitted with unverified email (16)"
+	},
+	"sso.header.auth-hint": {
+		"defaultMessage": "Signed in via Single Sign On"
+	},
+	"sso.info.internal-users-count": {
+		"defaultMessage": "{count} {count, plural, one {user} other {users}} logged in"
+	},
+	"sso.info.provisioned-users-count": {
+		"defaultMessage": "{count} {count, plural, one {user} other {users}} provisioned"
+	},
+	"sso.login.heading": {
+		"defaultMessage": "or continue with OAuth"
+	},
 	"sso.menu.label": {
 		"defaultMessage": "Single Sign On"
+	},
+	"sso.stats.accessed": {
+		"defaultMessage": "Accessed {date}"
+	},
+	"sso.stats.never-accessed": {
+		"defaultMessage": "Never accessed"
+	},
+	"sso.warning.partial-access": {
+		"defaultMessage": "When both 'User access' and 'Provision Users' are disabled then neither provisioning nor log in to internal user account are allowed via this SSO Client, but previously provisioned users can continue to access their accounts."
 	},
 	"stream": {
 		"defaultMessage": "Stream"

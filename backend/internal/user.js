@@ -3,6 +3,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import authModel from "../models/auth.js";
+import ssoAuthModel from "../models/sso_auth.js";
 import userModel from "../models/user.js";
 import userPermissionModel from "../models/user_permission.js";
 import internalAuditLog from "./audit-log.js";
@@ -75,10 +76,10 @@ const internalUser = {
 
 	/**
 	 * @param  {Access}  access
-	 * @param  {Object}  data
-	 * @param  {Integer} data.id
-	 * @param  {String}  [data.email]
-	 * @param  {String}  [data.name]
+	 * @param  {Object}  user
+	 * @param  {Integer} user.id
+	 * @param  {String}  [user.email]
+	 * @param  {String}  [user.name]
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
@@ -124,7 +125,10 @@ const internalUser = {
 					);
 				}
 
-				data.avatar = gravatar.url(data.email || user.email, { default: "mm" });
+				if (!user.avatar || user.email !== data.email) {
+					data.avatar = gravatar.url(data.email || user.email, { default: "mm" });
+				}
+
 				return userModel.query().patchAndFetchById(user.id, data).then(utils.omitRow(omissions()));
 			})
 			.then(() => {
@@ -147,10 +151,10 @@ const internalUser = {
 
 	/**
 	 * @param  {Access}   access
-	 * @param  {Object}   [data]
-	 * @param  {Integer}  [data.id]          Defaults to the token user
-	 * @param  {Array}    [data.expand]
-	 * @param  {Array}    [data.omit]
+	 * @param  {Object}   [user]
+	 * @param  {Integer}  [user.id]          Defaults to the token user
+	 * @param  {Array}    [user.expand]
+	 * @param  {Array}    [user.omit]
 	 * @return {Promise}
 	 */
 	get: (access, data) => {
@@ -159,6 +163,8 @@ const internalUser = {
 		if (typeof thisData.id === "undefined" || !thisData.id) {
 			thisData.id = access.token.getUserId(0);
 		}
+
+		const authType = access.token.getAuthType();
 
 		return access
 			.can("users:get", thisData.id)
@@ -180,6 +186,11 @@ const internalUser = {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
+
+				if (authType) {
+					row.auth_type = authType;
+				}
+
 				// Custom omissions
 				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
 					return _.omit(row, thisData.omit);
@@ -214,9 +225,9 @@ const internalUser = {
 
 	/**
 	 * @param {Access}  access
-	 * @param {Object}  data
-	 * @param {Integer} data.id
-	 * @param {String}  [data.reason]
+	 * @param {Object}  user
+	 * @param {Integer} user.id
+	 * @param {String}  [user.reason]
 	 * @returns {Promise}
 	 */
 	delete: (access, data) => {
@@ -342,10 +353,10 @@ const internalUser = {
 
 	/**
 	 * @param  {Access}  access
-	 * @param  {Object}  data
-	 * @param  {Integer} data.id
-	 * @param  {String}  data.type
-	 * @param  {String}  data.secret
+	 * @param  {Object}  user
+	 * @param  {Integer} user.id
+	 * @param  {String}  user.type
+	 * @param  {String}  user.secret
 	 * @return {Promise}
 	 */
 	setPassword: (access, data) => {
@@ -490,8 +501,8 @@ const internalUser = {
 
 	/**
 	 * @param {Access}   access
-	 * @param {Object}   data
-	 * @param {Integer}  data.id
+	 * @param {Object}   user
+	 * @param {Integer}  user.id
 	 */
 	loginAs: (access, data) => {
 		return access
@@ -501,6 +512,97 @@ const internalUser = {
 			})
 			.then((user) => {
 				return internalToken.getTokenFromUser(user);
+			});
+	},
+
+	/**
+	 * Provision new account for Single Sign On user
+	 * or register SSO access for `existingUser` if provided
+	 *
+	 * @param   {Object}  userData
+	 * @param   {Object}  authData
+	 * @param   {number}  ownerUserId
+	 * @param   {Object}  existingUser
+	 * @returns {Promise<Array>} [null, existingUser] or [newUser, null]
+	 */
+	provision: async (userData, authData, ownerUserId, existingUser = null) => {
+		authData.last_login_at = authData.auth_time;
+		delete authData.auth_time;
+
+		if (existingUser) {
+			await internalUser.ssoAccess(existingUser.id, "sso-idp", authData);
+			return [null, existingUser];
+		}
+
+		authData.first_login_at = authData.last_login_at;
+		userData.roles = userData.roles || [];
+		if (!userData.avatar) {
+			userData.avatar = gravatar.url(userData.email, { default: "mm" });
+		}
+
+		const user = await userModel.query().insertAndFetch(userData).then(utils.omitRow(omissions()));
+		await ssoAuthModel.query().insert({ user_id: user.id, auth_type: "sso-idp", ...authData });
+
+		// Create permissions row as well
+		const isAdmin = userData.roles.indexOf("admin") !== -1;
+		const permissions = await userPermissionModel.query().insertAndFetch({
+			user_id: user.id,
+			visibility: isAdmin ? "all" : "user",
+			proxy_hosts: "manage",
+			redirection_hosts: "manage",
+			dead_hosts: "manage",
+			streams: "manage",
+			access_lists: "manage",
+			certificates: "manage",
+		});
+
+		await internalAuditLog.add(null, {
+			user_id: ownerUserId, // owner of SSO Client
+			action: "created",
+			object_type: "user",
+			object_id: user.id,
+			meta: _.omit({ ...userData, permissions }, omissions()),
+		});
+
+		return [user, null];
+	},
+
+	/**
+	 * Either registers one of two types of authentication methods,
+	 * or records the time of access if the method exists for the user.
+	 *
+	 * @param   {Object}  config
+	 * @param   {Object}  authType "sso-idp" or "sso-npm"
+	 * @param   {Object}  auth
+	 * @returns {Promise}
+	 */
+	ssoAccess: (userId, authType, auth) => {
+		const authData = { auth_type: authType, user_id: userId, ...auth };
+
+		ssoAuthModel
+			.query()
+			.where("user_id", userId)
+			.andWhere("auth_type", authType)
+			.andWhere("subject", auth.subject)
+			.andWhere("sso_client_id", auth.sso_client_id)
+			.first()
+			.then(async (row) => {
+				if (row) {
+					// update existing auth type for user
+					return ssoAuthModel
+						.query()
+						.where({ id: row.id })
+						.patch({ last_login_at: auth.auth_time })
+						.then((updated_row) => updated_row);
+				}
+				// else insert new  auth type for user
+				authData.last_login_at = authData.auth_time;
+				authData.first_login_at = authData.auth_time;
+				delete authData.auth_time;
+				return ssoAuthModel
+					.query()
+					.insert({ ...authData })
+					.then((inserted_row) => inserted_row);
 			});
 	},
 };

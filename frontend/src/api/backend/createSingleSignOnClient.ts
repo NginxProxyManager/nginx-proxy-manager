@@ -1,15 +1,10 @@
 import * as api from "./base";
-import type {
-	OpenIDClientConfiguration,
-	SAMLClientConfiguration,
-	SingleSignOnClient,
-	SingleSignOnClientType,
-} from "./models";
+import type { SingleSignOnClient, SingleSignOnClientConfigurationType, SingleSignOnClientType } from "./models";
 
 export interface NewSingleSignOnClientConfiguration {
 	name: string;
 	clientType: SingleSignOnClientType;
-	configuration?: OpenIDClientConfiguration | SAMLClientConfiguration;
+	configuration?: SingleSignOnClientConfigurationType;
 }
 
 export async function createSingleSignOnClient(item: NewSingleSignOnClientConfiguration): Promise<SingleSignOnClient> {

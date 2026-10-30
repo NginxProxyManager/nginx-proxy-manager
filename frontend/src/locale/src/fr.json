@@ -755,8 +755,233 @@
 	"sign-in": {
 		"defaultMessage": "Se connecter"
 	},
+	"sign-in-with": {
+		"defaultMessage": "Se connecter avec {name}"
+	},
+	"single-sign-on": {
+		"defaultMessage": "Authentification centralisée"
+	},
 	"ssl-certificate": {
 		"defaultMessage": "Certificat SSL"
+	},
+	"sso-client": {
+		"defaultMessage": "SSO Client"
+	},
+	"sso-clients": {
+		"defaultMessage": "SSO Clients"
+	},
+	"sso-clients.count": {
+		"defaultMessage": "{count} {count, plural, one {SSO Client} other {SSO Clients}}"
+	},
+	"sso.action.add": {
+		"defaultMessage": "Nouveau : {type}"
+	},
+	"sso.column.internal": {
+		"defaultMessage": "Accès des utilisateurs"
+	},
+	"sso.column.provision": {
+		"defaultMessage": "Provisionnement"
+	},
+	"sso.config.access.allow-internal-if-admin.hint": {
+		"defaultMessage": "La connexion est autorisée uniquement pour un utilisateur existant ayant le rôle d’administrateur."
+	},
+	"sso.config.access.allow-internal-if-admin.label": {
+		"defaultMessage": "Administrateurs uniquement"
+	},
+	"sso.config.access.allow-internal.hint": {
+		"defaultMessage": "Autoriser la connexion d’un compte utilisateur interne actif dont l’adresse e-mail correspond."
+	},
+	"sso.config.access.allow-internal.label": {
+		"defaultMessage": "Utilisateurs existants"
+	},
+	"sso.config.access.label": {
+		"defaultMessage": "Contrôlez qui peut accéder à Nginx Proxy Manager après l’authentification et l’autorisation réussies par le fournisseur d’identité (IdP)."
+	},
+	"sso.config.access.provision-user.hint": {
+		"defaultMessage": "Créer de nouveaux comptes utilisateur dans Nginx Proxy Manager."
+	},
+	"sso.config.access.provision-user.label": {
+		"defaultMessage": "Créer de nouveaux utilisateurs"
+	},
+	"sso.config.access.require-group.hint": {
+		"defaultMessage": "Exiger que l’IdP envoie le claim « groups » et que celui-ci contienne le groupe indiqué."
+	},
+	"sso.config.access.require-group.label": {
+		"defaultMessage": "Exiger l’appartenance à un groupe"
+	},
+	"sso.config.access.role-map.hint": {
+		"defaultMessage": "Associer les noms des groupes envoyés par l’IdP au rôle attribué aux nouveaux utilisateurs lors de leur création."
+	},
+	"sso.config.access.role-map.label": {
+		"defaultMessage": "Associer les groupes aux rôles"
+	},
+	"sso.config.client_id.hint": {
+		"defaultMessage": "ID client fourni par l’IdP"
+	},
+	"sso.config.client_id.label": {
+		"defaultMessage": "ID client"
+	},
+	"sso.config.client_secret.hint": {
+		"defaultMessage": "Laisser vide pour conserver la valeur actuelle"
+	},
+	"sso.config.client_secret.label": {
+		"defaultMessage": "Secret client"
+	},
+	"sso.config.configuration_url.hint": {
+		"defaultMessage": "Ex. : https://authentik.yourdomain.com/application/o/nginx-pm"
+	},
+	"sso.config.configuration_url.label": {
+		"defaultMessage": "URL de l’émetteur de la configuration OpenID"
+	},
+	"sso.config.domain.hint": {
+		"defaultMessage": "Domaine de l’application Auth0, ex. : dev-foo123.us.auth0.com"
+	},
+	"sso.config.domain.label": {
+		"defaultMessage": "Domaine"
+	},
+	"sso.config.enabled.label": {
+		"defaultMessage": "Activé"
+	},
+	"sso.config.github_client_id.hint": {
+		"defaultMessage": "ID client de l’application OAuth GitHub"
+	},
+	"sso.config.github_client_id.label": {
+		"defaultMessage": "ID client"
+	},
+	"sso.config.name.hint": {
+		"defaultMessage": "Ex. : Authentik"
+	},
+	"sso.config.name.label": {
+		"defaultMessage": "Nom"
+	},
+	"sso.config.placeholder.group-name": {
+		"defaultMessage": "Nom du groupe"
+	},
+	"sso.config.protocol-disabled": {
+		"defaultMessage": "Le protocole {protocol} n’est pas implémenté. Cette configuration client ne sera pas utilisée."
+	},
+	"sso.config.protocol.label": {
+		"defaultMessage": "Protocole"
+	},
+	"sso.config.redirect_url.hint": {
+		"defaultMessage": "Conservez la partie « {id} » dans l’URL générée. Elle sera remplacée après l’enregistrement du formulaire. Vous pourrez ensuite copier l’URL finale dans la liste des URL de rappel autorisées de votre IdP."
+	},
+	"sso.config.redirect_url.label": {
+		"defaultMessage": "URL de redirection"
+	},
+	"sso.config.saml_endpoint.hint": {
+		"defaultMessage": "URL du point de terminaison du fournisseur SAML"
+	},
+	"sso.config.saml_endpoint.label": {
+		"defaultMessage": "Point de terminaison SAML"
+	},
+	"sso.config.settings.button-preview.label": {
+		"defaultMessage": "Aperçu du bouton"
+	},
+	"sso.config.settings.button-text.hint": {
+		"defaultMessage": "Vous pouvez remplacer le libellé du bouton de connexion. Sinon, le nom du client SSO sera utilisé dans la langue sélectionnée."
+	},
+	"sso.config.settings.button-text.label": {
+		"defaultMessage": "Texte du bouton"
+	},
+	"sso.config.settings.require-verified-email.hint": {
+		"defaultMessage": "Exiger que l’IdP envoie le claim « email_verified » avec la valeur true. Cette vérification n’a lieu qu’avant la connexion réussie d’un utilisateur via cet IdP."
+	},
+	"sso.config.settings.require-verified-email.label": {
+		"defaultMessage": "Exiger une adresse e-mail vérifiée"
+	},
+	"sso.config.tabs.idp": {
+		"defaultMessage": "Fournisseur d’identité"
+	},
+	"sso.config.tabs.provisioning": {
+		"defaultMessage": "Provisionnement"
+	},
+	"sso.config.tabs.settings": {
+		"defaultMessage": "Paramètres"
+	},
+	"sso.config.tabs.users": {
+		"defaultMessage": "Accès des utilisateurs"
+	},
+	"sso.error.config.group-reqired": {
+		"defaultMessage": "Configuration invalide : un nom de groupe ou une association de rôles est requis (4)"
+	},
+	"sso.error.email-claim-required": {
+		"defaultMessage": "Le fournisseur d’identité n’a pas envoyé le claim « email »."
+	},
+	"sso.error.group-or-role-map": {
+		"defaultMessage": "Cette option ou « Associer les groupes aux rôles » est obligatoire."
+	},
+	"sso.error.login.group-required": {
+		"defaultMessage": "Connexion refusée en raison de l’appartenance au groupe (14)"
+	},
+	"sso.error.login.not-found": {
+		"defaultMessage": "Aucun utilisateur correspondant à l’adresse e-mail fournie par l’IdP n’a été trouvé (11)"
+	},
+	"sso.error.login.not-permitted": {
+		"defaultMessage": "Connexion refusée par la politique (10)"
+	},
+	"sso.error.login.not-permitted-2": {
+		"defaultMessage": "Non autorisé par la politique (12)"
+	},
+	"sso.error.login.verified-email": {
+		"defaultMessage": "Connexion refusée avec une adresse e-mail non vérifiée (17)"
+	},
+	"sso.error.no-groups-claim": {
+		"defaultMessage": "L’IdP n’a pas envoyé le claim « groups » ou celui-ci était vide (13)"
+	},
+	"sso.error.no-groups-claim-2": {
+		"defaultMessage": "L’IdP n’a pas envoyé le claim « groups » ou celui-ci était vide. (5)"
+	},
+	"sso.error.not-permitted": {
+		"defaultMessage": "Non autorisé par la politique (2)"
+	},
+	"sso.error.signup.group-required": {
+		"defaultMessage": "Inscription refusée en raison de l’appartenance au groupe (6)"
+	},
+	"sso.error.signup.group-required-2": {
+		"defaultMessage": "Inscription refusée en raison de l’appartenance au groupe (7)"
+	},
+	"sso.error.signup.group-required-3": {
+		"defaultMessage": "Inscription refusée en raison de l’appartenance au groupe (8)"
+	},
+	"sso.error.signup.group-required-4": {
+		"defaultMessage": "Inscription refusée en raison de l’appartenance au groupe (9)"
+	},
+	"sso.error.signup.not-permitted": {
+		"defaultMessage": "Inscription refusée par la politique (1)"
+	},
+	"sso.error.signup.not-permitted-2": {
+		"defaultMessage": "Inscription refusée par la politique (3)"
+	},
+	"sso.error.signup.unique-email": {
+		"defaultMessage": "L’adresse e-mail fournie par l’IdP est déjà enregistrée (15)"
+	},
+	"sso.error.signup.verified-email": {
+		"defaultMessage": "Inscription refusée avec une adresse e-mail non vérifiée (16)"
+	},
+	"sso.header.auth-hint": {
+		"defaultMessage": "Connecté via l’authentification unique"
+	},
+	"sso.info.internal-users-count": {
+		"defaultMessage": "{count} {count, plural, one {utilisateur connecté} other {utilisateurs connectés}}"
+	},
+	"sso.info.provisioned-users-count": {
+		"defaultMessage": "{count} {count, plural, one {utilisateur provisionné} other {utilisateurs provisionnés}}"
+	},
+	"sso.login.heading": {
+		"defaultMessage": "ou continuez avec OAuth"
+	},
+	"sso.menu.label": {
+		"defaultMessage": "Authentification unique"
+	},
+	"sso.stats.accessed": {
+		"defaultMessage": "Accédé le {date}"
+	},
+	"sso.stats.never-accessed": {
+		"defaultMessage": "Jamais utilisé"
+	},
+	"sso.warning.partial-access": {
+		"defaultMessage": "Lorsque « Accès des utilisateurs » et « Créer de nouveaux utilisateurs » sont tous deux désactivés, ni le provisionnement ni la connexion aux comptes utilisateur internes ne sont autorisés via ce client SSO. Les utilisateurs déjà provisionnés peuvent toutefois continuer à accéder à leurs comptes."
 	},
 	"stream": {
 		"defaultMessage": "Stream"

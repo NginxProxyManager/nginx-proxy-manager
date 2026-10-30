@@ -704,6 +704,45 @@
 	"sso.action.add": {
 		"defaultMessage": "Új {type}"
 	},
+	"sso.column.internal": {
+		"defaultMessage": "Fiók elérés"
+	},
+	"sso.column.provision": {
+		"defaultMessage": "Provízió"
+	},
+	"sso.config.access.allow-internal-if-admin.hint": {
+		"defaultMessage": "Csak akkor lépeht be a meglévő felhasználó, ha Adminisztrátor."
+	},
+	"sso.config.access.allow-internal-if-admin.label": {
+		"defaultMessage": "Csak ha admin"
+	},
+	"sso.config.access.allow-internal.hint": {
+		"defaultMessage": "A hitelesített személy beléphet egyező email című létező felhasználói fiókba."
+	},
+	"sso.config.access.allow-internal.label": {
+		"defaultMessage": "Létező felhasználó"
+	},
+	"sso.config.access.label": {
+		"defaultMessage": "Szabályozhatja, ki érheti el az Nginx Proxy Manager-t sikeres központi hitelesítés után."
+	},
+	"sso.config.access.provision-user.hint": {
+		"defaultMessage": "Új felhasználói fiókok létrehozása Nginx Proxy Manager-ben."
+	},
+	"sso.config.access.provision-user.label": {
+		"defaultMessage": "Felhasználók létrehozása"
+	},
+	"sso.config.access.require-group.hint": {
+		"defaultMessage": "Csak akkor léphet be, ha a Hitelesítéskezelő elküldi a felhasználó csoporttagságait, és az tartalmazza a megadott csoportot."
+	},
+	"sso.config.access.require-group.label": {
+		"defaultMessage": "Csoporttagság követelése"
+	},
+	"sso.config.access.role-map.hint": {
+		"defaultMessage": "Redelje hozzá a Hitelesítéskezelő által küldött csporttagságot a létrehozandó felhasználó Nginx Proxy Manager szerepköréhez."
+	},
+	"sso.config.access.role-map.label": {
+		"defaultMessage": "Szerepkör hozzárendelés"
+	},
 	"sso.config.client_id.hint": {
 		"defaultMessage": "A Hitelesítéskezelő által adott Kliens Azonosító (Client ID)"
 	},
@@ -722,14 +761,32 @@
 	"sso.config.configuration_url.label": {
 		"defaultMessage": "OpenID Konfiguráció Kibocsátó URL"
 	},
+	"sso.config.domain.hint": {
+		"defaultMessage": "Auth0 Applikáció Domain, pl. dev-foo123.us.auth0.com"
+	},
+	"sso.config.domain.label": {
+		"defaultMessage": "Domain"
+	},
 	"sso.config.enabled.label": {
 		"defaultMessage": "Engedélyezve"
+	},
+	"sso.config.github_client_id.hint": {
+		"defaultMessage": "GitHub OAuth Applikáció Azonosítója (Client ID)"
+	},
+	"sso.config.github_client_id.label": {
+		"defaultMessage": "Applikáció Azonosító (Client ID)"
 	},
 	"sso.config.name.hint": {
 		"defaultMessage": "Pl. Authentik"
 	},
 	"sso.config.name.label": {
 		"defaultMessage": "Név"
+	},
+	"sso.config.placeholder.group-name": {
+		"defaultMessage": "Csoport neve"
+	},
+	"sso.config.protocol-disabled": {
+		"defaultMessage": "A {protocol} protocol is not implemented. This client configuration will not be used."
 	},
 	"sso.config.protocol.label": {
 		"defaultMessage": "Protokol"
@@ -746,8 +803,113 @@
 	"sso.config.saml_endpoint.label": {
 		"defaultMessage": "SAML Végpont"
 	},
+	"sso.config.settings.button-preview.label": {
+		"defaultMessage": "Gomb előnézet"
+	},
+	"sso.config.settings.button-text.hint": {
+		"defaultMessage": "Egyedi feliratot adhat meg a Belépés gombnak. Amikor ez a mező üres, az SSO Kliens neve fog megjelenni a gombon nemzetközi szövegkörnyezetben."
+	},
+	"sso.config.settings.button-text.label": {
+		"defaultMessage": "Gomb felirat"
+	},
+	"sso.config.settings.require-verified-email.hint": {
+		"defaultMessage": "A felhasználó csak visszaigazolt email címmel léphet be (a Hitelesítéskezelő elküldi az 'email_verified=true' tulajdonságot.) Ezt csak az első sikeres belépést megelőzően ellenőrizzük."
+	},
+	"sso.config.settings.require-verified-email.label": {
+		"defaultMessage": "Visszaigazolt email cím követelése"
+	},
+	"sso.config.tabs.idp": {
+		"defaultMessage": "Hitelesítéskezelő"
+	},
+	"sso.config.tabs.provisioning": {
+		"defaultMessage": "Provízió"
+	},
+	"sso.config.tabs.settings": {
+		"defaultMessage": "Beállítások"
+	},
+	"sso.config.tabs.users": {
+		"defaultMessage": "Fiók elérés"
+	},
+	"sso.error.config.group-reqired": {
+		"defaultMessage": "Szabálytalan konfiguráció, csoprt kötelező (4)"
+	},
+	"sso.error.email-claim-required": {
+		"defaultMessage": "A Hitelesítéskezelő nem küldtött email címet."
+	},
+	"sso.error.group-or-role-map": {
+		"defaultMessage": "Ez vagy a 'Szerepkör hozzárendelés' kötelező."
+	},
+	"sso.error.login.group-required": {
+		"defaultMessage": "Bejelentkezés nem engedélyezett, hiányzó csoporttagság (14)"
+	},
+	"sso.error.login.not-found": {
+		"defaultMessage": "A Hitelesítéskezelő által küldött email cím szerinti felhasználó nem található (11)"
+	},
+	"sso.error.login.not-permitted": {
+		"defaultMessage": "Bejelntkezés nem engedélyezett (10)"
+	},
+	"sso.error.login.not-permitted-2": {
+		"defaultMessage": "Nem engedélyezett (12)"
+	},
+	"sso.error.login.verified-email": {
+		"defaultMessage": "Bejelntkezés nem engedélyezett visszaigazolatlan email címmel (17)"
+	},
+	"sso.error.no-groups-claim": {
+		"defaultMessage": "A Hitelesítéskezelő nem küldte le a csoporttagságokat (13)"
+	},
+	"sso.error.no-groups-claim-2": {
+		"defaultMessage": "A Hitelesítéskezelő nem küldött vagy üres csoporttagságokat küldött (5)"
+	},
+	"sso.error.not-permitted": {
+		"defaultMessage": "Nem engedélyezett (2)"
+	},
+	"sso.error.signup.group-required": {
+		"defaultMessage": "Regisztráció nem engedélyezett, hiányzó csoporttagság (6)"
+	},
+	"sso.error.signup.group-required-2": {
+		"defaultMessage": "Regisztráció nem engedélyezett, hiányzó csoporttagság (7)"
+	},
+	"sso.error.signup.group-required-3": {
+		"defaultMessage": "Regisztráció nem engedélyezett, hiányzó csoporttagság (8)"
+	},
+	"sso.error.signup.group-required-4": {
+		"defaultMessage": "Regisztráció nem engedélyezett, hiányzó csoporttagság (9)"
+	},
+	"sso.error.signup.not-permitted": {
+		"defaultMessage": "Regisztráció nem engedélyezett (1)"
+	},
+	"sso.error.signup.not-permitted-2": {
+		"defaultMessage": "Regisztráció nem engedélyezett (3)"
+	},
+	"sso.error.signup.unique-email": {
+		"defaultMessage": "A Hitelesítéskezelő által küldött email címet már regisztrálták (15)"
+	},
+	"sso.error.signup.verified-email": {
+		"defaultMessage": "Regisztráció nem engedélyezett visszaigazolatlan email címmel (16)"
+	},
+	"sso.header.auth-hint": {
+		"defaultMessage": "Központi Hitelesítéssel jelentkezett be"
+	},
+	"sso.info.internal-users-count": {
+		"defaultMessage": "{count} felhasználó lépett be"
+	},
+	"sso.info.provisioned-users-count": {
+		"defaultMessage": "{count} felhasználó létrehozva"
+	},
+	"sso.login.heading": {
+		"defaultMessage": "vagy folytassa OAuth-tal"
+	},
 	"sso.menu.label": {
 		"defaultMessage": "Köztponti Hitelesítés"
+	},
+	"sso.stats.accessed": {
+		"defaultMessage": "Hozzáférés {date}"
+	},
+	"sso.stats.never-accessed": {
+		"defaultMessage": "Még nem használták"
+	},
+	"sso.warning.partial-access": {
+		"defaultMessage": "Amikor a Fiók elérés és a Provízió is le van tiltva, akkor az új regisztrációk és az eredetileg meglévő fiókbe belépés nem engedélyezett ezen a Hitelesítéskezelőn keresztül, de a korábban provízionált felsználók továbbra is elérhetik a fiókjukat addig, amíg az a fiók letiltásra vagy törlésre nem kerül, vagy amíg ez az SSO Kliens letiltásra vagy törlésre nem kerül."
 	},
 	"stream": {
 		"defaultMessage": "Stream"

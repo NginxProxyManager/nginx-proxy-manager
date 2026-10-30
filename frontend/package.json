@@ -29,8 +29,8 @@
 		"generate-password-browser": "^1.1.0",
 		"humps": "^2.0.1",
 		"universal-cookie": "^8.1.2",
-		"query-string": "^10.0.0",
-		"react": "^19.3.1",
+		"query-string": "^9.5.1",
+		"react": "^19.3.0",
 		"react-bootstrap": "^2.10.10",
 		"react-dom": "^19.3.1",
 		"react-intl": "^12.1.6",
@@ -39,7 +39,8 @@
 		"react-router-dom": "^7.18.5",
 		"react-select": "^5.10.2",
 		"react-toastify": "^11.2.0",
-		"rooks": "^9.9.0"
+		"rooks": "^9.9.0",
+		"rehype-raw": "^7.0.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.6.4",

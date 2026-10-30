@@ -28,12 +28,24 @@ const HOUR_CYCLE_BY_LANG: Record<string, "h12" | "h23"> = {
 	et: "h23",
 };
 
-const formatDateTime = (value: string | number, locale = "en-US"): string => {
+const formatDateTime = (
+	value: string | number,
+	locale = "en-US",
+	perspective: "relative" | "absolute" = "absolute",
+): string => {
 	const d = parseDate(value);
 	if (!d) return `${value}`;
 	const lang = (locale || "en").slice(0, 2);
 	const resolvedLocale = DATE_LOCALE_BY_LANG[lang] || locale;
 	const hourCycle = HOUR_CYCLE_BY_LANG[lang] || "h12";
+
+	if (perspective === "relative") {
+		const timeAgo = formatRelativePastMonth(d, resolvedLocale);
+		if (timeAgo) {
+			return timeAgo;
+		}
+	}
+
 	try {
 		return intlFormat(
 			d,
@@ -47,6 +59,29 @@ const formatDateTime = (value: string | number, locale = "en-US"): string => {
 	} catch {
 		return `${value}`;
 	}
+};
+
+const formatRelativePastMonth = (date: Date, locale: string) => {
+	if (date.getTime() > Date.now()) return; // return early for future dates fallback
+	const rel = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+	const seconds = Math.floor((date.getTime() - Date.now()) / 1000);
+	const minutes = Math.ceil(seconds / 60);
+	const hours = Math.ceil(minutes / 60);
+	const days = Math.ceil(hours / 24);
+
+	if (minutes === 0) {
+		return rel.format(seconds, "seconds");
+	}
+	if (minutes > -60) {
+		return rel.format(minutes, "minutes");
+	}
+	if (minutes > -60 * 24) {
+		return rel.format(hours, "hours");
+	}
+	if (minutes > -60 * 24 * 30) {
+		return rel.format(days, "days");
+	}
+	// fallback beyond 30 days
 };
 
 export { formatDateTime, parseDate, isUnixTimestamp };

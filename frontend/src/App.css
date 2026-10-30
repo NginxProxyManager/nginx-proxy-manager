@@ -143,3 +143,28 @@ html {
 	--tblr-btn-active-border-color: transparent;
 	--tblr-btn-box-shadow: var(--tblr-shadow-input);
 }
+
+.auth-type-badge {
+    position: absolute;
+    left: -0.5rem;
+    top: 0;
+    padding: 0 0.4rem 0.15rem 0.4rem;
+    margin: 0 0 0 0.5rem;
+    border: 1px solid white;
+    border-radius: var(--tblr-border-radius);
+    border-color: var(--tblr-border-color);
+    background-color: var(--tblr-bg-surface-secondary);
+    opacity: 0.85;
+    font-size: 0.7rem;
+}
+
+#sso-nav li a span {
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.33rem;
+}
+
+button.sso-login:disabled {
+    background-color: transparent;
+    color: var(--tblr-azure);
+}

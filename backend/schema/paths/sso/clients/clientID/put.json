@@ -39,6 +39,36 @@
             "enabled": {
               "$ref": "../../../../components/sso-client-object.json#/properties/enabled"
             },
+            "allow_internal": {
+          		"$ref": "../../../../components/sso-client-object.json#/properties/allow_internal"
+        		},
+        		"button_text": {
+          		"$ref": "../../../../components/sso-client-object.json#/properties/button_text"
+        		},
+        		"require_verified_email": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_verified_email"
+        		},
+        		"allow_internal_if_admin": {
+          		"$ref": "../../../../components/sso-client-object.json#/properties/allow_internal_if_admin"
+        		},
+        		"require_group": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_group"
+        		},
+        		"require_group_name": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_group_name"
+        		},
+        		"provision_users": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/provision_users"
+        		},
+        		"require_provision_group": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_provision_group"
+        		},
+        		"require_provision_group_name": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/require_provision_group_name"
+        		},
+        		"provision_role_map": {
+        		  "$ref": "../../../../components/sso-client-object.json#/properties/provision_role_map"
+            },
             "configuration": {
         			"oneOf": [
          				{
@@ -52,7 +82,13 @@
                   }
     						},
         				{
-        					"$ref": "../../../../components/sso-client-openid.json"
+        					"$ref": "../../../../components/sso-client-auth0.json"
+        				},
+        				{
+         					"$ref": "../../../../components/sso-client-github.json"
+        				},
+        				{
+         					"$ref": "../../../../components/sso-client-openid.json"
         				},
         				{
         					"$ref": "../../../../components/sso-client-saml.json"
@@ -62,11 +98,20 @@
             "meta": {
               "type": "object",
               "additionalProperties": false,
-              "properties": {},
+              "properties": {
+                "role_map": {
+                  "type": "array",
+                  "minItems": 0,
+                  "items": {
+                    "role": "string",
+                    "group": "string"
+                  }
+                }
+              },
               "example": {
                 "": {
                   "name": "Authentik",
-                  "client_type": "OAuth2/OpenID",
+                  "client_type": "OpenID",
                   "enabled": true,
                   "configuration": {
                     "client_id": "123",
@@ -93,7 +138,7 @@
               "created_on": "2026-10-25 13:51:09",
               "modified_on": "2026-10-25 13:51:09",
               "owner_user_id": 1,
-              "client_type": "OAuth2/OpenID",
+              "client_type": "OpenID",
               "name":"Authentik",
               "enabled": true,
               "meta": {},

@@ -1,10 +1,10 @@
 import express from "express";
-import { debug, sso as logger } from "../../logger.js";
 import internalSingleSignOnClient from "../../internal/sso-client.js";
+import jwtDecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
+import { debug, sso as logger } from "../../logger.js";
 import { getValidationSchema } from "../../schema/index.js";
-import jwtDecode from "../../lib/express/jwt-decode.js";
 
 const router = express.Router({
 	caseSensitive: true,
@@ -115,6 +115,11 @@ router
 				id: Number.parseInt(data.client_id, 10),
 				expand: req.query.expand?.split?.(","),
 			});
+
+			if (row.meta.role_map) {
+				row.provision_role_map = row.meta.role_map;
+			}
+
 			res.status(200).send(row);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);

@@ -2,7 +2,7 @@ import { IconLock, IconLogout, IconShieldLock, IconUser } from "@tabler/icons-re
 import { LocalePicker, NavLink, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useUser } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { showChangePasswordModal, showTwoFactorModal, showUserModal } from "src/modals";
 import styles from "./SiteHeader.module.css";
 
@@ -63,8 +63,18 @@ export function SiteHeader() {
 									}}
 								/>
 								<div className="d-none d-xl-block ps-2">
-									<div>{currentUser?.nickname}</div>
+									<div>
+										<span>{currentUser?.nickname}</span>
+									</div>
 									<div className="mt-1 small text-secondary">
+										{currentUser?.authType !== "password" && (
+											<span
+												className="auth-type-badge"
+												title={intl.formatMessage({ id: "sso.header.auth-hint" })}
+											>
+												{currentUser?.authType?.split("-")?.[0]}
+											</span>
+										)}
 										<T id={isAdmin ? "role.admin" : "role.standard-user"} />
 									</div>
 								</div>
@@ -100,28 +110,32 @@ export function SiteHeader() {
 									<IconUser width={18} />
 									<T id="user.edit-profile" />
 								</a>
-								<a
-									href="?"
-									className="dropdown-item"
-									onClick={(e) => {
-										e.preventDefault();
-										showChangePasswordModal("me");
-									}}
-								>
-									<IconLock width={18} />
-									<T id="user.change-password" />
-								</a>
-								<a
-									href="?"
-									className="dropdown-item"
-									onClick={(e) => {
-										e.preventDefault();
-										showTwoFactorModal("me");
-									}}
-								>
-									<IconShieldLock width={18} />
-									<T id="user.two-factor" />
-								</a>
+								{currentUser?.authType === "password" && (
+									<>
+										<a
+											href="?"
+											className="dropdown-item"
+											onClick={(e) => {
+												e.preventDefault();
+												showChangePasswordModal("me");
+											}}
+										>
+											<IconLock width={18} />
+											<T id="user.change-password" />
+										</a>
+										<a
+											href="?"
+											className="dropdown-item"
+											onClick={(e) => {
+												e.preventDefault();
+												showTwoFactorModal("me");
+											}}
+										>
+											<IconShieldLock width={18} />
+											<T id="user.two-factor" />
+										</a>
+									</>
+								)}
 								<div className="dropdown-divider" />
 								<a
 									href="?"

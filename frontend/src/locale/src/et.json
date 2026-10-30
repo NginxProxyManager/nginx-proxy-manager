@@ -773,26 +773,80 @@
 	"sso-clients.count": {
 		"defaultMessage": "{count} {count, plural, one {SSO klient} other {SSO klienti}}"
 	},
+	"sso.action.add": {
+		"defaultMessage": "Uus {type}"
+	},
+	"sso.column.internal": {
+		"defaultMessage": "Kasutajate juurdepääs"
+	},
+	"sso.column.provision": {
+		"defaultMessage": "Kasutajate loomine"
+	},
+	"sso.config.access.allow-internal-if-admin.hint": {
+		"defaultMessage": "Sisselogimine on lubatud ainult olemasolevale administraatorile."
+	},
+	"sso.config.access.allow-internal-if-admin.label": {
+		"defaultMessage": "Ainult administraatoritele"
+	},
+	"sso.config.access.allow-internal.hint": {
+		"defaultMessage": "Luba sisse logida aktiivsel sisekasutaja kontol, mille e-posti aadress kattub."
+	},
+	"sso.config.access.allow-internal.label": {
+		"defaultMessage": "Olemasolevad kasutajad"
+	},
+	"sso.config.access.label": {
+		"defaultMessage": "Määra, kes pääseb Nginx Proxy Managerisse pärast edukat autentimist ja autoriseerimist identiteedipakkuja (IdP) poolt."
+	},
+	"sso.config.access.provision-user.hint": {
+		"defaultMessage": "Loo Nginx Proxy Manageris uued kasutajakontod."
+	},
+	"sso.config.access.provision-user.label": {
+		"defaultMessage": "Loo uued kasutajad"
+	},
+	"sso.config.access.require-group.hint": {
+		"defaultMessage": "Nõua, et IdP saadaks grupid sisaldava claim'i ning et see sisaldaks määratud gruppi."
+	},
+	"sso.config.access.require-group.label": {
+		"defaultMessage": "Nõua grupi liikmesust"
+	},
+	"sso.config.access.role-map.hint": {
+		"defaultMessage": "Määra IdP saadetud grupinimede alusel, millise rolliga uus kasutaja luuakse."
+	},
+	"sso.config.access.role-map.label": {
+		"defaultMessage": "Vasta grupid rollidele"
+	},
 	"sso.config.client_id.hint": {
-		"defaultMessage": "Kliendi ID, mille andis identiteedipakkuja (IdP)"
+		"defaultMessage": "IdP antud kliendi ID"
 	},
 	"sso.config.client_id.label": {
 		"defaultMessage": "Kliendi ID"
 	},
 	"sso.config.client_secret.hint": {
-		"defaultMessage": "Selle muutmata jätmiseks jäta tühjaks"
+		"defaultMessage": "Jäta tühjaks, kui soovid selle muutmata jätta"
 	},
 	"sso.config.client_secret.label": {
-		"defaultMessage": "Kliendi salavõti"
+		"defaultMessage": "Kliendi saladus"
 	},
 	"sso.config.configuration_url.hint": {
 		"defaultMessage": "Nt https://authentik.yourdomain.com/application/o/nginx-pm"
 	},
 	"sso.config.configuration_url.label": {
-		"defaultMessage": "OpenID konfiguratsiooni väljastaja URL"
+		"defaultMessage": "OpenID konfiguratsiooni väljaandja URL"
+	},
+	"sso.config.domain.hint": {
+		"defaultMessage": "Auth0 rakenduse domeen, nt dev-foo123.us.auth0.com"
+	},
+	"sso.config.domain.label": {
+		"defaultMessage": "Domeen"
 	},
 	"sso.config.enabled.label": {
 		"defaultMessage": "Lubatud"
+	},
+	"sso.config.github_client_id.hint": {
+		"defaultMessage": "GitHubi OAuth-rakenduse kliendi ID"
+	},
+	"sso.config.github_client_id.label": {
+		"defaultMessage": "Kliendi ID"
 	},
 	"sso.config.name.hint": {
 		"defaultMessage": "Nt Authentik"
@@ -800,23 +854,134 @@
 	"sso.config.name.label": {
 		"defaultMessage": "Nimi"
 	},
+	"sso.config.placeholder.group-name": {
+		"defaultMessage": "Grupi nimi"
+	},
+	"sso.config.protocol-disabled": {
+		"defaultMessage": "Protokoll {protocol} pole rakendatud. Seda kliendi konfiguratsiooni ei kasutata."
+	},
 	"sso.config.protocol.label": {
 		"defaultMessage": "Protokoll"
 	},
 	"sso.config.redirect_url.hint": {
-		"defaultMessage": "Jäta genereeritud URL-is osa „{id}” alles — asendame selle pärast vormi salvestamist. Seejärel saad kopeerida lõpliku URL-i oma identiteedipakkuja lubatud tagasikutse-URL-ide hulka."
+		"defaultMessage": "Jäta loodud URL-is osa „{id}” alles. Asendame selle pärast vormi salvestamist ja seejärel saad lõpliku URL-i kopeerida oma IdP lubatud tagasikutse-URL-ide hulka."
 	},
 	"sso.config.redirect_url.label": {
 		"defaultMessage": "Ümbersuunamise URL"
 	},
 	"sso.config.saml_endpoint.hint": {
-		"defaultMessage": "SAML-i pakkuja lõpp-punkti URL"
+		"defaultMessage": "SAML-teenusepakkuja lõpp-punkti URL"
 	},
 	"sso.config.saml_endpoint.label": {
 		"defaultMessage": "SAML-i lõpp-punkt"
 	},
+	"sso.config.settings.button-preview.label": {
+		"defaultMessage": "Nupu eelvaade"
+	},
+	"sso.config.settings.button-text.hint": {
+		"defaultMessage": "Saad sisselogimisnupu teksti muuta. Tõlgitud vaates kasutatakse muul juhul SSO-kliendi nime."
+	},
+	"sso.config.settings.button-text.label": {
+		"defaultMessage": "Nupu tekst"
+	},
+	"sso.config.settings.require-verified-email.hint": {
+		"defaultMessage": "Nõua, et IdP saadaks claim'i „email_verified” väärtusega true. Seda kontrollitakse ainult enne, kui kasutaja selle IdP kaudu edukalt sisse logib."
+	},
+	"sso.config.settings.require-verified-email.label": {
+		"defaultMessage": "Nõua kinnitatud e-posti aadressi"
+	},
+	"sso.config.tabs.idp": {
+		"defaultMessage": "Identiteedipakkuja"
+	},
+	"sso.config.tabs.provisioning": {
+		"defaultMessage": "Kasutajate loomine"
+	},
+	"sso.config.tabs.settings": {
+		"defaultMessage": "Seaded"
+	},
+	"sso.config.tabs.users": {
+		"defaultMessage": "Kasutajate juurdepääs"
+	},
+	"sso.error.config.group-reqired": {
+		"defaultMessage": "Vigane konfiguratsioon: grupi nimi või rollide vastendus on nõutav (4)"
+	},
+	"sso.error.email-claim-required": {
+		"defaultMessage": "Identiteedipakkuja ei saatnud claim'i „email”."
+	},
+	"sso.error.group-or-role-map": {
+		"defaultMessage": "Vähemalt üks neist on nõutav: see või „Vasta grupid rollidele”."
+	},
+	"sso.error.login.group-required": {
+		"defaultMessage": "Grupi liikmesuse tõttu pole sisselogimine lubatud (14)"
+	},
+	"sso.error.login.not-found": {
+		"defaultMessage": "IdP esitatud e-posti aadressiga ei leitud sobivat kasutajat (11)"
+	},
+	"sso.error.login.not-permitted": {
+		"defaultMessage": "Poliitika ei luba sisse logida (10)"
+	},
+	"sso.error.login.not-permitted-2": {
+		"defaultMessage": "Poliitika ei luba seda (12)"
+	},
+	"sso.error.login.verified-email": {
+		"defaultMessage": "Kinnitamata e-posti aadressiga pole sisselogimine lubatud (17)"
+	},
+	"sso.error.no-groups-claim": {
+		"defaultMessage": "IdP ei saatnud claim'i „groups” või see oli tühi (13)"
+	},
+	"sso.error.no-groups-claim-2": {
+		"defaultMessage": "IdP ei saatnud claim'i „groups” või see oli tühi. (5)"
+	},
+	"sso.error.not-permitted": {
+		"defaultMessage": "Poliitika ei luba seda (2)"
+	},
+	"sso.error.signup.group-required": {
+		"defaultMessage": "Grupi liikmesuse tõttu pole registreerimine lubatud (6)"
+	},
+	"sso.error.signup.group-required-2": {
+		"defaultMessage": "Grupi liikmesuse tõttu pole registreerimine lubatud (7)"
+	},
+	"sso.error.signup.group-required-3": {
+		"defaultMessage": "Grupi liikmesuse tõttu pole registreerimine lubatud (8)"
+	},
+	"sso.error.signup.group-required-4": {
+		"defaultMessage": "Grupi liikmesuse tõttu pole registreerimine lubatud (9)"
+	},
+	"sso.error.signup.not-permitted": {
+		"defaultMessage": "Poliitika ei luba registreeruda (1)"
+	},
+	"sso.error.signup.not-permitted-2": {
+		"defaultMessage": "Poliitika ei luba registreeruda (3)"
+	},
+	"sso.error.signup.unique-email": {
+		"defaultMessage": "IdP esitatud e-posti aadress on juba registreeritud (15)"
+	},
+	"sso.error.signup.verified-email": {
+		"defaultMessage": "Kinnitamata e-posti aadressiga pole registreerimine lubatud (16)"
+	},
+	"sso.header.auth-hint": {
+		"defaultMessage": "Sisse logitud ühekordse sisselogimise (SSO) kaudu"
+	},
+	"sso.info.internal-users-count": {
+		"defaultMessage": "{count} sisse logitud {count, plural, one {kasutaja} other {kasutajat}}"
+	},
+	"sso.info.provisioned-users-count": {
+		"defaultMessage": "{count} loodud {count, plural, one {kasutaja} other {kasutajat}}"
+	},
+	"sso.login.heading": {
+		"defaultMessage": "Or continue with OAuth"
+	},
 	"sso.menu.label": {
-		"defaultMessage": "Ühekordne sisselogimine"
+		"defaultMessage": "või jätka OAuthiga"
+	},
+	"sso.stats.accessed": {
+		"defaultMessage": "Kasutatud {date}"
+	},
+	"sso.stats.never-accessed": {
+		"defaultMessage": "Pole kunagi kasutatud"
+	},
+	"sso.warning.partial-access": {
+		"defaultMessage": "Kui nii „Kasutajate juurdepääs” kui ka „Loo uued kasutajad” on keelatud, pole selle SSO-kliendi kaudu võimalik kasutajaid luua ega sisekasutaja kontole sisse logida. Varem loodud kasutajad saavad aga oma kontodele endiselt juurde pääseda."
 	},
 	"stream": {
 		"defaultMessage": "Voog"
