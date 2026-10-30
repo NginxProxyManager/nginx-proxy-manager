@@ -38,8 +38,9 @@
 		"react-qr-code": "^2.2.0",
 		"react-router-dom": "^7.18.4",
 		"react-select": "^5.10.2",
-		"react-toastify": "^11.1.0",
-		"rooks": "^9.9.0"
+		"react-toastify": "^11.2.0",
+		"rooks": "^9.9.0",
+		"rehype-raw": "^7.0.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.10",

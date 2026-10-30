@@ -116,3 +116,36 @@ label.row {
     margin-left: 0;
   }
 }
+
+.auth-type-badge {
+    position: absolute;
+    left: -0.5rem;
+    top: 0;
+    padding: 0 0.4rem 0.15rem 0.4rem;
+    margin: 0 0 0 0.5rem;
+    border: 1px solid var(--tblr-border-color);
+    border-radius: var(--tblr-border-radius);
+    background-color: var(--tblr-bg-surface-secondary);
+    opacity: 0.85;
+    font-size: 0.7rem;
+}
+
+#sso-nav li a span {
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.33rem;
+}
+
+button.sso-login:disabled {
+    background-color: transparent;
+    color: var(--tblr-azure);
+}
+
+.sso-btn-divider {
+    height: 1px;
+    opacity: 0.5;
+    margin: 1rem 0 0.6rem 0;
+    background: linear-gradient(
+        to right, transparent, var(--tblr-azure), transparent
+    );
+}

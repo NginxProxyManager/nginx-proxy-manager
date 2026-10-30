@@ -325,14 +325,14 @@
 				"$ref": "./paths/sso/clients/post.json"
 			}
 		},
-		"/sso/oauth2/{clientID}": {
+		"/sso/oauth2/{clientType}/{clientID}": {
 			"get": {
-				"$ref": "./paths/sso/oauth2/clientID/get.json"
+				"$ref": "./paths/sso/oauth2/clientType/clientID/get.json"
 			}
 		},
-		"/sso/oauth2/{clientID}/callback": {
+		"/sso/oauth2/{clientType}/{clientID}/callback": {
 			"get": {
-				"$ref": "./paths/sso/oauth2/clientID/callback/get.json"
+				"$ref": "./paths/sso/oauth2/clientType/clientID/callback/get.json"
 			}
 		},
 		"/sso/is-enabled": {

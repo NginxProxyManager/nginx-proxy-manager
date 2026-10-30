@@ -1,0 +1,26 @@
+{
+	"type": "object",
+	"description": "Auth0 Application Configuration",
+	"additionalProperties": false,
+	"properties": {
+	"id": {
+  		"$ref": "../common.json#/properties/id"
+  	},
+    "client_id": {
+      "type": "string"
+    },
+    "client_secret": {
+  	  "type": "string"
+  	},
+  	"domain": {
+  	  "type": "string"
+  	},
+  	"redirect_url": {
+      "type": "string"
+    },
+    "meta": {
+  		"type": "object",
+  		"example": {}
+  	}
+  }
+}

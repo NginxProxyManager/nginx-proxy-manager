@@ -29,6 +29,7 @@ export interface User {
 	avatar: string;
 	roles: string[];
 	permissions?: UserPermissions;
+	authType?: "password" | "sso-npm" | "sso-idp";
 }
 
 export interface AuditLog {
@@ -236,7 +237,9 @@ export interface DNSProvider {
 }
 
 export enum SingleSignOnClientType {
-	OpenID = "OAuth2/OpenID",
+	Auth0 = "Auth0",
+	GitHub = "GitHub",
+	OpenID = "OpenID",
 	SAML = "SAML",
 }
 
@@ -245,15 +248,51 @@ export interface SingleSignOnClient {
 	ownerUserId: number;
 	createdOn: string;
 	modifiedOn: string;
+	clientType: SingleSignOnClientType;
 	enabled: boolean;
 	name: string;
-	clientType: SingleSignOnClientType;
+	buttonText?: string;
+	requireVerifiedEmail: boolean;
+	// Logging in as existing user
+	allowInternal?: boolean;
+	allowInternalIfAdmin?: boolean;
+	requireGroup?: boolean;
+	requireGroupName?: string;
+	// User provisioning
+	provisionUsers?: boolean;
+	requireProvisionGroup?: boolean;
+	requireProvisionGroupName?: string;
+	provisionRoleMap?: ProvisionRoleMap[];
 	// Virtual property for frontend, holds the type specific expanded configuration
-	configuration?: OpenIDClientConfiguration | SAMLClientConfiguration;
+	configuration?:
+		| OpenIDClientConfiguration
+		| SAMLClientConfiguration
+		| Auth0ClientConfiguration
+		| GitHubConfiguration;
 	// Expansions
+	configurationAuth0?: Auth0ClientConfiguration;
+	configurationGithub?: GitHubConfiguration;
 	configurationOpenid?: OpenIDClientConfiguration;
 	configurationSaml?: SAMLClientConfiguration;
 	user?: User;
+}
+
+export interface ProvisionRoleMap {
+	role: "admin" | "user";
+	group: string;
+}
+
+export interface Auth0ClientConfiguration {
+	clientId: string;
+	clientSecret: string;
+	domain: string;
+	redirectUrl: string;
+}
+
+export interface GitHubConfiguration {
+	clientId: string;
+	clientSecret: string;
+	redirectUrl: string;
 }
 
 export interface OpenIDClientConfiguration {
@@ -266,3 +305,9 @@ export interface OpenIDClientConfiguration {
 export interface SAMLClientConfiguration {
 	samlEndpoint: string;
 }
+
+export type SingleSignOnClientConfigurationType =
+  | Auth0ClientConfiguration
+  | GitHubConfiguration
+  | OpenIDClientConfiguration
+  | SAMLClientConfiguration;

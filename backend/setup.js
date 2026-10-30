@@ -73,7 +73,7 @@ const setupDefaultUser = async () => {
  * @returns {Promise}
  */
 const setupDefaultSettings = async () => {
-  const row = await settingModel.query().select("id").where({ id: "default-site" }).first();
+	const row = await settingModel.query().select("id").where({ id: "default-site" }).first();
 
 	if (!row?.id) {
 		await settingModel.query().insert({

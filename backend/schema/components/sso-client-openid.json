@@ -1,6 +1,6 @@
 {
 	"type": "object",
-	"description": "OAuth2/OpenID Client or Application Configuration",
+	"description": "OpenID Client or Application Configuration",
 	"additionalProperties": false,
 	"properties": {
   	"id": {

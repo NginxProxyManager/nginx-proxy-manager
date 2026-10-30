@@ -2,8 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	createSingleSignOnClient,
 	getSingleSignOnClient,
+	type ProvisionRoleMap,
 	type SingleSignOnClient,
 	SingleSignOnClientType,
+	type SingleSignOnConfigExpansion,
 	updateSingleSignOnClient,
 } from "src/api/backend";
 
@@ -11,7 +13,30 @@ export const SingleSignOnClientBaseConfig = {
 	enabled: true,
 	name: "",
 	clientType: "",
-	configuration: "",
+	configuration: {},
+	buttonText: "",
+	requireVerifiedEmail: false,
+	allowInternal: true,
+	allowInternalIfAdmin: false,
+	requireGroup: false,
+	requireGroupName: "",
+	provisionUsers: false,
+	requireProvisionGroup: false,
+	requireProvisionGroupName: "",
+	provisionRoleMap: [] as ProvisionRoleMap[],
+};
+
+export const Auth0Config = {
+	clientId: "",
+	clientSecret: "",
+	domain: "",
+	redirectUrl: "",
+};
+
+export const GitHubConfig = {
+	githubClientId: "",
+	clientSecret: "",
+	redirectUrl: "",
 };
 
 export const OpenIDConfig = {
@@ -26,14 +51,23 @@ export const SAMLConfig = {
 };
 
 const fetchSingleSignOnClient = async (id: number | string, clientType?: SingleSignOnClientType) => {
+	if (!clientType) {
+		throw new Error("Client type required");
+	}
 	if (id.toString().startsWith("new")) {
 		const props = { clientType: "", configuration: {} };
 		if (clientType === SingleSignOnClientType.OpenID) {
 			props.clientType = SingleSignOnClientType.OpenID;
 			props.configuration = OpenIDConfig;
+		} else if (clientType === SingleSignOnClientType.GitHub) {
+			props.clientType = SingleSignOnClientType.GitHub;
+			props.configuration = GitHubConfig;
 		} else if (clientType === SingleSignOnClientType.SAML) {
 			props.clientType = SingleSignOnClientType.SAML;
 			props.configuration = SAMLConfig;
+		} else if (clientType === SingleSignOnClientType.Auth0) {
+			props.clientType = SingleSignOnClientType.Auth0;
+			props.configuration = Auth0Config;
 		}
 		return Promise.resolve({
 			...SingleSignOnClientBaseConfig,
@@ -41,8 +75,9 @@ const fetchSingleSignOnClient = async (id: number | string, clientType?: SingleS
 			configuration: props.configuration,
 		} as SingleSignOnClient);
 	}
-	const expand = clientType === SingleSignOnClientType.OpenID ? "configuration_openid" : "configuration_saml";
-	return getSingleSignOnClient(id, [expand]);
+	const expand = [`configuration_${clientType.toLocaleLowerCase()}` as SingleSignOnConfigExpansion];
+
+	return getSingleSignOnClient(id, expand);
 };
 
 interface UT {

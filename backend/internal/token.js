@@ -117,6 +117,7 @@ export default {
 
 			const token_attrs = {
 				id: access.token.getUserId(0),
+				authType: access.token.getAuthType(),
 			};
 
 			// Only admins can request otherwise scoped tokens
@@ -229,47 +230,29 @@ export default {
 	 * Issue a token following successful OAuth Authorization for the internal user
 	 * whose email address mathces the assumed identity (the email claim sent by the IdP).
 	 *
-	 * @param   {string} claimEmail
+	 * @param   {Object} user
 	 * @returns {Promise}
 	 */
-	getTokenFromOAuthClaim: async (claimEmail) => {
+	getTokenForSingleSignOnUser: async (user, authType, issuer) => {
 		const Token = TokenModel();
 		const tokenConfig = {
 			scope: "user",
 			expiry: "1d",
 		};
 
-		// Fetch the relevant user
-		return userModel
-			.query()
-			.where("email", claimEmail)
-			.andWhere("is_deleted", 0)
-			.andWhere("is_disabled", 0)
-			.first()
-			.then(async (user) => {
-				if (!user?.id) {
-					throw new errs.AuthError("No relevant user found for the email claimed by the IdP");
-				}
-				// Create a moment of the expiry expression
-				const expiry = parseDatePeriod(tokenConfig.expiry);
-				if (expiry === null) {
-					throw new errs.AuthError(`Invalid expiry time: ${tokenConfig.expiry}`);
-				}
+		// Create a moment of the expiry expression
+		const expiry = parseDatePeriod(tokenConfig.expiry);
+		if (expiry === null) {
+			throw new errs.AuthError(`Invalid expiry time: ${tokenConfig.expiry}`);
+		}
 
-				// Create new token
-				const iss = "api";
-				const attrs = { id: user.id };
-				const scope = [tokenConfig.scope];
-				const expiresIn = tokenConfig.expiry;
-				return Token.create({ iss, attrs, scope, expiresIn }).then((signed) => {
-					return { token: signed.token, expires: expiry.toISOString() };
-				});
-			})
-			.catch((error) => {
-				if (error instanceof errs.AuthError) {
-					throw error;
-				}
-				throw new errs.AuthError(`Unexpected error: ${error?.message}`);
-			});
+		// Create new token
+		const iss = issuer || "api";
+		const attrs = { id: user.id, authType };
+		const scope = [tokenConfig.scope];
+		const expiresIn = tokenConfig.expiry;
+		return Token.create({ iss, attrs, scope, expiresIn }).then((signed) => {
+			return { token: signed.token, expires: expiry.toISOString() };
+		});
 	},
 };
