@@ -35,15 +35,87 @@
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
 		},
+		"button_text": {
+		  "type": "string",
+			"description": "Optional login button label",
+			"example": "Auth0"
+		},
+		"require_verified_email": {
+		  "type": "boolean",
+			"description": "Deny login or provision if the 'email_verified' flag in the claims is not true",
+			"example": true
+		},
+		"allow_internal": {
+		  "type": "boolean",
+			"description": "Allow log in to existing user account.",
+			"example": true
+		},
+		"allow_internal_if_admin": {
+		  "type": "boolean",
+			"description": "Only allow log in to existing Administrator account.",
+			"example": true
+		},
+		"require_group": {
+		  "type": "boolean",
+			"description": "Require that the user is member of a specific group in the groups claim.",
+			"example": true
+		},
+		"require_group_name": {
+		  "type": "string",
+			"description": "The name of the requried group.",
+			"example": "NginxProxyManager-users"
+		},
+		"provision_users": {
+		  "type": "boolean",
+			"description": "Create new user account when authrozied by the IdP.",
+			"example": true
+		},
+		"require_provision_group": {
+		  "type": "boolean",
+			"description": "Only allow log in with provisioning if the user is member of a specified group in the groups claim.",
+			"example": true
+		},
+		"require_provision_group_name": {
+		  "type": "string",
+			"description": "The name of the requried group.",
+			"example": "NginxProxyManager-users"
+		},
+		"provision_role_map": {
+		  "type": "array",
+			"description": "Idp group name to NginXProxyManager role mapping",
+			"items": {
+			  "type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"group": {
+							"type": "string",
+							"minLength": 1
+						},
+						"role": {
+							"type": "string"
+						}
+					},
+					"example": {
+						"group": "NginxProxyManager-admin",
+						"role": "admin"
+					}
+			}
+		},
 		"meta": {
 			"type": "object",
 			"example": {}
 		},
 		"configuration": {
 			"oneOf": [
-				{
-					"$ref": "./sso-client-openid.json"
+  			{
+  				"$ref": "./sso-client-auth0.json"
+  			},
+  			{
+					"$ref": "./sso-client-github.json"
 				},
+  			{
+          "$ref": "./sso-client-openid.json"
+        },
 				{
 					"$ref": "./sso-client-saml.json"
 				}

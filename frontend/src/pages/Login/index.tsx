@@ -1,14 +1,14 @@
 import { Field, Form, Formik } from "formik";
 import { useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import { useEffectOnceWhen } from "rooks";
 import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
+import { SingleSignOnOptions } from "src/components/Form/SingleSignOnOptions";
 import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
 import styles from "./index.module.css";
-import Cookies from "universal-cookie";
-import AuthStore from "src/modules/AuthStore";
 
 function TwoFactorForm() {
 	const codeRef = useRef<HTMLInputElement>(null);
@@ -79,35 +79,12 @@ function TwoFactorForm() {
 	);
 }
 
-interface SingleSignOnIntegration {
-	enabled?: boolean;
-	configs?: [{ name: string; id: number }];
-	error?: string;
-}
-
 function LoginForm() {
 	const emailRef = useRef<HTMLInputElement>(null);
 	const [formErr, setFormErr] = useState("");
+	const [isOAuthInit, setOAuthInit] = useState<number>(0);
+	const [isSingleSignOnEnabled, setSingleSignOnEnabled] = useState<boolean | undefined>();
 	const { login } = useAuthState();
-	const [isOAuthInit, setOAuthInit] = useState<boolean>(false);
-	const getSingleSignOnIntegration: SingleSignOnIntegration = {};
-
-	const [SSOConfig, setSSOConfig] = useState(getSingleSignOnIntegration);
-	useEffect(() => {
-		const checkSingleSignOnIntegration = async () => {
-			try {
-				const response = await fetch("/api/sso/is-enabled");
-				const data: SingleSignOnIntegration = await response.json();
-				setSSOConfig(data);
-				setSSOConfig(data);
-			} catch {
-				setSSOConfig({ enabled: false })
-			}
-		};
-		if (!("enabled" in SSOConfig)) {
-			checkSingleSignOnIntegration();
-		}
-	});
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		setFormErr("");
@@ -121,41 +98,11 @@ function LoginForm() {
 		setSubmitting(false);
 	};
 
-	const initializeOAuthFlow = async (clientId: number) => {
-		setFormErr("");
-		setOAuthInit(true);
-		try {
-			// Redirect to initiate OAuth flow
-			document.location.replace(`/api/sso/oauth2/${clientId}`);
-		} catch {
-			setOAuthInit(false);
+	useEffectOnceWhen(() => {
+		if (!isSingleSignOnEnabled) {
+			emailRef.current?.focus();
 		}
-	};
-
-	const readOpenIdAuthenticationErrorFromCookie = async () => {
-		const cookies = new Cookies();
-		const error = cookies.get("npm_sso_error");
-		cookies.remove("npm_sso_error", { path: "/" });
-		if (error) {
-			SSOConfig.error = decodeURIComponent(error);
-		}
-	};
-
-	if (SSOConfig?.enabled && !AuthStore.hasActiveToken()) {
-		readOpenIdAuthenticationErrorFromCookie();
-	}
-
-	useEffect(() => {
-		if (SSOConfig?.error) {
-			setFormErr(SSOConfig?.error);
-		}
-	}, [SSOConfig]);
-
-  useEffect(() => {
-    if ("enabled" in SSOConfig && !SSOConfig.enabled) {
-      emailRef.current?.focus();
-    }
-	}, [SSOConfig]);
+	}, isSingleSignOnEnabled !== undefined);
 
 	return (
 		<>
@@ -219,30 +166,19 @@ function LoginForm() {
 								fullWidth
 								color="azure"
 								isLoading={isSubmitting}
-								disabled={isOAuthInit}
+								disabled={isOAuthInit === 0 ? undefined : isOAuthInit > 0}
 							>
 								<T id="sign-in" />
 							</Button>
-							{(SSOConfig.enabled &&
-								SSOConfig.configs?.length &&
-								SSOConfig.configs.map((config) => {
-									return (
-										<>
-											<hr className="my-3 mx-4" />
-											<Button
-												type="button"
-												fullWidth
-												color="azure"
-												disabled={isSubmitting}
-												isLoading={isOAuthInit}
-												onClick={() => initializeOAuthFlow(config.id)}
-											>
-												<T id="sign-in-with" data={{ name: config.name }} />
-											</Button>
-										</>
-									);
-								})) ||
-								null}
+							<SingleSignOnOptions
+								{...{
+									isSubmitting,
+									setFormErr,
+									isOAuthInit,
+									setOAuthInit,
+									setSingleSignOnEnabled,
+								}}
+							/>
 						</div>
 					</Form>
 				)}

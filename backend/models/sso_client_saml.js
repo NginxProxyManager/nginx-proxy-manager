@@ -6,7 +6,7 @@ Model.knex(db());
 
 const boolFields = ["is_deleted"];
 
-export class SAMLClientConfiguration extends Model {
+class SAMLClientConfiguration extends Model {
 	$beforeInsert() {
 		// Default for meta
 		if (typeof this.meta === "undefined") {
