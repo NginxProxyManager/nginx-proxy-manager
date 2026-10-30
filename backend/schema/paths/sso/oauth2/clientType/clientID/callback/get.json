@@ -3,7 +3,17 @@
   "summary": "Execute the callback phase of an OAuth Authroization Code flow",
   "tags": ["sso"],
   "parameters": [
-    {
+  	{
+			"in": "path",
+			"name": "clientType",
+			"description": "the lowercase Client type",
+			"schema": {
+				"type": "string"
+			},
+			"required": true,
+			"example": "openid"
+		},
+		{
       "in": "path",
       "name": "clientID",
       "schema": {

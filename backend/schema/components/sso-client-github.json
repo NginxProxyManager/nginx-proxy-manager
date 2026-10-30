@@ -1,0 +1,23 @@
+{
+	"type": "object",
+	"description": "GitHub OAuth Application Configuration",
+	"additionalProperties": false,
+	"properties": {
+  	"id": {
+  		"$ref": "../common.json#/properties/id"
+  	},
+    "github_client_id": {
+      "type": "string"
+    },
+    "client_secret": {
+  	  "type": "string"
+  	},
+  	"redirect_url": {
+      "type": "string"
+    },
+    "meta": {
+  		"type": "object",
+  		"example": {}
+  	}
+  }
+}

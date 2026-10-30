@@ -1,6 +1,6 @@
 {
 	"name": "nginx-proxy-manager",
-	"version": "2.16.0",
+	"version": "2.17.0",
 	"description": "A beautiful interface for creating Nginx endpoints",
 	"author": "Jamie Curnow <jc@jc21.com>",
 	"license": "MIT",
@@ -15,6 +15,7 @@
 	},
 	"dependencies": {
 		"@apidevtools/json-schema-ref-parser": "^16.0.6",
+		"@auth0/auth0-auth-js": "^1.18.0",
 		"ajv": "^8.20.0",
 		"archiver": "^8.0.0",
 		"batchflow": "^0.4.0",
