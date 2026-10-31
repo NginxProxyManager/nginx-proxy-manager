@@ -1,0 +1,785 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Qalan ehtiyat kodları: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Bu ehtiyat kodlarını təhlükəsiz yerdə saxlayın. Hər kod yalnız bir dəfə istifadə oluna bilər."
+	},
+	"2fa.disable": {
+		"defaultMessage": "İkifaktorlu doğrulamanı söndür"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "2FA-nı söndür"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "İkifaktorlu doğrulamanı söndürmək hesabınızın təhlükəsizliyini azaldacaq."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Deaktiv"
+	},
+	"2fa.done": {
+		"defaultMessage": "Ehtiyat kodlarımı yadda saxladım"
+	},
+	"2fa.enable": {
+		"defaultMessage": "İkifaktorlu doğrulamanı aktivləşdir"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Aktivdir"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Doğrulama kodunu daxil edin"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Söndürmək üçün doğrulama kodunu daxil edin"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Yenidən yarat"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Ehtiyat kodlarını yenidən yarat"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Yeni ehtiyat kodları yaratmaq üçün doğrulama kodunu daxil edin. Köhnə kodlarınız etibarsız olacaq."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Gizli açar"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Bu QR kodu doğrulama tətbiqinizlə skan edin və ya gizli açarı əl ilə daxil edin."
+	},
+	"2fa.status": {
+		"defaultMessage": "Vəziyyət"
+	},
+	"2fa.title": {
+		"defaultMessage": "İkifaktorlu doğrulama"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Doğrula və aktivləşdir"
+	},
+	"access-list": {
+		"defaultMessage": "Giriş siyahısı"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {qayda} other {qayda}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {istifadəçi} other {istifadəçi}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Ən azı 1 qayda mövcud olduqda, bu qadağan et qaydası ən sona əlavə olunacaq"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Nəzərə alın ki, icazə ver və qadağan et direktivləri təyin edildikləri sırada tətbiq olunacaq."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Doğrulamanı yuxarı axına ötür"
+	},
+	"access-list.public": {
+		"defaultMessage": "İctimai əlçatan"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Əsas doğrulama tələb olunmur"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 və ya 192.168.1.0/24 və ya 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "İstənilən şərti ödə"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {User} other {Users}}, {rules} {rules, plural, one {Rule} other {Rules}} - Yaradılıb: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Giriş siyahıları"
+	},
+	"action.add": {
+		"defaultMessage": "Əlavə et"
+	},
+	"action.add-location": {
+		"defaultMessage": "Məkan əlavə et"
+	},
+	"action.allow": {
+		"defaultMessage": "İcazə ver"
+	},
+	"action.clear": {
+		"defaultMessage": "Təmizlə"
+	},
+	"action.close": {
+		"defaultMessage": "Bağla"
+	},
+	"action.delete": {
+		"defaultMessage": "Sil"
+	},
+	"action.deny": {
+		"defaultMessage": "Qadağan et"
+	},
+	"action.disable": {
+		"defaultMessage": "Söndür"
+	},
+	"action.download": {
+		"defaultMessage": "Endir"
+	},
+	"action.edit": {
+		"defaultMessage": "Redaktə et"
+	},
+	"action.enable": {
+		"defaultMessage": "Aktivləşdir"
+	},
+	"action.permissions": {
+		"defaultMessage": "İcazələr"
+	},
+	"action.renew": {
+		"defaultMessage": "Yenilə"
+	},
+	"action.view-details": {
+		"defaultMessage": "Ətraflı bax"
+	},
+	"auditlogs": {
+		"defaultMessage": "Audit jurnalları"
+	},
+	"auto": {
+		"defaultMessage": "Avtomatik"
+	},
+	"cancel": {
+		"defaultMessage": "Ləğv et"
+	},
+	"certificate": {
+		"defaultMessage": "Sertifikat"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Sertifikat"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Sertifikat açarı"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Aralıq sertifikat"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "İstifadədədir"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Sertifikat təyin edilməyib"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Bu host HTTPS istifadə etməyəcək"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Yoxdur"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "İstifadə olunmur"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Sertifikatı yenilə"
+	},
+	"certificates": {
+		"defaultMessage": "Sertifikatlar"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Fərdi sertifikat"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Şifrə ilə qorunan açar faylları dəstəklənmir."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Giriş məlumatları faylının məzmunu"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Bu plagin provayderiniz üçün API tokeni və ya digər giriş məlumatlarını ehtiva edən konfiqurasiya faylı tələb edir"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Bu məlumat verilənlər bazasında və bir faylda açıq mətn kimi saxlanılacaq!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Yayılma saniyələri"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Plaginin standart dəyərini istifadə etmək üçün boş buraxın. DNS yayılmasını gözləmək üçün saniyələrin sayı."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS provayderi"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Provayder seçin..."
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Bu bölmə Certbot və onun DNS plaginləri haqqında müəyyən bilik tələb edir. Zəhmət olmasa müvafiq plaginlərin sənədləri ilə tanış olun."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "Bu domendə server tapıldı, lakin bu Nginx Proxy Manager kimi görünmür. Zəhmət olmasa domeninizin NPM instansiyanızın işlədiyi IP-yə yönləndirildiyinə əmin olun."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "site24x7.com ilə əlaqə xətası səbəbindən əlçatanlığı yoxlamaq mümkün olmadı."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "Bu domendə heç bir server mövcud deyil. Zəhmət olmasa domeninizin mövcud olduğuna, NPM instansiyanızın işlədiyi IP-yə yönləndirildiyinə və lazım gələrsə routerinizdə 80 portunun yönləndirildiyinə əmin olun."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Serveriniz əlçatandır və sertifikat yaratmaq mümkün olmalıdır."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "Bu domendə server tapıldı, lakin gözlənilməz status kodu qaytardı: {code}. Bu NPM serveridirmi? Zəhmət olmasa domeninizin NPM instansiyanızın işlədiyi IP-yə yönləndirildiyinə əmin olun."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "Bu domendə server tapıldı, lakin gözlənilməz məlumat qaytardı. Bu NPM serveridirmi? Zəhmət olmasa domeninizin NPM instansiyanızın işlədiyi IP-yə yönləndirildiyinə əmin olun."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Test nəticələri"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Bu domenlər artıq bu quraşdırmaya yönləndirilmiş şəkildə konfiqurasiya edilmiş olmalıdır."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Açar növü"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA geniş uyğunluğa malikdir, ECDSA daha sürətli və təhlükəsizdir, lakin köhnə sistemlərdə dəstəklənməyə bilər"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "Let's Encrypt ilə"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Yeni sertifikat sorğula"
+	},
+	"column.access": {
+		"defaultMessage": "Giriş"
+	},
+	"column.authorization": {
+		"defaultMessage": "Səlahiyyət"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Səlahiyyətlər"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Fərdi məkanlar"
+	},
+	"column.destination": {
+		"defaultMessage": "Təyinat"
+	},
+	"column.details": {
+		"defaultMessage": "Təfərrüatlar"
+	},
+	"column.email": {
+		"defaultMessage": "E-poçt"
+	},
+	"column.event": {
+		"defaultMessage": "Hadisə"
+	},
+	"column.expires": {
+		"defaultMessage": "Bitmə tarixi"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP kodu"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Daxil olan port"
+	},
+	"column.name": {
+		"defaultMessage": "Ad"
+	},
+	"column.protocol": {
+		"defaultMessage": "Protokol"
+	},
+	"column.provider": {
+		"defaultMessage": "Provayder"
+	},
+	"column.roles": {
+		"defaultMessage": "Rollar"
+	},
+	"column.rules": {
+		"defaultMessage": "Qaydalar"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Şərt"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Hamısı"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "İstənilən"
+	},
+	"column.scheme": {
+		"defaultMessage": "Sxem"
+	},
+	"column.source": {
+		"defaultMessage": "Mənbə"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Vəziyyət"
+	},
+	"created-on": {
+		"defaultMessage": "Yaradılıb: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "İdarə paneli"
+	},
+	"dead-host": {
+		"defaultMessage": "404 Host"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404 Hostlar"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {404 host} other {404 host}}"
+	},
+	"disabled": {
+		"defaultMessage": "Deaktiv"
+	},
+	"domain-names": {
+		"defaultMessage": "Domen adları"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Maksimum {count} domen adı"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Domen əlavə etmək üçün yazmağa başlayın..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Bu növ üçün wildcard-lara icazə verilmir"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Bu CA üçün wildcard-lar dəstəklənmir"
+	},
+	"domains.advanced": {
+		"defaultMessage": "Əlavə"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "SSL-i məcburi et"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "HSTS aktivdir"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "HSTS alt-domenləri"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "HTTP/2 dəstəyi"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Yuxarı axından yönləndirilən Proto başlıqlarına etibar et"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "DNS Challenge-dən istifadə et"
+	},
+	"email-address": {
+		"defaultMessage": "E-poçt ünvanı"
+	},
+	"empty-search": {
+		"defaultMessage": "Nəticə tapılmadı"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Niyə bir dənə yaratmırsınız?"
+	},
+	"enabled": {
+		"defaultMessage": "Aktivdir"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Ya bir Səlahiyyət, ya da bir Giriş Qaydası tələb olunur"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Səlahiyyət istifadəçi adları unikal olmalıdır"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Yanlış e-poçt və ya parol"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Yanlış domen: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Yanlış e-poçt ünvanı"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Maksimum uzunluq {max} simvol{max, plural, one {} other {s}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Çox sayda domen, maksimum {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Maksimum {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Minimum uzunluq {min} simvol{min, plural, one {} other {s}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Minimum {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Parollar uyğun gəlməlidir"
+	},
+	"error.required": {
+		"defaultMessage": "Bu tələb olunur"
+	},
+	"expires.on": {
+		"defaultMessage": "Bitmə tarixi: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Github-da fork et"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Ümumi hücumları blokla"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Statik faylları keşlə"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Yolu saxla"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Protokollar"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Websocket dəstəyi"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Yönləndirmə portu"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Sxem"
+	},
+	"hosts": {
+		"defaultMessage": "Hostlar"
+	},
+	"http-only": {
+		"defaultMessage": "Yalnız HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "DNS vasitəsilə Let's Encrypt"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "HTTP vasitəsilə Let's Encrypt"
+	},
+	"loading": {
+		"defaultMessage": "Yüklənir…"
+	},
+	"location.advanced-config": {
+		"defaultMessage": "Fərdi Nginx konfiqurasiyası var"
+	},
+	"location.filter": {
+		"defaultMessage": "Yol və ya təyinata görə süzgəclə"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Doğrulama kodu"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Kodu daxil edin"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Doğrulama tətbiqinizdəki kodu daxil edin"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "İkifaktorlu doğrulama"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Doğrula"
+	},
+	"login.title": {
+		"defaultMessage": "Hesabınıza daxil olun"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Fərdi Nginx konfiqurasiyası"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Öz riskinizlə fərdi Nginx konfiqurasiyanızı bura daxil edin!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "Bunu görməyə icazəniz yoxdur."
+	},
+	"notfound.action": {
+		"defaultMessage": "Məni əsas səhifəyə apar"
+	},
+	"notfound.content": {
+		"defaultMessage": "Təəssüf ki, axtardığınız səhifə tapılmadı"
+	},
+	"notfound.title": {
+		"defaultMessage": "Oops… Xəta səhifəsi tapdınız"
+	},
+	"notification.error": {
+		"defaultMessage": "Xəta"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} silindi"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} deaktiv edildi"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} aktivləşdirildi"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} yeniləndi"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} yadda saxlanıldı"
+	},
+	"notification.success": {
+		"defaultMessage": "Uğurlu"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "{object} əlavə et"
+	},
+	"object.delete": {
+		"defaultMessage": "{object} sil"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Bu {object} silmək istədiyinizə əminsiniz?"
+	},
+	"object.edit": {
+		"defaultMessage": "{object} redaktə et"
+	},
+	"object.empty": {
+		"defaultMessage": "Heç bir {objects} yoxdur"
+	},
+	"object.event.created": {
+		"defaultMessage": "{object} yaradıldı"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "{object} silindi"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "{object} deaktiv edildi"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "{object} aktivləşdirildi"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "{object} yeniləndi"
+	},
+	"object.event.updated": {
+		"defaultMessage": "{object} yeniləndi"
+	},
+	"offline": {
+		"defaultMessage": "Oflayn"
+	},
+	"online": {
+		"defaultMessage": "Onlayn"
+	},
+	"options": {
+		"defaultMessage": "Seçimlər"
+	},
+	"password": {
+		"defaultMessage": "Parol"
+	},
+	"password.generate": {
+		"defaultMessage": "Təsadüfi parol yarat"
+	},
+	"password.hide": {
+		"defaultMessage": "Parolu gizlət"
+	},
+	"password.show": {
+		"defaultMessage": "Parolu göstər"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Gizli"
+	},
+	"permissions.manage": {
+		"defaultMessage": "İdarə et"
+	},
+	"permissions.view": {
+		"defaultMessage": "Yalnız baxış"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Bütün elementlər"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Elementin görünürlüyü"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Yalnız yaradılan elementlər"
+	},
+	"proxy-host": {
+		"defaultMessage": "Proksi host"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Yönləndirmə hostu / IP"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Proksi hostlar"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {proksi host} other {proksi host}}"
+	},
+	"public": {
+		"defaultMessage": "İctimai"
+	},
+	"redirection-host": {
+		"defaultMessage": "Yönləndirmə hostu"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Yönləndirmə domeni"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP kodu"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Yönləndirmə hostları"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {yönləndirmə hostu} other {yönləndirmə hostu}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Çoxlu seçim"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Daimi olaraq köçürülüb"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Müvəqqəti olaraq köçürülüb"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Digərinə bax"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Müvəqqəti yönləndirmə"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Daimi yönləndirmə"
+	},
+	"role.admin": {
+		"defaultMessage": "Administrator"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Standart istifadəçi"
+	},
+	"save": {
+		"defaultMessage": "Yadda saxla"
+	},
+	"setting": {
+		"defaultMessage": "Parametr"
+	},
+	"settings": {
+		"defaultMessage": "Parametrlər"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Standart sayt"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404 səhifəsi"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Cavab yoxdur (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Təbriklər səhifəsi"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Nginx naməlum Host ilə qarşılaşdıqda nə göstəriləcək"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Fərdi HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": "<!-- Fərdi HTML məzmununuzu bura daxil edin -->"
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Yönləndirmə"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Administrator hesabınızı yaradaraq başlayın."
+	},
+	"setup.title": {
+		"defaultMessage": "Xoş gəlmisiniz!"
+	},
+	"sign-in": {
+		"defaultMessage": "Daxil ol"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL sertifikatı"
+	},
+	"stream": {
+		"defaultMessage": "Axın"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Yönləndirmə hostu"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com və ya 10.0.0.1 və ya 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Daxil olan port"
+	},
+	"streams": {
+		"defaultMessage": "Axınlar"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {axın} other {axın}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Test"
+	},
+	"update-available": {
+		"defaultMessage": "Yeniləmə mövcuddur: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "İstifadəçi"
+	},
+	"user.change-password": {
+		"defaultMessage": "Parolu dəyiş"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Parolu təsdiqlə"
+	},
+	"user.current-password": {
+		"defaultMessage": "Cari parol"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Profili redaktə et"
+	},
+	"user.full-name": {
+		"defaultMessage": "Tam ad"
+	},
+	"user.login-as": {
+		"defaultMessage": "{name} kimi daxil ol"
+	},
+	"user.logout": {
+		"defaultMessage": "Çıxış"
+	},
+	"user.new-password": {
+		"defaultMessage": "Yeni parol"
+	},
+	"user.nickname": {
+		"defaultMessage": "Ləqəb"
+	},
+	"user.set-password": {
+		"defaultMessage": "Parolu təyin et"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "{name} üçün icazələri təyin et"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Tünd rejimə keç"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Açıq rejimə keç"
+	},
+	"user.two-factor": {
+		"defaultMessage": "İkifaktorlu doğrulama"
+	},
+	"username": {
+		"defaultMessage": "İstifadəçi adı"
+	},
+	"users": {
+		"defaultMessage": "İstifadəçilər"
+	}
+}

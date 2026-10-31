@@ -72,7 +72,10 @@ export function SiteHeader() {
 							<div className="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
 								<div className="d-md-none">
 									{/* biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: This div is not interactive. */}
-									<div className="p-2 pb-1 pe-1 d-flex align-items-center" onClick={e => e.stopPropagation()}>
+									<div
+										className="p-2 pb-1 pe-1 d-flex align-items-center"
+										onClick={(e) => e.stopPropagation()}
+									>
 										<div className="ps-2 pe-1 me-auto">
 											<div>{currentUser?.nickname}</div>
 											<div className="mt-1 small text-secondary text-nowrap">

@@ -1,3 +1,51 @@
+/* card-active points --tblr-card-border-color at --tblr-primary, which both the
+   card outline and the card header's bottom border are drawn from. Tabler's
+   stylesheet is loaded after this one, so the override needs !important. */
 .locationCard {
-	border-color: light-dark(var(--tblr-gray-200), var(--tblr-gray-700)) !important;
+	--tblr-card-border-color: light-dark(var(--tblr-gray-200), var(--tblr-gray-700)) !important;
+}
+
+.filter {
+	max-width: 20rem;
+}
+
+/* The header is a plain toggle rather than a button-styled control, so that a
+   list of collapsed locations reads as rows instead of a stack of buttons. */
+.toggle {
+	display: flex;
+	flex: 1 1 auto;
+	align-self: stretch;
+	align-items: center;
+	min-width: 0;
+	padding: 0;
+	color: inherit;
+	text-align: left;
+	background: transparent;
+	border: 0;
+}
+
+.toggle:focus-visible {
+	outline: 2px solid var(--tblr-primary);
+	outline-offset: -2px;
+}
+
+/* Keeps the marker on one line next to the delete button, and lets it drop out
+   of the way before the path does when the row runs out of room. */
+.marker {
+	display: flex;
+	flex: 0 1 auto;
+	align-items: center;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.path {
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.summary {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }

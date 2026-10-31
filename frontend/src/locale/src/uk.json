@@ -1,0 +1,785 @@
+{
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Резервних кодів залишилося: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Збережіть ці резервні коди в безпечному місці. Кожен код можна використати лише один раз."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Вимкнути двофакторну автентифікацію"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Вимкнути 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Вимкнення двофакторної автентифікації знизить рівень безпеки вашого облікового запису."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Вимкнено"
+	},
+	"2fa.done": {
+		"defaultMessage": "Резервні коди збережено"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Увімкнути двофакторну автентифікацію"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Увімкнено"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Введіть код підтвердження"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Введіть код підтвердження для вимкнення"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Згенерувати повторно"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Повторно згенерувати резервні коди"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Введіть код підтвердження, щоб згенерувати нові резервні коди. Ваші старі коди стануть недійсними."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Секретний ключ"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Відскануйте цей QR-код у застосунку-автентифікаторі або введіть секретний ключ вручну."
+	},
+	"2fa.status": {
+		"defaultMessage": "Статус"
+	},
+	"2fa.title": {
+		"defaultMessage": "Двофакторна автентифікація"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Підтвердити й увімкнути"
+	},
+	"access-list": {
+		"defaultMessage": "Список доступу"
+	},
+	"access-list.access-count": {
+		"defaultMessage": "{count} {count, plural, one {правило} few {правила} many {правил} other {правила}}"
+	},
+	"access-list.auth-count": {
+		"defaultMessage": "{count} {count, plural, one {користувач} few {користувача} many {користувачів} other {користувача}}"
+	},
+	"access-list.help-rules-last": {
+		"defaultMessage": "Якщо є хоча б одне правило, правило 'заборонити все' буде додано останнім"
+	},
+	"access-list.help.rules-order": {
+		"defaultMessage": "Зверніть увагу: дозволяючі та забороняючі директиви застосовуються в порядку їх визначення."
+	},
+	"access-list.pass-auth": {
+		"defaultMessage": "Передавати авторизацію на upstream-сервер"
+	},
+	"access-list.public": {
+		"defaultMessage": "Загальнодоступний"
+	},
+	"access-list.public.subtitle": {
+		"defaultMessage": "Без аутентифікації"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 або 192.168.1.0/24 або 2001:0db8::/32"
+	},
+	"access-list.satisfy-any": {
+		"defaultMessage": "Будь-який збіг"
+	},
+	"access-list.subtitle": {
+		"defaultMessage": "{users} {users, plural, one {користувач} few {користувача} many {користувачів} other {користувача}}, {rules} {rules, plural, one {правило} few {правила} many {правил} other {правила}} - створено: {date}"
+	},
+	"access-lists": {
+		"defaultMessage": "Списки доступу"
+	},
+	"action.add": {
+		"defaultMessage": "Додати"
+	},
+	"action.add-location": {
+		"defaultMessage": "Додати маршрут"
+	},
+	"action.allow": {
+		"defaultMessage": "Дозволити"
+	},
+	"action.clear": {
+		"defaultMessage": "Очистити"
+	},
+	"action.close": {
+		"defaultMessage": "Закрити"
+	},
+	"action.delete": {
+		"defaultMessage": "Видалити"
+	},
+	"action.deny": {
+		"defaultMessage": "Заборонити"
+	},
+	"action.disable": {
+		"defaultMessage": "Вимкнути"
+	},
+	"action.download": {
+		"defaultMessage": "Завантажити"
+	},
+	"action.edit": {
+		"defaultMessage": "Змінити"
+	},
+	"action.enable": {
+		"defaultMessage": "Увімкнути"
+	},
+	"action.permissions": {
+		"defaultMessage": "Дозволи"
+	},
+	"action.renew": {
+		"defaultMessage": "Продовжити"
+	},
+	"action.view-details": {
+		"defaultMessage": "Переглянути відомості"
+	},
+	"auditlogs": {
+		"defaultMessage": "Журнал аудиту"
+	},
+	"auto": {
+		"defaultMessage": "Автоматично"
+	},
+	"cancel": {
+		"defaultMessage": "Скасувати"
+	},
+	"certificate": {
+		"defaultMessage": "Сертифікат"
+	},
+	"certificate.custom-certificate": {
+		"defaultMessage": "Сертифікат"
+	},
+	"certificate.custom-certificate-key": {
+		"defaultMessage": "Ключ сертифіката"
+	},
+	"certificate.custom-intermediate": {
+		"defaultMessage": "Проміжний сертифікат"
+	},
+	"certificate.in-use": {
+		"defaultMessage": "Використовується"
+	},
+	"certificate.none.subtitle": {
+		"defaultMessage": "Сертифікат не призначено"
+	},
+	"certificate.none.subtitle.for-http": {
+		"defaultMessage": "Цей хост не використовуватиме HTTPS"
+	},
+	"certificate.none.title": {
+		"defaultMessage": "Немає"
+	},
+	"certificate.not-in-use": {
+		"defaultMessage": "Не використовується"
+	},
+	"certificate.renew": {
+		"defaultMessage": "Продовжити сертифікат"
+	},
+	"certificates": {
+		"defaultMessage": "Сертифікати"
+	},
+	"certificates.custom": {
+		"defaultMessage": "Власний сертифікат"
+	},
+	"certificates.custom.warning": {
+		"defaultMessage": "Файли ключів, захищені паролем, не підтримуються."
+	},
+	"certificates.dns.credentials": {
+		"defaultMessage": "Вміст файлу облікових даних"
+	},
+	"certificates.dns.credentials-note": {
+		"defaultMessage": "Цей плагін потребує файл конфігурації, що містить API-токен або інші облікові дані вашого провайдера"
+	},
+	"certificates.dns.credentials-warning": {
+		"defaultMessage": "Ці дані зберігатимуться у незашифрованому вигляді в базі даних та файлі!"
+	},
+	"certificates.dns.propagation-seconds": {
+		"defaultMessage": "Очікування поширення (сек.)"
+	},
+	"certificates.dns.propagation-seconds-note": {
+		"defaultMessage": "Залиште порожнім для значення за замовчуванням плагіна. Секунди очікування поширення DNS."
+	},
+	"certificates.dns.provider": {
+		"defaultMessage": "DNS-провайдер"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Виберіть провайдера…"
+	},
+	"certificates.dns.warning": {
+		"defaultMessage": "Цей розділ потребує знань про Certbot та його DNS-плагіни. Будь ласка, зверніться до документації відповідних плагінів."
+	},
+	"certificates.http.reachability-404": {
+		"defaultMessage": "На цьому домені знайдено сервер, але, схоже, це не Nginx Proxy Manager. Переконайтеся, що ваш домен вказує на IP-адресу, де запущено ваш екземпляр NPM."
+	},
+	"certificates.http.reachability-failed-to-check": {
+		"defaultMessage": "Не вдалося перевірити доступність через помилку зв'язку з site24x7.com."
+	},
+	"certificates.http.reachability-not-resolved": {
+		"defaultMessage": "На цьому домені недоступний сервер. Переконайтеся, що домен існує та вказує на IP-адресу, де запущено ваш екземпляр NPM, і за потреби порт 80 проброшено на вашому роутері."
+	},
+	"certificates.http.reachability-ok": {
+		"defaultMessage": "Сервер доступний, випуск сертифікатів можливий."
+	},
+	"certificates.http.reachability-other": {
+		"defaultMessage": "На цьому домені знайдено сервер, але він повернув неочікуваний статус-код {code}. Це сервер NPM? Переконайтеся, що ваш домен вказує на IP-адресу, де запущено ваш екземпляр NPM."
+	},
+	"certificates.http.reachability-wrong-data": {
+		"defaultMessage": "На цьому домені знайдено сервер, але він повернув неочікувані дані. Це сервер NPM? Переконайтеся, що ваш домен вказує на IP-адресу, де запущено ваш екземпляр NPM."
+	},
+	"certificates.http.test-results": {
+		"defaultMessage": "Результати перевірки"
+	},
+	"certificates.http.warning": {
+		"defaultMessage": "Ці домени мають бути налаштовані та вказувати на цей екземпляр."
+	},
+	"certificates.key-type": {
+		"defaultMessage": "Тип ключа"
+	},
+	"certificates.key-type-description": {
+		"defaultMessage": "RSA широко сумісний, ECDSA швидший і безпечніший, але може не підтримуватися старими системами"
+	},
+	"certificates.key-type-ecdsa": {
+		"defaultMessage": "ECDSA 256"
+	},
+	"certificates.key-type-rsa": {
+		"defaultMessage": "RSA 2048"
+	},
+	"certificates.request.subtitle": {
+		"defaultMessage": "через Let's Encrypt"
+	},
+	"certificates.request.title": {
+		"defaultMessage": "Отримати новий сертифікат"
+	},
+	"column.access": {
+		"defaultMessage": "Доступ"
+	},
+	"column.authorization": {
+		"defaultMessage": "Авторизація"
+	},
+	"column.authorizations": {
+		"defaultMessage": "Авторизації"
+	},
+	"column.custom-locations": {
+		"defaultMessage": "Власні маршрути"
+	},
+	"column.destination": {
+		"defaultMessage": "Призначення"
+	},
+	"column.details": {
+		"defaultMessage": "Відомості"
+	},
+	"column.email": {
+		"defaultMessage": "Ел. пошта"
+	},
+	"column.event": {
+		"defaultMessage": "Подія"
+	},
+	"column.expires": {
+		"defaultMessage": "Закінчується"
+	},
+	"column.http-code": {
+		"defaultMessage": "HTTP-код"
+	},
+	"column.incoming-port": {
+		"defaultMessage": "Вхідний порт"
+	},
+	"column.name": {
+		"defaultMessage": "Ім'я"
+	},
+	"column.protocol": {
+		"defaultMessage": "Протокол"
+	},
+	"column.provider": {
+		"defaultMessage": "Провайдер"
+	},
+	"column.roles": {
+		"defaultMessage": "Ролі"
+	},
+	"column.rules": {
+		"defaultMessage": "Правила"
+	},
+	"column.satisfy": {
+		"defaultMessage": "Умови"
+	},
+	"column.satisfy-all": {
+		"defaultMessage": "Усі"
+	},
+	"column.satisfy-any": {
+		"defaultMessage": "Будь-яке"
+	},
+	"column.scheme": {
+		"defaultMessage": "Схема"
+	},
+	"column.source": {
+		"defaultMessage": "Джерело"
+	},
+	"column.ssl": {
+		"defaultMessage": "SSL"
+	},
+	"column.status": {
+		"defaultMessage": "Статус"
+	},
+	"created-on": {
+		"defaultMessage": "Створено: {date}"
+	},
+	"dashboard": {
+		"defaultMessage": "Огляд"
+	},
+	"dead-host": {
+		"defaultMessage": "404-хост"
+	},
+	"dead-hosts": {
+		"defaultMessage": "404-хости"
+	},
+	"dead-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {404-хост} few {404-хоста} many {404-хостів} other {404-хоста}}"
+	},
+	"disabled": {
+		"defaultMessage": "Вимкнено"
+	},
+	"domain-names": {
+		"defaultMessage": "Домени"
+	},
+	"domain-names.max": {
+		"defaultMessage": "Максимум {count} доменів"
+	},
+	"domain-names.placeholder": {
+		"defaultMessage": "Почніть вводити, щоб додати домен..."
+	},
+	"domain-names.wildcards-not-permitted": {
+		"defaultMessage": "Підстановчі домени не дозволені для цього типу"
+	},
+	"domain-names.wildcards-not-supported": {
+		"defaultMessage": "Підстановчі домени не підтримуються цим центром сертифікації"
+	},
+	"domains.advanced": {
+		"defaultMessage": "Розширені налаштування"
+	},
+	"domains.force-ssl": {
+		"defaultMessage": "Завжди SSL"
+	},
+	"domains.hsts-enabled": {
+		"defaultMessage": "Підтримка HSTS"
+	},
+	"domains.hsts-subdomains": {
+		"defaultMessage": "Піддомени HSTS"
+	},
+	"domains.http2-support": {
+		"defaultMessage": "Підтримка HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Довіряти заголовкам X-Forwarded-Proto від upstream-сервера"
+	},
+	"domains.use-dns": {
+		"defaultMessage": "Перевірка через DNS"
+	},
+	"email-address": {
+		"defaultMessage": "Адреса ел. пошти"
+	},
+	"empty-search": {
+		"defaultMessage": "Нічого не знайдено"
+	},
+	"empty-subtitle": {
+		"defaultMessage": "Чому б не створити його?"
+	},
+	"enabled": {
+		"defaultMessage": "Увімкнено"
+	},
+	"error.access.at-least-one": {
+		"defaultMessage": "Потрібна хоча б одна авторизація або одне правило доступу"
+	},
+	"error.access.duplicate-usernames": {
+		"defaultMessage": "Імена користувачів для авторизації мають бути унікальними"
+	},
+	"error.invalid-auth": {
+		"defaultMessage": "Невірна адреса ел. пошти або пароль"
+	},
+	"error.invalid-domain": {
+		"defaultMessage": "Невірний домен: {domain}"
+	},
+	"error.invalid-email": {
+		"defaultMessage": "Невірна адреса ел. пошти"
+	},
+	"error.max-character-length": {
+		"defaultMessage": "Максимальна довжина {max} {max, plural, one {символ} few {символи} many {символів} other {символа}}"
+	},
+	"error.max-domains": {
+		"defaultMessage": "Занадто багато доменів, максимум {max}"
+	},
+	"error.maximum": {
+		"defaultMessage": "Максимум {max}"
+	},
+	"error.min-character-length": {
+		"defaultMessage": "Мінімальна довжина {min} {min, plural, one {символ} few {символи} many {символів} other {символа}}"
+	},
+	"error.minimum": {
+		"defaultMessage": "Мінімум {min}"
+	},
+	"error.passwords-must-match": {
+		"defaultMessage": "Паролі повинні збігатися"
+	},
+	"error.required": {
+		"defaultMessage": "Обов'язкове поле"
+	},
+	"expires.on": {
+		"defaultMessage": "Закінчується: {date}"
+	},
+	"footer.github-fork": {
+		"defaultMessage": "Зробити форк на GitHub"
+	},
+	"host.flags.block-exploits": {
+		"defaultMessage": "Блокувати відомі експлойти"
+	},
+	"host.flags.cache-assets": {
+		"defaultMessage": "Кешувати ресурси"
+	},
+	"host.flags.preserve-path": {
+		"defaultMessage": "Зберігати шлях"
+	},
+	"host.flags.protocols": {
+		"defaultMessage": "Протоколи"
+	},
+	"host.flags.websockets-upgrade": {
+		"defaultMessage": "Підтримка WebSocket"
+	},
+	"host.forward-port": {
+		"defaultMessage": "Порт перенаправлення"
+	},
+	"host.forward-scheme": {
+		"defaultMessage": "Схема"
+	},
+	"hosts": {
+		"defaultMessage": "Хости"
+	},
+	"http-only": {
+		"defaultMessage": "Тільки HTTP"
+	},
+	"lets-encrypt": {
+		"defaultMessage": "Let's Encrypt"
+	},
+	"lets-encrypt-via-dns": {
+		"defaultMessage": "Let's Encrypt через DNS"
+	},
+	"lets-encrypt-via-http": {
+		"defaultMessage": "Let's Encrypt через HTTP"
+	},
+	"loading": {
+		"defaultMessage": "Завантаження…"
+	},
+	"location.advanced-config": {
+		"defaultMessage": "Має власну конфігурацію Nginx"
+	},
+	"location.filter": {
+		"defaultMessage": "Фільтрувати за шляхом або призначенням"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Код підтвердження"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Введіть код"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Введіть код із застосунку-автентифікатора"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Двофакторна автентифікація"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Підтвердити"
+	},
+	"login.title": {
+		"defaultMessage": "Авторизація"
+	},
+	"nginx-config.label": {
+		"defaultMessage": "Власна Nginx-конфігурація"
+	},
+	"nginx-config.placeholder": {
+		"defaultMessage": "# Введіть тут свою Nginx-конфігурацію, будьте обережні!"
+	},
+	"no-permission-error": {
+		"defaultMessage": "У вас немає доступу для перегляду."
+	},
+	"notfound.action": {
+		"defaultMessage": "Повернутися на головну"
+	},
+	"notfound.content": {
+		"defaultMessage": "Вибачте, але сторінку, яку ви шукаєте, не знайдено"
+	},
+	"notfound.title": {
+		"defaultMessage": "Ой… Ви потрапили на сторінку помилки"
+	},
+	"notification.error": {
+		"defaultMessage": "Помилка"
+	},
+	"notification.object-deleted": {
+		"defaultMessage": "{object} видалено"
+	},
+	"notification.object-disabled": {
+		"defaultMessage": "{object} вимкнено"
+	},
+	"notification.object-enabled": {
+		"defaultMessage": "{object} увімкнено"
+	},
+	"notification.object-renewed": {
+		"defaultMessage": "{object} продовжено"
+	},
+	"notification.object-saved": {
+		"defaultMessage": "{object} збережено"
+	},
+	"notification.success": {
+		"defaultMessage": "Успішно"
+	},
+	"object.actions-title": {
+		"defaultMessage": "{object} #{id}"
+	},
+	"object.add": {
+		"defaultMessage": "Додати {object}"
+	},
+	"object.delete": {
+		"defaultMessage": "Видалити {object}"
+	},
+	"object.delete.content": {
+		"defaultMessage": "Ви впевнені, що хочете видалити {object}?"
+	},
+	"object.edit": {
+		"defaultMessage": "Змінити {object}"
+	},
+	"object.empty": {
+		"defaultMessage": "{objects} відсутні"
+	},
+	"object.event.created": {
+		"defaultMessage": "{object} створено"
+	},
+	"object.event.deleted": {
+		"defaultMessage": "{object} видалено"
+	},
+	"object.event.disabled": {
+		"defaultMessage": "{object} вимкнено"
+	},
+	"object.event.enabled": {
+		"defaultMessage": "{object} увімкнено"
+	},
+	"object.event.renewed": {
+		"defaultMessage": "{object} продовжено"
+	},
+	"object.event.updated": {
+		"defaultMessage": "{object} оновлено"
+	},
+	"offline": {
+		"defaultMessage": "Офлайн"
+	},
+	"online": {
+		"defaultMessage": "Онлайн"
+	},
+	"options": {
+		"defaultMessage": "Параметри"
+	},
+	"password": {
+		"defaultMessage": "Пароль"
+	},
+	"password.generate": {
+		"defaultMessage": "Згенерувати випадковий пароль"
+	},
+	"password.hide": {
+		"defaultMessage": "Сховати пароль"
+	},
+	"password.show": {
+		"defaultMessage": "Показати пароль"
+	},
+	"permissions.hidden": {
+		"defaultMessage": "Приховано"
+	},
+	"permissions.manage": {
+		"defaultMessage": "Керування"
+	},
+	"permissions.view": {
+		"defaultMessage": "Тільки перегляд"
+	},
+	"permissions.visibility.all": {
+		"defaultMessage": "Усі елементи"
+	},
+	"permissions.visibility.title": {
+		"defaultMessage": "Видимість елементів"
+	},
+	"permissions.visibility.user": {
+		"defaultMessage": "Створені елементи"
+	},
+	"proxy-host": {
+		"defaultMessage": "Проксі-хост"
+	},
+	"proxy-host.forward-host": {
+		"defaultMessage": "Хост / IP перенаправлення"
+	},
+	"proxy-hosts": {
+		"defaultMessage": "Проксі-хости"
+	},
+	"proxy-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {проксі-хост} few {проксі-хоста} many {проксі-хостів} other {проксі-хоста}}"
+	},
+	"public": {
+		"defaultMessage": "Загальнодоступний"
+	},
+	"redirection-host": {
+		"defaultMessage": "Редирект-хост"
+	},
+	"redirection-host.forward-domain": {
+		"defaultMessage": "Домен перенаправлення"
+	},
+	"redirection-host.forward-http-code": {
+		"defaultMessage": "HTTP-код"
+	},
+	"redirection-hosts": {
+		"defaultMessage": "Редирект-хости"
+	},
+	"redirection-hosts.count": {
+		"defaultMessage": "{count} {count, plural, one {редирект-хост} few {редирект-хоста} many {редирект-хостів} other {редирект-хоста}}"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Кілька варіантів"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Переміщено назавжди"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Тимчасово переміщено"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Переглянути інше"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Тимчасове перенаправлення"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Постійне перенаправлення"
+	},
+	"role.admin": {
+		"defaultMessage": "Адміністратор"
+	},
+	"role.standard-user": {
+		"defaultMessage": "Звичайний користувач"
+	},
+	"save": {
+		"defaultMessage": "Зберегти"
+	},
+	"setting": {
+		"defaultMessage": "Налаштування"
+	},
+	"settings": {
+		"defaultMessage": "Налаштування"
+	},
+	"settings.default-site": {
+		"defaultMessage": "Сторінка за замовчуванням"
+	},
+	"settings.default-site.404": {
+		"defaultMessage": "404-сторінка"
+	},
+	"settings.default-site.444": {
+		"defaultMessage": "Немає відповіді (444)"
+	},
+	"settings.default-site.congratulations": {
+		"defaultMessage": "Сторінка привітання"
+	},
+	"settings.default-site.description": {
+		"defaultMessage": "Що показувати, коли Nginx отримує невідомий хост"
+	},
+	"settings.default-site.html": {
+		"defaultMessage": "Власний HTML"
+	},
+	"settings.default-site.html.placeholder": {
+		"defaultMessage": ""
+	},
+	"settings.default-site.redirect": {
+		"defaultMessage": "Перенаправлення"
+	},
+	"setup.preamble": {
+		"defaultMessage": "Почніть із створення облікового запису адміністратора."
+	},
+	"setup.title": {
+		"defaultMessage": "Ласкаво просимо!"
+	},
+	"sign-in": {
+		"defaultMessage": "Увійти"
+	},
+	"ssl-certificate": {
+		"defaultMessage": "SSL-сертифікат"
+	},
+	"stream": {
+		"defaultMessage": "Потік"
+	},
+	"stream.forward-host": {
+		"defaultMessage": "Хост перенаправлення"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com або 10.0.0.1 або 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
+	"stream.incoming-port": {
+		"defaultMessage": "Вхідний порт"
+	},
+	"streams": {
+		"defaultMessage": "Потоки"
+	},
+	"streams.count": {
+		"defaultMessage": "{count} {count, plural, one {потік} few {потоки} many {потоків} other {потока}}"
+	},
+	"streams.tcp": {
+		"defaultMessage": "TCP"
+	},
+	"streams.udp": {
+		"defaultMessage": "UDP"
+	},
+	"test": {
+		"defaultMessage": "Перевірити"
+	},
+	"update-available": {
+		"defaultMessage": "Доступне оновлення: {latestVersion}"
+	},
+	"user": {
+		"defaultMessage": "Користувач"
+	},
+	"user.change-password": {
+		"defaultMessage": "Змінити пароль"
+	},
+	"user.confirm-password": {
+		"defaultMessage": "Повторіть пароль"
+	},
+	"user.current-password": {
+		"defaultMessage": "Поточний пароль"
+	},
+	"user.edit-profile": {
+		"defaultMessage": "Змінити профіль"
+	},
+	"user.full-name": {
+		"defaultMessage": "Повне ім'я"
+	},
+	"user.login-as": {
+		"defaultMessage": "Увійти як {name}"
+	},
+	"user.logout": {
+		"defaultMessage": "Вийти"
+	},
+	"user.new-password": {
+		"defaultMessage": "Новий пароль"
+	},
+	"user.nickname": {
+		"defaultMessage": "Псевдонім"
+	},
+	"user.set-password": {
+		"defaultMessage": "Задати пароль"
+	},
+	"user.set-permissions": {
+		"defaultMessage": "Задати дозволи для {name}"
+	},
+	"user.switch-dark": {
+		"defaultMessage": "Увімкнути темну тему"
+	},
+	"user.switch-light": {
+		"defaultMessage": "Увімкнути світлу тему"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Двофакторна автентифікація"
+	},
+	"username": {
+		"defaultMessage": "Ім'я користувача"
+	},
+	"users": {
+		"defaultMessage": "Користувачі"
+	}
+}

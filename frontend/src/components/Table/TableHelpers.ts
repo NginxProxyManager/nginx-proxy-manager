@@ -61,4 +61,4 @@ const tableEventReducer = (state: any, { type, payload }: any) => {
 	}
 };
 
-export { tableEvents, tableEventReducer };
+export { tableEventReducer, tableEvents };

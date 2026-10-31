@@ -1,8 +1,8 @@
-import { flexRender } from "@tanstack/react-table";
+import { flexRender, type RowData } from "@tanstack/react-table";
 import type { TableLayoutProps } from "src/components";
 import { EmptyRow } from "./EmptyRow";
 
-function TableBody<T>(props: TableLayoutProps<T>) {
+function TableBody<T extends RowData>(props: TableLayoutProps<T>) {
 	const { tableInstance, extraStyles, emptyState } = props;
 	const rows = tableInstance.getRowModel().rows;
 

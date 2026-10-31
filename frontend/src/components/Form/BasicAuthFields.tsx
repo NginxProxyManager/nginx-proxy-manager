@@ -82,16 +82,13 @@ export function BasicAuthFields({ initialValues, name = "items" }: Props) {
 						/>
 					</div>
 					<div className="col-1">
-						<a
-							role="button"
+						<button
+							type="button"
 							className="btn btn-ghost btn-danger p-0"
-							onClick={(e) => {
-								e.preventDefault();
-								handleRemove(idx);
-							}}
+							onClick={() => handleRemove(idx)}
 						>
 							<IconX size={16} />
-						</a>
+						</button>
 					</div>
 				</div>
 			))}

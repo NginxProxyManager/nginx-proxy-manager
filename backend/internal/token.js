@@ -38,11 +38,7 @@ export default {
 			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
 		}
 
-		const auth = await authModel
-			.query()
-			.where("user_id", "=", user.id)
-			.where("type", "=", "password")
-			.first();
+		const auth = await authModel.query().where("user_id", "=", user.id).where("type", "=", "password").first();
 
 		if (!auth) {
 			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
@@ -50,10 +46,7 @@ export default {
 
 		const valid = await auth.verifyPassword(data.secret);
 		if (!valid) {
-			throw new errs.AuthError(
-				ERROR_MESSAGE_INVALID_AUTH,
-				ERROR_MESSAGE_INVALID_AUTH_I18N,
-			);
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH, ERROR_MESSAGE_INVALID_AUTH_I18N);
 		}
 
 		if (data.scope !== "user" && _.indexOf(user.roles, data.scope) === -1) {
@@ -171,7 +164,7 @@ export default {
 		}
 
 		// Check scope
-		if (!tokenData.scope || tokenData.scope[0] !== "2fa-challenge") {
+		if (tokenData.scope?.[0] !== "2fa-challenge") {
 			throw new errs.AuthError("Invalid challenge token");
 		}
 
@@ -183,10 +176,7 @@ export default {
 		// Verify 2FA code
 		const valid = await twoFactor.verifyForLogin(userId, code);
 		if (!valid) {
-			throw new errs.AuthError(
-				ERROR_MESSAGE_INVALID_2FA,
-				ERROR_MESSAGE_INVALID_2FA_I18N,
-			);
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_2FA, ERROR_MESSAGE_INVALID_2FA_I18N);
 		}
 
 		// Create full token

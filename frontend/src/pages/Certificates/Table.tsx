@@ -1,5 +1,5 @@
 import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
 import {
@@ -10,6 +10,7 @@ import {
 	GravatarFormatter,
 	HasPermission,
 } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 import { showCustomCertificateModal, showDNSCertificateModal, showHTTPCertificateModal } from "src/modals";
@@ -24,7 +25,7 @@ interface Props {
 	onDownload?: (id: number) => void;
 }
 export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered }: Props) {
-	const columnHelper = createColumnHelper<Certificate>();
+	const columnHelper = createColumnHelper<Features, Certificate>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row.owner, {
@@ -164,11 +165,10 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 		[columnHelper, onDelete, onRenew, onDownload],
 	);
 
-	const tableInstance = useReactTable<Certificate>({
+	const tableInstance = useTable({
+		features,
 		columns,
 		data,
-		getCoreRowModel: getCoreRowModel(),
-		rowCount: data.length,
 		meta: {
 			isFetching,
 		},
