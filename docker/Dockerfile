@@ -25,11 +25,20 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 	NPM_BUILD_DATE="${BUILD_DATE}" \
 	NODE_OPTIONS="--openssl-legacy-provider"
 
+# Apply pending Debian security updates and drop the kernel headers, which
+# are not needed at runtime and account for most of the reported CVEs.
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
+	&& apt-get -y --no-install-recommends upgrade \
 	&& apt-get install -y --no-install-recommends jq logrotate \
+	&& apt-get purge -y linux-libc-dev \
+	&& apt-get autoremove -y \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
+
+# Keep the bundled npm and the certbot virtualenv on patched versions
+RUN npm install -g npm@latest \
+	&& /opt/certbot/bin/pip install --no-cache-dir --upgrade pip setuptools certifi cryptography urllib3 msgpack filelock
 
 # s6 overlay
 COPY docker/scripts/install-s6 /tmp/install-s6
