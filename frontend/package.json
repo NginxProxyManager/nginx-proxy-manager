@@ -60,7 +60,7 @@
 		"sass": "^1.104.1",
 		"tmp": "^0.2.7",
 		"typescript": "7.0.2",
-		"vite": "^8.3.0",
+		"vite": "^8.3.3",
 		"vite-plugin-checker": "^0.14.5",
 		"vitest": "^4.1.11"
 	}
