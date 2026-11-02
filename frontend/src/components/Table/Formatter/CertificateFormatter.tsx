@@ -33,7 +33,6 @@ export function CertificateFormatter({ certificate }: Props) {
 		"text-warning": !expired && daysLeft !== null && daysLeft <= 30,
 	});
 
-	const dnsProvider = certificate.meta?.dnsChallenge ? certificate.meta?.dnsProvider : null;
 	const name = certificate.niceName || certificate.domainNames?.[0] || `#${certificate.id}`;
 
 	const popover = (
@@ -50,7 +49,6 @@ export function CertificateFormatter({ certificate }: Props) {
 				</div>
 				<div className="ms-1 mb-2">
 					<T id={translation} />
-					{dnsProvider ? ` (DNS: ${dnsProvider})` : null}
 				</div>
 				{certificate.domainNames?.length ? (
 					<>
