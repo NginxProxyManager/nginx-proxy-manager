@@ -44,3 +44,12 @@ export interface TwoFactorSetupResponse {
 export interface TwoFactorEnableResponse {
 	backupCodes: string[];
 }
+
+export interface AccessListKeyInviteResponse {
+	expiresOn: string;
+	urls: {
+		domain: string;
+		secure: boolean;
+		url: string;
+	}[];
+}

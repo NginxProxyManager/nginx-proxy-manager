@@ -1,0 +1,48 @@
+{
+	"type": "object",
+	"description": "Security key registered on an Access List",
+	"required": ["id", "created_on", "modified_on", "access_list_id", "name", "rp_id", "transports", "last_used_on", "meta"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"access_list_id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 100,
+			"example": "Backup YubiKey"
+		},
+		"rp_id": {
+			"type": "string",
+			"description": "Domain the key is registered for. It works on this domain and its subdomains.",
+			"example": "example.com"
+		},
+		"transports": {
+			"type": "array",
+			"description": "How the browser can reach the key",
+			"items": {
+				"type": "string"
+			},
+			"example": ["nfc", "usb"]
+		},
+		"last_used_on": {
+			"type": ["string", "null"],
+			"description": "Date and time the key was last used to sign in",
+			"example": "2026-10-04T08:12:00.000Z"
+		},
+		"meta": {
+			"type": "object",
+			"example": {}
+		}
+	}
+}

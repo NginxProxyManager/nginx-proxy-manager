@@ -30,6 +30,12 @@
 						"pass_auth": {
 							"$ref": "../../../components/access-list-object.json#/properties/pass_auth"
 						},
+						"key_auth": {
+							"$ref": "../../../components/access-list-object.json#/properties/key_auth"
+						},
+						"key_session_hours": {
+							"$ref": "../../../components/access-list-object.json#/properties/key_session_hours"
+						},
 						"items": {
 							"$ref": "../../../common.json#/properties/access_items"
 						},
@@ -42,6 +48,8 @@
 					"name": "My Access List",
 					"satisfy_any": true,
 					"pass_auth": false,
+					"key_auth": false,
+					"key_session_hours": 168,
 					"items": [
 						{
 							"username": "admin",
@@ -74,6 +82,8 @@
 								"meta": {},
 								"satisfy_any": true,
 								"pass_auth": false,
+								"key_auth": false,
+								"key_session_hours": 168,
 								"proxy_host_count": 0,
 								"owner": {
 									"id": 1,

@@ -39,6 +39,8 @@
 						"meta": {},
 						"satisfy_any": true,
 						"pass_auth": false,
+						"key_auth": false,
+						"key_session_hours": 168,
 						"proxy_host_count": 0
 					},
 					"schema": {

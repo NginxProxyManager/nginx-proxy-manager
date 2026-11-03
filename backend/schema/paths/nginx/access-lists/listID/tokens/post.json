@@ -1,0 +1,88 @@
+{
+	"operationId": "createAccessListToken",
+	"summary": "Add a header token",
+	"description": "Requests sending the header with exactly this value are let through. Only a hash of the value is stored.",
+	"tags": ["access-lists"],
+	"security": [
+		{
+			"bearerAuth": ["access_lists.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "listID",
+			"description": "Access List ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+	"requestBody": {
+		"description": "Token Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["name", "header_name", "value"],
+					"properties": {
+						"name": {
+							"$ref": "../../../../../components/access-list-token-object.json#/properties/name"
+						},
+						"header_name": {
+							"$ref": "../../../../../components/access-list-token-object.json#/properties/header_name"
+						},
+						"value": {
+							"type": "string",
+							"description": "Full header value, e.g. `Bearer <token>` for the Authorization header",
+							"minLength": 16,
+							"maxLength": 4096,
+							"example": "5f2c9e3a6b8d4e1f9a7c0b2d4e6f8a1c"
+						},
+						"forward": {
+							"$ref": "../../../../../components/access-list-token-object.json#/properties/forward"
+						}
+					}
+				},
+				"example": {
+					"name": "Overseerr",
+					"header_name": "X-Api-Key",
+					"value": "5f2c9e3a6b8d4e1f9a7c0b2d4e6f8a1c",
+					"forward": true
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"id": 4,
+								"created_on": "2026-10-04T08:00:00.000Z",
+								"modified_on": "2026-10-04T08:00:00.000Z",
+								"access_list_id": 2,
+								"name": "Overseerr",
+								"header_name": "X-Api-Key",
+								"forward": true,
+								"last_used_on": null,
+								"meta": {}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../../components/access-list-token-object.json"
+					}
+				}
+			}
+		}
+	}
+}

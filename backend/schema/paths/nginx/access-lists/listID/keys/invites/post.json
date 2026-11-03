@@ -1,0 +1,111 @@
+{
+	"operationId": "createAccessListKeyInvite",
+	"summary": "Create a one-time link for registering a security key",
+	"description": "Security keys are registered by opening the link on a site that uses the Access List and tapping the key. The link works once and expires after 24 hours. The list must have `key_auth` enabled.",
+	"tags": ["access-lists"],
+	"security": [
+		{
+			"bearerAuth": ["access_lists.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "listID",
+			"description": "Access List ID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"example": 2
+		}
+	],
+	"requestBody": {
+		"description": "Invite Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["name"],
+					"properties": {
+						"name": {
+							"$ref": "../../../../../../components/access-list-key-object.json#/properties/name"
+						}
+					}
+				},
+				"example": {
+					"name": "Backup YubiKey"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"expires_on": "2026-10-05T08:00:00.000Z",
+								"urls": [
+									{
+										"domain": "sonarr.example.com",
+										"secure": true,
+										"url": "https://sonarr.example.com/.npm-auth/enroll#eyJhbGciOiJIUzI1NiJ9..."
+									}
+								]
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["expires_on", "urls"],
+						"properties": {
+							"expires_on": {
+								"type": "string",
+								"description": "When the link stops working",
+								"example": "2026-10-05T08:00:00.000Z"
+							},
+							"urls": {
+								"type": "array",
+								"description": "The link on each domain using the list",
+								"items": {
+									"type": "object",
+									"additionalProperties": false,
+									"required": ["domain", "secure", "url"],
+									"properties": {
+										"domain": {
+											"type": "string",
+											"example": "sonarr.example.com"
+										},
+										"secure": {
+											"type": "boolean",
+											"description": "Whether the domain has a certificate. Browsers only allow security keys over HTTPS.",
+											"example": true
+										},
+										"url": {
+											"type": "string",
+											"example": "https://sonarr.example.com/.npm-auth/enroll#eyJhbGciOiJIUzI1NiJ9..."
+										}
+									}
+								},
+								"example": [
+									{
+										"domain": "sonarr.example.com",
+										"secure": true,
+										"url": "https://sonarr.example.com/.npm-auth/enroll#eyJhbGciOiJIUzI1NiJ9..."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

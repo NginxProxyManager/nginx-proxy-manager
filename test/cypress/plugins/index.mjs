@@ -2,6 +2,7 @@ import { plugin as cypressGrepPlugin } from "@cypress/grep/plugin";
 import { SwaggerValidation } from "@jc21/cypress-swagger-validation";
 import chalk from "chalk";
 import backendTask from "./backendApi/task.mjs";
+import gateTask from "./gateTask.mjs";
 
 export default (on, config) => {
 	// Replace swaggerBase config var wildcard
@@ -17,6 +18,7 @@ export default (on, config) => {
 	// Plugin Events
 	on("task", SwaggerValidation(config));
 	on("task", backendTask(config));
+	on("task", gateTask(config));
 	on("task", {
 		log(message) {
 			console.log(

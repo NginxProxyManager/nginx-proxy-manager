@@ -14,6 +14,7 @@
 	},
 	"dependencies": {
 		"@apidevtools/json-schema-ref-parser": "^16.0.2",
+		"@simplewebauthn/server": "^14.0.3",
 		"ajv": "^8.20.0",
 		"archiver": "^8.0.0",
 		"batchflow": "^0.4.0",
@@ -22,6 +23,7 @@
 		"body-parser": "^2.3.0",
 		"chalk": "5.6.2",
 		"compression": "^1.8.2",
+		"cookie": "^0.7.2",
 		"express": "^5.2.1",
 		"express-fileupload": "^1.5.2",
 		"gravatar": "^1.8.2",
@@ -39,7 +41,8 @@
 		"proxy-agent": "^8.0.2",
 		"signale": "1.4.0",
 		"sqlite3": "^6.0.1",
-		"temp-write": "^6.0.1"
+		"temp-write": "^6.0.1",
+		"tldts": "^7.4.16"
 	},
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^13.0.0",

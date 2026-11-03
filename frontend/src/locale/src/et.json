@@ -77,6 +77,66 @@
 	"access-list.inherit.subtitle": {
 		"defaultMessage": "Kasutab puhverserveri juurdepääsuloendit"
 	},
+	"access-list.keys.add": {
+		"defaultMessage": "Registreeri võti"
+	},
+	"access-list.keys.count": {
+		"defaultMessage": "{count} {count, plural, one {võti} other {võtit}}"
+	},
+	"access-list.keys.create-link": {
+		"defaultMessage": "Loo registreerimislink"
+	},
+	"access-list.keys.domain": {
+		"defaultMessage": "Domeen"
+	},
+	"access-list.keys.empty": {
+		"defaultMessage": "Turvavõtmeid pole veel registreeritud."
+	},
+	"access-list.keys.enable": {
+		"defaultMessage": "Luba turvavõtmed"
+	},
+	"access-list.keys.enable.help": {
+		"defaultMessage": "Külastajad logivad sisse saidi enda lehel, puudutades registreeritud võtit USB või NFC kaudu."
+	},
+	"access-list.keys.last-used": {
+		"defaultMessage": "Viimati kasutatud"
+	},
+	"access-list.keys.link.help": {
+		"defaultMessage": "Ava see link seadmes, millega võtit kasutad, ja sisesta või puuduta võtit. Link töötab üks kord ja aegub {date}."
+	},
+	"access-list.keys.link.insecure": {
+		"defaultMessage": "Sellel domeenil pole SSL-sertifikaati. Brauserid lubavad turvavõtmeid ainult HTTPS-i kaudu."
+	},
+	"access-list.keys.link.none": {
+		"defaultMessage": "Seda loendit ei kasuta veel ükski kindla domeeniga puhverserver, seega pole kohta, kus võtit registreerida."
+	},
+	"access-list.keys.name": {
+		"defaultMessage": "Võtme nimi"
+	},
+	"access-list.keys.name.placeholder": {
+		"defaultMessage": "nt varu-YubiKey"
+	},
+	"access-list.keys.never": {
+		"defaultMessage": "Mitte kunagi"
+	},
+	"access-list.keys.registered": {
+		"defaultMessage": "„{name}“ on registreeritud."
+	},
+	"access-list.keys.save-first": {
+		"defaultMessage": "Lülita turvavõtmed sisse, salvesta see loend ja kasuta seda mõnel puhverserveril. Seejärel ava loend uuesti, et võtmeid registreerida."
+	},
+	"access-list.keys.session": {
+		"defaultMessage": "Hoia sisselogituna"
+	},
+	"access-list.keys.session.days": {
+		"defaultMessage": "{count, plural, one {# päev} other {# päeva}}"
+	},
+	"access-list.keys.session.hours": {
+		"defaultMessage": "{count, plural, one {# tund} other {# tundi}}"
+	},
+	"access-list.keys.waiting": {
+		"defaultMessage": "Ootan võtme registreerimist…"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Edasta autentimine sihtserverile"
 	},
@@ -95,6 +155,60 @@
 	"access-list.subtitle": {
 		"defaultMessage": "{users} {users, plural, one {kasutaja} other {kasutajat}}, {rules} {rules, plural, one {reegel} other {reeglit}} – loodud: {date}"
 	},
+	"access-list.tab.keys": {
+		"defaultMessage": "Turvavõtmed"
+	},
+	"access-list.tab.tokens": {
+		"defaultMessage": "Pääsuload"
+	},
+	"access-list.tokens.add": {
+		"defaultMessage": "Lisa pääsuluba"
+	},
+	"access-list.tokens.count": {
+		"defaultMessage": "{count} {count, plural, one {pääsuluba} other {pääsuluba}}"
+	},
+	"access-list.tokens.created": {
+		"defaultMessage": "Kopeeri pääsuluba kohe. Seda enam uuesti ei näidata."
+	},
+	"access-list.tokens.empty": {
+		"defaultMessage": "Pääsulube veel pole."
+	},
+	"access-list.tokens.forward": {
+		"defaultMessage": "Edasta sihtserverile"
+	},
+	"access-list.tokens.forward.help": {
+		"defaultMessage": "Jäta see sisse, kui päis on ühtlasi rakenduse enda tunnus, näiteks Sonarri X-Api-Key."
+	},
+	"access-list.tokens.generate": {
+		"defaultMessage": "Genereeri"
+	},
+	"access-list.tokens.header": {
+		"defaultMessage": "Päis"
+	},
+	"access-list.tokens.header.custom": {
+		"defaultMessage": "Kohandatud päis"
+	},
+	"access-list.tokens.help": {
+		"defaultMessage": "Päringud, mis saadavad ühe neist päistest, pääsevad läbi ilma sisse logimata. Kasuta neid rakenduste ja skriptide jaoks."
+	},
+	"access-list.tokens.last-used-on": {
+		"defaultMessage": "Viimati kasutatud: {date}"
+	},
+	"access-list.tokens.name.placeholder": {
+		"defaultMessage": "nt Overseerr"
+	},
+	"access-list.tokens.never-used": {
+		"defaultMessage": "Pole kasutatud"
+	},
+	"access-list.tokens.save-first": {
+		"defaultMessage": "Salvesta see loend enne pääsulubade lisamist."
+	},
+	"access-list.tokens.value": {
+		"defaultMessage": "Väärtus"
+	},
+	"access-list.tokens.value.help": {
+		"defaultMessage": "Vähemalt 16 märki. Kleebi olemasolev saladus, näiteks rakenduse enda API-võti, või loo uus."
+	},
 	"access-lists": {
 		"defaultMessage": "Juurdepääsuloendid"
 	},
@@ -112,6 +226,12 @@
 	},
 	"action.close": {
 		"defaultMessage": "Sulge"
+	},
+	"action.copied": {
+		"defaultMessage": "Kopeeritud"
+	},
+	"action.copy": {
+		"defaultMessage": "Kopeeri"
 	},
 	"action.delete": {
 		"defaultMessage": "Kustuta"
@@ -136,6 +256,9 @@
 	},
 	"action.permissions": {
 		"defaultMessage": "Õigused"
+	},
+	"action.rename": {
+		"defaultMessage": "Nimeta ümber"
 	},
 	"action.renew": {
 		"defaultMessage": "Uuenda"
