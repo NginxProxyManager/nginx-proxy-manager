@@ -1,0 +1,12 @@
+/*
+ * Formik renders a <form> between .modal-content and the header/body/footer,
+ * which breaks the flex chain that .modal-dialog-scrollable relies on to give
+ * .modal-body a bounded height. Without this the body never scrolls and the
+ * footer buttons end up clipped below the viewport.
+ */
+.form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 100%;
+}

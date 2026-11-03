@@ -1,5 +1,6 @@
 export * from "./AccessClientFields";
 export * from "./AccessField";
+export * from "./AccessProviderFields";
 export * from "./BasicAuthFields";
 export * from "./DNSProviderFields";
 export * from "./DomainNamesField";

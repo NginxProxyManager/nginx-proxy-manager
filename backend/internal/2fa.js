@@ -33,7 +33,10 @@ const internal2fa = {
 	 * @returns {Promise<boolean>}
 	 */
 	isEnabled: async (userId) => {
-		const auth = await internal2fa.getUserPasswordAuth(userId);
+		// Users who only sign in through an external provider have no password
+		// auth row, and therefore no TOTP secret to check against.
+		const auth = await authModel.query().where("user_id", userId).andWhere("type", "password").first();
+
 		return auth?.meta?.totp_enabled === true;
 	},
 

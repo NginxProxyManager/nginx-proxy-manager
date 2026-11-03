@@ -1,58 +1,91 @@
 import _ from "lodash";
+import { isCI } from "../lib/config.js";
 import errs from "../lib/error.js";
 import { parseDatePeriod } from "../lib/helpers.js";
 import authModel from "../models/auth.js";
 import TokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import twoFactor from "./2fa.js";
+import internalAuthProvider from "./auth-provider.js";
 
 const ERROR_MESSAGE_INVALID_AUTH = "Invalid email or password";
 const ERROR_MESSAGE_INVALID_AUTH_I18N = "error.invalid-auth";
 const ERROR_MESSAGE_INVALID_2FA = "Invalid verification code";
 const ERROR_MESSAGE_INVALID_2FA_I18N = "error.invalid-2fa";
 
-export default {
+/**
+ * Holds a failed sign in until one to three seconds after it started.
+ *
+ * A local password check answers in milliseconds while an LDAP search and bind
+ * takes hundreds, so without this the response time says whether a directory
+ * knows the name. Padding to a total, rather than adding a delay on top, means
+ * the time spent checking no longer shows through. It also slows down guessing,
+ * which matters more than usual here: every wrong password counts towards the
+ * directory's own lockout, which would shut the person out of far more than
+ * this instance. Only failures wait, so a correct sign in stays fast.
+ *
+ * @param   {Number} startedAt  when the attempt started, from Date.now()
+ * @returns {Promise}
+ */
+const delayFailedSignIn = (startedAt) => {
+	if (process.env.NODE_ENV === "test" || isCI()) {
+		return Promise.resolve();
+	}
+	const totalMs = 1000 + Math.floor(Math.random() * 2000);
+	const remainingMs = Math.max(0, startedAt + totalMs - Date.now());
+	return new Promise((resolve) => setTimeout(resolve, remainingMs));
+};
+
+const internalToken = {
 	/**
-	 * @param   {Object} data
-	 * @param   {String} data.identity
-	 * @param   {String} data.secret
-	 * @param   {String} [data.scope]
-	 * @param   {String} [data.expiry]
-	 * @param   {String} [issuer]
-	 * @returns {Promise}
+	 * Verifies an email address and password against the locally stored
+	 * credentials, ignoring any external authentication providers.
+	 *
+	 * @param   {String} email
+	 * @param   {String} password
+	 * @returns {Promise<Object|null>} the user, or null when the pair is wrong
 	 */
-	getTokenFromEmail: async (data, issuer) => {
-		const Token = TokenModel();
-
-		data.scope = data.scope || "user";
-		data.expiry = data.expiry || "1d";
-
+	verifyLocalPassword: async (email, password) => {
 		const user = await userModel
 			.query()
-			.where("email", data.identity.toLowerCase().trim())
+			.where("email", email.toLowerCase().trim())
 			.andWhere("is_deleted", 0)
 			.andWhere("is_disabled", 0)
 			.first();
 
 		if (!user) {
-			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
+			return null;
 		}
 
 		const auth = await authModel.query().where("user_id", "=", user.id).where("type", "=", "password").first();
 
-		if (!auth) {
-			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
+		if (!auth?.secret) {
+			return null;
 		}
 
-		const valid = await auth.verifyPassword(data.secret);
-		if (!valid) {
-			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH, ERROR_MESSAGE_INVALID_AUTH_I18N);
-		}
+		const valid = await auth.verifyPassword(password);
+		return valid ? user : null;
+	},
 
-		if (data.scope !== "user" && _.indexOf(user.roles, data.scope) === -1) {
+	/**
+	 * Issues an access token for a user that has already been authenticated,
+	 * interrupting with a 2FA challenge when they have one enabled.
+	 *
+	 * @param   {Object} user
+	 * @param   {String} [scope]
+	 * @param   {String} [expiryPeriod]
+	 * @param   {String} [issuer]
+	 * @returns {Promise}
+	 */
+	issueForUser: async (user, scope, expiryPeriod, issuer) => {
+		const Token = TokenModel();
+		const thisScope = scope || "user";
+		const thisExpiry = expiryPeriod || "1d";
+
+		if (thisScope !== "user" && _.indexOf(user.roles, thisScope) === -1) {
 			// The scope requested doesn't exist as a role against the user,
 			// you shall not pass.
-			throw new errs.AuthError(`Invalid scope: ${data.scope}`);
+			throw new errs.AuthError(`Invalid scope: ${thisScope}`);
 		}
 
 		// Check if 2FA is enabled
@@ -75,9 +108,9 @@ export default {
 		}
 
 		// Create a moment of the expiry expression
-		const expiry = parseDatePeriod(data.expiry);
+		const expiry = parseDatePeriod(thisExpiry);
 		if (expiry === null) {
-			throw new errs.AuthError(`Invalid expiry time: ${data.expiry}`);
+			throw new errs.AuthError(`Invalid expiry time: ${thisExpiry}`);
 		}
 
 		const signed = await Token.create({
@@ -85,14 +118,77 @@ export default {
 			attrs: {
 				id: user.id,
 			},
-			scope: [data.scope],
-			expiresIn: data.expiry,
+			scope: [thisScope],
+			expiresIn: thisExpiry,
 		});
 
 		return {
 			token: signed.token,
 			expires: expiry.toISOString(),
 		};
+	},
+
+	/**
+	 * Authenticates a set of credentials from the login form.
+	 *
+	 * Local passwords are checked first (when local sign in is enabled) and
+	 * then every configured LDAP provider, so that directory users can use the
+	 * same form as everyone else.
+	 *
+	 * @param   {Object} data
+	 * @param   {String} data.identity
+	 * @param   {String} data.secret
+	 * @param   {String} [data.scope]
+	 * @param   {String} [data.expiry]
+	 * @param   {String} [issuer]
+	 * @returns {Promise}
+	 */
+	getTokenFromEmail: async (data, issuer) => {
+		const startedAt = Date.now();
+		const scope = data.scope || "user";
+		const expiry = data.expiry || "1d";
+
+		let user = null;
+
+		if (await internalAuthProvider.isLocalAuthEnabled()) {
+			user = await internalToken.verifyLocalPassword(data.identity, data.secret);
+		}
+
+		if (!user) {
+			// LDAP identities are often a username rather than an email address,
+			// so hand over what was typed rather than the normalised version.
+			user = await internalAuthProvider.authenticateLdap(data.identity.trim(), data.secret);
+		}
+
+		if (!user) {
+			await delayFailedSignIn(startedAt);
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH, ERROR_MESSAGE_INVALID_AUTH_I18N);
+		}
+
+		return await internalToken.issueForUser(user, scope, expiry, issuer);
+	},
+
+	/**
+	 * Issues a token for a user id, used once an external provider has
+	 * vouched for who they are.
+	 *
+	 * @param   {Integer} userId
+	 * @param   {String}  [issuer]
+	 * @returns {Promise}
+	 */
+	getTokenFromUserId: async (userId, issuer) => {
+		const user = await userModel
+			.query()
+			.where("id", userId)
+			.andWhere("is_deleted", 0)
+			.andWhere("is_disabled", 0)
+			.first();
+
+		if (!user) {
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
+		}
+
+		return await internalToken.issueForUser(user, "user", "1d", issuer);
 	},
 
 	/**
@@ -115,13 +211,35 @@ export default {
 				throw new errs.AuthError(`Invalid expiry time: ${thisData.expiry}`);
 			}
 
+			// The account may have been disabled, deleted or demoted since this
+			// token was issued, by an administrator or by a directory sync.
+			// Refreshing from the old token's claims alone would keep a revoked
+			// session looking signed in, so check the account as it is now. A 401
+			// is what makes the frontend sign out, rather than sit on an empty UI.
+			const user = await userModel
+				.query()
+				.where("id", access.token.getUserId(0))
+				.andWhere("is_deleted", 0)
+				.andWhere("is_disabled", 0)
+				.first();
+
+			if (!user) {
+				throw new errs.TokenRevokedError("User cannot be loaded for Token");
+			}
+
 			const token_attrs = {
-				id: access.token.getUserId(0),
+				id: user.id,
 			};
 
+			// Only keep the scopes the user still holds a role for
+			const roles = user.roles || [];
+			let scope = (access.token.get("scope") || []).filter((s) => s === "user" || roles.includes(s));
+			if (!scope.length) {
+				throw new errs.TokenRevokedError("User no longer holds the scope of this Token");
+			}
+
 			// Only admins can request otherwise scoped tokens
-			let scope = access.token.get("scope");
-			if (thisData.scope && access.token.hasScope("admin")) {
+			if (thisData.scope && scope.includes("admin")) {
 				scope = [thisData.scope];
 
 				if (thisData.scope === "job-board" || thisData.scope === "worker") {
@@ -141,7 +259,7 @@ export default {
 				expires: expiry.toISOString(),
 			};
 		}
-		throw new error.AssertionFailedError("Existing token contained invalid user data");
+		throw new errs.AssertionFailedError("Existing token contained invalid user data");
 	},
 
 	/**
@@ -225,3 +343,5 @@ export default {
 		};
 	},
 };
+
+export default internalToken;

@@ -109,6 +109,7 @@ const global = createLogger("Global   ");
 const migrate = createLogger("Migrate  ");
 const express = createLogger("Express  ");
 const access = createLogger("Access   ");
+const auth = createLogger("Auth     ");
 const nginx = createLogger("Nginx    ");
 const ssl = createLogger("SSL      ");
 const certbot = createLogger("Certbot  ");
@@ -123,4 +124,4 @@ const debug = (logger, ...args) => {
 	}
 };
 
-export { debug, global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges, remoteVersion };
+export { debug, global, migrate, express, access, auth, nginx, ssl, certbot, importer, setup, ipRanges, remoteVersion };
