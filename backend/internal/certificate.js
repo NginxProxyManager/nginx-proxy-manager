@@ -418,8 +418,38 @@ const internalCertificate = {
 		if (row.provider === "letsencrypt") {
 			// Revoke the cert
 			await internalCertificate.revokeLetsEncryptSsl(row);
+			// Certbot leaves the files behind when it can't revoke (e.g. a broken renewal config); remove them anyway
+			internalCertificate.removeLetsEncryptFiles(row.id);
 		}
 		return true;
+	},
+
+	/**
+	 * Removes a certificate's certbot files, as `certbot delete` would.
+	 *
+	 * @param {Number}  certificateId
+	 */
+	removeLetsEncryptFiles: (certificateId) => {
+		const paths = [
+			internalCertificate.getLiveCertPath(certificateId),
+			`/etc/letsencrypt/archive/npm-${certificateId}`,
+			`/etc/letsencrypt/renewal/npm-${certificateId}.conf`,
+			`/etc/letsencrypt/credentials/credentials-${certificateId}`,
+		];
+		const failed = [];
+		for (const p of paths) {
+			try {
+				fs.rmSync(p, { recursive: true, force: true });
+			} catch (err) {
+				logger.error(`Could not remove ${p}: ${err.message}`);
+				failed.push(p);
+			}
+		}
+		if (failed.length) {
+			throw new error.ValidationError(
+				`The certificate was removed from NPM, but these files could not be deleted: ${failed.join(", ")}. Delete them by hand.`,
+			);
+		}
 	},
 
 	/**
