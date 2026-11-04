@@ -247,6 +247,11 @@
 				"$ref": "./paths/nginx/dead-hosts/hostID/disable/post.json"
 			}
 		},
+		"/nginx/regenerate": {
+			"post": {
+				"$ref": "./paths/nginx/regenerate/post.json"
+			}
+		},
 		"/nginx/streams": {
 			"get": {
 				"$ref": "./paths/nginx/streams/get.json"

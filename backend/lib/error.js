@@ -113,6 +113,18 @@ const errs = {
 		this.status = 400;
 	},
 
+	/**
+	 * The request conflicts with an operation that is running right now, eg. a second regenerate
+	 */
+	ConflictError: function (message, previous) {
+		Error.captureStackTrace(this, this.constructor);
+		this.name = this.constructor.name;
+		this.previous = previous;
+		this.message = message;
+		this.public = true;
+		this.status = 409;
+	},
+
 	CommandError: function (stdErr, code, previous) {
 		Error.captureStackTrace(this, this.constructor);
 		this.name = this.constructor.name;
