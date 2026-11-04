@@ -239,52 +239,20 @@ const sentence = (str) => {
 
 /**
  * @param   {Object}  meta  host meta written by configure
- * @returns {boolean} true when the host is offline because an upstream name did not resolve. That can fix
- *                    itself once the upstream container is up.
+ * @returns {boolean} true when the host is offline because an upstream name did not resolve, or a custom
+ *                    location is unresolved. Both can fix themselves once the upstream container is up.
  */
 const mayResolveLater = (meta) => {
 	if (meta?.nginx_online === false) {
 		const text = `${meta.nginx_details?.nginx_output || ""} ${meta.nginx_err || ""}`;
 		return /host not found in upstream/i.test(text);
 	}
-	return false;
-};
-
-/**
- * Maps a line of a generated host config to the host's advanced configuration (between the
- * `# npm-advanced-config-begin` / `-end` markers of the host templates).
- *
- * @param   {String} configText
- * @param   {Number} line  1-based
- * @returns {{area: "host_advanced"|null, relative_line: Number|null}}
- */
-const describeConfigLine = (configText, line) => {
-	const result = { area: null, relative_line: null };
-	if (!configText || !line) {
-		return result;
-	}
-	const lines = configText.split("\n").slice(0, line);
-	let start = null;
-	for (let i = 0; i < lines.length; i++) {
-		const text = lines[i].trim();
-		if (text === "# npm-advanced-config-begin") {
-			start = i + 1;
-		} else if (text === "# npm-advanced-config-end" && i < lines.length - 1) {
-			// The error line itself can be the end marker line, that still belongs to the advanced config
-			start = null;
-		}
-	}
-	if (start !== null) {
-		result.area = "host_advanced";
-		result.relative_line = line - start;
-	}
-	return result;
+	return Array.isArray(meta?.nginx_locations) && meta.nginx_locations.some((loc) => loc?.status === "unresolved");
 };
 
 export {
 	capitalise,
 	cleanNginxOutput,
-	describeConfigLine,
 	humaniseNginxMessage,
 	MANAGED_FILE_REGEX,
 	mayResolveLater,

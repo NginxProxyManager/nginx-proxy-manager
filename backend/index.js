@@ -10,7 +10,7 @@ import { getCompiledSchema } from "./schema/index.js";
 import setup from "./setup.js";
 
 const IP_RANGES_FETCH_ENABLED = process.env.IP_RANGES_FETCH_ENABLED !== "false";
-// Delay before regenerating missing / broken host configs after startup
+// Delay before regenerating missing / broken / outdated host configs after startup
 const RECONCILE_DELAY_MS = 5000;
 
 async function appStart() {

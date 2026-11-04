@@ -2,6 +2,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import { findForbiddenFileDirective } from "../lib/nginx-advanced.js";
+import { findDuplicatePath } from "../lib/nginx-locations.js";
 import { global as logger } from "../logger.js";
 import deadHostModel from "../models/dead_host.js";
 import proxyHostModel from "../models/proxy_host.js";
@@ -72,7 +73,8 @@ const internalHost = {
 	/**
 	 * Input hygiene for incoming create/update data of all host types:
 	 * - strips the server-owned meta keys (the UI sends meta back on save)
-	 * - trims upstream host names
+	 * - trims upstream host names and location paths
+	 * - rejects duplicate custom location paths
 	 *
 	 * @param   {Object} data
 	 * @returns {Object} data, modified in place
@@ -87,6 +89,27 @@ const internalHost = {
 		for (const field of ["forward_host", "forwarding_host", "forward_domain_name"]) {
 			if (typeof data[field] === "string") {
 				data[field] = data[field].trim();
+			}
+		}
+
+		if (Array.isArray(data.locations)) {
+			data.locations = data.locations.map((location) => {
+				if (!location || typeof location !== "object") {
+					return location;
+				}
+				const loc = Object.assign({}, location);
+				if (typeof loc.forward_host === "string") {
+					loc.forward_host = loc.forward_host.trim();
+				}
+				if (typeof loc.path === "string") {
+					loc.path = loc.path.trim();
+				}
+				return loc;
+			});
+
+			const duplicate = findDuplicatePath(data.locations);
+			if (duplicate) {
+				throw new errs.ValidationError(`The custom location path "${duplicate}" is used more than once`);
 			}
 		}
 

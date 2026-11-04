@@ -1,6 +1,7 @@
 import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
+import { matchSavedLocations } from "../lib/nginx-locations.js";
 import utils from "../lib/utils.js";
 import proxyHostModel from "../models/proxy_host.js";
 import userPermissionModel from "../models/user_permission.js";
@@ -201,10 +202,10 @@ const internalProxyHost = {
 					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
 				}
 				if (!isAdmin && Array.isArray(thisData.locations)) {
-					const existingLocations = Array.isArray(row.locations) ? row.locations : [];
-					for (const loc of thisData.locations) {
-						const existingLoc = existingLocations.find((l) => l.path === loc.path);
-						const existingAdv = existingLoc?.advanced_config || "";
+					// Paths are trimmed and regex locations may repeat one, see matchSavedLocations
+					const existingLocations = matchSavedLocations(thisData.locations, row.locations);
+					for (const [i, loc] of thisData.locations.entries()) {
+						const existingAdv = existingLocations[i]?.advanced_config || "";
 						if (typeof loc.advanced_config === "undefined") {
 							loc.advanced_config = existingAdv;
 						} else if ((loc.advanced_config || "") !== existingAdv) {
