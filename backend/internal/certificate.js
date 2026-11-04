@@ -256,6 +256,7 @@ const internalCertificate = {
 						await internalNginx.reload();
 						// 6. Re-instate previously disabled hosts
 						await internalCertificate.enableInUseHosts(inUseResult);
+						await internalNginx.reload();
 					} catch (err) {
 						// In the event of failure, revert things and throw err back
 						await internalCertificate.enableInUseHosts(inUseResult);
@@ -275,6 +276,7 @@ const internalCertificate = {
 						await internalNginx.reload();
 						// 6. Re-instate previously disabled hosts
 						await internalCertificate.enableInUseHosts(inUseResult);
+						await internalNginx.reload();
 					} catch (err) {
 						// In the event of failure, revert things and throw err back
 						await internalNginx.deleteLetsEncryptRequestConfig(certificate);

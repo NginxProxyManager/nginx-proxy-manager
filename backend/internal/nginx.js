@@ -4,106 +4,825 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
 import errs from "../lib/error.js";
+import {
+	attributeToHostFile,
+	blameOtherHost,
+	blameTests,
+	blameUnattributed,
+	causedByProtected,
+	errorPaths,
+	mentionsPath,
+	regenerateOrDisable,
+} from "../lib/nginx-blame.js";
+import {
+	capitalise,
+	describeConfigLine,
+	humaniseNginxMessage,
+	mayResolveLater,
+	parseManagedFile,
+	parseNginxTestOutput,
+	sentence,
+} from "../lib/nginx-errors.js";
+import { createLock } from "../lib/nginx-lock.js";
+import { createReloadWaiter } from "../lib/nginx-reload.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
 import accessListModel from "../models/access_list.js";
 import certificateModel from "../models/certificate.js";
+import deadHostModel from "../models/dead_host.js";
+import proxyHostModel from "../models/proxy_host.js";
+import redirectionHostModel from "../models/redirection_host.js";
+import streamModel from "../models/stream.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+/**
+ * Meta keys owned by the server. They are stripped from incoming data and only set by configure().
+ */
+const SERVER_META_KEYS = ["nginx_online", "nginx_err", "nginx_checked_at", "nginx_details"];
+
+const HOST_MODELS = {
+	proxy_host: proxyHostModel,
+	redirection_host: redirectionHostModel,
+	dead_host: deadHostModel,
+	stream: streamModel,
+};
+
+const HOST_LABELS = {
+	proxy_host: "Proxy host",
+	redirection_host: "Redirection host",
+	dead_host: "404 host",
+	stream: "Stream",
+};
+
+// How often broken files of other hosts may be repaired / moved aside in one configure or reload. Each repair
+// runs a nested configure (DNS lookups, several nginx -t) while holding the lock, which blocks every save.
+// A group of hosts sharing a broken path (see blameUnattributed()) counts once.
+const MAX_HEAL_ITERATIONS = 10;
+const TOO_MANY_BROKEN_HOSTS = `Too many broken host configs to repair in one go (more than ${MAX_HEAL_ITERATIONS}). Regenerate all host configs (restart NPM or run backend/scripts/regenerate-config), then try again.`;
+// When the startup reconcile tries hosts again whose upstream names did not resolve yet
+const RECONCILE_RETRY_DELAYS = [30 * 1000, 2 * 60 * 1000, 5 * 60 * 1000];
+
+/**
+ * Every sequence that writes nginx config, tests it and reloads nginx runs through this lock,
+ * otherwise concurrent saves test and rename each other's files. Re-entrant: code that already
+ * holds the lock runs directly. Timers started inside the lock must use runOutsideLock, see lib/nginx-lock.js.
+ */
+const { withLock: withRawLock, runOutsideLock, isHeld } = createLock();
+
+/**
+ * Set when a reload was signalled but not confirmed (see reloadNginx()): the master may still be reading the
+ * config, or it rejected it. Files changed after that (candidates, rollbacks) may then be what nginx applies.
+ */
+let reloadInDoubt = false;
+
+/**
+ * Set when the extra reload of settleReload() was not confirmed either: nginx doesn't apply the config at all
+ * (eg. a listen port in use, which nginx -t doesn't catch). Until a reload is confirmed again, an unconfirmed
+ * reload is not settled, otherwise every later save would wait for nginx twice.
+ */
+let reloadFailing = false;
+
+/**
+ * At the end of a locked section, after a reload that was not confirmed: reloads once more, now that every
+ * candidate file is gone and every rollback is done, so the files on disk are what nginx runs.
+ * Never throws, the section's own result is what the caller gets.
+ *
+ * @returns {Promise}
+ */
+const settleReload = async () => {
+	if (!reloadInDoubt) {
+		return;
+	}
+	// Only one more attempt: when this one isn't confirmed either, nginx fails to apply the config (eg. a listen
+	// port in use, which nginx -t doesn't catch), and every section would wait for it again. reloadFailing then
+	// keeps the next sections from settling until a reload is confirmed again.
+	reloadInDoubt = false;
+	try {
+		const result = await internalNginx.runTest();
+		if (!result.ok) {
+			logger.error(`nginx reload not confirmed and the config fails the test: ${result.parsed?.message}`);
+			return;
+		}
+		logger.warn("nginx reload not confirmed, reloading again");
+		const outcome = await internalNginx.reloadWaiter.reloadAndWait();
+		if (outcome.confirmed) {
+			reloadFailing = false;
+		} else {
+			reloadFailing = true;
+			logger.error(
+				`nginx did not confirm the reload either (${outcome.reason}). The running config may be older than the config files, see /data/logs/fallback_error.log`,
+			);
+		}
+	} catch (err) {
+		logger.error(`Could not reload nginx again: ${err.message}`);
+	}
+};
+
+/**
+ * withRawLock() that settles a reload in doubt before the lock is released, see settleReload()
+ *
+ * @param   {Function} fn
+ * @returns {Promise}
+ */
+const withLock = (fn) => {
+	if (isHeld()) {
+		return fn();
+	}
+	return withRawLock(async () => {
+		try {
+			return await fn();
+		} finally {
+			await settleReload();
+		}
+	});
+};
+
+const readFileOrNull = (filename) => {
+	try {
+		return fs.readFileSync(filename, { encoding: "utf8" });
+	} catch {
+		return null;
+	}
+};
+
+const toBool = (v, fallback) => {
+	if (typeof v === "undefined" || v === null || `${v}`.trim() === "") {
+		return fallback;
+	}
+	return /^(1|true|yes|on)$/i.test(`${v}`.trim());
+};
+
+const hostLabel = (hostType, host) => {
+	const label = HOST_LABELS[hostType] || hostType;
+	const names =
+		Array.isArray(host?.domain_names) && host.domain_names.length ? ` (${host.domain_names.join(", ")})` : "";
+	return `${label} #${host?.id}${names}`;
+};
+
+/**
+ * @param   {String} advancedConfig
+ * @param   {String} message  nginx error message
+ * @returns {boolean} true when the advanced config (not counting comments) uses the variable or a path the
+ *          message names
+ */
+const mentionedInAdvanced = (advancedConfig, message) => {
+	if (!advancedConfig || !message) {
+		return false;
+	}
+	const variable = `${message}`.match(/unknown "([^"]+)" variable/);
+	const names = variable ? [`$${variable[1]}`] : errorPaths(message);
+	return names.some((name) => mentionsPath(advancedConfig, name));
+};
+
 const internalNginx = {
+	SERVER_META_KEYS,
+
 	/**
-	 * This will:
-	 * - test the nginx config first to make sure it's OK
-	 * - create / recreate the config for the host
-	 * - test again
-	 * - IF OK:  update the meta with online status
-	 * - IF BAD: update the meta with offline status and remove the config entirely
-	 * - then reload nginx
+	 * Runs fn while holding the nginx lock
+	 *
+	 * @param   {Function} fn
+	 * @returns {Promise}
+	 */
+	withLock: withLock,
+
+	/**
+	 * Signals reloads and waits until nginx has applied them, see lib/nginx-reload.js
+	 */
+	reloadWaiter: createReloadWaiter({
+		signal: () => utils.execFile("/usr/sbin/nginx", ["-s", "reload"]),
+		errorLog: "/data/logs/fallback_error.log",
+	}),
+
+	/**
+	 * Removes the server-owned meta keys from incoming data, in place.
+	 *
+	 * @param   {Object} data
+	 * @returns {Object} data
+	 */
+	stripServerMeta: (data) => {
+		if (data?.meta && typeof data.meta === "object") {
+			for (const key of SERVER_META_KEYS) {
+				delete data.meta[key];
+			}
+		}
+		return data;
+	},
+
+	/**
+	 * @param   {Error}  err
+	 * @returns {boolean} true when configure() did not apply the change: nginx rejected the host itself (or the
+	 *                    global config), or the config could not be rendered. The previous config is still active.
+	 */
+	isHostLevelError: (err) =>
+		(err instanceof errs.NginxConfigError && ["host", "global"].includes(err.details?.scope)) ||
+		(err instanceof errs.ConfigurationError && err.configureFailed === true),
+
+	/**
+	 * Writes the config for a host, makes sure nginx accepts it and reloads nginx.
+	 *
+	 * - Broken config files of OTHER hosts are repaired or moved aside (.err) and that host is marked offline.
+	 * - When this host's config is rejected, the previous config is
+	 *   restored and an NginxConfigError (scope "host" or "global") is thrown.
 	 *
 	 * @param   {Object|String}  model
 	 * @param   {String}         host_type
 	 * @param   {Object}         host
-	 * @returns {Promise}
+	 * @param   {Object}         [opts]
+	 * @param   {Boolean}        [opts.reload]  default true
+	 * @param   {Boolean}        [opts.dryRun]  only check that nginx accepts the host: the previous config
+	 *                                          files are put back and the meta is not written, see configureHost()
+	 * @returns {Promise<Object>} the new meta
 	 */
-	configure: (model, host_type, host) => {
-		let combined_meta = {};
-
-		return internalNginx
-			.test()
-			.then(() => {
-				// Nginx is OK
-				// We're deleting this config regardless.
-				// Don't throw errors, as the file may not exist at all
-				// Delete the .err file too
-				return internalNginx.deleteConfig(host_type, host, true);
-			})
-			.then(() => {
-				return internalNginx.generateConfig(host_type, host);
-			})
-			.then(() => {
-				// Test nginx again and update meta with result
-				return internalNginx
-					.test()
-					.then(() => {
-						// nginx is ok
-						combined_meta = _.assign({}, host.meta, {
-							nginx_online: true,
-							nginx_err: null,
-						});
-
-						return model.query().where("id", host.id).patch({
-							meta: combined_meta,
-						});
-					})
-					.catch((err) => {
-						// Remove the error_log line because it's a docker-ism false positive that doesn't need to be reported.
-						// It will always look like this:
-						//   nginx: [alert] could not open error log file: open() "/var/log/nginx/error.log" failed (6: No such device or address)
-
-						const valid_lines = [];
-						const err_lines = err.message.split("\n");
-						err_lines.map((line) => {
-							if (line.indexOf("/var/log/nginx/error.log") === -1) {
-								valid_lines.push(line);
-							}
-							return true;
-						});
-
-						debug(logger, "Nginx test failed:", valid_lines.join("\n"));
-
-						// config is bad, update meta and delete config
-						combined_meta = _.assign({}, host.meta, {
-							nginx_online: false,
-							nginx_err: valid_lines.join("\n"),
-						});
-
-						return model
-							.query()
-							.where("id", host.id)
-							.patch({
-								meta: combined_meta,
-							})
-							.then(() => {
-								// Keep the failed config as a .err file for inspection
-								return internalNginx.renameConfigAsError(host_type, host);
-							})
-							.then(() => {
-								// The rename removed the live config already, don't touch the .err file
-								return internalNginx.deleteConfig(host_type, host, false);
-							});
-					});
-			})
-			.then(() => {
-				return internalNginx.reload();
-			})
-			.then(() => {
-				return combined_meta;
-			});
+	configure: (model, host_type, host, opts = {}) => {
+		return withLock(() =>
+			internalNginx.configureHost(model, host_type, host, {
+				reload: opts.reload !== false && opts.dryRun !== true,
+				depth: 0,
+				dryRun: opts.dryRun === true,
+			}),
+		);
 	},
 
 	/**
+	 * configure() without the lock. Only call this while holding the lock.
+	 *
+	 * @param   {Object}   model
+	 * @param   {String}   host_type
+	 * @param   {Object}   host
+	 * @param   {Object}   opts
+	 * @param   {Boolean}  opts.reload
+	 * @param   {Number}   opts.depth           recursion guard for repairing other hosts
+	 * @param   {Boolean}  [opts.offlineOnError] mark the host offline instead of throwing on host level errors
+	 * @param   {Boolean}  [opts.dryRun]  check only: on success the host's previous config files are put back and
+	 *                                    nothing is written to the database. Other hosts may still be repaired.
+	 * @returns {Promise<Object>}
+	 */
+	configureHost: async (model, host_type, host, opts) => {
+		const hostType = internalNginx.getFileFriendlyHostType(host_type);
+		const filename = internalNginx.getConfigName(hostType, host.id);
+		const previous = readFileOrNull(filename);
+		// A config kept aside for inspection survives a failed attempt
+		const previousErr = readFileOrNull(`${filename}.err`);
+
+		let heals = 0;
+		let configText = "";
+		let failure = null;
+
+		for (;;) {
+			try {
+				configText = await internalNginx.generateConfig(hostType, host);
+			} catch (err) {
+				await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
+				const error =
+					err instanceof errs.ConfigurationError ? err : new errs.ConfigurationError(err.message, err);
+				// the change was not applied, see isHostLevelError()
+				error.configureFailed = true;
+				throw error;
+			}
+
+			const result = await internalNginx.runTest({ file: filename, text: configText });
+			if (result.ok) {
+				failure = null;
+				break;
+			}
+
+			const parsed = result.parsed;
+			if (parsed.file === filename) {
+				failure = { scope: "host", parsed };
+				break;
+			}
+
+			let blame = null;
+			const tests = blameTests({
+				own: filename,
+				protect: opts.protect,
+				testWithoutOwn: () => internalNginx.testWithout(filename, configText),
+				testAside: (files) => internalNginx.testAside(files),
+			});
+			if (parseManagedFile(parsed.file)) {
+				// nginx names another host's file. That host is only repaired or taken offline when its file
+				// fails on its own, without this host's new config: an error can show up in a file that is
+				// fine by itself, eg. a duplicate `listen ... default_server` is reported at the second
+				// definition, or this host's advanced config includes the other host's file.
+				// In a nested configure the host being saved is taken out as well, see blameTests().
+				blame = await blameOtherHost(parsed, tests.testWithout);
+			} else if (!parsed.file) {
+				// No file named, eg. another host's log file can't be opened. Only a host whose file mentions
+				// the path AND whose removal makes the error go away is blamed, see lib/nginx-blame.js
+				blame = await blameUnattributed(parsed, {
+					own: { file: filename },
+					listFiles: internalNginx.listManagedFiles,
+					testWithout: tests.testWithout,
+					testWithoutCandidate: tests.testWithoutCandidate,
+					testWithoutCandidates: tests.testWithoutCandidates,
+				});
+			}
+			if (blame) {
+				if (blame.action === "conflict") {
+					// When the error stays with every other host's config moved aside, this host's own config
+					// causes it (eg. its advanced config uses an unknown variable): a host level error, not a
+					// conflict with another host
+					if (!parsed.file && (await internalNginx.failsAlone(filename, parsed))) {
+						failure = { scope: "host", parsed };
+						break;
+					}
+					failure = { scope: "host", parsed, conflict: true };
+					break;
+				}
+				const protect = opts.protect || [];
+				const others = blame.action === "heal" ? blame.others || [blame.other] : [];
+				if (
+					others.some((other) =>
+						protect.includes(internalNginx.getConfigName(other.host_type, other.host_id)),
+					)
+				) {
+					// A nested configure (regenerating another host, see healOtherHost()) never touches the
+					// host being saved: the host being saved is at fault, see the protect check below
+					failure = { scope: "host", parsed: blame.parsed, namesProtected: true };
+					break;
+				}
+				if (others.length && heals >= MAX_HEAL_ITERATIONS) {
+					logger.error(`${hostLabel(hostType, host)}: ${TOO_MANY_BROKEN_HOSTS}`);
+					failure = { scope: "global", tooMany: true, parsed: blame.parsed };
+					break;
+				}
+				let healed = false;
+				try {
+					for (const other of others) {
+						const otherParsed =
+							others.length > 1
+								? Object.assign({}, blame.parsed, {
+										file: internalNginx.getConfigName(other.host_type, other.host_id),
+									})
+								: blame.parsed;
+						if (await internalNginx.healOtherHost(other, otherParsed, opts.depth, [...protect, filename])) {
+							healed = true;
+						}
+					}
+				} catch (err) {
+					if (!err.protectedConflict) {
+						throw err;
+					}
+					// Regenerating the other host failed because of this host's new config: this change conflicts
+					// with it. The other host keeps its file, nothing is disabled.
+					failure = { scope: "host", parsed: err.parsed, conflict: true };
+					break;
+				}
+				if (healed) {
+					heals++;
+					continue;
+				}
+				failure = { scope: "global", parsed: blame.parsed };
+				break;
+			}
+
+			failure = { scope: "global", parsed };
+			break;
+		}
+
+		if (
+			failure &&
+			opts.protect?.length &&
+			(await causedByProtected({
+				parsed: failure.parsed,
+				protect: opts.protect,
+				namesProtected: failure.namesProtected,
+				testWithoutProtected: () => internalNginx.testAside(opts.protect),
+			}))
+		) {
+			// A nested configure (regenerating this host while another host is being saved) failed because of the
+			// host being saved: that save must fail as a conflict, this host must not be disabled for it
+			await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
+			const abort = new Error(`Regenerating ${hostLabel(hostType, host)} conflicts with the host being saved`);
+			abort.protectedConflict = true;
+			abort.parsed = failure.parsed;
+			throw abort;
+		}
+
+		if (failure) {
+			const error = failure.tooMany
+				? new errs.NginxConfigError(TOO_MANY_BROKEN_HOSTS, { kind: "nginx_config", scope: "global" })
+				: failure.conflict
+					? internalNginx.buildConflictError(hostType, host, failure.parsed)
+					: internalNginx.buildConfigError(failure.scope, hostType, host, failure.parsed, configText);
+			if (opts.offlineOnError && failure.scope === "host") {
+				// Bulk mode: don't fail the whole operation because of one host, take it offline instead
+				internalNginx.renameConfigAsErrorSync(filename);
+				const meta = internalNginx.buildOfflineMeta(host.meta, error);
+				await model.query().where("id", host.id).patch({ meta });
+				logger.warn(`${hostLabel(hostType, host)} is offline: ${error.message}`);
+				return meta;
+			}
+			await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
+			throw error;
+		}
+
+		const meta = _.assign({}, host.meta, {
+			nginx_online: true,
+			nginx_err: null,
+			nginx_details: null,
+			nginx_checked_at: new Date().toISOString(),
+		});
+
+		if (opts.dryRun) {
+			internalNginx.restoreConfig(filename, previous);
+			internalNginx.restoreConfig(`${filename}.err`, previousErr);
+			return meta;
+		}
+
+		internalNginx.deleteFile(`${filename}.err`);
+		await model.query().where("id", host.id).patch({ meta });
+
+		if (opts.reload) {
+			// The config was just tested while holding the lock, no need to test again
+			await internalNginx.reloadNginx({ skipTest: true });
+		}
+		return meta;
+	},
+
+	/**
+	 * Runs `nginx -t` with the config file of the host being configured taken out, then puts it back.
+	 * Only call this while holding the lock.
+	 *
+	 * @param   {String} filename    the config file of the host being configured
+	 * @param   {String} configText  its new content
+	 * @returns {Promise<{ok: boolean, parsed?: Object}>}
+	 */
+	testWithout: async (filename, configText) => {
+		internalNginx.deleteFile(filename);
+		try {
+			return await internalNginx.runTest();
+		} finally {
+			try {
+				fs.writeFileSync(filename, configText, { encoding: "utf8" });
+			} catch (err) {
+				logger.error(`Could not write ${filename} back: ${err.message}`);
+			}
+		}
+	},
+
+	/**
+	 * Runs `nginx -t` with the given config files moved aside (to `<file>.npm-aside`, which nginx doesn't
+	 * include), then puts them back. Only call this while holding the lock.
+	 *
+	 * @param   {String[]} filenames
+	 * @returns {Promise<{ok: boolean, parsed?: Object}>}
+	 */
+	testAside: async (filenames) => {
+		const moved = [];
+		try {
+			for (const filename of filenames) {
+				if (fs.existsSync(filename)) {
+					fs.renameSync(filename, `${filename}.npm-aside`);
+					moved.push(filename);
+				}
+			}
+			return await internalNginx.runTest();
+		} finally {
+			for (const filename of moved) {
+				try {
+					fs.renameSync(`${filename}.npm-aside`, filename);
+				} catch (err) {
+					logger.error(`Could not move ${filename} back: ${err.message}`);
+				}
+			}
+		}
+	},
+
+	/**
+	 * Runs `nginx -t` with the config files of all other managed hosts moved aside. Only call this while
+	 * holding the lock.
+	 *
+	 * @param   {String} filename  the config file of the host being configured
+	 * @param   {Object} parsed    the parsed error to look for
+	 * @returns {Promise<boolean>} true when the same error remains: the host's own config causes it
+	 */
+	failsAlone: async (filename, parsed) => {
+		const others = internalNginx
+			.listManagedFiles()
+			.map(({ file }) => file)
+			.filter((file) => file !== filename);
+		const result = await internalNginx.testAside(others);
+		return !result.ok && result.parsed?.message === parsed.message;
+	},
+
+	/**
+	 * nginx reported the error in another host's file, but that file passes without this host's new config:
+	 * this change is at fault. The other host's file name is not passed on, the user may not be allowed to
+	 * see that host.
+	 *
+	 * @param   {String}  hostType
+	 * @param   {Object}  host
+	 * @param   {Object}  parsed  parsed nginx -t output
+	 * @returns {errs.NginxConfigError}
+	 */
+	buildConflictError: (hostType, host, parsed) => {
+		const humanised = parsed.message
+			? humaniseNginxMessage(parsed.message)
+			: { text: "nginx rejected the configuration", hint: null };
+		const output = `${parsed.output || ""}`.replace(
+			/\/data\/nginx\/(proxy_host|redirection_host|dead_host|stream)\/\d+\.conf(:\d+)?/g,
+			"<another host's config>",
+		);
+		return new errs.NginxConfigError(
+			sentence(`This change conflicts with the configuration of another host: ${humanised.text}`),
+			{
+				kind: "nginx_config",
+				scope: "host",
+				host_type: hostType,
+				host_id: host.id,
+				file: internalNginx.getConfigName(hostType, host.id),
+				line: null,
+				nginx_output: output || null,
+				hint:
+					humanised.hint ||
+					"Another host already uses this setting (for example the same listen port with default_server), or the advanced configuration includes another host's config file.",
+			},
+		);
+	},
+
+	/**
+	 * Puts a host back the way it was before a configure attempt that did not apply: its config file,
+	 * the .err file kept for inspection and, when other hosts were repaired during the attempt, its meta.
+	 * Repairing another host runs a nested configure that can blame this host's new file and mark this host
+	 * offline, although its previous config stays active.
+	 *
+	 * @param   {Object}       model
+	 * @param   {Object}       host
+	 * @param   {String}       filename
+	 * @param   {String|null}  previous     previous content of the config file
+	 * @param   {String|null}  previousErr  previous content of the .err file
+	 * @param   {Boolean}      restoreMeta
+	 * @returns {Promise}
+	 */
+	restoreHost: async (model, host, filename, previous, previousErr, restoreMeta) => {
+		internalNginx.restoreConfig(filename, previous);
+		internalNginx.restoreConfig(`${filename}.err`, previousErr);
+		if (restoreMeta) {
+			try {
+				await model
+					.query()
+					.where("id", host.id)
+					.patch({ meta: host.meta || {} });
+			} catch (err) {
+				logger.warn(`Could not restore the meta of the host of ${filename}: ${err.message}`);
+			}
+		}
+	},
+
+	/**
+	 * Another host's config file breaks `nginx -t` by itself. An enabled host is first regenerated from its
+	 * database row (without reload): that repairs files written by older
+	 * versions and files that were tampered with, eg. by a log directive of another host's advanced config
+	 * writing into them. Only when the regenerated config still fails at host level (or the host is
+	 * disabled / has no row) is the file moved to .err and the host marked offline.
+	 *
+	 * @param   {Object}   other      {host_type, host_id}
+	 * @param   {Object}   parsed     parsed nginx -t output
+	 * @param   {Number}   depth
+	 * @param   {String[]} [protect]  config files the regeneration must not repair or move aside (the host
+	 *                                being saved)
+	 * @returns {Promise<boolean>} true when something was changed and the test should be repeated
+	 */
+	healOtherHost: async (other, parsed, depth, protect = []) => {
+		const model = HOST_MODELS[other.host_type];
+		const filename = internalNginx.getConfigName(other.host_type, other.host_id);
+		const fileText = readFileOrNull(filename);
+		if (fileText === null) {
+			return false;
+		}
+
+		let row = null;
+		try {
+			row = await model
+				.query()
+				.where("is_deleted", 0)
+				.andWhere("id", other.host_id)
+				.allowGraph(model.defaultAllowGraph)
+				.withGraphFetched(`[${model.defaultExpand.join(", ")}]`)
+				.first();
+		} catch (err) {
+			logger.warn(`Could not load ${other.host_type} #${other.host_id}: ${err.message}`);
+		}
+
+		await regenerateOrDisable({
+			enabled: !!row?.enabled,
+			depth: depth || 0,
+			// the host being saved caused the failure: no disabling, configureHost() turns it into a conflict
+			isAbort: (err) => err?.protectedConflict === true,
+			regenerate: async () => {
+				await internalNginx.configureHost(model, other.host_type, row, {
+					reload: false,
+					depth: (depth || 0) + 1,
+					protect,
+				});
+				logger.warn(
+					`Regenerated the nginx config of ${hostLabel(other.host_type, row)} because nginx rejected it`,
+				);
+			},
+			disable: async (regenerateError) => {
+				if (regenerateError) {
+					debug(logger, `Regenerating ${other.host_type} #${other.host_id} failed:`, regenerateError.message);
+				}
+				// The regenerated config's own failure explains best what is wrong with the host
+				const regenerated =
+					regenerateError instanceof errs.NginxConfigError && regenerateError.details?.scope === "host";
+				const error = regenerated
+					? new errs.NginxConfigError(
+							regenerateError.message,
+							Object.assign({}, regenerateError.details, { scope: "other_host" }),
+						)
+					: internalNginx.buildConfigError(
+							"other_host",
+							other.host_type,
+							row || { id: other.host_id },
+							parsed,
+							readFileOrNull(filename) || fileText,
+						);
+				internalNginx.renameConfigAsErrorSync(filename);
+
+				if (row) {
+					const meta = internalNginx.buildOfflineMeta(row.meta, error, "Disabled automatically: ");
+					await model.query().where("id", row.id).patch({ meta });
+				}
+				logger.warn(
+					`Disabled the nginx config of ${hostLabel(other.host_type, row || { id: other.host_id })}: ${error.message}`,
+				);
+			},
+		});
+		return true;
+	},
+
+	/**
+	 * @param   {Object}  oldMeta
+	 * @param   {Error}   error   NginxConfigError
+	 * @param   {String}  [prefix]
+	 * @returns {Object}
+	 */
+	buildOfflineMeta: (oldMeta, error, prefix = "") => {
+		const meta = _.assign({}, oldMeta, {
+			nginx_online: false,
+			nginx_err: `${prefix}${error.message}`,
+			nginx_details: error.details,
+			nginx_checked_at: new Date().toISOString(),
+		});
+		return meta;
+	},
+
+	/**
+	 * @param   {String}  scope       host | other_host | global
+	 * @param   {String}  hostType
+	 * @param   {Object}  host
+	 * @param   {Object}  parsed      parsed nginx -t output
+	 * @param   {String}  configText  the host's generated config, used to locate the error
+	 * @returns {errs.NginxConfigError}
+	 */
+	buildConfigError: (scope, hostType, host, parsed, configText) => {
+		const filename = internalNginx.getConfigName(hostType, host.id);
+		const humanised = parsed.message
+			? humaniseNginxMessage(parsed.message)
+			: { text: "nginx kept rejecting the configuration", hint: null };
+		const ownFile = parsed.file === filename;
+		const where = ownFile ? describeConfigLine(configText, parsed.line) : { area: null };
+
+		let message;
+		if (scope === "global") {
+			const managed = parseManagedFile(parsed.file);
+			const fileInfo = parsed.file ? ` in ${parsed.file}${parsed.line ? ` (line ${parsed.line})` : ""}` : "";
+			message = managed
+				? `Nginx rejected ${hostLabel(managed.host_type, { id: managed.host_id })}: ${humanised.text}`
+				: `Nginx configuration error${fileInfo}: ${humanised.text}`;
+		} else if (where.area === "host_advanced") {
+			message = `Advanced configuration: ${humanised.text} (line ${where.relative_line})`;
+		} else if (!parsed.line && mentionedInAdvanced(host.advanced_config, parsed.message)) {
+			// An error without a line (eg. an unknown variable) that names something the advanced config uses
+			message = `Advanced configuration: ${humanised.text}`;
+		} else {
+			message = capitalise(humanised.text);
+		}
+
+		const managed = scope === "global" ? parseManagedFile(parsed.file) : null;
+		return new errs.NginxConfigError(sentence(message), {
+			kind: "nginx_config",
+			scope,
+			host_type: managed ? managed.host_type : scope === "global" ? null : hostType,
+			host_id: managed ? managed.host_id : scope === "global" ? null : host.id,
+			file: parsed.file || null,
+			line: parsed.line || null,
+			nginx_output: parsed.output || null,
+			hint: humanised.hint || null,
+		});
+	},
+
+	/**
+	 * An NginxConfigError of scope "global" can name another host and include its nginx output. A user who
+	 * can't see that host only gets a generic message. Never throws, redacts when in doubt.
+	 *
+	 * @param   {Object}  access  the request's Access object
+	 * @param   {Error}   err
+	 * @returns {Promise<Error>} err, modified in place
+	 */
+	redactConfigError: async (access, err) => {
+		if (!(err instanceof errs.NginxConfigError) || err.details?.scope !== "global" || !err.details.host_id) {
+			return err;
+		}
+		const { host_type: hostType, host_id: hostId } = err.details;
+		let visible = false;
+		try {
+			const permission = hostType === "stream" ? "streams" : `${hostType}s`;
+			const accessData = await access.can(`${permission}:list`);
+			if (
+				accessData === true ||
+				accessData?.permission_visibility === "all" ||
+				accessData?.roles?.includes("admin")
+			) {
+				visible = true;
+			} else if (HOST_MODELS[hostType]) {
+				const row = await HOST_MODELS[hostType].query().where("id", hostId).first();
+				// Proxy hosts can also be shared with a user explicitly, see permissions.meta.proxy_host_ids
+				const permissions = access.getPermissions ? access.getPermissions() : {};
+				const allowedIds =
+					hostType === "proxy_host"
+						? permissions?.meta?.proxy_host_ids || permissions?.meta?.proxyHostIds || []
+						: [];
+				visible =
+					!!row &&
+					(row.owner_user_id === access.token.getUserId(1) ||
+						(!row.is_deleted && allowedIds.map(Number).includes(Number(row.id))));
+			}
+		} catch {
+			visible = false;
+		}
+		if (!visible) {
+			err.message = "Nginx rejected the configuration of another host. Please ask an administrator to check it.";
+			err.details = Object.assign({}, err.details, {
+				host_type: null,
+				host_id: null,
+				file: null,
+				line: null,
+				nginx_output: null,
+				hint: null,
+			});
+		}
+		return err;
+	},
+
+	/**
+	 * @param   {Object} [own]       the host being configured
+	 * @param   {String} [own.file]  its config file
+	 * @param   {String} [own.text]  its new config
+	 * @returns {Promise<{ok: boolean, parsed?: Object}>}
+	 */
+	runTest: async (own) => {
+		try {
+			await internalNginx.test();
+			return { ok: true };
+		} catch (err) {
+			const output = err?.message || `${err}`;
+			debug(logger, "Nginx test failed:", output);
+			return { ok: false, parsed: internalNginx.attributeToHostFile(parseNginxTestOutput(output), own) };
+		}
+	},
+
+	/**
+	 * Blames an error that names no config file on the host being configured when its new config mentions
+	 * a path named in the error, see lib/nginx-blame.js
+	 *
+	 * @param   {Object} parsed  parsed nginx -t output
+	 * @param   {Object} [own]   {file, text} of the host being configured
+	 * @returns {Object} parsed, with file set when the host being configured is to blame
+	 */
+	attributeToHostFile: (parsed, own) => attributeToHostFile(parsed, own),
+
+	/**
+	 * @returns {Array<{file: String, text: String}>} the managed host config files, in the order nginx and
+	 *          prepare/55-nginx-validate.sh read them in
+	 */
+	listManagedFiles: () => {
+		const out = [];
+		for (const hostType of Object.keys(HOST_MODELS)) {
+			const dir = `/data/nginx/${hostType}`;
+			let files = [];
+			try {
+				files = fs
+					.readdirSync(dir)
+					.filter((f) => /^\d+\.conf$/.test(f))
+					.sort();
+			} catch {
+				continue;
+			}
+			for (const file of files) {
+				out.push({ file: `${dir}/${file}`, text: readFileOrNull(`${dir}/${file}`) || "" });
+			}
+		}
+		return out;
+	},
+
+	/**
+	 * Plain `nginx -t` of the whole configuration
+	 *
 	 * @returns {Promise}
 	 */
 	test: () => {
@@ -112,13 +831,154 @@ const internalNginx = {
 	},
 
 	/**
+	 * Tests the config, repairing or moving aside broken files of managed hosts.
+	 * Throws an NginxConfigError (scope global) when the config can't be repaired.
+	 * Only call this while holding the lock.
+	 *
 	 * @returns {Promise}
 	 */
-	reload: () => {
-		return internalNginx.test().then(() => {
-			logger.info("Reloading Nginx");
-			return utils.execFile("/usr/sbin/nginx", ["-s", "reload"]);
+	testAndHeal: async () => {
+		for (let i = 0; i <= MAX_HEAL_ITERATIONS; i++) {
+			const result = await internalNginx.runTest();
+			if (result.ok) {
+				return;
+			}
+			if (i === MAX_HEAL_ITERATIONS) {
+				break;
+			}
+			const parsed = result.parsed;
+			const named = parseManagedFile(parsed.file);
+			let targets = named ? [{ other: named, parsed }] : [];
+			if (!named && !parsed.file) {
+				// eg. a log file that can't be opened: blame the host(s) whose removal makes the error go away
+				const blame = await blameUnattributed(parsed, {
+					listFiles: internalNginx.listManagedFiles,
+					testWithoutCandidate: (file) => internalNginx.testAside([file]),
+					testWithoutCandidates: (files) => internalNginx.testAside(files),
+				});
+				if (blame.action === "heal") {
+					targets = (blame.others || [blame.other]).map((other) => ({
+						other,
+						parsed: Object.assign({}, blame.parsed, {
+							file: internalNginx.getConfigName(other.host_type, other.host_id),
+						}),
+					}));
+				}
+			}
+			let healed = false;
+			for (const target of targets) {
+				if (await internalNginx.healOtherHost(target.other, target.parsed, 0)) {
+					healed = true;
+				}
+			}
+			if (healed) {
+				continue;
+			}
+			throw internalNginx.buildConfigError("global", "default", { id: 0 }, result.parsed, "");
+		}
+		logger.error(TOO_MANY_BROKEN_HOSTS);
+		throw new errs.NginxConfigError(TOO_MANY_BROKEN_HOSTS, {
+			kind: "nginx_config",
+			scope: "global",
 		});
+	},
+
+	/**
+	 * Only call this while holding the lock.
+	 *
+	 * @param   {Object}  [opts]
+	 * @param   {Boolean} [opts.skipTest]
+	 * @returns {Promise}
+	 */
+	reloadNginx: async (opts = {}) => {
+		if (!opts.skipTest) {
+			await internalNginx.testAndHeal();
+		}
+		logger.info("Reloading Nginx");
+		// Waits until the master has applied the config: only then may the lock be released, see
+		// lib/nginx-reload.js
+		const outcome = await internalNginx.reloadWaiter.reloadAndWait();
+		if (outcome.confirmed) {
+			reloadInDoubt = false;
+			reloadFailing = false;
+			debug(logger, `nginx reload applied after ${outcome.waitedMs} ms`);
+		} else if (outcome.noMaster) {
+			debug(logger, `Could not confirm the nginx reload: ${outcome.reason}`);
+		} else if (outcome.rejected) {
+			// The master has read the files on disk and rejected them: nothing is in doubt, another reload of the
+			// same files would fail the same way
+			logger.error(`${outcome.reason}. The running config is older than the config files.`);
+		} else if (reloadFailing) {
+			logger.warn(`Could not confirm the nginx reload: ${outcome.reason}`);
+		} else {
+			reloadInDoubt = true;
+			logger.warn(`Could not confirm the nginx reload: ${outcome.reason}`);
+		}
+	},
+
+	/**
+	 * Tests (repairing broken files of other hosts) and reloads nginx
+	 *
+	 * @returns {Promise}
+	 */
+	reload: () => withLock(() => internalNginx.reloadNginx()),
+
+	/**
+	 * Removes the config of a host and reloads nginx
+	 *
+	 * @param   {String}  host_type
+	 * @param   {Object}  host
+	 * @returns {Promise}
+	 */
+	removeConfigAndReload: (host_type, host) =>
+		withLock(async () => {
+			await internalNginx.deleteConfig(host_type, host);
+			return internalNginx.reloadNginx();
+		}),
+
+	/**
+	 * Regenerates the default site config and reloads nginx.
+	 * On failure the default site config is removed, nginx falls back to the built-in default.
+	 *
+	 * @param   {Object}  setting  the default-site setting row
+	 * @returns {Promise}
+	 */
+	configureDefaultSite: (setting) =>
+		withLock(async () => {
+			await internalNginx.deleteConfig("default");
+			await internalNginx.generateConfig("default", setting);
+			try {
+				await internalNginx.reloadNginx();
+			} catch (err) {
+				await internalNginx.deleteConfig("default");
+				await internalNginx.reloadNginx().catch((reloadErr) => {
+					logger.error(`Could not reload nginx: ${reloadErr.message}`);
+				});
+				if (err instanceof errs.NginxConfigError) {
+					throw new errs.NginxConfigError(
+						`Could not reconfigure the default site. ${err.message}`,
+						err.details,
+						err,
+					);
+				}
+				throw new errs.ValidationError("Could not reconfigure Nginx. Please check logs.", err);
+			}
+		}),
+
+	/**
+	 * @param   {String}       filename
+	 * @param   {String|null}  previous
+	 */
+	restoreConfig: (filename, previous) => {
+		if (previous === null) {
+			internalNginx.deleteFile(filename);
+			return;
+		}
+		try {
+			fs.writeFileSync(filename, previous, { encoding: "utf8" });
+		} catch (err) {
+			logger.error(`Could not restore ${filename}: ${err.message}`);
+		}
 	},
 
 	/**
@@ -206,9 +1066,11 @@ const internalNginx = {
 	},
 
 	/**
+	 * Renders and writes the config file of a host.
+	 *
 	 * @param   {String}  host_type
-	 * @param   {Object}  host
-	 * @returns {Promise}
+	 * @param   {Object}  host_row
+	 * @returns {Promise<String>} the written config
 	 */
 	generateConfig: async (host_type, host_row) => {
 		// Prevent modifying the original object:
@@ -220,86 +1082,68 @@ const internalNginx = {
 		debug(logger, `Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));
 
 		const renderEngine = utils.getRenderEngine();
+		const filename = internalNginx.getConfigName(nice_host_type, host.id);
 
-		return new Promise((resolve, reject) => {
-			let template = null;
-			const filename = internalNginx.getConfigName(nice_host_type, host.id);
+		let template = null;
+		try {
+			template = fs.readFileSync(`${__dirname}/../templates/${nice_host_type}.conf`, { encoding: "utf8" });
+		} catch (err) {
+			throw new errs.ConfigurationError(err.message);
+		}
+
+		// Manipulate the data a bit before sending it to the template
+		if (nice_host_type !== "default") {
+			host.use_default_location = true;
+			if (typeof host.advanced_config !== "undefined" && host.advanced_config) {
+				host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
+			}
+		}
+
+		// For redirection hosts, if the scheme is not http or https, set it to $scheme
+		if (
+			nice_host_type === "redirection_host" &&
+			["http", "https"].indexOf(host.forward_scheme.toLowerCase()) === -1
+		) {
+			host.forward_scheme = "$scheme";
+		}
+
+		// A stream forwarding to an IPv6 literal must have the address wrapped in
+		// square brackets before nginx appends ":<port>". Without the brackets nginx
+		// reads the trailing ":<port>" as part of the address and rejects the upstream
+		// ("invalid port in upstream"), so the stream saves but never activates (#5740).
+		if (nice_host_type === "stream" && net.isIPv6(host.forwarding_host)) {
+			host.forwarding_host = `[${host.forwarding_host}]`;
+		}
+
+		if (host.locations) {
+			// Allow someone who is using / custom location path to use it, and skip the default / location
+			_.map(host.locations, (location) => {
+				if (location.path === "/") {
+					host.use_default_location = false;
+				}
+			});
 
 			try {
-				template = fs.readFileSync(`${__dirname}/../templates/${nice_host_type}.conf`, { encoding: "utf8" });
+				host.locations = await internalNginx.renderLocations(host);
 			} catch (err) {
-				reject(new errs.ConfigurationError(err.message));
-				return;
-			}
-
-			let locationsPromise;
-			let origLocations;
-
-			// Manipulate the data a bit before sending it to the template
-			if (nice_host_type !== "default") {
-				host.use_default_location = true;
-				if (typeof host.advanced_config !== "undefined" && host.advanced_config) {
-					host.use_default_location = !internalNginx.advancedConfigHasDefaultLocation(host.advanced_config);
-				}
-			}
-
-			// For redirection hosts, if the scheme is not http or https, set it to $scheme
-			if (
-				nice_host_type === "redirection_host" &&
-				["http", "https"].indexOf(host.forward_scheme.toLowerCase()) === -1
-			) {
-				host.forward_scheme = "$scheme";
-			}
-
-			// A stream forwarding to an IPv6 literal must have the address wrapped in
-			// square brackets before nginx appends ":<port>". Without the brackets nginx
-			// reads the trailing ":<port>" as part of the address and rejects the upstream
-			// ("invalid port in upstream"), so the stream saves but never activates (#5740).
-			if (nice_host_type === "stream" && net.isIPv6(host.forwarding_host)) {
-				host.forwarding_host = `[${host.forwarding_host}]`;
-			}
-
-			if (host.locations) {
-				//logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
-				origLocations = [].concat(host.locations);
-				locationsPromise = internalNginx.renderLocations(host).then((renderedLocations) => {
-					host.locations = renderedLocations;
-				});
-
-				// Allow someone who is using / custom location path to use it, and skip the default / location
-				_.map(host.locations, (location) => {
-					if (location.path === "/") {
-						host.use_default_location = false;
-					}
-				});
-			} else {
-				locationsPromise = Promise.resolve();
-			}
-
-			// Set the IPv6 setting for the host
-			host.ipv6 = internalNginx.ipv6Enabled();
-
-			locationsPromise.then(() => {
-				renderEngine
-					.parseAndRender(template, host)
-					.then((config_text) => {
-						fs.writeFileSync(filename, config_text, { encoding: "utf8" });
-						debug(logger, "Wrote config:", filename, config_text);
-
-						// Restore locations array
-						host.locations = origLocations;
-
-						resolve(true);
-					})
-					.catch((err) => {
-						debug(logger, `Could not write ${filename}:`, err.message);
-						reject(new errs.ConfigurationError(err.message));
-					});
-			}).catch((err) => {
 				debug(logger, `Could not render locations for ${filename}:`, err.message);
-				reject(new errs.ConfigurationError(err.message));
-			});
-		});
+				throw new errs.ConfigurationError(err.message);
+			}
+		}
+
+		// Set the IPv6 setting for the host
+		host.ipv6 = internalNginx.ipv6Enabled();
+
+		let config_text;
+		try {
+			config_text = await renderEngine.parseAndRender(template, host);
+			fs.writeFileSync(filename, config_text, { encoding: "utf8" });
+		} catch (err) {
+			debug(logger, `Could not write ${filename}:`, err.message);
+			throw new errs.ConfigurationError(err.message);
+		}
+		debug(logger, "Wrote config:", filename, config_text);
+		return config_text;
 	},
 
 	/**
@@ -460,32 +1304,76 @@ const internalNginx = {
 			internalNginx.getFileFriendlyHostType(host_type),
 			typeof host === "undefined" ? 0 : host.id,
 		);
-		const config_file_err = `${config_file}.err`;
-
-		return new Promise((resolve /*, reject*/) => {
-			fs.unlink(config_file_err, () => {
-				// ignore result, a previous .err file may not exist
-				fs.rename(config_file, config_file_err, () => {
-					// also ignore result, as this is a debugging informative file anyway
-					resolve();
-				});
-			});
+		return new Promise((resolve) => {
+			internalNginx.renameConfigAsErrorSync(config_file);
+			resolve();
 		});
 	},
 
 	/**
+	 * Moves a config to <file>.err, which nginx does not include, keeping it for inspection.
+	 *
+	 * @param   {String}  config_file
+	 */
+	renameConfigAsErrorSync: (config_file) => {
+		const config_file_err = `${config_file}.err`;
+		try {
+			fs.rmSync(config_file_err, { force: true });
+			if (fs.existsSync(config_file)) {
+				fs.renameSync(config_file, config_file_err);
+			}
+		} catch (err) {
+			logger.warn(`Could not move ${config_file} to ${config_file_err}: ${err.message}`);
+			internalNginx.deleteFile(config_file);
+		}
+	},
+
+	/**
+	 * Regenerates the configs of several hosts (eg. after an access list or certificate change).
+	 * Each host goes through configure without reloading, a host that nginx rejects is taken
+	 * offline instead of failing the whole operation. The caller reloads nginx afterwards.
+	 *
 	 * @param   {String}  hostType
 	 * @param   {Array}   hosts
 	 * @returns {Promise}
 	 */
-	bulkGenerateConfigs: (hostType, hosts) => {
-		const promises = [];
-		hosts.map((host) => {
-			promises.push(internalNginx.generateConfig(hostType, host));
-			return true;
-		});
+	bulkGenerateConfigs: (hostType, hosts) =>
+		withLock(async () => {
+			const type = internalNginx.getFileFriendlyHostType(hostType);
+			const model = HOST_MODELS[type];
+			for (const staleHost of hosts || []) {
+				if (!staleHost?.id) {
+					continue;
+				}
+				// The rows were loaded before the lock was taken, sometimes minutes before (a certificate
+				// request). Configure from the current row, or a concurrent edit (its locations, its meta)
+				// would be overwritten with the old values.
+				const host = await internalNginx.loadHostRow(type, staleHost.id);
+				if (!host?.enabled) {
+					continue;
+				}
+				await internalNginx.configureHost(model, type, host, {
+					reload: false,
+					depth: 0,
+					offlineOnError: true,
+				});
+			}
+		}),
 
-		return Promise.all(promises);
+	/**
+	 * @param   {String}  hostType  file friendly host type
+	 * @param   {Number}  id
+	 * @returns {Promise<Object|undefined>} the non-deleted row with the relations the templates need
+	 */
+	loadHostRow: (hostType, id) => {
+		const model = HOST_MODELS[hostType];
+		return model
+			.query()
+			.where("is_deleted", 0)
+			.andWhere("id", id)
+			.allowGraph(model.defaultAllowGraph)
+			.withGraphFetched(`[${model.defaultExpand.join(", ")}]`)
+			.first();
 	},
 
 	/**
@@ -502,6 +1390,147 @@ const internalNginx = {
 
 		return Promise.all(promises);
 	},
+
+	/**
+	 * Called once after the backend started: regenerates hosts whose config is missing or was moved aside
+	 * (by the prepare/55-nginx-validate.sh startup check or a failed test). Never throws.
+	 *
+	 * Upstream names often don't resolve yet right after a host reboot (all containers start at once).
+	 * Hosts that end offline because of that are tried again a few times with backoff
+	 * (RECONCILE_RETRY_DELAYS), so they come back on their own.
+	 *
+	 * @param   {Object}  [opts]
+	 * @param   {Object}  [opts.only]     {host_type: [ids]}, configure exactly these hosts (retry pass)
+	 * @param   {Number}  [opts.attempt]  retry attempt, 0 for the startup pass
+	 * @returns {Promise<Object>} summary
+	 */
+	reconcile: (opts = {}) =>
+		withLock(async () => {
+			const attempt = opts.attempt || 0;
+			const summary = { checked: 0, regenerated: 0, offline: 0, failed: 0, retry: {} };
+			if (!opts.only) {
+				internalNginx.restoreStaleAside();
+			}
+
+			for (const [hostType, model] of Object.entries(HOST_MODELS)) {
+				const only = opts.only ? opts.only[hostType] : null;
+				if (opts.only && !only?.length) {
+					continue;
+				}
+				let rows = [];
+				try {
+					const query = model
+						.query()
+						.where("is_deleted", 0)
+						.andWhere("enabled", 1)
+						.allowGraph(model.defaultAllowGraph)
+						.withGraphFetched(`[${model.defaultExpand.join(", ")}]`);
+					if (only) {
+						query.whereIn("id", only);
+					}
+					rows = await query;
+				} catch (err) {
+					logger.error(`Startup reconcile: could not load ${hostType} rows: ${err.message}`);
+					continue;
+				}
+
+				for (const row of rows) {
+					summary.checked++;
+					const filename = internalNginx.getConfigName(hostType, row.id);
+					const text = readFileOrNull(filename);
+					const needsWork = !!only || text === null || fs.existsSync(`${filename}.err`);
+					if (!needsWork) {
+						continue;
+					}
+					try {
+						const meta = await internalNginx.configureHost(model, hostType, row, {
+							reload: false,
+							depth: 0,
+							offlineOnError: true,
+						});
+						if (meta.nginx_online === false) {
+							summary.offline++;
+						} else {
+							summary.regenerated++;
+						}
+						if (mayResolveLater(meta)) {
+							summary.retry[hostType] = summary.retry[hostType] || [];
+							summary.retry[hostType].push(row.id);
+						}
+					} catch (err) {
+						summary.failed++;
+						logger.error(`Startup reconcile: ${hostLabel(hostType, row)}: ${err.message}`);
+					}
+				}
+			}
+
+			if (summary.regenerated || summary.offline) {
+				try {
+					await internalNginx.reloadNginx();
+				} catch (err) {
+					logger.error(`Startup reconcile: nginx reload failed: ${err.message}`);
+				}
+			}
+			const retries = Object.values(summary.retry).reduce((sum, ids) => sum + ids.length, 0);
+			logger.info(
+				`Startup reconcile${attempt ? ` (retry ${attempt})` : ""}: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline}, failed ${summary.failed}${retries ? `, ${retries} waiting for DNS` : ""}`,
+			);
+
+			if (retries && attempt < RECONCILE_RETRY_DELAYS.length) {
+				// Outside the lock context: the retry has to queue for the lock like any other caller
+				runOutsideLock(() => {
+					const timer = setTimeout(() => {
+						internalNginx.reconcile({ only: summary.retry, attempt: attempt + 1 });
+					}, RECONCILE_RETRY_DELAYS[attempt]);
+					timer.unref?.();
+				});
+			}
+			return summary;
+		}).catch((err) => {
+			logger.error(`Startup reconcile failed: ${err.message}`);
+			return null;
+		}),
+
+	/**
+	 * testAside() moves config files to `<file>.npm-aside` for a moment. A backend killed right then leaves
+	 * them there: put them back, or delete them when the config was written again since. Only call this
+	 * while holding the lock.
+	 *
+	 * @returns {Number} how many files were handled
+	 */
+	restoreStaleAside: () => {
+		let handled = 0;
+		for (const hostType of [...Object.keys(HOST_MODELS), "default_host"]) {
+			const dir = `/data/nginx/${hostType}`;
+			let files = [];
+			try {
+				files = fs.readdirSync(dir).filter((f) => f.endsWith(".conf.npm-aside"));
+			} catch {
+				continue;
+			}
+			for (const file of files) {
+				const aside = `${dir}/${file}`;
+				const conf = aside.slice(0, -".npm-aside".length);
+				try {
+					if (fs.existsSync(conf)) {
+						fs.rmSync(aside, { force: true });
+					} else {
+						fs.renameSync(aside, conf);
+						logger.warn(`Restored ${conf} from an interrupted config test`);
+					}
+					handled++;
+				} catch (err) {
+					logger.error(`Could not restore ${conf} from ${aside}: ${err.message}`);
+				}
+			}
+		}
+		return handled;
+	},
+
+	/**
+	 * @returns {boolean}
+	 */
+	reconcileOnStartEnabled: () => toBool(process.env.NPM_RECONCILE_ON_START, true),
 
 	/**
 	 * @param   {string}  config
