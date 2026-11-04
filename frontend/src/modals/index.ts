@@ -15,4 +15,5 @@ export * from "./RenewCertificateModal";
 export * from "./SetPasswordModal";
 export * from "./StreamModal";
 export * from "./TwoFactorModal";
+export * from "./UpdateCertificateModal";
 export * from "./UserModal";
