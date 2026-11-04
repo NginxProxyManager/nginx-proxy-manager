@@ -599,6 +599,14 @@
 		"package_name": "certbot-dns-route53",
 		"version": "=={{certbot-version}}"
 	},
+	"scaleway": {
+		"credentials": "dns_scaleway_application_token = b3a0b9a9-3814-4f12-95b0-a7473bf8b306",
+		"dependencies": "",
+		"full_plugin_name": "dns-scaleway",
+		"name": "Scaleway",
+		"package_name": "certbot-dns-scaleway",
+		"version": "~=0.0.7"
+	},
 	"selectelv2": {
 		"credentials": "dns_selectel_api_v2_account_id = your_account_id\ndns_selectel_api_v2_project_name = your_project\ndns_selectel_api_v2_username = your_username\ndns_selectel_api_v2_password = your_password",
 		"dependencies": "",
