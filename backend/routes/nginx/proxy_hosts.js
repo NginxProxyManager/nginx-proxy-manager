@@ -1,6 +1,7 @@
 import express from "express";
 import fs from "node:fs";
 import internalProxyHost from "../../internal/proxy-host.js";
+import addHostTestRoute from "../../lib/express/host-test-route.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
@@ -70,6 +71,13 @@ router
 			next(err);
 		}
 	});
+
+/**
+ * /api/nginx/proxy-hosts/test
+ *
+ * Test the settings of a new or edited host without saving them. Before the /:id routes.
+ */
+addHostTestRoute(router, { schemaPath: "/nginx/proxy-hosts/test", hostType: "proxy_host" });
 
 /**
  * Specific proxy-host

@@ -1,0 +1,246 @@
+{
+	"type": "object",
+	"description": "Result of a configuration test (POST /nginx/<host type>/test). Nothing was saved and nginx was not reloaded.",
+	"additionalProperties": false,
+	"required": [
+		"ok",
+		"nginx_online",
+		"nginx_err",
+		"nginx_details",
+		"nginx_locations",
+		"upstreams",
+		"warnings"
+	],
+	"properties": {
+		"ok": {
+			"type": "boolean",
+			"description": "Nginx accepts the configuration as entered: the host would be online and no custom location would be quarantined. Unresolved locations and unreachable upstreams don't fail the test.",
+			"example": true
+		},
+		"nginx_online": {
+			"type": "boolean",
+			"description": "False when nginx rejects the host itself; a save would fail with nginx_err",
+			"example": true
+		},
+		"nginx_err": {
+			"type": [
+				"string",
+				"null"
+			],
+			"description": "Why nginx rejects the host, the message a save would fail with",
+			"example": null
+		},
+		"nginx_details": {
+			"description": "Structured details of nginx_err, same shape as error.details of a failed save",
+			"oneOf": [
+				{
+					"type": "null"
+				},
+				{
+					"$ref": "./error-object.json#/properties/details"
+				}
+			],
+			"example": null
+		},
+		"nginx_locations": {
+			"type": "array",
+			"description": "One entry per custom location (proxy hosts), same shape as meta.nginx_locations of a saved host. Also filled in when nginx rejects the host.",
+			"example": [
+				{
+					"index": 0,
+					"path": "/api",
+					"status": "ok",
+					"mode": "dynamic",
+					"message": null
+				}
+			],
+			"items": {
+				"$ref": "./proxy-host-object.json#/properties/meta/properties/nginx_locations/items"
+			}
+		},
+		"upstreams": {
+			"type": "array",
+			"description": "Reachability of the main forward target and every enabled custom location (proxy hosts) or the forwarding target (TCP streams)",
+			"example": [
+				{
+					"host": "app",
+					"port": 8080,
+					"scheme": "http",
+					"ok": true,
+					"code": "ok",
+					"message": "app:8080 is reachable (1.2 ms).",
+					"addresses": [
+						"172.18.0.5"
+					],
+					"resolver_ok": true,
+					"system_ok": true,
+					"ms": 1.2,
+					"location_index": null,
+					"path": null
+				}
+			],
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"required": [
+					"host",
+					"port",
+					"scheme",
+					"ok",
+					"code",
+					"message",
+					"addresses",
+					"resolver_ok",
+					"system_ok",
+					"ms",
+					"location_index",
+					"path"
+				],
+				"properties": {
+					"host": {
+						"type": "string",
+						"description": "The host as given (including any /path)",
+						"example": "app"
+					},
+					"port": {
+						"type": [
+							"integer",
+							"null"
+						],
+						"example": 8080
+					},
+					"scheme": {
+						"type": [
+							"string",
+							"null"
+						],
+						"example": "http"
+					},
+					"ok": {
+						"type": "boolean",
+						"description": "True when a TCP connection could be opened",
+						"example": true
+					},
+					"code": {
+						"type": "string",
+						"description": "Machine readable result. resolver_mismatch is ok:true but only works with a static upstream. rate_limited: not probed, the user's upstream check budget (shared with /upstreams/check) is used up",
+						"example": "ok",
+						"enum": [
+							"ok",
+							"invalid_host",
+							"dns_not_found",
+							"dns_timeout",
+							"resolver_mismatch",
+							"tcp_refused",
+							"tcp_timeout",
+							"tcp_unreachable",
+							"disabled",
+							"rate_limited"
+						]
+					},
+					"message": {
+						"type": "string",
+						"description": "Human readable explanation",
+						"example": "app:8080 is reachable (1.2 ms)."
+					},
+					"addresses": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"example": [
+							"172.18.0.5"
+						]
+					},
+					"resolver_ok": {
+						"type": [
+							"boolean",
+							"null"
+						],
+						"description": "Resolves through nginx's resolver (null: IP literal, or no resolver configured)",
+						"example": true
+					},
+					"system_ok": {
+						"type": [
+							"boolean",
+							"null"
+						],
+						"description": "Resolves through the system resolver incl. /etc/hosts (null: IP literal)",
+						"example": true
+					},
+					"ms": {
+						"type": [
+							"number",
+							"null"
+						],
+						"description": "TCP connect time in milliseconds",
+						"example": 1.2
+					},
+					"location_index": {
+						"type": [
+							"integer",
+							"null"
+						],
+						"description": "Index of the custom location this target belongs to, null for the main target",
+						"example": null
+					},
+					"path": {
+						"type": [
+							"string",
+							"null"
+						],
+						"description": "Path of that custom location",
+						"example": null
+					}
+				}
+			}
+		},
+		"warnings": {
+			"type": "array",
+			"description": "Things a save would do besides saving this host",
+			"example": [
+				{
+					"code": "certificate_pending",
+					"message": "A new certificate is requested when you save."
+				}
+			],
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"required": [
+					"code",
+					"message"
+				],
+				"properties": {
+					"code": {
+						"type": "string",
+						"enum": [
+							"certificate_pending",
+							"other_host_broken",
+							"upstreams_rate_limited"
+						],
+						"example": "other_host_broken"
+					},
+					"message": {
+						"type": "string",
+						"example": "Nginx rejects the current configuration of Proxy host #4: unknown directive \"proxy_passs\". Saving would repair or disable it."
+					},
+					"host_type": {
+						"type": [
+							"string",
+							"null"
+						],
+						"example": "proxy_host"
+					},
+					"host_id": {
+						"type": [
+							"integer",
+							"null"
+						],
+						"example": 4
+					}
+				}
+			}
+		}
+	}
+}
