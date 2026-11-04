@@ -127,13 +127,17 @@ export interface Certificate {
 }
 
 export interface ProxyLocation {
+	id?: number | null;
 	path: string;
 	advancedConfig: string;
 	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
+	forwardPath?: string;
 	accessListId?: number;
 	accessList?: AccessList;
+	// Missing means enabled
+	enabled?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -141,7 +145,7 @@ export interface ProxyLocation {
 // stripped by the backend from anything the client sends back).
 // ---------------------------------------------------------------------------
 
-export type NginxConfigErrorScope = "host" | "other_host" | "global";
+export type NginxConfigErrorScope = "location" | "host" | "other_host" | "global";
 
 export interface NginxConfigErrorDetails {
 	// unsafe_value: a stored value that can't be written into nginx config safely (host meta only)
@@ -151,6 +155,8 @@ export interface NginxConfigErrorDetails {
 	hostId?: number | null;
 	file?: string | null;
 	line?: number | null;
+	locationIndex?: number | null;
+	locationPath?: string | null;
 	nginxOutput?: string | null;
 	hint?: string | null;
 	// What the UI words the error from (the message is English). Missing in details stored by older versions.
@@ -175,12 +181,24 @@ export interface NginxConfigErrorDetails {
 	previousConfigRunning?: boolean;
 }
 
+export type LocationStatusValue = "ok" | "disabled" | "quarantined" | "unresolved";
+
+export interface NginxLocationStatus {
+	index: number;
+	path: string;
+	status: LocationStatusValue;
+	mode: "dynamic" | "static" | null;
+	message: string | null;
+}
+
 export interface HostMeta {
 	// false only when the host's config is not active in nginx
 	nginxOnline?: boolean;
 	nginxErr?: string | null;
 	nginxDetails?: NginxConfigErrorDetails | null;
 	nginxCheckedAt?: string;
+	// proxy hosts only, one entry per location, same order
+	nginxLocations?: NginxLocationStatus[];
 	// Other, client-owned meta (letsencrypt, dns challenge, ...)
 	[key: string]: any;
 }

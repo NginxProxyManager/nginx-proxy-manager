@@ -14,6 +14,7 @@ export * from "./SiteContainer";
 export * from "./SiteFooter";
 export * from "./SiteHeader";
 export * from "./SiteMenu";
+export * from "./StatusBadges";
 export * from "./Table";
 export * from "./ThemeSwitcher";
 export * from "./Unhealthy";

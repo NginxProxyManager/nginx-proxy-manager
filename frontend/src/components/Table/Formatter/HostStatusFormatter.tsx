@@ -12,12 +12,14 @@ import { HostNginxError } from "../../NginxFeedback";
 const STATE_COLOR: Record<HostState, string> = {
 	disabled: "secondary",
 	online: "lime",
+	warning: "yellow",
 	error: "red",
 };
 
 const STATE_LABEL: Record<HostState, string> = {
 	disabled: "disabled",
 	online: "online",
+	warning: "host-status.warning",
 	error: "host-status.error",
 };
 
@@ -35,7 +37,7 @@ export function HostStatusFormatter({ enabled, meta, onLogs }: Props) {
 	const [show, setShow] = useState(false);
 	const hideTimer = useRef<number | null>(null);
 	const status = getHostStatus(enabled, meta);
-	const hasDetails = status.state === "error";
+	const hasDetails = status.state === "error" || status.state === "warning";
 
 	useEffect(
 		() => () => {
@@ -104,6 +106,21 @@ export function HostStatusFormatter({ enabled, meta, onLogs }: Props) {
 							/>
 						</li>
 					) : null}
+					{status.problemLocations.map((l) => (
+						<li key={`loc-${l.index}`} className="mb-2">
+							<div>
+								<code>{l.path}</code>{" "}
+								<span
+									className={cn("badge", l.status === "quarantined" ? "bg-red-lt" : "bg-yellow-lt")}
+								>
+									<T id={`location-status.${l.status}`} />
+								</span>
+							</div>
+							<div className="text-secondary text-break">
+								{l.message || <T id={`location-status.${l.status}.default`} />}
+							</div>
+						</li>
+					))}
 				</ul>
 				{meta?.nginxCheckedAt ? (
 					<div className="text-secondary small mt-1">

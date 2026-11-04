@@ -48,7 +48,7 @@ function buildBody(data?: Record<string, any>): string | undefined {
 
 /**
  * Structured detail the backend attaches to some public errors, such as a
- * NginxConfigError. Keys arrive camelized (`host_id` -> `hostId`).
+ * NginxConfigError. Keys arrive camelized (`location_index` -> `locationIndex`).
  */
 export type ApiErrorDetails = Record<string, any>;
 
