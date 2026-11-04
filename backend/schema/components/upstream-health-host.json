@@ -1,0 +1,75 @@
+{
+	"type": "object",
+	"description": "Health of one host's upstream targets",
+	"additionalProperties": false,
+	"required": ["checked_at", "ok", "targets"],
+	"properties": {
+		"checked_at": {
+			"type": "string",
+			"example": "2026-11-04T10:00:00.000Z",
+			"format": "date-time"
+		},
+		"ok": {
+			"type": "boolean",
+			"description": "True when every target is reachable",
+			"example": true
+		},
+		"targets": {
+			"type": "array",
+			"example": [
+				{
+					"location_index": null,
+					"host": "app",
+					"port": 80,
+					"ok": true,
+					"code": "ok",
+					"message": "app:80 is reachable (2 ms).",
+					"ms": 2
+				}
+			],
+			"items": {
+				"type": "object",
+				"additionalProperties": false,
+				"required": ["location_index", "host", "port", "ok", "code", "message", "ms"],
+				"properties": {
+					"location_index": {
+						"type": ["integer", "null"],
+						"minimum": 0,
+						"description": "Index into the proxy host's locations, null for the main target",
+						"example": 0
+					},
+					"path": {
+						"type": "string",
+						"description": "Location path (custom locations only)",
+						"example": "/api"
+					},
+					"host": {
+						"type": "string",
+						"example": "app"
+					},
+					"port": {
+						"type": "integer",
+						"example": 80
+					},
+					"ok": {
+						"type": "boolean",
+						"example": true
+					},
+					"code": {
+						"type": "string",
+						"description": "Same codes as POST /upstreams/check",
+						"example": "ok"
+					},
+					"message": {
+						"type": "string",
+						"example": "app:80 is reachable (2 ms)."
+					},
+					"ms": {
+						"type": ["number", "null"],
+						"example": 2
+					}
+				}
+			}
+		}
+	}
+}

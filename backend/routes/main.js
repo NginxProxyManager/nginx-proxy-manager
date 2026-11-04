@@ -17,6 +17,7 @@ import reportsRoutes from "./reports.js";
 import schemaRoutes from "./schema.js";
 import settingsRoutes from "./settings.js";
 import tokensRoutes from "./tokens.js";
+import upstreamsRoutes from "./upstreams.js";
 import usersRoutes from "./users.js";
 import versionRoutes from "./version.js";
 
@@ -61,6 +62,7 @@ router.use("/nginx/dead-hosts", deadHostsRoutes);
 router.use("/nginx/streams", streamsRoutes);
 router.use("/nginx/access-lists", accessListsRoutes);
 router.use("/nginx/certificates", certificatesHostsRoutes);
+router.use("/upstreams", upstreamsRoutes);
 
 // Only include CI routes if we're in a CI environment
 if (isCI()) {
