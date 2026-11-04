@@ -16,10 +16,10 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@tabler/core": "^1.5.1",
-		"@tabler/icons-react": "^3.46.0",
-		"@tanstack/react-query": "^5.102.8",
-		"@tanstack/react-table": "^9.2.4",
+		"@tabler/core": "^1.7.3",
+		"@tabler/icons-react": "^3.50.0",
+		"@tanstack/react-query": "^5.105.0",
+		"@tanstack/react-table": "^9.3.1",
 		"@uiw/react-textarea-code-editor": "^3.1.1",
 		"classnames": "^2.5.1",
 		"country-flag-icons": "^1.6.20",
@@ -37,7 +37,7 @@
 		"react-qr-code": "^2.2.0",
 		"react-router-dom": "^7.18.4",
 		"react-select": "^5.10.2",
-		"react-toastify": "^11.1.0",
+		"react-toastify": "^11.2.0",
 		"rooks": "^9.9.0"
 	},
 	"devDependencies": {
