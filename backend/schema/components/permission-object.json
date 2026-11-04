@@ -1,6 +1,7 @@
 {
 	"type": "object",
 	"minProperties": 1,
+	"additionalProperties": false,
 	"properties": {
 		"visibility": {
 			"type": "string",
