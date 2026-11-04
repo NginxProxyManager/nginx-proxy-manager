@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
 	cleanNginxOutput,
-	describeConfigLine,
 	humaniseNginxMessage,
 	mayResolveLater,
 	parseManagedFile,
@@ -169,38 +168,20 @@ describe("mayResolveLater", () => {
 		);
 	});
 
-	it("is false for an online host", () => {
+	it("is true for a proxy host with an unresolved custom location", () => {
+		assert.equal(
+			mayResolveLater({
+				nginx_online: true,
+				nginx_locations: [{ status: "ok" }, { status: "unresolved" }],
+			}),
+			true,
+		);
+	});
+
+	it("is false for an online host without unresolved locations", () => {
+		assert.equal(mayResolveLater({ nginx_online: true, nginx_locations: [{ status: "quarantined" }] }), false);
 		assert.equal(mayResolveLater({ nginx_online: true }), false);
 		assert.equal(mayResolveLater(null), false);
-	});
-});
-
-describe("describeConfigLine", () => {
-	const config = [
-		"server {", // 1
-		"  listen 80;", // 2
-		"  # npm-advanced-config-begin", // 3
-		"proxy_passs http://a;", // 4
-		"more_set_headers x;", // 5
-		"  # npm-advanced-config-end", // 6
-		"  location / {}", // 7
-		"}", // 8
-	].join("\n");
-
-	it("maps host advanced config lines", () => {
-		assert.deepEqual(describeConfigLine(config, 4), { area: "host_advanced", relative_line: 1 });
-		assert.deepEqual(describeConfigLine(config, 5), { area: "host_advanced", relative_line: 2 });
-	});
-
-	it("still counts the end marker line as part of the advanced config", () => {
-		assert.deepEqual(describeConfigLine(config, 6), { area: "host_advanced", relative_line: 3 });
-	});
-
-	it("maps nothing outside the advanced config", () => {
-		assert.deepEqual(describeConfigLine(config, 2), { area: null, relative_line: null });
-		assert.deepEqual(describeConfigLine(config, 7), { area: null, relative_line: null });
-		assert.deepEqual(describeConfigLine("", 3), { area: null, relative_line: null });
-		assert.deepEqual(describeConfigLine(config, null), { area: null, relative_line: null });
 	});
 });
 

@@ -92,6 +92,32 @@
 				"nginx_checked_at": {
 					"type": "string",
 					"description": "Server-owned. ISO timestamp of the last nginx configuration"
+				},
+				"nginx_locations": {
+					"type": "array",
+					"description": "Server-owned. One entry per custom location, in the same order as locations",
+					"items": {
+						"type": "object",
+						"properties": {
+							"index": {
+								"type": "integer"
+							},
+							"path": {
+								"type": "string"
+							},
+							"status": {
+								"type": "string",
+								"enum": ["ok", "disabled", "quarantined", "unresolved"]
+							},
+							"mode": {
+								"type": ["string", "null"],
+								"enum": ["dynamic", "static", null]
+							},
+							"message": {
+								"type": ["string", "null"]
+							}
+						}
+					}
 				}
 			},
 			"example": {
@@ -149,6 +175,11 @@
 					},
 					"access_list_id": {
 						"$ref": "../common.json#/properties/access_list_id"
+					},
+					"enabled": {
+						"type": "boolean",
+						"description": "When false the location is kept but not rendered. Missing means true",
+						"example": true
 					}
 				}
 			},

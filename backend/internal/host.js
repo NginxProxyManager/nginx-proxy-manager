@@ -2,6 +2,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import { findForbiddenFileDirective } from "../lib/nginx-advanced.js";
+import { findDuplicatePath, matchSavedLocations } from "../lib/nginx-locations.js";
 import { global as logger } from "../logger.js";
 import deadHostModel from "../models/dead_host.js";
 import proxyHostModel from "../models/proxy_host.js";
@@ -78,7 +79,9 @@ const internalHost = {
 	 */
 	assertLocationAdvancedConfigUnchanged: (locations, existingLocations) => {
 		const existing = Array.isArray(existingLocations) ? existingLocations : [];
-		const advAtPath = (path) => existing.find((l) => l.path === path)?.advanced_config || "";
+		// The saved location at the same (trimmed) path; the n-th of a repeated (regex) path is the n-th saved one
+		const savedAtPath = matchSavedLocations(locations, existing);
+		const advAtPath = (i) => savedAtPath[i]?.advanced_config || "";
 		const pool = existing.map((l) => l.advanced_config || "").filter(Boolean);
 		const take = (value) => {
 			const i = pool.indexOf(value);
@@ -95,10 +98,10 @@ const internalHost = {
 		// Pass 1: locations that keep the config at their own path
 		const unresolved = [];
 		const omitted = [];
-		for (const loc of locations) {
-			const atPath = advAtPath(loc.path);
+		for (const [i, loc] of locations.entries()) {
+			const atPath = advAtPath(i);
 			if (typeof loc.advanced_config === "undefined") {
-				omitted.push(loc);
+				omitted.push(i);
 			} else if ((loc.advanced_config || "") === atPath && (!atPath || take(atPath))) {
 				// unchanged
 			} else {
@@ -117,9 +120,9 @@ const internalHost = {
 		// Pass 3: locations that omit advanced_config keep the one at their path, if no location
 		// that names it explicitly has claimed it. Running this last stops a new location at an
 		// old path taking the config away from the location it was renamed to.
-		for (const loc of omitted) {
-			const atPath = advAtPath(loc.path);
-			loc.advanced_config = atPath && take(atPath) ? atPath : "";
+		for (const i of omitted) {
+			const atPath = advAtPath(i);
+			locations[i].advanced_config = atPath && take(atPath) ? atPath : "";
 		}
 	},
 
@@ -185,7 +188,8 @@ const internalHost = {
 	/**
 	 * Input hygiene for incoming create/update data of all host types:
 	 * - strips the server-owned meta keys (the UI sends meta back on save)
-	 * - trims upstream host names
+	 * - trims upstream host names and location paths
+	 * - rejects duplicate custom location paths
 	 *
 	 * @param   {Object} data
 	 * @returns {Object} data, modified in place
@@ -200,6 +204,27 @@ const internalHost = {
 		for (const field of ["forward_host", "forwarding_host", "forward_domain_name"]) {
 			if (typeof data[field] === "string") {
 				data[field] = data[field].trim();
+			}
+		}
+
+		if (Array.isArray(data.locations)) {
+			data.locations = data.locations.map((location) => {
+				if (!location || typeof location !== "object") {
+					return location;
+				}
+				const loc = Object.assign({}, location);
+				if (typeof loc.forward_host === "string") {
+					loc.forward_host = loc.forward_host.trim();
+				}
+				if (typeof loc.path === "string") {
+					loc.path = loc.path.trim();
+				}
+				return loc;
+			});
+
+			const duplicate = findDuplicatePath(data.locations);
+			if (duplicate) {
+				throw new errs.ValidationError(`The custom location path "${duplicate}" is used more than once`);
 			}
 		}
 

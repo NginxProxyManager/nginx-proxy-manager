@@ -28,7 +28,7 @@
 				},
 				"scope": {
 					"type": "string",
-					"enum": ["host", "other_host", "global"],
+					"enum": ["location", "host", "other_host", "global"],
 					"example": "host"
 				},
 				"host_type": {
@@ -46,6 +46,14 @@
 				"line": {
 					"type": ["integer", "null"],
 					"example": 31
+				},
+				"location_index": {
+					"type": ["integer", "null"],
+					"example": null
+				},
+				"location_path": {
+					"type": ["string", "null"],
+					"example": null
 				},
 				"nginx_output": {
 					"type": ["string", "null"],

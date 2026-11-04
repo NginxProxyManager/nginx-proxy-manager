@@ -200,7 +200,7 @@ describe("buildOfflineMeta", () => {
 			].join("\n"),
 		});
 		for (const prefix of ["", "Disabled automatically: "]) {
-			const meta = internalNginx.buildOfflineMeta({ letsencrypt_agree: false }, err, prefix);
+			const meta = internalNginx.buildOfflineMeta({ letsencrypt_agree: false }, err, null, prefix);
 			assert.equal(meta.nginx_online, false);
 			assert.equal(meta.nginx_details.nginx_output, 'nginx: [emerg] unknown directive "bogus" in /data/nginx/proxy_host/3.conf:3');
 			assert.equal(meta.nginx_details.file, "/data/nginx/proxy_host/3.conf");

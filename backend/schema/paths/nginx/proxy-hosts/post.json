@@ -164,6 +164,8 @@
 										"host_id": 12,
 										"file": "/data/nginx/proxy_host/12.conf",
 										"line": 31,
+										"location_index": null,
+										"location_path": null,
 										"nginx_output": "nginx: [emerg] unknown directive \"proxy_passs\" in /data/nginx/proxy_host/12.conf:31",
 										"hint": "Check the spelling of the directive. If it comes from an nginx module, that module may not be available."
 									}
