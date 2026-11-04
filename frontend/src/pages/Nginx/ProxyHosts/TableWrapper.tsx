@@ -4,7 +4,7 @@ import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
-import { useProxyHosts, useUser } from "src/hooks";
+import { useProxyHosts, useUpstreamHealth, useUser } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showHostLogsModal, showProxyHostModal } from "src/modals";
 import { formatApiError } from "src/modules/HostStatus";
@@ -16,6 +16,7 @@ export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
 	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
+	const { data: health } = useUpstreamHealth();
 	const { data: currentUser } = useUser("me");
 	const canManage = hasPermission(PROXY_HOSTS, MANAGE, currentUser?.permissions, currentUser?.roles);
 
@@ -115,6 +116,7 @@ export default function TableWrapper() {
 					onEdit={(id: number) => showProxyHostModal(id)}
 					onLogs={(id: number) => showHostLogsModal(id)}
 					onErrorLogs={canManage ? (id: number) => showHostLogsModal(id, "error") : undefined}
+					health={health?.hosts?.proxyHost}
 					onDelete={(id: number) => {
 						const host = data?.find((h) => h.id === id);
 						showDeleteConfirmModal({

@@ -11,6 +11,7 @@ import {
 	Button,
 	cleanLocations,
 	DomainNamesField,
+	ForwardHostCheckHint,
 	HasPermission,
 	keepSavedAdvancedConfig,
 	Loading,
@@ -20,6 +21,8 @@ import {
 	SaveWarning,
 	SSLCertificateField,
 	SSLOptionsFields,
+	UpstreamField,
+	usePrefillGuard,
 } from "src/components";
 import { FormModal } from "src/components/Form";
 import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
@@ -82,6 +85,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	// Id of a host created by this modal, so that saving again updates it
 	const [savedId, setSavedId] = useState<number | null>(null);
 	const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
+	const guardPrefill = usePrefillGuard();
 
 	const isAdmin = currentUser?.roles?.includes("admin");
 	// Only admins may change the advanced config, the others don't get its tab
@@ -331,13 +335,49 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	>
 																		<T id="proxy-host.forward-host" />
 																	</label>
-																	<input
+																	<UpstreamField
 																		id="forwardHost"
-																		type="text"
-																		className={`form-control ${form.errors.forwardHost && form.touched.forwardHost ? "is-invalid" : ""}`}
-																		required
+																		value={field.value || ""}
 																		placeholder="example.com"
-																		{...field}
+																		isInvalid={
+																			!!(
+																				form.errors.forwardHost &&
+																				form.touched.forwardHost
+																			)
+																		}
+																		onChange={(v) =>
+																			form.setFieldValue("forwardHost", v)
+																		}
+																		onBlur={() =>
+																			form.setFieldTouched("forwardHost", true)
+																		}
+																		onSelectCandidate={(picked) => {
+																			const prefill = guardPrefill(
+																				picked,
+																				{
+																					port: form.values.forwardPort,
+																					scheme: form.values.forwardScheme,
+																				},
+																				{
+																					port: form.initialValues
+																						.forwardPort,
+																					scheme: form.initialValues
+																						.forwardScheme,
+																				},
+																			);
+																			if (prefill.port) {
+																				form.setFieldValue(
+																					"forwardPort",
+																					prefill.port,
+																				);
+																			}
+																			if (prefill.scheme) {
+																				form.setFieldValue(
+																					"forwardScheme",
+																					prefill.scheme,
+																				);
+																			}
+																		}}
 																	/>
 																	{form.errors.forwardHost ? (
 																		<div className="invalid-feedback">
@@ -347,6 +387,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																				: null}
 																		</div>
 																	) : null}
+																	<ForwardHostCheckHint />
 																</div>
 															)}
 														</Field>

@@ -21,5 +21,8 @@ export * from "./useSetting";
 export * from "./useStream";
 export * from "./useStreams";
 export * from "./useTheme";
+export * from "./useUpstreamCandidates";
+export * from "./useUpstreamCheck";
+export * from "./useUpstreamHealth";
 export * from "./useUser";
 export * from "./useUsers";

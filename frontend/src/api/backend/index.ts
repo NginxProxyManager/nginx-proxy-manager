@@ -1,4 +1,5 @@
 export { ApiError, type ApiErrorDetails, buildApiError, isApiError } from "./base";
+export * from "./checkUpstreams";
 export * from "./checkVersion";
 export * from "./createAccessList";
 export * from "./createCertificate";
@@ -39,6 +40,8 @@ export * from "./getSettings";
 export * from "./getStream";
 export * from "./getStreams";
 export * from "./getToken";
+export * from "./getUpstreamCandidates";
+export * from "./getUpstreamHealth";
 export * from "./getUser";
 export * from "./getUsers";
 export * from "./helpers";
