@@ -2,10 +2,88 @@
 outline: deep
 ---
 
-# Host Status and Nginx Errors
+# Custom Locations
 
-NPM checks every host config with nginx before it goes live. This page explains what happens when nginx rejects a
-host, what the host statuses in the UI mean, and how one broken host config is kept from stopping nginx at startup.
+A proxy host can send some paths to other upstreams with custom locations. This page explains how NPM keeps a
+broken or unreachable custom location from taking the whole host, or nginx, offline, and what the statuses in the
+UI mean.
+
+## How a location reaches its upstream
+
+nginx has to turn the upstream host name into an IP address. NPM renders each custom location in one of two ways:
+
+- **Dynamic** (the default): the host name goes into a variable and nginx looks it up through its
+  [resolver](/advanced-config/#disable-nginx-resolver) on each request, caching the answer for 10 seconds. If the container behind it
+  is stopped, removed or renamed, only that location answers `502 Bad Gateway` until the name resolves again. nginx
+  keeps running, and the location picks up a new container IP without a reload.
+- **Static**: the host name is written into the config as it is. nginx looks it up once, when the config is loaded.
+  Before this change every custom location worked this way, and one unresolvable name made nginx reject the whole
+  configuration.
+
+NPM picks the mode for each location every time it writes the host's config:
+
+| Upstream | Mode |
+| --- | --- |
+| IP address | static |
+| Name listed in `/etc/hosts`, for example from `extra_hosts` or `host.docker.internal` | static, because nginx's resolver doesn't read `/etc/hosts` |
+| Name that nginx's resolver knows | dynamic |
+| Name that only the system resolver knows, for example through a search domain in `/etc/resolv.conf` | static |
+| Name that doesn't resolve at all | dynamic, with status **unresolved** |
+| A single nginx variable, for example `$backend` with `set $backend app;` in the advanced configuration | static, written as it is: nginx already resolves it per request |
+| Location with a forward path whose advanced configuration reads `$uri` or `$document_uri` | static while the name resolves, see below |
+| `NPM_LOCATION_DYNAMIC_DNS=false`, or the resolver is disabled (`DISABLE_RESOLVER`) | static |
+
+Both modes forward requests the same way: the request path, forward path, query string and redirects from the
+upstream are handled exactly as before. The dynamic mode adds a `rewrite` and a `proxy_redirect` line to do this, and
+a `set $npm_loc_<n>_host` line, which runs before your advanced configuration.
+
+::: warning $uri with a forward path
+With a forward path, the dynamic mode replaces the location's path with the forward path through
+`rewrite ... break`, so `$uri` and `$document_uri` hold the **rewritten** path (`/x/hello` instead of `/u/hello` for
+location `/u/` with forward path `/x/`) in everything that runs after it: `proxy_set_header`, `add_header`,
+`try_files`, `proxy_cache_key`, log formats, and so on. `$request_uri` is not affected.
+
+To keep the old value, a location whose advanced configuration reads `$uri` or `$document_uri` is rendered static
+as long as its upstream name resolves. When the name doesn't resolve, the location has to be dynamic (a literal
+unknown name makes nginx reject the whole configuration), and `$uri` then holds the rewritten path. Variables read
+outside the location's advanced configuration, for example in the host's advanced configuration or a custom log
+format, are not detected: use `$request_uri` there, or set `NPM_LOCATION_DYNAMIC_DNS=false`.
+:::
+
+A forward host that is a single nginx variable, such as `$backend`, is written into the config exactly as before
+(`proxy_pass http://$backend:8080;`), without the extra lines. "Cache Assets" doesn't add the nested asset location
+for it, because a nested location doesn't run the `set $backend ...;` of its parent.
+
+To go back to the old literal rendering for every location:
+
+```yml
+    environment:
+      NPM_LOCATION_DYNAMIC_DNS: 'false'
+```
+
+::: tip
+With "Cache Assets" enabled, assets (`.css`, `.js`, images, fonts) under a custom location are now fetched from that
+location's own upstream. Before, they were fetched from the host's main upstream.
+:::
+
+## Location statuses
+
+After every save, NPM reports a status for each custom location. The UI shows it on the location, and the API returns
+it in `meta.nginx_locations` of the proxy host:
+
+| Status | Meaning | What nginx does |
+| --- | --- | --- |
+| `ok` | The location is active. | Proxies to the upstream. |
+| `unresolved` | The upstream name doesn't resolve right now, for example because the container is stopped. | Answers `502` for this location until the name resolves. The rest of the host works. |
+| `quarantined` | nginx rejected the location, or NPM knows it would. The message says why, for example an unknown directive in its advanced configuration, a forward path on a regular-expression location, or a forward path with spaces, quotes, `;`, `{`, `}`, `#` or `\` (nginx variables such as `$1` are fine). | Answers `503` for this path. If nginx rejects even that placeholder, for example because the path itself is invalid, the location is left out. |
+| `disabled` | You switched the location off. | The location isn't in the config. Requests fall through to the host's other locations. |
+
+Fix the cause and save the host again to bring a quarantined location back. An unresolved location comes back by
+itself once the upstream name resolves.
+
+Location paths that nginx itself rejects as duplicates are rejected when you save: the same exact path (`= /x`)
+twice, or the same prefix path twice (`/x` and `^~ /x` count as the same). Regular-expression (`~`, `~*`) and named
+(`@name`) locations may repeat; nginx uses the first one that matches.
 
 ## When nginx rejects a host
 
@@ -36,6 +114,8 @@ The API answers `400` with the details:
       "host_id": 12,
       "file": "/data/nginx/proxy_host/12.conf",
       "line": 31,
+      "location_index": null,
+      "location_path": null,
       "nginx_output": "nginx: [emerg] unknown directive \"proxy_passs\" in /data/nginx/proxy_host/12.conf:31",
       "hint": "Check the spelling of the directive. If it comes from an nginx module, that module may not be available."
     }
@@ -55,8 +135,8 @@ the same `listen ... default_server` as another host, which nginx reports at the
 of another host's file): the save fails with scope `host` and the other host is not touched. Only a host whose file
 fails on its own is repaired or taken out:
 
-- an enabled host is regenerated from the database first (without a reload). That fixes files written by older
-  versions and files that were changed behind NPM's back.
+- an enabled host is regenerated from the database first (without a reload, with its own custom locations
+  quarantined if needed). That fixes files written by older versions and files that were changed behind NPM's back.
 - only if the regenerated config still fails at host level (or the host is disabled), its file is moved to
   `<id>.conf.err` (which nginx ignores) and the host is shown as offline, with `nginx_err` starting with
   `Disabled automatically:`
@@ -124,6 +204,7 @@ requests and sets them when it writes the host's config:
 | `nginx_err` | Why the host is offline, otherwise `null` |
 | `nginx_details` | The structured details of the failure (same shape as `error.details` above), otherwise `null` |
 | `nginx_checked_at` | When the config was last written |
+| `nginx_locations` | Proxy hosts only: one entry per custom location, `{ index, path, status, mode, message }` |
 
 ## Startup
 
@@ -137,11 +218,13 @@ Three steps keep one broken host from stopping nginx, every site, and the admin 
    none helps alone, all of them are tried together and, if that helps, all are moved to `.err`). This never stops
    the container from starting. Files left as `<id>.conf.npm-aside` by an interrupted check are put back first (or
    deleted when the `.conf` exists).
-2. A few seconds after the backend is up, it regenerates host configs that are missing or were moved to `.err`. Then
-   it reloads nginx once. Hosts that still fail are shown as offline with the reason.
+2. A few seconds after the backend is up, it regenerates host configs that are missing, were moved to `.err`, or were
+   written by an older version (custom locations with the static form only). Then it reloads nginx once. Hosts that
+   still fail are shown as offline with the reason.
 3. Right after a host reboot, upstream containers may not be resolvable yet. Hosts that end offline because nginx
-   could not find an upstream host (`host not found in upstream`, typical for streams) are tried again after 30
-   seconds, 2 minutes and 5 minutes. A host that still fails after that stays offline until it is saved again.
+   could not find an upstream host (`host not found in upstream`, typical for streams), and proxy hosts with
+   unresolved custom locations, are tried again after 30 seconds, 2 minutes and 5 minutes. A host that still fails
+   after that stays offline until it is saved again.
 
 To skip the second step:
 
@@ -154,4 +237,6 @@ To skip the second step:
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `NPM_RECONCILE_ON_START` | `true` | Regenerate missing or broken host configs after the backend starts. |
+| `NPM_LOCATION_DYNAMIC_DNS` | `true` | Resolve custom location upstreams per request where possible. `false` renders every location with the literal host name. |
+| `NPM_RECONCILE_ON_START` | `true` | Regenerate missing, broken or outdated host configs after the backend starts. |
+| `DISABLE_RESOLVER` | unset | No nginx resolver is generated. Custom locations then always use the static form. |
