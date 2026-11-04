@@ -434,6 +434,15 @@
 	"expires.on": {
 		"defaultMessage": "Expires: {date}"
 	},
+	"folder": {
+		"defaultMessage": "Folder"
+	},
+	"folder.create": {
+		"defaultMessage": "Create folder \"{name}\""
+	},
+	"folder.placeholder": {
+		"defaultMessage": "No folder"
+	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},

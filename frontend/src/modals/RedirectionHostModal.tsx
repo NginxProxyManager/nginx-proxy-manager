@@ -8,6 +8,7 @@ import Modal from "react-bootstrap/Modal";
 import {
 	Button,
 	DomainNamesField,
+	FolderField,
 	Loading,
 	NginxConfigField,
 	SSLCertificateField,
@@ -256,6 +257,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 														</div>
 													)}
 												</Field>
+												<FolderField queryKey="redirection-hosts" />
 												<div className="my-3">
 													<h4 className="py-2">
 														<T id="options" />

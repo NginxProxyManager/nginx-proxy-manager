@@ -41,7 +41,8 @@ export default function TableWrapper() {
 		filtered = data?.filter((item) => {
 			return (
 				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
-				item.forwardDomainName.toLowerCase().includes(search)
+				item.forwardDomainName.toLowerCase().includes(search) ||
+				(item.meta?.folder ?? "").toLowerCase().includes(search)
 			);
 		});
 	} else if (search !== "") {

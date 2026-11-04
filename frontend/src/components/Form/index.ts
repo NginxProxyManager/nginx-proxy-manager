@@ -3,6 +3,7 @@ export * from "./AccessField";
 export * from "./BasicAuthFields";
 export * from "./DNSProviderFields";
 export * from "./DomainNamesField";
+export * from "./FolderField";
 export * from "./LocationsFields";
 export * from "./NginxConfigField";
 export * from "./SSLCertificateField";

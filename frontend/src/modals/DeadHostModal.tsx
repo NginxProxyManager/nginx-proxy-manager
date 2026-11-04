@@ -7,6 +7,7 @@ import Modal from "react-bootstrap/Modal";
 import {
 	Button,
 	DomainNamesField,
+	FolderField,
 	Loading,
 	NginxConfigField,
 	SSLCertificateField,
@@ -132,6 +133,7 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
+												<FolderField queryKey="dead-hosts" />
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField
