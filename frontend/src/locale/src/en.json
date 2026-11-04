@@ -437,6 +437,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
+	"form.unsaved-changes": {
+		"defaultMessage": "You have unsaved changes. Are you sure you want to discard them?"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
 	},

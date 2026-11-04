@@ -437,6 +437,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Tee GitHubis fork"
 	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Sul on salvestamata muudatusi. Kas oled kindel, et soovid need tühistada?"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
 	},
