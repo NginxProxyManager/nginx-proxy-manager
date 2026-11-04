@@ -49,7 +49,13 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 				},
 				cell: (info: any) => {
 					const value = info.getValue();
-					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
+					return (
+						<DomainsFormatter
+							domains={value.domainNames}
+							createdOn={value.createdOn}
+							linkScheme={value.certificateId > 0 ? "https" : "http"}
+						/>
+					);
 				},
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {

@@ -20,4 +20,5 @@ fi
 . /etc/s6-overlay/s6-rc.d/prepare/45-admin-port.sh
 . /etc/s6-overlay/s6-rc.d/prepare/50-ipv6.sh
 . /etc/s6-overlay/s6-rc.d/prepare/60-secrets.sh
+. /etc/s6-overlay/s6-rc.d/prepare/70-public-ports.sh
 . /etc/s6-overlay/s6-rc.d/prepare/90-banner.sh

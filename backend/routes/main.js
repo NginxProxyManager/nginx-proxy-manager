@@ -2,6 +2,7 @@ import express from "express";
 import { isCI } from "../lib/config.js";
 import errs from "../lib/error.js";
 import logRequest from "../lib/express/log-request.js";
+import { getPublicPorts } from "../lib/public-ports.js";
 import pjson from "../package.json" with { type: "json" };
 import { isSetup } from "../setup.js";
 import auditLogRoutes from "./audit-log.js";
@@ -39,6 +40,7 @@ router.get("/", async (_, res /*, next*/) => {
 	res.status(200).send({
 		status: "OK",
 		setup,
+		public_ports: getPublicPorts(),
 		version: {
 			major: Number.parseInt(version.shift(), 10),
 			minor: Number.parseInt(version.shift(), 10),
