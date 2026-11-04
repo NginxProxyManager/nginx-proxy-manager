@@ -470,6 +470,36 @@
 	"host-status.warning": {
 		"defaultMessage": "Warnung"
 	},
+	"host-test.failed": {
+		"defaultMessage": "Der Test konnte nicht ausgeführt werden"
+	},
+	"host-test.main-target": {
+		"defaultMessage": "Weiterleitungs-Host"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "Das war ein Test, es wurde nichts gespeichert."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Konfiguration OK"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Konfiguration OK, mit Warnungen"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, one {Nginx würde # benutzerdefinierten Pfad deaktivieren} other {Nginx würde # benutzerdefinierte Pfade deaktivieren}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Nicht geprüft: zu viele Prüfungen in der letzten Minute"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Erreichbarkeit"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx würde diese Konfiguration ablehnen"
+	},
+	"host-test.stale": {
+		"defaultMessage": "Das Formular wurde nach diesem Test geändert. Teste erneut, um die Änderungen zu prüfen."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Gängige Exploits blockieren"
 	},

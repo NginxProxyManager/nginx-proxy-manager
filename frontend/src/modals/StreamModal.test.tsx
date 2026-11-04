@@ -23,16 +23,30 @@ const stream = {
 const fetchMock = vi.fn<typeof fetch>();
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
 let putBodies: any[] = [];
+let testBodies: any[] = [];
 
 beforeEach(() => {
 	localStorage.clear();
 	putBodies = [];
+	testBodies = [];
 	fetchMock.mockImplementation(async (input, init) => {
 		const url = String(input);
 		if (init?.method === "PUT" && url.startsWith("/api/nginx/streams/1")) {
 			putBodies.push(JSON.parse(String(init.body)));
 			// saved, but nginx could not load the host
 			return json({ ...stream, meta: { nginx_online: false, nginx_err: "bind() failed" } });
+		}
+		if (init?.method === "POST" && url.startsWith("/api/nginx/streams/test")) {
+			testBodies.push(JSON.parse(String(init.body)));
+			return json({
+				ok: true,
+				nginx_online: true,
+				nginx_err: null,
+				nginx_details: null,
+				nginx_locations: [],
+				upstreams: [],
+				warnings: [],
+			});
 		}
 		if (url.startsWith("/api/nginx/streams/1")) {
 			return json(stream);
@@ -98,5 +112,34 @@ describe("StreamModal save with warnings", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
 		expect(window.confirm).toHaveBeenCalledTimes(2);
 		expect(screen.getByTestId("save-warning")).toBeInTheDocument();
+	});
+});
+
+describe("StreamModal Test button", () => {
+	it("tests the edited values without saving, the edit stays unsaved", async () => {
+		render(
+			<QueryClientProvider client={new QueryClient()}>
+				<LocaleProvider>
+					<EasyModal.Provider />
+				</LocaleProvider>
+			</QueryClientProvider>,
+		);
+		await act(async () => {
+			showStreamModal(1);
+		});
+		fireEvent.change(await screen.findByLabelText("Incoming Port"), { target: { value: "8081" } });
+
+		fireEvent.click(screen.getByRole("button", { name: "Test" }));
+
+		await screen.findByText("Configuration OK");
+		expect(testBodies).toHaveLength(1);
+		expect(testBodies[0]).toMatchObject({ id: 1, incoming_port: 8081 });
+		expect(putBodies).toHaveLength(0);
+		expect(screen.getByLabelText("Incoming Port")).toHaveValue(8081);
+
+		// a test is not a save: closing still asks about the edit
+		fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+		expect(window.confirm).toHaveBeenCalledOnce();
+		expect(screen.getByText("Configuration OK")).toBeInTheDocument();
 	});
 });

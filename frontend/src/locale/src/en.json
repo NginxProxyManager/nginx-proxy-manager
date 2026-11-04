@@ -470,6 +470,36 @@
 	"host-status.warning": {
 		"defaultMessage": "Warning"
 	},
+	"host-test.failed": {
+		"defaultMessage": "The test could not be run"
+	},
+	"host-test.main-target": {
+		"defaultMessage": "Forward host"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "This was a test, nothing was saved."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Configuration OK"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Configuration OK, with warnings"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, one {Nginx would disable # custom location} other {Nginx would disable # custom locations}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Not checked: too many checks in the last minute"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Reachability"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx would reject this configuration"
+	},
+	"host-test.stale": {
+		"defaultMessage": "The form was changed after this test. Test again to check the changes."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
 	},

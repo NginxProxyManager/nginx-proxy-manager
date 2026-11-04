@@ -13,6 +13,7 @@ import {
 	DomainNamesField,
 	ForwardHostCheckHint,
 	HasPermission,
+	HostConfigTestResult,
 	Loading,
 	LocationsFields,
 	NginxConfigField,
@@ -20,17 +21,19 @@ import {
 	SaveWarning,
 	SSLCertificateField,
 	SSLOptionsFields,
+	TestConfigButton,
 	UpstreamField,
 	usePrefillGuard,
 } from "src/components";
 import { FormModal } from "src/components/Form";
-import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
+import { useHostConfigTest, useProxyHost, useSetProxyHost, useUser } from "src/hooks";
 import { intl, T } from "src/locale";
 import {
 	formatApiError,
 	getErrorLocationIndex,
 	getNginxErrorDetails,
 	getProblemLocations,
+	getTestLocationIndex,
 	hasSaveWarnings,
 	stripServerMeta,
 } from "src/modules/HostStatus";
@@ -46,6 +49,18 @@ const TAB_ORDER: TabId[] = ["details", "locations", "ssl", "advanced"];
 // Fields on the Details tab, to show it when one of them is invalid
 const DETAILS_FIELDS = ["domainNames", "forwardScheme", "forwardHost", "forwardPort", "accessListId"];
 
+// The tab holding the first invalid field
+const tabForErrors = (errors: Record<string, unknown> | undefined): TabId | null => {
+	const keys = Object.keys(errors || {});
+	if (keys.some((k) => DETAILS_FIELDS.includes(k))) {
+		return "details";
+	}
+	if (keys.includes("locations")) {
+		return "locations";
+	}
+	return null;
+};
+
 // Switches to the tab holding the first invalid field after a submit was
 // blocked by validation, which would otherwise look like nothing happened.
 function TabErrorSwitcher({ onTab }: { onTab: (tab: TabId) => void }) {
@@ -53,11 +68,9 @@ function TabErrorSwitcher({ onTab }: { onTab: (tab: TabId) => void }) {
 	const wasSubmitting = useRef(false);
 	useEffect(() => {
 		if (wasSubmitting.current && !isSubmitting) {
-			const keys = Object.keys(errors || {});
-			if (keys.some((k) => DETAILS_FIELDS.includes(k))) {
-				onTab("details");
-			} else if (keys.includes("locations")) {
-				onTab("locations");
+			const tab = tabForErrors(errors);
+			if (tab) {
+				onTab(tab);
 			}
 		}
 		wasSubmitting.current = isSubmitting;
@@ -85,6 +98,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [savedId, setSavedId] = useState<number | null>(null);
 	const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
 	const guardPrefill = usePrefillGuard();
+	const configTest = useHostConfigTest("proxy-hosts");
 
 	const isAdmin = currentUser?.roles?.includes("admin");
 	// Only admins may change the advanced config, the others don't get its tab
@@ -138,14 +152,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	});
 	const tabPane = (tab: TabId) => cn("tab-pane", { "active show": activeTab === tab });
 
-	const onSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
-		if (isSubmitting) return;
-		setIsSubmitting(true);
-		setErrorMsg(null);
-		setSavedMeta(null);
-		setHighlightIndex(null);
-
-		const { ...payload } = {
+	// What a save sends, also what "Test" checks
+	const buildPayload = (values: any) => {
+		const payload = {
 			id: savedId ?? (id === "new" ? undefined : id),
 			...values,
 			// rows that were added but never filled in
@@ -153,7 +162,6 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			// server-owned status keys are never sent back
 			meta: stripServerMeta(values.meta),
 		};
-
 		if (!isAdmin) {
 			delete payload.advanced_config;
 			delete payload.advancedConfig;
@@ -162,6 +170,34 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			// when the path is renamed; the backend matches them by value. Looking them up by
 			// path here would silently drop the config from a renamed location.
 		}
+		return payload;
+	};
+
+	const onTest = async (form: any) => {
+		setErrorMsg(null);
+		setHighlightIndex(null);
+		const result = await configTest.runTest(form, buildPayload(form.values), (errors) => {
+			const tab = tabForErrors(errors);
+			if (tab) {
+				setActiveTab(tab);
+			}
+		});
+		const index = getTestLocationIndex(result);
+		if (index !== null) {
+			setActiveTab("locations");
+			setHighlightIndex(index);
+		}
+	};
+
+	const onSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
+		setErrorMsg(null);
+		setSavedMeta(null);
+		setHighlightIndex(null);
+		configTest.reset();
+
+		const payload = buildPayload(values);
 
 		setProxyHost(payload, {
 			onError: (err: unknown) => {
@@ -244,7 +280,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{({ onHide }) => (
+					{({ onHide, ...form }) => (
 						<Form>
 							<TabErrorSwitcher onTab={showTab} />
 							<Modal.Header closeButton>
@@ -260,6 +296,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
 								</Alert>
+								<HostConfigTestResult
+									result={configTest.result}
+									error={configTest.error}
+									testedKey={configTest.testedKey}
+									onClose={configTest.reset}
+								/>
 								<div className="card m-0 border-0">
 									<div className="card-header">
 										<div className="nav nav-tabs card-header-tabs" role="tablist">
@@ -513,7 +555,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											<div className={tabPane("locations")} id="tab-locations" role="tabpanel" aria-labelledby="tab-link-locations">
 												<LocationsFields
 													initialValues={data?.locations || []}
-													statuses={(savedMeta ?? data?.meta)?.nginxLocations}
+													statuses={
+														configTest.result?.nginxLocations ??
+														(savedMeta ?? data?.meta)?.nginxLocations
+													}
 													highlightIndex={highlightIndex}
 													allowAdvanced={!!isAdmin}
 													readOnly={isSubmitting}
@@ -546,10 +591,15 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 									<T id="cancel" />
 								</Button>
 								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
+									<TestConfigButton
+										onClick={() => onTest(form)}
+										isTesting={configTest.isTesting}
+										disabled={isSubmitting}
+									/>
 									<Button
 										type="submit"
 										actionType="primary"
-										className="ms-auto bg-lime"
+										className="bg-lime"
 										data-bs-dismiss="modal"
 										isLoading={isSubmitting}
 										disabled={isSubmitting}

@@ -8,15 +8,17 @@ import type { HostMeta } from "src/api/backend";
 import {
 	Button,
 	DomainNamesField,
+	HostConfigTestResult,
 	Loading,
 	NginxConfigField,
 	NginxErrorMessage,
 	SaveWarning,
 	SSLCertificateField,
 	SSLOptionsFields,
+	TestConfigButton,
 } from "src/components";
 import { FormModal } from "src/components/Form";
-import { useDeadHost, useSetDeadHost, useUser } from "src/hooks";
+import { useDeadHost, useHostConfigTest, useSetDeadHost, useUser } from "src/hooks";
 import { T } from "src/locale";
 import { formatApiError, getNginxErrorDetails, hasSaveWarnings, stripServerMeta } from "src/modules/HostStatus";
 import { showObjectSuccess } from "src/notifications";
@@ -38,26 +40,34 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [savedMeta, setSavedMeta] = useState<HostMeta | null>(null);
 	// Id of a host created by this modal, so that saving again updates it
 	const [savedId, setSavedId] = useState<number | null>(null);
+	const configTest = useHostConfigTest("dead-hosts");
 
 	const isAdmin = currentUser?.roles?.includes("admin");
+
+	// What a save sends, also what "Test" checks
+	const buildPayload = (values: any) => {
+		const payload = {
+			id: savedId ?? (id === "new" ? undefined : id),
+			...values,
+			// server-owned status keys are never sent back
+			meta: stripServerMeta(values.meta),
+		};
+		// Only admins may change the advanced config
+		if (!isAdmin) {
+			delete payload.advanced_config;
+			delete payload.advancedConfig;
+		}
+		return payload;
+	};
 
 	const onSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		setErrorMsg(null);
 		setSavedMeta(null);
+		configTest.reset();
 
-		const { ...payload } = {
-			id: savedId ?? (id === "new" ? undefined : id),
-			...values,
-			// server-owned status keys are never sent back
-			meta: stripServerMeta(values.meta),
-		};
-
-		if (!isAdmin) {
-			delete payload.advanced_config;
-			delete payload.advancedConfig;
-		}
+		const payload = buildPayload(values);
 
 		setDeadHost(payload, {
 			onError: (err: unknown) => {
@@ -121,7 +131,7 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{({ onHide }) => (
+					{({ onHide, ...form }) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -136,6 +146,12 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
 								</Alert>
+								<HostConfigTestResult
+									result={configTest.result}
+									error={configTest.error}
+									testedKey={configTest.testedKey}
+									onClose={configTest.reset}
+								/>
 								<div className="card m-0 border-0">
 									<div className="card-header">
 										<ul className="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
@@ -205,10 +221,18 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
+								<TestConfigButton
+									onClick={() => {
+										setErrorMsg(null);
+										configTest.runTest(form, buildPayload(form.values));
+									}}
+									isTesting={configTest.isTesting}
+									disabled={isSubmitting}
+								/>
 								<Button
 									type="submit"
 									actionType="primary"
-									className="ms-auto bg-red"
+									className="bg-red"
 									data-bs-dismiss="modal"
 									isLoading={isSubmitting}
 									disabled={isSubmitting}

@@ -470,6 +470,36 @@
 	"host-status.warning": {
 		"defaultMessage": "Cảnh báo"
 	},
+	"host-test.failed": {
+		"defaultMessage": "Không thể chạy kiểm tra"
+	},
+	"host-test.main-target": {
+		"defaultMessage": "Host chuyển tiếp"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "Đây chỉ là kiểm tra, không có gì được lưu."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Cấu hình hợp lệ"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Cấu hình hợp lệ, có cảnh báo"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, other {Nginx sẽ tắt # vị trí tùy chỉnh}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Chưa kiểm tra: quá nhiều lần kiểm tra trong một phút qua"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Khả năng kết nối"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx sẽ từ chối cấu hình này"
+	},
+	"host-test.stale": {
+		"defaultMessage": "Biểu mẫu đã thay đổi sau lần kiểm tra này. Hãy kiểm tra lại để xác nhận các thay đổi."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
 	},
