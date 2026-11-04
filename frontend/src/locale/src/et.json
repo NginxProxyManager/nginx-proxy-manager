@@ -455,8 +455,14 @@
 	"host-status.error": {
 		"defaultMessage": "Viga"
 	},
+	"host-status.main-target": {
+		"defaultMessage": "Peamine sihtkoht"
+	},
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx ei rakendanud selle hosti uusimat seadistust ja kasutab endiselt eelmist."
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: {target} pole kättesaadav"
 	},
 	"host-status.view-error-log": {
 		"defaultMessage": "Näita vealogi"
@@ -1054,6 +1060,81 @@
 	},
 	"update-available": {
 		"defaultMessage": "Uuendus saadaval: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Kontrollin…"
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Kontroll on välja lülitatud"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Hosti ei leitud"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "DNS-päring aegus"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Vigane hostinimi"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Kättesaadav"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Kättesaadav ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Lahendub ainult /etc/hosts või otsingudomeenide kaudu"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Ühendusest keelduti"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Ühendus aegus"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Host pole kättesaadav"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "nginxi muutuja"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Määratakse täpsemas seadistuses ja nginx lahendab selle iga päringu ajal, seega siin seda ei kontrollita."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "nginx lahendab selle iga päringu ajal, seega siin seda ei kontrollita. Sellel peab olema väärtus enne selle hosti täpsema seadistuse käivitumist, näiteks map-ist failis /data/nginx/custom/http.conf; set täpsemas seadistuses on liiga hilja."
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Dockeri tuvastus on väljas: määra NPM_DOCKER_DISCOVERY=true (vt dokumentatsiooni)."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "Võid sisestada ka mis tahes hostinime või IP-aadressi."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Võrgust leitud"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Dockeri konteinerid"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Varem kasutatud"
+	},
+	"upstream.loading": {
+		"defaultMessage": "Otsin sihtkohti…"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "Soovitusi pole, sisesta hostinimi või IP-aadress"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Pordid: {ports}"
+	},
+	"upstream.refresh": {
+		"defaultMessage": "Värskenda soovitusi"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "Kasuta „{value}“"
+	},
+	"upstream.used-by": {
+		"defaultMessage": "kasutab {count, plural, one {# host} other {# hosti}}"
 	},
 	"user": {
 		"defaultMessage": "Kasutaja"

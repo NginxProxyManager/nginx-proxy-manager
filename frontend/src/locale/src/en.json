@@ -455,8 +455,14 @@
 	"host-status.error": {
 		"defaultMessage": "Error"
 	},
+	"host-status.main-target": {
+		"defaultMessage": "Main destination"
+	},
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx did not apply this host's latest configuration and still runs its previous one."
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: {target} is not reachable"
 	},
 	"host-status.view-error-log": {
 		"defaultMessage": "View error log"
@@ -1054,6 +1060,81 @@
 	},
 	"update-available": {
 		"defaultMessage": "Update Available: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Checking…"
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Check disabled"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Host not found"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "DNS lookup timed out"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Invalid host name"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Reachable"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Reachable ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Resolves only via /etc/hosts or search domains"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Connection refused"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Connection timed out"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Host unreachable"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "nginx variable"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Set in the advanced configuration and resolved by nginx for each request, so it isn't checked here."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "Resolved by nginx for each request, so it isn't checked here. It needs a value before this host's advanced configuration runs, for example from a map in /data/nginx/custom/http.conf; a set in the advanced configuration comes too late."
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Docker discovery is off: set NPM_DOCKER_DISCOVERY=true (see docs)."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "You can also type any host name or IP address."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Discovered on network"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Docker containers"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Used before"
+	},
+	"upstream.loading": {
+		"defaultMessage": "Looking for upstreams…"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "No suggestions, type a host name or IP address"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Ports: {ports}"
+	},
+	"upstream.refresh": {
+		"defaultMessage": "Refresh suggestions"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "Use \"{value}\""
+	},
+	"upstream.used-by": {
+		"defaultMessage": "used by {count, plural, one {# host} other {# hosts}}"
 	},
 	"user": {
 		"defaultMessage": "User"

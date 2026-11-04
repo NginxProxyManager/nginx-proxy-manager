@@ -11,6 +11,8 @@ import {
 	SaveWarning,
 	SSLCertificateField,
 	SSLOptionsFields,
+	UpstreamField,
+	usePrefillGuard,
 } from "src/components";
 import { FormModal } from "src/components/Form";
 import { useSetStream, useStream } from "src/hooks";
@@ -31,6 +33,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { mutate: setStream } = useSetStream();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const guardPrefill = usePrefillGuard();
 	// Set when a save went through but nginx couldn't load the host
 	const [savedMeta, setSavedMeta] = useState<HostMeta | null>(null);
 	// Id of a host created by this modal, so that saving again updates it
@@ -195,15 +198,40 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	>
 																		<T id="stream.forward-host" />
 																	</label>
-																	<input
+																	<UpstreamField
 																		id="forwardingHost"
-																		type="text"
-																		className={`form-control ${form.errors.forwardingHost && form.touched.forwardingHost ? "is-invalid" : ""}`}
-																		required
+																		value={field.value || ""}
+																		isInvalid={
+																			!!(
+																				form.errors.forwardingHost &&
+																				form.touched.forwardingHost
+																			)
+																		}
 																		placeholder={intl.formatMessage({
 																			id: "stream.forward-host.placeholder",
 																		})}
-																		{...field}
+																		onChange={(v) =>
+																			form.setFieldValue("forwardingHost", v)
+																		}
+																		onBlur={() =>
+																			form.setFieldTouched("forwardingHost", true)
+																		}
+																		onSelectCandidate={(picked) => {
+																			const prefill = guardPrefill(
+																				picked,
+																				{ port: form.values.forwardingPort },
+																				{
+																					port: form.initialValues
+																						.forwardingPort,
+																				},
+																			);
+																			if (prefill.port) {
+																				form.setFieldValue(
+																					"forwardingPort",
+																					prefill.port,
+																				);
+																			}
+																		}}
 																	/>
 																	{form.errors.forwardingHost ? (
 																		<div className="invalid-feedback">

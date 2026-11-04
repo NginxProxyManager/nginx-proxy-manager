@@ -13,11 +13,13 @@ import cn from "classnames";
 import { useField, useFormikContext } from "formik";
 import { useEffect, useRef, useState } from "react";
 import type { NginxLocationStatus, ProxyLocation } from "src/api/backend";
+import { useUpstreamCheck } from "src/hooks";
 import { intl, T } from "src/locale";
-import { locationDuplicateKey, locationHostPart, normaliseLocationPath } from "src/modules/HostStatus";
-import { LocationStatusBadge, LocationStatusDetail } from "../StatusBadges";
+import { isVariableHost, locationDuplicateKey, locationHostPart, normaliseLocationPath } from "src/modules/HostStatus";
+import { LocationStatusBadge, LocationStatusDetail, UpstreamCheckBadge, VariableHostBadge } from "../StatusBadges";
 import { AccessField } from "./AccessField";
 import styles from "./LocationsFields.module.css";
+import { UpstreamField, usePrefillGuard } from "./UpstreamField";
 
 // Below this many locations the list is short enough to scan by eye, and the
 // filter would only take up space.
@@ -440,9 +442,24 @@ function LocationCard({
 }: CardProps) {
 	const item = row.value;
 	const isEnabled = item.enabled !== false;
+	// Port and scheme as they were when the row was loaded or added; a picked
+	// candidate only replaces them while the user hasn't changed them.
+	const [initial] = useState(() => ({ port: item.forwardPort, scheme: item.forwardScheme }));
+	const guardPrefill = usePrefillGuard();
 	const bodyId = `location-body-${row.id}`;
 
+	// Check reachability once the card has been opened, and keep showing the
+	// result in the header after it's collapsed again.
+	const [wasOpened, setWasOpened] = useState(isOpen);
+	useEffect(() => {
+		if (isOpen) setWasOpened(true);
+	}, [isOpen]);
 	const hostError = errorFor("forwardHost");
+	const check = useUpstreamCheck(
+		{ host: item.forwardHost, port: item.forwardPort, scheme: item.forwardScheme },
+		isEnabled && wasOpened && !hostError && !isVariableHost(locationHostPart(item.forwardHost)),
+	);
+
 	const pathError = errorFor("path");
 	const portError = errorFor("forwardPort");
 
@@ -486,6 +503,15 @@ function LocationCard({
 							id={`location-status-${row.id}`}
 							status={status.status}
 							location={status}
+						/>
+					) : null}
+					{isEnabled && isVariableHost(locationHostPart(item.forwardHost)) ? (
+						<VariableHostBadge id={`location-check-${row.id}`} />
+					) : isEnabled ? (
+						<UpstreamCheckBadge
+							id={`location-check-${row.id}`}
+							result={check.result}
+							isChecking={check.isChecking}
 						/>
 					) : null}
 				</span>
@@ -592,15 +618,24 @@ function LocationCard({
 								<label className="form-label text-nowrap" htmlFor={`location-forwardHost-${row.id}`}>
 									<T id="proxy-host.forward-host" />
 								</label>
-								<input
+								<UpstreamField
 									id={`location-forwardHost-${row.id}`}
-									type="text"
-									className={cn("form-control", { "is-invalid": !!hostError })}
-									placeholder="eg: 10.0.0.1/path/"
-									autoComplete="off"
 									value={item.forwardHost}
-									onChange={(e) => onChanges({ forwardHost: e.target.value })}
+									placeholder="eg: 10.0.0.1/path/"
+									isInvalid={!!hostError}
+									onChange={(forwardHost) => onChanges({ forwardHost })}
 									onBlur={() => onTouched("forwardHost")}
+									onSelectCandidate={(picked) => {
+										const prefill = guardPrefill(
+											picked,
+											{ port: item.forwardPort, scheme: item.forwardScheme },
+											initial,
+										);
+										const changes: Partial<ProxyLocation> = {};
+										if (prefill.port) changes.forwardPort = prefill.port;
+										if (prefill.scheme) changes.forwardScheme = prefill.scheme;
+										if (Object.keys(changes).length) onChanges(changes);
+									}}
 								/>
 								{hostError ? <div className="invalid-feedback">{hostError}</div> : null}
 							</div>

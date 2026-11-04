@@ -1,7 +1,7 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import type { Stream } from "src/api/backend";
+import type { Stream, UpstreamHostHealth } from "src/api/backend";
 import {
 	CertificateFormatter,
 	EmptyData,
@@ -24,8 +24,19 @@ interface Props {
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
+	// Upstream health by stream id
+	health?: Record<string, UpstreamHostHealth>;
 }
-export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onDisableToggle, onNew }: Props) {
+export default function Table({
+	data,
+	isFetching,
+	isFiltered,
+	onEdit,
+	onDelete,
+	onDisableToggle,
+	onNew,
+	health,
+}: Props) {
 	const columnHelper = createColumnHelper<Features, Stream>();
 	const columns = useMemo(
 		() => [
@@ -98,7 +109,9 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				sortFn: sortByHostStatus,
 				cell: (info: any) => {
 					const row: Stream = info.row.original;
-					return <HostStatusFormatter enabled={info.getValue()} meta={row.meta} />;
+					return (
+						<HostStatusFormatter enabled={info.getValue()} meta={row.meta} health={health?.[`${row.id}`]} />
+					);
 				},
 			}),
 			columnHelper.display({
@@ -167,7 +180,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onDisableToggle, onDelete, health],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);

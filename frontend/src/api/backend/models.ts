@@ -312,3 +312,96 @@ export interface DNSProvider {
 	name: string;
 	credentials: string;
 }
+
+// ---------------------------------------------------------------------------
+// Upstream discovery / reachability check / health (/api/upstreams/*)
+// ---------------------------------------------------------------------------
+
+export type UpstreamSource = "docker" | "dns" | "history";
+
+export interface UpstreamProviderStatus {
+	status: "ok" | "disabled" | "unavailable";
+	message: string | null;
+}
+
+export interface UpstreamCandidate {
+	host: string;
+	label: string;
+	source: UpstreamSource;
+	ports: number[];
+	hintPort: number | null;
+	hintScheme: "http" | "https" | null;
+	network: string | null;
+	state: string | null;
+	ip: string | null;
+	usedBy: number;
+}
+
+export interface UpstreamCandidates {
+	providers: Record<UpstreamSource, UpstreamProviderStatus>;
+	items: UpstreamCandidate[];
+	generatedAt: string;
+}
+
+export type UpstreamCheckCode =
+	| "ok"
+	| "invalid_host"
+	| "dns_not_found"
+	| "dns_timeout"
+	| "resolver_mismatch"
+	| "tcp_refused"
+	| "tcp_timeout"
+	| "tcp_unreachable"
+	| "disabled";
+
+export interface UpstreamCheckTarget {
+	host: string;
+	port: number;
+	scheme?: string;
+}
+
+export interface UpstreamCheckResult {
+	host: string;
+	port: number;
+	scheme?: string;
+	ok: boolean;
+	code: UpstreamCheckCode;
+	message: string;
+	addresses?: string[];
+	resolverOk?: boolean | null;
+	systemOk?: boolean | null;
+	ms?: number | null;
+}
+
+export interface UpstreamCheckResponse {
+	results: UpstreamCheckResult[];
+}
+
+export interface UpstreamHealthTarget {
+	// null for the host's main destination
+	locationIndex: number | null;
+	path?: string;
+	host: string;
+	port: number;
+	ok: boolean;
+	code: UpstreamCheckCode;
+	message: string;
+	ms?: number | null;
+}
+
+export interface UpstreamHostHealth {
+	checkedAt: string;
+	ok: boolean;
+	targets: UpstreamHealthTarget[];
+}
+
+export interface UpstreamHealth {
+	enabled: boolean;
+	interval: number;
+	checkedAt: string | null;
+	hosts: {
+		// Keyed by host id (as a string). `proxy_host` arrives camelized.
+		proxyHost?: Record<string, UpstreamHostHealth>;
+		stream?: Record<string, UpstreamHostHealth>;
+	};
+}

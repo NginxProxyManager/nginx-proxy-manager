@@ -3,10 +3,10 @@ import cn from "classnames";
 import { type PointerEvent, useEffect, useRef, useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import type { HostMeta } from "src/api/backend";
+import type { HostMeta, UpstreamHealthTarget, UpstreamHostHealth } from "src/api/backend";
 import { useLocaleState } from "src/context";
-import { formatDateTime, T } from "src/locale";
-import { getHostStatus, type HostState } from "src/modules/HostStatus";
+import { formatDateTime, intl, T } from "src/locale";
+import { getHostStatus, type HostState, isTranslatedCheckCode } from "src/modules/HostStatus";
 import { HostNginxError } from "../../NginxFeedback";
 import { LocationStatusDetail } from "../../StatusBadges";
 
@@ -27,17 +27,27 @@ const STATE_LABEL: Record<HostState, string> = {
 // Keeps the popover open while the pointer moves from the badge into it
 const HIDE_DELAY_MS = 200;
 
+export const describeHealthTarget = (t: UpstreamHealthTarget) => {
+	const where =
+		t.locationIndex === null || typeof t.locationIndex === "undefined"
+			? intl.formatMessage({ id: "host-status.main-target" })
+			: t.path || `#${t.locationIndex + 1}`;
+	const reason = isTranslatedCheckCode(t.code) ? intl.formatMessage({ id: `upstream.check.${t.code}` }) : t.message;
+	return { where, target: `${t.host}:${t.port}`, reason: reason || t.message };
+};
+
 interface Props {
 	enabled: boolean;
 	meta?: HostMeta | null;
+	health?: UpstreamHostHealth | null;
 	// When given, the popover offers a link to the host's error log
 	onLogs?: () => void;
 }
-export function HostStatusFormatter({ enabled, meta, onLogs }: Props) {
+export function HostStatusFormatter({ enabled, meta, health, onLogs }: Props) {
 	const { locale } = useLocaleState();
 	const [show, setShow] = useState(false);
 	const hideTimer = useRef<number | null>(null);
-	const status = getHostStatus(enabled, meta);
+	const status = getHostStatus(enabled, meta, health);
 	const hasDetails = status.state === "error" || status.state === "warning";
 
 	useEffect(
@@ -122,6 +132,17 @@ export function HostStatusFormatter({ enabled, meta, onLogs }: Props) {
 							</div>
 						</li>
 					))}
+					{status.unhealthyTargets.map((t, i) => {
+						const d = describeHealthTarget(t);
+						return (
+							<li key={`health-${i}`} className="mb-2">
+								<div>
+									<T id="host-status.unreachable" data={{ where: d.where, target: d.target }} />
+								</div>
+								<div className="text-secondary text-break">{d.reason}</div>
+							</li>
+						);
+					})}
 				</ul>
 				{meta?.nginxCheckedAt ? (
 					<div className="text-secondary small mt-1">

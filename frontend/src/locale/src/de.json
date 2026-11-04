@@ -455,8 +455,14 @@
 	"host-status.error": {
 		"defaultMessage": "Fehler"
 	},
+	"host-status.main-target": {
+		"defaultMessage": "Hauptziel"
+	},
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx hat die neueste Konfiguration dieses Hosts nicht übernommen und verwendet weiterhin die vorherige."
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: {target} ist nicht erreichbar"
 	},
 	"host-status.view-error-log": {
 		"defaultMessage": "Fehlerprotokoll anzeigen"
@@ -1054,6 +1060,81 @@
 	},
 	"update-available": {
 		"defaultMessage": "Update verfügbar: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Prüfe…"
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Prüfung deaktiviert"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Host nicht gefunden"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "DNS-Abfrage abgelaufen"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Ungültiger Hostname"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Erreichbar"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Erreichbar ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Nur über /etc/hosts oder Suchdomänen auflösbar"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Verbindung abgelehnt"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Zeitüberschreitung der Verbindung"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Host nicht erreichbar"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "nginx-Variable"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Wird in der erweiterten Konfiguration gesetzt und von nginx bei jeder Anfrage aufgelöst, daher wird sie hier nicht geprüft."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "Wird von nginx bei jeder Anfrage aufgelöst, daher wird sie hier nicht geprüft. Sie braucht einen Wert, bevor die erweiterte Konfiguration dieses Hosts ausgeführt wird, zum Beispiel aus einer map in /data/nginx/custom/http.conf; ein set in der erweiterten Konfiguration kommt zu spät."
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Docker-Erkennung ist aus: NPM_DOCKER_DISCOVERY=true setzen (siehe Doku)."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "Es kann auch ein beliebiger Hostname oder eine IP-Adresse eingegeben werden."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Im Netzwerk gefunden"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Docker-Container"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Bereits verwendet"
+	},
+	"upstream.loading": {
+		"defaultMessage": "Suche nach Zielen…"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "Keine Vorschläge, Hostname oder IP-Adresse eingeben"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Ports: {ports}"
+	},
+	"upstream.refresh": {
+		"defaultMessage": "Vorschläge aktualisieren"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "„{value}“ verwenden"
+	},
+	"upstream.used-by": {
+		"defaultMessage": "von {count, plural, one {# Host} other {# Hosts}} verwendet"
 	},
 	"user": {
 		"defaultMessage": "User"

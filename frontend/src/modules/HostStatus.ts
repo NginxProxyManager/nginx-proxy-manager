@@ -3,6 +3,8 @@ import {
 	isApiError,
 	type NginxConfigErrorDetails,
 	type NginxLocationStatus,
+	type UpstreamHealthTarget,
+	type UpstreamHostHealth,
 } from "src/api/backend";
 import { intl } from "src/locale";
 
@@ -224,23 +226,47 @@ export const locationStatusText = (
 	return { text: hasMessage(fallback) ? intl.formatMessage({ id: fallback }) : "", detail: null };
 };
 
+export const getUnhealthyTargets = (health?: UpstreamHostHealth | null): UpstreamHealthTarget[] =>
+	(health?.targets || []).filter((t) => !t.ok);
+
 export type HostState = "disabled" | "online" | "warning" | "error";
 
 export interface HostStatusInfo {
 	state: HostState;
 	nginxErr: string | null;
 	problemLocations: NginxLocationStatus[];
+	unhealthyTargets: UpstreamHealthTarget[];
 }
 
-export const getHostStatus = (enabled: boolean, meta?: HostMeta | null): HostStatusInfo => {
+export const getHostStatus = (
+	enabled: boolean,
+	meta?: HostMeta | null,
+	health?: UpstreamHostHealth | null,
+): HostStatusInfo => {
 	if (!enabled) {
-		return { state: "disabled", nginxErr: null, problemLocations: [] };
+		return { state: "disabled", nginxErr: null, problemLocations: [], unhealthyTargets: [] };
 	}
 	const problemLocations = getProblemLocations(meta);
+	// A location nginx couldn't resolve or had to quarantine is already listed;
+	// its failed health probe would only report the same problem a second time.
+	const unhealthyTargets = getUnhealthyTargets(health).filter(
+		(t) =>
+			typeof t.locationIndex !== "number" ||
+			!problemLocations.some(
+				(l) =>
+					l.index === t.locationIndex &&
+					(!t.path || !l.path || normaliseLocationPath(t.path) === normaliseLocationPath(l.path)),
+			),
+	);
 	if (meta?.nginxOnline === false) {
-		return { state: "error", nginxErr: meta.nginxErr || null, problemLocations };
+		return { state: "error", nginxErr: meta.nginxErr || null, problemLocations, unhealthyTargets };
 	}
-	return { state: problemLocations.length ? "warning" : "online", nginxErr: null, problemLocations };
+	return {
+		state: problemLocations.length || unhealthyTargets.length ? "warning" : "online",
+		nginxErr: null,
+		problemLocations,
+		unhealthyTargets,
+	};
 };
 
 // The order of the status column, ascending: the hosts that need attention first
@@ -307,3 +333,5 @@ export const isVariableHost = (host?: string | null) => {
  * host part, so `$backend/api` is a variable host with a path.
  */
 export const locationHostPart = (host?: string | null) => `${host ?? ""}`.trim().split("/")[0];
+
+export const isTranslatedCheckCode = (code?: string) => !!code && hasMessage(`upstream.check.${code}`);

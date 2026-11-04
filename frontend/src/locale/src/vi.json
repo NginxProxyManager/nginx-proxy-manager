@@ -455,8 +455,14 @@
 	"host-status.error": {
 		"defaultMessage": "Lỗi"
 	},
+	"host-status.main-target": {
+		"defaultMessage": "Đích chính"
+	},
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx chưa áp dụng cấu hình mới nhất của host này và vẫn đang chạy cấu hình trước đó."
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: không thể kết nối tới {target}"
 	},
 	"host-status.view-error-log": {
 		"defaultMessage": "Xem nhật ký lỗi"
@@ -1054,6 +1060,81 @@
 	},
 	"update-available": {
 		"defaultMessage": "Đã có bản cập nhật: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Đang kiểm tra…"
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Đã tắt kiểm tra"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Không tìm thấy host"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "Tra cứu DNS quá thời gian"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Tên host không hợp lệ"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Có thể kết nối"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Có thể kết nối ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Chỉ phân giải được qua /etc/hosts hoặc tên miền tìm kiếm"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Kết nối bị từ chối"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Kết nối quá thời gian"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Không thể truy cập host"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "Biến nginx"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Được đặt trong cấu hình nâng cao và được nginx phân giải cho mỗi yêu cầu, nên không được kiểm tra ở đây."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "Được nginx phân giải cho mỗi yêu cầu, nên không được kiểm tra ở đây. Biến này cần có giá trị trước khi cấu hình nâng cao của host này chạy, ví dụ từ một map trong /data/nginx/custom/http.conf; lệnh set trong cấu hình nâng cao là quá muộn."
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Tính năng phát hiện Docker đang tắt: hãy đặt NPM_DOCKER_DISCOVERY=true (xem tài liệu)."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "Bạn cũng có thể nhập bất kỳ tên host hoặc địa chỉ IP nào."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Phát hiện trên mạng"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Container Docker"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Đã dùng trước đây"
+	},
+	"upstream.loading": {
+		"defaultMessage": "Đang tìm upstream…"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "Không có gợi ý, hãy nhập tên host hoặc địa chỉ IP"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Cổng: {ports}"
+	},
+	"upstream.refresh": {
+		"defaultMessage": "Làm mới gợi ý"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "Dùng \"{value}\""
+	},
+	"upstream.used-by": {
+		"defaultMessage": "được dùng bởi {count, plural, other {# host}}"
 	},
 	"user": {
 		"defaultMessage": "Người dùng"
