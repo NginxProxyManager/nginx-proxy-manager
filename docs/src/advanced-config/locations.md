@@ -77,7 +77,7 @@ the save fails with scope `host` as a conflict and the other host keeps its file
 
 At most 10 rounds of repairs run per save or reload (each one blocks other saves while it runs). After that the
 save fails with scope `global` and the message `Too many broken host configs to repair in one go`: regenerate all
-host configs (restart NPM, or run `backend/scripts/regenerate-config` in the container), then try again.
+host configs (Settings > Nginx Configuration, restart NPM, or run `backend/scripts/regenerate-config` in the container), then try again.
 
 Save the affected host again once the cause is fixed.
 
