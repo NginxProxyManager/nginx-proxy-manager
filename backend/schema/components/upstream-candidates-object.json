@@ -39,6 +39,31 @@
 			"type": "array",
 			"example": [
 				{
+					"host": "grafana",
+					"label": "grafana (container)",
+					"source": "docker",
+					"ports": [3000],
+					"hint_port": 3000,
+					"hint_scheme": "http",
+					"network": "npm_default",
+					"state": "running",
+					"ip": "172.18.0.4",
+					"used_by": 0,
+					"suggestion": {
+						"domain_names": ["grafana.example.com"],
+						"forward_scheme": "http",
+						"forward_host": "grafana",
+						"forward_port": 3000,
+						"allow_websocket_upgrade": true,
+						"block_exploits": true,
+						"caching_enabled": false,
+						"http2_support": false,
+						"ignored_domains": [],
+						"existing_host_id": null,
+						"existing_host_type": null
+					}
+				},
+				{
 					"host": "app",
 					"label": "app (on npm_default)",
 					"source": "dns",
@@ -124,6 +149,92 @@
 						"minimum": 0,
 						"description": "Number of existing hosts forwarding to this host",
 						"example": 2
+					},
+					"suggestion": {
+						"type": "object",
+						"description": "Docker containers only: a proxy host built from the container's npm.* labels (npm.domain, npm.port, npm.scheme, npm.websocket, npm.block_exploits, npm.caching, npm.http2). domain_names is empty when the container has no valid npm.domain label. existing_host_id/existing_host_type name a host (visible to the user) that already uses one of the domain names: Create would fail for any type, only a proxy host can be opened instead.",
+						"additionalProperties": false,
+						"required": ["domain_names", "forward_scheme", "forward_host", "forward_port", "allow_websocket_upgrade", "block_exploits", "caching_enabled", "http2_support", "ignored_domains", "existing_host_id", "existing_host_type"],
+						"example": {
+							"domain_names": ["grafana.example.com"],
+							"forward_scheme": "http",
+							"forward_host": "grafana",
+							"forward_port": 3000,
+							"allow_websocket_upgrade": true,
+							"block_exploits": true,
+							"caching_enabled": false,
+							"http2_support": false,
+							"ignored_domains": [],
+							"existing_host_id": null,
+							"existing_host_type": null
+						},
+						"properties": {
+							"domain_names": {
+								"type": "array",
+								"description": "Valid domain names from the npm.domain label",
+								"maxItems": 100,
+								"example": ["grafana.example.com"],
+								"items": {
+									"type": "string",
+									"example": "grafana.example.com"
+								}
+							},
+							"forward_scheme": {
+								"type": "string",
+								"enum": ["http", "https"],
+								"example": "http"
+							},
+							"forward_host": {
+								"type": "string",
+								"description": "Container name",
+								"example": "grafana"
+							},
+							"forward_port": {
+								"type": ["integer", "null"],
+								"minimum": 1,
+								"maximum": 65535,
+								"description": "npm.port, or the only exposed port",
+								"example": 3000
+							},
+							"allow_websocket_upgrade": {
+								"type": "boolean",
+								"example": true
+							},
+							"block_exploits": {
+								"type": "boolean",
+								"example": true
+							},
+							"caching_enabled": {
+								"type": "boolean",
+								"example": false
+							},
+							"http2_support": {
+								"type": "boolean",
+								"example": false
+							},
+							"ignored_domains": {
+								"type": "array",
+								"description": "Entries of the npm.domain label that were dropped because the domain names field would refuse them (cut to 100 characters, at most 10)",
+								"maxItems": 10,
+								"example": [],
+								"items": {
+									"type": "string",
+									"maxLength": 100,
+									"example": "*.com"
+								}
+							},
+							"existing_host_id": {
+								"type": ["integer", "null"],
+								"description": "Id of a host (visible to the user) that already uses one of the domain names. A proxy host is reported before a redirection host, a redirection host before a 404 host.",
+								"example": null
+							},
+							"existing_host_type": {
+								"type": ["string", "null"],
+								"enum": ["proxy_host", "redirection_host", "dead_host", null],
+								"description": "Type of the host in existing_host_id",
+								"example": null
+							}
+						}
 					}
 				}
 			}

@@ -11,8 +11,11 @@ import {
 	describeDockerError,
 	discoverDocker,
 	isAllowedPath,
+	isValidLabelDomain,
 	looksLikeSelf,
 	parseDockerHost,
+	parseLabelDomains,
+	splitLabelDomains,
 	parseMountinfoContainerId,
 	parseNpmLabels,
 	usableNames,
@@ -108,17 +111,96 @@ describe("docker: DOCKER_HOST parsing and allowlist", () => {
 	});
 
 	it("reads npm.* labels only", () => {
+		const none = {
+			domains: [],
+			ignored_domains: [],
+			websocket: null,
+			block_exploits: null,
+			caching: null,
+			http2: null,
+		};
 		assert.deepEqual(parseNpmLabels({ "npm.port": "8080", "npm.scheme": "HTTPS", "npm.hide": "no" }), {
 			hide: false,
 			port: 8080,
 			scheme: "https",
+			...none,
 		});
 		assert.deepEqual(parseNpmLabels({ "npm.port": "99999", "npm.scheme": "ftp", "npm.hide": "true" }), {
 			hide: true,
 			port: null,
 			scheme: null,
+			...none,
 		});
-		assert.deepEqual(parseNpmLabels(null), { hide: false, port: null, scheme: null });
+		assert.deepEqual(parseNpmLabels(null), { hide: false, port: null, scheme: null, ...none });
+	});
+
+	it("reads the one-click labels and ignores invalid values", () => {
+		assert.deepEqual(
+			parseNpmLabels({
+				"npm.domain": " App.Example.com, www.example.com  app.example.com,,",
+				"npm.port": " 3000 ",
+				"npm.websocket": "TRUE",
+				"npm.block_exploits": "1",
+				"npm.caching": "off",
+				"npm.http2": "maybe",
+			}),
+			{
+				hide: false,
+				port: 3000,
+				scheme: null,
+				domains: ["app.example.com", "www.example.com"],
+				ignored_domains: [],
+				websocket: true,
+				block_exploits: true,
+				caching: false,
+				http2: null,
+			},
+		);
+		assert.equal(parseNpmLabels({ "npm.port": "80abc" }).port, null);
+		assert.equal(parseNpmLabels({ "npm.port": "0" }).port, null);
+	});
+
+	it("keeps only domains the domain names field would accept", () => {
+		assert.deepEqual(
+			parseLabelDomains(
+				"*.example.com a.b ok.example.com bad;rm.example.com x .lead.com trail.com. dou..ble.com -h.com h-.com " +
+					"münchen.example.com under_score.example.com $(id).com a/b.com",
+			),
+			["*.example.com", "a.b", "ok.example.com", "münchen.example.com", "under_score.example.com"],
+		);
+		// single leading wildcard in front of two or more labels only (the proxy host field refuses "*.com")
+		for (const bad of [
+			"*.com",
+			"*",
+			"*.",
+			"**.example.com",
+			"*.*.example.com",
+			"a.*.example.com",
+			"www.example.*",
+			"*example.com",
+		]) {
+			assert.equal(isValidLabelDomain(bad), false, bad);
+		}
+		assert.equal(isValidLabelDomain("*.sub.example.com"), true);
+		assert.equal(isValidLabelDomain("*.-bad.example.com"), false);
+		assert.deepEqual(parseLabelDomains(undefined), []);
+		assert.deepEqual(parseLabelDomains(42), []);
+		assert.equal(isValidLabelDomain(`${"a".repeat(64)}.com`), false);
+		const many = Array.from({ length: 150 }, (_, i) => `d${i}.example.com`).join(",");
+		assert.equal(parseLabelDomains(many).length, 100);
+	});
+
+	it("reports the npm.domain entries it drops", () => {
+		assert.deepEqual(splitLabelDomains("*.com, ok.example.com bad;rm.example.com *.com OK.example.com"), {
+			domains: ["ok.example.com"],
+			ignored: ["*.com", "bad;rm.example.com"],
+		});
+		assert.deepEqual(splitLabelDomains(undefined), { domains: [], ignored: [] });
+		const junk = Array.from({ length: 20 }, (_, i) => `bad${i}!.com`).join(" ");
+		assert.equal(splitLabelDomains(junk).ignored.length, 10);
+		assert.equal(splitLabelDomains(`${"x".repeat(300)}!`).ignored[0].length, 100);
+		assert.deepEqual(parseNpmLabels({ "npm.domain": "*.com" }).ignored_domains, ["*.com"]);
+		assert.deepEqual(parseNpmLabels({ "npm.domain": "*.com" }).domains, []);
 	});
 });
 
@@ -160,20 +242,79 @@ describe("docker: candidate parsing from fixture JSON", () => {
 	it("never leaks env, command, mounts or foreign labels", () => {
 		const json = JSON.stringify(items);
 		assert.doesNotMatch(json, /hunter2|secret|traefik|Mounts|Command|Labels/);
+		const keys = [
+			"hint_port",
+			"hint_scheme",
+			"host",
+			"ip",
+			"label",
+			"network",
+			"ports",
+			"source",
+			"state",
+			"used_by",
+		];
 		for (const item of items) {
-			assert.deepEqual(Object.keys(item).sort(), [
-				"hint_port",
-				"hint_scheme",
-				"host",
-				"ip",
-				"label",
-				"network",
-				"ports",
-				"source",
-				"state",
-				"used_by",
-			]);
+			// container items carry the label suggestion, compose service aliases don't
+			const expected = item.label.endsWith("(container)") ? [...keys, "suggestion"].sort() : keys;
+			assert.deepEqual(Object.keys(item).sort(), expected);
 		}
+	});
+
+	it("suggests a proxy host from the labels on the container item only", () => {
+		assert.deepEqual(byHost["myproj-web-1"].suggestion, {
+			domain_names: [],
+			forward_scheme: "http",
+			forward_host: "myproj-web-1",
+			forward_port: 3000,
+			allow_websocket_upgrade: false,
+			block_exploits: false,
+			caching_enabled: false,
+			http2_support: false,
+			ignored_domains: [],
+			existing_host_id: null,
+			existing_host_type: null,
+		});
+		assert.equal(byHost.web.suggestion, undefined);
+		assert.equal(byHost.grafana.suggestion.forward_scheme, "https");
+		assert.equal(byHost.grafana.suggestion.forward_port, 3001);
+		assert.equal(byHost.worker.suggestion.forward_port, null);
+
+		const [labelled] = containersToCandidates(
+			[
+				{
+					Id: "f".repeat(64),
+					Names: ["/blog"],
+					Labels: {
+						"npm.domain": "blog.example.com,www.blog.example.com *.com",
+						"npm.port": "2368",
+						"npm.scheme": "http",
+						"npm.websocket": "true",
+						"npm.block_exploits": "yes",
+						"npm.caching": "true",
+						"npm.http2": "on",
+					},
+					State: "exited",
+					Ports: [],
+					NetworkSettings: { Networks: { npm_default: { IPAddress: "172.18.0.9" } } },
+				},
+			],
+			{ networks: ["npm_default"] },
+		);
+		assert.deepEqual(labelled.suggestion, {
+			domain_names: ["blog.example.com", "www.blog.example.com"],
+			forward_scheme: "http",
+			forward_host: "blog",
+			forward_port: 2368,
+			allow_websocket_upgrade: true,
+			block_exploits: true,
+			caching_enabled: true,
+			http2_support: true,
+			ignored_domains: ["*.com"],
+			existing_host_id: null,
+			existing_host_type: null,
+		});
+		assert.equal(labelled.state, "exited");
 	});
 
 	it("drops legacy link names and invalid hosts", () => {
