@@ -69,7 +69,8 @@ it contains a variable, for example `~ ^/api/(.*)$` with forward path `/v1/$1`, 
 upstream as `/v1/users/7`. Such a location is written as it is.
 
 A forward host that is a single nginx variable, such as `$backend`, is written into the config exactly as before
-(`proxy_pass http://$backend:8080;`), without the extra lines. With "Cache Assets" its assets use the same `proxy_pass`.
+(`proxy_pass http://$backend:8080;`), without the extra lines. NPM doesn't check or monitor such an upstream. With
+"Cache Assets" its assets use the same `proxy_pass`.
 
 To go back to the old literal rendering for every location:
 
