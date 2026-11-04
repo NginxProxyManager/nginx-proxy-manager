@@ -61,7 +61,7 @@ const HOST_LABELS = {
 // runs a nested configure (DNS lookups, several nginx -t) while holding the lock, which blocks every save.
 // A group of hosts sharing a broken path (see blameUnattributed()) counts once.
 const MAX_HEAL_ITERATIONS = 10;
-const TOO_MANY_BROKEN_HOSTS = `Too many broken host configs to repair in one go (more than ${MAX_HEAL_ITERATIONS}). Regenerate all host configs (restart NPM or run backend/scripts/regenerate-config), then try again.`;
+const TOO_MANY_BROKEN_HOSTS = `Too many broken host configs to repair in one go (more than ${MAX_HEAL_ITERATIONS}). Regenerate all host configs (Settings > Nginx Configuration, or restart NPM), then try again.`;
 // While regenerateAll() runs (it holds the lock): the hosts healOtherHost() repaired or took offline,
 // {host_type, id}. Their state after the final reload is reported, see summariseFinal().
 let healRecorder = null;
