@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Close"
 	},
+	"action.copied": {
+		"defaultMessage": "Copied"
+	},
+	"action.copy": {
+		"defaultMessage": "Copy"
+	},
 	"action.delete": {
 		"defaultMessage": "Delete"
 	},
@@ -349,12 +355,6 @@
 	},
 	"docker-labels.button": {
 		"defaultMessage": "From Docker"
-	},
-	"docker-labels.copied": {
-		"defaultMessage": "Copied"
-	},
-	"docker-labels.copy": {
-		"defaultMessage": "Copy"
 	},
 	"docker-labels.create": {
 		"defaultMessage": "Create"
@@ -1182,7 +1182,13 @@
 		"defaultMessage": "Resolved by nginx for each request, so it isn't checked here. It needs a value before this host's advanced configuration runs, for example from a map in /data/nginx/custom/http.conf; a set in the advanced configuration comes too late."
 	},
 	"upstream.docker-disabled": {
-		"defaultMessage": "Docker discovery is off: set NPM_DOCKER_DISCOVERY=true (see docs)."
+		"defaultMessage": "Docker discovery is off."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Set it up"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Docker discovery doesn't work: {reason}."
 	},
 	"upstream.free-text": {
 		"defaultMessage": "You can also type any host name or IP address."

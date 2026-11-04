@@ -5,6 +5,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { allowedPrefill, candidatePrefill, groupCandidates, UpstreamField } from "./UpstreamField";
 
 const hookState = vi.hoisted(() => ({ data: undefined as unknown, refresh: () => {} }));
+const helpModal = vi.hoisted(() => vi.fn());
+vi.mock("src/modals", () => ({ showHelpModal: helpModal }));
+
 vi.mock("src/hooks", () => ({
 	useUpstreamCandidates: () => ({
 		data: hookState.data,
@@ -43,9 +46,12 @@ const items: UpstreamCandidate[] = [
 	candidate({ host: "db-ui", label: "db-ui", source: "dns", ports: [8081] }),
 ];
 
-const data = (dockerStatus: "ok" | "disabled" = "ok"): UpstreamCandidates => ({
+const data = (
+	dockerStatus: "ok" | "disabled" | "unavailable" = "ok",
+	message: string | null = null,
+): UpstreamCandidates => ({
 	providers: {
-		docker: { status: dockerStatus, message: null },
+		docker: { status: dockerStatus, message },
 		dns: { status: "ok", message: null },
 		history: { status: "ok", message: null },
 	},
@@ -172,7 +178,25 @@ describe("UpstreamField", () => {
 	it("explains how to enable Docker discovery when it's disabled", () => {
 		render(<Harness candidates={data("disabled")} />);
 		openMenu();
-		expect(screen.getByTestId("docker-disabled-hint")).toHaveTextContent("NPM_DOCKER_DISCOVERY=true");
+		expect(screen.getByTestId("docker-disabled-hint")).toHaveTextContent("Docker discovery is off");
+	});
+
+	it("opens the setup help from the hint without taking the focus first", () => {
+		render(<Harness candidates={data("disabled")} />);
+		openMenu();
+		const link = screen.getByTestId("docker-help-link");
+		// mousedown must not take the focus from the input (react-select would close the menu)
+		expect(fireEvent.mouseDown(link)).toBe(false);
+		fireEvent.click(link);
+		expect(helpModal).toHaveBeenCalledWith("DockerDiscovery", "lime");
+	});
+
+	it("shows why Docker discovery doesn't work and links the help", () => {
+		render(<Harness candidates={data("unavailable", "permission denied on the Docker socket")} />);
+		openMenu();
+		expect(screen.getByTestId("docker-error-hint")).toHaveTextContent("permission denied on the Docker socket");
+		expect(screen.getByTestId("docker-help-link")).toBeInTheDocument();
+		expect(screen.queryByTestId("docker-disabled-hint")).toBeNull();
 	});
 
 	it("doesn't show the Docker hint when discovery works", () => {

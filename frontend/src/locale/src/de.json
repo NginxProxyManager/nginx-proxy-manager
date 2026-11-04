@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Schließen"
 	},
+	"action.copied": {
+		"defaultMessage": "Kopiert"
+	},
+	"action.copy": {
+		"defaultMessage": "Kopieren"
+	},
 	"action.delete": {
 		"defaultMessage": "Löschen"
 	},
@@ -349,12 +355,6 @@
 	},
 	"docker-labels.button": {
 		"defaultMessage": "Aus Docker"
-	},
-	"docker-labels.copied": {
-		"defaultMessage": "Kopiert"
-	},
-	"docker-labels.copy": {
-		"defaultMessage": "Kopieren"
 	},
 	"docker-labels.create": {
 		"defaultMessage": "Erstellen"
@@ -1182,7 +1182,13 @@
 		"defaultMessage": "Wird von nginx bei jeder Anfrage aufgelöst, daher wird sie hier nicht geprüft. Sie braucht einen Wert, bevor die erweiterte Konfiguration dieses Hosts ausgeführt wird, zum Beispiel aus einer map in /data/nginx/custom/http.conf; ein set in der erweiterten Konfiguration kommt zu spät."
 	},
 	"upstream.docker-disabled": {
-		"defaultMessage": "Docker-Erkennung ist aus: NPM_DOCKER_DISCOVERY=true setzen (siehe Doku)."
+		"defaultMessage": "Docker-Erkennung ist aus."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Einrichten"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Docker-Erkennung funktioniert nicht: {reason}."
 	},
 	"upstream.free-text": {
 		"defaultMessage": "Es kann auch ein beliebiger Hostname oder eine IP-Adresse eingegeben werden."

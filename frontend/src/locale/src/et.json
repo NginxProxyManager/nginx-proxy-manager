@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Sulge"
 	},
+	"action.copied": {
+		"defaultMessage": "Kopeeritud"
+	},
+	"action.copy": {
+		"defaultMessage": "Kopeeri"
+	},
 	"action.delete": {
 		"defaultMessage": "Kustuta"
 	},
@@ -349,12 +355,6 @@
 	},
 	"docker-labels.button": {
 		"defaultMessage": "Dockerist"
-	},
-	"docker-labels.copied": {
-		"defaultMessage": "Kopeeritud"
-	},
-	"docker-labels.copy": {
-		"defaultMessage": "Kopeeri"
 	},
 	"docker-labels.create": {
 		"defaultMessage": "Loo"
@@ -1182,7 +1182,13 @@
 		"defaultMessage": "nginx lahendab selle iga päringu ajal, seega siin seda ei kontrollita. Sellel peab olema väärtus enne selle hosti täpsema seadistuse käivitumist, näiteks map-ist failis /data/nginx/custom/http.conf; set täpsemas seadistuses on liiga hilja."
 	},
 	"upstream.docker-disabled": {
-		"defaultMessage": "Dockeri tuvastus on väljas: määra NPM_DOCKER_DISCOVERY=true (vt dokumentatsiooni)."
+		"defaultMessage": "Dockeri tuvastus on väljas."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Seadista"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Dockeri tuvastus ei tööta: {reason}."
 	},
 	"upstream.free-text": {
 		"defaultMessage": "Võid sisestada ka mis tahes hostinime või IP-aadressi."

@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Đóng"
 	},
+	"action.copied": {
+		"defaultMessage": "Đã sao chép"
+	},
+	"action.copy": {
+		"defaultMessage": "Sao chép"
+	},
 	"action.delete": {
 		"defaultMessage": "Xóa"
 	},
@@ -349,12 +355,6 @@
 	},
 	"docker-labels.button": {
 		"defaultMessage": "Từ Docker"
-	},
-	"docker-labels.copied": {
-		"defaultMessage": "Đã sao chép"
-	},
-	"docker-labels.copy": {
-		"defaultMessage": "Sao chép"
 	},
 	"docker-labels.create": {
 		"defaultMessage": "Tạo"
@@ -1183,6 +1183,12 @@
 	},
 	"upstream.docker-disabled": {
 		"defaultMessage": "Tính năng phát hiện Docker đang tắt: hãy đặt NPM_DOCKER_DISCOVERY=true (xem tài liệu)."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Thiết lập"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Tính năng phát hiện Docker không hoạt động: {reason}."
 	},
 	"upstream.free-text": {
 		"defaultMessage": "Bạn cũng có thể nhập bất kỳ tên host hoặc địa chỉ IP nào."

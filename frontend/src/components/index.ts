@@ -19,3 +19,4 @@ export * from "./StatusBadges";
 export * from "./Table";
 export * from "./ThemeSwitcher";
 export * from "./Unhealthy";
+export * from "./CopyableCode";

@@ -25,6 +25,7 @@ import CreatableSelect from "react-select/creatable";
 import type { UpstreamCandidate, UpstreamCandidates, UpstreamSource } from "src/api/backend";
 import { useUpstreamCandidates } from "src/hooks";
 import { intl, T } from "src/locale";
+import { showHelpModal } from "src/modals";
 
 export interface UpstreamOption {
 	readonly value: string;
@@ -192,15 +193,36 @@ const Input = (props: InputProps<UpstreamOption, false, GroupBase<UpstreamOption
 
 interface MenuFooterInfo {
 	dockerDisabled: boolean;
+	// Set when Docker discovery is switched on but doesn't work, e.g. no access to the API
+	dockerError?: string | null;
 	onRefresh?: () => void;
 	isRefreshing?: boolean;
 }
 const MenuFooterContext = createContext<MenuFooterInfo>({ dockerDisabled: false });
 
+// Buttons inside the react-select menu: mousedown must not move the focus away
+// from the input, or the menu closes before the click lands.
+const keepFocus = (e: { preventDefault: () => void }) => e.preventDefault();
+
+function DockerHelpLink() {
+	return (
+		<button
+			type="button"
+			className="btn btn-sm btn-link p-0 align-baseline"
+			tabIndex={-1}
+			onMouseDown={keepFocus}
+			onClick={() => showHelpModal("DockerDiscovery", "lime")}
+			data-testid="docker-help-link"
+		>
+			<T id="upstream.docker-help" />
+		</button>
+	);
+}
+
 // Menu with a footer: a hint how to enable Docker discovery (or that free text
 // works), and a button to refresh the suggestions.
 function MenuList(props: MenuListProps<UpstreamOption, false, GroupBase<UpstreamOption>>) {
-	const { dockerDisabled, onRefresh, isRefreshing } = useContext(MenuFooterContext);
+	const { dockerDisabled, dockerError, onRefresh, isRefreshing } = useContext(MenuFooterContext);
 	return (
 		<>
 			<components.MenuList {...props}>{props.children}</components.MenuList>
@@ -208,7 +230,11 @@ function MenuList(props: MenuListProps<UpstreamOption, false, GroupBase<Upstream
 				<span className="flex-fill">
 					{dockerDisabled ? (
 						<span data-testid="docker-disabled-hint">
-							<T id="upstream.docker-disabled" />
+							<T id="upstream.docker-disabled" /> <DockerHelpLink />
+						</span>
+					) : dockerError ? (
+						<span data-testid="docker-error-hint">
+							<T id="upstream.docker-unavailable" data={{ reason: dockerError }} /> <DockerHelpLink />
 						</span>
 					) : (
 						<T id="upstream.free-text" />
@@ -283,11 +309,12 @@ export function UpstreamField({
 
 	const groups = useMemo(() => groupCandidates(data?.items), [data]);
 	const dockerDisabled = data?.providers?.docker?.status === "disabled";
+	const dockerError = data?.providers?.docker?.status === "unavailable" ? data.providers.docker.message || "?" : null;
 	const { refresh, isRefreshing } = query;
 
 	const footer = useMemo<MenuFooterInfo>(
-		() => ({ dockerDisabled, onRefresh: candidates ? undefined : refresh, isRefreshing }),
-		[dockerDisabled, candidates, refresh, isRefreshing],
+		() => ({ dockerDisabled, dockerError, onRefresh: candidates ? undefined : refresh, isRefreshing }),
+		[dockerDisabled, dockerError, candidates, refresh, isRefreshing],
 	);
 
 	const filterOption = useMemo(() => {
