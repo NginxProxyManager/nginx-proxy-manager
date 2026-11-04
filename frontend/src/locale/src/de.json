@@ -347,6 +347,54 @@
 	"disabled": {
 		"defaultMessage": "Deaktiviert"
 	},
+	"docker-labels.button": {
+		"defaultMessage": "Aus Docker"
+	},
+	"docker-labels.copied": {
+		"defaultMessage": "Kopiert"
+	},
+	"docker-labels.copy": {
+		"defaultMessage": "Kopieren"
+	},
+	"docker-labels.create": {
+		"defaultMessage": "Erstellen"
+	},
+	"docker-labels.empty": {
+		"defaultMessage": "Noch kein Container hat ein npm.domain-Label. Labels wie diese einem Container in einem Netzwerk von Nginx Proxy Manager hinzufügen, ihn neu erstellen und dann aktualisieren:"
+	},
+	"docker-labels.exists": {
+		"defaultMessage": "{type, select, redirection_host {Ein Weiterleitungs-Host verwendet bereits eine dieser Domains} dead_host {Ein 404-Host verwendet bereits eine dieser Domains} other {Ein Proxy-Host verwendet bereits eine dieser Domains}}"
+	},
+	"docker-labels.ignored": {
+		"defaultMessage": "Aus npm.domain nicht verwendet: {domains}"
+	},
+	"docker-labels.ignored-hint": {
+		"defaultMessage": "Das Feld für Domainnamen würde diese Namen ablehnen (Wildcards nur als führendes *. wie *.example.com)"
+	},
+	"docker-labels.intro": {
+		"defaultMessage": "Diese Container haben ein npm.domain-Label. Erstellen öffnet ein ausgefülltes Proxy-Host-Formular: prüfen, dann speichern."
+	},
+	"docker-labels.no-port": {
+		"defaultMessage": "Kein Port: npm.port-Label setzen oder im Formular eintragen"
+	},
+	"docker-labels.open": {
+		"defaultMessage": "Öffnen"
+	},
+	"docker-labels.other": {
+		"defaultMessage": "Weitere Container ({count})"
+	},
+	"docker-labels.other-hint": {
+		"defaultMessage": "Kein verwendbares npm.domain-Label: Erstellen füllt nur das Ziel aus."
+	},
+	"docker-labels.title": {
+		"defaultMessage": "Proxy-Hosts aus Docker-Labels"
+	},
+	"docker-labels.unavailable": {
+		"defaultMessage": "Docker-Labels können nicht gelesen werden: {message}"
+	},
+	"docker-labels.used-by": {
+		"defaultMessage": "{type, select, redirection_host {Von einem Weiterleitungs-Host verwendet: zuerst ändern oder entfernen} dead_host {Von einem 404-Host verwendet: zuerst ändern oder entfernen} other {Von einem Proxy-Host verwendet}}"
+	},
 	"domain-names": {
 		"defaultMessage": "Domain Names"
 	},

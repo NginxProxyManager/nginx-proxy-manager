@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { buildHistoryCandidates, mergeCandidates } from "../lib/upstream/candidates.js";
+import { buildHistoryCandidates, markExistingHosts, mergeCandidates } from "../lib/upstream/candidates.js";
 
 const item = (host, source, extra = {}) => ({
 	host,
@@ -101,5 +101,82 @@ describe("candidates: merge and dedupe", () => {
 
 	it("ignores junk", () => {
 		assert.deepEqual(mergeCandidates([[null, { host: "" }, { source: "dns" }]]), []);
+	});
+});
+
+describe("candidates: label suggestions", () => {
+	const suggestion = (domains) => ({
+		domain_names: domains,
+		forward_scheme: "http",
+		forward_host: "blog",
+		forward_port: 2368,
+		allow_websocket_upgrade: false,
+		block_exploits: false,
+		caching_enabled: false,
+		http2_support: false,
+		ignored_domains: [],
+		existing_host_id: null,
+		existing_host_type: null,
+	});
+
+	it("keeps the docker suggestion when merging", () => {
+		const s = suggestion(["blog.example.com"]);
+		const merged = mergeCandidates([
+			[item("blog", "history", { used_by: 1 }), item("blog", "docker", { suggestion: s })],
+		]);
+		assert.equal(merged.length, 1);
+		assert.deepEqual(merged[0].suggestion, s);
+		assert.equal(merged[0].used_by, 1);
+		const plain = mergeCandidates([[item("db", "dns")]]);
+		assert.equal("suggestion" in plain[0], false);
+	});
+
+	it("marks suggestions whose domain is already served, without changing the input", () => {
+		const s = suggestion(["www.blog.example.com", "blog.example.com"]);
+		const items = [
+			item("blog", "docker", { suggestion: s }),
+			item("other", "docker", { suggestion: suggestion([]) }),
+		];
+		const out = markExistingHosts(items, {
+			proxyHosts: [
+				{ id: 4, domain_names: ["shop.example.com"] },
+				{ id: 9, domain_names: ["Blog.Example.com"] },
+				{ id: 10, domain_names: null },
+			],
+		});
+		assert.equal(out[0].suggestion.existing_host_id, 9);
+		assert.equal(out[0].suggestion.existing_host_type, "proxy_host");
+		assert.equal(out[1].suggestion.existing_host_id, null);
+		assert.equal(out[1].suggestion.existing_host_type, null);
+		// the discovery cache is shared between users
+		assert.equal(s.existing_host_id, null);
+		assert.notEqual(out[0].suggestion, s);
+		assert.notEqual(out[0].suggestion.ignored_domains, s.ignored_domains);
+		assert.deepEqual(markExistingHosts([item("x", "dns")], {}), [item("x", "dns")]);
+		assert.equal(markExistingHosts(items, undefined)[0].suggestion.existing_host_id, null);
+	});
+
+	it("reports redirection and 404 hosts that already use a domain, proxy hosts first", () => {
+		const items = [
+			item("a", "docker", { suggestion: suggestion(["a.example.com"]) }),
+			item("b", "docker", { suggestion: suggestion(["b.example.com"]) }),
+			item("c", "docker", { suggestion: suggestion(["b.example.com", "c.example.com", "a.example.com"]) }),
+			item("d", "docker", { suggestion: suggestion(["d.example.com"]) }),
+		];
+		const out = markExistingHosts(items, {
+			proxyHosts: [{ id: 1, domain_names: ["c.example.com"] }],
+			redirectionHosts: [{ id: 2, domain_names: ["A.example.com"] }],
+			deadHosts: [
+				{ id: 3, domain_names: ["b.example.com"] },
+				{ id: 4, domain_names: ["a.example.com"] },
+			],
+		});
+		const got = out.map((i) => [i.suggestion.existing_host_type, i.suggestion.existing_host_id]);
+		assert.deepEqual(got, [
+			["redirection_host", 2],
+			["dead_host", 3],
+			["proxy_host", 1],
+			[null, null],
+		]);
 	});
 });

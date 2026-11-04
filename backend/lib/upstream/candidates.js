@@ -83,8 +83,8 @@ const buildHistoryCandidates = ({ proxyHosts = [], streams = [] } = {}) => {
 
 /**
  * Merges candidates from all providers and dedupes them by host (case-insensitive).
- * Priority docker > dns > history: the best source wins for label/source/network/state/ip, ports are
- * unioned, hints fall back to lower-priority sources, used_by is kept from history.
+ * Priority docker > dns > history: the best source wins for label/source/network/state/ip/suggestion, ports
+ * are unioned, hints fall back to lower-priority sources, used_by is kept from history.
  *
  * @param   {Array<Array<object>>} lists
  * @param   {number} [max]
@@ -112,6 +112,7 @@ const mergeCandidates = (lists, max = MAX_ITEMS) => {
 				state: item.state ?? null,
 				ip: item.ip ?? null,
 				used_by: item.used_by || 0,
+				...(item.suggestion ? { suggestion: item.suggestion } : {}),
 			});
 			continue;
 		}
@@ -122,6 +123,9 @@ const mergeCandidates = (lists, max = MAX_ITEMS) => {
 		existing.state = existing.state ?? item.state ?? null;
 		existing.ip = existing.ip ?? item.ip ?? null;
 		existing.used_by = Math.max(existing.used_by, item.used_by || 0);
+		if (!existing.suggestion && item.suggestion) {
+			existing.suggestion = item.suggestion;
+		}
 	}
 
 	const items = [...merged.values()];
@@ -138,4 +142,62 @@ const mergeCandidates = (lists, max = MAX_ITEMS) => {
 	return items.slice(0, max);
 };
 
-export { buildHistoryCandidates, MAX_ITEMS, mergeCandidates };
+// Host types that can hold a domain name, in the order a match is reported (a proxy host can be opened from
+// the label list, the others only explain why Create would fail)
+const HOST_TYPES = [
+	["proxy_host", "proxyHosts"],
+	["redirection_host", "redirectionHosts"],
+	["dead_host", "deadHosts"],
+];
+
+/**
+ * Returns copies of the items whose label suggestion points at a host that already serves one of its domains
+ * (`existing_host_id` + `existing_host_type`). A proxy host wins over a redirection host, which wins over a
+ * 404 host. The input items (shared by the discovery cache) are not changed.
+ *
+ * @param   {Array<object>} items
+ * @param   {object}        [hosts]  non-deleted rows the user can see (id, domain_names) per host type
+ * @param   {Array<object>} [hosts.proxyHosts]
+ * @param   {Array<object>} [hosts.redirectionHosts]
+ * @param   {Array<object>} [hosts.deadHosts]
+ * @returns {Array<object>}
+ */
+const markExistingHosts = (items, hosts = {}) => {
+	const byDomain = new Map();
+	for (const [type, key] of HOST_TYPES) {
+		for (const row of hosts?.[key] || []) {
+			for (const domain of Array.isArray(row?.domain_names) ? row.domain_names : []) {
+				const name = `${domain ?? ""}`.trim().toLowerCase();
+				if (name && !byDomain.has(name)) {
+					byDomain.set(name, { id: row.id, type });
+				}
+			}
+		}
+	}
+	// best match over all the suggestion's domains: the earliest host type
+	const rank = (m) => HOST_TYPES.findIndex(([type]) => type === m.type);
+	return items.map((item) => {
+		if (!item.suggestion) {
+			return item;
+		}
+		let match = null;
+		for (const d of item.suggestion.domain_names || []) {
+			const m = byDomain.get(d.toLowerCase());
+			if (m && (!match || rank(m) < rank(match))) {
+				match = m;
+			}
+		}
+		return {
+			...item,
+			suggestion: {
+				...item.suggestion,
+				domain_names: [...(item.suggestion.domain_names || [])],
+				ignored_domains: [...(item.suggestion.ignored_domains || [])],
+				existing_host_id: match ? match.id : null,
+				existing_host_type: match ? match.type : null,
+			},
+		};
+	});
+};
+
+export { buildHistoryCandidates, MAX_ITEMS, markExistingHosts, mergeCandidates };

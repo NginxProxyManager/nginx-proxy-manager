@@ -59,22 +59,76 @@ ports and their state.
 
 NPM only ever sends `GET` requests, and only to `/version`, `/containers/json`,
 `/containers/{id}/json` and `/networks/{id}`. From the answers it keeps only names, ports, state,
-network and IP address. Environment variables, mounts, commands and labels outside the `npm.`
-namespace are never stored or returned.
+network, IP address and the `npm.*` labels below. Environment variables, mounts, commands and labels
+outside the `npm.` namespace are never stored or returned.
 
 Requests time out after 3 seconds and answers are capped at 2 MB. Results are cached for 30 seconds.
 
 #### Labels
 
-You can add these labels to your own containers to improve the suggestions:
+You can add these labels to your own containers to improve the suggestions and to create a proxy
+host from a container in one click:
 
 | Label | Example | Effect |
 |---|---|---|
+| `npm.domain` | `npm.domain=app.example.com, www.app.example.com` | Domain names of the proxy host (comma and/or space separated). Needed for one-click creation |
 | `npm.port` | `npm.port=8080` | Port that is filled in when you pick the container |
 | `npm.scheme` | `npm.scheme=https` | Scheme that is filled in when you pick the container |
+| `npm.websocket` | `npm.websocket=true` | Turns on "Websockets Support" |
+| `npm.block_exploits` | `npm.block_exploits=true` | Turns on "Block Common Exploits" |
+| `npm.caching` | `npm.caching=true` | Turns on "Cache Assets" |
+| `npm.http2` | `npm.http2=true` | Turns on "HTTP/2 Support" as soon as you pick a certificate in the form (HTTP/2 needs one, so it stays off without) |
 | `npm.hide` | `npm.hide=true` | Never suggest this container |
 
 Without `npm.port`, the port is filled in only when the container exposes exactly one TCP port.
+Without `npm.scheme`, the scheme is `https` for port 443 and 8443, otherwise `http`.
+
+Invalid values are ignored rather than rejected: `true`/`false` also accept `1`/`0`, `yes`/`no` and
+`on`/`off`; anything else counts as not set. Domain names that the domain field would refuse are
+dropped from `npm.domain`, and the list shows them under the container. A wildcard is accepted only
+in front: `*.example.com` works, `*.com` and `www.example.*` don't. A wildcard host needs a DNS
+challenge certificate if you want HTTPS; pick it in the form.
+
+#### Create a proxy host from labels
+
+On the **Proxy Hosts** page, **From Docker** lists the containers that have an `npm.domain` label.
+The button is only shown when Docker discovery works and you may manage proxy hosts. DNS discovery
+alone can't read labels.
+
+- **Create** opens the proxy host form filled in from the labels: domain names, scheme, the
+  container name as forward host, port and the switches above. Check it, add a certificate if you
+  want one, and save. Nothing is created until you save.
+- **Open** is shown instead when a host that you can see already uses one of the domains. For a
+  proxy host that is the host to edit. For a redirection host or a 404 host the list says so: change
+  or remove that host first, since two hosts can't share a domain name. A host you can't see (other
+  users' hosts, when you only see your own) still blocks the domain; saving then fails with
+  "_domain_ is already in use".
+- Containers without a usable `npm.domain` are listed under **Other containers**; there **Create**
+  fills in only the forward host, scheme and port. If a container's `npm.domain` had only names that
+  were dropped, that section opens by itself and shows them.
+
+NPM never creates or changes hosts by itself because of labels; the labels are only read when you
+open the list.
+
+```yaml
+services:
+  whoami:
+    image: traefik/whoami
+    networks: [npm_default]  # a network Nginx Proxy Manager is on
+    labels:
+      npm.domain: "whoami.example.com, www.whoami.example.com"
+      npm.port: "80"
+      npm.scheme: "http"
+      npm.websocket: "true"
+      npm.block_exploits: "true"
+
+networks:
+  npm_default:
+    external: true
+```
+
+Labels are read when the container is created, so recreate it (`docker compose up -d`) after
+changing them, then use the refresh button in the list.
 
 #### Recommended setup: docker-socket-proxy
 
@@ -212,7 +266,7 @@ doesn't grant new access. The rate limits keep it from being used as a fast port
 
 | Endpoint | Description |
 |---|---|
-| `GET /api/upstreams/candidates?refresh=true` | Suggestions with the status of each source; `refresh=true` bypasses the 30 second cache |
+| `GET /api/upstreams/candidates?refresh=true` | Suggestions with the status of each source; `refresh=true` bypasses the 30 second cache. Docker containers carry a `suggestion` built from their labels, with `existing_host_id` set when a proxy host already uses one of its domains |
 | `POST /api/upstreams/check` | Check up to 20 targets: `{"targets": [{"host": "app", "port": 8080, "scheme": "http"}]}` |
 | `GET /api/upstreams/health` | Latest health monitor results per proxy host and stream |
 
