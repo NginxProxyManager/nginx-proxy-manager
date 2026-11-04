@@ -48,12 +48,12 @@
 		"version": "~=2.0.0"
 	},
 	"beget": {
-		"credentials": "# Beget API credentials used by Certbot\nbeget_plugin_username = username\nbeget_plugin_password = password",
+		"credentials": "# Beget API credentials used by Certbot\n# Find on Settings -> Security -> BegetAPI\ndns_beget_plugin_username = username\ndns_beget_plugin_password = password",
 		"dependencies": "",
-		"full_plugin_name": "beget-plugin",
+		"full_plugin_name": "dns-beget-plugin",
 		"name": "Beget",
-		"package_name": "certbot-beget-plugin",
-		"version": "~=1.0.0.dev9"
+		"package_name": "certbot-dns-beget-plugin",
+		"version": "~=1.0.0"
 	},
 	"bunny": {
 		"credentials": "# Bunny API token used by Certbot (see https://dash.bunny.net/account/settings)\ndns_bunny_api_key = xxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx",
