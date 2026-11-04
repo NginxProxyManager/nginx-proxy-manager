@@ -1,0 +1,24 @@
+{
+	"Id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+	"Name": "/npm-app-1",
+	"Config": {
+		"Hostname": "aaaaaaaaaaaa",
+		"Env": ["DB_MYSQL_PASSWORD=secret-should-never-leak"],
+		"Cmd": ["/init"]
+	},
+	"Mounts": [{ "Source": "/var/run/docker.sock", "Destination": "/var/run/docker.sock" }],
+	"NetworkSettings": {
+		"Networks": {
+			"npm_default": {
+				"NetworkID": "1111111111111111111111111111111111111111111111111111111111111111",
+				"IPAddress": "172.18.0.2",
+				"Aliases": ["npm-app-1", "app"]
+			},
+			"proxy": {
+				"NetworkID": "2222222222222222222222222222222222222222222222222222222222222222",
+				"IPAddress": "172.20.0.2",
+				"Aliases": ["npm-app-1"]
+			}
+		}
+	}
+}
