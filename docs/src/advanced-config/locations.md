@@ -76,7 +76,8 @@ it contains a variable, for example `~ ^/api/(.*)$` with forward path `/v1/$1`, 
 upstream as `/v1/users/7`. Such a location is written as it is.
 
 A forward host with an nginx variable, such as `$backend` or `app-$stage`, is written into the config exactly as before
-(`proxy_pass http://$backend:8080;`), without the extra lines, also with `NPM_LOCATION_DYNAMIC_DNS=false`. With "Cache Assets" its assets use the same `proxy_pass`.
+(`proxy_pass http://$backend:8080;`), without the extra lines, also with `NPM_LOCATION_DYNAMIC_DNS=false`. NPM doesn't
+check or monitor such an upstream. With "Cache Assets" its assets use the same `proxy_pass`.
 Since v2.17 the API refuses a `$` in a forward host, so this only applies to locations saved before. A forward path
 can still use variables such as `$1` or `$request_uri`, but not the braced form (`${name}`): the API refuses braces.
 
