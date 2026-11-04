@@ -461,6 +461,9 @@
 	"host-status.view-error-log": {
 		"defaultMessage": "View error log"
 	},
+	"host-status.warning": {
+		"defaultMessage": "Warning"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
 	},
@@ -500,11 +503,62 @@
 	"loading": {
 		"defaultMessage": "Loading…"
 	},
+	"location-status.disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Active"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Not active"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx rejected this location, so it was disabled. The rest of the host keeps working."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Unresolved"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "The forward host can't be resolved right now. Requests to this location fail until it can."
+	},
+	"location.advanced": {
+		"defaultMessage": "Advanced"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Has custom Nginx configuration"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Another location already uses {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "This location has errors"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "The host contains characters that are not allowed (quotes, ;, braces, $, # or \\). A single nginx variable such as $backend is allowed."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "The host must not contain spaces"
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Invalid characters in forward path (spaces, quotes, ;, braces, # or \\). nginx variables such as $uri are allowed."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Some custom locations have errors"
+	},
 	"location.filter": {
 		"defaultMessage": "Filter by path or destination"
+	},
+	"location.path-label": {
+		"defaultMessage": "Location"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Enable or disable this location"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, one {# location} other {# locations}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, one {# problem} other {# problems}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Verification Code"
@@ -755,8 +809,14 @@
 	"save-warning.offline": {
 		"defaultMessage": "Saved, but nginx could not load this host, so it is offline:"
 	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, one {# custom location was disabled because nginx rejected it.} other {# custom locations were disabled because nginx rejected them.}}"
+	},
 	"save-warning.title": {
 		"defaultMessage": "Saved with warnings"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, one {# custom location points to a host that can't be resolved right now.} other {# custom locations point to hosts that can't be resolved right now.}}"
 	},
 	"setting": {
 		"defaultMessage": "Setting"

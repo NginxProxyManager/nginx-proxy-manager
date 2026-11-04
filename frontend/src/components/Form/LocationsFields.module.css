@@ -5,6 +5,31 @@
 	--tblr-card-border-color: light-dark(var(--tblr-gray-200), var(--tblr-gray-700)) !important;
 }
 
+/* A location with validation errors, or the one nginx rejected on save */
+.locationCard.invalid,
+.locationCard.highlight {
+	--tblr-card-border-color: var(--tblr-danger) !important;
+}
+
+.locationCard.highlight {
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--tblr-danger) 25%, transparent);
+}
+
+/* Switched off by the user: still editable, but visibly not in use */
+.muted .toggle,
+.muted .badges,
+.muted :global(.card-body) {
+	opacity: 0.55;
+}
+
+.badges {
+	display: flex;
+	flex: 0 0 auto;
+	gap: 0.25rem;
+	align-items: center;
+	white-space: nowrap;
+}
+
 .filter {
 	max-width: 20rem;
 }

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Alert } from "react-bootstrap";
 import type { HostMeta, NginxConfigErrorDetails } from "src/api/backend";
 import { T } from "src/locale";
+import { getProblemLocations } from "src/modules/HostStatus";
 import { Button } from "./Button";
 
 interface NginxErrorMessageProps {
@@ -40,9 +41,13 @@ interface SaveWarningProps {
 }
 /**
  * Shown instead of closing the modal when a save succeeded but nginx didn't
- * take all of it: the host is offline.
+ * take all of it: the host is offline, or some custom locations were disabled
+ * or can't be resolved.
  */
 export function SaveWarning({ meta, onClose }: SaveWarningProps) {
+	const problems = getProblemLocations(meta);
+	const quarantined = problems.filter((p) => p.status === "quarantined");
+	const unresolved = problems.filter((p) => p.status === "unresolved");
 	return (
 		<Alert variant="warning" className="m-3" data-testid="save-warning">
 			<h4 className="alert-title">
@@ -53,6 +58,27 @@ export function SaveWarning({ meta, onClose }: SaveWarningProps) {
 					<T id="save-warning.offline" />
 					{meta.nginxErr ? <span className="d-block text-break">{meta.nginxErr}</span> : null}
 				</p>
+			) : null}
+			{quarantined.length ? (
+				<p className="mb-1">
+					<T id="save-warning.quarantined" data={{ count: quarantined.length }} />
+				</p>
+			) : null}
+			{unresolved.length ? (
+				<p className="mb-1">
+					<T id="save-warning.unresolved" data={{ count: unresolved.length }} />
+				</p>
+			) : null}
+			{problems.length ? (
+				<ul className="mb-2">
+					{problems.map((p) => (
+						<li key={p.index}>
+							<code>{p.path}</code>
+							{": "}
+							{p.message || <T id={`location-status.${p.status}.default`} />}
+						</li>
+					))}
+				</ul>
 			) : null}
 			<div className="d-flex">
 				<Button size="sm" className="ms-auto" onClick={onClose}>

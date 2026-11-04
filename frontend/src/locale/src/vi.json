@@ -461,6 +461,9 @@
 	"host-status.view-error-log": {
 		"defaultMessage": "Xem nhật ký lỗi"
 	},
+	"host-status.warning": {
+		"defaultMessage": "Cảnh báo"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
 	},
@@ -500,11 +503,62 @@
 	"loading": {
 		"defaultMessage": "Đang tải…"
 	},
+	"location-status.disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Đang hoạt động"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Không hoạt động"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx đã từ chối vị trí này nên nó đã bị tắt. Phần còn lại của host vẫn hoạt động bình thường."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Chưa phân giải được"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "Hiện không thể phân giải host đích. Các yêu cầu tới vị trí này sẽ thất bại cho đến khi phân giải được."
+	},
+	"location.advanced": {
+		"defaultMessage": "Nâng cao"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Có cấu hình Nginx tùy chỉnh"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Một vị trí khác đã dùng {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Vị trí này có lỗi"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "Host chứa ký tự không được phép (dấu nháy, ;, dấu ngoặc nhọn, $, # hoặc \\). Được phép dùng một biến nginx duy nhất như $backend."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "Host không được chứa khoảng trắng"
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Đường dẫn đích chứa ký tự không hợp lệ (khoảng trắng, dấu nháy, ;, dấu ngoặc nhọn, # hoặc \\). Được phép dùng biến nginx như $uri."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Một số vị trí tùy chỉnh có lỗi"
+	},
 	"location.filter": {
 		"defaultMessage": "Lọc theo đường dẫn hoặc đích"
+	},
+	"location.path-label": {
+		"defaultMessage": "Vị trí"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Bật hoặc tắt vị trí này"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, other {# vị trí}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, other {# vấn đề}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Mã xác minh"
@@ -755,8 +809,14 @@
 	"save-warning.offline": {
 		"defaultMessage": "Đã lưu, nhưng nginx không thể tải host này nên host đang ngoại tuyến:"
 	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, other {# vị trí tùy chỉnh đã bị tắt vì nginx từ chối.}}"
+	},
 	"save-warning.title": {
 		"defaultMessage": "Đã lưu nhưng có cảnh báo"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, other {# vị trí tùy chỉnh trỏ tới host hiện không thể phân giải.}}"
 	},
 	"setting": {
 		"defaultMessage": "Cài đặt"

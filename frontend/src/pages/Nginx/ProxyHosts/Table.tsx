@@ -14,7 +14,28 @@ import {
 import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
+import { getProblemLocations } from "src/modules/HostStatus";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
+
+// "+2 locations · 1 problem" under the main destination
+function LocationsHint({ host }: { host: ProxyHost }) {
+	const count = host.locations?.length || 0;
+	if (!count) {
+		return null;
+	}
+	const problems = host.enabled ? getProblemLocations(host.meta).length : 0;
+	return (
+		<div className="text-secondary small">
+			<T id="locations.count" data={{ count }} />
+			{problems ? (
+				<span className="text-warning">
+					{" · "}
+					<T id="locations.problems" data={{ count: problems }} />
+				</span>
+			) : null}
+		</div>
+	);
+}
 
 interface Props {
 	data: ProxyHost[];
@@ -76,7 +97,12 @@ export default function Table({
 				},
 				cell: (info: any) => {
 					const value = info.getValue();
-					return `${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`;
+					return (
+						<>
+							{`${value.forwardScheme}://${value.forwardHost}:${value.forwardPort}`}
+							<LocationsHint host={value} />
+						</>
+					);
 				},
 			}),
 			columnHelper.accessor((row: any) => row.certificate, {

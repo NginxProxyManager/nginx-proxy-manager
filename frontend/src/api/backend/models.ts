@@ -127,13 +127,17 @@ export interface Certificate {
 }
 
 export interface ProxyLocation {
+	id?: number | null;
 	path: string;
 	advancedConfig: string;
 	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
+	forwardPath?: string;
 	accessListId?: number;
 	accessList?: AccessList;
+	// Missing means enabled
+	enabled?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -141,7 +145,7 @@ export interface ProxyLocation {
 // stripped by the backend from anything the client sends back).
 // ---------------------------------------------------------------------------
 
-export type NginxConfigErrorScope = "host" | "other_host" | "global";
+export type NginxConfigErrorScope = "location" | "host" | "other_host" | "global";
 
 export interface NginxConfigErrorDetails {
 	kind: "nginx_config";
@@ -150,8 +154,20 @@ export interface NginxConfigErrorDetails {
 	hostId?: number;
 	file?: string | null;
 	line?: number | null;
+	locationIndex?: number | null;
+	locationPath?: string | null;
 	nginxOutput?: string | null;
 	hint?: string | null;
+}
+
+export type LocationStatusValue = "ok" | "disabled" | "quarantined" | "unresolved";
+
+export interface NginxLocationStatus {
+	index: number;
+	path: string;
+	status: LocationStatusValue;
+	mode: "dynamic" | "static" | null;
+	message: string | null;
 }
 
 export interface HostMeta {
@@ -160,6 +176,8 @@ export interface HostMeta {
 	nginxErr?: string | null;
 	nginxDetails?: NginxConfigErrorDetails | null;
 	nginxCheckedAt?: string;
+	// proxy hosts only, one entry per location, same order
+	nginxLocations?: NginxLocationStatus[];
 	// Other, client-owned meta (letsencrypt, dns challenge, ...)
 	[key: string]: any;
 }

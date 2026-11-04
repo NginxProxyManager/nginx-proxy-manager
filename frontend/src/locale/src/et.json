@@ -461,6 +461,9 @@
 	"host-status.view-error-log": {
 		"defaultMessage": "Näita vealogi"
 	},
+	"host-status.warning": {
+		"defaultMessage": "Hoiatus"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
 	},
@@ -500,11 +503,62 @@
 	"loading": {
 		"defaultMessage": "Laadimine…"
 	},
+	"location-status.disabled": {
+		"defaultMessage": "Väljas"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Aktiivne"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Pole aktiivne"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx lükkas selle asukoha tagasi, seega lülitati see välja. Ülejäänud host töötab edasi."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Lahendamata"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "Sihthosti nime ei saa praegu lahendada. Päringud sellele asukohale ebaõnnestuvad, kuni see õnnestub."
+	},
+	"location.advanced": {
+		"defaultMessage": "Täpsemalt"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Kohandatud Nginx seadistus olemas"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Teine asukoht kasutab juba teed {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Selles asukohas on vigu"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "Host sisaldab lubamatuid märke (jutumärgid, ;, sulud, $, # või \\). Üksik nginxi muutuja, näiteks $backend, on lubatud."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "Host ei tohi sisaldada tühikuid"
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Edastusteel on lubamatud märgid (tühikud, jutumärgid, ;, sulud, # või \\). nginxi muutujad, näiteks $uri, on lubatud."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Mõnes kohandatud asukohas on vigu"
+	},
 	"location.filter": {
 		"defaultMessage": "Filtreeri tee või sihtkoha järgi"
+	},
+	"location.path-label": {
+		"defaultMessage": "Asukoht"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Lülita see asukoht sisse või välja"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, one {# asukoht} other {# asukohta}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, one {# probleem} other {# probleemi}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Kinnituskood"
@@ -755,8 +809,14 @@
 	"save-warning.offline": {
 		"defaultMessage": "Salvestatud, kuid nginx ei suutnud seda hosti laadida, seega on see maas:"
 	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, one {# kohandatud asukoht lülitati välja, sest nginx lükkas selle tagasi.} other {# kohandatud asukohta lülitati välja, sest nginx lükkas need tagasi.}}"
+	},
 	"save-warning.title": {
 		"defaultMessage": "Salvestatud hoiatustega"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, one {# kohandatud asukoht viitab hostile, mida ei saa praegu lahendada.} other {# kohandatud asukohta viitavad hostidele, mida ei saa praegu lahendada.}}"
 	},
 	"setting": {
 		"defaultMessage": "Seade"
