@@ -84,7 +84,7 @@ export default defineConfig({
 					{
 						text: "Advanced Configuration",
 						link: "/advanced-config/",
-						items: [{ text: "Host Status and Nginx Errors", link: "/advanced-config/locations" }],
+						items: [{ text: "Custom Locations", link: "/advanced-config/locations" }],
 					},
 					{ text: "Upgrading", link: "/upgrading/" },
 					{ text: "Frequently Asked Questions", link: "/faq/" },
