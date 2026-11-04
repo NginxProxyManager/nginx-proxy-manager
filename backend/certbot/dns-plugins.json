@@ -173,7 +173,7 @@
 		"full_plugin_name": "dns-multi",
 		"name": "DnsMulti",
 		"package_name": "certbot-dns-multi",
-		"version": "~=4.9"
+		"version": "~=5.6.0"
 	},
 	"dnspod": {
 		"credentials": "dns_dnspod_email = \"email@example.com\"\ndns_dnspod_api_token = \"id,key\"",
