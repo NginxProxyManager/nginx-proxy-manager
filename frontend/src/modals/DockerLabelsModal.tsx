@@ -1,11 +1,11 @@
-import { IconBrandDocker, IconChevronDown, IconChevronRight, IconCopy, IconRefresh } from "@tabler/icons-react";
+import { IconBrandDocker, IconChevronDown, IconChevronRight, IconRefresh } from "@tabler/icons-react";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import type { UpstreamCandidate, UpstreamCandidates, UpstreamSuggestion } from "src/api/backend";
-import { Button, Loading } from "src/components";
+import { Button, CopyableCode, Loading } from "src/components";
 import { useUpstreamCandidates } from "src/hooks";
 import { intl, T } from "src/locale";
 import { showDeadHostModal } from "./DeadHostModal";
@@ -138,31 +138,10 @@ function OpenExisting({ s, onOpen }: { s: UpstreamSuggestion; onOpen: ListProps[
 }
 
 function ComposeExample() {
-	const [copied, setCopied] = useState(false);
-	const copy = async () => {
-		try {
-			await navigator.clipboard.writeText(COMPOSE_EXAMPLE);
-			setCopied(true);
-			setTimeout(() => setCopied(false), 2000);
-		} catch {
-			// no clipboard access (http): the text can still be selected
-		}
-	};
 	return (
-		<div className="position-relative">
-			<pre className="small mb-0" data-testid="compose-example">
-				{COMPOSE_EXAMPLE}
-			</pre>
-			<button
-				type="button"
-				className="btn btn-sm position-absolute top-0 end-0 m-2"
-				onClick={copy}
-				data-testid="copy-compose-example"
-			>
-				<IconCopy size={14} className="me-1" />
-				<T id={copied ? "docker-labels.copied" : "docker-labels.copy"} />
-			</button>
-		</div>
+		<CopyableCode className="small mb-0" testId="compose-example">
+			{COMPOSE_EXAMPLE}
+		</CopyableCode>
 	);
 }
 
