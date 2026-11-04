@@ -44,8 +44,8 @@
 		"dependencies": "",
 		"full_plugin_name": "dns-baidu",
 		"name": "baidu",
-		"package_name": "certbot-dns-baidu",
-		"version": "~=0.1.1"
+		"package_name": "certbot-dns-baidu-bcd",
+		"version": "~=2.0.0"
 	},
 	"beget": {
 		"credentials": "# Beget API credentials used by Certbot\nbeget_plugin_username = username\nbeget_plugin_password = password",
