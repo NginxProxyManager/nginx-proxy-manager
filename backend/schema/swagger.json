@@ -172,6 +172,11 @@
 				"$ref": "./paths/nginx/proxy-hosts/post.json"
 			}
 		},
+		"/nginx/proxy-hosts/test": {
+			"post": {
+				"$ref": "./paths/nginx/proxy-hosts/test/post.json"
+			}
+		},
 		"/nginx/proxy-hosts/{hostID}": {
 			"get": {
 				"$ref": "./paths/nginx/proxy-hosts/hostID/get.json"
@@ -199,6 +204,11 @@
 			},
 			"post": {
 				"$ref": "./paths/nginx/redirection-hosts/post.json"
+			}
+		},
+		"/nginx/redirection-hosts/test": {
+			"post": {
+				"$ref": "./paths/nginx/redirection-hosts/test/post.json"
 			}
 		},
 		"/nginx/redirection-hosts/{hostID}": {
@@ -230,6 +240,11 @@
 				"$ref": "./paths/nginx/dead-hosts/post.json"
 			}
 		},
+		"/nginx/dead-hosts/test": {
+			"post": {
+				"$ref": "./paths/nginx/dead-hosts/test/post.json"
+			}
+		},
 		"/nginx/dead-hosts/{hostID}": {
 			"get": {
 				"$ref": "./paths/nginx/dead-hosts/hostID/get.json"
@@ -257,6 +272,11 @@
 			},
 			"post": {
 				"$ref": "./paths/nginx/streams/post.json"
+			}
+		},
+		"/nginx/streams/test": {
+			"post": {
+				"$ref": "./paths/nginx/streams/test/post.json"
 			}
 		},
 		"/nginx/streams/{streamID}": {

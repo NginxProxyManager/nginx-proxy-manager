@@ -203,15 +203,18 @@ describe("repairs of other hosts while saving a host whose own config is not app
 		assert.match(reloads[0][`${id}.conf`], /# before/);
 	});
 
-	it("applies them with a reload after a dry run", async () => {
+	it("leaves them to the save after a dry run: a dry run never changes another host", async () => {
 		const other = await brokenHost();
+		const before = onDisk(other);
+		const otherMeta = (await row(other)).meta;
 		const id = await host("# fine", "server {\n  # before\n}\n");
 		reloads = [];
 		await internalNginx.configure(proxyHostModel, "proxy_host", await row(id), { dryRun: true });
-		assert.equal((await row(other)).meta.nginx_online, false);
-		assert.equal(reloads.length, 1);
-		assert.equal(reloads[0][`${other}.conf`], undefined);
-		assert.match(reloads[0][`${id}.conf`], /# before/);
+		// the broken file was only moved aside for the test (see dryRun()), nothing to apply
+		assert.equal(onDisk(other), before);
+		assert.deepEqual((await row(other)).meta, otherMeta);
+		assert.match(onDisk(id), /# before/);
+		assert.equal(reloads.length, 0);
 	});
 
 	it("does not reload for a rejected save or a dry run without repairs, or with reload: false", async () => {

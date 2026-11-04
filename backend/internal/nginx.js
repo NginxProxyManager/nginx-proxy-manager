@@ -79,6 +79,10 @@ const MAX_HEAL_ITERATIONS = 10;
 const TOO_MANY_BROKEN_HOSTS = `Too many broken host configs to repair in one go (more than ${MAX_HEAL_ITERATIONS}). Regenerate all host configs (restart NPM or run backend/scripts/regenerate-config), then try again.`;
 // Extra configure iterations on top of one per location
 const EXTRA_CONFIGURE_ITERATIONS = 10;
+
+// Config name of a host that doesn't exist yet, see dryRun(). Not a number, so it can never be a real host's
+// file (see parseManagedFile/listManagedFiles) and is easy to clean up after an interrupted test.
+const DRY_RUN_ID = "npm-dry-run";
 // When the startup reconcile tries hosts again whose upstream names did not resolve yet
 const RECONCILE_RETRY_DELAYS = [30 * 1000, 2 * 60 * 1000, 5 * 60 * 1000];
 
@@ -204,6 +208,23 @@ const mentionedInAdvanced = (advancedConfig, message) => {
 	return names.some((name) => mentionsPath(advancedConfig, name));
 };
 
+/**
+ * @param   {Object} entry  an other host's file moved aside during a dry run
+ * @returns {Object}
+ */
+const describeAside = (entry) => {
+	const humanised = entry.parsed?.message ? humaniseNginxMessage(entry.parsed.message) : null;
+	return {
+		host_type: entry.host_type,
+		host_id: entry.host_id,
+		message: sentence(
+			`Nginx rejects the current configuration of ${hostLabel(entry.host_type, { id: entry.host_id })}${
+				humanised ? `: ${humanised.text}` : ""
+			}`,
+		),
+	};
+};
+
 const internalNginx = {
 	SERVER_META_KEYS,
 
@@ -301,19 +322,123 @@ const internalNginx = {
 	 * @param   {Object}         host
 	 * @param   {Object}         [opts]
 	 * @param   {Boolean}        [opts.reload]  default true
-	 * @param   {Boolean}        [opts.dryRun]  only check that nginx accepts the host: the previous config
-	 *                                          files are put back and the meta is not written, see configureHost()
+	 * @param   {Boolean}        [opts.dryRun]  only check that nginx accepts the host, nothing is changed:
+	 *                                          see dryRun(). Throws like a real configure would.
 	 * @returns {Promise<Object>} the new meta
 	 */
 	configure: (model, host_type, host, opts = {}) => {
+		if (opts.dryRun === true) {
+			return internalNginx.dryRun(model, host_type, host).then((result) => {
+				if (result.error) {
+					throw result.error;
+				}
+				return result.meta;
+			});
+		}
 		return withLock(() =>
 			internalNginx.configureHost(model, host_type, host, {
-				reload: opts.reload !== false && opts.dryRun !== true,
+				reload: opts.reload !== false,
 				applyRepairs: opts.reload !== false,
 				depth: 0,
-				dryRun: opts.dryRun === true,
 			}),
 		);
+	},
+
+	/**
+	 * Checks whether nginx would accept a host, without changing anything: the host's config is written for the
+	 * duration of `nginx -t` only, nothing is written to the database, nginx is not reloaded and other hosts'
+	 * files are not repaired (a broken one is moved aside for the test, put back afterwards and reported).
+	 *
+	 * A host that doesn't exist yet has no id: pass `id: internalNginx.DRY_RUN_ID`, its config is written to a
+	 * reserved file name that is removed afterwards (with the log files `nginx -t` creates for it).
+	 *
+	 * @param   {Object}  model
+	 * @param   {String}  host_type
+	 * @param   {Object}  host  the host as it would be saved, with its relations
+	 * @returns {Promise<{meta: Object|null, error: Error|null, locations: Array|null, aside: Array}>}
+	 *          error: the host-level NginxConfigError/ConfigurationError a save would fail with.
+	 *          aside: other hosts whose broken config would be repaired or disabled by a save
+	 *          ({host_type, host_id, message, details}).
+	 */
+	dryRun: (model, host_type, host) =>
+		withLock(async () => {
+			const hostType = internalNginx.getFileFriendlyHostType(host_type);
+			const isNew = host.id === DRY_RUN_ID;
+			const filename = internalNginx.getConfigName(hostType, host.id);
+			if (isNew) {
+				// a leftover of an interrupted test must not be put back
+				internalNginx.deleteFile(filename);
+				internalNginx.deleteFile(`${filename}.err`);
+			}
+			const previous = readFileOrNull(filename);
+			const previousErr = readFileOrNull(`${filename}.err`);
+			const aside = [];
+			const opts = { reload: false, depth: 0, dryRun: true, aside };
+
+			try {
+				const meta = await internalNginx.configureHost(model, hostType, host, opts);
+				return {
+					meta,
+					error: null,
+					locations: meta.nginx_locations || null,
+					aside: aside.map(describeAside),
+				};
+			} catch (err) {
+				if (!internalNginx.isHostLevelError(err)) {
+					throw err;
+				}
+				return {
+					meta: null,
+					error: err,
+					locations: err.locationStates || null,
+					aside: aside.map(describeAside),
+				};
+			} finally {
+				internalNginx.restoreConfig(filename, previous);
+				internalNginx.restoreConfig(`${filename}.err`, previousErr);
+				for (const entry of aside) {
+					try {
+						if (fs.existsSync(`${entry.file}.npm-aside`)) {
+							fs.renameSync(`${entry.file}.npm-aside`, entry.file);
+						}
+					} catch (err) {
+						logger.error(`Could not move ${entry.file} back: ${err.message}`);
+					}
+				}
+				if (isNew) {
+					internalNginx.removeDryRunFiles();
+				}
+			}
+		}),
+
+	DRY_RUN_ID,
+
+	/**
+	 * Removes what a dry run of a new host leaves behind: its config file (only after an interrupted test) and
+	 * the log files `nginx -t` opened for it. Only call this while holding the lock.
+	 */
+	removeDryRunFiles: () => {
+		for (const hostType of Object.keys(HOST_MODELS)) {
+			const filename = internalNginx.getConfigName(hostType, DRY_RUN_ID);
+			for (const file of [filename, `${filename}.err`, `${filename}.npm-aside`]) {
+				if (fs.existsSync(file)) {
+					internalNginx.deleteFile(file);
+				}
+			}
+		}
+		let logs = [];
+		try {
+			logs = fs.readdirSync("/data/logs").filter((f) => f.includes(`-${DRY_RUN_ID}_`));
+		} catch {
+			return;
+		}
+		for (const file of logs) {
+			try {
+				fs.rmSync(`/data/logs/${file}`, { force: true });
+			} catch (err) {
+				logger.warn(`Could not remove /data/logs/${file}: ${err.message}`);
+			}
+		}
 	},
 
 	/**
@@ -330,10 +455,13 @@ const internalNginx = {
 	 * @param   {Function} [opts.modeResolver]  shared DNS cache, see lib/upstream-dns.js
 	 * @param   {Boolean}  [opts.offlineOnError] mark the host offline instead of throwing on host level errors
 	 * @param   {Boolean}  [opts.dryRun]  check only: on success the host's previous config files are put back and
-	 *                                    nothing is written to the database. Other hosts may still be repaired.
-	 * @param   {Boolean}  [opts.applyRepairs] when this host's config is not applied (it is rejected, or this is a
-	 *                                    dry run) but other hosts were repaired: reload nginx, so it runs the
-	 *                                    repaired files their status already describes, see applyRepairs()
+	 *                                    nothing is written to the database. Broken files of other hosts are not
+	 *                                    repaired: they are moved aside for the test and listed in opts.aside,
+	 *                                    the caller puts them back, see dryRun()
+	 * @param   {Array}    [opts.aside]   dry run: collects the other hosts' files moved aside
+	 * @param   {Boolean}  [opts.applyRepairs] when this host's config is not applied (it is rejected) but other
+	 *                                    hosts were repaired: reload nginx, so it runs the repaired files their
+	 *                                    status already describes, see applyRepairs()
 	 * @returns {Promise<Object>}
 	 */
 	configureHost: async (model, host_type, host, opts) => {
@@ -502,6 +630,36 @@ const internalNginx = {
 					failure = { scope: "host", parsed: blame.parsed, namesProtected: true };
 					break;
 				}
+				if (opts.dryRun && others.length) {
+					// A dry run never changes another host: the broken file is only moved aside for the test (so
+					// this host's config can still be checked) and reported. Saving would repair or disable it.
+					const aside = opts.aside || [];
+					if (aside.length >= MAX_HEAL_ITERATIONS) {
+						failure = { scope: "global", tooMany: true, parsed: blame.parsed };
+						break;
+					}
+					let moved = false;
+					for (const other of others) {
+						const otherFile = internalNginx.getConfigName(other.host_type, other.host_id);
+						if (!fs.existsSync(otherFile)) {
+							continue;
+						}
+						fs.renameSync(otherFile, `${otherFile}.npm-aside`);
+						aside.push({
+							host_type: other.host_type,
+							host_id: other.host_id,
+							file: otherFile,
+							parsed:
+								others.length > 1 ? Object.assign({}, blame.parsed, { file: otherFile }) : blame.parsed,
+						});
+						moved = true;
+					}
+					if (moved) {
+						continue;
+					}
+					failure = { scope: "global", parsed: blame.parsed };
+					break;
+				}
 				if (others.length && heals >= MAX_HEAL_ITERATIONS) {
 					logger.error(`${hostLabel(hostType, host)}: ${TOO_MANY_BROKEN_HOSTS}`);
 					failure = { scope: "global", tooMany: true, parsed: blame.parsed };
@@ -608,6 +766,9 @@ const internalNginx = {
 			await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
 			if (opts.applyRepairs && heals > 0) {
 				await internalNginx.applyRepairs(hostType, host);
+			}
+			if (opts.dryRun && states) {
+				error.locationStates = states.map(publicLocationState);
 			}
 			throw error;
 		}
@@ -1099,6 +1260,45 @@ const internalNginx = {
 	},
 
 	/**
+	 * Never throws, false when in doubt.
+	 *
+	 * @param   {Object}  access    the request's Access object
+	 * @param   {String}  hostType  proxy_host, redirection_host, dead_host or stream
+	 * @param   {Number}  hostId
+	 * @returns {Promise<boolean>} whether the user may see that host
+	 */
+	canSeeHost: async (access, hostType, hostId) => {
+		try {
+			const permission = hostType === "stream" ? "streams" : `${hostType}s`;
+			const accessData = await access.can(`${permission}:list`);
+			if (
+				accessData === true ||
+				accessData?.permission_visibility === "all" ||
+				accessData?.roles?.includes("admin")
+			) {
+				return true;
+			}
+			if (HOST_MODELS[hostType]) {
+				const row = await HOST_MODELS[hostType].query().where("id", hostId).first();
+				// Proxy hosts can also be shared with a user explicitly, see permissions.meta.proxy_host_ids
+				const permissions = access.getPermissions ? access.getPermissions() : {};
+				const allowedIds =
+					hostType === "proxy_host"
+						? permissions?.meta?.proxy_host_ids || permissions?.meta?.proxyHostIds || []
+						: [];
+				return (
+					!!row &&
+					(row.owner_user_id === access.token.getUserId(1) ||
+						(!row.is_deleted && allowedIds.map(Number).includes(Number(row.id))))
+				);
+			}
+		} catch {
+			// not visible
+		}
+		return false;
+	},
+
+	/**
 	 * An NginxConfigError of scope "global" can name another host and include its nginx output. A user who
 	 * can't see that host only gets a generic message. Never throws, redacts when in doubt.
 	 *
@@ -1111,32 +1311,7 @@ const internalNginx = {
 			return err;
 		}
 		const { host_type: hostType, host_id: hostId } = err.details;
-		let visible = false;
-		try {
-			const permission = hostType === "stream" ? "streams" : `${hostType}s`;
-			const accessData = await access.can(`${permission}:list`);
-			if (
-				accessData === true ||
-				accessData?.permission_visibility === "all" ||
-				accessData?.roles?.includes("admin")
-			) {
-				visible = true;
-			} else if (HOST_MODELS[hostType]) {
-				const row = await HOST_MODELS[hostType].query().where("id", hostId).first();
-				// Proxy hosts can also be shared with a user explicitly, see permissions.meta.proxy_host_ids
-				const permissions = access.getPermissions ? access.getPermissions() : {};
-				const allowedIds =
-					hostType === "proxy_host"
-						? permissions?.meta?.proxy_host_ids || permissions?.meta?.proxyHostIds || []
-						: [];
-				visible =
-					!!row &&
-					(row.owner_user_id === access.token.getUserId(1) ||
-						(!row.is_deleted && allowedIds.map(Number).includes(Number(row.id))));
-			}
-		} catch {
-			visible = false;
-		}
+		const visible = await internalNginx.canSeeHost(access, hostType, hostId);
 		if (!visible) {
 			err.message = "Nginx rejected the configuration of another host. Please ask an administrator to check it.";
 			err.details = Object.assign({}, err.details, {
@@ -1916,6 +2091,8 @@ const internalNginx = {
 	 */
 	restoreStaleAside: () => {
 		let handled = 0;
+		// files of a dry run of a new host, see dryRun()
+		internalNginx.removeDryRunFiles();
 		for (const hostType of [...Object.keys(HOST_MODELS), "default_host"]) {
 			const dir = `/data/nginx/${hostType}`;
 			let files = [];

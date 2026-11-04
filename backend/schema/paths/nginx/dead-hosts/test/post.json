@@ -1,0 +1,161 @@
+{
+	"operationId": "testDeadHostConfig",
+	"summary": "Test the configuration of a 404 Host without saving it",
+	"description": "Validates the payload like a save would (schema, duplicate custom location paths, forbidden file directives, domain names in use: 400) and lets nginx check the generated configuration without activating it: nothing is written to the database, nginx is not reloaded and other hosts are not changed. A configuration nginx rejects is returned as ok:false with the error a save would fail with. Also checks that the upstream targets are reachable. Needs the create permission, or the update permission when id is given. Rate limited to 30 tests per minute per user.",
+	"tags": [
+		"404-hosts"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"dead_hosts.manage"
+			]
+		}
+	],
+	"requestBody": {
+		"description": "404 Host payload, the same as for creating one, plus id when testing an edit",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"domain_names"
+					],
+					"properties": {
+						"id": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "Set when testing changes to an existing 404 host: the payload is merged over the stored one, like an update",
+							"example": 12
+						},
+						"domain_names": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/domain_names"
+						},
+						"certificate_id": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/certificate_id"
+						},
+						"ssl_forced": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/ssl_forced"
+						},
+						"hsts_enabled": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/hsts_enabled"
+						},
+						"hsts_subdomains": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/hsts_subdomains"
+						},
+						"http2_support": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/http2_support"
+						},
+						"advanced_config": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/advanced_config"
+						},
+						"meta": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/meta"
+						}
+					}
+				},
+				"example": {
+					"domain_names": [
+						"test.example.com"
+					],
+					"certificate_id": 0,
+					"ssl_forced": false,
+					"advanced_config": "",
+					"http2_support": false,
+					"hsts_enabled": false,
+					"hsts_subdomains": false,
+					"meta": {}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"ok": true,
+								"nginx_online": true,
+								"nginx_err": null,
+								"nginx_details": null,
+								"nginx_locations": [],
+								"upstreams": [],
+								"warnings": []
+							}
+						},
+						"rejected": {
+							"value": {
+								"ok": false,
+								"nginx_online": false,
+								"nginx_err": "Advanced configuration: unknown directive \"proxy_passs\" (line 3).",
+								"nginx_details": {
+									"kind": "nginx_config",
+									"scope": "host",
+									"host_type": "dead_host",
+									"host_id": 12,
+									"file": "/data/nginx/dead_host/12.conf",
+									"line": 31,
+									"location_index": null,
+									"location_path": null,
+									"nginx_output": "nginx: [emerg] unknown directive \"proxy_passs\" in /data/nginx/dead_host/12.conf:31",
+									"hint": "Check the spelling of the directive. If it comes from an nginx module, that module may not be available."
+								},
+								"nginx_locations": [],
+								"upstreams": [],
+								"warnings": []
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/host-test-result.json"
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "400 response, the payload is invalid (eg. a domain name is already in use)",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 400,
+									"message": "test.example.com is already in use"
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/error.json"
+					}
+				}
+			}
+		},
+		"429": {
+			"description": "Too many tests",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 429,
+									"message": "Too many configuration tests. Try again in 20 seconds."
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/error.json"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,5 +1,7 @@
+import errs from "../lib/error.js";
 import { buildHistoryCandidates, mergeCandidates } from "../lib/upstream/candidates.js";
 import { checkTarget, checkTargets } from "../lib/upstream/check.js";
+import { consumeCheckBudget } from "../lib/upstream/check-budget.js";
 import {
 	getDockerHost,
 	getHealthInterval,
@@ -12,7 +14,6 @@ import { describeDockerError, discoverDocker } from "../lib/upstream/docker.js";
 import { TooManyRequestsError } from "../lib/upstream/errors.js";
 import { HealthMonitor, visibilityFilter } from "../lib/upstream/health.js";
 import { createRateLimiter } from "../lib/upstream/rate-limit.js";
-import errs from "../lib/error.js";
 import { debug, global as logger } from "../logger.js";
 import proxyHostModel from "../models/proxy_host.js";
 import streamModel from "../models/stream.js";
@@ -22,7 +23,6 @@ import internalStream from "./stream.js";
 const CACHE_TTL_MS = 30 * 1000;
 const MAX_TARGETS = 20;
 
-const checkLimiter = createRateLimiter({ limit: 60, windowMs: 60 * 1000 });
 const refreshLimiter = createRateLimiter({ limit: 6, windowMs: 60 * 1000 });
 
 /** @type {{at: number, value: object}|null} */
@@ -198,7 +198,7 @@ const internalUpstream = {
 
 		const enabled = isUpstreamCheckEnabled();
 		if (enabled) {
-			const limit = checkLimiter.consume(rateKey(access), targets.length);
+			const limit = consumeCheckBudget(access, targets.length);
 			if (!limit.ok) {
 				throw new TooManyRequestsError(
 					`Too many upstream checks. Try again in ${limit.retryAfter} seconds.`,
