@@ -156,6 +156,12 @@
 			],
 			"example": "192.168.0.11"
 		},
+		"note": {
+			"description": "Note",
+			"type": "string",
+			"example": "Home",
+			"maxLength": 200
+		},
 		"access_items": {
 			"type": "array",
 			"items": {
@@ -191,19 +197,24 @@
 					"address": {
 						"$ref": "#/properties/address"
 					},
+					"note": {
+						"$ref": "#/properties/note"
+					},
 					"directive": {
 						"$ref": "#/properties/directive"
 					}
 				},
 				"example": {
 					"directive": "allow",
-					"address": "192.168.0.0/24"
+					"address": "192.168.0.0/24",
+					"note": "Home"
 				}
 			},
 			"example": [
 				{
 					"directive": "allow",
-					"address": "192.168.0.0/24"
+					"address": "192.168.0.0/24",
+					"note": "Home"
 				}
 			]
 		},

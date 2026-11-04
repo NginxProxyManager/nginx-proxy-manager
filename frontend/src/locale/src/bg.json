@@ -26,6 +26,9 @@
 	"access-list.rule-source.placeholder": {
 		"defaultMessage": "192.168.1.100 или 192.168.1.0/24 или 2001:0db8::/32"
 	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "Напр. „Дом“ или „Офис“"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Удовлетворяване на което и да е"
 	},

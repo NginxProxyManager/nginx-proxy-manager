@@ -89,6 +89,9 @@
 	"access-list.rule-source.placeholder": {
 		"defaultMessage": "192.168.1.100 või 192.168.1.0/24 või 2001:0db8::/32"
 	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "Nt „Kodu“ või „Kontor“"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Piisab ühest tingimusest"
 	},

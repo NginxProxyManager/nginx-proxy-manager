@@ -26,6 +26,9 @@
 	"access-list.rule-source.placeholder": {
 		"defaultMessage": "192.168.1.100 / 192.168.1.0/24 / IPv6"
 	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "예: \"집\" 또는 \"사무실\""
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "조건 중 하나라도 충족"
 	},

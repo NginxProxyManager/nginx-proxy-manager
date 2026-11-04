@@ -101,6 +101,7 @@ export type AccessListClient = {
 	modifiedOn?: string;
 	accessListId?: number;
 	address: string;
+	note?: string;
 	directive: "allow" | "deny";
 	meta?: Record<string, any>;
 };

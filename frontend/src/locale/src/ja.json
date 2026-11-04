@@ -23,6 +23,12 @@
 	"access-list.public.subtitle": {
 		"defaultMessage": "ベーシック認証を使用しません"
 	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 または 192.168.1.0/24 または 2001:0db8::/32"
+	},
+	"access-list.rule-source.placeholder-note": {
+		"defaultMessage": "例：「自宅」や「オフィス」"
+	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "いずれかを満たす"
 	},
