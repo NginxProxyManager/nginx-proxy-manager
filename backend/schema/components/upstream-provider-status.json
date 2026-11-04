@@ -1,0 +1,18 @@
+{
+	"type": "object",
+	"description": "Status of one upstream discovery provider",
+	"additionalProperties": false,
+	"required": ["status", "message"],
+	"properties": {
+		"status": {
+			"type": "string",
+			"example": "ok",
+			"enum": ["ok", "disabled", "unavailable"]
+		},
+		"message": {
+			"type": ["string", "null"],
+			"description": "Why the provider is disabled or unavailable, or a warning",
+			"example": null
+		}
+	}
+}

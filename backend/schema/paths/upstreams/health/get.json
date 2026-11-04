@@ -1,0 +1,62 @@
+{
+	"operationId": "getUpstreamHealth",
+	"summary": "Latest upstream health results",
+	"description": "Results of the background TCP health monitor (NPM_UPSTREAM_HEALTH_INTERVAL). Only hosts the user can list are included. Requires `view` permission for proxy hosts or streams.",
+	"tags": ["upstreams"],
+	"security": [
+		{
+			"bearerAuth": ["proxy_hosts.view", "streams.view"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"enabled": true,
+								"interval": 60,
+								"checked_at": "2026-11-04T10:00:00.000Z",
+								"hosts": {
+									"proxy_host": {
+										"12": {
+											"checked_at": "2026-11-04T10:00:00.000Z",
+											"ok": false,
+											"targets": [
+												{
+													"location_index": null,
+													"host": "app",
+													"port": 80,
+													"ok": true,
+													"code": "ok",
+													"message": "app:80 is reachable (2 ms).",
+													"ms": 2
+												},
+												{
+													"location_index": 0,
+													"path": "/api",
+													"host": "api",
+													"port": 8080,
+													"ok": false,
+													"code": "tcp_refused",
+													"message": "Connection to api:8080 was refused. The host exists, but nothing is listening on port 8080.",
+													"ms": null
+												}
+											]
+										}
+									},
+									"stream": {}
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/upstream-health-object.json"
+					}
+				}
+			}
+		}
+	}
+}

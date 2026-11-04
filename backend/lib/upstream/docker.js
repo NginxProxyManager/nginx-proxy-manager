@@ -1,0 +1,449 @@
+import fs from "node:fs";
+import http from "node:http";
+import os from "node:os";
+import { isValidHost } from "./util.js";
+
+/**
+ * Read-only Docker Engine API client used for upstream discovery.
+ *
+ * - plain node:http (never an HTTP(S)_PROXY agent: the socket or socket-proxy is local)
+ * - GET only, against a hard-coded allowlist of paths
+ * - 3s timeout and 2MB response cap
+ * - only names, ports, state, network and ip leave this module; never env, mounts, cmd or labels
+ *   outside the npm.* namespace
+ */
+
+const REQUEST_TIMEOUT_MS = 3000;
+const MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+const ID_PATTERN = "[A-Za-z0-9][A-Za-z0-9_.-]{0,127}";
+const ALLOWED_PATHS = [
+	/^\/version$/,
+	/^\/containers\/json(?:\?[A-Za-z0-9%=&_.-]*)?$/,
+	new RegExp(`^/containers/${ID_PATTERN}/json$`),
+	new RegExp(`^/networks/${ID_PATTERN}$`),
+];
+
+class DockerApiError extends Error {
+	constructor(message, code, status) {
+		super(message);
+		this.name = "DockerApiError";
+		this.code = code || null;
+		this.status = status || null;
+	}
+}
+
+/**
+ * Parses DOCKER_HOST into node:http request options
+ *
+ * @param   {string} dockerHost  unix:///path, tcp://host:port or http://host:port
+ * @returns {{socketPath?: string, host?: string, port?: number}}
+ * @throws  {DockerApiError}
+ */
+const parseDockerHost = (dockerHost) => {
+	const raw = `${dockerHost ?? ""}`.trim();
+	if (raw.startsWith("unix://")) {
+		const socketPath = raw.slice("unix://".length);
+		if (!socketPath.startsWith("/")) {
+			throw new DockerApiError(`DOCKER_HOST "${raw}" must be an absolute unix socket path.`, "EINVAL");
+		}
+		return { socketPath };
+	}
+	if (raw.startsWith("/")) {
+		return { socketPath: raw };
+	}
+	const match = /^(?:tcp|http):\/\/(\[[^\]]+\]|[^:/]+)(?::(\d{1,5}))?\/?$/.exec(raw);
+	if (match) {
+		const port = match[2] ? Number.parseInt(match[2], 10) : 2375;
+		if (port < 1 || port > 65535) {
+			throw new DockerApiError(`DOCKER_HOST "${raw}" has an invalid port.`, "EINVAL");
+		}
+		return { host: match[1].replace(/^\[|\]$/g, ""), port };
+	}
+	throw new DockerApiError(
+		`DOCKER_HOST "${raw}" is not supported. Use unix:///var/run/docker.sock or tcp://host:2375 (TLS is not supported).`,
+		"EINVAL",
+	);
+};
+
+/**
+ * @param   {string} path
+ * @returns {boolean}
+ */
+const isAllowedPath = (path) => ALLOWED_PATHS.some((re) => re.test(path));
+
+/**
+ * Creates a minimal client bound to one DOCKER_HOST
+ *
+ * @param   {string} dockerHost
+ * @param   {object} [opts]
+ * @param   {number} [opts.timeoutMs]
+ * @param   {number} [opts.maxBytes]
+ * @returns {{get: function(string): Promise<any>, target: object}}
+ */
+const createDockerClient = (dockerHost, opts = {}) => {
+	const target = parseDockerHost(dockerHost);
+	const timeoutMs = opts.timeoutMs || REQUEST_TIMEOUT_MS;
+	const maxBytes = opts.maxBytes || MAX_RESPONSE_BYTES;
+
+	const get = (path) =>
+		new Promise((resolve, reject) => {
+			if (!isAllowedPath(path)) {
+				reject(new DockerApiError(`Docker API path not allowed: ${path.split("?")[0]}`, "EPATH"));
+				return;
+			}
+
+			let settled = false;
+			const done = (fn, value) => {
+				if (!settled) {
+					settled = true;
+					clearTimeout(timer);
+					fn(value);
+				}
+			};
+
+			const req = http.request(
+				{
+					...target,
+					method: "GET",
+					path,
+					agent: false,
+					headers: { Accept: "application/json", Host: "docker" },
+				},
+				(res) => {
+					const chunks = [];
+					let size = 0;
+					res.on("data", (chunk) => {
+						size += chunk.length;
+						if (size > maxBytes) {
+							req.destroy();
+							done(reject, new DockerApiError("Docker API response is too large.", "ETOOBIG"));
+							return;
+						}
+						chunks.push(chunk);
+					});
+					res.on("end", () => {
+						if (settled) {
+							return;
+						}
+						if (res.statusCode !== 200) {
+							done(
+								reject,
+								new DockerApiError(
+									`Docker API answered ${res.statusCode} for ${path.split("?")[0]}`,
+									"ESTATUS",
+									res.statusCode,
+								),
+							);
+							return;
+						}
+						try {
+							done(resolve, JSON.parse(Buffer.concat(chunks).toString("utf8")));
+						} catch (_) {
+							done(reject, new DockerApiError("Docker API returned invalid JSON.", "EJSON"));
+						}
+					});
+					res.on("error", (err) => done(reject, new DockerApiError(err.message, err.code)));
+				},
+			);
+
+			const timer = setTimeout(() => {
+				req.destroy();
+				done(reject, new DockerApiError("Docker API did not answer within 3 seconds.", "ETIMEDOUT"));
+			}, timeoutMs);
+
+			req.on("error", (err) => done(reject, new DockerApiError(err.message, err.code)));
+			req.end();
+		});
+
+	return { get, target };
+};
+
+/**
+ * Finds the 64-hex container id in /proc/self/mountinfo (the /etc/hostname bind mount lives in
+ * /var/lib/docker/containers/<id>/). Works on cgroup v2 where /proc/self/cgroup is just "0::/".
+ *
+ * @param   {string} content
+ * @returns {string|null}
+ */
+const parseMountinfoContainerId = (content) => {
+	const match = /\/containers\/([0-9a-f]{64})\//.exec(`${content ?? ""}`);
+	return match ? match[1] : null;
+};
+
+/**
+ * @param   {object} [interfaces]  os.networkInterfaces() output
+ * @returns {string[]}  non-internal addresses
+ */
+const ownAddresses = (interfaces = os.networkInterfaces()) =>
+	Object.values(interfaces || {})
+		.flat()
+		.filter((addr) => addr && !addr.internal)
+		.map((addr) => addr.address);
+
+const safeName = (name) => `${name ?? ""}`.replace(/^\//, "");
+
+/**
+ * Container names usable as an upstream host. Legacy link aliases ("/web/db") contain a slash
+ * and are not resolvable names, so they are dropped.
+ *
+ * @param   {Array} names  Names from /containers/json
+ * @returns {string[]}
+ */
+const usableNames = (names) =>
+	(Array.isArray(names) ? names : []).map(safeName).filter((name) => !name.includes("/") && isValidHost(name));
+
+/**
+ * Whether an inspected container is really us: at least one of its network addresses must be one
+ * of ours. A container without any address (host network) cannot be disproved and is accepted.
+ *
+ * @param   {object}   container  /containers/{id}/json response
+ * @param   {string[]} mine       ownAddresses()
+ * @returns {boolean}
+ */
+const looksLikeSelf = (container, mine) => {
+	const ips = Object.values(container?.NetworkSettings?.Networks || {})
+		.map((n) => n?.IPAddress)
+		.filter(Boolean);
+	if (!ips.length) {
+		return true;
+	}
+	const set = new Set(mine);
+	return ips.some((ip) => set.has(ip));
+};
+
+/**
+ * Reads the hints from npm.* labels. No other label ever leaves this module.
+ *
+ * @param   {object} labels
+ * @returns {{hide: boolean, port: number|null, scheme: string|null}}
+ */
+const parseNpmLabels = (labels) => {
+	const l = labels && typeof labels === "object" ? labels : {};
+	const port = Number.parseInt(l["npm.port"], 10);
+	const scheme = `${l["npm.scheme"] ?? ""}`.trim().toLowerCase();
+	return {
+		hide: /^(1|true|yes|on)$/i.test(`${l["npm.hide"] ?? ""}`.trim()),
+		port: port >= 1 && port <= 65535 ? port : null,
+		scheme: scheme === "http" || scheme === "https" ? scheme : null,
+	};
+};
+
+/**
+ * Turns the /containers/json list into candidate items.
+ *
+ * @param   {Array}    containers   /containers/json response
+ * @param   {object}   ctx
+ * @param   {string[]} ctx.networks Networks NPM is attached to (names)
+ * @param   {string}   [ctx.selfId] NPM's own container id (skipped)
+ * @returns {Array<object>}
+ */
+const containersToCandidates = (containers, { networks, selfId }) => {
+	const items = [];
+	const shared = new Set(networks || []);
+
+	for (const container of Array.isArray(containers) ? containers : []) {
+		if (!container || typeof container !== "object") {
+			continue;
+		}
+		const id = `${container.Id ?? ""}`;
+		if (selfId && id && (id === selfId || id.startsWith(selfId) || selfId.startsWith(id))) {
+			continue;
+		}
+
+		const labels = container.Labels && typeof container.Labels === "object" ? container.Labels : {};
+		const hints = parseNpmLabels(labels);
+		if (hints.hide) {
+			continue;
+		}
+
+		const names = usableNames(container.Names);
+		if (!names.length) {
+			continue;
+		}
+
+		const ports = [
+			...new Set(
+				(Array.isArray(container.Ports) ? container.Ports : [])
+					.filter((p) => p && `${p.Type ?? "tcp"}`.toLowerCase() === "tcp")
+					.map((p) => Number.parseInt(p.PrivatePort, 10))
+					.filter((p) => p >= 1 && p <= 65535),
+			),
+		];
+		if (hints.port && !ports.includes(hints.port)) {
+			ports.push(hints.port);
+		}
+		ports.sort((a, b) => a - b);
+
+		let network = null;
+		let ip = null;
+		const containerNetworks = container.NetworkSettings?.Networks || {};
+		for (const [name, info] of Object.entries(containerNetworks)) {
+			if (!shared.size || shared.has(name)) {
+				network = name;
+				ip = info?.IPAddress || null;
+				break;
+			}
+		}
+
+		const hintPort = hints.port || (ports.length === 1 ? ports[0] : null);
+		const hintScheme = hints.scheme || (hintPort === 443 || hintPort === 8443 ? "https" : null);
+		const state = typeof container.State === "string" ? container.State : null;
+
+		const base = {
+			source: "docker",
+			ports,
+			hint_port: hintPort,
+			hint_scheme: hintScheme,
+			network,
+			state,
+			ip,
+			used_by: 0,
+		};
+
+		items.push({ ...base, host: names[0], label: `${names[0]} (container)` });
+
+		const service = `${labels["com.docker.compose.service"] ?? ""}`.trim();
+		if (service && service !== names[0] && /^[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(service) && isValidHost(service)) {
+			items.push({ ...base, host: service, label: `${service} (compose service of ${names[0]})` });
+		}
+	}
+
+	return items;
+};
+
+/**
+ * Discovers containers that share a network with NPM.
+ *
+ * @param   {object}   [opts]
+ * @param   {string}   opts.dockerHost
+ * @param   {string}   [opts.hostname]     defaults to os.hostname()
+ * @param   {function} [opts.readMountinfo]
+ * @param   {object}   [opts.interfaces]   defaults to os.networkInterfaces()
+ * @param   {object}   [opts.client]       pre-built client (tests)
+ * @returns {Promise<{items: Array, networks: string[], selfId: string|null}>}
+ */
+const discoverDocker = async (opts = {}) => {
+	const client = opts.client || createDockerClient(opts.dockerHost);
+
+	if (client.target?.socketPath) {
+		try {
+			fs.statSync(client.target.socketPath);
+		} catch (_) {
+			throw new DockerApiError(
+				`Docker socket ${client.target.socketPath} does not exist. Mount it, or point DOCKER_HOST at a docker-socket-proxy.`,
+				"ENOENT",
+			);
+		}
+	}
+
+	await client.get("/version");
+
+	const inspect = async (id) => {
+		if (!id || !new RegExp(`^${ID_PATTERN}$`).test(id)) {
+			return null;
+		}
+		try {
+			return await client.get(`/containers/${id}/json`);
+		} catch (err) {
+			if (err.status === 404) {
+				return null;
+			}
+			throw err;
+		}
+	};
+
+	// 1. Who am I? The hostname is usually the short container id, but users can set it to anything
+	// (even another container's name), so a hostname match must also share one of our addresses.
+	const mine = ownAddresses(opts.interfaces);
+	let self = await inspect(opts.hostname ?? os.hostname());
+	if (self && !looksLikeSelf(self, mine)) {
+		self = null;
+	}
+	if (!self) {
+		// 2. The container id from our own mount table
+		let mountinfo = "";
+		try {
+			mountinfo = opts.readMountinfo ? opts.readMountinfo() : fs.readFileSync("/proc/self/mountinfo", "utf8");
+		} catch (_) {
+			// ignore
+		}
+		self = await inspect(parseMountinfoContainerId(mountinfo));
+	}
+
+	let selfId = self?.Id || null;
+	let networks = Object.keys(self?.NetworkSettings?.Networks || {});
+
+	if (!self) {
+		// 3. Fallback: match our own IPs against the running containers
+		const mineSet = new Set(mine);
+		const all = await client.get("/containers/json");
+		const match = (Array.isArray(all) ? all : []).find((c) =>
+			Object.values(c?.NetworkSettings?.Networks || {}).some((n) => n?.IPAddress && mineSet.has(n.IPAddress)),
+		);
+		if (match) {
+			selfId = match.Id || null;
+			networks = Object.keys(match.NetworkSettings?.Networks || {});
+		}
+	}
+
+	if (!networks.length) {
+		throw new DockerApiError(
+			"Could not find Nginx Proxy Manager's own container through the Docker API, so its networks are unknown.",
+			"ESELF",
+		);
+	}
+
+	// "host" and "none" networks have no peers we could resolve by name
+	const usable = networks.filter((n) => n !== "host" && n !== "none");
+	if (!usable.length) {
+		return { items: [], networks, selfId };
+	}
+
+	const filters = encodeURIComponent(JSON.stringify({ network: usable }));
+	const containers = await client.get(`/containers/json?filters=${filters}`);
+	return { items: containersToCandidates(containers, { networks: usable, selfId }), networks: usable, selfId };
+};
+
+/**
+ * Human readable reason why the Docker provider failed
+ *
+ * @param   {Error} err
+ * @returns {string}
+ */
+const describeDockerError = (err) => {
+	if (!err) {
+		return "Docker discovery failed.";
+	}
+	if (err.code === "EACCES") {
+		return "Permission denied on the Docker socket. The backend runs as PUID/PGID without supplementary groups; use a docker-socket-proxy (DOCKER_HOST=tcp://...) instead.";
+	}
+	if (err.code === "ECONNREFUSED") {
+		return "Connection to the Docker API was refused. Check DOCKER_HOST and that the socket proxy is running.";
+	}
+	if (err.code === "ENOTFOUND" || err.code === "EAI_AGAIN") {
+		return "The DOCKER_HOST host name could not be resolved.";
+	}
+	if (err.status === 403) {
+		return "The Docker API denied the request. If you use a docker-socket-proxy, enable CONTAINERS=1 and NETWORKS=1.";
+	}
+	if (err instanceof DockerApiError) {
+		return err.message;
+	}
+	return `Docker discovery failed: ${err.message || err.code || "unknown error"}`;
+};
+
+export {
+	ALLOWED_PATHS,
+	containersToCandidates,
+	createDockerClient,
+	DockerApiError,
+	describeDockerError,
+	discoverDocker,
+	isAllowedPath,
+	looksLikeSelf,
+	ownAddresses,
+	parseDockerHost,
+	parseMountinfoContainerId,
+	parseNpmLabels,
+	usableNames,
+};
