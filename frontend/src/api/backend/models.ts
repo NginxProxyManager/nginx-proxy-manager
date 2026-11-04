@@ -288,3 +288,25 @@ export interface DNSProvider {
 	name: string;
 	credentials: string;
 }
+
+export type NginxHostType = "proxy_host" | "redirection_host" | "dead_host" | "stream";
+
+export interface NginxRegenerateHost {
+	hostType: NginxHostType;
+	id: number;
+	// first domain name, or the incoming port of a stream
+	name: string;
+	// offline and failed hosts
+	error?: string;
+	// warnings: the broken custom locations, one per line
+	message?: string;
+}
+
+export interface NginxRegenerateResult {
+	checked: number;
+	regenerated: number;
+	offline: NginxRegenerateHost[];
+	failed: NginxRegenerateHost[];
+	warnings: NginxRegenerateHost[];
+	durationMs: number;
+}

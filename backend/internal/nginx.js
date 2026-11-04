@@ -65,7 +65,7 @@ const HOST_LABELS = {
 const MAX_HEAL_ITERATIONS = 10;
 // Subject of the conflict error of a host whose regenerated config conflicts, see buildConflictError()
 const REGENERATED_SUBJECT = "The regenerated configuration";
-const TOO_MANY_BROKEN_HOSTS = `Too many broken host configs to repair in one go (more than ${MAX_HEAL_ITERATIONS}). Regenerate all host configs (restart NPM or run backend/scripts/regenerate-config), then try again.`;
+const TOO_MANY_BROKEN_HOSTS = `Too many broken host configs to repair in one go (more than ${MAX_HEAL_ITERATIONS}). Regenerate all host configs (Settings > Nginx Configuration, or restart NPM), then try again.`;
 // While regenerateAll() runs (it holds the lock): the hosts healOtherHost() repaired or took offline,
 // {host_type, id}. Their state after the final reload is reported, see summariseFinal().
 let healRecorder = null;

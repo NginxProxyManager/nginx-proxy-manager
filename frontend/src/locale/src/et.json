@@ -569,6 +569,9 @@
 	"logs.truncated-warning": {
 		"defaultMessage": "Kuvatakse ainult faili kõige uuem osa."
 	},
+	"nginx-config": {
+		"defaultMessage": "Nginxi konfiguratsioon"
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Kohandatud Nginx seadistus"
 	},
@@ -770,6 +773,9 @@
 	"object.event.enabled": {
 		"defaultMessage": "Sisse lülitatud: {object}"
 	},
+	"object.event.regenerated": {
+		"defaultMessage": "{object} uuesti loodud"
+	},
 	"object.event.renewed": {
 		"defaultMessage": "Uuendatud: {object}"
 	},
@@ -919,6 +925,48 @@
 	},
 	"settings.default-site.redirect": {
 		"defaultMessage": "Ümbersuunamine"
+	},
+	"settings.nginx": {
+		"defaultMessage": "Nginxi konfiguratsioon"
+	},
+	"settings.nginx.regenerate.audit": {
+		"defaultMessage": "{checked, plural, one {# host} other {# hosti}}, {offline} võrgust väljas"
+	},
+	"settings.nginx.regenerate.button": {
+		"defaultMessage": "Loo kõik konfiguratsioonid uuesti"
+	},
+	"settings.nginx.regenerate.confirm-body": {
+		"defaultMessage": "Kõigi hostide konfiguratsioonifailid kirjutatakse andmebaasi põhjal uuesti ja nginx laaditakse üks kord uuesti. Töötavad hostid jäävad võrku, katkestust ei ole."
+	},
+	"settings.nginx.regenerate.confirm-button": {
+		"defaultMessage": "Loo uuesti"
+	},
+	"settings.nginx.regenerate.confirm-offline": {
+		"defaultMessage": "Host, mille nginx tagasi lükkab, võetakse võrgust maha ja kuvatakse hiljem loendis, täpselt nagu hosti salvestamisel. Teisi hoste see ei mõjuta."
+	},
+	"settings.nginx.regenerate.confirm-title": {
+		"defaultMessage": "Kas luua kõigi hostide konfiguratsioonid uuesti?"
+	},
+	"settings.nginx.regenerate.description": {
+		"defaultMessage": "Kirjutab iga lubatud proksihosti, ümbersuunamishosti, 404-hosti ja voo nginxi konfiguratsioonifaili andmebaasi põhjal uuesti ja laadib seejärel nginxi üks kord uuesti. Kasuta seda pärast uuendamist, varukoopia taastamist või kui kettal olevaid konfiguratsioonifaile muudeti või need kadusid."
+	},
+	"settings.nginx.regenerate.failed": {
+		"defaultMessage": "{count, plural, one {# hosti ei õnnestunud uuesti luua, see jätab alles eelmise konfiguratsiooni:} other {# hosti ei õnnestunud uuesti luua, need jätavad alles eelmise konfiguratsiooni:}}"
+	},
+	"settings.nginx.regenerate.offline": {
+		"defaultMessage": "{count, plural, one {# host on nüüd võrgust väljas, nginx lükkas selle tagasi:} other {# hosti on nüüd võrgust väljas, nginx lükkas need tagasi:}}"
+	},
+	"settings.nginx.regenerate.result": {
+		"defaultMessage": "Kontrolliti {checked, plural, one {# hosti} other {# hosti}} {seconds} s jooksul: {regenerated} võrgus, {offline} võrgust väljas, {failed} jäi uuesti loomata."
+	},
+	"settings.nginx.regenerate.running": {
+		"defaultMessage": "Luuakse uuesti. Iga hosti kontrollitakse nginxiga, see võib veidi aega võtta."
+	},
+	"settings.nginx.regenerate.title": {
+		"defaultMessage": "Loo kõigi hostide konfiguratsioonid uuesti"
+	},
+	"settings.nginx.regenerate.warnings": {
+		"defaultMessage": "{count, plural, one {# host on võrgus, kuid mõni selle kohandatud asukoht ei tööta:} other {# hosti on võrgus, kuid mõni nende kohandatud asukoht ei tööta:}}"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Alustuseks loo endale administraatori konto."

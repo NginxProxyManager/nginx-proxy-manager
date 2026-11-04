@@ -569,6 +569,9 @@
 	"logs.truncated-warning": {
 		"defaultMessage": "Chỉ hiển thị phần mới nhất của tệp này."
 	},
+	"nginx-config": {
+		"defaultMessage": "Cấu hình Nginx"
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Cấu hình Nginx tùy chỉnh"
 	},
@@ -770,6 +773,9 @@
 	"object.event.enabled": {
 		"defaultMessage": "Đã bật {object}"
 	},
+	"object.event.regenerated": {
+		"defaultMessage": "Đã tạo lại {object}"
+	},
 	"object.event.renewed": {
 		"defaultMessage": "Đã gia hạn {object}"
 	},
@@ -919,6 +925,48 @@
 	},
 	"settings.default-site.redirect": {
 		"defaultMessage": "Chuyển hướng"
+	},
+	"settings.nginx": {
+		"defaultMessage": "Cấu hình Nginx"
+	},
+	"settings.nginx.regenerate.audit": {
+		"defaultMessage": "{checked} host, {offline} ngoại tuyến"
+	},
+	"settings.nginx.regenerate.button": {
+		"defaultMessage": "Tạo lại cấu hình của mọi host"
+	},
+	"settings.nginx.regenerate.confirm-body": {
+		"defaultMessage": "Mọi tệp cấu hình host được ghi lại từ cơ sở dữ liệu và nginx được tải lại một lần. Các host đang hoạt động vẫn trực tuyến, không có thời gian gián đoạn."
+	},
+	"settings.nginx.regenerate.confirm-button": {
+		"defaultMessage": "Tạo lại"
+	},
+	"settings.nginx.regenerate.confirm-offline": {
+		"defaultMessage": "Host nào bị nginx từ chối sẽ bị chuyển sang ngoại tuyến và được liệt kê sau đó, giống như khi lưu host. Các host khác không bị ảnh hưởng."
+	},
+	"settings.nginx.regenerate.confirm-title": {
+		"defaultMessage": "Tạo lại cấu hình của mọi host?"
+	},
+	"settings.nginx.regenerate.description": {
+		"defaultMessage": "Ghi lại tệp cấu hình nginx của mọi proxy host, máy chủ chuyển hướng, máy chủ 404 và stream đang bật từ cơ sở dữ liệu, sau đó tải lại nginx một lần. Hãy dùng sau khi nâng cấp, sau khi khôi phục bản sao lưu, hoặc khi các tệp cấu hình trên đĩa bị thay đổi hay bị mất."
+	},
+	"settings.nginx.regenerate.failed": {
+		"defaultMessage": "{count} host không thể tạo lại và vẫn giữ cấu hình trước đó:"
+	},
+	"settings.nginx.regenerate.offline": {
+		"defaultMessage": "{count} host hiện đang ngoại tuyến, nginx đã từ chối:"
+	},
+	"settings.nginx.regenerate.result": {
+		"defaultMessage": "Đã kiểm tra {checked} host trong {seconds} giây: {regenerated} trực tuyến, {offline} ngoại tuyến, {failed} chưa được tạo lại."
+	},
+	"settings.nginx.regenerate.running": {
+		"defaultMessage": "Đang tạo lại. Mỗi host đều được kiểm tra bằng nginx, việc này có thể mất một lúc."
+	},
+	"settings.nginx.regenerate.title": {
+		"defaultMessage": "Tạo lại cấu hình của mọi host"
+	},
+	"settings.nginx.regenerate.warnings": {
+		"defaultMessage": "{count} host vẫn trực tuyến, nhưng một số đường dẫn tùy chỉnh của chúng không hoạt động:"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Bắt đầu bằng cách tạo tài khoản quản trị viên."

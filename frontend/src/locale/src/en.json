@@ -569,6 +569,9 @@
 	"logs.truncated-warning": {
 		"defaultMessage": "Only the most recent portion of this file is shown."
 	},
+	"nginx-config": {
+		"defaultMessage": "Nginx Configuration"
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Custom Nginx Configuration"
 	},
@@ -770,6 +773,9 @@
 	"object.event.enabled": {
 		"defaultMessage": "Enabled {object}"
 	},
+	"object.event.regenerated": {
+		"defaultMessage": "Regenerated {object}"
+	},
 	"object.event.renewed": {
 		"defaultMessage": "Renewed {object}"
 	},
@@ -919,6 +925,48 @@
 	},
 	"settings.default-site.redirect": {
 		"defaultMessage": "Redirect"
+	},
+	"settings.nginx": {
+		"defaultMessage": "Nginx Configuration"
+	},
+	"settings.nginx.regenerate.audit": {
+		"defaultMessage": "{checked, plural, one {# host} other {# hosts}}, {offline} offline"
+	},
+	"settings.nginx.regenerate.button": {
+		"defaultMessage": "Regenerate all host configs"
+	},
+	"settings.nginx.regenerate.confirm-body": {
+		"defaultMessage": "All host config files are rewritten from the database and nginx is reloaded once. Working hosts stay online, there is no downtime."
+	},
+	"settings.nginx.regenerate.confirm-button": {
+		"defaultMessage": "Regenerate"
+	},
+	"settings.nginx.regenerate.confirm-offline": {
+		"defaultMessage": "A host that nginx rejects is taken offline and listed afterwards, just as when saving the host. The other hosts are not affected."
+	},
+	"settings.nginx.regenerate.confirm-title": {
+		"defaultMessage": "Regenerate all host configs?"
+	},
+	"settings.nginx.regenerate.description": {
+		"defaultMessage": "Rewrites the nginx config file of every enabled proxy host, redirection host, 404 host and stream from the database, then reloads nginx once. Use it after an upgrade, after restoring a backup, or when config files on disk were changed or lost."
+	},
+	"settings.nginx.regenerate.failed": {
+		"defaultMessage": "{count, plural, one {# host could not be regenerated and keeps its previous config:} other {# hosts could not be regenerated and keep their previous config:}}"
+	},
+	"settings.nginx.regenerate.offline": {
+		"defaultMessage": "{count, plural, one {# host is offline now, nginx rejected it:} other {# hosts are offline now, nginx rejected them:}}"
+	},
+	"settings.nginx.regenerate.result": {
+		"defaultMessage": "Checked {checked, plural, one {# host} other {# hosts}} in {seconds} s: {regenerated} online, {offline} offline, {failed} not regenerated."
+	},
+	"settings.nginx.regenerate.running": {
+		"defaultMessage": "Regenerating. Every host is tested with nginx, this can take a while."
+	},
+	"settings.nginx.regenerate.title": {
+		"defaultMessage": "Regenerate all host configs"
+	},
+	"settings.nginx.regenerate.warnings": {
+		"defaultMessage": "{count, plural, one {# host is online, but some of its custom locations don't work:} other {# hosts are online, but some of their custom locations don't work:}}"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Get started by creating your admin account."
