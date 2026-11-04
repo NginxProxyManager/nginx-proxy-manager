@@ -56,11 +56,13 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 let putBodies: any[] = [];
 // when set, a PUT waits for it: the save is still in flight
 let putGate: Promise<void> | null = null;
+let testBodies: any[] = [];
 
 beforeEach(() => {
 	localStorage.clear();
 	putBodies = [];
 	putGate = null;
+	testBodies = [];
 	currentUser = me;
 	currentHost = host;
 	vi.stubGlobal(
@@ -80,6 +82,18 @@ beforeEach(() => {
 							{ index: 0, path: "/api", status: "quarantined", mode: null, message: "unknown variable" },
 						],
 					},
+				});
+			}
+			if (init?.method === "POST" && url.startsWith("/api/nginx/proxy-hosts/test")) {
+				testBodies.push(JSON.parse(String(init.body)));
+				return json({
+					ok: true,
+					nginx_online: true,
+					nginx_err: null,
+					nginx_details: null,
+					nginx_locations: [],
+					upstreams: [],
+					warnings: [],
 				});
 			}
 			if (url.startsWith("/api/users/me")) return json(currentUser);
@@ -229,6 +243,23 @@ describe("ProxyHostModal for a user who isn't an admin", () => {
 		expect(putBodies).toHaveLength(1);
 		expect(putBodies[0]).not.toHaveProperty("advanced_config");
 		expect(putBodies[0].locations.map((l: any) => l.advanced_config)).toEqual(["expires 1d;", "expires 7d;"]);
+	});
+
+	it("tests what a save would send, without an advanced config of its own", async () => {
+		currentUser = user;
+		currentHost = {
+			...host,
+			advanced_config: "add_header X-Host 1;",
+			locations: [
+				{ path: "/api", forward_scheme: "http", forward_host: "api", forward_port: 80, advanced_config: "expires 1d;" },
+			],
+		} as any;
+		await open();
+		fireEvent.click(screen.getByRole("button", { name: "Test" }));
+		await waitFor(() => expect(testBodies).toHaveLength(1));
+
+		expect(testBodies[0]).not.toHaveProperty("advanced_config");
+		expect(testBodies[0].locations.map((l: any) => l.advanced_config)).toEqual(["expires 1d;"]);
 	});
 });
 

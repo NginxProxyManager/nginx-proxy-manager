@@ -4,6 +4,7 @@ export * from "./ErrorNotFound";
 export * from "./Flag";
 export * from "./Form";
 export * from "./HasPermission";
+export * from "./HostConfigTest";
 export * from "./Loading";
 export * from "./LoadingPage";
 export * from "./LocalePicker";

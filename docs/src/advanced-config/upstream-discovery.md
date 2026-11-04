@@ -200,7 +200,8 @@ page.
   hosts or streams.
 - Health results are available to users who may **view** proxy hosts or streams. They only include
   hosts that user can see.
-- Each user can check up to 60 targets per minute and force-refresh the suggestions 6 times per
+- Each user can check up to 60 targets per minute (the targets checked by **Test** in a host's dialog
+  count too) and force-refresh the suggestions 6 times per
   minute. Beyond that, the API answers `429 Too Many Requests` with a `Retry-After` header.
 - Checks and discovery are logged at debug level only.
 

@@ -470,6 +470,36 @@
 	"host-status.warning": {
 		"defaultMessage": "Hoiatus"
 	},
+	"host-test.failed": {
+		"defaultMessage": "Testi ei õnnestunud käivitada"
+	},
+	"host-test.main-target": {
+		"defaultMessage": "Edastuse host"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "See oli test, midagi ei salvestatud."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Seadistus korras"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Konfiguratsioon on korras, hoiatustega"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, one {Nginx keelaks # kohandatud asukoha} other {Nginx keelaks # kohandatud asukohta}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Kontrollimata: viimasel minutil liiga palju kontrolle"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Kättesaadavus"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx lükkaks selle seadistuse tagasi"
+	},
+	"host-test.stale": {
+		"defaultMessage": "Vormi muudeti pärast seda testi. Muudatuste kontrollimiseks testi uuesti."
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
 	},

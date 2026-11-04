@@ -9,6 +9,7 @@ export * from "./useDeadHost";
 export * from "./useDeadHosts";
 export * from "./useDnsProviders";
 export * from "./useHealth";
+export * from "./useHostConfigTest";
 export * from "./useHostReport";
 export * from "./useLogSources";
 export * from "./useLogTail";

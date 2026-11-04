@@ -1,5 +1,6 @@
 import {
 	type HostMeta,
+	type HostTestResult,
 	isApiError,
 	type NginxConfigErrorDetails,
 	type NginxLocationStatus,
@@ -63,6 +64,18 @@ export const PROBLEM_LOCATION_STATUSES = ["quarantined", "unresolved"];
 
 export const getProblemLocations = (meta?: HostMeta | null): NginxLocationStatus[] =>
 	(meta?.nginxLocations || []).filter((l) => PROBLEM_LOCATION_STATUSES.includes(l.status));
+
+/**
+ * The custom location a config test points at: the one nginx rejected the
+ * host for, or the first one it would quarantine. null when there is none.
+ */
+export const getTestLocationIndex = (result?: HostTestResult | null): number | null => {
+	if (!result || result.ok) return null;
+	const fromDetails = getErrorLocationIndex(result.nginxDetails);
+	if (fromDetails !== null) return fromDetails;
+	const quarantined = (result.nginxLocations || []).find((l) => l.status === "quarantined");
+	return quarantined ? quarantined.index : null;
+};
 
 export const getUnhealthyTargets = (health?: UpstreamHostHealth | null): UpstreamHealthTarget[] =>
 	(health?.targets || []).filter((t) => !t.ok);
