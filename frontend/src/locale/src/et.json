@@ -431,6 +431,9 @@
 	"error.required": {
 		"defaultMessage": "See on kohustuslik"
 	},
+	"error.unknown": {
+		"defaultMessage": "Tundmatu viga"
+	},
 	"expires.on": {
 		"defaultMessage": "Aegub: {date}"
 	},
@@ -439,6 +442,24 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "Sul on salvestamata muudatusi. Kas oled kindel, et soovid need tühistada?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Viimati seadistatud {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx ei suutnud selle hosti seadistust laadida, seega on see maas."
+	},
+	"host-status.details": {
+		"defaultMessage": "Näita oleku üksikasju"
+	},
+	"host-status.disabled": {
+		"defaultMessage": "Väljas"
+	},
+	"host-status.error": {
+		"defaultMessage": "Viga"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Näita vealogi"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
@@ -553,6 +574,9 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Sisesta siia oma Nginx seadistus omal vastutusel!"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Näita nginxi väljundit"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Selle vaatamiseks sul õigust pole."
@@ -727,6 +751,12 @@
 	},
 	"save": {
 		"defaultMessage": "Salvesta"
+	},
+	"save-warning.offline": {
+		"defaultMessage": "Salvestatud, kuid nginx ei suutnud seda hosti laadida, seega on see maas:"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Salvestatud hoiatustega"
 	},
 	"setting": {
 		"defaultMessage": "Seade"

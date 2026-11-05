@@ -9,7 +9,7 @@ import {
 	EmptyData,
 	GravatarFormatter,
 	HasPermission,
-	TrueFalseFormatter,
+	HostStatusFormatter,
 } from "src/components";
 import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
@@ -24,6 +24,8 @@ interface Props {
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onLogs?: (id: number) => void;
+	// Opens the error log from the status popover; omitted when not permitted
+	onErrorLogs?: (id: number) => void;
 	onNew?: () => void;
 }
 export default function Table({
@@ -33,6 +35,7 @@ export default function Table({
 	onDelete,
 	onDisableToggle,
 	onLogs,
+	onErrorLogs,
 	onNew,
 	isFiltered,
 }: Props) {
@@ -96,7 +99,14 @@ export default function Table({
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
+					const row: ProxyHost = info.row.original;
+					return (
+						<HostStatusFormatter
+							enabled={info.getValue()}
+							meta={row.meta}
+							onLogs={onErrorLogs ? () => onErrorLogs(row.id) : undefined}
+						/>
+					);
 				},
 			}),
 			columnHelper.display({
@@ -176,7 +186,7 @@ export default function Table({
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete, onLogs],
+		[columnHelper, onEdit, onDisableToggle, onDelete, onLogs, onErrorLogs],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);
