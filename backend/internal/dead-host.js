@@ -147,10 +147,20 @@ const internalDeadHost = {
 			);
 		}
 
-		// Before the certificate is created, so a refused request doesn't leave one behind
+		// Before anything is configured or a certificate is requested
 		internalHost.assertAdvancedConfigAllowed(access, data, row);
 
+		let newCertificateId = null;
 		if (createCertificate) {
+			// Check that nginx accepts the rest of the update before the certificate is requested
+			await internalHost.checkProposedHost({
+				model: deadHostModel,
+				hostType: "dead_host",
+				row: await internalDeadHost.get(access, { id: data.id, expand: ["owner", "certificate"] }),
+				patch: internalHost.cleanSslHstsData(_.assign({}, { domain_names: row.domain_names }, data), row),
+				skipDisabled: true,
+			});
+
 			const cert = await internalCertificate.createQuickCertificate(access, {
 				domain_names: data.domain_names || row.domain_names,
 				meta: _.assign({}, row.meta, data.meta),
@@ -158,6 +168,7 @@ const internalDeadHost = {
 
 			// update host with cert id
 			data.certificate_id = cert.id;
+			newCertificateId = cert.id;
 		}
 
 		// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
@@ -172,25 +183,35 @@ const internalDeadHost = {
 		thisData = internalHost.cleanSslHstsData(thisData, row);
 
 		// do the row update and configure nginx, there's no need to add nginx config if host is disabled
-		const thisRow = await internalHost.updateAndConfigure({
-			model: deadHostModel,
-			hostType: "dead_host",
-			id: data.id,
-			patch: data,
-			skipDisabled: true,
-			fetch: () =>
-				internalDeadHost.get(access, {
-					id: thisData.id,
-					expand: ["owner", "certificate"],
-				}),
-			audit: () =>
-				internalAuditLog.add(access, {
-					action: "updated",
-					object_type: "dead-host",
-					object_id: row.id,
-					meta: thisData,
-				}),
-		});
+		let thisRow;
+		try {
+			thisRow = await internalHost.updateAndConfigure({
+				model: deadHostModel,
+				hostType: "dead_host",
+				id: data.id,
+				patch: data,
+				skipDisabled: true,
+				fetch: () =>
+					internalDeadHost.get(access, {
+						id: thisData.id,
+						expand: ["owner", "certificate"],
+					}),
+				audit: () =>
+					internalAuditLog.add(access, {
+						action: "updated",
+						object_type: "dead-host",
+						object_id: row.id,
+						meta: thisData,
+					}),
+			});
+		} catch (err) {
+			if (newCertificateId) {
+				await internalHost.discardUnusedCertificate(newCertificateId, () =>
+					internalCertificate.delete(access, { id: newCertificateId }),
+				);
+			}
+			throw err;
+		}
 
 		return _.omit(internalHost.cleanRowCertificateMeta(thisRow), omissions());
 	},

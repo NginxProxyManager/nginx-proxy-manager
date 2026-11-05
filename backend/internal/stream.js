@@ -110,6 +110,7 @@ const internalStream = {
 	update: (access, data) => {
 		let thisData = internalHost.sanitiseInput(data);
 		const create_certificate = thisData.certificate_id === "new";
+		let newCertificateId = null;
 
 		if (create_certificate) {
 			delete thisData.certificate_id;
@@ -130,14 +131,27 @@ const internalStream = {
 				}
 
 				if (create_certificate) {
-					return internalCertificate
-						.createQuickCertificate(access, {
-							domain_names: thisData.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, thisData.meta),
-						})
+					// Check that nginx accepts the rest of the update before the certificate is requested
+					return internalStream
+						.get(access, { id: row.id, expand: ["owner", "certificate"] })
+						.then((fullRow) =>
+							internalHost.checkProposedHost({
+								model: streamModel,
+								hostType: "stream",
+								row: fullRow,
+								patch: _.assign({}, { domain_names: row.domain_names }, thisData),
+							}),
+						)
+						.then(() =>
+							internalCertificate.createQuickCertificate(access, {
+								domain_names: thisData.domain_names || row.domain_names,
+								meta: _.assign({}, row.meta, thisData.meta),
+							}),
+						)
 						.then((cert) => {
 							// update host with cert id
 							thisData.certificate_id = cert.id;
+							newCertificateId = cert.id;
 						})
 						.then(() => {
 							return row;
@@ -169,6 +183,14 @@ const internalStream = {
 							meta: thisData,
 						}),
 				});
+			})
+			.catch(async (err) => {
+				if (newCertificateId) {
+					await internalHost.discardUnusedCertificate(newCertificateId, () =>
+						internalCertificate.delete(access, { id: newCertificateId }),
+					);
+				}
+				throw err;
 			})
 			.then((row) => {
 				return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());

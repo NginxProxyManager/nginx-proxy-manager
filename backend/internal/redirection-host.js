@@ -131,6 +131,7 @@ const internalRedirectionHost = {
 	update: (access, data) => {
 		let thisData = internalHost.sanitiseInput(data || {});
 		const createCertificate = thisData.certificate_id === "new";
+		let newCertificateId = null;
 
 		if (createCertificate) {
 			delete thisData.certificate_id;
@@ -171,18 +172,34 @@ const internalRedirectionHost = {
 					);
 				}
 
-				// Before the certificate is created, so a refused request doesn't leave one behind
+				// Before anything is configured or a certificate is requested
 				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
 
 				if (createCertificate) {
-					return internalCertificate
-						.createQuickCertificate(access, {
-							domain_names: thisData.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, thisData.meta),
-						})
+					// Check that nginx accepts the rest of the update before the certificate is requested
+					return internalRedirectionHost
+						.get(access, { id: row.id, expand: ["owner", "certificate"] })
+						.then((fullRow) =>
+							internalHost.checkProposedHost({
+								model: redirectionHostModel,
+								hostType: "redirection_host",
+								row: fullRow,
+								patch: internalHost.cleanSslHstsData(
+									_.assign({}, { domain_names: row.domain_names }, thisData),
+									row,
+								),
+							}),
+						)
+						.then(() =>
+							internalCertificate.createQuickCertificate(access, {
+								domain_names: thisData.domain_names || row.domain_names,
+								meta: _.assign({}, row.meta, thisData.meta),
+							}),
+						)
 						.then((cert) => {
 							// update host with cert id
 							thisData.certificate_id = cert.id;
+							newCertificateId = cert.id;
 						})
 						.then(() => {
 							return row;
@@ -220,6 +237,14 @@ const internalRedirectionHost = {
 							meta: thisData,
 						}),
 				});
+			})
+			.catch(async (err) => {
+				if (newCertificateId) {
+					await internalHost.discardUnusedCertificate(newCertificateId, () =>
+						internalCertificate.delete(access, { id: newCertificateId }),
+					);
+				}
+				throw err;
 			})
 			.then((row) => {
 				return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
