@@ -237,6 +237,40 @@ Setting these environment variables will create the default user on startup, ski
       INITIAL_ADMIN_PASSWORD: mypassword1
 ```
 
+## PROXY Protocol Support
+
+Proxy hosts can opt-in to the PROXY protocol so the client's real IP is preserved when
+NPM sits behind an upstream load balancer (AWS NLB, HAProxy, another nginx, etc.) that
+speaks PROXY protocol. See nginx's [`ngx_http_realip_module`](https://nginx.org/en/docs/http/ngx_http_realip_module.html)
+for how `set_real_ip_from` and `real_ip_header proxy_protocol` interact.
+
+When enabled on a proxy host, NPM listens for PROXY protocol traffic on additional ports:
+
+| Port | Purpose                       |
+|------|-------------------------------|
+| 88   | HTTP with PROXY protocol      |
+| 444  | HTTPS (TLS) with PROXY protocol |
+
+These ports are **not** exposed by default. Publish them in your `docker-compose.yml`
+so your upstream load balancer can reach them:
+
+```yml
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '81:81'
+      - '88:88'    # PROXY protocol (HTTP)
+      - '444:444'  # PROXY protocol (HTTPS)
+    # ...
+```
+
+When editing a proxy host, enable **PROXY Protocol** and supply the **Load Balancer IP / CIDR**
+of the upstream that will be sending PROXY protocol headers. This value becomes the
+`set_real_ip_from` directive — without it, nginx will not trust the forwarded client IP.
+
 ## Disable Nginx Resolver
 
 On startup, we generate a resolvers directive for Nginx unless this is defined:
