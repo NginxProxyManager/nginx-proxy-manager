@@ -6,8 +6,9 @@ existed. The configs are produced by the real backend renderer (`backend/lib/ngi
 `backend/templates/_location.conf`).
 
 - `cases.json`: the custom locations (path, forward path, optional host, advanced config, caching, access list)
-- `reqs.txt`: the requests, one per line, `path`, `path|user:password` or `path|user:password|:port` (the port is
-  added to the Host header, `path||:8443` without credentials)
+- `reqs.txt`: the requests, one per line: `path|user:password|:port|expected`, everything but the path is optional
+  (`path||:8443`). The port is added to the Host header, the expected text must be in the response (eg.
+  `"url":"/api/42"`, the URI the upstream got)
 - `echo.js`: the upstream, answers with the URI and the Host header it received and can redirect
 - `gen.mjs`: writes the nginx config with three servers (legacy :8001, static :8002, dynamic :8003)
 - `run.sh`: starts nginx, sends every request to the servers and compares status, `Location` and body. It also

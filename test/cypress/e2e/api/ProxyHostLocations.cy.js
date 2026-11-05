@@ -238,6 +238,22 @@ describe('Proxy Host custom location resilience', () => {
 		});
 	});
 
+	it('Should pass a forward path with an nginx variable as it is', () => {
+		cy.task('backendApiPut', {
+			token: token,
+			path:  `/api/nginx/proxy-hosts/${hostId}`,
+			data:  {
+				locations: [location('/q/', 'examplesite', { forward_path: '/$arg_page' })],
+			},
+		}).then((data) => {
+			cy.validateSwaggerSchema('put', 200, '/nginx/proxy-hosts/{hostID}', data);
+			expect(data.meta.nginx_locations[0]).to.include({ index: 0, status: 'ok', mode: 'static' });
+		});
+
+		// /q/anything?page=dashboard reaches examplesite as /dashboard: no rest of the path, no query string
+		expectPage('/q/anything?page=dashboard', 'this is the dashboard page');
+	});
+
 	it('Should delete the host', () => {
 		cy.task('backendApiDelete', {
 			token: token,

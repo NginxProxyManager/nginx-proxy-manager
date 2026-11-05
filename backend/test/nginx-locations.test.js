@@ -6,6 +6,7 @@ import {
 	describeConfigLine,
 	escapeRegex,
 	findDuplicatePath,
+	hasVariablePath,
 	isVariableHost,
 	MESSAGES,
 	matchSavedLocations,
@@ -353,6 +354,38 @@ describe("renderLocation", () => {
 		assert.doesNotMatch(out, /location ~\*/);
 	});
 
+	it("renders a forward path with an nginx variable without rewrite, like before", async () => {
+		const loc = { ...base, path: "/a/", forward_path: "/api/$arg_id" };
+		const mode = chooseLocationMode(prepareLocation(loc), { mode: "dynamic", status: "ok" });
+		const out = await render(loc, mode);
+		assert.match(out, /proxy_pass\s+http:\/\/app:8080\/api\/\$arg_id;/);
+		assert.doesNotMatch(out, /rewrite|npm_loc_0_host|proxy_redirect/);
+	});
+
+	it("passes a variable forward path to the nested asset location as it is", async () => {
+		const loc = { ...base, path: "/a/", forward_path: "/api/$arg_id" };
+		const out = await render(loc, { mode: "static" }, { caching_enabled: true });
+		const nested = out.slice(out.indexOf("location ~*"));
+		assert.match(nested, /proxy_pass http:\/\/app:8080\/api\/\$arg_id;/);
+		// "proxy_redirect default" is not allowed with variables, the parent has none either
+		assert.match(nested, /proxy_redirect off;/);
+		assert.doesNotMatch(nested, /rewrite/);
+	});
+
+	it("does not nest the asset cache when the forward path uses a capture, the nested regex replaces it", async () => {
+		for (const forward_path of ["/v/$1", "/v/$" + "{2}"]) {
+			const out = await render({ ...base, path: "/a/", forward_path }, { mode: "static" }, { caching_enabled: true });
+			assert.doesNotMatch(out, /location ~\*/, forward_path);
+		}
+	});
+
+	it("keeps the rendering of a literal forward path", async () => {
+		const out = await render({ ...base, path: "/a", forward_path: "/x" }, { mode: "dynamic" }, { caching_enabled: true });
+		const nested = out.slice(out.indexOf("location ~*"));
+		assert.match(nested, /proxy_pass http:\/\/\$npm_loc_0_host:8080;/);
+		assert.match(nested, /proxy_redirect http:\/\/app:8080\/x \/a;/);
+	});
+
 	it("does not nest the asset cache in exact or named locations", async () => {
 		const out = await render({ ...base, path: "= /a" }, { mode: "dynamic" }, { caching_enabled: true });
 		assert.doesNotMatch(out, /location ~\*/);
@@ -459,5 +492,21 @@ describe("chooseLocationMode", () => {
 	it("stays dynamic when the host does not resolve, a literal unknown host fails nginx -t", () => {
 		const unresolved = { mode: "dynamic", status: "unresolved" };
 		assert.deepEqual(chooseLocationMode(loc({ advanced_config: "add_header X $uri;" }), unresolved), unresolved);
+	});
+
+	it("renders a forward path with an nginx variable literally, nginx sends that URI as it is", () => {
+		for (const forward_path of ["/api/$arg_id", "/api/$" + "{arg_id}/x", "$request_uri", "/v/$1"]) {
+			const l = loc({ forward_path });
+			assert.equal(hasVariablePath(l), true, forward_path);
+			assert.deepEqual(chooseLocationMode(l, dynamicOk), { mode: "static", status: "ok" }, forward_path);
+			// nginx resolves a proxy_pass with variables per request, the warning stays
+			assert.deepEqual(chooseLocationMode(l, { mode: "dynamic", status: "unresolved" }), {
+				mode: "static",
+				status: "unresolved",
+			});
+			assert.deepEqual(chooseLocationMode(l, { mode: "static", status: "ok" }), { mode: "static", status: "ok" });
+		}
+		assert.equal(hasVariablePath(loc({ forward_path: "/x/" })), false);
+		assert.equal(hasVariablePath(loc({ forward_path: "" })), false);
 	});
 });

@@ -87,3 +87,15 @@
 /cache/app.css
 /cacheroot/app.css||:8443
 /qc%20p/app.css||:8443
+/av/foo?id=42|||"url":"/api/42"
+/av/
+/av/?id=7|||"url":"/api/7"
+/av/foo?id=42||:8443|"url":"/api/42"
+/avb/foo?id=42|||"url":"/api/42/x"
+/avh/foo?q=1|||"url":"/h/srv"
+/avr/foo?q=1|||"url":"//avr/foo?q=1"
+/avr/r?redir=rel
+/avr/r?redir=abs
+/avc/foo?id=42|||"url":"/api/42"
+/avc/x.css?id=5|||"url":"/api/5"
+/avc/x.css?id=6||:8443|"url":"/api/6"
