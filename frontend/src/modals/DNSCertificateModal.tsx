@@ -89,26 +89,26 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 								</Field>
 								<DNSProviderFields />
 							</div>
-						</Modal.Body>
-						<Modal.Footer>
-							<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
-								<T id="cancel" />
-							</Button>
-							<Button
-								type="submit"
-								color="pink"
-								className="ms-auto"
-								data-bs-dismiss="modal"
-								isLoading={isSubmitting}
-								disabled={isSubmitting}
-							>
-								<T id="save" />
-							</Button>
-						</Modal.Footer>
-					</Form>
-				)}
-			</Formik>
-		</Modal>
+						</div>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
+							<T id="cancel" />
+						</Button>
+						<Button
+							type="submit"
+							color="pink"
+							className="ms-auto"
+							data-bs-dismiss="modal"
+							isLoading={isSubmitting}
+							disabled={isSubmitting}
+						>
+							<T id="save" />
+						</Button>
+					</Modal.Footer>
+				</Form>
+			)}
+		</FormModal>
 	);
 });
 

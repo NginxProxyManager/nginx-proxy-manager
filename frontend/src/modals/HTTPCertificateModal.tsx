@@ -195,33 +195,20 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 							>
 								<T id="test" />
 							</Button>
-							<div className="ms-auto">
-								<Button
-									type="button"
-									actionType="secondary"
-									className="me-3"
-									data-bs-dismiss="modal"
-									isLoading={isTesting}
-									disabled={isSubmitting || domains.length === 0}
-									onClick={handleTest}
-								>
-									<T id="test" />
-								</Button>
-								<Button
-									type="submit"
-									color="pink"
-									data-bs-dismiss="modal"
-									isLoading={isSubmitting}
-									disabled={isSubmitting || isTesting}
-								>
-									<T id="save" />
-								</Button>
-							</div>
-						</Modal.Footer>
-					</Form>
-				)}
-			</Formik>
-		</Modal>
+							<Button
+								type="submit"
+								color="pink"
+								data-bs-dismiss="modal"
+								isLoading={isSubmitting}
+								disabled={isSubmitting || isTesting}
+							>
+								<T id="save" />
+							</Button>
+						</div>
+					</Modal.Footer>
+				</Form>
+			)}
+		</FormModal>
 	);
 });
 
