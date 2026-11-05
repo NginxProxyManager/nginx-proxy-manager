@@ -68,6 +68,35 @@ describe("validateLocations", () => {
 		expect(validateLocations([loc({ forwardHost: " app/sub/ " })])[0]).toBeUndefined();
 	});
 
+	it("skips the format checks of a disabled row, the backend never renders it", () => {
+		const hosts = ["app;evil", "my app", "app/a b", "app$x"];
+		expect(validateLocations(hosts.map((forwardHost, i) => loc({ path: `/d${i}`, enabled: false, forwardHost })))).toEqual(
+			hosts.map(() => undefined),
+		);
+		// the same rows switched on (or without `enabled`) still have errors
+		for (const enabled of [true, undefined]) {
+			const errors = validateLocations(hosts.map((forwardHost, i) => loc({ path: `/d${i}`, enabled, forwardHost })));
+			expect(errors.every((e) => e?.forwardHost)).toBe(true);
+		}
+	});
+
+	it("keeps the checks the API makes for every row on a disabled row", () => {
+		const [host, low, high, path] = validateLocations([
+			loc({ path: "/a", enabled: false, forwardHost: "" }),
+			loc({ path: "/b", enabled: false, forwardPort: 0 }),
+			loc({ path: "/c", enabled: false, forwardPort: 70000 }),
+			loc({ path: "", enabled: false }),
+		]);
+		expect(host?.forwardHost).toBe("This is required");
+		expect(low?.forwardPort).toMatch(/1/);
+		expect(high?.forwardPort).toMatch(/65535/);
+		expect(path?.path).toBe("This is required");
+		// the backend rejects duplicate paths among disabled rows too
+		const [, dup] = validateLocations([loc({ path: "/x" }), loc({ path: "/x", enabled: false, forwardHost: "a b" })]);
+		expect(dup?.path).toMatch(/already uses/);
+		expect(dup?.forwardHost).toBeUndefined();
+	});
+
 	it("requires a host part, not just a path", () => {
 		// the server would store an empty forward host and quarantine the location
 		for (const forwardHost of ["/api", " /x", "/", "  "]) {
@@ -234,6 +263,16 @@ describe("LocationsFields", () => {
 		expect(screen.getByText("The host must not contain spaces")).toBeInTheDocument();
 		expect(screen.getByTestId("location-card-1").querySelector(".is-invalid")).not.toBeNull();
 		expect(screen.getAllByLabelText("This location has errors").length).toBe(2);
+	});
+
+	it("saves a disabled row whose stored host is invalid, and blocks again once it is switched on", async () => {
+		const { onSubmit } = renderFields([loc({ path: "/old", enabled: false, forwardHost: "app;legacy" })]);
+		fireEvent.click(screen.getByText("save"));
+		await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+		fireEvent.click(screen.getByLabelText("Enable or disable this location"));
+		fireEvent.click(screen.getByText("save"));
+		await waitFor(() => expect(screen.getByText(/The host contains characters that are not allowed/)).toBeInTheDocument());
+		expect(onSubmit).toHaveBeenCalledTimes(1);
 	});
 
 	it("submits valid locations, storing the port as a number", async () => {

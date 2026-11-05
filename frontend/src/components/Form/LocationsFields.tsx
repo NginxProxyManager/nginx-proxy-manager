@@ -76,8 +76,14 @@ export const validateLocations = (items: ProxyLocation[] = []): (LocationErrors 
 		const host = `${item.forwardHost ?? ""}`.trim();
 		const hostPart = locationHostPart(host);
 		const pathPart = host.slice(hostPart.length);
+		// A disabled row is never rendered (the backend's preflightLocation() stops at `enabled: false`), so it only
+		// gets the checks the API itself makes for every row: required host, port range and duplicate paths.
+		// Switching it back on brings the format errors back.
+		const isEnabled = item.enabled !== false;
 		if (!hostPart) {
 			errors.forwardHost = intl.formatMessage({ id: "error.required" });
+		} else if (!isEnabled) {
+			// no format checks
 		} else if (/\s/.test(hostPart)) {
 			errors.forwardHost = intl.formatMessage({ id: "location.error.host-whitespace" });
 		} else if (!isVariableHost(hostPart) && INVALID_HOST_CHARS.test(hostPart)) {
