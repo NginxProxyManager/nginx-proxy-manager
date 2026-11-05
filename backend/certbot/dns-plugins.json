@@ -333,7 +333,7 @@
 		"full_plugin_name": "dns-hetzner",
 		"name": "Hetzner",
 		"package_name": "certbot-dns-hetzner",
-		"version": "~=1.0.4"
+		"version": "~=4.0.0"
 	},
 	"hetzner-cloud": {
 		"credentials": "dns_hetzner_cloud_api_token = your_api_token_here",
