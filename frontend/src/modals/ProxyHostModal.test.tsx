@@ -104,8 +104,72 @@ const open = async () => {
 	await act(async () => {
 		showProxyHostModal(1);
 	});
-	await waitFor(() => expect(document.getElementById("forwardPort")).not.toBeNull());
+	await screen.findByRole("tablist");
+	return screen.getAllByRole("tab");
 };
+
+const selected = () => screen.getAllByRole("tab").find((t) => t.getAttribute("aria-selected") === "true");
+
+describe("ProxyHostModal tabs", () => {
+	it("keeps only the active tab in the tab order", async () => {
+		const tabs = await open();
+		expect(tabs).toHaveLength(4);
+		expect(tabs.map((t) => t.getAttribute("tabindex"))).toEqual([null, "-1", "-1", "-1"]);
+		expect(tabs[0]).toHaveAttribute("aria-controls", "tab-details");
+		expect(document.getElementById("tab-details")).toHaveAttribute("aria-labelledby", "tab-link-details");
+	});
+
+	it("moves between the tabs with the arrow keys, Home and End, and takes the focus along", async () => {
+		const tabs = await open();
+		tabs[0].focus();
+
+		fireEvent.keyDown(tabs[0], { key: "ArrowRight" });
+		expect(selected()).toBe(tabs[1]);
+		expect(document.activeElement).toBe(tabs[1]);
+		expect(tabs.map((t) => t.getAttribute("tabindex"))).toEqual(["-1", null, "-1", "-1"]);
+		expect(document.getElementById("tab-locations")).toHaveClass("active");
+
+		fireEvent.keyDown(tabs[1], { key: "ArrowDown" });
+		expect(document.activeElement).toBe(tabs[2]);
+		fireEvent.keyDown(tabs[2], { key: "End" });
+		expect(selected()).toBe(tabs[3]);
+		expect(document.activeElement).toBe(tabs[3]);
+		// wraps around at both ends
+		fireEvent.keyDown(tabs[3], { key: "ArrowRight" });
+		expect(document.activeElement).toBe(tabs[0]);
+		fireEvent.keyDown(tabs[0], { key: "ArrowLeft" });
+		expect(document.activeElement).toBe(tabs[3]);
+		fireEvent.keyDown(tabs[3], { key: "ArrowUp" });
+		expect(document.activeElement).toBe(tabs[2]);
+		fireEvent.keyDown(tabs[2], { key: "Home" });
+		expect(selected()).toBe(tabs[0]);
+		expect(document.activeElement).toBe(tabs[0]);
+	});
+
+	it("leaves out the Advanced tab for a user who isn't an admin", async () => {
+		currentUser = user;
+		const tabs = await open();
+		expect(tabs).toHaveLength(3);
+		expect(document.getElementById("tab-advanced")).toBeNull();
+
+		tabs[0].focus();
+		fireEvent.keyDown(tabs[0], { key: "End" });
+		expect(selected()).toBe(tabs[2]);
+		expect(document.activeElement).toBe(tabs[2]);
+		fireEvent.keyDown(tabs[2], { key: "ArrowRight" });
+		expect(document.activeElement).toBe(tabs[0]);
+		fireEvent.keyDown(tabs[0], { key: "ArrowLeft" });
+		expect(document.activeElement).toBe(tabs[2]);
+	});
+
+	it("ignores other keys and still switches on click", async () => {
+		const tabs = await open();
+		fireEvent.keyDown(tabs[0], { key: "a" });
+		expect(selected()).toBe(tabs[0]);
+		fireEvent.click(tabs[2]);
+		expect(selected()).toBe(tabs[2]);
+	});
+});
 
 const saveWithWarning = async () => {
 	await open();

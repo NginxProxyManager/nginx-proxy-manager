@@ -2,7 +2,7 @@ import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, useFormikContext } from "formik";
-import { type MouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { type KeyboardEvent, type MouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import type { HostMeta, ProxyHost } from "src/api/backend";
@@ -36,6 +36,9 @@ import { validateForwardHost, validateNumber } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
 type TabId = "details" | "locations" | "ssl" | "advanced";
+
+// In the order of the tab strip, for the arrow keys
+const TAB_ORDER: TabId[] = ["details", "locations", "ssl", "advanced"];
 
 // Fields on the Details tab, to show it when one of them is invalid
 const DETAILS_FIELDS = ["domainNames", "forwardScheme", "forwardHost", "forwardPort", "accessListId"];
@@ -79,21 +82,57 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [savedId, setSavedId] = useState<number | null>(null);
 	const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
 
+	const isAdmin = currentUser?.roles?.includes("admin");
+	// Only admins may change the advanced config, the others don't get its tab
+	const tabOrder = isAdmin ? TAB_ORDER : TAB_ORDER.filter((tab) => tab !== "advanced");
+
 	const showTab = useCallback((tab: TabId) => setActiveTab(tab), []);
+	const tabRefs = useRef<Partial<Record<TabId, HTMLAnchorElement | null>>>({});
+	// Tabs pattern with a roving tabindex: only the active tab is in the tab order, the arrow keys (and Home /
+	// End) move between the tabs and take the focus along, like Bootstrap's tab component did
+	const onTabKeyDown = (e: KeyboardEvent<HTMLAnchorElement>, tab: TabId) => {
+		const i = tabOrder.indexOf(tab);
+		let next: TabId;
+		switch (e.key) {
+			case "ArrowRight":
+			case "ArrowDown":
+				next = tabOrder[(i + 1) % tabOrder.length];
+				break;
+			case "ArrowLeft":
+			case "ArrowUp":
+				next = tabOrder[(i + tabOrder.length - 1) % tabOrder.length];
+				break;
+			case "Home":
+				next = tabOrder[0];
+				break;
+			case "End":
+				next = tabOrder[tabOrder.length - 1];
+				break;
+			default:
+				return;
+		}
+		e.preventDefault();
+		setActiveTab(next);
+		tabRefs.current[next]?.focus();
+	};
 	const tabLink = (tab: TabId) => ({
 		href: `#tab-${tab}`,
+		id: `tab-link-${tab}`,
 		className: cn("nav-link", { active: activeTab === tab }),
 		role: "tab",
 		"aria-selected": activeTab === tab,
+		"aria-controls": `tab-${tab}`,
 		tabIndex: activeTab === tab ? undefined : -1,
+		ref: (el: HTMLAnchorElement | null) => {
+			tabRefs.current[tab] = el;
+		},
 		onClick: (e: MouseEvent) => {
 			e.preventDefault();
 			setActiveTab(tab);
 		},
+		onKeyDown: (e: KeyboardEvent<HTMLAnchorElement>) => onTabKeyDown(e, tab),
 	});
 	const tabPane = (tab: TabId) => cn("tab-pane", { "active show": activeTab === tab });
-
-	const isAdmin = currentUser?.roles?.includes("admin");
 
 	const onSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
 		if (isSubmitting) return;
@@ -219,37 +258,37 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								</Alert>
 								<div className="card m-0 border-0">
 									<div className="card-header">
-										<ul className="nav nav-tabs card-header-tabs">
-											<li className="nav-item" role="presentation">
+										<div className="nav nav-tabs card-header-tabs" role="tablist">
+											<div className="nav-item" role="presentation">
 												<a {...tabLink("details")}>
 													<T id="column.details" />
 												</a>
-											</li>
-											<li className="nav-item" role="presentation">
+											</div>
+											<div className="nav-item" role="presentation">
 												<a {...tabLink("locations")}>
 													<T id="column.custom-locations" />
 												</a>
-											</li>
-											<li className="nav-item" role="presentation">
+											</div>
+											<div className="nav-item" role="presentation">
 												<a {...tabLink("ssl")}>
 													<T id="column.ssl" />
 												</a>
-											</li>
+											</div>
 											{isAdmin && (
-												<li className="nav-item ms-auto" role="presentation">
+												<div className="nav-item ms-auto" role="presentation">
 													<a
 														{...tabLink("advanced")}
 														title={intl.formatMessage({ id: "location.advanced" })}
 													>
 														<IconSettings size={20} />
 													</a>
-												</li>
+												</div>
 											)}
-										</ul>
+										</div>
 									</div>
 									<div className="card-body">
 										<div className="tab-content">
-											<div className={tabPane("details")} id="tab-details" role="tabpanel">
+											<div className={tabPane("details")} id="tab-details" role="tabpanel" aria-labelledby="tab-link-details">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
 												<div className="row">
 													<div className="col-sm-3 col-md-3">
@@ -424,7 +463,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													</div>
 												</div>
 											</div>
-											<div className={tabPane("locations")} id="tab-locations" role="tabpanel">
+											<div className={tabPane("locations")} id="tab-locations" role="tabpanel" aria-labelledby="tab-link-locations">
 												<LocationsFields
 													initialValues={data?.locations || []}
 													statuses={(savedMeta ?? data?.meta)?.nginxLocations}
@@ -432,7 +471,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													allowAdvanced={!!isAdmin}
 												/>
 											</div>
-											<div className={tabPane("ssl")} id="tab-ssl" role="tabpanel">
+											<div className={tabPane("ssl")} id="tab-ssl" role="tabpanel" aria-labelledby="tab-link-ssl">
 												<SSLCertificateField
 													name="certificateId"
 													label="ssl-certificate"
@@ -441,7 +480,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
 											</div>
 											{isAdmin && (
-												<div className={tabPane("advanced")} id="tab-advanced" role="tabpanel">
+												<div
+													className={tabPane("advanced")}
+													id="tab-advanced"
+													role="tabpanel"
+													aria-labelledby="tab-link-advanced"
+												>
 													<NginxConfigField />
 												</div>
 											)}
