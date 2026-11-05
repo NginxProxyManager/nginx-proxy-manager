@@ -300,6 +300,7 @@ settings in the form the way a save would, without saving anything:
   names used by another host
 - nginx checks the generated configuration (`nginx -t`). Nothing is written to the database, nginx is not
   reloaded and no other host is changed. A new host is checked under a temporary file name that is removed again.
+  A disabled host is checked as it would run once enabled; it stays disabled.
 - the forward host and every enabled custom location (proxy hosts), or the forwarding host (TCP streams), are
   checked for DNS and a TCP connection, like the live check next to the fields
 

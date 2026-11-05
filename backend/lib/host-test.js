@@ -16,6 +16,15 @@ const WARNING_MESSAGES = {
 };
 
 /**
+ * The test checks a host as it runs once enabled, also when it is (still) disabled: a disabled host renders an
+ * empty config, nginx -t would accept anything. Returns a copy, the host itself is not changed.
+ *
+ * @param   {Object} host
+ * @returns {Object}
+ */
+const asEnabled = (host) => Object.assign({}, host, { enabled: true });
+
+/**
  * The upstream targets of a host, the same ones the health monitor probes: the main forward target and every
  * enabled custom location (proxy hosts), the forwarding target (TCP streams). Redirection and 404 hosts have none.
  *
@@ -27,8 +36,7 @@ const buildTestTargets = (hostType, host) => {
 	if (!host || !["proxy_host", "stream"].includes(hostType)) {
 		return [];
 	}
-	// The test checks the host as it would be saved, also when it is (still) disabled
-	const row = Object.assign({}, host, { enabled: true });
+	const row = asEnabled(host);
 	const built = buildHealthTargets(hostType === "proxy_host" ? { proxyHosts: [row] } : { streams: [row] });
 	return (built[0]?.targets || []).slice(0, MAX_TEST_TARGETS);
 };
@@ -184,6 +192,7 @@ const mergeTargetResults = (targets, results) =>
 	);
 
 export {
+	asEnabled,
 	buildAsideWarnings,
 	buildTestResult,
 	buildTestTargets,

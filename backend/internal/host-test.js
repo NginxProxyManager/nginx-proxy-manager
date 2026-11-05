@@ -1,6 +1,7 @@
 import _ from "lodash";
 import errs from "../lib/error.js";
 import {
+	asEnabled,
 	buildAsideWarnings,
 	buildTestResult,
 	buildTestTargets,
@@ -226,7 +227,7 @@ const internalHostTest = {
 	},
 
 	/**
-	 * The host as a save would store and configure it
+	 * The host as a save would store and configure it, as if enabled
 	 *
 	 * @param   {Access}       access
 	 * @param   {Object}       type    entry of HOST_TYPES
@@ -250,10 +251,10 @@ const internalHostTest = {
 			host.id = internalNginx.DRY_RUN_ID;
 			host.owner_user_id = access.token.getUserId(1);
 			host.meta = input.meta || {};
-			if (typeof host.enabled === "undefined") {
-				host.enabled = true;
-			}
 		}
+		// Checked as it runs once enabled: a disabled host renders an empty config that nginx always accepts.
+		// host is a copy, the stored row (and what a save would store) keeps its enabled state.
+		host = asEnabled(host);
 
 		// Relations of the stored row that the payload changed are (re)loaded by nginx.loadRenderRelations()
 		if (!(host.certificate_id > 0)) {
