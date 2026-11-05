@@ -1,0 +1,144 @@
+import { IconFileText } from "@tabler/icons-react";
+import cn from "classnames";
+import { type PointerEvent, useEffect, useRef, useState } from "react";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+import type { HostMeta } from "src/api/backend";
+import { useLocaleState } from "src/context";
+import { formatDateTime, T } from "src/locale";
+import { getHostStatus, type HostState } from "src/modules/HostStatus";
+
+const STATE_COLOR: Record<HostState, string> = {
+	disabled: "secondary",
+	online: "lime",
+	error: "red",
+};
+
+const STATE_LABEL: Record<HostState, string> = {
+	disabled: "host-status.disabled",
+	online: "online",
+	error: "host-status.error",
+};
+
+// Keeps the popover open while the pointer moves from the badge into it
+const HIDE_DELAY_MS = 200;
+
+interface Props {
+	enabled: boolean;
+	meta?: HostMeta | null;
+	// When given, the popover offers a link to the host's error log
+	onLogs?: () => void;
+}
+export function HostStatusFormatter({ enabled, meta, onLogs }: Props) {
+	const { locale } = useLocaleState();
+	const [show, setShow] = useState(false);
+	const hideTimer = useRef<number | null>(null);
+	const status = getHostStatus(enabled, meta);
+	const hasDetails = status.state === "error";
+
+	useEffect(
+		() => () => {
+			if (hideTimer.current !== null) window.clearTimeout(hideTimer.current);
+		},
+		[],
+	);
+
+	const badge = (
+		<span className={cn("status", `status-${STATE_COLOR[status.state]}`)}>
+			<span className={cn("status-dot", { "status-dot-animated": status.state !== "disabled" })} />
+			<T id={STATE_LABEL[status.state]} />
+		</span>
+	);
+
+	if (!hasDetails) {
+		return badge;
+	}
+
+	const cancelHide = () => {
+		if (hideTimer.current !== null) {
+			window.clearTimeout(hideTimer.current);
+			hideTimer.current = null;
+		}
+	};
+	const open = () => {
+		cancelHide();
+		setShow(true);
+	};
+	const scheduleHide = () => {
+		cancelHide();
+		hideTimer.current = window.setTimeout(() => setShow(false), HIDE_DELAY_MS);
+	};
+	// Hover only for real mouse pointers: touch devices emulate mouseenter on
+	// tap, which would fight with the click toggle.
+	const hoverOpen = (e: PointerEvent<HTMLElement>) => {
+		if (e.pointerType === "mouse") open();
+	};
+	const hoverHide = (e: PointerEvent<HTMLElement>) => {
+		if (e.pointerType === "mouse") scheduleHide();
+	};
+
+	const popover = (
+		<Popover onPointerEnter={hoverOpen} onPointerLeave={hoverHide} data-testid="host-status-popover">
+			<Popover.Header as="h3">
+				<T id={STATE_LABEL[status.state]} />
+			</Popover.Header>
+			<Popover.Body>
+				<ul className="list-unstyled mb-0">
+					{status.state === "error" ? (
+						<li className="mb-2">
+							<div className="fw-bold">
+								<T id="host-status.config-error" />
+							</div>
+							{status.nginxErr ? <div className="text-break">{status.nginxErr}</div> : null}
+						</li>
+					) : null}
+				</ul>
+				{meta?.nginxCheckedAt ? (
+					<div className="text-secondary small mt-1">
+						<T id="host-status.checked-at" data={{ date: formatDateTime(meta.nginxCheckedAt, locale) }} />
+					</div>
+				) : null}
+				{onLogs ? (
+					<button
+						type="button"
+						className="btn btn-sm mt-2"
+						onClick={() => {
+							setShow(false);
+							onLogs();
+						}}
+					>
+						<IconFileText size={16} className="me-1" />
+						<T id="host-status.view-error-log" />
+					</button>
+				) : null}
+			</Popover.Body>
+		</Popover>
+	);
+
+	// Controlled, so that hover (desktop) and tap (touch, no hover) both work,
+	// and a tap outside closes it again.
+	return (
+		<OverlayTrigger
+			trigger="click"
+			placement="auto"
+			rootClose
+			show={show}
+			onToggle={(next) => (next ? open() : setShow(false))}
+			overlay={popover}
+		>
+			<button
+				type="button"
+				className="btn btn-link p-0 text-reset text-decoration-none"
+				aria-expanded={show}
+				onPointerEnter={hoverOpen}
+				onPointerLeave={hoverHide}
+			>
+				{badge}
+				{/* Announced after the visible state, e.g. "Error, show status details" */}
+				<span className="visually-hidden">
+					, <T id="host-status.details" />
+				</span>
+			</button>
+		</OverlayTrigger>
+	);
+}
