@@ -11,6 +11,7 @@ describe('Host config test', () => {
 	let sslHostId;
 	let certId;
 	let missingCertId;
+	let disabledHostId;
 	let sharedHostId;
 
 	const request = (host, path) => {
@@ -320,6 +321,54 @@ describe('Host config test', () => {
 		});
 	});
 
+	it('Should test a disabled host as it would run once enabled, without enabling it', () => {
+		const disabledDomain = 'config-test-disabled.example.com';
+
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/proxy-hosts',
+			data:  proxyHost({ domain_names: [disabledDomain] }),
+		}).then((data) => {
+			disabledHostId = data.id;
+			cy.task('backendApiPost', {
+				token: token,
+				path:  `/api/nginx/proxy-hosts/${disabledHostId}/disable`,
+			});
+		});
+
+		// nginx reloads are signalled and return immediately: wait until the disabled host is no longer served,
+		// so the check at the end shows that the tests did not bring it back
+		cy.waitUntil(() => request(disabledDomain, '/').then((res) => !res.body.includes('this is the index page')), {
+			timeout:  15000,
+			interval: 500,
+			errorMsg: 'the disabled host is still served',
+		});
+
+		cy.then(() => {
+			// a disabled host renders an empty config: the test must still check what enabling would load
+			testProxyHost(proxyHost({ id: disabledHostId, domain_names: [disabledDomain], advanced_config: 'this_is_not_a_directive on;' })).then((data) => {
+				cy.validateSwaggerSchema('post', 200, '/nginx/proxy-hosts/test', data);
+				expect(data).to.include({ ok: false, nginx_online: false });
+				expect(data.nginx_err).to.contain('this_is_not_a_directive');
+			});
+			testProxyHost(proxyHost({ id: disabledHostId, domain_names: [disabledDomain] })).then((data) => {
+				expect(data).to.include({ ok: true, nginx_online: true });
+			});
+
+			cy.task('backendApiGet', {
+				token: token,
+				path:  `/api/nginx/proxy-hosts/${disabledHostId}`,
+			}).then((data) => {
+				expect(data).to.include({ enabled: false, advanced_config: '' });
+			});
+		});
+
+		// still disabled: the domain is not served
+		request(disabledDomain, '/').then((res) => {
+			expect(res.body).not.to.contain('this is the index page');
+		});
+	});
+
 	it('Should not let users who are not admins test an advanced config', () => {
 		const sharedDomain = 'config-test-shared.example.com';
 		const email = 'config-tester@example.com';
@@ -422,7 +471,7 @@ describe('Host config test', () => {
 	});
 
 	after(() => {
-		for (const id of [hostId, sslHostId, sharedHostId]) {
+		for (const id of [hostId, sslHostId, disabledHostId, sharedHostId]) {
 			if (id) {
 				cy.task('backendApiDelete', {
 					token: token,

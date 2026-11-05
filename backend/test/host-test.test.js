@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+	asEnabled,
 	buildAsideWarnings,
 	buildTestResult,
 	buildTestTargets,
@@ -12,6 +13,14 @@ import {
 } from "../lib/host-test.js";
 import { CHECK_BUDGET_PER_MINUTE } from "../lib/upstream/check-budget.js";
 import { createRateLimiter } from "../lib/upstream/rate-limit.js";
+
+describe("asEnabled", () => {
+	it("returns an enabled copy and leaves the host as it is", () => {
+		const host = { id: 1, enabled: false, forward_host: "app" };
+		assert.deepEqual(asEnabled(host), { id: 1, enabled: true, forward_host: "app" });
+		assert.equal(host.enabled, false);
+	});
+});
 
 describe("buildTestTargets", () => {
 	it("checks the main target and the enabled locations of a proxy host, also when it is disabled", () => {
