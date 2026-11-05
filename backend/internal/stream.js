@@ -269,56 +269,26 @@ const internalStream = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	enable: (access, data) => {
-		return access
-			.can("streams:update", data.id)
-			.then(() => {
-				return internalStream.get(access, {
-					id: data.id,
-					expand: ["certificate", "owner"],
-				});
-			})
-			.then((row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(data.id);
-				}
-				if (row.enabled) {
-					throw new errs.ValidationError("Stream is already enabled");
-				}
+	enable: async (access, data) => {
+		await access.can("streams:update", data.id);
+		// 404 and permission check before the lock is taken
+		await internalStream.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: streamModel,
+			hostType: "stream",
+			enable: true,
+			fetch: () => internalStream.get(access, { id: data.id, expand: ["certificate", "owner"] }),
+			alreadyMessage: "Stream is already enabled",
+		});
 
-				row.enabled = 1;
-
-				return streamModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 1,
-					})
-					.then(() => {
-						// Configure nginx
-						return internalNginx.configure(streamModel, "stream", row).catch(async (err) => {
-							// nginx rejected the stream and kept the previous config, keep it disabled. Any other failure
-							// (eg. only the reload failed) leaves the new config file in place: then it stays enabled,
-							// otherwise the next reload activates a host that the UI shows as disabled.
-							if (internalNginx.isHostLevelError(err)) {
-								await streamModel.query().where("id", row.id).patch({ enabled: 0 });
-							}
-							throw err;
-						});
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "enabled",
-							object_type: "stream",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
-				return true;
-			});
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "enabled",
+			object_type: "stream",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+		return true;
 	},
 
 	/**
@@ -328,45 +298,25 @@ const internalStream = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	disable: (access, data) => {
-		return access
-			.can("streams:update", data.id)
-			.then(() => {
-				return internalStream.get(access, { id: data.id });
-			})
-			.then((row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(data.id);
-				}
-				if (!row.enabled) {
-					throw new errs.ValidationError("Stream is already disabled");
-				}
+	disable: async (access, data) => {
+		await access.can("streams:update", data.id);
+		await internalStream.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: streamModel,
+			hostType: "stream",
+			enable: false,
+			fetch: () => internalStream.get(access, { id: data.id }),
+			alreadyMessage: "Stream is already disabled",
+		});
 
-				row.enabled = 0;
-
-				return streamModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 0,
-					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.removeConfigAndReload("stream", row);
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "disabled",
-							object_type: "stream",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
-				return true;
-			});
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "disabled",
+			object_type: "stream",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+		return true;
 	},
 
 	/**
