@@ -26,5 +26,10 @@
  {"path":"/avb/","fp":"/api/${arg_id}/x"},
  {"path":"/avh/","fp":"/h/$host"},
  {"path":"/avr/","fp":"$request_uri"},
- {"path":"/avc/","fp":"/api/$arg_id","cache":true}
+ {"path":"/avc/","fp":"/api/$arg_id","cache":true},
+ {"path":"~ ^/rx/(.*)$","fp":"/v1/$1"},
+ {"path":"~* ^/rxi/(?<rest>.*)$","fp":"/v2/$rest"},
+ {"path":"~ ^/cachere/(.*)$","fp":"/v1/$1","cache":true},
+ {"path":"@fb","fp":"/fb$request_uri"},
+ {"path":"/tofb/","fp":"","adv":"error_page 418 = @fb; return 418;"}
 ]

@@ -160,8 +160,8 @@ const RULES = [
 	},
 	{
 		regex: /"proxy_pass" cannot have URI part in location given by regular expression/,
-		text: () => "a forward path can't be used with a regular-expression location",
-		hint: "Remove the forward path or use a prefix location.",
+		text: () => "a forward path without an nginx variable can't be used with a regular-expression or named location",
+		hint: "Use a capture or variable in the forward path (/v1/$1), remove the forward path or use a prefix location.",
 	},
 	{
 		regex: /pcre2?_compile\(\) failed: (.+?)(?: in "[^"]*")?(?: at "[^"]*")?$/,
