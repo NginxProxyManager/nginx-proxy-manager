@@ -295,6 +295,48 @@ const internalHost = {
 	},
 
 	/**
+	 * The state change of an enable or disable: re-reads the host, checks that the change is needed, patches
+	 * `enabled` and installs or removes the nginx config. All of it runs under the nginx lock, the same lock
+	 * updateAndConfigure() holds, so a rejected update can't put back an `enabled` value that a concurrent
+	 * enable or disable has written in between, and an enable always configures the latest row.
+	 *
+	 * When nginx rejects an enabled host and keeps the previous config, the host stays disabled. Any other
+	 * failure (eg. only the reload failed) leaves the new config file in place: then it stays enabled,
+	 * otherwise the next reload activates a host that the UI shows as disabled.
+	 *
+	 * @param   {Object}    opts
+	 * @param   {Object}    opts.model
+	 * @param   {String}    opts.hostType       proxy_host, redirection_host, dead_host or stream
+	 * @param   {Boolean}   opts.enable         true to enable, false to disable
+	 * @param   {Function}  opts.fetch          async () => row, loads the host with the relations nginx needs
+	 * @param   {String}    opts.alreadyMessage  error message when the host already has the requested state
+	 * @returns {Promise<Object>} the row as it was configured
+	 */
+	setEnabledAndConfigure: ({ model, hostType, enable, fetch, alreadyMessage }) =>
+		internalNginx.withLock(async () => {
+			const row = await fetch();
+			if (!!row.enabled === enable) {
+				throw new errs.ValidationError(alreadyMessage);
+			}
+			row.enabled = enable ? 1 : 0;
+			await model.query().where("id", row.id).patch({ enabled: row.enabled });
+
+			if (!enable) {
+				await internalNginx.removeConfigAndReload(hostType, row);
+				return row;
+			}
+			try {
+				await internalNginx.configure(model, hostType, row);
+			} catch (err) {
+				if (internalNginx.isHostLevelError(err)) {
+					await model.query().where("id", row.id).patch({ enabled: 0 });
+				}
+				throw err;
+			}
+			return row;
+		}),
+
+	/**
 	 * This returns all the host types with any domain listed in the provided domainNames array.
 	 * This is used by the certificates to temporarily disable any host that is using the domain
 	 *

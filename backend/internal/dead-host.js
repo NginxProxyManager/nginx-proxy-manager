@@ -271,35 +271,15 @@ const internalDeadHost = {
 	 */
 	enable: async (access, data) => {
 		await access.can("dead_hosts:update", data.id);
-		const row = await internalDeadHost.get(access, {
-			id: data.id,
-			expand: ["certificate", "owner"],
+		// 404 and permission check before the lock is taken
+		await internalDeadHost.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: deadHostModel,
+			hostType: "dead_host",
+			enable: true,
+			fetch: () => internalDeadHost.get(access, { id: data.id, expand: ["certificate", "owner"] }),
+			alreadyMessage: "Host is already enabled",
 		});
-		if (!row?.id) {
-			throw new errs.ItemNotFoundError(data.id);
-		}
-		if (row.enabled) {
-			throw new errs.ValidationError("Host is already enabled");
-		}
-
-		row.enabled = 1;
-
-		await deadHostModel.query().where("id", row.id).patch({
-			enabled: 1,
-		});
-
-		// Configure nginx
-		try {
-			await internalNginx.configure(deadHostModel, "dead_host", row);
-		} catch (err) {
-			// nginx rejected the host and kept the previous config, keep it disabled. Any other failure
-			// (eg. only the reload failed) leaves the new config file in place: then it stays enabled,
-			// otherwise the next reload activates a host that the UI shows as disabled.
-			if (internalNginx.isHostLevelError(err)) {
-				await deadHostModel.query().where("id", row.id).patch({ enabled: 0 });
-			}
-			throw err;
-		}
 
 		// Add to audit log
 		await internalAuditLog.add(access, {
@@ -320,22 +300,14 @@ const internalDeadHost = {
 	 */
 	disable: async (access, data) => {
 		await access.can("dead_hosts:update", data.id);
-		const row = await internalDeadHost.get(access, { id: data.id });
-		if (!row?.id) {
-			throw new errs.ItemNotFoundError(data.id);
-		}
-		if (!row.enabled) {
-			throw new errs.ValidationError("Host is already disabled");
-		}
-
-		row.enabled = 0;
-
-		await deadHostModel.query().where("id", row.id).patch({
-			enabled: 0,
+		await internalDeadHost.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: deadHostModel,
+			hostType: "dead_host",
+			enable: false,
+			fetch: () => internalDeadHost.get(access, { id: data.id }),
+			alreadyMessage: "Host is already disabled",
 		});
-
-		// Delete Nginx Config
-		await internalNginx.removeConfigAndReload("dead_host", row);
 
 		// Add to audit log
 		await internalAuditLog.add(access, {
