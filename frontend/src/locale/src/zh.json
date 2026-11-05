@@ -356,6 +356,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "缓存资源"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "保留路径"
 	},
@@ -370,6 +373,9 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "协议"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "主机列表"

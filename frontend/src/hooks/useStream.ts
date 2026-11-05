@@ -12,6 +12,7 @@ const fetchStream = (id: number | "new") => {
 			udpForwarding: false,
 			meta: {},
 			enabled: true,
+			enableProxyProtocol: false,
 			certificateId: 0,
 		} as Stream);
 	}

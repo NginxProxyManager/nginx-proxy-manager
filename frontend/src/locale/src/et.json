@@ -446,6 +446,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Puhverda failid"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Säilita tee"
 	},
@@ -460,6 +463,9 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Skeem"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Hostid"
