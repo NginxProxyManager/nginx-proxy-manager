@@ -956,6 +956,9 @@
 	"settings.nginx.regenerate.offline": {
 		"defaultMessage": "{count} host hiện đang ngoại tuyến, nginx đã từ chối:"
 	},
+	"settings.nginx.regenerate.partial": {
+		"defaultMessage": "Lần chạy đã thất bại, nhưng trước đó đã thay đổi một số host. Đây là những gì đã được thực hiện cho đến lúc đó:"
+	},
 	"settings.nginx.regenerate.result": {
 		"defaultMessage": "Đã kiểm tra {checked} host trong {seconds} giây: {regenerated} trực tuyến, {offline} ngoại tuyến, {failed} chưa được tạo lại."
 	},

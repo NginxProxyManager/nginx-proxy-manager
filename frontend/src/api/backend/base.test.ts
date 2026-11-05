@@ -63,6 +63,48 @@ describe("ApiError parsing", () => {
 		});
 	});
 
+	it("keeps the partial summary of a failed regeneration", async () => {
+		const err = (await catchError(
+			processResponse(
+				json(
+					{
+						error: {
+							code: 500,
+							message: "Internal Error",
+							regenerate_summary: {
+								checked: 2,
+								regenerated: 1,
+								offline: [{ host_type: "proxy_host", id: 4, name: "broken.example.com", error: "bad" }],
+								failed: [],
+								warnings: [],
+								duration_ms: 900,
+							},
+						},
+					},
+					500,
+				),
+			),
+		)) as ApiError;
+		expect(err.message).toBe("Internal Error");
+		expect(err.details).toBeUndefined();
+		expect(err.regenerateSummary).toEqual({
+			checked: 2,
+			regenerated: 1,
+			offline: [{ hostType: "proxy_host", id: 4, name: "broken.example.com", error: "bad" }],
+			failed: [],
+			warnings: [],
+			durationMs: 900,
+		});
+		// Other errors don't get one
+		expect(
+			buildApiError({ status: 409, statusText: "" }, { error: { message: "busy" } }).regenerateSummary,
+		).toBeUndefined();
+		expect(
+			buildApiError({ status: 500, statusText: "" }, { error: { message: "x", regenerate_summary: "nope" } })
+				.regenerateSummary,
+		).toBeUndefined();
+	});
+
 	it("tolerates a non-JSON error body", async () => {
 		const err = (await catchError(
 			processResponse(new Response("<html>Bad Gateway</html>", { status: 502, statusText: "Bad Gateway" })),

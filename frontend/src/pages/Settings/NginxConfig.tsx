@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {
+	isApiError,
 	type NginxHostType,
 	type NginxRegenerateHost,
 	type NginxRegenerateResult,
@@ -93,11 +94,43 @@ function HostList({ titleId, hosts, text, testId }: HostListProps) {
 	);
 }
 
-function RegenerateResult({ result }: { result: NginxRegenerateResult }) {
+// The summary a failed run sends with its error, see error.regenerate_summary. Missing parts count as empty.
+const partialResult = (error: unknown): NginxRegenerateResult | null => {
+	if (!isApiError(error) || !error.regenerateSummary) {
+		return null;
+	}
+	const raw = error.regenerateSummary;
+	const list = (value: unknown) => (Array.isArray(value) ? (value as NginxRegenerateHost[]) : []);
+	const count = (value: unknown) => (typeof value === "number" ? value : 0);
+	return {
+		checked: count(raw.checked),
+		regenerated: count(raw.regenerated),
+		offline: list(raw.offline),
+		failed: list(raw.failed),
+		warnings: list(raw.warnings),
+		durationMs: count(raw.durationMs),
+	};
+};
+
+interface RegenerateResultProps {
+	result: NginxRegenerateResult;
+	// the run failed after it changed hosts, this is what it did until then
+	partial?: boolean;
+}
+function RegenerateResult({ result, partial }: RegenerateResultProps) {
 	const problems = result.offline.length + result.failed.length;
-	const variant = problems ? "warning" : result.warnings.length ? "info" : "success";
+	const variant = partial || problems ? "warning" : result.warnings.length ? "info" : "success";
 	return (
-		<Alert variant={variant} className="mt-4 mb-0" data-testid="regenerate-result">
+		<Alert
+			variant={variant}
+			className="mt-4 mb-0"
+			data-testid={partial ? "regenerate-partial" : "regenerate-result"}
+		>
+			{partial ? (
+				<div className="fw-bold mb-1">
+					<T id="settings.nginx.regenerate.partial" />
+				</div>
+			) : null}
 			<div className="d-flex align-items-center">
 				{problems ? (
 					<IconAlertTriangle size={20} className="me-2 flex-shrink-0" />
@@ -163,6 +196,9 @@ export default function NginxConfig() {
 	const running = latest?.status === "pending";
 	const result = latest?.status === "success" ? (latest.data ?? null) : null;
 	const error = latest?.status === "error" && latest.submittedAt !== dismissed ? formatApiError(latest.error) : null;
+	// A failed run may have rewritten hosts or taken them offline already. Shown until the next run, also when
+	// the error was dismissed, like the result of a successful run.
+	const partial = latest?.status === "error" ? partialResult(latest.error) : null;
 
 	const onRegenerate = () => {
 		setConfirming(false);
@@ -204,6 +240,7 @@ export default function NginxConfig() {
 				</Alert>
 			) : null}
 			{result ? <RegenerateResult result={result} /> : null}
+			{partial ? <RegenerateResult result={partial} partial /> : null}
 
 			<Modal show={confirming} onHide={() => setConfirming(false)}>
 				<Modal.Header closeButton>

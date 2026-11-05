@@ -86,6 +86,10 @@
 					"example": "forward_host"
 				}
 			}
+		},
+		"regenerate_summary": {
+			"description": "Only when regenerating all host configs failed part way: what the run did until then. Hosts may have been rewritten or taken offline already.",
+			"$ref": "./nginx-regenerate-result.json"
 		}
 	}
 }
