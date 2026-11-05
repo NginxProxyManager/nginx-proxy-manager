@@ -437,6 +437,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork dự án này trên Github"
 	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Bạn có các thay đổi chưa được lưu. Bạn có chắc chắn muốn hủy bỏ chúng không?"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
 	},
@@ -641,11 +644,20 @@
 	"password.show": {
 		"defaultMessage": "Hiện mật khẩu"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Máy chủ proxy được phép"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Cấp thêm quyền truy cập vào các máy chủ proxy đã chọn do người dùng khác tạo (ngoài các mục do chính người dùng tạo)."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Ẩn"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Quản lý"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Không tìm thấy máy chủ proxy nào"
 	},
 	"permissions.view": {
 		"defaultMessage": "Chỉ xem"
