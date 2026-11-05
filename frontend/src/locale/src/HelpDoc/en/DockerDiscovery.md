@@ -54,7 +54,8 @@ labels:
 ```
 
 Other labels: `npm.block_exploits`, `npm.caching`, `npm.http2` (true/false) and
-`npm.hide=true` to leave a container out.
+`npm.hide=true` to leave a container out (also of the network scan, as long as
+Docker discovery works: the scan itself can't read labels).
 
 ### Troubleshooting
 

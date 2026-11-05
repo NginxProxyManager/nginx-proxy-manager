@@ -142,6 +142,29 @@ const mergeCandidates = (lists, max = MAX_ITEMS) => {
 	return items.slice(0, max);
 };
 
+/**
+ * Drops the DNS discovery items of containers labelled npm.hide=true: DNS discovery can't read labels and would
+ * suggest them again. Matched by name (case-insensitive) or by IP, which also catches a PTR name that differs
+ * from the container's names. Docker items are already filtered, history items are hosts the user typed.
+ *
+ * @param   {Array<object>} items
+ * @param   {{hosts: Set<string>, ips: Set<string>}|null} hidden  null: unknown (Docker discovery off or failed)
+ * @returns {Array<object>}
+ */
+const excludeHidden = (items, hidden) => {
+	if (!hidden || (!hidden.hosts?.size && !hidden.ips?.size)) {
+		return items;
+	}
+	return items.filter(
+		(item) =>
+			item?.source !== "dns" ||
+			!(
+				(typeof item.host === "string" && hidden.hosts?.has(item.host.toLowerCase())) ||
+				(item.ip && hidden.ips?.has(item.ip))
+			),
+	);
+};
+
 // Host types that can hold a domain name, in the order a match is reported (a proxy host can be opened from
 // the label list, the others only explain why Create would fail)
 const HOST_TYPES = [
@@ -200,4 +223,4 @@ const markExistingHosts = (items, hosts = {}) => {
 	});
 };
 
-export { buildHistoryCandidates, MAX_ITEMS, markExistingHosts, mergeCandidates };
+export { buildHistoryCandidates, excludeHidden, MAX_ITEMS, markExistingHosts, mergeCandidates };

@@ -1,5 +1,10 @@
 import errs from "../lib/error.js";
-import { buildHistoryCandidates, markExistingHosts, mergeCandidates } from "../lib/upstream/candidates.js";
+import {
+	buildHistoryCandidates,
+	excludeHidden,
+	markExistingHosts,
+	mergeCandidates,
+} from "../lib/upstream/candidates.js";
 import { checkTarget, checkTargets } from "../lib/upstream/check.js";
 import { consumeCheckBudget } from "../lib/upstream/check-budget.js";
 import {
@@ -44,14 +49,14 @@ const DNS_DISABLED_MESSAGE = "DNS discovery is disabled (NPM_DNS_DISCOVERY=false
 const runDiscoveryProviders = async () => {
 	const dockerPromise = (async () => {
 		if (!isDockerDiscoveryEnabled()) {
-			return { status: { status: "disabled", message: DOCKER_DISABLED_MESSAGE }, items: [] };
+			return { status: { status: "disabled", message: DOCKER_DISABLED_MESSAGE }, items: [], hidden: null };
 		}
 		try {
 			const result = await discoverDocker({ dockerHost: getDockerHost() });
-			return { status: { status: "ok", message: null }, items: result.items };
+			return { status: { status: "ok", message: null }, items: result.items, hidden: result.hidden };
 		} catch (err) {
 			debug(logger, `Upstream docker discovery failed: ${err.message}`);
-			return { status: { status: "unavailable", message: describeDockerError(err) }, items: [] };
+			return { status: { status: "unavailable", message: describeDockerError(err) }, items: [], hidden: null };
 		}
 	})();
 
@@ -87,7 +92,9 @@ const runDiscoveryProviders = async () => {
 	const [docker, dnsResult] = await Promise.all([dockerPromise, dnsPromise]);
 	return {
 		providers: { docker: docker.status, dns: dnsResult.status },
-		items: [...docker.items, ...dnsResult.items],
+		// npm.hide applies to DNS discovery too (as far as Docker discovery tells which containers are hidden). The
+		// hidden names never leave this function, and the cache holds the filtered list.
+		items: [...docker.items, ...excludeHidden(dnsResult.items, docker.hidden)],
 	};
 };
 

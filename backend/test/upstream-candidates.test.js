@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { buildHistoryCandidates, markExistingHosts, mergeCandidates } from "../lib/upstream/candidates.js";
+import {
+	buildHistoryCandidates,
+	excludeHidden,
+	markExistingHosts,
+	mergeCandidates,
+} from "../lib/upstream/candidates.js";
 
 const item = (host, source, extra = {}) => ({
 	host,
@@ -59,6 +64,47 @@ describe("candidates: history", () => {
 	it("handles empty input", () => {
 		assert.deepEqual(buildHistoryCandidates(), []);
 		assert.deepEqual(buildHistoryCandidates({ proxyHosts: [null], streams: [{}] }), []);
+	});
+});
+
+describe("candidates: npm.hide for DNS discovery", () => {
+	const hidden = { hosts: new Set(["hidden-db"]), ips: new Set(["172.18.0.5"]) };
+
+	it("drops DNS items of hidden containers by name or by IP", () => {
+		const dns = [
+			item("Hidden-DB", "dns", { ip: "172.18.0.7" }),
+			item("proj-hidden-db-1", "dns", { ip: "172.18.0.5" }),
+			item("web", "dns", { ip: "172.18.0.3" }),
+		];
+		assert.deepEqual(
+			excludeHidden(dns, hidden).map((i) => i.host),
+			["web"],
+		);
+	});
+
+	it("keeps docker and history items and everything when the hidden containers are unknown", () => {
+		const items = [
+			item("hidden-db", "history", { used_by: 1 }),
+			item("hidden-db", "docker"),
+			item("hidden-db", "dns"),
+		];
+		assert.deepEqual(
+			excludeHidden(items, hidden).map((i) => i.source),
+			["history", "docker"],
+		);
+		assert.equal(excludeHidden(items, null).length, 3);
+		assert.equal(excludeHidden(items, { hosts: new Set(), ips: new Set() }).length, 3);
+	});
+
+	it("the merged list no longer brings a hidden container back through DNS discovery", () => {
+		const merged = mergeCandidates([
+			[item("web", "docker")],
+			excludeHidden([item("hidden-db", "dns", { ip: "172.18.0.5" }), item("web", "dns")], hidden),
+		]);
+		assert.deepEqual(
+			merged.map((i) => i.host),
+			["web"],
+		);
 	});
 });
 
