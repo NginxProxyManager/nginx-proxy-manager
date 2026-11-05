@@ -143,6 +143,7 @@ const internalProxyHost = {
 	update: (access, data) => {
 		let thisData = internalHost.sanitiseInput(data);
 		const createCertificate = thisData.certificate_id === "new";
+		let newCertificateId = null;
 
 		if (createCertificate) {
 			delete thisData.certificate_id;
@@ -182,34 +183,7 @@ const internalProxyHost = {
 					);
 				}
 
-				if (createCertificate) {
-					return internalCertificate
-						.createQuickCertificate(access, {
-							domain_names: thisData.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, thisData.meta),
-						})
-						.then((cert) => {
-							// update host with cert id
-							thisData.certificate_id = cert.id;
-						})
-						.then(() => {
-							return row;
-						});
-				}
-				return row;
-			})
-			.then((row) => {
-				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				thisData = _.assign(
-					{},
-					{
-						domain_names: row.domain_names,
-					},
-					data,
-				);
-
-				thisData = internalHost.cleanSslHstsData(thisData, row);
-
+				// Before anything is configured or a certificate is requested
 				const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
 				if (
 					!isAdmin &&
@@ -233,6 +207,51 @@ const internalProxyHost = {
 					}
 				}
 
+				if (createCertificate) {
+					// Check that nginx accepts the rest of the update before the certificate is requested
+					return internalProxyHost
+						.get(access, { id: row.id, expand: ["owner", "certificate", "access_list.[clients,items]"] })
+						.then((fullRow) =>
+							internalHost.checkProposedHost({
+								model: proxyHostModel,
+								hostType: "proxy_host",
+								row: fullRow,
+								patch: internalHost.cleanSslHstsData(
+									_.assign({}, { domain_names: row.domain_names }, data),
+									row,
+								),
+								skipDisabled: true,
+							}),
+						)
+						.then(() =>
+							internalCertificate.createQuickCertificate(access, {
+								domain_names: thisData.domain_names || row.domain_names,
+								meta: _.assign({}, row.meta, thisData.meta),
+							}),
+						)
+						.then((cert) => {
+							// update host with cert id
+							thisData.certificate_id = cert.id;
+							newCertificateId = cert.id;
+						})
+						.then(() => {
+							return row;
+						});
+				}
+				return row;
+			})
+			.then((row) => {
+				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
+				thisData = _.assign(
+					{},
+					{
+						domain_names: row.domain_names,
+					},
+					data,
+				);
+
+				thisData = internalHost.cleanSslHstsData(thisData, row);
+
 				return internalHost.updateAndConfigure({
 					model: proxyHostModel,
 					hostType: "proxy_host",
@@ -253,6 +272,14 @@ const internalProxyHost = {
 							meta: thisData,
 						}),
 				});
+			})
+			.catch(async (err) => {
+				if (newCertificateId) {
+					await internalHost.discardUnusedCertificate(newCertificateId, () =>
+						internalCertificate.delete(access, { id: newCertificateId }),
+					);
+				}
+				throw err;
 			})
 			.then((row) => {
 				return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());

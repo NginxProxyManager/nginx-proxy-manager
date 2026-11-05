@@ -6,6 +6,7 @@ import { global as logger } from "../logger.js";
 import deadHostModel from "../models/dead_host.js";
 import proxyHostModel from "../models/proxy_host.js";
 import redirectionHostModel from "../models/redirection_host.js";
+import streamModel from "../models/stream.js";
 import internalNginx from "./nginx.js";
 
 const internalHost = {
@@ -192,6 +193,62 @@ const internalHost = {
 				await writeAudit();
 			}
 			throw err;
+		}
+	},
+
+	/**
+	 * For an update that asks for a new certificate (certificate_id "new"): checks that nginx accepts the rest of
+	 * the update before the certificate is requested. Otherwise the certificate would be issued, the update
+	 * rejected and rolled back, and the certificate left unused but renewed forever. Like create(), the check
+	 * runs with the host's current certificate; the SSL part is checked when the certificate is added.
+	 *
+	 * @param   {Object}   opts
+	 * @param   {Object}   opts.model
+	 * @param   {String}   opts.hostType       proxy_host, redirection_host, dead_host or stream
+	 * @param   {Object}   opts.row            the current row, with the relations nginx needs
+	 * @param   {Object}   opts.patch          the data the update will patch (without certificate_id)
+	 * @param   {Boolean}  [opts.skipDisabled] the update doesn't configure nginx for a disabled host either
+	 * @returns {Promise}  rejects with the error the update would have been rejected with
+	 */
+	checkProposedHost: async ({ model, hostType, row, patch, skipDisabled = false }) => {
+		const proposed = _.assign(
+			{},
+			row,
+			_.omit(patch, ["id", "certificate_id", "certificate", "owner", "access_list", "meta"]),
+		);
+		if (skipDisabled && !proposed.enabled) {
+			return;
+		}
+		await internalNginx.configure(model, hostType, proposed, { dryRun: true });
+	},
+
+	/**
+	 * After an update with a new certificate failed: removes that certificate when no host uses it, eg. when
+	 * nginx only rejected the update once the certificate was there and the row was rolled back. Never throws,
+	 * the update's own error is what the caller reports.
+	 *
+	 * @param   {Number}    certificateId
+	 * @param   {Function}  remove  async (): deletes (and revokes) the certificate
+	 * @returns {Promise<boolean>} true when the certificate was removed
+	 */
+	discardUnusedCertificate: async (certificateId, remove) => {
+		try {
+			for (const model of [proxyHostModel, redirectionHostModel, deadHostModel, streamModel]) {
+				const user = await model
+					.query()
+					.where("is_deleted", 0)
+					.andWhere("certificate_id", certificateId)
+					.first();
+				if (user) {
+					return false;
+				}
+			}
+			await remove();
+			logger.warn(`Removed certificate #${certificateId}: the update it was requested for was rejected`);
+			return true;
+		} catch (err) {
+			logger.warn(`Could not remove the unused certificate #${certificateId}: ${err.message}`);
+			return false;
 		}
 	},
 

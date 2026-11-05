@@ -134,6 +134,7 @@ const internalRedirectionHost = {
 	update: (access, data) => {
 		let thisData = internalHost.sanitiseInput(data || {});
 		const createCertificate = thisData.certificate_id === "new";
+		let newCertificateId = null;
 
 		if (createCertificate) {
 			delete thisData.certificate_id;
@@ -174,15 +175,41 @@ const internalRedirectionHost = {
 					);
 				}
 
+				// Before anything is configured or a certificate is requested
+				const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
+				if (
+					!isAdmin &&
+					typeof thisData.advanced_config !== "undefined" &&
+					thisData.advanced_config !== row.advanced_config
+				) {
+					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
+				}
+
 				if (createCertificate) {
-					return internalCertificate
-						.createQuickCertificate(access, {
-							domain_names: thisData.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, thisData.meta),
-						})
+					// Check that nginx accepts the rest of the update before the certificate is requested
+					return internalRedirectionHost
+						.get(access, { id: row.id, expand: ["owner", "certificate"] })
+						.then((fullRow) =>
+							internalHost.checkProposedHost({
+								model: redirectionHostModel,
+								hostType: "redirection_host",
+								row: fullRow,
+								patch: internalHost.cleanSslHstsData(
+									_.assign({}, { domain_names: row.domain_names }, thisData),
+									row,
+								),
+							}),
+						)
+						.then(() =>
+							internalCertificate.createQuickCertificate(access, {
+								domain_names: thisData.domain_names || row.domain_names,
+								meta: _.assign({}, row.meta, thisData.meta),
+							}),
+						)
 						.then((cert) => {
 							// update host with cert id
 							thisData.certificate_id = cert.id;
+							newCertificateId = cert.id;
 						})
 						.then(() => {
 							return row;
@@ -202,15 +229,6 @@ const internalRedirectionHost = {
 
 				thisData = internalHost.cleanSslHstsData(thisData, row);
 
-				const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
-				if (
-					!isAdmin &&
-					typeof thisData.advanced_config !== "undefined" &&
-					thisData.advanced_config !== row.advanced_config
-				) {
-					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
-				}
-
 				return internalHost.updateAndConfigure({
 					model: redirectionHostModel,
 					hostType: "redirection_host",
@@ -229,6 +247,14 @@ const internalRedirectionHost = {
 							meta: thisData,
 						}),
 				});
+			})
+			.catch(async (err) => {
+				if (newCertificateId) {
+					await internalHost.discardUnusedCertificate(newCertificateId, () =>
+						internalCertificate.delete(access, { id: newCertificateId }),
+					);
+				}
+				throw err;
 			})
 			.then((row) => {
 				return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
