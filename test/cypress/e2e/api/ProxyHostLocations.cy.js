@@ -269,6 +269,28 @@ describe('Proxy Host custom location resilience', () => {
 		expectPage('/cap/dashboard', 'this is the dashboard page');
 	});
 
+	it('Should quarantine a location that uses an unknown variable, not the host', () => {
+		cy.task('backendApiPut', {
+			token: token,
+			path:  `/api/nginx/proxy-hosts/${hostId}`,
+			data:  {
+				locations: [
+					location('/dash', 'examplesite', { forward_path: '/dashboard' }),
+					location('/typo', 'examplesite', { advanced_config: 'proxy_set_header X-Test $missing_variable;' }),
+				],
+			},
+		}).then((data) => {
+			cy.validateSwaggerSchema('put', 200, '/nginx/proxy-hosts/{hostID}', data);
+			expect(data.meta).to.have.property('nginx_online', true);
+			expect(data.meta.nginx_locations[0]).to.include({ index: 0, status: 'ok' });
+			expect(data.meta.nginx_locations[1]).to.include({ index: 1, status: 'quarantined', mode: null });
+			expect(data.meta.nginx_locations[1].message).to.contain('unknown variable "$missing_variable"');
+		});
+
+		expectPage('/dash', 'this is the dashboard page');
+		expectStatus('/typo', '503');
+	});
+
 	it('Should delete the host', () => {
 		cy.task('backendApiDelete', {
 			token: token,

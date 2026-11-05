@@ -384,6 +384,50 @@ const renderLocation = async (engine, template, loc, state) => {
 };
 
 /**
+ * Finds the custom locations behind an `nginx -t` error that names no line, eg. `unknown "x" variable`
+ * (nginx checks variables after parsing the files and doesn't say where they are used). The candidates are
+ * replaced by `return 503;` stubs, which contain nothing of the user's input:
+ *
+ * - still the same error with all of them stubbed: not caused by a location, null
+ * - otherwise each candidate is rendered alone, with all the others still stubbed: every one that brings the
+ *   same error back fails on its own and is returned (two broken locations with the same message are both
+ *   found, a working one is never blamed for them)
+ * - none fails alone (eg. two locations only fail together): each candidate is stubbed alone, the first one
+ *   that makes the error go away (or change) is returned
+ * - none of that: all candidates
+ *
+ * @param   {Object}   opts
+ * @param   {Number[]} opts.candidates     indexes of the locations that are rendered (ok / unresolved)
+ * @param   {Object}   opts.parsed         the parsed error
+ * @param   {Function} opts.testWithStubs  async (indexes) => {ok, parsed}: nginx -t with those locations stubbed
+ * @returns {Promise<Number[]|null>} the indexes to quarantine
+ */
+const isolateFaultyLocations = async ({ candidates, parsed, testWithStubs }) => {
+	const sameError = (result) => !result.ok && result.parsed?.message === parsed.message;
+	if (!candidates.length || sameError(await testWithStubs(candidates))) {
+		return null;
+	}
+	if (candidates.length === 1) {
+		return candidates;
+	}
+	const failAlone = [];
+	for (const index of candidates) {
+		if (sameError(await testWithStubs(candidates.filter((i) => i !== index)))) {
+			failAlone.push(index);
+		}
+	}
+	if (failAlone.length) {
+		return failAlone;
+	}
+	for (const index of candidates) {
+		if (!sameError(await testWithStubs([index]))) {
+			return [index];
+		}
+	}
+	return candidates;
+};
+
+/**
  * @returns {String}
  */
 const readLocationTemplate = () => fs.readFileSync(TEMPLATE_FILE, { encoding: "utf8" });
@@ -479,6 +523,7 @@ export {
 	findDuplicatePath,
 	hasDirective,
 	hasVariablePath,
+	isolateFaultyLocations,
 	isVariableHost,
 	matchSavedLocations,
 	normaliseLocationPath,
