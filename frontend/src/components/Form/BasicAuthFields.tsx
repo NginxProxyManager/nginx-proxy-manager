@@ -38,8 +38,7 @@ export function BasicAuthFields({ initialValues, name = "items" }: Props) {
 	};
 
 	const setFormField = (newValues: AccessListItem[]) => {
-		const filtered = newValues.filter((v: AccessListItem) => v?.username?.trim() !== "");
-		setFieldValue(name, filtered);
+		setFieldValue(name, newValues);
 	};
 
 	return (

@@ -1,7 +1,7 @@
 import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form, Formik } from "formik";
+import { Field, Form } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
@@ -16,6 +16,7 @@ import {
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
+import { FormModal } from "src/components/Form";
 import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
 import { T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
@@ -36,6 +37,8 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	const isAdmin = currentUser?.roles?.includes("admin");
+
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
@@ -45,6 +48,20 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			id: id === "new" ? undefined : id,
 			...values,
 		};
+		payload.locations = (values.locations || []).filter((location: any) => location.path?.trim() !== "");
+
+		if (!isAdmin) {
+			delete payload.advanced_config;
+			delete payload.advancedConfig;
+			const existingLocations = data?.locations || [];
+			payload.locations = payload.locations.map((loc: any) => {
+				const existingLoc = existingLocations.find((l: any) => l.path === loc.path);
+				return {
+					...loc,
+					advancedConfig: existingLoc?.advancedConfig || "",
+				};
+			});
+		}
 
 		setProxyHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
@@ -60,15 +77,22 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	};
 
 	return (
-		<Modal show={visible} onHide={remove}>
-			{!isLoading && (error || userError) && (
-				<Alert variant="danger" className="m-3">
-					{error?.message || userError?.message || "Unknown error"}
-				</Alert>
+		<>
+			{(isLoading || userIsLoading || ((error || userError) && (!data || !currentUser))) && (
+				<Modal show={visible} onHide={remove}>
+					{!isLoading && (error || userError) && (
+						<Alert variant="danger" className="m-3">
+							{error?.message || userError?.message || "Unknown error"}
+						</Alert>
+					)}
+					{(isLoading || userIsLoading) && <Loading noLogo />}
+				</Modal>
 			)}
-			{isLoading || (userIsLoading && <Loading noLogo />)}
 			{!isLoading && !userIsLoading && data && currentUser && (
-				<Formik
+				<FormModal
+					show={visible}
+					onHide={remove}
+					preventHide={isSubmitting}
 					initialValues={
 						{
 							// Details tab
@@ -96,7 +120,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
+					{({ onHide }) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -145,19 +169,21 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													<T id="column.ssl" />
 												</a>
 											</li>
-											<li className="nav-item ms-auto" role="presentation">
-												<a
-													href="#tab-advanced"
-													className="nav-link"
-													title="Settings"
-													data-bs-toggle="tab"
-													aria-selected="false"
-													tabIndex={-1}
-													role="tab"
-												>
-													<IconSettings size={20} />
-												</a>
-											</li>
+											{isAdmin && (
+												<li className="nav-item ms-auto" role="presentation">
+													<a
+														href="#tab-advanced"
+														className="nav-link"
+														title="Settings"
+														data-bs-toggle="tab"
+														aria-selected="false"
+														tabIndex={-1}
+														role="tab"
+													>
+														<IconSettings size={20} />
+													</a>
+												</li>
+											)}
 										</ul>
 									</div>
 									<div className="card-body">
@@ -165,12 +191,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
 												<div className="row">
-													<div className="col-md-3">
+													<div className="col-sm-3 col-md-3">
 														<Field name="forwardScheme">
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label
-																		className="form-label"
+																		className="form-label text-nowrap"
 																		htmlFor="forwardScheme"
 																	>
 																		<T id="host.forward-scheme" />
@@ -196,11 +222,14 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															)}
 														</Field>
 													</div>
-													<div className="col-md-6">
+													<div className="col-sm-5 col-md-5">
 														<Field name="forwardHost" validate={validateString(1, 255)}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
-																	<label className="form-label" htmlFor="forwardHost">
+																	<label
+																		className="form-label text-nowrap"
+																		htmlFor="forwardHost"
+																	>
 																		<T id="proxy-host.forward-host" />
 																	</label>
 																	<input
@@ -223,11 +252,14 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															)}
 														</Field>
 													</div>
-													<div className="col-md-3">
+													<div className="col-sm-4 col-md-4">
 														<Field name="forwardPort" validate={validateNumber(1, 65535)}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
-																	<label className="form-label" htmlFor="forwardPort">
+																	<label
+																		className="form-label text-nowrap"
+																		htmlFor="forwardPort"
+																	>
 																		<T id="host.forward-port" />
 																	</label>
 																	<input
@@ -332,7 +364,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												</div>
 											</div>
 											<div className="tab-pane" id="tab-locations" role="tabpanel">
-												<LocationsFields initialValues={data?.locations || []} />
+												<LocationsFields
+													initialValues={data?.locations || []}
+													allowAdvanced={!!isAdmin}
+												/>
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField
@@ -342,15 +377,17 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												/>
 												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
 											</div>
-											<div className="tab-pane" id="tab-advanced" role="tabpanel">
-												<NginxConfigField />
-											</div>
+											{isAdmin && (
+												<div className="tab-pane" id="tab-advanced" role="tabpanel">
+													<NginxConfigField />
+												</div>
+											)}
 										</div>
 									</div>
 								</div>
 							</Modal.Body>
 							<Modal.Footer>
-								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
+								<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
 								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
@@ -368,9 +405,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							</Modal.Footer>
 						</Form>
 					)}
-				</Formik>
+				</FormModal>
 			)}
-		</Modal>
+		</>
 	);
 });
 
