@@ -27,6 +27,7 @@ import {
 	CONFIG_VERSION_MARKER,
 	chooseLocationMode,
 	describeConfigLine,
+	isolateFaultyLocations,
 	isVariableHost,
 	MESSAGES as LOCATION_MESSAGES,
 	parseLocationPath,
@@ -355,6 +356,47 @@ const internalNginx = {
 		let configText = "";
 		let failure = null;
 
+		// An error without a line (eg. `unknown "x" variable`) can still come from a custom location. Before the
+		// whole host is rejected, the locations are stubbed one by one to find it, see isolateFaultyLocations().
+		const isolateLocations = async (parsed) => {
+			const candidates = (states || [])
+				.filter((s) => s.status === "ok" || s.status === "unresolved")
+				.map((s) => s.index);
+			if (!candidates.length) {
+				return null;
+			}
+			// In a nested configure the host being saved may cause it, causedByProtected() decides that below
+			if (opts.protect?.length && (await internalNginx.testAside(opts.protect)).ok) {
+				return null;
+			}
+			try {
+				return await isolateFaultyLocations({
+					candidates,
+					parsed,
+					testWithStubs: async (indexes) => {
+						const stubbed = states.map((s) =>
+							indexes.includes(s.index)
+								? Object.assign({}, s, { status: "quarantined", mode: null, stub: true })
+								: s,
+						);
+						// writes the host's file, see below
+						const text = await internalNginx.generateConfig(hostType, host, { locationStates: stubbed });
+						return internalNginx.runTest({ file: filename, text });
+					},
+				});
+			} finally {
+				// Put the config that failed back: when no location is to blame, the host is rejected or (bulk
+				// mode) its file is kept as .err for inspection, which must not show the last stubbed variant
+				fs.writeFileSync(filename, configText, { encoding: "utf8" });
+			}
+		};
+		const quarantineFaulty = (indexes, parsed) => {
+			for (const index of indexes) {
+				internalNginx.quarantineLocation(states[index], host, parsed, modeResolver);
+			}
+			quarantines += indexes.length;
+		};
+
 		for (;;) {
 			if (quarantines > maxQuarantines) {
 				failure = { scope: "host", parsed: { file: filename, line: null, message: "", output: "" } };
@@ -393,6 +435,12 @@ const internalNginx = {
 					quarantines++;
 					continue;
 				}
+				// the file but no line, eg. a log path of a location that can't be opened
+				const faulty = where.location_index === null && !parsed.line ? await isolateLocations(parsed) : null;
+				if (faulty) {
+					quarantineFaulty(faulty, parsed);
+					continue;
+				}
 				failure = { scope: "host", parsed };
 				break;
 			}
@@ -424,9 +472,15 @@ const internalNginx = {
 			}
 			if (blame) {
 				if (blame.action === "conflict") {
-					// When the error stays with every other host's config moved aside, this host's own config
-					// causes it (eg. its advanced config uses an unknown variable): a host level error, not a
-					// conflict with another host
+					// fails only with this host's config: maybe one of its locations
+					const faulty = !parsed.file ? await isolateLocations(parsed) : null;
+					if (faulty) {
+						quarantineFaulty(faulty, parsed);
+						continue;
+					}
+					// No location is to blame. When the error stays with every other host's config moved aside, this
+					// host's own config causes it (eg. its advanced config uses an unknown variable): a host level
+					// error, not a conflict with another host
 					if (!parsed.file && (await internalNginx.failsAlone(filename, parsed))) {
 						failure = { scope: "host", parsed };
 						break;

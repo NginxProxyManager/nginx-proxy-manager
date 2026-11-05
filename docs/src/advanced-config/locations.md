@@ -89,6 +89,11 @@ it in `meta.nginx_locations` of the proxy host:
 | `quarantined` | nginx rejected the location, or NPM knows it would. The message says why, for example an unknown directive in its advanced configuration, a forward path without an nginx variable on a regular-expression or named location (nginx rejects that URI; a capture such as `/v1/$1` or `$request_uri` works), or a forward path with spaces, quotes, `;`, `{`, `}`, `#` or `\` (nginx variables such as `$1` are fine). | Answers `503` for this path. If nginx rejects even that placeholder, for example because the path itself is invalid, the location is left out. |
 | `disabled` | You switched the location off. | The location isn't in the config. Requests fall through to the host's other locations. |
 
+Some nginx errors name no line, for example `unknown "x" variable` for a misspelled variable (nginx checks variables
+after reading all files). Then NPM replaces the host's custom locations with placeholders to find the one that causes
+it and quarantines only that one. If the error stays with every location replaced, it comes from the host itself and the
+save fails as described below.
+
 Fix the cause and save the host again to bring a quarantined location back. An unresolved location comes back by
 itself once the upstream name resolves.
 
