@@ -30,6 +30,7 @@ NPM picks the mode for each location every time it writes the host's config:
 | Name that only the system resolver knows, for example through a search domain in `/etc/resolv.conf` | static |
 | Name that doesn't resolve at all | dynamic, with status **unresolved** |
 | A single nginx variable, for example `$backend` with `set $backend app;` in the advanced configuration | static, written as it is: nginx already resolves it per request |
+| Location whose forward path contains an nginx variable, for example `/api/$arg_id` or `$request_uri` | static, written as it is: nginx already resolves it per request (a name that doesn't resolve still shows **unresolved**) |
 | Location with a forward path whose advanced configuration reads `$uri` or `$document_uri` | static while the name resolves, see below |
 | `NPM_LOCATION_DYNAMIC_DNS=false`, or the resolver is disabled (`DISABLE_RESOLVER`) | static |
 
@@ -49,6 +50,12 @@ unknown name makes nginx reject the whole configuration), and `$uri` then holds 
 outside the location's advanced configuration, for example in the host's advanced configuration or a custom log
 format, are not detected: use `$request_uri` there, or set `NPM_LOCATION_DYNAMIC_DNS=false`.
 :::
+
+A forward path with an nginx variable is written into the config exactly as before too
+(`proxy_pass http://app:8080/api/$arg_id;`). nginx sends such a URI as it is: `/a/foo?id=42` on location `/a/` reaches
+the upstream as `/api/42`, without the rest of the path and without the query string. "Cache Assets" passes the same
+URI for assets, and doesn't add the nested asset location when the forward path uses a regex capture such as `$1`,
+because the nested location has captures of its own.
 
 A forward host that is a single nginx variable, such as `$backend`, is written into the config exactly as before
 (`proxy_pass http://$backend:8080;`), without the extra lines. "Cache Assets" doesn't add the nested asset location

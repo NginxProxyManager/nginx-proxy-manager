@@ -40,14 +40,22 @@ diffs=0
 total=0
 while IFS= read -r line; do
 	[ -z "$line" ] && continue
-	# path|user:password|:port (the last two are optional, the port is added to the Host header)
-	IFS='|' read -r path creds hostport <<< "$line"
+	# path|user:password|:port|expected (all but the path are optional; the port is added to the Host header,
+	# the expected text must be in the response, eg. the URI the upstream got)
+	IFS='|' read -r path creds hostport expect <<< "$line"
 
 	static="$(fetch 8002 "$path" "$creds" "$hostport")"
 	dynamic="$(fetch 8003 "$path" "$creds" "$hostport")"
 	total=$((total + 1))
 	if [[ "$static$dynamic" == *HOST-MISMATCH* ]]; then
 		echo "DIFF  forwarded Host $line"
+		echo "   static:  $static"
+		echo "   dynamic: $dynamic"
+		diffs=$((diffs + 1))
+		continue
+	fi
+	if [ -n "$expect" ] && [[ "$dynamic" != *"$expect"* || "$static" != *"$expect"* ]]; then
+		echo "DIFF  expected $line"
 		echo "   static:  $static"
 		echo "   dynamic: $dynamic"
 		diffs=$((diffs + 1))
@@ -61,7 +69,7 @@ while IFS= read -r line; do
 		continue
 	fi
 
-	if [[ ! "$path" =~ ^/(cache|cacheroot|acl|qc%20p)/ ]]; then
+	if [[ ! "$path" =~ ^/(cache|cacheroot|acl|qc%20p|avc)/ ]]; then
 		legacy="$(fetch 8001 "$path" "$creds" "$hostport")"
 		total=$((total + 1))
 		if [ "$legacy" != "$dynamic" ] || [[ "$legacy" == *HOST-MISMATCH* ]]; then

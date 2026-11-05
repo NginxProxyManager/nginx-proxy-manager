@@ -21,5 +21,10 @@
  {"path":"\"/qc p/\"","fp":"/c/","cache":true},
  {"path":"/uri/","fp":"/x/","adv":"add_header X-Sem-Uri $uri always;"},
  {"path":"/var/","host":"$sembackend","fp":"","adv":"set $sembackend echo;"},
- {"path":"/varfp/","host":"$sembackend","fp":"/x/","adv":"set $sembackend echo;"}
+ {"path":"/varfp/","host":"$sembackend","fp":"/x/","adv":"set $sembackend echo;"},
+ {"path":"/av/","fp":"/api/$arg_id"},
+ {"path":"/avb/","fp":"/api/${arg_id}/x"},
+ {"path":"/avh/","fp":"/h/$host"},
+ {"path":"/avr/","fp":"$request_uri"},
+ {"path":"/avc/","fp":"/api/$arg_id","cache":true}
 ]
