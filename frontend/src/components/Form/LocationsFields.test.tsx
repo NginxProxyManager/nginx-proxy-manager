@@ -282,7 +282,7 @@ describe("LocationsFields", () => {
 			],
 			generatedAt: "2026-11-04T10:00:00Z",
 		};
-		renderFields([loc({ path: "/a", forwardHost: "", forwardPort: 80 })]);
+		const { formValues } = renderFields([loc({ path: "/a", forwardHost: "", forwardPort: 80 })]);
 		fireEvent.click(screen.getByText("/a"));
 		const port = screen.getByPlaceholderText("eg: 8081") as HTMLInputElement;
 		const host = document.querySelector("[id^=location-forwardHost-]") as HTMLInputElement;
@@ -295,13 +295,42 @@ describe("LocationsFields", () => {
 		pick("svc");
 		expect(host.value).toBe("svc");
 		expect(port.value).toBe("3000");
+		// the form holds the picked host together with its port, not only the inputs
+		expect(formValues()[0]).toMatchObject({ forwardHost: "svc", forwardPort: 3000 });
 		pick("other");
 		expect(port.value).toBe("4000");
+		expect(formValues()[0]).toMatchObject({ forwardHost: "other", forwardPort: 4000 });
 		// a port the user typed stays
 		fireEvent.change(port, { target: { value: "8443" } });
 		pick("svc");
 		expect(host.value).toBe("svc");
 		expect(port.value).toBe("8443");
+		expect(formValues()[0]).toMatchObject({ forwardHost: "svc", forwardPort: 8443 });
+	});
+
+	it("saves the picked container's host with the port and scheme it fills in", async () => {
+		checkState.candidates = {
+			providers: {},
+			items: [
+				{ host: "svc", label: "svc", source: "docker", ports: [3000], hintPort: 3000, hintScheme: "https" },
+			],
+			generatedAt: "2026-11-04T10:00:00Z",
+		};
+		const { onSubmit } = renderFields([loc({ path: "/a", forwardHost: "app", forwardPort: 80 })]);
+		fireEvent.click(screen.getByText("/a"));
+		const host = document.querySelector("[id^=location-forwardHost-]") as HTMLInputElement;
+		fireEvent.focus(host);
+		fireEvent.keyDown(host, { key: "ArrowDown", code: "ArrowDown" });
+		fireEvent.click(screen.getByText("svc"));
+
+		fireEvent.click(screen.getByText("save"));
+
+		await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+		expect(onSubmit.mock.calls[0][0].locations[0]).toMatchObject({
+			forwardHost: "svc",
+			forwardPort: 3000,
+			forwardScheme: "https",
+		});
 	});
 
 	it("blocks submit with invalid rows, expands them and shows the errors", async () => {
