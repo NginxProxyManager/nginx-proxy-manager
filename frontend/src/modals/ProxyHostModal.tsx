@@ -1,7 +1,7 @@
 import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form, Formik } from "formik";
+import { Field, Form } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
@@ -16,7 +16,8 @@ import {
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
-import { useProxyHost, useSetProxyHost, useUser, useHealth } from "src/hooks";
+import { FormModal } from "src/components/Form";
+import { useHealth, useProxyHost, useSetProxyHost, useUser } from "src/hooks";
 import { T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
@@ -46,6 +47,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			id: id === "new" ? undefined : id,
 			...values,
 		};
+		payload.locations = (values.locations || []).filter((location: any) => location.path?.trim() !== "");
 
 		payload.http3_support = http3Support ? 1 : 0;
 
@@ -63,15 +65,22 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	};
 
 	return (
-		<Modal show={visible} onHide={remove}>
-			{!isLoading && (error || userError) && (
-				<Alert variant="danger" className="m-3">
-					{error?.message || userError?.message || "Unknown error"}
-				</Alert>
+		<>
+			{(isLoading || userIsLoading || ((error || userError) && (!data || !currentUser))) && (
+				<Modal show={visible} onHide={remove}>
+					{!isLoading && (error || userError) && (
+						<Alert variant="danger" className="m-3">
+							{error?.message || userError?.message || "Unknown error"}
+						</Alert>
+					)}
+					{(isLoading || userIsLoading) && <Loading noLogo />}
+				</Modal>
 			)}
-			{isLoading || (userIsLoading && <Loading noLogo />)}
 			{!isLoading && !userIsLoading && data && currentUser && (
-				<Formik
+				<FormModal
+					show={visible}
+					onHide={remove}
+					preventHide={isSubmitting}
 					initialValues={
 						{
 							// Details tab
@@ -100,7 +109,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
+					{({ onHide }) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -360,7 +369,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								</div>
 							</Modal.Body>
 							<Modal.Footer>
-								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
+								<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
 								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
@@ -378,9 +387,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							</Modal.Footer>
 						</Form>
 					)}
-				</Formik>
+				</FormModal>
 			)}
-		</Modal>
+		</>
 	);
 });
 

@@ -88,8 +88,10 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	};
 
 	const setFormField = (newRows: Row[]) => {
-		const filtered = newRows.map((r: Row) => r.value).filter((v: ProxyLocation) => v?.path?.trim() !== "");
-		setFieldValue(name, filtered);
+		setFieldValue(
+			name,
+			newRows.map((r: Row) => r.value),
+		);
 	};
 
 	const forwardSummary = (item: ProxyLocation) => {

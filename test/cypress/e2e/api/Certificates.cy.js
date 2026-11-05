@@ -35,6 +35,63 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
+	it('Unauthenticated user cannot validate custom certificate', () => {
+		cy.task('backendApiPostFiles', {
+			path:          '/api/nginx/certificates/validate',
+			files:         {
+				certificate:     certFile,
+				certificate_key: keyFile,
+			},
+			returnOnError: true,
+		}).then((data) => {
+			expect(data.error.code).to.equal(403);
+		});
+	});
+
+	it('User with certificates view permission cannot validate custom certificate', () => {
+		const viewer = {
+			email:  'viewer@example.com',
+			secret: 'changeme',
+		};
+
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/users',
+			data:  {
+				name:     'Certificate Viewer',
+				nickname: 'Viewer',
+				email:    viewer.email,
+				roles:    ['user'],
+				auth:     {
+					type:   'password',
+					secret: viewer.secret,
+				},
+			},
+		}).then((user) => {
+			cy.task('backendApiPut', {
+				token: token,
+				path:  `/api/users/${user.id}/permissions`,
+				data:  {
+					certificates: 'view',
+				},
+			});
+
+			cy.getToken(null, {identity: viewer.email, secret: viewer.secret}).then((viewerToken) => {
+				cy.task('backendApiPostFiles', {
+					token:         viewerToken,
+					path:          '/api/nginx/certificates/validate',
+					files:         {
+						certificate:     certFile,
+						certificate_key: keyFile,
+					},
+					returnOnError: true,
+				}).then((data) => {
+					expect(data.error.code).to.equal(403);
+				});
+			});
+		});
+	});
+
 	it('Custom certificate lifecycle', () => {
 		// Create custom cert
 		cy.task('backendApiPost', {

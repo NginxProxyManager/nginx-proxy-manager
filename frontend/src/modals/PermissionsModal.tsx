@@ -1,12 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form, Formik } from "formik";
+import { Field, Form } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { setPermissions } from "src/api/backend";
 import { Button, Loading } from "src/components";
+import { FormModal } from "src/components/Form";
 import { useUser } from "src/hooks";
 import { T } from "src/locale";
 import styles from "./PermissionsModal.module.css";
@@ -133,15 +134,22 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const isAdmin = data?.roles.indexOf("admin") !== -1;
 
 	return (
-		<Modal show={visible} onHide={remove}>
-			{!isLoading && error && (
-				<Alert variant="danger" className="m-3">
-					{error?.message || "Unknown error"}
-				</Alert>
+		<>
+			{(isLoading || (error && !data)) && (
+				<Modal show={visible} onHide={remove}>
+					{!isLoading && error && (
+						<Alert variant="danger" className="m-3">
+							{error?.message || "Unknown error"}
+						</Alert>
+					)}
+					{isLoading && <Loading noLogo />}
+				</Modal>
 			)}
-			{isLoading && <Loading noLogo />}
 			{!isLoading && data && (
-				<Formik
+				<FormModal
+					show={visible}
+					onHide={remove}
+					preventHide={isSubmitting}
 					initialValues={
 						{
 							visibility: data.permissions?.visibility,
@@ -155,7 +163,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
+					{({ onHide }) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -263,7 +271,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								)}
 							</Modal.Body>
 							<Modal.Footer>
-								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
+								<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
 								<Button
@@ -278,9 +286,9 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							</Modal.Footer>
 						</Form>
 					)}
-				</Formik>
+				</FormModal>
 			)}
-		</Modal>
+		</>
 	);
 });
 

@@ -57,6 +57,9 @@ export default defineConfig({
 	test: {
 		environment: "happy-dom",
 		setupFiles: ["./vitest-setup.js"],
+		// Node 25+ has a built-in global localStorage (undefined without
+		// --localstorage-file) that shadows happy-dom's; turn it off.
+		execArgv: ["--no-experimental-webstorage"],
 	},
 	assetsInclude: ["**/*.md", "**/*.png", "**/*.svg"],
 });
