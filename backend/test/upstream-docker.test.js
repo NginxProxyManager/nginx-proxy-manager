@@ -6,6 +6,7 @@ import path from "node:path";
 import { after, before, describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
+	collectHiddenTargets,
 	containersToCandidates,
 	createDockerClient,
 	describeDockerError,
@@ -214,6 +215,36 @@ describe("docker: candidate parsing from fixture JSON", () => {
 		assert.equal(byHost["hidden-db"], undefined);
 	});
 
+	it("collects the names and IPs of hidden containers, for the other providers", () => {
+		const hidden = collectHiddenTargets(containersJson, { selfId: SELF_ID });
+		assert.deepEqual([...hidden.hosts], ["hidden-db"]);
+		assert.deepEqual([...hidden.ips], ["172.18.0.5"]);
+	});
+
+	it("collects every name, the compose service and the IPs on all networks of a hidden container", () => {
+		const hidden = collectHiddenTargets(
+			[
+				{
+					Id: "f".repeat(64),
+					Names: ["/Proj-Secret-1", "/bad name"],
+					Labels: { "npm.hide": "yes", "com.docker.compose.service": "secret" },
+					NetworkSettings: {
+						Networks: { npm_default: { IPAddress: "172.18.0.9" }, other: { IPAddress: "10.1.0.9" } },
+					},
+				},
+				// NPM itself is never hidden from anything
+				{ Id: SELF_ID, Names: ["/npm"], Labels: { "npm.hide": "true" }, NetworkSettings: { Networks: {} } },
+				{ Id: "1".repeat(64), Names: ["/shown"], Labels: { "npm.hide": "false" } },
+				null,
+				"junk",
+			],
+			{ selfId: SELF_ID },
+		);
+		assert.deepEqual([...hidden.hosts].sort(), ["proj-secret-1", "secret"]);
+		assert.deepEqual([...hidden.ips].sort(), ["10.1.0.9", "172.18.0.9"]);
+		assert.deepEqual(collectHiddenTargets(null), { hosts: new Set(), ips: new Set() });
+	});
+
 	it("returns container names and compose service aliases", () => {
 		assert.equal(byHost["myproj-web-1"].label, "myproj-web-1 (container)");
 		assert.equal(byHost.web.label, "web (compose service of myproj-web-1)");
@@ -360,6 +391,9 @@ describe("docker: client against a fake API on a unix socket", () => {
 		assert.deepEqual(result.networks, ["npm_default", "proxy"]);
 		const hosts = result.items.map((i) => i.host).sort();
 		assert.deepEqual(hosts, ["grafana", "myproj-web-1", "web", "worker"]);
+		// the hidden container is left out here and reported for the DNS results
+		assert.deepEqual([...result.hidden.hosts], ["hidden-db"]);
+		assert.deepEqual([...result.hidden.ips], ["172.18.0.5"]);
 		assert.ok(fake.requests.every((r) => r.method === "GET"));
 		const listCall = fake.requests.find((r) => r.url.startsWith("/containers/json?"));
 		assert.ok(listCall, "lists containers filtered by network");

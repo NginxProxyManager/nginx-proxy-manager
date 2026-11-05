@@ -54,7 +54,8 @@ labels:
 ```
 
 Weitere Labels: `npm.block_exploits`, `npm.caching`, `npm.http2` (true/false) und
-`npm.hide=true`, um einen Container auszublenden.
+`npm.hide=true`, um einen Container auszublenden (auch aus dem Netzwerk-Scan, solange
+die Docker-Erkennung funktioniert: der Scan selbst kann keine Labels lesen).
 
 ### Fehlersuche
 

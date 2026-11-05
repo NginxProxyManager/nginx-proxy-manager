@@ -78,7 +78,12 @@ host from a container in one click:
 | `npm.block_exploits` | `npm.block_exploits=true` | Turns on "Block Common Exploits" |
 | `npm.caching` | `npm.caching=true` | Turns on "Cache Assets" |
 | `npm.http2` | `npm.http2=true` | Turns on "HTTP/2 Support" as soon as you pick a certificate in the form (HTTP/2 needs one, so it stays off without) |
-| `npm.hide` | `npm.hide=true` | Never suggest this container |
+| `npm.hide` | `npm.hide=true` | Never suggest this container, also not through DNS discovery (see below) |
+
+`npm.hide` needs Docker discovery: DNS discovery can't read labels, so it leaves out the names and
+addresses Docker discovery reports as hidden. With DNS discovery alone, or while Docker discovery
+is unavailable, a hidden container can still be suggested; turn DNS discovery off
+(`NPM_DNS_DISCOVERY=false`) or keep the container on a network NPM isn't on.
 
 Without `npm.port`, the port is filled in only when the container exposes exactly one TCP port.
 Without `npm.scheme`, the scheme is `https` for port 443 and 8443, otherwise `http`.

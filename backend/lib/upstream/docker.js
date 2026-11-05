@@ -436,6 +436,48 @@ const containersToCandidates = (containers, { networks, selfId }) => {
 };
 
 /**
+ * Names and addresses of the containers labelled npm.hide=true. Other providers (DNS discovery) can't read labels
+ * and would suggest these containers again, so their results are filtered with this. Only names and IPs leave
+ * this module, never labels.
+ *
+ * @param   {Array}    containers   /containers/json response
+ * @param   {object}   [ctx]
+ * @param   {string}   [ctx.selfId] NPM's own container id (skipped)
+ * @returns {{hosts: Set<string>, ips: Set<string>}} hosts in lower case
+ */
+const collectHiddenTargets = (containers, { selfId } = {}) => {
+	const hosts = new Set();
+	const ips = new Set();
+	for (const container of Array.isArray(containers) ? containers : []) {
+		if (!container || typeof container !== "object") {
+			continue;
+		}
+		const id = `${container.Id ?? ""}`;
+		if (selfId && id && (id === selfId || id.startsWith(selfId) || selfId.startsWith(id))) {
+			continue;
+		}
+		const labels = container.Labels && typeof container.Labels === "object" ? container.Labels : {};
+		if (!parseNpmLabels(labels).hide) {
+			continue;
+		}
+		for (const name of usableNames(container.Names)) {
+			hosts.add(name.toLowerCase());
+		}
+		const service = `${labels["com.docker.compose.service"] ?? ""}`.trim();
+		if (service && /^[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(service) && isValidHost(service)) {
+			hosts.add(service.toLowerCase());
+		}
+		// every network: DNS discovery sweeps all of NPM's subnets
+		for (const info of Object.values(container.NetworkSettings?.Networks || {})) {
+			if (typeof info?.IPAddress === "string" && info.IPAddress !== "") {
+				ips.add(info.IPAddress);
+			}
+		}
+	}
+	return { hosts, ips };
+};
+
+/**
  * Discovers containers that share a network with NPM.
  *
  * @param   {object}   [opts]
@@ -444,7 +486,8 @@ const containersToCandidates = (containers, { networks, selfId }) => {
  * @param   {function} [opts.readMountinfo]
  * @param   {object}   [opts.interfaces]   defaults to os.networkInterfaces()
  * @param   {object}   [opts.client]       pre-built client (tests)
- * @returns {Promise<{items: Array, networks: string[], selfId: string|null}>}
+ * @returns {Promise<{items: Array, hidden: {hosts: Set<string>, ips: Set<string>}, networks: string[],
+ *          selfId: string|null}>} hidden: the containers labelled npm.hide=true, see collectHiddenTargets()
  */
 const discoverDocker = async (opts = {}) => {
 	const client = opts.client || createDockerClient(opts.dockerHost);
@@ -520,12 +563,17 @@ const discoverDocker = async (opts = {}) => {
 	// "host" and "none" networks have no peers we could resolve by name
 	const usable = networks.filter((n) => n !== "host" && n !== "none");
 	if (!usable.length) {
-		return { items: [], networks, selfId };
+		return { items: [], hidden: { hosts: new Set(), ips: new Set() }, networks, selfId };
 	}
 
 	const filters = encodeURIComponent(JSON.stringify({ network: usable }));
 	const containers = await client.get(`/containers/json?filters=${filters}`);
-	return { items: containersToCandidates(containers, { networks: usable, selfId }), networks: usable, selfId };
+	return {
+		items: containersToCandidates(containers, { networks: usable, selfId }),
+		hidden: collectHiddenTargets(containers, { selfId }),
+		networks: usable,
+		selfId,
+	};
 };
 
 /**
@@ -558,6 +606,7 @@ const describeDockerError = (err) => {
 
 export {
 	ALLOWED_PATHS,
+	collectHiddenTargets,
 	containersToCandidates,
 	createDockerClient,
 	DockerApiError,
