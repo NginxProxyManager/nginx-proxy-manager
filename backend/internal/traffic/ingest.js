@@ -25,6 +25,16 @@ class Stopped extends Error {}
  * files) inside the retention window is imported. After that only new bytes
  * are read, tracked by a cursor (inode + byte position) kept in the database.
  */
+// The cursor's inode column also carries a generation ("<inode>:<n>") that goes up every time the
+// file is rotated or truncated. It is part of a batch's identity in remote stores, so a new file
+// can't reuse the identity of a batch that was written for an earlier one.
+const GENERATION_STRIDE = 400000009;
+const splitInode = (value) => {
+	const [ino, gen] = String(value).split(":");
+	return { ino, gen: Number(gen) || 0 };
+};
+const joinInode = (ino, gen) => `${ino}:${gen}`;
+
 class Ingest {
 	/**
 	 * @param {Object}   opts
@@ -185,10 +195,11 @@ class Ingest {
 		const agg = new Aggregator({ statusCodes: this.statusCodes });
 		const savedPosition = Number(cursor.position);
 		let position = savedPosition;
-		const rotated = String(stat.ino) !== cursor.inode || stat.size < position;
+		const saved = splitInode(cursor.inode);
+		const rotated = String(stat.ino) !== saved.ino || stat.size < position;
 
 		if (rotated) {
-			await this.#recoverRotated(full, cursor, host, agg);
+			await this.#recoverRotated(full, saved.ino, savedPosition, host, agg);
 			position = 0;
 		}
 
@@ -199,10 +210,11 @@ class Ingest {
 			this.#checkStopped();
 			await this.#commit(agg.drain(), {
 				file,
-				inode: stat.ino,
+				inode: joinInode(stat.ino, rotated ? saved.gen + 1 : saved.gen),
 				position: position + consumed,
-				// batches are keyed by where they started, which is what makes a repeat of one safe
-				key: rotated ? savedPosition : position,
+				// batches are keyed by file generation and start position, which is what makes a
+				// repeat of one safe (a repeat after a failure starts from the same cursor)
+				key: saved.gen * GENERATION_STRIDE + (rotated ? savedPosition : position),
 			});
 		}
 	}
@@ -212,11 +224,10 @@ class Ingest {
 	 * logrotate's `compress` (without `delaycompress`) turns the old file into .1.gz straight away,
 	 * otherwise it stays as .1 with the same inode.
 	 */
-	async #recoverRotated(full, cursor, host, agg) {
-		const position = Number(cursor.position);
+	async #recoverRotated(full, inode, position, host, agg) {
 		try {
 			const plain = await fs.promises.stat(`${full}.1`);
-			if (String(plain.ino) === cursor.inode) {
+			if (String(plain.ino) === inode) {
 				if (plain.size > position) {
 					await this.#readRange(`${full}.1`, position, plain.size, host, agg);
 				}
@@ -304,6 +315,42 @@ class Ingest {
 	}
 
 	/**
+	 * Timestamp of the oldest line in a host's logs (the oldest rotated file, else the live one),
+	 * or null if there is none.
+	 */
+	async #firstTimestamp(file) {
+		const dir = await fs.promises.readdir(LOG_DIR);
+		const rotated = dir
+			.filter((f) => f.startsWith(`${file}.`))
+			.map((f) => ({ name: f, n: Number.parseInt(f.slice(file.length + 1), 10) }))
+			.filter((f) => Number.isFinite(f.n))
+			.sort((a, b) => b.n - a.n)
+			.map((f) => f.name);
+		const host = parseFileName(file);
+		const found = Symbol("found");
+		for (const name of [...rotated, file]) {
+			let ts = null;
+			try {
+				await this.#streamLines(path.join(LOG_DIR, name), {}, (line) => {
+					const rec = this.#parse(line, host);
+					if (rec) {
+						ts = rec.ts;
+						throw found;
+					}
+				});
+			} catch (err) {
+				if (err !== found) {
+					continue;
+				}
+			}
+			if (ts !== null) {
+				return ts;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Byte length of the file up to and including its last newline.
 	 */
 	async #completeLength(filePath, size) {
@@ -336,8 +383,17 @@ class Ingest {
 	 */
 	async #backfill(file, host, stat) {
 		const full = path.join(LOG_DIR, file);
+		// Only the period the logs still cover is replaced; older history in the store is kept.
+		const cutoff = this.#cutoff;
 		try {
-			await this.store.clearHost(host.host_type, host.host_id);
+			const first = await this.#firstTimestamp(file);
+			if (first !== null) {
+				await this.store.clearHost(
+					host.host_type,
+					host.host_id,
+					Math.floor(Math.max(first, cutoff) / 3600) * 3600,
+				);
+			}
 		} catch (err) {
 			logger.warn(
 				`Traffic stats: could not clear old statistics of ${file}, they may be counted twice: ${err.message}`,
@@ -345,7 +401,6 @@ class Ingest {
 		}
 
 		const agg = new Aggregator({ statusCodes: this.statusCodes });
-		const cutoff = this.#cutoff;
 		let newest = 0;
 		let lines = 0;
 		const onLine = async (line) => {
@@ -358,7 +413,14 @@ class Ingest {
 				this.#checkStopped();
 				const batch = agg.drainBefore(newest - BACKFILL_LAG_SECONDS);
 				if (batch.buckets.length > 0 || batch.tops.length > 0) {
-					await this.store.write(batch, { backfill: true });
+					try {
+						await this.store.write(batch, { backfill: true });
+					} catch (err) {
+						// These counts are already out of memory: the import has to stop, and the
+						// cursor must not move, so the next pass imports this host again.
+						err.writeFailed = true;
+						throw err;
+					}
 				}
 			}
 		};
@@ -373,7 +435,7 @@ class Ingest {
 			try {
 				await this.#streamLines(path.join(LOG_DIR, r.name), {}, onLine);
 			} catch (err) {
-				if (err instanceof Stopped) {
+				if (err instanceof Stopped || err.writeFailed) {
 					throw err;
 				}
 				logger.warn(`Traffic stats: could not import ${r.name}: ${err.message}`);
@@ -387,7 +449,7 @@ class Ingest {
 		}
 
 		this.#checkStopped();
-		await this.#commit(agg.drain(), { file, inode: stat.ino, position: consumed, backfill: true });
+		await this.#commit(agg.drain(), { file, inode: joinInode(stat.ino, 0), position: consumed, backfill: true });
 		logger.info(`Traffic stats: imported existing log ${file}`);
 	}
 }

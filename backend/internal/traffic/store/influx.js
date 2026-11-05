@@ -141,10 +141,11 @@ const influxStore = (cfg, labelOf = () => "") => {
 		async clear() {},
 
 		/**
-		 * Deletes what was written for one host, before its log is imported again, so an earlier
-		 * import and earlier live points can't add up with the new import.
+		 * Deletes what was written for one host from `since` (epoch seconds) on, before its log is
+		 * imported again, so an earlier import and earlier live points can't add up with the new
+		 * import. Older points, which the logs can't rebuild, are left alone.
 		 */
-		async clearHost(host_type, host_id) {
+		async clearHost(host_type, host_id, since = 0) {
 			for (const measurement of [MEASUREMENT, STATUS_MEASUREMENT]) {
 				await call(
 					`/api/v2/delete?org=${encodeURIComponent(cfg.org)}&bucket=${encodeURIComponent(cfg.bucket)}`,
@@ -152,7 +153,7 @@ const influxStore = (cfg, labelOf = () => "") => {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
-							start: "1970-01-01T00:00:00Z",
+							start: new Date(since * 1000).toISOString(),
 							stop: new Date(Date.now() + 86400000).toISOString(),
 							predicate: `_measurement="${measurement}" AND host_type="${escapeFlux(host_type)}" AND host_id="${Number(host_id)}"`,
 						}),

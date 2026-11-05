@@ -96,6 +96,22 @@ test("deletes a host's points before it is imported again", async () => {
 	);
 });
 
+test("only deletes from the given time on, so older history is kept", async () => {
+	const calls = capture();
+	const store = influxStore(cfg);
+	await store.clearHost("proxy", 3, 1700000000);
+	assert.equal(JSON.parse(calls[0].body).start, "2023-11-14T22:13:20.000Z");
+});
+
+test("a rotated file's batches don't reuse the identity of the old file's batches", async () => {
+	const calls = capture();
+	const store = influxStore(cfg);
+	const stride = 400000009;
+	await store.write(batch, { key: 0 });
+	await store.write(batch, { key: 1 * stride + 0 });
+	assert.notEqual(calls[0].body, calls[1].body);
+});
+
 test("reads per-code windows from the status measurement", async () => {
 	const queries = [];
 	globalThis.fetch = async (_url, options) => {

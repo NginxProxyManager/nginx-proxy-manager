@@ -123,9 +123,9 @@ const localStore = {
 	/**
 	 * Forgets everything recorded for one host, before its log is imported again.
 	 */
-	async clearHost(host_type, host_id) {
-		await db()("traffic_stat").where({ host_type, host_id }).del();
-		await db()("traffic_stat_top").where({ host_type, host_id }).del();
+	async clearHost(host_type, host_id, since = 0) {
+		await db()("traffic_stat").where({ host_type, host_id }).andWhere("bucket", ">=", since).del();
+		await db()("traffic_stat_top").where({ host_type, host_id }).andWhere("bucket", ">=", since).del();
 	},
 
 	async clear() {
