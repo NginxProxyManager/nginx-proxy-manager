@@ -72,6 +72,16 @@
 				}
 			}
 		},
+		"400": {
+			"description": "The request body is invalid (eg. an unknown host type), or nginx rejected the final config test or reload. For an nginx error, error.details describes it and error.regenerate_summary lists what the run did until then",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/error.json"
+					}
+				}
+			}
+		},
 		"403": {
 			"description": "Not an admin",
 			"content": {
@@ -86,6 +96,41 @@
 			"description": "A regeneration is running already",
 			"content": {
 				"application/json": {
+					"schema": {
+						"$ref": "../../../components/error.json"
+					}
+				}
+			}
+		},
+		"500": {
+			"description": "The run failed part way, eg. nginx could not be reloaded or the hosts of a type could not be loaded. error.regenerate_summary lists what the run did until then",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 500,
+									"message": "Internal Error",
+									"regenerate_summary": {
+										"checked": 3,
+										"regenerated": 2,
+										"offline": [
+											{
+												"host_type": "proxy_host",
+												"id": 4,
+												"name": "broken.example.com",
+												"error": "unknown directive \"proxy_passs\""
+											}
+										],
+										"failed": [],
+										"warnings": [],
+										"duration_ms": 2350
+									}
+								}
+							}
+						}
+					},
 					"schema": {
 						"$ref": "../../../components/error.json"
 					}

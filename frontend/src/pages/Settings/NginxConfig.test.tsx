@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { ApiError } from "src/api/backend";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import NginxConfig from "./NginxConfig";
 
@@ -116,6 +117,59 @@ describe("Settings: Nginx configuration", () => {
 		await confirm();
 		expect(await screen.findByText(/being regenerated already/)).toBeInTheDocument();
 		expect(screen.queryByTestId("regenerate-result")).toBeNull();
+		expect(screen.queryByTestId("regenerate-partial")).toBeNull();
+	});
+
+	it("shows the hosts a failed run changed next to its error", async () => {
+		// eg. the final nginx reload failed after a host was taken offline
+		api.regenerateNginxConfigs.mockRejectedValue(
+			new ApiError("Internal Error", {
+				status: 500,
+				regenerateSummary: {
+					checked: 3,
+					regenerated: 1,
+					offline: [
+						{ hostType: "proxy_host", id: 7, name: "broken.example.com", error: "unknown directive" },
+					],
+					failed: [{ hostType: "dead_host", id: 5, name: "gone.example.com", error: "certificate missing" }],
+					warnings: [],
+					durationMs: 1500,
+				},
+			}),
+		);
+		renderPage();
+		await confirm();
+
+		expect(await screen.findByText("Internal Error")).toBeInTheDocument();
+		const partial = await screen.findByTestId("regenerate-partial");
+		expect(partial).toHaveClass("alert-warning");
+		expect(partial).toHaveTextContent("The run failed, but it had already changed hosts");
+		expect(partial).toHaveTextContent("Checked 3 hosts in 1.5 s: 1 online, 1 offline, 1 not regenerated.");
+		expect(screen.getByTestId("regenerate-offline")).toHaveTextContent("broken.example.com");
+		expect(screen.getByTestId("regenerate-failed")).toHaveTextContent("gone.example.com");
+		expect(screen.queryByTestId("regenerate-result")).toBeNull();
+
+		fireEvent.click(screen.getByRole("button", { name: "broken.example.com" }));
+		expect(modals.showProxyHostModal).toHaveBeenCalledWith(7);
+
+		// Dismissing the error keeps the list of changed hosts
+		fireEvent.click(screen.getByRole("button", { name: /close alert/i }));
+		await waitFor(() => expect(screen.queryByText("Internal Error")).toBeNull());
+		expect(screen.getByTestId("regenerate-partial")).toBeInTheDocument();
+	});
+
+	it("tolerates an incomplete summary of a failed run", async () => {
+		api.regenerateNginxConfigs.mockRejectedValue(
+			new ApiError("Internal Error", {
+				status: 500,
+				regenerateSummary: { offline: [{ hostType: "stream", id: 2, name: "2222" }] },
+			}),
+		);
+		renderPage();
+		await confirm();
+		const partial = await screen.findByTestId("regenerate-partial");
+		expect(partial).toHaveTextContent("Checked 0 hosts in 0.0 s: 0 online, 1 offline, 0 not regenerated.");
+		expect(screen.getByTestId("regenerate-offline")).toHaveTextContent("2222");
 	});
 
 	it("keeps a running regeneration and its result when the section is left and opened again", async () => {

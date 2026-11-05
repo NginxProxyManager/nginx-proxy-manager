@@ -824,6 +824,9 @@
 	"settings.nginx.regenerate.offline": {
 		"defaultMessage": "{count, plural, one {# Host ist jetzt offline, Nginx hat ihn abgelehnt:} other {# Hosts sind jetzt offline, Nginx hat sie abgelehnt:}}"
 	},
+	"settings.nginx.regenerate.partial": {
+		"defaultMessage": "Der Lauf ist fehlgeschlagen, hatte aber schon Hosts geändert. Das hat er bis dahin getan:"
+	},
 	"settings.nginx.regenerate.result": {
 		"defaultMessage": "{checked, plural, one {# Host} other {# Hosts}} in {seconds} s geprüft: {regenerated} online, {offline} offline, {failed} nicht neu erzeugt."
 	},

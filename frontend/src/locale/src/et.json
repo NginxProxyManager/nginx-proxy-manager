@@ -824,6 +824,9 @@
 	"settings.nginx.regenerate.offline": {
 		"defaultMessage": "{count, plural, one {# host on nüüd võrgust väljas, nginx lükkas selle tagasi:} other {# hosti on nüüd võrgust väljas, nginx lükkas need tagasi:}}"
 	},
+	"settings.nginx.regenerate.partial": {
+		"defaultMessage": "Käivitus ebaõnnestus, kuid oli hoste juba muutnud. Seda tehti enne tõrget:"
+	},
 	"settings.nginx.regenerate.result": {
 		"defaultMessage": "Kontrolliti {checked, plural, one {# hosti} other {# hosti}} {seconds} s jooksul: {regenerated} võrgus, {offline} võrgust väljas, {failed} jäi uuesti loomata."
 	},
