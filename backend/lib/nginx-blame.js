@@ -183,16 +183,17 @@ const causedByProtected = async ({ parsed, protect, namesProtected, testWithoutP
  *
  * @param   {Object}   opts
  * @param   {boolean}  opts.enabled     the host's row exists and is enabled
- * @param   {Number}   opts.depth       recursion depth, regenerating only happens at depth 0
+ * @param   {boolean}  [opts.mayRegenerate]  false when the host was already regenerated in this operation or the
+ *                                      repair budget is used up (see newRepair() in internal/nginx.js)
  * @param   {Function} opts.regenerate  async (): configure the host again, throws when that fails
  * @param   {Function} opts.disable     async (regenerateError?): move the file aside, mark the host offline
  * @param   {Function} [opts.isAbort]   (err) => boolean: a regenerate error that must not disable the host
  *                                      (the host being saved caused it, see causedByProtected()), rethrown
  * @returns {Promise<"regenerated"|"disabled">}
  */
-const regenerateOrDisable = async ({ enabled, depth, regenerate, disable, isAbort }) => {
+const regenerateOrDisable = async ({ enabled, mayRegenerate = true, regenerate, disable, isAbort }) => {
 	let regenerateError = null;
-	if (enabled && (depth || 0) < 1) {
+	if (enabled && mayRegenerate) {
 		try {
 			await regenerate();
 			return "regenerated";

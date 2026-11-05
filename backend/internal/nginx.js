@@ -162,6 +162,14 @@ const hostLabel = (hostType, host) => {
 };
 
 /**
+ * @param   {String|null} [saved]  config file of the host the operation saves; null when no host is saved,
+ *                                 eg. the startup / reload test, where every repaired host comes from its row
+ * @returns {{tried: Set<String>, budget: Number, saved: String|null}} the repair state of one operation: the
+ *          config files already regenerated, how many regenerations are left and the host being saved
+ */
+const newRepair = (saved = null) => ({ tried: new Set(), budget: MAX_HEAL_ITERATIONS, saved });
+
+/**
  * @param   {String} advancedConfig
  * @param   {String} message  nginx error message
  * @returns {boolean} true when the advanced config (not counting comments) uses the variable or a path the
@@ -253,7 +261,9 @@ const internalNginx = {
 	 * @param   {Object}   host
 	 * @param   {Object}   opts
 	 * @param   {Boolean}  opts.reload
-	 * @param   {Number}   opts.depth           recursion guard for repairing other hosts
+	 * @param   {Number}   opts.depth           nesting level of repairs of other hosts (for logging)
+	 * @param   {Object}   [opts.repair]        repair state shared by the nested repairs of one operation, see
+	 *                                          newRepair(); a new one is created when missing
 	 * @param   {Boolean}  [opts.offlineOnError] mark the host offline instead of throwing on host level errors
 	 * @param   {Boolean}  [opts.dryRun]  check only: on success the host's previous config files are put back and
 	 *                                    nothing is written to the database. Other hosts may still be repaired.
@@ -267,6 +277,8 @@ const internalNginx = {
 		const previousErr = readFileOrNull(`${filename}.err`);
 
 		let heals = 0;
+		// Without a repair state this is the top of the operation: the host being saved
+		const repair = opts.repair || newRepair(filename);
 		let configText = "";
 		let failure = null;
 
@@ -357,12 +369,26 @@ const internalNginx = {
 										file: internalNginx.getConfigName(other.host_type, other.host_id),
 									})
 								: blame.parsed;
-						if (await internalNginx.healOtherHost(other, otherParsed, opts.depth, [...protect, filename])) {
+						if (
+							await internalNginx.healOtherHost(
+								other,
+								otherParsed,
+								opts.depth,
+								[...protect, filename],
+								repair,
+							)
+						) {
 							healed = true;
 						}
 					}
 				} catch (err) {
 					if (!err.protectedConflict) {
+						throw err;
+					}
+					if (filename !== repair.saved) {
+						// This host is itself being regenerated and the conflict involves the host being saved, see
+						// healOtherHost(): pass it on, this host is not at fault
+						await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
 						throw err;
 					}
 					// Regenerating the other host failed because of this host's new config: this change conflicts
@@ -392,11 +418,28 @@ const internalNginx = {
 				testWithoutProtected: () => internalNginx.testAside(opts.protect),
 			}))
 		) {
-			// A nested configure (regenerating this host while another host is being saved) failed because of the
-			// host being saved: that save must fail as a conflict, this host must not be disabled for it
+			// A nested configure (regenerating this host while repairing on behalf of the hosts above it) failed
+			// because of a host above it.
+			// involvesSaved: the host being saved is part of the cause (the test passes with only its file moved
+			// aside). That save must fail as a conflict, this host must not be disabled for it. Otherwise the
+			// conflict is with hosts above it that are themselves regenerated from their database rows (any of
+			// them, also in the startup / reload test, where no host is saved): this host, which was broken
+			// already, is the one to take offline, see healOtherHost().
+			const saved = repair.saved;
+			const involvesSaved =
+				!!saved &&
+				opts.protect.includes(saved) &&
+				(failure.parsed?.file === saved ||
+					opts.protect.length === 1 ||
+					(await internalNginx.testAside([saved])).ok === true);
 			await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
-			const abort = new Error(`Regenerating ${hostLabel(hostType, host)} conflicts with the host being saved`);
+			const abort = new Error(
+				involvesSaved
+					? `Regenerating ${hostLabel(hostType, host)} conflicts with the host being saved`
+					: `The regenerated config of ${hostLabel(hostType, host)} conflicts with another regenerated host`,
+			);
 			abort.protectedConflict = true;
+			abort.involvesSaved = involvesSaved;
 			abort.parsed = failure.parsed;
 			throw abort;
 		}
@@ -516,9 +559,10 @@ const internalNginx = {
 	 * @param   {String}  hostType
 	 * @param   {Object}  host
 	 * @param   {Object}  parsed  parsed nginx -t output
+	 * @param   {String}  [subject]  what conflicts, the start of the message
 	 * @returns {errs.NginxConfigError}
 	 */
-	buildConflictError: (hostType, host, parsed) => {
+	buildConflictError: (hostType, host, parsed, subject = "This change") => {
 		const humanised = parsed.message
 			? humaniseNginxMessage(parsed.message)
 			: { text: "nginx rejected the configuration", hint: null };
@@ -527,7 +571,7 @@ const internalNginx = {
 			"<another host's config>",
 		);
 		return new errs.NginxConfigError(
-			sentence(`This change conflicts with the configuration of another host: ${humanised.text}`),
+			sentence(`${subject} conflicts with the configuration of another host: ${humanised.text}`),
 			{
 				kind: "nginx_config",
 				scope: "host",
@@ -581,12 +625,14 @@ const internalNginx = {
 	 *
 	 * @param   {Object}   other      {host_type, host_id}
 	 * @param   {Object}   parsed     parsed nginx -t output
-	 * @param   {Number}   depth
+	 * @param   {Number}   depth      nesting level of this repair
 	 * @param   {String[]} [protect]  config files the regeneration must not repair or move aside (the host
 	 *                                being saved)
+	 * @param   {Object}   [repair]   the operation's repair state, see newRepair(): each host is regenerated at
+	 *                                most once per operation and all levels share one budget
 	 * @returns {Promise<boolean>} true when something was changed and the test should be repeated
 	 */
-	healOtherHost: async (other, parsed, depth, protect = []) => {
+	healOtherHost: async (other, parsed, depth, protect = [], repair = newRepair()) => {
 		const model = HOST_MODELS[other.host_type];
 		const filename = internalNginx.getConfigName(other.host_type, other.host_id);
 		const fileText = readFileOrNull(filename);
@@ -607,16 +653,26 @@ const internalNginx = {
 			logger.warn(`Could not load ${other.host_type} #${other.host_id}: ${err.message}`);
 		}
 
+		// Every host gets one regeneration attempt per operation, also when it is found broken while another host
+		// is being regenerated. The protect list keeps the recursion from coming back to a host above it.
+		const mayRegenerate = !repair.tried.has(filename) && repair.budget > 0;
+		if (row?.enabled && mayRegenerate) {
+			repair.tried.add(filename);
+			repair.budget--;
+		}
 		await regenerateOrDisable({
 			enabled: !!row?.enabled,
-			depth: depth || 0,
-			// the host being saved caused the failure: no disabling, configureHost() turns it into a conflict
-			isAbort: (err) => err?.protectedConflict === true,
+			mayRegenerate,
+			// The host being saved caused the failure: no disabling, configureHost() turns it into a conflict.
+			// A conflict only with hosts above it that are themselves regenerated (their config comes from their
+			// database rows) takes this host, which was broken already, offline instead, see configureHost().
+			isAbort: (err) => err?.protectedConflict === true && err.involvesSaved === true,
 			regenerate: async () => {
 				await internalNginx.configureHost(model, other.host_type, row, {
 					reload: false,
 					depth: (depth || 0) + 1,
 					protect,
+					repair,
 				});
 				logger.warn(
 					`Regenerated the nginx config of ${hostLabel(other.host_type, row)} because nginx rejected it`,
@@ -629,18 +685,33 @@ const internalNginx = {
 				// The regenerated config's own failure explains best what is wrong with the host
 				const regenerated =
 					regenerateError instanceof errs.NginxConfigError && regenerateError.details?.scope === "host";
-				const error = regenerated
-					? new errs.NginxConfigError(
-							regenerateError.message,
-							Object.assign({}, regenerateError.details, { scope: "other_host" }),
-						)
-					: internalNginx.buildConfigError(
-							"other_host",
-							other.host_type,
-							row || { id: other.host_id },
-							parsed,
-							readFileOrNull(filename) || fileText,
-						);
+				let error;
+				if (regenerateError?.protectedConflict) {
+					// Its regenerated config conflicts with the regenerated config of a host above it
+					const conflict = internalNginx.buildConflictError(
+						other.host_type,
+						row || { id: other.host_id },
+						regenerateError.parsed || parsed,
+						"The regenerated configuration",
+					);
+					error = new errs.NginxConfigError(
+						conflict.message,
+						Object.assign({}, conflict.details, { scope: "other_host" }),
+					);
+				} else if (regenerated) {
+					error = new errs.NginxConfigError(
+						regenerateError.message,
+						Object.assign({}, regenerateError.details, { scope: "other_host" }),
+					);
+				} else {
+					error = internalNginx.buildConfigError(
+						"other_host",
+						other.host_type,
+						row || { id: other.host_id },
+						parsed,
+						readFileOrNull(filename) || fileText,
+					);
+				}
 				internalNginx.renameConfigAsErrorSync(filename);
 
 				if (row) {
@@ -838,6 +909,7 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	testAndHeal: async () => {
+		const repair = newRepair();
 		for (let i = 0; i <= MAX_HEAL_ITERATIONS; i++) {
 			const result = await internalNginx.runTest();
 			if (result.ok) {
@@ -867,7 +939,7 @@ const internalNginx = {
 			}
 			let healed = false;
 			for (const target of targets) {
-				if (await internalNginx.healOtherHost(target.other, target.parsed, 0)) {
+				if (await internalNginx.healOtherHost(target.other, target.parsed, 0, [], repair)) {
 					healed = true;
 				}
 			}

@@ -290,7 +290,6 @@ describe("regenerateOrDisable", () => {
 		await assert.rejects(
 			regenerateOrDisable({
 				enabled: true,
-				depth: 0,
 				regenerate: async () => {
 					throw abort;
 				},
@@ -308,7 +307,6 @@ describe("regenerateOrDisable", () => {
 		let disabled = false;
 		const out = await regenerateOrDisable({
 			enabled: true,
-			depth: 0,
 			regenerate: async () => {},
 			disable: async () => {
 				disabled = true;
@@ -323,7 +321,6 @@ describe("regenerateOrDisable", () => {
 		let got = null;
 		const out = await regenerateOrDisable({
 			enabled: true,
-			depth: 0,
 			regenerate: async () => {
 				throw failure;
 			},
@@ -335,11 +332,8 @@ describe("regenerateOrDisable", () => {
 		assert.equal(got, failure);
 	});
 
-	it("does not regenerate disabled hosts or nested repairs", async () => {
-		for (const opts of [
-			{ enabled: false, depth: 0 },
-			{ enabled: true, depth: 1 },
-		]) {
+	it("does not regenerate disabled hosts or hosts already regenerated in this operation", async () => {
+		for (const opts of [{ enabled: false }, { enabled: true, mayRegenerate: false }]) {
 			let regenerated = false;
 			const out = await regenerateOrDisable({
 				...opts,
