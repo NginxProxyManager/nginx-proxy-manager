@@ -1,6 +1,16 @@
-<!-- WARNING: Any PR without a description will be closed. The title is not enough! -->
+<!--
 
-<!-- ANOTHER WARNING: Don't go creating a duplicate PR! Check that someone hasn't already created something that tackles your fix and if so, help them first -->
+WARNINGS:
+
+1. An AI bot will comment on this PR! If you don't get a perfect score or don't
+address any issues raised, your PR won't get merged!
+
+2. Any PR without a description will be closed. The title is not enough!
+
+3. Don't go creating a duplicate PR! Check that someone hasn't already created
+something that tackles your fix and if so, help them first
+
+-->
 
 ## Why
 
@@ -28,4 +38,3 @@ you change will break API for existing users -->
 
 - [ ] AI was used to write this
 - [ ] AI was used to review this
-
