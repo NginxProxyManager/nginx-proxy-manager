@@ -254,6 +254,21 @@ describe('Proxy Host custom location resilience', () => {
 		expectPage('/q/anything?page=dashboard', 'this is the dashboard page');
 	});
 
+	it('Should keep a regex location whose forward path uses a capture', () => {
+		cy.task('backendApiPut', {
+			token: token,
+			path:  `/api/nginx/proxy-hosts/${hostId}`,
+			data:  {
+				locations: [location('~ ^/cap/(.*)$', 'examplesite', { forward_path: '/$1' })],
+			},
+		}).then((data) => {
+			cy.validateSwaggerSchema('put', 200, '/nginx/proxy-hosts/{hostID}', data);
+			expect(data.meta.nginx_locations[0]).to.include({ index: 0, status: 'ok', mode: 'static' });
+		});
+
+		expectPage('/cap/dashboard', 'this is the dashboard page');
+	});
+
 	it('Should delete the host', () => {
 		cy.task('backendApiDelete', {
 			token: token,

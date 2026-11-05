@@ -98,7 +98,7 @@ describe("humaniseNginxMessage", () => {
 		['unexpected end of file, expecting "}"', 'the configuration ends unexpectedly, a "}" is missing'],
 		[
 			'"proxy_pass" cannot have URI part in location given by regular expression, or inside named location, or inside "if" statement, or inside "limit_except" block',
-			"a forward path can't be used with a regular-expression location",
+			"a forward path without an nginx variable can't be used with a regular-expression or named location",
 		],
 		[
 			'pcre2_compile() failed: missing closing parenthesis in "^/(a"',

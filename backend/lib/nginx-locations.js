@@ -53,8 +53,9 @@ const URI_VARIABLES = /\$(uri|document_uri)(?![A-Za-z0-9_])|\$\{(uri|document_ur
 
 const MESSAGES = {
 	regexWithForwardPath:
-		"A forward path can't be used with a regular-expression location; remove the forward path or use a prefix location.",
-	namedWithForwardPath: "A forward path can't be used with a named location; remove the forward path.",
+		"A forward path without an nginx variable can't be used with a regular-expression location; use a capture such as /v1/$1, remove the forward path or use a prefix location.",
+	namedWithForwardPath:
+		"A forward path without an nginx variable can't be used with a named location; use a variable such as $request_uri or remove the forward path.",
 	invalidHost:
 		"The forward host contains characters that are not allowed (spaces, quotes, ; { } $ # or \\). A single nginx variable such as $backend is allowed.",
 	emptyHost: "The forward host is empty.",
@@ -244,10 +245,13 @@ const preflightLocation = (loc) => {
 	if (!bracesBalanced(loc.advanced_config)) {
 		return { status: "quarantined", message: MESSAGES.unbalancedBraces };
 	}
-	if (loc.forward_path && parsed.isRegex) {
+	// nginx -t rejects a URI in the proxy_pass of a regex or named location ("cannot have URI part"), but not
+	// when the proxy_pass has a variable: `location ~ ^/api/(.*)$` with forward path `/v1/$1` has always worked.
+	// Such a location is rendered literally, see chooseLocationMode().
+	if (loc.forward_path && !hasVariablePath(loc) && parsed.isRegex) {
 		return { status: "quarantined", message: MESSAGES.regexWithForwardPath };
 	}
-	if (loc.forward_path && parsed.isNamed) {
+	if (loc.forward_path && !hasVariablePath(loc) && parsed.isNamed) {
 		return { status: "quarantined", message: MESSAGES.namedWithForwardPath };
 	}
 	return null;
