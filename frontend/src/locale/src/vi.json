@@ -509,6 +509,9 @@
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx chưa áp dụng cấu hình mới nhất của host này và vẫn đang chạy cấu hình trước đó."
 	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx không phân giải được {target}"
+	},
 	"host-status.unreachable": {
 		"defaultMessage": "{where}: không thể kết nối tới {target}"
 	},

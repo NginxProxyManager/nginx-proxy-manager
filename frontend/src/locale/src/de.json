@@ -509,6 +509,9 @@
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx hat die neueste Konfiguration dieses Hosts nicht übernommen und verwendet weiterhin die vorherige."
 	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx kann {target} nicht auflösen"
+	},
 	"host-status.unreachable": {
 		"defaultMessage": "{where}: {target} ist nicht erreichbar"
 	},

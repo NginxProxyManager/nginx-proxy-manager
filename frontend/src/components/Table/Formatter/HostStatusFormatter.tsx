@@ -137,7 +137,10 @@ export function HostStatusFormatter({ enabled, meta, health, onLogs }: Props) {
 						return (
 							<li key={`health-${i}`} className="mb-2">
 								<div>
-									<T id="host-status.unreachable" data={{ where: d.where, target: d.target }} />
+									<T
+										id={t.code === "resolver_mismatch" ? "host-status.resolver-only" : "host-status.unreachable"}
+										data={{ where: d.where, target: d.target }}
+									/>
 								</div>
 								<div className="text-secondary text-break">{d.reason}</div>
 							</li>

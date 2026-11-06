@@ -106,6 +106,30 @@ describe("HostStatusFormatter", () => {
 		expect(popover).toHaveTextContent("Connection refused");
 	});
 
+	it("warns about a main target nginx can't resolve per request", async () => {
+		const health: UpstreamHostHealth = {
+			checkedAt: "2026-11-04T10:00:00Z",
+			ok: false,
+			targets: [
+				{
+					locationIndex: null,
+					host: "app",
+					port: 80,
+					ok: false,
+					code: "resolver_mismatch",
+					message: "app:80 is reachable, but nginx resolves this upstream per request",
+				},
+			],
+		};
+		const { container } = render(<HostStatusFormatter enabled meta={{ nginxOnline: true }} health={health} />);
+		expect(statusEl(container)).toHaveClass("status-yellow");
+
+		fireEvent.click(screen.getByRole("button"));
+		const popover = await screen.findByTestId("host-status-popover");
+		expect(popover).toHaveTextContent("nginx can't resolve app:80");
+		expect(popover).not.toHaveTextContent("is not reachable");
+	});
+
 	it("doesn't list a failed health probe of a location that is already unresolved", async () => {
 		const meta: HostMeta = {
 			nginxOnline: true,

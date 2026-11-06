@@ -509,6 +509,9 @@
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx ei rakendanud selle hosti uusimat seadistust ja kasutab endiselt eelmist."
 	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx ei suuda {target} lahendada"
+	},
 	"host-status.unreachable": {
 		"defaultMessage": "{where}: {target} pole kättesaadav"
 	},

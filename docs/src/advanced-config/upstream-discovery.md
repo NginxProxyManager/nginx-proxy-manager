@@ -210,7 +210,7 @@ check:
 | Result | Meaning |
 |---|---|
 | `ok` | Resolved and accepted a connection |
-| `resolver_mismatch` | Reachable, but the name only resolves through `/etc/hosts` or a search domain. It works only when NPM renders this upstream statically (resolved once, when the configuration loads); requests through nginx's resolver would fail. Use the full DNS name or the container name instead. |
+| `resolver_mismatch` | Reachable, but the name only resolves through `/etc/hosts` or a search domain. It works only when NPM renders this upstream statically (resolved once, when the configuration loads); requests through nginx's resolver would fail. NPM always resolves a proxy host's main destination through nginx's resolver, and a custom location in dynamic mode too, so for those the result is shown as a warning and the health monitor counts it as unhealthy. Use the full DNS name or the container name instead. |
 | `dns_not_found` | Neither resolver knows the name. Check the spelling, and that the container is running and on the same network. |
 | `dns_timeout` | No DNS server answered in time |
 | `tcp_refused` | The host exists, but nothing listens on that port |

@@ -1,3 +1,4 @@
+import { forResolverTarget } from "./check.js";
 import { createLimiter, isVariableHost, splitHostPath } from "./util.js";
 
 /**
@@ -21,7 +22,37 @@ const toPort = (value) => {
 };
 
 /**
+ * Whether nginx resolves a custom location's upstream per request (dynamic mode, a proxy_pass with a variable),
+ * from the location states the last configure saved (meta.nginx_locations, see lib/nginx-locations.js).
+ *
+ * @param   {Array|null} states  meta.nginx_locations
+ * @param   {number}     index   the location's index in host.locations
+ * @returns {boolean}
+ */
+const isDynamicLocation = (states, index) =>
+	Array.isArray(states) && states.some((state) => state?.index === index && state.mode === "dynamic");
+
+/**
+ * @param   {Object|String|null} meta  a proxy host's meta (a string when read without the model's parsing)
+ * @returns {Array|null}  meta.nginx_locations
+ */
+const savedLocationStates = (meta) => {
+	let value = meta;
+	if (typeof value === "string") {
+		try {
+			value = JSON.parse(value);
+		} catch {
+			return null;
+		}
+	}
+	return Array.isArray(value?.nginx_locations) ? value.nginx_locations : null;
+};
+
+/**
  * Turns host rows into the list of targets to probe.
+ *
+ * `resolver` tells whether nginx resolves the target per request (only through its own `resolver`): the main
+ * target of a proxy host always (proxy_pass $server), a custom location in dynamic mode, a stream never.
  *
  * @param   {object} rows
  * @param   {Array}  [rows.proxyHosts]  enabled, non-deleted proxy hosts
@@ -36,11 +67,12 @@ const buildHealthTargets = ({ proxyHosts = [], streams = [] } = {}) => {
 			continue;
 		}
 		const targets = [];
+		const states = savedLocationStates(row.meta);
 		const { host } = splitHostPath(row.forward_host);
 		const port = toPort(row.forward_port);
 		// A variable upstream (`$backend`) is resolved by nginx per request and can't be probed
 		if (host && port && !isVariableHost(host)) {
-			targets.push({ location_index: null, host, port, scheme: row.forward_scheme });
+			targets.push({ location_index: null, host, port, scheme: row.forward_scheme, resolver: true });
 		}
 		(Array.isArray(row.locations) ? row.locations : []).forEach((location, index) => {
 			if (!location || location.enabled === false || !location.forward_host || !location.forward_port) {
@@ -57,6 +89,7 @@ const buildHealthTargets = ({ proxyHosts = [], streams = [] } = {}) => {
 				host: split.host,
 				port: locationPort,
 				scheme: location.forward_scheme,
+				resolver: isDynamicLocation(states, index),
 			});
 		});
 		if (targets.length) {
@@ -78,7 +111,7 @@ const buildHealthTargets = ({ proxyHosts = [], streams = [] } = {}) => {
 			type: "stream",
 			id: row.id,
 			owner_user_id: row.owner_user_id,
-			targets: [{ location_index: null, host, port, scheme: null }],
+			targets: [{ location_index: null, host, port, scheme: null, resolver: false }],
 		});
 	}
 
@@ -191,7 +224,7 @@ class HealthMonitor {
 			hosts.map(async (entry) => {
 				const targets = await Promise.all(
 					entry.targets.map(async (target) => {
-						const result = await probe(target);
+						const result = forResolverTarget(await probe(target), target, target.resolver);
 						const out = {
 							location_index: target.location_index,
 							host: target.host,
@@ -268,4 +301,4 @@ const visibilityFilter = (accessData, userId, allowedIds = []) => {
 	return (ownerId, hostId) => ownerId === userId || allowed.has(Number(hostId));
 };
 
-export { buildHealthTargets, HealthMonitor, visibilityFilter };
+export { buildHealthTargets, HealthMonitor, isDynamicLocation, visibilityFilter };
