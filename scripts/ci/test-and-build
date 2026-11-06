@@ -28,3 +28,5 @@ docker build --pull --no-cache --compress \
 	--build-arg BUILD_DATE="$(date '+%Y-%m-%d %T %Z')" \
 	.
 echo -e "${BLUE}❯ ${GREEN}Building Complete${RESET}"
+
+python3 test/host-header-smoke.py "${IMAGE:-nginx-proxy-manager}:${BRANCH_LOWER:-unknown}-ci-${BUILD_NUMBER:-0000}"

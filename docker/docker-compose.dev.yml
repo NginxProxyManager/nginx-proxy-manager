@@ -16,6 +16,7 @@ services:
           - website1.example.com
           - website2.example.com
           - website3.example.com
+          - website4.example.com
     environment:
       TZ: "${TZ:-Australia/Brisbane}"
       PUID: 1000
