@@ -53,18 +53,22 @@ format, are not detected: use `$request_uri` there, or set `NPM_LOCATION_DYNAMIC
 
 A forward path with an nginx variable is written into the config exactly as before too
 (`proxy_pass http://app:8080/api/$arg_id;`). nginx sends such a URI as it is: `/a/foo?id=42` on location `/a/` reaches
-the upstream as `/api/42`, without the rest of the path and without the query string. "Cache Assets" doesn't add the
-nested asset location for such a forward path: a nested location doesn't run the `set` of its parent (a forward path
-`/v1/$target` with `set $target ...;` in the advanced configuration) and has regex captures of its own (`$1`). Assets
-are then proxied like every other request of the location, without caching.
+the upstream as `/api/42`, without the rest of the path and without the query string. With "Cache Assets" the nested
+asset location uses the same `proxy_pass`, so `/a/app.css?id=5` reaches the upstream as `/api/5` too (cached).
 
 The same applies to a regular-expression or named location with a forward path: nginx only accepts a URI there when
 it contains a variable, for example `~ ^/api/(.*)$` with forward path `/v1/$1`, which sends `/api/users/7` to the
 upstream as `/v1/users/7`. Such a location is written as it is.
 
 A forward host that is a single nginx variable, such as `$backend`, is written into the config exactly as before
-(`proxy_pass http://$backend:8080;`), without the extra lines. "Cache Assets" doesn't add the nested asset location
-for it, because a nested location doesn't run the `set $backend ...;` of its parent.
+(`proxy_pass http://$backend:8080;`), without the extra lines. With "Cache Assets" its assets use the same `proxy_pass`.
+
+A nested location doesn't run the `set` lines of its parent, so the nested asset location repeats the `set` statements
+at the top level of the location's advanced configuration, in order (`set $backend app;`, or `set $target t;` for a
+forward path `/v1/$target`). A `set` inside an `if` or another block, and variables changed by other directives
+(`rewrite`, `auth_request_set`, the captures of a regex `if`, ...) are not repeated: in asset requests such a variable
+keeps the value from the top-level `set` statements (or none). Use a `map` in the host's advanced configuration or turn "Cache
+Assets" off for such a location.
 
 To go back to the old literal rendering for every location:
 
@@ -77,7 +81,9 @@ Existing hosts are written again with the new setting when NPM restarts (unless 
 
 ::: tip
 With "Cache Assets" enabled, assets (`.css`, `.js`, images, fonts) under a custom location are now fetched from that
-location's own upstream. Before, they were fetched from the host's main upstream.
+location's own upstream. Before, they were fetched from the host's main upstream. This holds for prefix locations
+(`/api/`, `^~ /api/`). In a regular-expression location the host-level asset location, which comes first in the
+server block, still takes the assets to the host's main upstream, as before.
 :::
 
 ## Location statuses

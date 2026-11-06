@@ -321,6 +321,38 @@ const chooseLocationMode = (loc, resolved) => {
 };
 
 /**
+ * @param   {String} value  a token's value as nginx sees it (unescaped)
+ * @returns {String} the value as a double quoted nginx string that reads back as the same value
+ */
+const quoteNginxValue = (value) => `"${`${value}`.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+
+/**
+ * The `set` statements at the top level of a location's advanced config, in order, for the nested asset location:
+ * a nested location doesn't run the rewrite-phase directives of its parent, so a variable used by the forward
+ * host / path (`set $target t;` with forward path `/v1/$target`) or by an inherited proxy_set_header would be
+ * empty there.
+ *
+ * Only top-level `set $name value;` statements are repeated. Not covered: a `set` inside an `if` (or another
+ * block), variables changed by other directives (`rewrite`, `auth_request_set`, a regex `if` and its captures,
+ * ...) and a `set` that reads such a variable. For those the nested asset location only sees the value from the
+ * repeated top-level `set` statements (or none).
+ *
+ * @param   {String} advancedConfig
+ * @returns {String[]} eg. ['set $target "t";']
+ */
+const assetSetDirectives = (advancedConfig) =>
+	scanNginxConfig(advancedConfig)
+		.statements.filter(
+			(s) =>
+				s.depth === 0 &&
+				s.end === ";" &&
+				s.tokens.length === 3 &&
+				s.tokens[0] === "set" &&
+				/^\$[A-Za-z0-9_]+$/.test(s.tokens[1]),
+		)
+		.map((s) => `set ${s.tokens[1]} ${quoteNginxValue(s.tokens[2])};`);
+
+/**
  * Template variables (all prefixed npm_) for the dynamic / static rendering of a location.
  *
  * @param   {Object} loc    prepared location (merged with the host's settings)
@@ -338,14 +370,16 @@ const buildLocationContext = (loc, state) => {
 	// the upstream outside of the forward path. Quoted, so a quoted path with spaces stays one argument.
 	const rewrite = canRewrite ? `"(?s)^${escapeRegex(parsed.unquoted).replace(/"/g, '\\"')}(.*)$" ${fp}$1` : "";
 	const redirect = canRewrite ? `${upstreamBase}${fp} ${parsed.uri}` : `${upstreamBase}/ /`;
-	// nginx does not allow nested locations in exact match and named locations. A nested location doesn't
-	// run the parent's `set`, so a variable set in the advanced config would be empty there: neither a
-	// variable forward host ($backend) nor a variable forward path (/v1/$target) gets the nested asset
-	// location, their assets go through the parent's proxy_pass (uncached). A capture ($1) in the forward
-	// path would be replaced by the nested regex location's own captures as well.
+	// nginx does not allow nested locations in exact match and named locations. Every other location with
+	// "Cache Assets" gets the nested asset location, also one with a variable forward host ($backend) or forward
+	// path (/api/$arg_id): without it the host-level asset regex (conf.d/include/assets.conf, included in the
+	// server block before the custom locations) wins over the prefix location and sends its assets to the host's
+	// main upstream. A nested location doesn't run the parent's `set`, so the top-level `set` statements of the
+	// advanced config are repeated in it, see assetSetDirectives(). A variable proxy_pass is repeated as it is
+	// (nginx sends its URI as it is, no rewrite), like the parent it has no implicit "proxy_redirect default".
 	const userRedirect = hasDirective(loc.advanced_config, "proxy_redirect");
-	const assetsAllowed =
-		!parsed.isExact && !parsed.isNamed && !isVariableHost(loc.forward_host) && !hasVariablePath(loc);
+	const variableProxyPass = isVariableHost(loc.forward_host) || hasVariablePath(loc);
+	const assetsAllowed = !parsed.isExact && !parsed.isNamed;
 
 	return Object.assign({}, loc, {
 		forward_path: fp,
@@ -359,10 +393,12 @@ const buildLocationContext = (loc, state) => {
 		// the user manages proxy_redirect in the advanced config
 		npm_redirect: dynamic && !userRedirect ? redirect : "",
 		npm_assets: assetsAllowed && (loc.caching_enabled === 1 || loc.caching_enabled === true),
-		npm_asset_rewrite: rewrite,
+		npm_asset_sets: assetSetDirectives(loc.advanced_config),
+		npm_asset_rewrite: variableProxyPass ? "" : rewrite,
+		npm_asset_uri: variableProxyPass ? fp : "",
 		// When the user manages proxy_redirect in the advanced config, the nested location sets none and
 		// inherits that rule (a proxy_redirect in the nested block would replace it).
-		npm_asset_redirect: userRedirect ? "" : redirect,
+		npm_asset_redirect: userRedirect ? "" : variableProxyPass ? "off" : redirect,
 	});
 };
 
@@ -526,6 +562,7 @@ export {
 	CONFIG_VERSION,
 	CONFIG_VERSION_MARKER,
 	MESSAGES,
+	assetSetDirectives,
 	bracesBalanced,
 	buildLocationContext,
 	chooseLocationMode,

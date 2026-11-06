@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+	assetSetDirectives,
 	bracesBalanced,
 	chooseLocationMode,
 	describeConfigLine,
@@ -334,6 +335,7 @@ describe("renderLocation", () => {
 		const cases = [
 			{ mode: "static", forward_path: "/x" },
 			{ mode: "dynamic", forward_path: "/x" },
+			{ mode: "static", forward_path: "/api/$arg_id" },
 		];
 		for (const rule of ["proxy_redirect off;", "proxy_redirect http://app:8080/ /;"]) {
 			for (const { mode, forward_path } of cases) {
@@ -410,10 +412,15 @@ describe("renderLocation", () => {
 		const mode = chooseLocationMode(prepareLocation(loc), { mode: "dynamic", status: "unresolved" });
 		assert.deepEqual(mode, { mode: "static", status: "ok" });
 		const out = await render(loc, mode, { caching_enabled: true });
-		assert.match(out, /proxy_pass\s+http:\/\/\$backend:8080\/fp;/);
-		assert.doesNotMatch(out, /rewrite|npm_loc_0_host|proxy_redirect/);
-		// a nested location would not run the parent's `set $backend`
-		assert.doesNotMatch(out, /location ~\*/);
+		const parent = out.slice(0, out.indexOf("location ~*"));
+		assert.match(parent, /proxy_pass\s+http:\/\/\$backend:8080\/fp;/);
+		assert.doesNotMatch(out, /^\s*rewrite |npm_loc_0_host/m);
+		assert.doesNotMatch(parent, /proxy_redirect/);
+		// the nested asset location repeats the parent's `set $backend` and its proxy_pass, as it is
+		const nested = out.slice(out.indexOf("location ~*"));
+		assert.match(nested, /proxy_cache public-cache;/);
+		assert.match(nested, /set \$backend "app";\n\s+proxy_pass http:\/\/\$backend:8080\/fp;/);
+		assert.match(nested, /proxy_redirect off;/);
 	});
 
 	it("renders a forward path with an nginx variable without rewrite, like before", async () => {
@@ -424,29 +431,81 @@ describe("renderLocation", () => {
 		assert.doesNotMatch(out, /rewrite|npm_loc_0_host|proxy_redirect/);
 	});
 
-	it("does not nest the asset cache when the forward path has a variable set in the advanced config", async () => {
-		// the nested location would not run the parent's `set $target`, assets would reach /v1/ instead of /v1/t
+	it("repeats the advanced config's set in the nested asset location of a variable forward path", async () => {
+		// without the nested location the host-level asset regex takes the assets to the host's main upstream,
+		// without the `set` the nested location would send them to /v1/ instead of /v1/t
 		const loc = { ...base, path: "/a/", forward_path: "/v1/$target", advanced_config: "set $target t;" };
 		const mode = chooseLocationMode(prepareLocation(loc), { mode: "dynamic", status: "ok" });
 		assert.deepEqual(mode, { mode: "static", status: "ok" });
 		const out = await render(loc, mode, { caching_enabled: true });
-		assert.match(out, /proxy_pass\s+http:\/\/app:8080\/v1\/\$target;/);
-		assert.equal(out.match(/proxy_pass/g).length, 1);
-		assert.doesNotMatch(out, /location ~\*|proxy_cache/);
+		assert.match(out.slice(0, out.indexOf("location ~*")), /proxy_pass\s+http:\/\/app:8080\/v1\/\$target;/);
+		const nested = out.slice(out.indexOf("location ~*"));
+		assert.match(nested, /proxy_cache public-cache;/);
+		assert.match(nested, /set \$target "t";\n\s+proxy_pass http:\/\/app:8080\/v1\/\$target;/);
+		assert.doesNotMatch(out, /^\s*rewrite /m);
 	});
 
-	it("does not nest the asset cache for any variable forward path", async () => {
+	it("passes a variable forward path to the nested asset location as it is", async () => {
 		for (const forward_path of ["/api/$arg_id", "/api/$" + "{arg_id}/x", "$request_uri"]) {
 			const out = await render({ ...base, path: "/a/", forward_path }, { mode: "static" }, { caching_enabled: true });
-			assert.doesNotMatch(out, /location ~\*/, forward_path);
+			const nested = out.slice(out.indexOf("location ~*"));
+			assert.notEqual(out.indexOf("location ~*"), -1, forward_path);
+			const uri = forward_path.startsWith("/") ? forward_path : `/${forward_path}`;
+			assert.ok(nested.includes(`proxy_pass http://app:8080${uri};`), forward_path);
+			// "proxy_redirect default" doesn't apply to a proxy_pass with variables, the parent has none either
+			assert.match(nested, /proxy_redirect off;/);
+			assert.doesNotMatch(out, /^\s*rewrite /m);
 		}
 	});
 
-	it("does not nest the asset cache when the forward path uses a capture, the nested regex replaces it", async () => {
+	it("keeps the parent's captures in the nested asset location (its regex has no capture group)", async () => {
 		for (const forward_path of ["/v/$1", "/v/$" + "{2}"]) {
 			const out = await render({ ...base, path: "/a/", forward_path }, { mode: "static" }, { caching_enabled: true });
-			assert.doesNotMatch(out, /location ~\*/, forward_path);
+			const nested = out.slice(out.indexOf("location ~*"));
+			const regex = nested.slice(0, nested.indexOf("\n"));
+			assert.match(regex, /^location ~\* \^\.\*\\\.\(\?:css\|js\|/);
+			assert.doesNotMatch(regex, /\((?!\?:)/);
+			assert.ok(nested.includes(`proxy_pass http://app:8080${forward_path};`), forward_path);
 		}
+	});
+
+	it("repeats only the top-level set statements of the advanced config in the nested asset location", async () => {
+		const advanced_config = [
+			"set $a one;",
+			"# set $commented x;",
+			"if ($arg_x) { set $b two; }",
+			"proxy_set_header X-A $a;",
+			'set $c "a \\"q\\" $host";',
+			// biome-ignore lint/suspicious/noTemplateCurlyInString: nginx ${var} syntax, not a JS template
+			"set   $d   ${a}x;",
+			"location /inner { set $e e; }",
+		].join("\n");
+		const out = await render(
+			{ ...base, path: "/a/", forward_path: "/x/", advanced_config },
+			{ mode: "dynamic" },
+			{ caching_enabled: true },
+		);
+		const nested = out.slice(out.lastIndexOf("location ~*"));
+		const sets = nested.match(/^\s*set .*$/gm).map((l) => l.trim());
+		assert.deepEqual(sets, [
+			'set $npm_loc_0_host "app";',
+			'set $a "one";',
+			'set $c "a \\"q\\" $host";',
+			// biome-ignore lint/suspicious/noTemplateCurlyInString: nginx ${var} syntax, not a JS template
+			'set $d "${a}x";',
+		]);
+		// before the rewrite and the proxy_pass, as in the parent
+		// biome-ignore lint/suspicious/noTemplateCurlyInString: nginx ${var} syntax, not a JS template
+		assert.ok(nested.indexOf('set $d "${a}x";') < nested.indexOf("rewrite "));
+	});
+
+	it("lists the top-level set statements of an advanced config", () => {
+		assert.deepEqual(assetSetDirectives(""), []);
+		assert.deepEqual(assetSetDirectives(null), []);
+		assert.deepEqual(assetSetDirectives("set $x 'it\\'s';\nset $y a\\\\b;\nset $bad;\nset nodollar v;\nset $z 1 2;"), [
+			'set $x "it\'s";',
+			'set $y "a\\\\b";',
+		]);
 	});
 
 	it("keeps the rendering of a literal forward path", async () => {
@@ -463,8 +522,11 @@ describe("renderLocation", () => {
 		const out = await render(loc, mode, { caching_enabled: true });
 		assert.match(out, /location ~ \^\/api\/\(\.\*\)\$ \{/);
 		assert.match(out, /proxy_pass\s+http:\/\/app:8080\/v1\/\$1;/);
-		// no rewrite or set (they would not change $1, but are not needed), no nested location overwriting $1
-		assert.doesNotMatch(out, /rewrite|npm_loc_0_host|proxy_redirect|location ~\*/);
+		// no rewrite or set (they would not change $1, but are not needed)
+		assert.doesNotMatch(out, /^\s*rewrite |npm_loc_0_host/m);
+		// the nested asset location keeps $1 (its regex has no capture group)
+		const nested = out.slice(out.indexOf("location ~*"));
+		assert.match(nested, /proxy_pass http:\/\/app:8080\/v1\/\$1;/);
 	});
 
 	it("renders a named location with a variable forward path literally", async () => {

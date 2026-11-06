@@ -2,18 +2,22 @@
 # Compares the responses of the legacy, static and dynamic rendering of custom locations.
 # Runs inside the nginx-full base image, see README.md. Exits 1 when any response differs.
 #
-#   /w        this folder
-#   /backend  the backend folder, with node_modules installed
-#   a host "echo" serving echo.js on port 9000, reachable through the docker resolver 127.0.0.11
+#   /w            this folder
+#   /backend      the backend folder, with node_modules installed
+#   /npm-include  docker/rootfs/etc/nginx/conf.d/include (assets.conf, proxy.conf for the cached hosts)
+#   a host "echo" serving echo.js on ports 9000 and 9001, reachable through the docker resolver 127.0.0.11
 
 set -euo pipefail
 
-mkdir -p /var/log/nginx /var/cache/nginx /data/access /tmp/nginx-sem-cache
+mkdir -p /var/log/nginx /var/cache/nginx /data/access /data/logs /tmp/nginx-sem-cache /tmp/nginx-sem/conf.d
 echo 'alice:{PLAIN}secret' > /data/access/4
+# `include conf.d/include/...` of the host template is relative to the config file
+ln -sfn /npm-include /tmp/nginx-sem/conf.d/include
+test -f /tmp/nginx-sem/conf.d/include/assets.conf
 
-node /w/gen.mjs /backend > /tmp/nginx-sem.conf
-nginx -t -c /tmp/nginx-sem.conf 2>&1 | tail -2
-nginx -c /tmp/nginx-sem.conf &
+node /w/gen.mjs /backend > /tmp/nginx-sem/nginx.conf
+nginx -t -c /tmp/nginx-sem/nginx.conf 2>&1 | tail -2
+nginx -c /tmp/nginx-sem/nginx.conf &
 NGINX_PID=$!
 trap 'kill $NGINX_PID 2>/dev/null || true' EXIT
 sleep 1
@@ -33,8 +37,13 @@ fetch () {
 	if [ -n "$got" ] && [ "$got" != "\"host\":\"${host}\"" ]; then
 		out="$out HOST-MISMATCH(sent ${host})"
 	fi
-	echo "$out $(grep -iE '^(location|x-sem-[a-z-]+):' /tmp/nginx-sem-head | tr -d '\r' | tr '\n' ' ') $(cat /tmp/nginx-sem-body)" | sed -E 's/srv800[0-9]/srv/g'
+	echo "$out $(grep -iE '^(location|x-sem-[a-z-]+):' /tmp/nginx-sem-head | tr -d '\r' | tr '\n' ' ') $(cat /tmp/nginx-sem-body)" | sed -E 's/srv80[0-9]{2}/srv/g'
 }
+
+# Cases with "Cache Assets" are served by the full host template (gen.mjs, :8012 static / :8013 dynamic), the others
+# by :8002 / :8003. Neither is compared with the legacy rendering, nor is the access list case.
+CACHED='^/(cache|cacheroot|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation)/'
+NOT_LEGACY='^/(cache|cacheroot|acl|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation)/'
 
 diffs=0
 total=0
@@ -44,9 +53,22 @@ while IFS= read -r line; do
 	# the expected text must be in the response, eg. the URI the upstream got)
 	IFS='|' read -r path creds hostport expect <<< "$line"
 
-	static="$(fetch 8002 "$path" "$creds" "$hostport")"
-	dynamic="$(fetch 8003 "$path" "$creds" "$hostport")"
+	if [[ "$path" =~ $CACHED ]]; then
+		static="$(fetch 8012 "$path" "$creds" "$hostport")"
+		dynamic="$(fetch 8013 "$path" "$creds" "$hostport")"
+	else
+		static="$(fetch 8002 "$path" "$creds" "$hostport")"
+		dynamic="$(fetch 8003 "$path" "$creds" "$hostport")"
+	fi
 	total=$((total + 1))
+	# a custom location's request (asset or not) must not end up at the host's main upstream, unless expected
+	if [[ "$static$dynamic" == *'"upstream":"main"'* && "$expect" != *'"upstream":"main"'* ]]; then
+		echo "DIFF  main upstream $line"
+		echo "   static:  $static"
+		echo "   dynamic: $dynamic"
+		diffs=$((diffs + 1))
+		continue
+	fi
 	if [[ "$static$dynamic" == *HOST-MISMATCH* ]]; then
 		echo "DIFF  forwarded Host $line"
 		echo "   static:  $static"
@@ -69,7 +91,7 @@ while IFS= read -r line; do
 		continue
 	fi
 
-	if [[ ! "$path" =~ ^/(cache|cacheroot|acl|qc%20p|avc|cachere|cro|cvt)/ ]]; then
+	if [[ ! "$path" =~ $NOT_LEGACY ]]; then
 		legacy="$(fetch 8001 "$path" "$creds" "$hostport")"
 		total=$((total + 1))
 		if [ "$legacy" != "$dynamic" ] || [[ "$legacy" == *HOST-MISMATCH* ]]; then

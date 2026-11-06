@@ -9,12 +9,18 @@ existed. The configs are produced by the real backend renderer (`backend/lib/ngi
 - `reqs.txt`: the requests, one per line: `path|user:password|:port|expected`, everything but the path is optional
   (`path||:8443`). The port is added to the Host header, the expected text must be in the response (eg.
   `"url":"/api/42"`, the URI the upstream got)
-- `echo.js`: the upstream, answers with the URI and the Host header it received and can redirect
-- `gen.mjs`: writes the nginx config with three servers (legacy :8001, static :8002, dynamic :8003)
+- `echo.js`: the upstream, answers with the URI and the Host header it received and can redirect. On port 9001 it is
+  the host's main upstream and adds `"upstream":"main"`
+- `gen.mjs`: writes the nginx config with three servers for the cases without caching (legacy :8001, static :8002,
+  dynamic :8003) and two hosts for the cases with caching (static :8012, dynamic :8013). These are rendered with the
+  full host template `backend/templates/proxy_host.conf`, so they contain the host-level asset location
+  (`conf.d/include/assets.conf`, proxied to the main upstream) before the custom locations, as in a real config
 - `run.sh`: starts nginx, sends every request to the servers and compares status, `Location` and body. It also
   checks that the upstream got the Host the client sent, port included (`proxy_set_header Host $forward_host`, see
   `map $http_host $forward_host` in `docker/rootfs/etc/nginx/nginx.conf`). For cached assets that only holds when the
-  cache key contains the port, so `/cache/app.css` with `:8443` and `:9443` must not share a cache entry.
+  cache key contains the port, so `/cache/app.css` with `:8443` and `:9443` must not share a cache entry. A response from the main upstream is a
+  difference unless the request expects `"upstream":"main"`: the requests of a custom location, assets included,
+  must reach that location's upstream.
 
 Cases with caching or an access list are only compared between static and dynamic: caching inside a custom location
 used to proxy assets to the host's main upstream, which was fixed on purpose.
@@ -29,6 +35,7 @@ docker run -d --name npm-sem-echo --network npm-sem --network-alias echo \
   -v "$PWD/test/nginx-semantics:/w:ro" nginxproxymanager/nginx-full:certbot-node node /w/echo.js
 docker run --rm --network npm-sem \
   -v "$PWD/test/nginx-semantics:/w:ro" -v "$PWD/backend:/backend:ro" \
+  -v "$PWD/docker/rootfs/etc/nginx/conf.d/include:/npm-include:ro" \
   nginxproxymanager/nginx-full:certbot-node bash /w/run.sh
 docker rm -f npm-sem-echo && docker network rm npm-sem
 ```

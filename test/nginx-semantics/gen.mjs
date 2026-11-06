@@ -3,8 +3,16 @@
 //
 //   :8001  legacy  hand written literal proxy_pass, the rendering before dynamic locations
 //                  (only for cases without caching / access list, which changed on purpose)
-//   :8002  static  real renderer, literal upstream
-//   :8003  dynamic real renderer, upstream in a variable resolved per request
+//   :8002  static  real renderer, literal upstream          (cases without caching)
+//   :8003  dynamic real renderer, upstream in a variable     (cases without caching)
+//   :8012  static  cases with caching, in the full host template (backend/templates/proxy_host.conf)
+//   :8013  dynamic the same, dynamic rendering
+//
+// The cached cases need the whole host: proxy_host.conf includes the host-level asset location
+// (conf.d/include/assets.conf through _assets.conf) in the server block before the custom locations. It proxies
+// to the host's main upstream, here echo:9001 (answers with "upstream":"main"), and as a regex location it wins
+// over every prefix custom location that has no nested asset location of its own. `include conf.d/...` is read
+// relative to the config file, run.sh links conf.d/include to docker/rootfs/etc/nginx/conf.d/include.
 //
 // Usage: node gen.mjs <backend dir> > nginx.conf
 import path from "node:path";
@@ -54,10 +62,13 @@ const location = (c) => ({
 	advanced_config: c.adv || "",
 });
 
-const render = async (mode) => {
+const render = async (mode, cached) => {
 	let out = "";
 	for (let i = 0; i < cases.length; i++) {
 		const c = cases[i];
+		if (!!c.cache !== cached) {
+			continue;
+		}
 		const loc = Object.assign({}, hostFields(c), prepareLocation(location(c)));
 		// what the backend checks before nginx is asked: a location it quarantines answers 503 here
 		const problem = preflightLocation(loc);
@@ -96,6 +107,29 @@ const legacy = () => {
 	return out;
 };
 
+// The host as internal/nginx.js generateConfig() hands it to proxy_host.conf
+const cachedHost = async (mode, port) => {
+	const hostTemplate = fs.readFileSync(path.join(backendDir, "templates/proxy_host.conf"), "utf8");
+	const text = await engine.parseAndRender(hostTemplate, {
+		id: port,
+		enabled: true,
+		domain_names: [`sem-${mode}.test`],
+		forward_scheme: "http",
+		forward_host: "echo",
+		forward_port: 9001,
+		...hostFields({ cache: true }),
+		advanced_config: "",
+		use_default_location: true,
+		ipv6: false,
+		npm_location_dns: `# npm-location-dns: ${mode}`,
+		locations: await render(mode, true),
+	});
+	if (!/^\s*listen 80;$/m.test(text) || !/include conf\.d\/include\/assets\.conf;/.test(text)) {
+		throw new Error("proxy_host.conf: no `listen 80;` or no host-level assets.conf");
+	}
+	return text.replace(/^(\s*)listen 80;$/m, `$1listen ${port};`);
+};
+
 const common = `  location = /auth { internal; proxy_pass http://echo:9000/auth; proxy_pass_request_body off; proxy_set_header Content-Length ""; }
 `;
 
@@ -113,15 +147,33 @@ http {
     default $http_host;
     "" $host;
   }
+  # as in docker/rootfs/etc/nginx/nginx.conf, used by conf.d/include/proxy.conf
+  map $host $forward_scheme {
+    default http;
+  }
+  map $http_x_forwarded_proto $x_forwarded_proto {
+    "http" "http";
+    "https" "https";
+    default $scheme;
+  }
+  map $http_x_forwarded_scheme $x_forwarded_scheme {
+    "http" "http";
+    "https" "https";
+    default $scheme;
+  }
+  # the format the host template logs with, conf.d/include/log-proxy.conf
+  log_format proxy '[$time_local] $status $request_method $host "$request_uri" [Sent-to $server]';
   proxy_cache_path /tmp/nginx-sem-cache levels=1:2 keys_zone=public-cache:5m max_size=64m;
   server {
     listen 8001;
 ${common}${legacy()}  }
   server {
     listen 8002;
-${common}${await render("static")}  }
+${common}${await render("static", false)}  }
   server {
     listen 8003;
-${common}${await render("dynamic")}  }
+${common}${await render("dynamic", false)}  }
+${await cachedHost("static", 8012)}
+${await cachedHost("dynamic", 8013)}
 }
 `);
