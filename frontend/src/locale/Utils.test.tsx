@@ -112,3 +112,14 @@ describe("formatDateTime Estonian locale", () => {
 		}
 	});
 });
+
+describe("formatDateTime Vietnamese locale", () => {
+	it("uses 24-hour clock for vi and vi-VN", () => {
+		const value = "2024-06-15T15:30:00.000Z";
+		for (const locale of ["vi", "vi-VN"]) {
+			const text = formatDateTime(value, locale);
+			// Vietnamese 12-hour output marks the period with SA (sáng) / CH (chiều)
+			expect(text).not.toMatch(/\b(SA|CH)\b/);
+		}
+	});
+});

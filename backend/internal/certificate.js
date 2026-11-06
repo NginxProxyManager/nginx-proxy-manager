@@ -990,7 +990,8 @@ const internalCertificate = {
 		if (hasConfigArg) {
 			args.push(`--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation);
 		}
-		if (certificate.meta.propagation_seconds !== undefined) {
+		// The route53 plugin waits for the change through the AWS API and has no propagation option
+		if (certificate.meta.propagation_seconds !== undefined && certificate.meta.dns_provider !== "route53") {
 			args.push(
 				`--${dnsPlugin.full_plugin_name}-propagation-seconds`,
 				certificate.meta.propagation_seconds.toString(),
@@ -1059,6 +1060,8 @@ const internalCertificate = {
 				object_id: updatedCertificate.id,
 				meta: updatedCertificate,
 			});
+
+			await internalNginx.reload();
 
 			return updatedCertificate;
 		}

@@ -440,6 +440,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Tee GitHubis fork"
 	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Sul on salvestamata muudatusi. Kas oled kindel, et soovid need tühistada?"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
 	},
@@ -644,11 +647,20 @@
 	"password.show": {
 		"defaultMessage": "Näita parooli"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Lubatud puhverserverid"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Annab täiendava ligipääsu teiste kasutajate loodud valitud puhverserveritele (lisaks kasutaja enda loodud kirjetele)."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Peidetud"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Halda"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Ühtegi puhverserverit ei leitud"
 	},
 	"permissions.view": {
 		"defaultMessage": "Ainult vaatamine"
