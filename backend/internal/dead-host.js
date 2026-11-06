@@ -19,6 +19,7 @@ const internalDeadHost = {
 	 * @returns {Promise}
 	 */
 	create: async (access, data) => {
+		internalHost.sanitiseInput(data);
 		const createCertificate = data.certificate_id === "new";
 
 		if (createCertificate) {
@@ -61,37 +62,58 @@ const internalDeadHost = {
 
 		const row = await deadHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 
+		let freshRow;
+		let issuedCertificateId = null;
+		try {
+			if (createCertificate) {
+				// Check that nginx accepts the host before a certificate is requested: when the host is
+				// rejected the create is rolled back, and a certificate issued for it would be left behind
+				// (and renewed forever). The SSL part is checked again when the certificate is added.
+				await internalNginx.configure(deadHostModel, "dead_host", row, { dryRun: true });
+				const cert = await internalCertificate.createQuickCertificate(access, data);
+				issuedCertificateId = cert.id;
+
+				// update host with cert id
+				await internalDeadHost.update(access, {
+					id: row.id,
+					certificate_id: cert.id,
+				});
+			}
+
+			// re-fetch with cert
+			freshRow = await internalDeadHost.get(access, {
+				id: row.id,
+				expand: ["certificate", "owner"],
+			});
+
+			// Sanity check
+			if (createCertificate && !freshRow.certificate_id) {
+				throw new errs.InternalValidationError("The host was created but the Certificate creation failed.");
+			}
+
+			// Configure nginx
+			freshRow.meta = await internalNginx.configure(deadHostModel, "dead_host", freshRow);
+		} catch (err) {
+			// nginx rejected the new host: don't keep a host that was never active
+			if (internalNginx.isHostLevelError(err)) {
+				await deadHostModel.query().where("id", row.id).patch({ is_deleted: 1 });
+			}
+			// the certificate requested for it is left unused when the host is gone or was rejected with it
+			if (issuedCertificateId) {
+				await internalHost.discardUnusedCertificate(issuedCertificateId, () =>
+					internalCertificate.delete(access, { id: issuedCertificateId }),
+				);
+			}
+			throw err;
+		}
+
 		// Add to audit log
 		await internalAuditLog.add(access, {
 			action: "created",
 			object_type: "dead-host",
 			object_id: row.id,
-			meta: thisData,
+			meta: _.assign({}, thisData, { meta: _.assign({}, thisData.meta || {}, freshRow.meta) }),
 		});
-
-		if (createCertificate) {
-			const cert = await internalCertificate.createQuickCertificate(access, data);
-
-			// update host with cert id
-			await internalDeadHost.update(access, {
-				id: row.id,
-				certificate_id: cert.id,
-			});
-		}
-
-		// re-fetch with cert
-		const freshRow = await internalDeadHost.get(access, {
-			id: row.id,
-			expand: ["certificate", "owner"],
-		});
-
-		// Sanity check
-		if (createCertificate && !freshRow.certificate_id) {
-			throw new errs.InternalValidationError("The host was created but the Certificate creation failed.");
-		}
-
-		// Configure nginx
-		await internalNginx.configure(deadHostModel, "dead_host", freshRow);
 
 		return freshRow;
 	},
@@ -103,6 +125,7 @@ const internalDeadHost = {
 	 * @return {Promise}
 	 */
 	update: async (access, data) => {
+		internalHost.sanitiseInput(data);
 		const createCertificate = data.certificate_id === "new";
 		if (createCertificate) {
 			delete data.certificate_id;
@@ -135,7 +158,27 @@ const internalDeadHost = {
 			);
 		}
 
+		// Before anything is configured or a certificate is requested
+		const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
+		if (
+			!isAdmin &&
+			typeof data.advanced_config !== "undefined" &&
+			data.advanced_config !== row.advanced_config
+		) {
+			throw new errs.PermissionError("You do not have permission to modify advanced configuration");
+		}
+
+		let newCertificateId = null;
 		if (createCertificate) {
+			// Check that nginx accepts the rest of the update before the certificate is requested
+			await internalHost.checkProposedHost({
+				model: deadHostModel,
+				hostType: "dead_host",
+				row: await internalDeadHost.get(access, { id: data.id, expand: ["owner", "certificate"] }),
+				patch: internalHost.cleanSslHstsData(_.assign({}, { domain_names: row.domain_names }, data), row),
+				skipDisabled: true,
+			});
+
 			const cert = await internalCertificate.createQuickCertificate(access, {
 				domain_names: data.domain_names || row.domain_names,
 				meta: _.assign({}, row.meta, data.meta),
@@ -143,6 +186,7 @@ const internalDeadHost = {
 
 			// update host with cert id
 			data.certificate_id = cert.id;
+			newCertificateId = cert.id;
 		}
 
 		// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
@@ -156,38 +200,37 @@ const internalDeadHost = {
 
 		thisData = internalHost.cleanSslHstsData(thisData, row);
 
-		const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
-		if (
-			!isAdmin &&
-			typeof data.advanced_config !== "undefined" &&
-			data.advanced_config !== row.advanced_config
-		) {
-			throw new errs.PermissionError("You do not have permission to modify advanced configuration");
+		// do the row update and configure nginx, there's no need to add nginx config if host is disabled
+		let thisRow;
+		try {
+			thisRow = await internalHost.updateAndConfigure({
+				model: deadHostModel,
+				hostType: "dead_host",
+				id: data.id,
+				patch: data,
+				skipDisabled: true,
+				fetch: () =>
+					internalDeadHost.get(access, {
+						id: thisData.id,
+						expand: ["owner", "certificate"],
+					}),
+				audit: () =>
+					internalAuditLog.add(access, {
+						action: "updated",
+						object_type: "dead-host",
+						object_id: row.id,
+						meta: thisData,
+					}),
+			});
+		} catch (err) {
+			if (newCertificateId) {
+				await internalHost.discardUnusedCertificate(newCertificateId, () =>
+					internalCertificate.delete(access, { id: newCertificateId }),
+				);
+			}
+			throw err;
 		}
 
-		// do the row update
-		await deadHostModel.query().where({ id: data.id }).patch(data);
-
-		// Add to audit log
-		await internalAuditLog.add(access, {
-			action: "updated",
-			object_type: "dead-host",
-			object_id: row.id,
-			meta: thisData,
-		});
-
-		const thisRow = await internalDeadHost.get(access, {
-			id: thisData.id,
-			expand: ["owner", "certificate"],
-		});
-
-		// Configure nginx
-		if (!thisRow.enabled) {
-			// No need to add nginx config if host is disabled
-			return _.omit(internalHost.cleanRowCertificateMeta(thisRow), omissions());
-		}
-		const newMeta = await internalNginx.configure(deadHostModel, "dead_host", thisRow);
-		thisRow.meta = newMeta;
 		return _.omit(internalHost.cleanRowCertificateMeta(thisRow), omissions());
 	},
 
@@ -246,8 +289,7 @@ const internalDeadHost = {
 		});
 
 		// Delete Nginx Config
-		await internalNginx.deleteConfig("dead_host", row);
-		await internalNginx.reload();
+		await internalNginx.removeConfigAndReload("dead_host", row);
 
 		// Add to audit log
 		await internalAuditLog.add(access, {
@@ -268,25 +310,15 @@ const internalDeadHost = {
 	 */
 	enable: async (access, data) => {
 		await access.can("dead_hosts:update", data.id);
-		const row = await internalDeadHost.get(access, {
-			id: data.id,
-			expand: ["certificate", "owner"],
+		// 404 and permission check before the lock is taken
+		await internalDeadHost.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: deadHostModel,
+			hostType: "dead_host",
+			enable: true,
+			fetch: () => internalDeadHost.get(access, { id: data.id, expand: ["certificate", "owner"] }),
+			alreadyMessage: "Host is already enabled",
 		});
-		if (!row?.id) {
-			throw new errs.ItemNotFoundError(data.id);
-		}
-		if (row.enabled) {
-			throw new errs.ValidationError("Host is already enabled");
-		}
-
-		row.enabled = 1;
-
-		await deadHostModel.query().where("id", row.id).patch({
-			enabled: 1,
-		});
-
-		// Configure nginx
-		await internalNginx.configure(deadHostModel, "dead_host", row);
 
 		// Add to audit log
 		await internalAuditLog.add(access, {
@@ -307,23 +339,14 @@ const internalDeadHost = {
 	 */
 	disable: async (access, data) => {
 		await access.can("dead_hosts:update", data.id);
-		const row = await internalDeadHost.get(access, { id: data.id });
-		if (!row?.id) {
-			throw new errs.ItemNotFoundError(data.id);
-		}
-		if (!row.enabled) {
-			throw new errs.ValidationError("Host is already disabled");
-		}
-
-		row.enabled = 0;
-
-		await deadHostModel.query().where("id", row.id).patch({
-			enabled: 0,
+		await internalDeadHost.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: deadHostModel,
+			hostType: "dead_host",
+			enable: false,
+			fetch: () => internalDeadHost.get(access, { id: data.id }),
+			alreadyMessage: "Host is already disabled",
 		});
-
-		// Delete Nginx Config
-		await internalNginx.deleteConfig("dead_host", row);
-		await internalNginx.reload();
 
 		// Add to audit log
 		await internalAuditLog.add(access, {

@@ -136,6 +136,34 @@ export interface ProxyLocation {
 	accessList?: AccessList;
 }
 
+// ---------------------------------------------------------------------------
+// Server-owned host meta (written by the backend after every nginx configure,
+// stripped by the backend from anything the client sends back).
+// ---------------------------------------------------------------------------
+
+export type NginxConfigErrorScope = "host" | "other_host" | "global";
+
+export interface NginxConfigErrorDetails {
+	kind: "nginx_config";
+	scope: NginxConfigErrorScope;
+	hostType?: string;
+	hostId?: number;
+	file?: string | null;
+	line?: number | null;
+	nginxOutput?: string | null;
+	hint?: string | null;
+}
+
+export interface HostMeta {
+	// false only when the host's config is not active in nginx
+	nginxOnline?: boolean;
+	nginxErr?: string | null;
+	nginxDetails?: NginxConfigErrorDetails | null;
+	nginxCheckedAt?: string;
+	// Other, client-owned meta (letsencrypt, dns challenge, ...)
+	[key: string]: any;
+}
+
 export interface ProxyHost {
 	id: number;
 	createdOn: string;
@@ -151,7 +179,7 @@ export interface ProxyHost {
 	cachingEnabled: boolean;
 	blockExploits: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
 	enabled: boolean;
@@ -174,7 +202,7 @@ export interface DeadHost {
 	certificateId: number;
 	sslForced: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	http2Support: boolean;
 	enabled: boolean;
 	hstsEnabled: boolean;
@@ -196,7 +224,7 @@ export interface RedirectionHost {
 	sslForced: boolean;
 	blockExploits: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	http2Support: boolean;
 	forwardScheme: string;
 	forwardHttpCode: number;
@@ -218,7 +246,7 @@ export interface Stream {
 	forwardingPort: number;
 	tcpForwarding: boolean;
 	udpForwarding: boolean;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	enabled: boolean;
 	certificateId: number;
 	// Expansions:
@@ -238,4 +266,28 @@ export interface DNSProvider {
 	id: string;
 	name: string;
 	credentials: string;
+}
+
+export type NginxHostType = "proxy_host" | "redirection_host" | "dead_host" | "stream";
+
+export interface NginxRegenerateHost {
+	hostType: NginxHostType;
+	id: number;
+	// first domain name, or the incoming port of a stream
+	name: string;
+	// offline and failed hosts
+	error?: string;
+	// warnings: the broken custom locations, one per line; skipped: why the host was left alone
+	message?: string;
+}
+
+export interface NginxRegenerateResult {
+	checked: number;
+	regenerated: number;
+	offline: NginxRegenerateHost[];
+	failed: NginxRegenerateHost[];
+	warnings: NginxRegenerateHost[];
+	// hosts a running certificate request has taken out of nginx, it puts them back itself
+	skipped?: NginxRegenerateHost[];
+	durationMs: number;
 }

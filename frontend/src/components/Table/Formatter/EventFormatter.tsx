@@ -1,8 +1,17 @@
-import { IconArrowsCross, IconBolt, IconBoltOff, IconDisc, IconLock, IconShield, IconUser } from "@tabler/icons-react";
+import {
+	IconArrowsCross,
+	IconBolt,
+	IconBoltOff,
+	IconDisc,
+	IconLock,
+	IconRefresh,
+	IconShield,
+	IconUser,
+} from "@tabler/icons-react";
 import cn from "classnames";
 import type { AuditLog } from "src/api/backend";
 import { useLocaleState } from "src/context";
-import { formatDateTime, T } from "src/locale";
+import { formatDateTime, intl, T } from "src/locale";
 
 const getEventValue = (event: AuditLog) => {
 	switch (event.objectType) {
@@ -17,6 +26,11 @@ const getEventValue = (event: AuditLog) => {
 			return event.meta?.incomingPort || "N/A";
 		case "certificate":
 			return event.meta?.domainNames?.join(", ") || event.meta?.niceName || "N/A";
+		case "nginx-config":
+			return intl.formatMessage(
+				{ id: "settings.nginx.regenerate.audit" },
+				{ checked: event.meta?.checked ?? 0, offline: event.meta?.offline ?? 0 },
+			);
 		default:
 			return `UNKNOWN EVENT TYPE: ${event.objectType}`;
 	}
@@ -57,6 +71,9 @@ const getIcon = (row: AuditLog) => {
 			break;
 		case "certificate":
 			ico = <IconShield size={16} className={c} />;
+			break;
+		case "nginx-config":
+			ico = <IconRefresh size={16} className={c} />;
 			break;
 	}
 

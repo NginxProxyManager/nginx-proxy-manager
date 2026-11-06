@@ -431,11 +431,35 @@
 	"error.required": {
 		"defaultMessage": "Dies ist erforderlich."
 	},
+	"error.unknown": {
+		"defaultMessage": "Unbekannter Fehler"
+	},
 	"expires.on": {
 		"defaultMessage": "Ablauf am: {date}"
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
+	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Sie haben ungespeicherte Änderungen. Möchten Sie diese wirklich verwerfen?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Zuletzt konfiguriert {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx konnte die Konfiguration dieses Hosts nicht laden, daher ist er offline."
+	},
+	"host-status.details": {
+		"defaultMessage": "Statusdetails anzeigen"
+	},
+	"host-status.disabled": {
+		"defaultMessage": "Deaktiviert"
+	},
+	"host-status.error": {
+		"defaultMessage": "Fehler"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Fehlerprotokoll anzeigen"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Gängige Exploits blockieren"
@@ -545,11 +569,17 @@
 	"logs.truncated-warning": {
 		"defaultMessage": "Es wird nur der neueste Teil dieser Datei angezeigt."
 	},
+	"nginx-config": {
+		"defaultMessage": "Nginx-Konfiguration"
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Benutzerdefinierte Nginx Konfiguration"
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Geben Sie hier Ihre benutzerdefinierte Nginx-Konfiguration auf eigene Gefahr ein!"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Nginx-Ausgabe anzeigen"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Sie haben keinen Zugriff, um dies anzuzeigen."
@@ -614,6 +644,9 @@
 	"object.event.enabled": {
 		"defaultMessage": "{object} aktiviert"
 	},
+	"object.event.regenerated": {
+		"defaultMessage": "{object} neu erzeugt"
+	},
 	"object.event.renewed": {
 		"defaultMessage": "{object} erneuert"
 	},
@@ -641,11 +674,20 @@
 	"password.show": {
 		"defaultMessage": "Passwort anzeigen"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Erlaubte Proxy Hosts"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Gewährt zusätzlich Zugriff auf ausgewählte Proxy Hosts, die andere Benutzer erstellt haben (neben den eigenen Hosts des Benutzers)."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Versteckt"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Verwalten"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Keine Proxy Hosts gefunden"
 	},
 	"permissions.view": {
 		"defaultMessage": "Nur anzeigen"
@@ -716,6 +758,12 @@
 	"save": {
 		"defaultMessage": "Speichern"
 	},
+	"save-warning.offline": {
+		"defaultMessage": "Gespeichert, aber nginx konnte diesen Host nicht laden, daher ist er offline:"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Mit Warnungen gespeichert"
+	},
 	"setting": {
 		"defaultMessage": "Einstellung"
 	},
@@ -745,6 +793,54 @@
 	},
 	"settings.default-site.redirect": {
 		"defaultMessage": "Weiterleitung"
+	},
+	"settings.nginx": {
+		"defaultMessage": "Nginx-Konfiguration"
+	},
+	"settings.nginx.regenerate.audit": {
+		"defaultMessage": "{checked, plural, one {# Host} other {# Hosts}}, {offline} offline"
+	},
+	"settings.nginx.regenerate.button": {
+		"defaultMessage": "Alle Host-Konfigurationen neu erzeugen"
+	},
+	"settings.nginx.regenerate.confirm-body": {
+		"defaultMessage": "Alle Host-Konfigurationsdateien werden aus der Datenbank neu geschrieben und Nginx wird einmal neu geladen. Funktionierende Hosts bleiben online, es gibt keine Ausfallzeit."
+	},
+	"settings.nginx.regenerate.confirm-button": {
+		"defaultMessage": "Neu erzeugen"
+	},
+	"settings.nginx.regenerate.confirm-offline": {
+		"defaultMessage": "Ein Host, den Nginx ablehnt, wird offline genommen und danach aufgelistet, genau wie beim Speichern des Hosts. Die anderen Hosts sind davon nicht betroffen."
+	},
+	"settings.nginx.regenerate.confirm-title": {
+		"defaultMessage": "Alle Host-Konfigurationen neu erzeugen?"
+	},
+	"settings.nginx.regenerate.description": {
+		"defaultMessage": "Schreibt die Nginx-Konfigurationsdatei jedes aktiven Proxy-Hosts, Weiterleitungs-Hosts, 404-Hosts und Streams neu aus der Datenbank und lädt Nginx danach einmal neu. Nützlich nach einem Update, nach dem Wiederherstellen eines Backups oder wenn Konfigurationsdateien auf der Festplatte geändert wurden oder fehlen."
+	},
+	"settings.nginx.regenerate.failed": {
+		"defaultMessage": "{count, plural, one {# Host konnte nicht neu erzeugt werden und behält seine bisherige Konfiguration:} other {# Hosts konnten nicht neu erzeugt werden und behalten ihre bisherige Konfiguration:}}"
+	},
+	"settings.nginx.regenerate.offline": {
+		"defaultMessage": "{count, plural, one {# Host ist jetzt offline, Nginx hat ihn abgelehnt:} other {# Hosts sind jetzt offline, Nginx hat sie abgelehnt:}}"
+	},
+	"settings.nginx.regenerate.partial": {
+		"defaultMessage": "Der Lauf ist fehlgeschlagen, hatte aber schon Hosts geändert. Das hat er bis dahin getan:"
+	},
+	"settings.nginx.regenerate.result": {
+		"defaultMessage": "{checked, plural, one {# Host} other {# Hosts}} in {seconds} s geprüft: {regenerated} online, {offline} offline, {failed} nicht neu erzeugt."
+	},
+	"settings.nginx.regenerate.running": {
+		"defaultMessage": "Wird neu erzeugt. Jeder Host wird mit Nginx geprüft, das kann eine Weile dauern."
+	},
+	"settings.nginx.regenerate.skipped": {
+		"defaultMessage": "{count, plural, one {# Host wurde übersprungen, für ihn läuft eine Zertifikatsanfrage, die ihn danach wieder einrichtet:} other {# Hosts wurden übersprungen, für sie läuft eine Zertifikatsanfrage, die sie danach wieder einrichtet:}}"
+	},
+	"settings.nginx.regenerate.title": {
+		"defaultMessage": "Alle Host-Konfigurationen neu erzeugen"
+	},
+	"settings.nginx.regenerate.warnings": {
+		"defaultMessage": "{count, plural, one {# Host ist online, aber einige seiner benutzerdefinierten Locations funktionieren nicht:} other {# Hosts sind online, aber einige ihrer benutzerdefinierten Locations funktionieren nicht:}}"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Beginnen Sie mit der Erstellung Ihres Administratorkontos."

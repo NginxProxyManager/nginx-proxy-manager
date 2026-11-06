@@ -1,0 +1,31 @@
+{
+	"type": "object",
+	"description": "A host listed in the result of regenerating all nginx configs",
+	"additionalProperties": false,
+	"required": ["host_type", "id", "name"],
+	"properties": {
+		"host_type": {
+			"type": "string",
+			"enum": ["proxy_host", "redirection_host", "dead_host", "stream"],
+			"example": "proxy_host"
+		},
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"name": {
+			"type": "string",
+			"description": "First domain name, or the incoming port of a stream",
+			"example": "app.example.com"
+		},
+		"error": {
+			"type": "string",
+			"description": "Why nginx rejected the host (offline) or why it could not be regenerated (failed)",
+			"example": "unknown directive \"proxy_passs\""
+		},
+		"message": {
+			"type": "string",
+			"description": "Warnings: the custom locations that are disabled or don't resolve right now, one per line. Skipped: why the host was left alone",
+			"example": "/api: Disabled because nginx rejected it: unknown directive \"proxy_passs\""
+		}
+	}
+}
