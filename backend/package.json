@@ -10,6 +10,7 @@
 		"lint": "biome lint",
 		"prettier": "biome format --write .",
 		"validate-schema": "node validate-schema.js",
+		"test": "node --test \"test/**/*.test.js\"",
 		"regenerate-config": "node scripts/regenerate-config"
 	},
 	"dependencies": {

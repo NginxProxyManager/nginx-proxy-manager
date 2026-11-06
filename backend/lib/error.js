@@ -95,6 +95,24 @@ const errs = {
 		this.status = 400;
 	},
 
+	/**
+	 * Nginx rejected a generated configuration. `details` is a structured,
+	 * user-safe description of the failure that is returned to the client.
+	 *
+	 * @param {String} message  Human readable message
+	 * @param {Object} details  See docs/src/advanced-config/locations.md
+	 * @param {Error}  [previous]
+	 */
+	NginxConfigError: function (message, details, previous) {
+		Error.captureStackTrace(this, this.constructor);
+		this.name = this.constructor.name;
+		this.previous = previous;
+		this.message = message;
+		this.details = details || {};
+		this.public = true;
+		this.status = 400;
+	},
+
 	CommandError: function (stdErr, code, previous) {
 		Error.captureStackTrace(this, this.constructor);
 		this.name = this.constructor.name;

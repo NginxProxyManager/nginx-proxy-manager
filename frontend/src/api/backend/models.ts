@@ -127,13 +127,59 @@ export interface Certificate {
 }
 
 export interface ProxyLocation {
+	id?: number | null;
 	path: string;
 	advancedConfig: string;
 	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
+	forwardPath?: string;
 	accessListId?: number;
 	accessList?: AccessList;
+	// Missing means enabled
+	enabled?: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Server-owned host meta (written by the backend after every nginx configure,
+// stripped by the backend from anything the client sends back).
+// ---------------------------------------------------------------------------
+
+export type NginxConfigErrorScope = "location" | "host" | "other_host" | "global";
+
+export interface NginxConfigErrorDetails {
+	kind: "nginx_config";
+	scope: NginxConfigErrorScope;
+	hostType?: string;
+	hostId?: number;
+	file?: string | null;
+	line?: number | null;
+	locationIndex?: number | null;
+	locationPath?: string | null;
+	nginxOutput?: string | null;
+	hint?: string | null;
+}
+
+export type LocationStatusValue = "ok" | "disabled" | "quarantined" | "unresolved";
+
+export interface NginxLocationStatus {
+	index: number;
+	path: string;
+	status: LocationStatusValue;
+	mode: "dynamic" | "static" | null;
+	message: string | null;
+}
+
+export interface HostMeta {
+	// false only when the host's config is not active in nginx
+	nginxOnline?: boolean;
+	nginxErr?: string | null;
+	nginxDetails?: NginxConfigErrorDetails | null;
+	nginxCheckedAt?: string;
+	// proxy hosts only, one entry per location, same order
+	nginxLocations?: NginxLocationStatus[];
+	// Other, client-owned meta (letsencrypt, dns challenge, ...)
+	[key: string]: any;
 }
 
 export interface ProxyHost {
@@ -151,7 +197,7 @@ export interface ProxyHost {
 	cachingEnabled: boolean;
 	blockExploits: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
 	enabled: boolean;
@@ -174,7 +220,7 @@ export interface DeadHost {
 	certificateId: number;
 	sslForced: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	http2Support: boolean;
 	enabled: boolean;
 	hstsEnabled: boolean;
@@ -196,7 +242,7 @@ export interface RedirectionHost {
 	sslForced: boolean;
 	blockExploits: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	http2Support: boolean;
 	forwardScheme: string;
 	forwardHttpCode: number;
@@ -218,7 +264,7 @@ export interface Stream {
 	forwardingPort: number;
 	tcpForwarding: boolean;
 	udpForwarding: boolean;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	enabled: boolean;
 	certificateId: number;
 	// Expansions:

@@ -7,15 +7,19 @@ import { Button, Loading } from "src/components";
 import { useProxyHostLogs } from "src/hooks";
 import { T } from "src/locale";
 
-const showHostLogsModal = (id: number) => {
-	EasyModal.show(HostLogsModal, { id });
+const showHostLogsModal = (id: number, initialType: "access" | "error" = "access") => {
+	// `id` doubles as the modal id (InnerModalProps), so it is passed as a
+	// variable: an object literal would fail the excess property check.
+	const props = { id, initialType };
+	EasyModal.show(HostLogsModal, props);
 };
 
 interface Props extends InnerModalProps {
 	id: number;
+	initialType?: "access" | "error";
 }
-const HostLogsModal = EasyModal.create(({ id, visible, remove }: Props) => {
-	const [logType, setLogType] = useState<"access" | "error">("access");
+const HostLogsModal = EasyModal.create(({ id, initialType, visible, remove }: Props) => {
+	const [logType, setLogType] = useState<"access" | "error">(initialType ?? "access");
 	const { data, isLoading, error } = useProxyHostLogs(id, logType);
 
 	return (

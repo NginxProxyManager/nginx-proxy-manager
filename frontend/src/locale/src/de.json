@@ -431,11 +431,38 @@
 	"error.required": {
 		"defaultMessage": "Dies ist erforderlich."
 	},
+	"error.unknown": {
+		"defaultMessage": "Unbekannter Fehler"
+	},
 	"expires.on": {
 		"defaultMessage": "Ablauf am: {date}"
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
+	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Sie haben ungespeicherte Änderungen. Möchten Sie diese wirklich verwerfen?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Zuletzt konfiguriert {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx konnte die Konfiguration dieses Hosts nicht laden, daher ist er offline."
+	},
+	"host-status.details": {
+		"defaultMessage": "Statusdetails anzeigen"
+	},
+	"host-status.disabled": {
+		"defaultMessage": "Deaktiviert"
+	},
+	"host-status.error": {
+		"defaultMessage": "Fehler"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Fehlerprotokoll anzeigen"
+	},
+	"host-status.warning": {
+		"defaultMessage": "Warnung"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Gängige Exploits blockieren"
@@ -476,11 +503,62 @@
 	"loading": {
 		"defaultMessage": "Laden…"
 	},
+	"location-status.disabled": {
+		"defaultMessage": "Deaktiviert"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Aktiv"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Nicht aktiv"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx hat diese Location abgelehnt, daher wurde sie deaktiviert. Der Rest des Hosts funktioniert weiter."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Nicht auflösbar"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "Der Ziel-Host kann gerade nicht aufgelöst werden. Anfragen an diese Location schlagen fehl, bis er erreichbar ist."
+	},
+	"location.advanced": {
+		"defaultMessage": "Erweitert"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Hat eine eigene Nginx-Konfiguration"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Eine andere Location verwendet bereits {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Diese Location enthält Fehler"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "Der Host enthält unzulässige Zeichen (Anführungszeichen, ;, Klammern, $, # oder \\). Eine einzelne nginx-Variable wie $backend ist erlaubt."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "Der Host darf keine Leerzeichen enthalten"
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Ungültige Zeichen im Weiterleitungspfad (Leerzeichen, Anführungszeichen, ;, Klammern, # oder \\). nginx-Variablen wie $uri sind erlaubt."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Einige benutzerdefinierte Locations enthalten Fehler"
+	},
 	"location.filter": {
 		"defaultMessage": "Nach Pfad oder Ziel filtern"
+	},
+	"location.path-label": {
+		"defaultMessage": "Location"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Diese Location aktivieren oder deaktivieren"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, one {# Location} other {# Locations}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, one {# Problem} other {# Probleme}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Verifizierungscode"
@@ -550,6 +628,9 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Geben Sie hier Ihre benutzerdefinierte Nginx-Konfiguration auf eigene Gefahr ein!"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Nginx-Ausgabe anzeigen"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Sie haben keinen Zugriff, um dies anzuzeigen."
@@ -641,11 +722,20 @@
 	"password.show": {
 		"defaultMessage": "Passwort anzeigen"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Erlaubte Proxy Hosts"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Gewährt zusätzlich Zugriff auf ausgewählte Proxy Hosts, die andere Benutzer erstellt haben (neben den eigenen Hosts des Benutzers)."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Versteckt"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Verwalten"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Keine Proxy Hosts gefunden"
 	},
 	"permissions.view": {
 		"defaultMessage": "Nur anzeigen"
@@ -715,6 +805,18 @@
 	},
 	"save": {
 		"defaultMessage": "Speichern"
+	},
+	"save-warning.offline": {
+		"defaultMessage": "Gespeichert, aber nginx konnte diesen Host nicht laden, daher ist er offline:"
+	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, one {# benutzerdefinierte Location wurde deaktiviert, weil nginx sie abgelehnt hat.} other {# benutzerdefinierte Locations wurden deaktiviert, weil nginx sie abgelehnt hat.}}"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Mit Warnungen gespeichert"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, one {# benutzerdefinierte Location zeigt auf einen Host, der gerade nicht aufgelöst werden kann.} other {# benutzerdefinierte Locations zeigen auf Hosts, die gerade nicht aufgelöst werden können.}}"
 	},
 	"setting": {
 		"defaultMessage": "Einstellung"
