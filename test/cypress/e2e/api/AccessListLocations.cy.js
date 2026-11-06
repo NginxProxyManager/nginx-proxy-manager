@@ -31,7 +31,7 @@ describe('Per-path Access Lists', () => {
 	 */
 	const request = (path, creds) => {
 		const auth = creds ? `-u '${creds.username}:${creds.password}'` : '';
-		return cy.exec(`curl --noproxy '*' -s -w '\n%{http_code}' ${auth} http://${domain}${path}`)
+		return cy.task('exec', { command: `curl --noproxy '*' -s -w '\n%{http_code}' ${auth} http://${domain}${path}` }, { log: false })
 			.then((result) => {
 				expect(result.exitCode).to.eq(0);
 				const lines = result.stdout.trim().split('\n');

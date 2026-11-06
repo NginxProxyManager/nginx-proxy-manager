@@ -116,3 +116,30 @@ label.row {
     margin-left: 0;
   }
 }
+
+/* Keep Tabler 1.5's behaviour on Tabler 1.6/1.7. App.css loads before the
+   dynamically imported Tabler CSS, hence the doubled :root selectors. */
+
+/* 1.6 dropped the reserved scrollbar gutter, so the layout shifted 7px between short and long pages */
+html {
+	scrollbar-gutter: stable;
+}
+@supports not (scrollbar-gutter: stable) {
+	html {
+		overflow-y: scroll;
+	}
+}
+
+/* 1.6+ mixes the focus ring 50% with the background (75% dark, about 2.1:1 on white); restore full strength */
+:root:root {
+	--tblr-focus-ring-opacity: 1;
+	--tblr-focus-ring-opacity-dark: 1;
+}
+
+/* Coloured primary buttons (btn-primary + bg-<colour>) got a blue primary border in 1.7 */
+.btn-primary[class*=" bg-"] {
+	--tblr-btn-border-color: transparent;
+	--tblr-btn-hover-border-color: transparent;
+	--tblr-btn-active-border-color: transparent;
+	--tblr-btn-box-shadow: var(--tblr-shadow-input);
+}

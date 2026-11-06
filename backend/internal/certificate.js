@@ -24,6 +24,104 @@ const certbotCommand = "certbot";
 const certbotLogsDir = "/data/logs";
 const certbotWorkDir = "/tmp/letsencrypt-lib";
 
+// Certbot output lines that say nothing about why a request failed
+const certbotNoise = [
+	/^Saving debug log/,
+	/^Ask for help/,
+	/^See the logfile/,
+	/^(- )+-?$/,
+	/^Processing \//,
+	/^Renewing an existing/,
+	/^Requesting a certificate/,
+	/^Plugins selected/,
+	/^Account registered/,
+	/^Waiting \d+ seconds/,
+	/^All renewals failed/,
+	/^\S+\/fullchain\.pem \(failure\)$/,
+	/^\d+ renew failure\(s\)/,
+];
+
+// Plain-language hints for failures that are common and fixable outside NPM
+const certbotHints = [
+	[
+		/expected \S+ to be a symlink/i,
+		() =>
+			"This certificate's files in /etc/letsencrypt were copied without their symlinks (live/ must link to archive/). Restore /etc/letsencrypt from a copy made with tar or rsync -a, or delete this certificate and create it again.",
+	],
+	[
+		/Renewal configuration file \S+ is broken/i,
+		() =>
+			"This certificate's files in /etc/letsencrypt are damaged or missing. Restore /etc/letsencrypt from a backup, or delete this certificate and create it again.",
+	],
+	[
+		/\b9109\b.*?location: ([0-9a-f.:]+)/i,
+		(m) => {
+			const ip = m[1].replace(/\.+$/, "");
+			return `Cloudflare refused the API token from this server's public IP (${ip}). The token has Client IP Address Filtering: add ${ip} to the token in Cloudflare (My Profile > API Tokens), or remove the filter, then renew again.`;
+		},
+	],
+	[
+		/\b(6003|6111|9103|9109|10000)\b|Invalid request headers|Invalid access token|Authentication error/i,
+		() =>
+			"Cloudflare rejected the API token. Check the token value and that it has Zone > DNS > Edit for this domain's zone.",
+	],
+	[
+		/too many (certificates|failed authorizations|new orders)|rateLimited/i,
+		() => "Let's Encrypt rate limit reached. Wait before retrying (see https://letsencrypt.org/docs/rate-limits/).",
+	],
+	[
+		/NXDOMAIN|DNS problem/i,
+		() => "Let's Encrypt could not look up the domain. Check the DNS records of every domain on the certificate.",
+	],
+	[
+		/Timeout during connect|Connection refused|Invalid response from/i,
+		() =>
+			"Let's Encrypt could not reach this server over HTTP (port 80) for the challenge. Check that the domain points here and port 80 is open, or use a DNS challenge.",
+	],
+];
+
+/**
+ * Turns certbot's stderr into a message the UI can show: a hint for common causes plus certbot's own reason.
+ * Certbot never prints DNS provider credentials.
+ *
+ * @param   {String} stderr
+ * @returns {String}
+ */
+const certbotFailureMessage = (stderr) => {
+	const reason = `${stderr || ""}`
+		.split("\n")
+		.map((line) => line.trim())
+		.filter((line) => line && !certbotNoise.some((re) => re.test(line)))
+		.join(" ")
+		.slice(0, 800);
+
+	for (const [pattern, hint] of certbotHints) {
+		const match = reason.match(pattern);
+		if (match) {
+			return `${hint(match)} (Certbot: ${reason})`;
+		}
+	}
+	return reason ? `Certbot failed: ${reason}` : "Certbot failed. See /data/logs/letsencrypt.log for details.";
+};
+
+/**
+ * Runs certbot; a failure becomes a public error with the real reason instead of "Internal Error".
+ *
+ * @param   {Array}  args
+ * @param   {Object} [opts]
+ * @returns {Promise}
+ */
+const runCertbot = async (args, opts) => {
+	try {
+		return await utils.execFile(certbotCommand, args, opts);
+	} catch (err) {
+		if (err instanceof error.CommandError) {
+			throw new error.ValidationError(certbotFailureMessage(err.message), err);
+		}
+		throw err;
+	}
+};
+
 const omissions = () => {
 	return ["is_deleted", "owner.is_deleted", "meta.dns_provider_credentials", "meta.certificate_key"];
 };
@@ -418,8 +516,38 @@ const internalCertificate = {
 		if (row.provider === "letsencrypt") {
 			// Revoke the cert
 			await internalCertificate.revokeLetsEncryptSsl(row);
+			// Certbot leaves the files behind when it can't revoke (e.g. a broken renewal config); remove them anyway
+			internalCertificate.removeLetsEncryptFiles(row.id);
 		}
 		return true;
+	},
+
+	/**
+	 * Removes a certificate's certbot files, as `certbot delete` would.
+	 *
+	 * @param {Number}  certificateId
+	 */
+	removeLetsEncryptFiles: (certificateId) => {
+		const paths = [
+			internalCertificate.getLiveCertPath(certificateId),
+			`/etc/letsencrypt/archive/npm-${certificateId}`,
+			`/etc/letsencrypt/renewal/npm-${certificateId}.conf`,
+			`/etc/letsencrypt/credentials/credentials-${certificateId}`,
+		];
+		const failed = [];
+		for (const p of paths) {
+			try {
+				fs.rmSync(p, { recursive: true, force: true });
+			} catch (err) {
+				logger.error(`Could not remove ${p}: ${err.message}`);
+				failed.push(p);
+			}
+		}
+		if (failed.length) {
+			throw new error.ValidationError(
+				`The certificate was removed from NPM, but these files could not be deleted: ${failed.join(", ")}. Delete them by hand.`,
+			);
+		}
 	},
 
 	/**
@@ -813,7 +941,7 @@ const internalCertificate = {
 
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
-		const result = await utils.execFile(certbotCommand, args, adds.opts);
+		const result = await runCertbot(args, adds.opts);
 		logger.success(result);
 		return result;
 	},
@@ -862,7 +990,8 @@ const internalCertificate = {
 		if (hasConfigArg) {
 			args.push(`--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation);
 		}
-		if (certificate.meta.propagation_seconds !== undefined) {
+		// The route53 plugin waits for the change through the AWS API and has no propagation option
+		if (certificate.meta.propagation_seconds !== undefined && certificate.meta.dns_provider !== "route53") {
 			args.push(
 				`--${dnsPlugin.full_plugin_name}-propagation-seconds`,
 				certificate.meta.propagation_seconds.toString(),
@@ -880,7 +1009,7 @@ const internalCertificate = {
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
 		try {
-			const result = await utils.execFile(certbotCommand, args, adds.opts);
+			const result = await runCertbot(args, adds.opts);
 			logger.info(result);
 			return result;
 		} finally {
@@ -932,6 +1061,8 @@ const internalCertificate = {
 				meta: updatedCertificate,
 			});
 
+			await internalNginx.reload();
+
 			return updatedCertificate;
 		}
 
@@ -974,7 +1105,7 @@ const internalCertificate = {
 
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
-		const result = await utils.execFile(certbotCommand, args, adds.opts);
+		const result = await runCertbot(args, adds.opts);
 		logger.info(result);
 		return result;
 	},
@@ -1058,7 +1189,7 @@ const internalCertificate = {
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
 		try {
-			const result = await utils.execFile(certbotCommand, args, adds.opts);
+			const result = await runCertbot(args, adds.opts);
 			logger.info(result);
 			return result;
 		} finally {
@@ -1101,7 +1232,7 @@ const internalCertificate = {
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
 		try {
-			const result = await utils.execFile(certbotCommand, args, adds.opts);
+			const result = await runCertbot(args, adds.opts);
 			await utils.exec(`rm -f '/etc/letsencrypt/credentials/credentials-${certificate.id}' || true`);
 			logger.info(result);
 			return result;
