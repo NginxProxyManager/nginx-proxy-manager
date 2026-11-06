@@ -41,7 +41,7 @@ describe("Estonian UI locale", () => {
 			"object",
 			"objects",
 			"id",
-			"date",
+      "date",
 			"users",
 			"rules",
 			"max",

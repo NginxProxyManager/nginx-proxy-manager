@@ -1,0 +1,7 @@
+{
+	"type": "array",
+	"description": "SSO Client list",
+	"items": {
+		"$ref": "./sso-client-object.json"
+	}
+}

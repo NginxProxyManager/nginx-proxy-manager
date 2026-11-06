@@ -329,6 +329,9 @@
 	"column.status": {
 		"defaultMessage": "Status"
 	},
+	"column.type": {
+		"defaultMessage": "Sorte"
+	},
 	"created-on": {
 		"defaultMessage": "Erstelldatum: {date}"
 	},
@@ -755,8 +758,236 @@
 	"sign-in": {
 		"defaultMessage": "Login"
 	},
+	"sign-in-with": {
+		"defaultMessage": "Login mit {name}"
+	},
+	"single-sign-on": {
+		"defaultMessage": "Einmalanmeldung"
+	},
 	"ssl-certificate": {
 		"defaultMessage": "SSL-Zertifikate"
+	},
+	"sso-client": {
+		"defaultMessage": "SSO Klient"
+	},
+	"sso-clients": {
+		"defaultMessage": "SSO Klientel"
+	},
+	"sso-clients.count": {
+		"defaultMessage": "{count} {count, plural, one {SSO Klient} other {SSO Klientel}}"
+	},
+	"sso.action.add": {
+		"defaultMessage": "Neu: {type}"
+	},
+	"sso.column.internal": {
+		"defaultMessage": "Benutzerzugriff"
+	},
+	"sso.column.provision": {
+		"defaultMessage": "Bereitstellung"
+	},
+	"sso.config.access.allow-internal-if-admin.hint": {
+		"defaultMessage": "Die Anmeldung ist nur für bestehende Benutzer möglich, die Administratoren sind."
+	},
+	"sso.config.access.allow-internal-if-admin.label": {
+		"defaultMessage": "Nur für Administratoren"
+	},
+	"sso.config.access.allow-internal.hint": {
+		"defaultMessage": "Anmeldung für ein aktives internes Benutzerkonto mit übereinstimmender E-Mail-Adresse erlauben."
+	},
+	"sso.config.access.allow-internal.label": {
+		"defaultMessage": "Bestehende Benutzer"
+	},
+	"sso.config.access.label": {
+		"defaultMessage": "Steuern Sie, wer nach erfolgreicher Authentifizierung und Autorisierung durch den IdP auf Nginx Proxy Manager zugreifen darf."
+	},
+	"sso.config.access.provision-user.hint": {
+		"defaultMessage": "Neue Benutzerkonten in Nginx Proxy Manager bereitstellen."
+	},
+	"sso.config.access.provision-user.label": {
+		"defaultMessage": "Neue Benutzer bereitstellen"
+	},
+	"sso.config.access.require-group.hint": {
+		"defaultMessage": "Verlangen, dass der IdP den groups-Claim sendet und dieser die angegebene Gruppe enthält."
+	},
+	"sso.config.access.require-group.label": {
+		"defaultMessage": "Gruppenmitgliedschaft verlangen"
+	},
+	"sso.config.access.role-map.hint": {
+		"defaultMessage": "Gruppennamen, die vom IdP gesendet werden, den Rollen zuordnen, mit denen neue Benutzer bereitgestellt werden sollen."
+	},
+	"sso.config.access.role-map.label": {
+		"defaultMessage": "Gruppen Rollen zuordnen"
+	},
+	"sso.config.client_id.hint": {
+		"defaultMessage": "Vom IdP bereitgestellte Client-ID"
+	},
+	"sso.config.client_id.label": {
+		"defaultMessage": "Client-ID"
+	},
+	"sso.config.client_secret.hint": {
+		"defaultMessage": "Leer lassen, um den aktuellen Wert beizubehalten"
+	},
+	"sso.config.client_secret.label": {
+		"defaultMessage": "Client-Secret"
+	},
+	"sso.config.configuration_url.hint": {
+		"defaultMessage": "Z. B. https://authentik.yourdomain.com/application/o/nginx-pm"
+	},
+	"sso.config.configuration_url.label": {
+		"defaultMessage": "OpenID-Konfigurationsaussteller-URL"
+	},
+	"sso.config.domain.hint": {
+		"defaultMessage": "Domain der Auth0-Anwendung, z. B. dev-foo123.us.auth0.com"
+	},
+	"sso.config.domain.label": {
+		"defaultMessage": "Domain"
+	},
+	"sso.config.enabled.label": {
+		"defaultMessage": "Aktiviert"
+	},
+	"sso.config.github_client_id.hint": {
+		"defaultMessage": "Client-ID der GitHub-OAuth-Anwendung"
+	},
+	"sso.config.github_client_id.label": {
+		"defaultMessage": "Client-ID"
+	},
+	"sso.config.name.hint": {
+		"defaultMessage": "Z. B. Authentik"
+	},
+	"sso.config.name.label": {
+		"defaultMessage": "Name"
+	},
+	"sso.config.placeholder.group-name": {
+		"defaultMessage": "Gruppenname"
+	},
+	"sso.config.protocol-disabled": {
+		"defaultMessage": "Das Protokoll {protocol} ist nicht implementiert. Diese Client-Konfiguration wird nicht verwendet."
+	},
+	"sso.config.protocol.label": {
+		"defaultMessage": "Protokoll"
+	},
+	"sso.config.redirect_url.hint": {
+		"defaultMessage": "Lassen Sie den Teil „{id}“ in der generierten URL stehen. Er wird nach dem Speichern des Formulars ersetzt. Anschließend können Sie die endgültige URL in die Liste der zulässigen Callback-URLs Ihres IdP kopieren."
+	},
+	"sso.config.redirect_url.label": {
+		"defaultMessage": "Weiterleitungs-URL"
+	},
+	"sso.config.saml_endpoint.hint": {
+		"defaultMessage": "Endpunkt-URL des SAML-Anbieters"
+	},
+	"sso.config.saml_endpoint.label": {
+		"defaultMessage": "SAML-Endpunkt"
+	},
+	"sso.config.settings.button-preview.label": {
+		"defaultMessage": "Schaltflächenvorschau"
+	},
+	"sso.config.settings.button-text.hint": {
+		"defaultMessage": "Sie können die Beschriftung der Anmeldeschaltfläche überschreiben. Andernfalls wird der Name des SSO-Clients in übersetzter Form verwendet."
+	},
+	"sso.config.settings.button-text.label": {
+		"defaultMessage": "Schaltflächentext"
+	},
+	"sso.config.settings.require-verified-email.hint": {
+		"defaultMessage": "Verlangen, dass der IdP den Claim „email_verified“ mit dem Wert true sendet. Dies wird nur geprüft, bevor sich ein Benutzer erfolgreich über diesen IdP anmeldet."
+	},
+	"sso.config.settings.require-verified-email.label": {
+		"defaultMessage": "Bestätigte E-Mail-Adresse verlangen"
+	},
+	"sso.config.tabs.idp": {
+		"defaultMessage": "Identitätsanbieter"
+	},
+	"sso.config.tabs.provisioning": {
+		"defaultMessage": "Bereitstellung"
+	},
+	"sso.config.tabs.settings": {
+		"defaultMessage": "Einstellungen"
+	},
+	"sso.config.tabs.users": {
+		"defaultMessage": "Benutzerzugriff"
+	},
+	"sso.error.config.group-reqired": {
+		"defaultMessage": "Ungültige Konfiguration: Gruppenname oder Rollenzuordnung erforderlich (4)"
+	},
+	"sso.error.default": {
+		"defaultMessage": "Unerwarteter Fehler, bitte versuchen Sie es später noch einmal."
+	},
+	"sso.error.email-claim-required": {
+		"defaultMessage": "Der Identitätsanbieter hat den Claim „email“ nicht gesendet."
+	},
+	"sso.error.group-or-role-map": {
+		"defaultMessage": "Entweder diese Option oder „Gruppen Rollen zuordnen“ ist erforderlich."
+	},
+	"sso.error.login.group-required": {
+		"defaultMessage": "Anmeldung aufgrund der Gruppenmitgliedschaft nicht erlaubt (14)"
+	},
+	"sso.error.login.not-found": {
+		"defaultMessage": "Für die vom IdP angegebene E-Mail-Adresse wurde kein passender Benutzer gefunden (11)"
+	},
+	"sso.error.login.not-permitted": {
+		"defaultMessage": "Anmeldung aufgrund der Richtlinie nicht erlaubt (10)"
+	},
+	"sso.error.login.not-permitted-2": {
+		"defaultMessage": "Aufgrund der Richtlinie nicht erlaubt (12)"
+	},
+	"sso.error.login.verified-email": {
+		"defaultMessage": "Anmeldung mit einer nicht bestätigten E-Mail-Adresse nicht erlaubt (17)"
+	},
+	"sso.error.no-groups-claim": {
+		"defaultMessage": "Der IdP hat den Claim „groups“ nicht gesendet oder er war leer (13)"
+	},
+	"sso.error.no-groups-claim-2": {
+		"defaultMessage": "Der IdP hat den Claim „groups“ nicht gesendet oder er war leer. (5)"
+	},
+	"sso.error.not-permitted": {
+		"defaultMessage": "Aufgrund der Richtlinie nicht erlaubt (2)"
+	},
+	"sso.error.signup.group-required": {
+		"defaultMessage": "Registrierung aufgrund der Gruppenmitgliedschaft nicht erlaubt (6)"
+	},
+	"sso.error.signup.group-required-2": {
+		"defaultMessage": "Registrierung aufgrund der Gruppenmitgliedschaft nicht erlaubt (7)"
+	},
+	"sso.error.signup.group-required-3": {
+		"defaultMessage": "Registrierung aufgrund der Gruppenmitgliedschaft nicht erlaubt (8)"
+	},
+	"sso.error.signup.group-required-4": {
+		"defaultMessage": "Registrierung aufgrund der Gruppenmitgliedschaft nicht erlaubt (9)"
+	},
+	"sso.error.signup.not-permitted": {
+		"defaultMessage": "Registrierung aufgrund der Richtlinie nicht erlaubt (1)"
+	},
+	"sso.error.signup.not-permitted-2": {
+		"defaultMessage": "Registrierung aufgrund der Richtlinie nicht erlaubt (3)"
+	},
+	"sso.error.signup.unique-email": {
+		"defaultMessage": "Die vom IdP angegebene E-Mail-Adresse ist bereits registriert (15)"
+	},
+	"sso.error.signup.verified-email": {
+		"defaultMessage": "Registrierung mit einer nicht bestätigten E-Mail-Adresse nicht erlaubt (16)"
+	},
+	"sso.header.auth-hint": {
+		"defaultMessage": "Über Single Sign-On angemeldet"
+	},
+	"sso.info.internal-users-count": {
+		"defaultMessage": "{users} {users, plural, one {Benutzer} other {Benutzer}} angemeldet"
+	},
+	"sso.info.provisioned-users-count": {
+		"defaultMessage": "{users} {users, plural, one {Benutzerkonto } other {Benutzerkonten bereitgestellt}}"
+	},
+	"sso.login.heading": {
+		"defaultMessage": "oder mit OAuth fortfahren"
+	},
+	"sso.menu.label": {
+		"defaultMessage": "Single Sign-On"
+	},
+	"sso.stats.accessed": {
+		"defaultMessage": "Zugriff am {date}"
+	},
+	"sso.stats.never-accessed": {
+		"defaultMessage": "Nie aufgerufen"
+	},
+	"sso.warning.partial-access": {
+		"defaultMessage": "Wenn sowohl „Benutzerzugriff“ als auch „Neue Benutzer bereitstellen“ deaktiviert sind, können über diesen SSO-Client weder Benutzer bereitgestellt noch bestehende interne Benutzerkonten für die Anmeldung verwendet werden. Bereits bereitgestellte Benutzer können weiterhin auf ihre Konten zugreifen."
 	},
 	"stream": {
 		"defaultMessage": "Stream"

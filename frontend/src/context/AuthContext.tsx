@@ -24,6 +24,7 @@ export interface AuthContextType {
 	verifyTwoFactor: (code: string) => Promise<void>;
 	cancelTwoFactor: () => void;
 	loginAs: (id: number) => Promise<void>;
+	loginSingleSignOnUser: (token: string, expires: number) => Promise<void>;
 	logout: () => void;
 	token?: string;
 }
@@ -75,6 +76,16 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		window.location.reload();
 	};
 
+	const loginSingleSignOnUser = async (token: string, expiry: number) => {
+		if (AuthStore.hasActiveToken() || !token || !expiry) return;
+		const expires = new Date(expiry).toISOString();
+		const returnTo = localStorage.getItem("returnTo");
+		AuthStore.add({ token, expires });
+		queryClient.clear();
+		localStorage.removeItem("returnTo");
+		window.location.replace(returnTo ?? "/");
+	};
+
 	const logout = () => {
 		if (AuthStore.count() >= 2) {
 			AuthStore.drop();
@@ -109,6 +120,7 @@ function AuthProvider({ children, tokenRefreshInterval = 5 * 60 * 1000 }: Props)
 		verifyTwoFactor,
 		cancelTwoFactor,
 		loginAs,
+		loginSingleSignOnUser,
 		logout,
 	};
 

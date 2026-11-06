@@ -1,6 +1,6 @@
 {
 	"name": "nginx-proxy-manager",
-	"version": "2.0.0",
+	"version": "2.16.0",
 	"description": "A beautiful interface for creating Nginx endpoints",
 	"author": "Jamie Curnow <jc@jc21.com>",
 	"license": "MIT",
@@ -14,6 +14,7 @@
 	},
 	"dependencies": {
 		"@apidevtools/json-schema-ref-parser": "^16.0.5",
+		"@auth0/auth0-auth-js": "^1.18.0",
 		"ajv": "^8.20.0",
 		"archiver": "^8.0.0",
 		"batchflow": "^0.4.0",
@@ -33,7 +34,8 @@
 		"mysql2": "^3.24.6",
 		"node-rsa": "^2.0.0",
 		"objection": "4.4.2",
-		"otplib": "^13.6.0",
+		"openid-client": "^6.8.8",
+    "otplib": "^13.6.0",
 		"path": "^0.12.7",
 		"pg": "^8.23.1",
 		"proxy-agent": "^8.0.2",

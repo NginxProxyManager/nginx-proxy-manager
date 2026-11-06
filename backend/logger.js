@@ -116,6 +116,7 @@ const importer = createLogger("Importer ");
 const setup = createLogger("Setup    ");
 const ipRanges = createLogger("IP Ranges");
 const remoteVersion = createLogger("Remote Version");
+const sso = createLogger("SSO      ");
 
 const debug = (logger, ...args) => {
 	if (isDebugMode()) {
@@ -123,4 +124,4 @@ const debug = (logger, ...args) => {
 	}
 };
 
-export { debug, global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges, remoteVersion };
+export { debug, global, migrate, express, access, nginx, ssl, certbot, importer, setup, ipRanges, remoteVersion, sso };
