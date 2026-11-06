@@ -30,6 +30,7 @@ import {
 	describeConfigLine,
 	isolateFaultyLocations,
 	isVariableHost,
+	locationDnsMarker,
 	MESSAGES as LOCATION_MESSAGES,
 	parseLocationPath,
 	preflightLocation,
@@ -577,7 +578,7 @@ const internalNginx = {
 								: s,
 						);
 						// writes the host's file, see below
-						const text = await internalNginx.generateConfig(hostType, host, { locationStates: stubbed });
+						const text = await internalNginx.generateConfig(hostType, host, { locationStates: stubbed, modeResolver });
 						return internalNginx.runTest({ file: filename, text });
 					},
 				});
@@ -601,7 +602,7 @@ const internalNginx = {
 			}
 
 			try {
-				configText = await internalNginx.generateConfig(hostType, host, { locationStates: states });
+				configText = await internalNginx.generateConfig(hostType, host, { locationStates: states, modeResolver });
 			} catch (err) {
 				if (err.unsafeNginxValue && !opts.dryRun) {
 					// A stored value that could add nginx directives (saved before the API refused such values, see
@@ -2329,6 +2330,7 @@ const internalNginx = {
 	 * @param   {Object}  host_row
 	 * @param   {Object}  [opts]
 	 * @param   {Array}   [opts.locationStates]  from computeLocationStates(), computed when missing
+	 * @param   {Function} [opts.modeResolver]   the DNS setting is recorded in the config, see locationDnsMarker()
 	 * @returns {Promise<String>} the written config
 	 */
 	generateConfig: async (host_type, host_row, opts = {}) => {
@@ -2378,9 +2380,9 @@ const internalNginx = {
 		}
 
 		if (Array.isArray(host.locations) && host.locations.length) {
-			const states =
-				opts.locationStates ||
-				(await internalNginx.computeLocationStates(host.locations, createModeResolver()));
+			const modeResolver = opts.modeResolver || createModeResolver();
+			const states = opts.locationStates || (await internalNginx.computeLocationStates(host.locations, modeResolver));
+			host.npm_location_dns = locationDnsMarker(modeResolver);
 
 			// Allow someone who is using / custom location path to use it, and skip the default / location.
 			// A location the user disabled doesn't count, the default location takes over.
@@ -2757,6 +2759,8 @@ const internalNginx = {
 							Array.isArray(row.locations) &&
 							row.locations.length > 0 &&
 							(text.indexOf(CONFIG_VERSION_MARKER) === -1 ||
+								// written for another NPM_LOCATION_DYNAMIC_DNS / resolver setting
+								text.indexOf(locationDnsMarker(modeResolver)) === -1 ||
 								// The DNS retry timer only lives in memory: after a restart within its window
 								// nobody would try these locations again and the status would stay unresolved
 								(row.meta?.nginx_locations || []).some((state) => state?.status === "unresolved")));
