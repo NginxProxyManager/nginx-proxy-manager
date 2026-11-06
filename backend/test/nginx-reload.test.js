@@ -119,7 +119,7 @@ describe("createReloadWaiter", () => {
 		const outcome = await waiter.reloadAndWait();
 		assert.deepEqual(outcome, { confirmed: true, waitedMs: 40 });
 
-		// an old worker that never stops: the new config is applied all the same
+		// an old worker that is neither gone nor shutting down: no new generation has replaced the old one
 		const stuck = fakeNginx();
 		const clock2 = fakeClock();
 		const waiter2 = createReloadWaiter({
@@ -134,7 +134,11 @@ describe("createReloadWaiter", () => {
 				stuck.removeProcess(101);
 			},
 		});
-		assert.deepEqual(await waiter2.reloadAndWait(), { confirmed: true, oldStillRunning: true, waitedMs: 200 });
+		assert.deepEqual(await waiter2.reloadAndWait(), {
+			confirmed: false,
+			reason: "the nginx workers from before the reload were still running after 200 ms",
+			waitedMs: 200,
+		});
 	});
 
 	it("does not count the worker processes of the old generation or processes of other parents", async () => {
@@ -219,6 +223,129 @@ describe("createReloadWaiter", () => {
 		const outcome2 = await waiter2.reloadAndWait();
 		assert.equal(outcome2.rejected, undefined);
 		assert.match(outcome2.reason, /no new worker processes within 100 ms/);
+	});
+
+	describe("a worker that crashed and was restarted while the reload is rejected", () => {
+		const restart = (nginx, errorLog, pid, replacement) => {
+			nginx.removeProcess(pid);
+			nginx.addProcess(replacement, 100);
+			fs.appendFileSync(errorLog, `2026/11/05 10:00:01 [alert] 100#100: worker process ${pid} exited on signal 9\n`);
+		};
+		const rejectBind = (errorLog) =>
+			fs.appendFileSync(
+				errorLog,
+				"2026/11/05 10:00:01 [emerg] 100#100: bind() to 0.0.0.0:3000 failed (98: Address in use)\n" +
+					"2026/11/05 10:00:03 [emerg] 100#100: still could not bind()\n",
+			);
+
+		it("keeps checking for the rejection while the other old workers keep running", async () => {
+			const nginx = fakeNginx();
+			const clock = fakeClock();
+			const errorLog = path.join(path.dirname(nginx.pidFile), "fallback_error.log");
+			fs.writeFileSync(errorLog, "");
+			const waiter = createReloadWaiter({
+				procDir: nginx.procDir,
+				pidFile: nginx.pidFile,
+				errorLog,
+				now: clock.now,
+				sleep: async (ms) => {
+					// the master reaps and restarts the crashed worker first, then fails to bind() for 2.5 s
+					if (clock.sleeps.length === 1) {
+						// no [alert] line: an old worker that exited with code 0 is logged below the level
+						nginx.removeProcess(101);
+						nginx.addProcess(103, 100);
+					}
+					if (clock.sleeps.length === 100) {
+						rejectBind(errorLog);
+					}
+					await clock.sleep(ms);
+				},
+				intervalMs: 25,
+				signal: async () => {},
+			});
+			const outcome = await waiter.reloadAndWait();
+			assert.equal(outcome.confirmed, false);
+			assert.equal(outcome.rejected, true);
+			assert.equal(outcome.emerg, "bind() to 0.0.0.0:3000 failed (98: Address in use)");
+			assert.equal(outcome.waitedMs, 2525);
+		});
+
+		it("does not count the restarted worker of a single-worker nginx as a new generation", async () => {
+			const nginx = fakeNginx([101]);
+			const clock = fakeClock();
+			const errorLog = path.join(path.dirname(nginx.pidFile), "fallback_error.log");
+			fs.writeFileSync(errorLog, "");
+			const waiter = createReloadWaiter({
+				procDir: nginx.procDir,
+				pidFile: nginx.pidFile,
+				errorLog,
+				now: clock.now,
+				sleep: async (ms) => {
+					if (clock.sleeps.length === 1) {
+						// the only old worker is gone and a new child runs: what a reload looks like in /proc
+						restart(nginx, errorLog, 101, 103);
+					}
+					if (clock.sleeps.length === 40) {
+						rejectBind(errorLog);
+					}
+					await clock.sleep(ms);
+				},
+				intervalMs: 25,
+				signal: async () => {},
+			});
+			const outcome = await waiter.reloadAndWait();
+			assert.equal(outcome.rejected, true);
+			assert.equal(outcome.waitedMs, 1025);
+
+			// without a rejection and without a reload it is not confirmed either, within the time limit
+			const quiet = fakeNginx([101]);
+			const clock2 = fakeClock();
+			const log2 = path.join(path.dirname(quiet.pidFile), "fallback_error.log");
+			fs.writeFileSync(log2, "");
+			const waiter2 = createReloadWaiter({
+				procDir: quiet.procDir,
+				pidFile: quiet.pidFile,
+				errorLog: log2,
+				now: clock2.now,
+				sleep: clock2.sleep,
+				timeoutMs: 200,
+				intervalMs: 50,
+				signal: async () => restart(quiet, log2, 101, 103),
+			});
+			const outcome2 = await waiter2.reloadAndWait();
+			assert.equal(outcome2.confirmed, false);
+			assert.equal(outcome2.rejected, undefined);
+			assert.equal(outcome2.waitedMs, 200);
+		});
+
+		it("confirms a reload that replaced the old generation although a worker was restarted before", async () => {
+			const nginx = fakeNginx();
+			const clock = fakeClock();
+			const errorLog = path.join(path.dirname(nginx.pidFile), "fallback_error.log");
+			fs.writeFileSync(errorLog, "");
+			const waiter = createReloadWaiter({
+				procDir: nginx.procDir,
+				pidFile: nginx.pidFile,
+				errorLog,
+				now: clock.now,
+				sleep: async (ms) => {
+					if (clock.sleeps.length === 1) {
+						restart(nginx, errorLog, 101, 103);
+					}
+					if (clock.sleeps.length === 3) {
+						// the reload: a new generation, every child from before is told to shut down
+						nginx.addProcess(104, 100);
+						nginx.addProcess(105, 100);
+						nginx.shuttingDown(102);
+						nginx.shuttingDown(103);
+					}
+					await clock.sleep(ms);
+				},
+				intervalMs: 25,
+				signal: async () => {},
+			});
+			assert.deepEqual(await waiter.reloadAndWait(), { confirmed: true, waitedMs: 100 });
+		});
 	});
 
 	it("reports a master that has exited", async () => {
