@@ -31,5 +31,6 @@
  {"path":"~* ^/rxi/(?<rest>.*)$","fp":"/v2/$rest"},
  {"path":"~ ^/cachere/(.*)$","fp":"/v1/$1","cache":true},
  {"path":"@fb","fp":"/fb$request_uri"},
+ {"path":"/cro/","fp":"/c/","cache":true,"adv":"proxy_redirect off;"},
  {"path":"/tofb/","fp":"","adv":"error_page 418 = @fb; return 418;"}
 ]

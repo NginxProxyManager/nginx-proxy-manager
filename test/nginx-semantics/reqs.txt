@@ -108,3 +108,5 @@
 /tofb/x||:8443|"url":"/fb/tofb/x"
 /cachere/app.css|||"url":"/v1/app.css"
 /cachere/page||:8443|"url":"/v1/page"
+/cro/r?redir=abs|||http://echo:9000/c/r/next
+/cro/r.css?redir=abs|||http://echo:9000/c/r.css/next
