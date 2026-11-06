@@ -133,6 +133,34 @@ describe("mergeTargetResults", () => {
 		assert.equal(stream.ok, true);
 	});
 
+	it("a location with a variable forward path needs the resolver although the dry run renders it static", () => {
+		const targets = buildTestTargets("proxy_host", {
+			forward_host: "app",
+			forward_port: 80,
+			locations: [
+				{ path: "/api", forward_host: "st", forward_port: 80, forward_path: "/api/$arg_id" },
+				{ path: "/emb", forward_host: "st/v1/$1", forward_port: 80 },
+				{ path: "/plain", forward_host: "st", forward_port: 80, forward_path: "/api" },
+			],
+		});
+		const mismatch = { host: "st", port: 80, ok: true, code: "resolver_mismatch", message: "reachable, but" };
+		const merged = mergeTargetResults(
+			targets,
+			[{ ...mismatch, host: "app" }, mismatch, mismatch, mismatch],
+			[0, 1, 2].map((index) => ({ index, status: "ok", mode: "static" })),
+		);
+		assert.deepEqual(
+			merged.map((r) => [r.location_index, r.ok]),
+			[
+				[null, false],
+				[0, false],
+				[1, false],
+				[2, true],
+			],
+		);
+		assert.match(merged[1].message, /nginx resolves this upstream per request/);
+	});
+
 	it("a host whose main target only resolves through /etc/hosts tests with warnings", () => {
 		const targets = buildTestTargets("proxy_host", { forward_host: "app", forward_port: 80, locations: [] });
 		const upstreams = mergeTargetResults(targets, [{ host: "app", port: 80, ok: true, code: "resolver_mismatch" }]);

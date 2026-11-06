@@ -179,7 +179,8 @@ const checkTestTargets = async (targets, { enabled, consume, check }) => {
 
 /**
  * Puts the check results next to the targets they belong to. A resolver_mismatch is not ok for a target nginx
- * resolves per request (the main target, a custom location the test rendered in dynamic mode), like the health
+ * resolves per request (the main target, a custom location the test rendered in dynamic mode or one with a variable
+ * forward path, which is rendered static but still resolved per request), like the health
  * monitor counts it, see forResolverTarget().
  *
  * @param   {Array}      targets      from buildTestTargets()
@@ -192,9 +193,8 @@ const mergeTargetResults = (targets, results, locations = null) =>
 		const needsResolver =
 			target.location_index === null || typeof target.location_index === "undefined"
 				? target.resolver !== false
-				: Array.isArray(locations)
-					? isDynamicLocation(locations, target.location_index)
-					: !!target.resolver;
+				: target.variable_path === true ||
+					(Array.isArray(locations) ? isDynamicLocation(locations, target.location_index) : !!target.resolver);
 		return Object.assign({}, forResolverTarget(results[index], target, needsResolver), {
 			location_index: target.location_index ?? null,
 			path: typeof target.path === "string" ? target.path : null,
