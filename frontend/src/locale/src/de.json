@@ -431,11 +431,35 @@
 	"error.required": {
 		"defaultMessage": "Dies ist erforderlich."
 	},
+	"error.unknown": {
+		"defaultMessage": "Unbekannter Fehler"
+	},
 	"expires.on": {
 		"defaultMessage": "Ablauf am: {date}"
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
+	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Sie haben ungespeicherte Änderungen. Möchten Sie diese wirklich verwerfen?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Zuletzt konfiguriert {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx konnte die Konfiguration dieses Hosts nicht laden, daher ist er offline."
+	},
+	"host-status.details": {
+		"defaultMessage": "Statusdetails anzeigen"
+	},
+	"host-status.disabled": {
+		"defaultMessage": "Deaktiviert"
+	},
+	"host-status.error": {
+		"defaultMessage": "Fehler"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Fehlerprotokoll anzeigen"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Gängige Exploits blockieren"
@@ -551,6 +575,9 @@
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Geben Sie hier Ihre benutzerdefinierte Nginx-Konfiguration auf eigene Gefahr ein!"
 	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Nginx-Ausgabe anzeigen"
+	},
 	"no-permission-error": {
 		"defaultMessage": "Sie haben keinen Zugriff, um dies anzuzeigen."
 	},
@@ -641,11 +668,20 @@
 	"password.show": {
 		"defaultMessage": "Passwort anzeigen"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Erlaubte Proxy Hosts"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Gewährt zusätzlich Zugriff auf ausgewählte Proxy Hosts, die andere Benutzer erstellt haben (neben den eigenen Hosts des Benutzers)."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Versteckt"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Verwalten"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Keine Proxy Hosts gefunden"
 	},
 	"permissions.view": {
 		"defaultMessage": "Nur anzeigen"
@@ -715,6 +751,12 @@
 	},
 	"save": {
 		"defaultMessage": "Speichern"
+	},
+	"save-warning.offline": {
+		"defaultMessage": "Gespeichert, aber nginx konnte diesen Host nicht laden, daher ist er offline:"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Mit Warnungen gespeichert"
 	},
 	"setting": {
 		"defaultMessage": "Einstellung"

@@ -60,7 +60,11 @@ const processItems = async (model, type, hostType) => {
 	for (const row of rows) {
 		if (!DRY_RUN) {
 			logIt(`[${type}] Regenerating config #${row.id}: ${row.domain_names ? row.domain_names.join(", ") : 'port ' + row.incoming_port}`);
-			await internalNginx.configure(model, hostType, row);
+			try {
+				await internalNginx.configure(model, hostType, row);
+			} catch (err) {
+				logIt(`[${type}] Could not regenerate config #${row.id}: ${err.message}`, "error");
+			}
 		} else {
 			logIt(`[${type}] Skipping generation of config #${row.id}: ${row.domain_names ? row.domain_names.join(", ") : 'port ' + row.incoming_port}`);
 		}

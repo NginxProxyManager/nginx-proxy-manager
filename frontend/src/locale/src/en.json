@@ -431,6 +431,9 @@
 	"error.required": {
 		"defaultMessage": "This is required"
 	},
+	"error.unknown": {
+		"defaultMessage": "Unknown error"
+	},
 	"expires.on": {
 		"defaultMessage": "Expires: {date}"
 	},
@@ -439,6 +442,24 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "You have unsaved changes. Are you sure you want to discard them?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Last configured {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx could not load this host's configuration, so it is offline."
+	},
+	"host-status.details": {
+		"defaultMessage": "Show status details"
+	},
+	"host-status.disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"host-status.error": {
+		"defaultMessage": "Error"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "View error log"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
@@ -553,6 +574,9 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Enter your custom Nginx configuration here at your own risk!"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Show nginx output"
 	},
 	"no-permission-error": {
 		"defaultMessage": "You do not have access to view this."
@@ -727,6 +751,12 @@
 	},
 	"save": {
 		"defaultMessage": "Save"
+	},
+	"save-warning.offline": {
+		"defaultMessage": "Saved, but nginx could not load this host, so it is offline:"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Saved with warnings"
 	},
 	"setting": {
 		"defaultMessage": "Setting"

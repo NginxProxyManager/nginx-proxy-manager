@@ -2,7 +2,9 @@ import bodyParser from "body-parser";
 import compression from "compression";
 import express from "express";
 import fileUpload from "express-fileupload";
+import internalNginx from "./internal/nginx.js";
 import { isDebugMode } from "./lib/config.js";
+import errs from "./lib/error.js";
 import cors from "./lib/express/cors.js";
 import jwt from "./lib/express/jwt.js";
 import { debug, express as logger } from "./logger.js";
@@ -57,6 +59,18 @@ app.use((_, res, next) => {
 app.use(jwt());
 app.use("/", mainRoutes);
 
+// Nginx errors can name another host, only show those details to users who can see that host
+app.use((err, _req, res, next) => {
+	if (!(err instanceof errs.NginxConfigError) || !res.locals.access) {
+		next(err);
+		return;
+	}
+	internalNginx.redactConfigError(res.locals.access, err).then(
+		() => next(err),
+		() => next(err),
+	);
+});
+
 // production error handler
 // no stacktraces leaked to user
 app.use((err, req, res, _) => {
@@ -69,6 +83,10 @@ app.use((err, req, res, _) => {
 
 	if (typeof err.message_i18n !== "undefined") {
 		payload.error.message_i18n = err.message_i18n;
+	}
+
+	if (err.public && err.details && typeof err.details === "object") {
+		payload.error.details = err.details;
 	}
 
 	if (isDebugMode() || (req.baseUrl + req.path).includes("nginx/certificates")) {

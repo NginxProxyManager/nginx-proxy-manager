@@ -431,6 +431,9 @@
 	"error.required": {
 		"defaultMessage": "Trường này là bắt buộc"
 	},
+	"error.unknown": {
+		"defaultMessage": "Lỗi không xác định"
+	},
 	"expires.on": {
 		"defaultMessage": "Hết hạn: {date}"
 	},
@@ -439,6 +442,24 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "Bạn có các thay đổi chưa được lưu. Bạn có chắc chắn muốn hủy bỏ chúng không?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Cấu hình lần cuối lúc {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx không thể tải cấu hình của host này nên host đang ngoại tuyến."
+	},
+	"host-status.details": {
+		"defaultMessage": "Hiện chi tiết trạng thái"
+	},
+	"host-status.disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"host-status.error": {
+		"defaultMessage": "Lỗi"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Xem nhật ký lỗi"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
@@ -553,6 +574,9 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Nhập cấu hình Nginx tùy chỉnh tại đây, bạn tự chịu rủi ro!"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Hiện đầu ra của nginx"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Bạn không có quyền xem nội dung này."
@@ -727,6 +751,12 @@
 	},
 	"save": {
 		"defaultMessage": "Lưu"
+	},
+	"save-warning.offline": {
+		"defaultMessage": "Đã lưu, nhưng nginx không thể tải host này nên host đang ngoại tuyến:"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Đã lưu nhưng có cảnh báo"
 	},
 	"setting": {
 		"defaultMessage": "Cài đặt"
