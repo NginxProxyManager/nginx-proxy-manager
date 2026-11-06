@@ -20,6 +20,11 @@ import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
 
 const letsencryptConfig = "/etc/letsencrypt.ini";
+
+// The host types of internalHost.getHostsWithDomains(), see disableInUseHosts()
+const IN_USE_HOST_TYPES = ["proxy_host", "redirection_host", "dead_host"];
+// inUseResult -> ends the suspension of its hosts, see disableInUseHosts()
+const inUseSuspensions = new WeakMap();
 const certbotCommand = "certbot";
 const certbotLogsDir = "/data/logs";
 const certbotWorkDir = "/tmp/letsencrypt-lib";
@@ -237,15 +242,16 @@ const internalCertificate = {
 				// 1. Find out any hosts that are using any of the hostnames in this cert
 				const inUseResult = await internalHost.getHostsWithDomains(certificate.domain_names);
 
-				// 2. Disable them in nginx temporarily
-				await internalCertificate.disableInUseHosts(inUseResult);
-
+				// Checked before the hosts are disabled, they would stay disabled otherwise
 				const user = await userModel.query().where("is_deleted", 0).andWhere("id", data.owner_user_id).first();
 				if (!user?.email) {
 					throw new error.ValidationError(
 						"A valid email address must be set on your user account to use Let's Encrypt",
 					);
 				}
+
+				// 2. Disable them in nginx temporarily
+				await internalCertificate.disableInUseHosts(inUseResult);
 
 				// With DNS challenge no config is needed, so skip 3 and 5.
 				if (certificate.meta?.dns_challenge) {
@@ -1264,19 +1270,26 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	disableInUseHosts: async (inUseResult) => {
-		if (inUseResult?.total_count) {
-			if (inUseResult?.proxy_hosts.length) {
-				await internalNginx.bulkDeleteConfigs("proxy_host", inUseResult.proxy_hosts);
-			}
-
-			if (inUseResult?.redirection_hosts.length) {
-				await internalNginx.bulkDeleteConfigs("redirection_host", inUseResult.redirection_hosts);
-			}
-
-			if (inUseResult?.dead_hosts.length) {
-				await internalNginx.bulkDeleteConfigs("dead_host", inUseResult.dead_hosts);
-			}
+		if (!inUseResult?.total_count) {
+			return;
 		}
+		// The hosts are marked as suspended before their configs are removed, so that nothing (eg. the startup
+		// reconcile) recreates them while the certificate is requested. enableInUseHosts() ends the suspension.
+		const releases = [];
+		inUseSuspensions.set(inUseResult, () => {
+			for (const release of releases) {
+				release();
+			}
+		});
+		await internalNginx.withLock(async () => {
+			for (const hostType of IN_USE_HOST_TYPES) {
+				const hosts = inUseResult[`${hostType}s`];
+				if (hosts?.length) {
+					releases.push(internalNginx.suspendHosts(hostType, hosts));
+					await internalNginx.bulkDeleteConfigs(hostType, hosts);
+				}
+			}
+		});
 	},
 
 	/**
@@ -1288,17 +1301,17 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	enableInUseHosts: async (inUseResult) => {
-		if (inUseResult.total_count) {
-			if (inUseResult.proxy_hosts.length) {
-				await internalNginx.bulkGenerateConfigs("proxy_host", inUseResult.proxy_hosts);
-			}
-
-			if (inUseResult.redirection_hosts.length) {
-				await internalNginx.bulkGenerateConfigs("redirection_host", inUseResult.redirection_hosts);
-			}
-
-			if (inUseResult.dead_hosts.length) {
-				await internalNginx.bulkGenerateConfigs("dead_host", inUseResult.dead_hosts);
+		const release = inUseSuspensions.get(inUseResult);
+		if (release) {
+			inUseSuspensions.delete(inUseResult);
+			release();
+		}
+		if (inUseResult?.total_count) {
+			for (const hostType of IN_USE_HOST_TYPES) {
+				const hosts = inUseResult[`${hostType}s`];
+				if (hosts?.length) {
+					await internalNginx.bulkGenerateConfigs(hostType, hosts);
+				}
 			}
 		}
 	},

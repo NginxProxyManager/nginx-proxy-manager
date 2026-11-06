@@ -78,6 +78,15 @@ const { withLock: withRawLock, runOutsideLock, isHeld } = createLock();
 let reloadInDoubt = false;
 
 /**
+ * Hosts whose config a certificate request has removed until the request is done ("<host type>#<id>" ->
+ * how many requests hold it), see suspendHosts(). Their config file is missing on purpose: recreating it
+ * (eg. the startup reconcile) would put the host back in front of the HTTP challenge server and the
+ * challenge requests would go to the host's upstream.
+ */
+const suspendedHosts = new Map();
+const suspendKey = (hostType, id) => `${hostType}#${id}`;
+
+/**
  * Set when the extra reload of settleReload() was not confirmed either: nginx doesn't apply the config at all
  * (eg. a listen port in use, which nginx -t doesn't catch). Until a reload is confirmed again, an unconfirmed
  * reload is not settled, otherwise every later save would wait for nginx twice.
@@ -202,6 +211,44 @@ const internalNginx = {
 		signal: () => utils.execFile("/usr/sbin/nginx", ["-s", "reload"]),
 		errorLog: "/data/logs/fallback_error.log",
 	}),
+
+	/**
+	 * Marks hosts as removed for a certificate request: reconcile() and bulkGenerateConfigs() leave their
+	 * config missing until the returned function is called. Call it before the configs are removed.
+	 *
+	 * @param   {String}  hostType
+	 * @param   {Array}   hosts
+	 * @returns {Function} ends the suspension, may be called more than once
+	 */
+	suspendHosts: (hostType, hosts) => {
+		const type = internalNginx.getFileFriendlyHostType(hostType);
+		const keys = (hosts || []).filter((h) => h?.id).map((h) => suspendKey(type, h.id));
+		for (const key of keys) {
+			suspendedHosts.set(key, (suspendedHosts.get(key) || 0) + 1);
+		}
+		let released = false;
+		return () => {
+			if (released) {
+				return;
+			}
+			released = true;
+			for (const key of keys) {
+				const count = (suspendedHosts.get(key) || 0) - 1;
+				if (count > 0) {
+					suspendedHosts.set(key, count);
+				} else {
+					suspendedHosts.delete(key);
+				}
+			}
+		};
+	},
+
+	/**
+	 * @param   {String}  hostType  file friendly host type
+	 * @param   {Number}  id
+	 * @returns {boolean} true while a certificate request has removed the host's config, see suspendHosts()
+	 */
+	isSuspended: (hostType, id) => suspendedHosts.has(suspendKey(hostType, id)),
 
 	/**
 	 * Removes the server-owned meta keys from incoming data, in place.
@@ -1499,6 +1546,10 @@ const internalNginx = {
 				if (!staleHost?.id) {
 					continue;
 				}
+				if (internalNginx.isSuspended(type, staleHost.id)) {
+					// A certificate request has removed it, it is configured once the request is done
+					continue;
+				}
 				// The rows were loaded before the lock was taken, sometimes minutes before (a certificate
 				// request). Configure from the current row, or a concurrent edit (its locations, its meta)
 				// would be overwritten with the old values.
@@ -1547,7 +1598,8 @@ const internalNginx = {
 
 	/**
 	 * Called once after the backend started: regenerates hosts whose config is missing or was moved aside
-	 * (by the prepare/55-nginx-validate.sh startup check or a failed test). Never throws.
+	 * (by the prepare/55-nginx-validate.sh startup check or a failed test). Never throws. Hosts that a
+	 * running certificate request has removed (see suspendHosts()) are skipped, the request puts them back.
 	 *
 	 * Upstream names often don't resolve yet right after a host reboot (all containers start at once).
 	 * Hosts that end offline because of that are tried again a few times with backoff
@@ -1561,7 +1613,7 @@ const internalNginx = {
 	reconcile: (opts = {}) =>
 		withLock(async () => {
 			const attempt = opts.attempt || 0;
-			const summary = { checked: 0, regenerated: 0, offline: 0, failed: 0, retry: {} };
+			const summary = { checked: 0, regenerated: 0, offline: 0, failed: 0, suspended: 0, retry: {} };
 			if (!opts.only) {
 				internalNginx.restoreStaleAside();
 			}
@@ -1589,6 +1641,10 @@ const internalNginx = {
 				}
 
 				for (const row of rows) {
+					if (internalNginx.isSuspended(hostType, row.id)) {
+						summary.suspended++;
+						continue;
+					}
 					summary.checked++;
 					const filename = internalNginx.getConfigName(hostType, row.id);
 					const text = readFileOrNull(filename);
@@ -1627,7 +1683,7 @@ const internalNginx = {
 			}
 			const retries = Object.values(summary.retry).reduce((sum, ids) => sum + ids.length, 0);
 			logger.info(
-				`Startup reconcile${attempt ? ` (retry ${attempt})` : ""}: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline}, failed ${summary.failed}${retries ? `, ${retries} waiting for DNS` : ""}`,
+				`Startup reconcile${attempt ? ` (retry ${attempt})` : ""}: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline}, failed ${summary.failed}${summary.suspended ? `, ${summary.suspended} skipped for a certificate request` : ""}${retries ? `, ${retries} waiting for DNS` : ""}`,
 			);
 
 			if (retries && attempt < RECONCILE_RETRY_DELAYS.length) {
