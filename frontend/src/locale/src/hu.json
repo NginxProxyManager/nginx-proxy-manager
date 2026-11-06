@@ -314,8 +314,8 @@
 	"column.status": {
 		"defaultMessage": "Állapot"
 	},
-	"created-on": {
-		"defaultMessage": "Létrehozva: {date}"
+	"column.type": {
+		"defaultMessage": "Típus"
 	},
 	"dashboard": {
 		"defaultMessage": "Vezérlőpult"
@@ -832,6 +832,9 @@
 	},
 	"sso.error.config.group-reqired": {
 		"defaultMessage": "Szabálytalan konfiguráció, csoprt kötelező (4)"
+	},
+	"sso.error.default": {
+		"defaultMessage": "Unexpected error, please try again later."
 	},
 	"sso.error.email-claim-required": {
 		"defaultMessage": "A Hitelesítéskezelő nem küldtött email címet."

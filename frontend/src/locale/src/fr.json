@@ -329,6 +329,9 @@
 	"column.status": {
 		"defaultMessage": "Statut"
 	},
+	"column.type": {
+		"defaultMessage": "Type"
+	},
 	"created-on": {
 		"defaultMessage": "Création : {date}"
 	},
@@ -904,6 +907,9 @@
 	},
 	"sso.error.config.group-reqired": {
 		"defaultMessage": "Configuration invalide : un nom de groupe ou une association de rôles est requis (4)"
+	},
+	"sso.error.default": {
+		"defaultMessage": "Erreur inattendue, veuillez réessayer plus tard."
 	},
 	"sso.error.email-claim-required": {
 		"defaultMessage": "Le fournisseur d’identité n’a pas envoyé le claim « email »."

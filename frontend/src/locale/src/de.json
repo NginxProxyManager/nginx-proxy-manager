@@ -329,6 +329,9 @@
 	"column.status": {
 		"defaultMessage": "Status"
 	},
+	"column.type": {
+		"defaultMessage": "Sorte"
+	},
 	"created-on": {
 		"defaultMessage": "Erstelldatum: {date}"
 	},
@@ -904,6 +907,9 @@
 	},
 	"sso.error.config.group-reqired": {
 		"defaultMessage": "Ungültige Konfiguration: Gruppenname oder Rollenzuordnung erforderlich (4)"
+	},
+	"sso.error.default": {
+		"defaultMessage": "Unerwarteter Fehler, bitte versuchen Sie es später noch einmal."
 	},
 	"sso.error.email-claim-required": {
 		"defaultMessage": "Der Identitätsanbieter hat den Claim „email“ nicht gesendet."

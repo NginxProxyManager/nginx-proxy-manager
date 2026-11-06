@@ -329,6 +329,9 @@
 	"column.status": {
 		"defaultMessage": "Olek"
 	},
+	"column.type": {
+		"defaultMessage": "tüüp"
+	},
 	"created-on": {
 		"defaultMessage": "Loodud: {date}"
 	},
@@ -904,6 +907,9 @@
 	},
 	"sso.error.config.group-reqired": {
 		"defaultMessage": "Vigane konfiguratsioon: grupi nimi või rollide vastendus on nõutav (4)"
+	},
+	"sso.error.default": {
+		"defaultMessage": "Ootamatu viga, palun proovige hiljem uuesti."
 	},
 	"sso.error.email-claim-required": {
 		"defaultMessage": "Identiteedipakkuja ei saatnud claim'i „email”."
