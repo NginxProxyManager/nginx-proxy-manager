@@ -2583,7 +2583,8 @@ const internalNginx = {
 	 * nginx once. Hosts that nginx rejects are taken offline, as on save. Used by POST /api/nginx/regenerate
 	 * and backend/scripts/regenerate-config.
 	 *
-	 * When the final test/reload or loading the rows of a host type fails, the error is thrown with the
+	 * When the final test/reload fails (also when nginx rejects the reload) or loading the rows of a host type
+	 * fails, the error is thrown with the
 	 * summary of what was done until then as `err.regenerateSummary` (hosts may have changed already).
 	 *
 	 * @param   {Object}  [opts]
@@ -2608,7 +2609,23 @@ const internalNginx = {
 				let failure = null;
 				try {
 					// Also when no host was configured: restored aside files have to be loaded
-					await internalNginx.reloadNginx();
+					const outcome = await internalNginx.reloadNginx();
+					if (outcome?.rejected) {
+						// nginx -t passed but the master rejected the files (eg. a listen port another process
+						// uses, -t doesn't bind ports): nginx still runs the config from before the regeneration
+						failure = internalNginx.buildConfigError(
+							"global",
+							"default",
+							{ id: 0 },
+							{
+								message: outcome.emerg || outcome.reason || null,
+								file: null,
+								line: null,
+								output: outcome.reason || null,
+							},
+							"",
+						);
+					}
 				} catch (err) {
 					failure = err;
 				}

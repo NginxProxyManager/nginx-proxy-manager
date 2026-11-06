@@ -1049,3 +1049,42 @@ describe("a reload that throws while looking for the rejected configs", () => {
 		assert.match(onDisk(served), /listen 5555/);
 	});
 });
+
+describe("a regeneration whose reload nginx rejects", () => {
+	beforeEach(() => {
+		outcomes = [];
+		reloads = [];
+	});
+	afterEach(async () => {
+		for (const name of real.readdirSync(dir)) {
+			real.rmSync(join(dir, name));
+		}
+		await db("stream").delete();
+	});
+
+	it("fails with the readable error and the summary of what was regenerated", async () => {
+		const id = await stream(3333, false);
+		outcomes = [rejected()];
+		await assert.rejects(internalNginx.regenerateAll({ hostTypes: ["stream"], restoreAside: false }), (err) => {
+			assert.ok(err instanceof errs.NginxConfigError);
+			assert.equal(err.details.scope, "global");
+			assert.equal(err.details.kind, "nginx_config");
+			assert.match(err.message, /the address 0\.0\.0\.0:3333 is already in use/);
+			assert.match(err.details.nginx_output, /Address already in use/);
+			assert.equal(err.regenerateSummary.checked, 1);
+			assert.equal(err.regenerateSummary.regenerated, 1);
+			assert.deepEqual(err.regenerateSummary.failed, []);
+			return true;
+		});
+		// one reload, no second one: the regenerated files stay on disk for the user to fix
+		assert.equal(reloads.length, 1);
+		assert.match(onDisk(id), /listen 3333/);
+	});
+
+	it("returns the summary when nginx applies the reload", async () => {
+		await stream(3333, false);
+		const summary = await internalNginx.regenerateAll({ hostTypes: ["stream"], restoreAside: false });
+		assert.equal(summary.regenerated, 1);
+		assert.equal(reloads.length, 1);
+	});
+});
