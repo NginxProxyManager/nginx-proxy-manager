@@ -14,6 +14,8 @@ let dryRuns = 0;
 let configures = 0;
 // Certificate ids nginx rejects: an update that is only rejected once the new certificate is in it
 let rejectCertificates = new Set();
+// Runs once a certificate is issued, eg. to let another host take it up meanwhile
+let afterIssue = null;
 
 const isBad = (host) =>
 	host.advanced_config === "bogus_directive on;" || host.forwarding_host === "bad" || host.forward_host === "bad";
@@ -48,6 +50,9 @@ before(() => {
 			...ts,
 		});
 		issued.push(id);
+		if (afterIssue) {
+			await afterIssue(id);
+		}
 		return { id };
 	};
 	internalCertificate.delete = async (_access, data) => {
@@ -83,6 +88,12 @@ const types = [
 			advanced_config: "",
 			locations: "[]",
 		},
+		create: (domain) => ({
+			domain_names: [domain],
+			forward_scheme: "http",
+			forward_host: "app",
+			forward_port: 80,
+		}),
 	},
 	{
 		name: "redirection host",
@@ -97,6 +108,12 @@ const types = [
 			forward_http_code: 301,
 			advanced_config: "",
 		},
+		create: (domain) => ({
+			domain_names: [domain],
+			forward_scheme: "http",
+			forward_domain_name: "target.example.com",
+			forward_http_code: 301,
+		}),
 	},
 	{
 		name: "dead host",
@@ -105,6 +122,7 @@ const types = [
 		bad: { advanced_config: "bogus_directive on;" },
 		skipsDisabled: true,
 		row: { domain_names: JSON.stringify(["c.example.com"]), advanced_config: "" },
+		create: (domain) => ({ domain_names: [domain] }),
 	},
 	{
 		name: "stream",
@@ -113,6 +131,14 @@ const types = [
 		bad: { forwarding_host: "bad" },
 		skipsDisabled: false,
 		row: { incoming_port: 9000, forwarding_host: "app", forwarding_port: 80, tcp_forwarding: 1, udp_forwarding: 0 },
+		create: (domain) => ({
+			domain_names: [domain],
+			incoming_port: 9100,
+			forwarding_host: "app",
+			forwarding_port: 80,
+			tcp_forwarding: true,
+			udp_forwarding: false,
+		}),
 	},
 ];
 
@@ -146,6 +172,7 @@ for (const type of types) {
 			dryRuns = 0;
 			configures = 0;
 			rejectCertificates = new Set();
+			afterIssue = null;
 		});
 		afterEach(async () => {
 			await db("certificate").update({ is_deleted: 1 });
@@ -237,5 +264,79 @@ for (const type of types) {
 				assert.equal(issued.length, 1);
 			});
 		}
+	});
+}
+
+let nextDomain = 1;
+
+for (const type of types) {
+	describe(`${type.name} create with a new certificate`, () => {
+		let internal;
+		const nextCertificate = async () => ((await db("certificate").max("id as id").first()).id || 0) + 1;
+		const liveHosts = async () => (await db(type.table).where("is_deleted", 0)).map((h) => h.id);
+		const create = () =>
+			internal.create(access, { ...type.create(`create-${nextDomain++}.example.com`), certificate_id: "new" });
+
+		before(async () => {
+			internal = await load(type.module);
+		});
+		beforeEach(async () => {
+			issued = [];
+			deleted = [];
+			dryRuns = 0;
+			configures = 0;
+			rejectCertificates = new Set();
+			afterIssue = null;
+			await db(type.table).update({ is_deleted: 1 });
+		});
+		afterEach(async () => {
+			await db("certificate").update({ is_deleted: 1 });
+			await db(type.table).update({ is_deleted: 1 });
+		});
+
+		it("removes the host and the new certificate when nginx only rejects the host with it", async () => {
+			// eg. an advanced ssl_session_cache that only conflicts with the one _certificates.conf adds
+			const next = await nextCertificate();
+			rejectCertificates.add(next);
+
+			await assert.rejects(create(), errs.NginxConfigError);
+			assert.equal(dryRuns, 1);
+			assert.deepEqual(issued, [next]);
+			assert.deepEqual(await liveHosts(), []);
+			assert.deepEqual(deleted, [next]);
+			assert.deepEqual(await liveCertificates(), []);
+		});
+
+		it("keeps the new certificate when another host uses it meanwhile", async () => {
+			const next = await nextCertificate();
+			rejectCertificates.add(next);
+			const [other] = await db("dead_host").insert({
+				owner_user_id: 1,
+				certificate_id: 0,
+				enabled: 1,
+				meta: "{}",
+				domain_names: JSON.stringify([`other-${nextDomain++}.example.com`]),
+				advanced_config: "",
+				...ts,
+			});
+			afterIssue = async (id) => db("dead_host").where("id", other).update({ certificate_id: id });
+
+			try {
+				await assert.rejects(create(), errs.NginxConfigError);
+				assert.deepEqual(await liveHosts(), type.table === "dead_host" ? [other] : []);
+				assert.deepEqual(deleted, []);
+				assert.deepEqual(await liveCertificates(), [next]);
+			} finally {
+				await db("dead_host").where("id", other).update({ is_deleted: 1 });
+			}
+		});
+
+		it("keeps the host and the new certificate when the create goes through", async () => {
+			const row = await create();
+			assert.equal(issued.length, 1);
+			assert.equal(row.certificate_id, issued[0]);
+			assert.deepEqual(deleted, []);
+			assert.deepEqual(await liveCertificates(), issued);
+		});
 	});
 }

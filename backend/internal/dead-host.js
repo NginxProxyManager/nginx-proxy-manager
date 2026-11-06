@@ -60,6 +60,7 @@ const internalDeadHost = {
 		const row = await deadHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 
 		let freshRow;
+		let issuedCertificateId = null;
 		try {
 			if (createCertificate) {
 				// Check that nginx accepts the host before a certificate is requested: when the host is
@@ -67,6 +68,7 @@ const internalDeadHost = {
 				// (and renewed forever). The SSL part is checked again when the certificate is added.
 				await internalNginx.configure(deadHostModel, "dead_host", row, { dryRun: true });
 				const cert = await internalCertificate.createQuickCertificate(access, data);
+				issuedCertificateId = cert.id;
 
 				// update host with cert id
 				await internalDeadHost.update(access, {
@@ -92,6 +94,12 @@ const internalDeadHost = {
 			// nginx rejected the new host: don't keep a host that was never active
 			if (internalNginx.isHostLevelError(err)) {
 				await deadHostModel.query().where("id", row.id).patch({ is_deleted: 1 });
+			}
+			// the certificate requested for it is left unused when the host is gone or was rejected with it
+			if (issuedCertificateId) {
+				await internalHost.discardUnusedCertificate(issuedCertificateId, () =>
+					internalCertificate.delete(access, { id: issuedCertificateId }),
+				);
 			}
 			throw err;
 		}
