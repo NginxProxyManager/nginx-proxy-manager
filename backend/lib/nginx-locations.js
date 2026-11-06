@@ -246,12 +246,14 @@ const preflightLocation = (loc) => {
 		return { status: "quarantined", message: MESSAGES.unbalancedBraces };
 	}
 	// nginx -t rejects a URI in the proxy_pass of a regex or named location ("cannot have URI part"), but not
-	// when the proxy_pass has a variable: `location ~ ^/api/(.*)$` with forward path `/v1/$1` has always worked.
-	// Such a location is rendered literally, see chooseLocationMode().
-	if (loc.forward_path && !hasVariablePath(loc) && parsed.isRegex) {
+	// when the proxy_pass has a variable: `location ~ ^/api/(.*)$` with forward path `/v1/$1`, or forward host
+	// `$backend` with forward path `/v1/`, have always worked. Such a location is rendered literally, see
+	// chooseLocationMode().
+	const variableProxyPass = hasVariablePath(loc) || isVariableHost(loc.forward_host);
+	if (loc.forward_path && !variableProxyPass && parsed.isRegex) {
 		return { status: "quarantined", message: MESSAGES.regexWithForwardPath };
 	}
-	if (loc.forward_path && !hasVariablePath(loc) && parsed.isNamed) {
+	if (loc.forward_path && !variableProxyPass && parsed.isNamed) {
 		return { status: "quarantined", message: MESSAGES.namedWithForwardPath };
 	}
 	return null;
