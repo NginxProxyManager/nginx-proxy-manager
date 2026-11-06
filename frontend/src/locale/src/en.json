@@ -509,6 +509,9 @@
 	"host-status.main-target": {
 		"defaultMessage": "Main destination"
 	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx can't resolve {target}"
+	},
 	"host-status.unreachable": {
 		"defaultMessage": "{where}: {target} is not reachable"
 	},

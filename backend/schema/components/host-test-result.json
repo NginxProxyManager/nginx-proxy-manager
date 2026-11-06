@@ -123,7 +123,7 @@
 					},
 					"code": {
 						"type": "string",
-						"description": "Machine readable result. resolver_mismatch is ok:true but only works with a static upstream. rate_limited: not probed, the user's upstream check budget (shared with /upstreams/check) is used up",
+						"description": "Machine readable result. resolver_mismatch: reachable, but the name only resolves through /etc/hosts or a search domain; ok:false for a target nginx resolves per request (the main target, a custom location in dynamic mode). rate_limited: not probed, the user's upstream check budget (shared with /upstreams/check) is used up",
 						"example": "ok",
 						"enum": [
 							"ok",

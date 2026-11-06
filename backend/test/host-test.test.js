@@ -37,8 +37,8 @@ describe("buildTestTargets", () => {
 			],
 		});
 		assert.deepEqual(targets, [
-			{ location_index: null, host: "app", port: 8080, scheme: "http" },
-			{ location_index: 0, path: "/api", host: "api", port: 9000, scheme: "https" },
+			{ location_index: null, host: "app", port: 8080, scheme: "http", resolver: true },
+			{ location_index: 0, path: "/api", host: "api", port: 9000, scheme: "https", resolver: false },
 		]);
 	});
 
@@ -49,7 +49,7 @@ describe("buildTestTargets", () => {
 				forwarding_port: 5432,
 				tcp_forwarding: true,
 			}),
-			[{ location_index: null, host: "db", port: 5432, scheme: null }],
+			[{ location_index: null, host: "db", port: 5432, scheme: null, resolver: false }],
 		);
 		assert.deepEqual(
 			buildTestTargets("stream", { forwarding_host: "dns", forwarding_port: 53, tcp_forwarding: false }),
@@ -90,6 +90,60 @@ describe("mergeTargetResults", () => {
 			{ host: "app", port: 80, ok: true, code: "ok", location_index: null, path: null },
 			{ host: "api", port: 81, ok: false, code: "tcp_refused", location_index: 1, path: "/api" },
 		]);
+	});
+
+	it("counts a resolver_mismatch as not ok for targets nginx resolves per request", () => {
+		const mismatch = (host) => ({
+			host,
+			port: 80,
+			ok: true,
+			code: "resolver_mismatch",
+			message: "reachable, but",
+			ms: 1,
+		});
+		const targets = buildTestTargets("proxy_host", {
+			forward_host: "app",
+			forward_port: 80,
+			locations: [
+				{ path: "/static", forward_host: "st", forward_port: 80 },
+				{ path: "/dyn", forward_host: "dy", forward_port: 80 },
+			],
+		});
+		// the dry run's location states decide the mode, not the (possibly stale) saved meta
+		const merged = mergeTargetResults(targets, [mismatch("app"), mismatch("st"), mismatch("dy")], [
+			{ index: 0, path: "/static", status: "ok", mode: "static" },
+			{ index: 1, path: "/dyn", status: "ok", mode: "dynamic" },
+		]);
+		assert.deepEqual(
+			merged.map((r) => [r.location_index, r.ok, r.code]),
+			[
+				[null, false, "resolver_mismatch"],
+				[0, true, "resolver_mismatch"],
+				[1, false, "resolver_mismatch"],
+			],
+		);
+		assert.match(merged[0].message, /nginx resolves this upstream per request/);
+		assert.equal(merged[1].message, "reachable, but");
+
+		// streams proxy to a static upstream
+		const [stream] = mergeTargetResults(
+			buildTestTargets("stream", { forwarding_host: "db", forwarding_port: 5432, tcp_forwarding: true }),
+			[mismatch("db")],
+		);
+		assert.equal(stream.ok, true);
+	});
+
+	it("a host whose main target only resolves through /etc/hosts tests with warnings", () => {
+		const targets = buildTestTargets("proxy_host", { forward_host: "app", forward_port: 80, locations: [] });
+		const upstreams = mergeTargetResults(targets, [{ host: "app", port: 80, ok: true, code: "resolver_mismatch" }]);
+		const result = buildTestResult({
+			meta: { nginx_online: true, nginx_locations: [] },
+			error: null,
+			locations: [],
+			upstreams,
+		});
+		assert.equal(result.ok, true, "nginx accepts it");
+		assert.equal(result.upstreams[0].ok, false, "but requests to the main target would fail");
 	});
 });
 

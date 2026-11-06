@@ -42,7 +42,14 @@ describe("health: targets", () => {
 			["proxy_host:12:3", "proxy_host:13:1", "stream:3:1"],
 		);
 		const loc = targets[0].targets[1];
-		assert.deepEqual(loc, { location_index: 0, path: "/api", host: "api", port: 8080, scheme: "http" });
+		assert.deepEqual(loc, {
+			location_index: 0,
+			path: "/api",
+			host: "api",
+			port: 8080,
+			scheme: "http",
+			resolver: false,
+		});
 		assert.equal(targets[0].targets[2].location_index, 2, "index is the position in locations[]");
 	});
 });
@@ -80,9 +87,88 @@ describe("health: variable upstreams", () => {
 				type: "proxy_host",
 				id: 20,
 				owner_user_id: 1,
-				targets: [{ location_index: 1, path: "/a", host: "app", port: 80, scheme: undefined }],
+				targets: [{ location_index: 1, path: "/a", host: "app", port: 80, scheme: undefined, resolver: false }],
 			},
 		]);
+	});
+});
+
+describe("health: resolver-only upstreams", () => {
+	const mismatchCheck = async (target) => ({
+		ok: true,
+		code: "resolver_mismatch",
+		message: `${target.host} only via /etc/hosts`,
+		ms: 1,
+	});
+
+	it("marks the targets nginx resolves per request: the main target and dynamic locations", () => {
+		const [host] = buildHealthTargets({
+			proxyHosts: [
+				{
+					id: 30,
+					owner_user_id: 1,
+					enabled: true,
+					forward_host: "app",
+					forward_port: 80,
+					locations: [
+						{ path: "/s", forward_host: "st", forward_port: 80 },
+						{ path: "/d", forward_host: "dy", forward_port: 80 },
+					],
+					// as read by a select without the model's JSON parsing
+					meta: JSON.stringify({
+						nginx_locations: [
+							{ index: 0, path: "/s", status: "ok", mode: "static" },
+							{ index: 1, path: "/d", status: "ok", mode: "dynamic" },
+						],
+					}),
+				},
+			],
+		});
+		assert.deepEqual(
+			host.targets.map((t) => [t.location_index, t.resolver]),
+			[
+				[null, true],
+				[0, false],
+				[1, true],
+			],
+		);
+	});
+
+	it("counts a resolver_mismatch of the main target as unhealthy, of a static location or a stream as healthy", async () => {
+		const monitor = new HealthMonitor({
+			getInterval: () => 60,
+			loadRows: async () => ({
+				proxyHosts: [
+					{
+						id: 31,
+						owner_user_id: 1,
+						enabled: true,
+						forward_host: "app",
+						forward_port: 80,
+						locations: [{ path: "/s", forward_host: "app", forward_port: 80 }],
+						meta: { nginx_locations: [{ index: 0, path: "/s", status: "ok", mode: "static" }] },
+					},
+				],
+				streams: [
+					{ id: 6, owner_user_id: 1, enabled: true, tcp_forwarding: true, forwarding_host: "db", forwarding_port: 1 },
+				],
+			}),
+			check: mismatchCheck,
+		});
+		await monitor.runOnce();
+		const all = monitor.snapshot({ proxy_host: () => true, stream: () => true });
+		const h31 = all.hosts.proxy_host["31"];
+		assert.equal(h31.ok, false);
+		assert.deepEqual(
+			h31.targets.map((t) => [t.location_index, t.ok, t.code]),
+			[
+				[null, false, "resolver_mismatch"],
+				[0, true, "resolver_mismatch"],
+			],
+			"same probe (deduped), interpreted per target",
+		);
+		assert.match(h31.targets[0].message, /nginx resolves this upstream per request/);
+		assert.equal(all.hosts.stream["6"].ok, true);
 	});
 });
 

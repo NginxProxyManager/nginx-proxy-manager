@@ -509,6 +509,9 @@
 	"host-status.main-target": {
 		"defaultMessage": "Peamine sihtkoht"
 	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx ei suuda {target} lahendada"
+	},
 	"host-status.unreachable": {
 		"defaultMessage": "{where}: {target} pole kättesaadav"
 	},

@@ -187,6 +187,9 @@ const MESSAGES = {
 	dns_timeout: (t) => `Looking up "${t.host}" timed out. The DNS server did not answer in time.`,
 	resolver_mismatch: (t, r) =>
 		`${describeHost(t.host, t.port)} is reachable${typeof r.ms === "number" ? ` (${formatMs(r.ms)})` : ""}, but "${t.host}" only resolves through /etc/hosts or a resolv.conf search domain, not through nginx's DNS resolver. It works only with a static (load-time) upstream.`,
+	// resolver_mismatch of a target nginx resolves per request, see forResolverTarget()
+	resolver_required: (t, r) =>
+		`${describeHost(t.host, t.port)} is reachable${typeof r.ms === "number" ? ` (${formatMs(r.ms)})` : ""}, but "${t.host}" only resolves through /etc/hosts or a resolv.conf search domain. nginx resolves this upstream per request through its DNS resolver, which doesn't find it: requests fail. Use a name the resolver finds (eg. the container name on a shared Docker network) or an IP address.`,
 	tcp_refused: (t) =>
 		`Connection to ${describeHost(t.host, t.port)} was refused. The host exists, but nothing is listening on port ${t.port}.`,
 	tcp_timeout: (t) =>
@@ -310,6 +313,25 @@ const checkTarget = async (rawTarget, opts = {}) => {
 };
 
 /**
+ * A check result as it applies to a target nginx resolves per request: a proxy_pass with a variable, which is the
+ * main target of every proxy host and a custom location in dynamic mode. Such a proxy_pass only uses nginx's
+ * `resolver`, never /etc/hosts or search domains, so a resolver_mismatch (reachable, but only through those) fails
+ * at request time: the result is not ok. The code stays resolver_mismatch, so clients show it as a warning.
+ * A static (load-time) upstream is resolved like the check's system lookup, its resolver_mismatch stays ok.
+ *
+ * @param   {object}  result          from checkTarget()
+ * @param   {object}  target          {host, port}
+ * @param   {boolean} needsResolver   nginx resolves the target per request
+ * @returns {object}  the result, or a copy marked not ok
+ */
+const forResolverTarget = (result, target, needsResolver) => {
+	if (!needsResolver || result?.code !== "resolver_mismatch") {
+		return result;
+	}
+	return { ...result, ok: false, message: MESSAGES.resolver_required(target, result) };
+};
+
+/**
  * Key used to dedupe identical targets
  *
  * @param   {{host: string, port: number, scheme?: string}} target
@@ -345,4 +367,14 @@ const checkTargets = async (targets, opts = {}) => {
 	);
 };
 
-export { checkTarget, checkTargets, formatMs, MESSAGES, resolverLookup, systemLookup, targetKey, tcpConnect };
+export {
+	checkTarget,
+	checkTargets,
+	forResolverTarget,
+	formatMs,
+	MESSAGES,
+	resolverLookup,
+	systemLookup,
+	targetKey,
+	tcpConnect,
+};

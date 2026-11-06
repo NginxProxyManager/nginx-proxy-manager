@@ -1,4 +1,5 @@
-import { buildHealthTargets } from "./upstream/health.js";
+import { forResolverTarget } from "./upstream/check.js";
+import { buildHealthTargets, isDynamicLocation } from "./upstream/health.js";
 
 /**
  * Pure helpers of the "Test config" endpoints (POST /nginx/<host type>/test), see internal/host-test.js
@@ -177,19 +178,28 @@ const checkTestTargets = async (targets, { enabled, consume, check }) => {
 };
 
 /**
- * Puts the check results next to the targets they belong to
+ * Puts the check results next to the targets they belong to. A resolver_mismatch is not ok for a target nginx
+ * resolves per request (the main target, a custom location the test rendered in dynamic mode), like the health
+ * monitor counts it, see forResolverTarget().
  *
- * @param   {Array} targets  from buildTestTargets()
- * @param   {Array} results  from checkTargets(), same order
+ * @param   {Array}      targets      from buildTestTargets()
+ * @param   {Array}      results      from checkTargets(), same order
+ * @param   {Array|null} [locations]  the location states of the dry run (their mode)
  * @returns {Array}
  */
-const mergeTargetResults = (targets, results) =>
-	targets.map((target, index) =>
-		Object.assign({}, results[index], {
+const mergeTargetResults = (targets, results, locations = null) =>
+	targets.map((target, index) => {
+		const needsResolver =
+			target.location_index === null || typeof target.location_index === "undefined"
+				? target.resolver !== false
+				: Array.isArray(locations)
+					? isDynamicLocation(locations, target.location_index)
+					: !!target.resolver;
+		return Object.assign({}, forResolverTarget(results[index], target, needsResolver), {
 			location_index: target.location_index ?? null,
 			path: typeof target.path === "string" ? target.path : null,
-		}),
-	);
+		});
+	});
 
 export {
 	asEnabled,

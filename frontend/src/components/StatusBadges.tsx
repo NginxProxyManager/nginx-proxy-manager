@@ -58,6 +58,10 @@ export function LocationStatusBadge({ id, status, message }: LocationStatusBadge
 /** Whole milliseconds, "<1" below one, as in the check's message */
 export const formatCheckMs = (ms: number): string => (ms < 1 ? "<1" : `${Math.round(ms)}`);
 
+/** A check result to show as a warning rather than as reachable or failed */
+export const isResolverWarning = (result: Pick<UpstreamCheckResult, "code">): boolean =>
+	result.code === "resolver_mismatch";
+
 /** Short translated text for a reachability check result */
 export const checkResultText = (result: UpstreamCheckResult): string => {
 	if (result.code === "ok") {
@@ -89,14 +93,14 @@ export function UpstreamCheckBadge({ id, result, isChecking }: UpstreamCheckBadg
 	if (!result || result.code === "disabled") {
 		return null;
 	}
-	const warn = result.code === "resolver_mismatch";
-	const cls = result.ok ? (warn ? "bg-yellow-lt" : "bg-green-lt") : "bg-red-lt";
-	const icon = result.ok ? (
-		warn ? (
-			<IconAlertTriangle size={12} className="me-1" />
-		) : (
-			<IconCheck size={12} className="me-1" />
-		)
+	// Reachable, but only through /etc/hosts or a search domain: a warning, also where the result counts it as
+	// not ok (a target nginx resolves per request, see the health monitor and the config test)
+	const warn = isResolverWarning(result);
+	const cls = warn ? "bg-yellow-lt" : result.ok ? "bg-green-lt" : "bg-red-lt";
+	const icon = warn ? (
+		<IconAlertTriangle size={12} className="me-1" />
+	) : result.ok ? (
+		<IconCheck size={12} className="me-1" />
 	) : (
 		<IconX size={12} className="me-1" />
 	);
@@ -129,9 +133,9 @@ export function UpstreamCheckHint({ id, result, isChecking }: UpstreamCheckBadge
 	if (!result || result.code === "disabled") {
 		return null;
 	}
-	const warn = result.code === "resolver_mismatch";
-	const cls = result.ok ? (warn ? "text-warning" : "text-success") : "text-danger";
-	const Icon = result.ok ? (warn ? IconAlertTriangle : IconCheck) : IconX;
+	const warn = isResolverWarning(result);
+	const cls = warn ? "text-warning" : result.ok ? "text-success" : "text-danger";
+	const Icon = warn ? IconAlertTriangle : result.ok ? IconCheck : IconX;
 	const details = [result.message, result.addresses?.length ? result.addresses.join(", ") : null]
 		.filter(Boolean)
 		.join(" – ");

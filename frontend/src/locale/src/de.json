@@ -509,6 +509,9 @@
 	"host-status.main-target": {
 		"defaultMessage": "Hauptziel"
 	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx kann {target} nicht auflösen"
+	},
 	"host-status.unreachable": {
 		"defaultMessage": "{where}: {target} ist nicht erreichbar"
 	},

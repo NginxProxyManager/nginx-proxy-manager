@@ -509,6 +509,9 @@
 	"host-status.main-target": {
 		"defaultMessage": "Đích chính"
 	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx không phân giải được {target}"
+	},
 	"host-status.unreachable": {
 		"defaultMessage": "{where}: không thể kết nối tới {target}"
 	},

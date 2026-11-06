@@ -216,7 +216,7 @@ const internalHostTest = {
 			meta: dry.meta,
 			error,
 			locations: dry.locations,
-			upstreams: mergeTargetResults(targets, checked.results),
+			upstreams: mergeTargetResults(targets, checked.results, dry.meta?.nginx_locations || dry.locations),
 			warnings,
 		});
 		debug(

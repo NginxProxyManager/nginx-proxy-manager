@@ -291,7 +291,7 @@ const healthMonitor = new HealthMonitor({
 		const [proxyHosts, streams] = await Promise.all([
 			proxyHostModel
 				.query()
-				.select("id", "owner_user_id", "enabled", "forward_host", "forward_port", "forward_scheme", "locations")
+				.select("id", "owner_user_id", "enabled", "forward_host", "forward_port", "forward_scheme", "locations", "meta")
 				.where("is_deleted", 0)
 				.andWhere("enabled", 1),
 			streamModel
