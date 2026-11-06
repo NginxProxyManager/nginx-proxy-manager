@@ -6,7 +6,9 @@ const handler = (main) => (req, res) => {
   const h = { "content-type": "application/json" };
   if (req.url.includes("redir=abs")) { h.location = "http://echo:9000" + req.url.split("?")[0] + "/next"; res.writeHead(302, h); return res.end(); }
   if (req.url.includes("redir=rel")) { h.location = req.url.split("?")[0] + "/next"; res.writeHead(302, h); return res.end(); }
-  res.writeHead(200, h); res.end(JSON.stringify(main ? { url: req.url, host: req.headers.host, upstream: "main" } : { url: req.url, host: req.headers.host }));
+  // x-sem-in: a proxy_set_header of an included snippet (run.sh), shown as "in"
+  const body = { url: req.url, host: req.headers.host, in: req.headers["x-sem-in"] };
+  res.writeHead(200, h); res.end(JSON.stringify(main ? { ...body, upstream: "main" } : body));
 };
 http.createServer(handler(false)).listen(9000);
 http.createServer(handler(true)).listen(9001);

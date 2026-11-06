@@ -51,6 +51,9 @@ const unescapeToken = (raw) => {
  * @property {String}   end     what ended it: ";", "{" (a block starts), "}" (a block ended right after
  *                              tokens without `;`, which nginx rejects) or "eof"
  * @property {Number}   depth   block depth the statement is in, 0 at the top
+ * @property {Number}   start   offset of the statement's first token in the text (its quote, if quoted)
+ * @property {Number}   [close] for a block ("{"): offset just after the `}` that closes it, unset while unclosed
+ * @property {Number}   [stop]  for any other statement: offset just after it (after its `;`)
  */
 
 /**
@@ -76,24 +79,39 @@ const scanNginxConfig = (text) => {
 	let sQuoted = false;
 	let variable = false;
 	let start = 0;
+	// offset of the current statement's first token, -1 before it
+	let statementStart = -1;
+	// the open blocks, innermost last
+	const open = [];
 
-	const endStatement = (end) => {
+	const endStatement = (end, at) => {
+		let statement = null;
 		if (tokens.length || end === "{") {
-			statements.push({ tokens, end, depth });
+			statement = { tokens, end, depth, start: statementStart < 0 ? at : statementStart };
+			if (end !== "{") {
+				statement.stop = end === ";" ? at + 1 : at;
+			}
+			statements.push(statement);
 		}
 		tokens = [];
+		statementStart = -1;
+		return statement;
 	};
-	const blockStart = () => {
+	const blockStart = (at) => {
 		if (!tokens.length) {
 			errors.push('unexpected "{"');
 		}
-		endStatement("{");
+		open.push(endStatement("{", at));
 		depth++;
 	};
-	const blockEnd = () => {
+	const blockEnd = (at) => {
 		if (tokens.length) {
 			errors.push('unexpected "}"');
-			endStatement("}");
+			endStatement("}", at);
+		}
+		const block = open.pop();
+		if (block) {
+			block.close = at + 1;
 		}
 		depth--;
 		if (depth < 0) {
@@ -122,13 +140,13 @@ const scanNginxConfig = (text) => {
 			if (ch === ";") {
 				needSpace = false;
 				lastSpace = true;
-				endStatement(";");
+				endStatement(";", i);
 				continue;
 			}
 			if (ch === "{") {
 				needSpace = false;
 				lastSpace = true;
-				blockStart();
+				blockStart(i);
 				continue;
 			}
 			needSpace = false;
@@ -149,17 +167,23 @@ const scanNginxConfig = (text) => {
 					if (!tokens.length) {
 						errors.push('unexpected ";"');
 					}
-					endStatement(";");
+					endStatement(";", i);
 					continue;
 				case "{":
-					blockStart();
+					blockStart(i);
 					continue;
 				case "}":
-					blockEnd();
+					blockEnd(i);
 					continue;
 				case "#":
 					sharpComment = true;
 					continue;
+			}
+			// a token starts here
+			if (statementStart < 0) {
+				statementStart = i;
+			}
+			switch (ch) {
 				case "\\":
 					quoted = true;
 					lastSpace = false;
@@ -222,9 +246,9 @@ const scanNginxConfig = (text) => {
 		if (found) {
 			tokens.push(unescapeToken(src.slice(start, i)));
 			if (ch === ";") {
-				endStatement(";");
+				endStatement(";", i);
 			} else if (ch === "{") {
-				blockStart();
+				blockStart(i);
 			}
 		}
 	}
@@ -239,7 +263,7 @@ const scanNginxConfig = (text) => {
 	}
 	if (tokens.length) {
 		errors.push('unexpected end of file, expecting ";" or "}"');
-		endStatement("eof");
+		endStatement("eof", src.length);
 	}
 	if (depth > 0) {
 		errors.push('unexpected end of file, expecting "}"');

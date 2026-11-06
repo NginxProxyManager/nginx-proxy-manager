@@ -40,5 +40,20 @@
  {"path":"/tovfb/","fp":"","adv":"error_page 418 = @vfb; return 418;"},
  {"path":"/api/","fp":"/api/$arg_id","cache":true},
  {"path":"/cvar/","host":"$sembackend","fp":"","cache":true,"adv":"set $sembackend echo;"},
- {"path":"/cvarfp/","host":"$sembackend","fp":"/x/","cache":true,"adv":"set $sembackend echo;"}
+ {"path":"/cvarfp/","host":"$sembackend","fp":"/x/","cache":true,"adv":"set $sembackend echo;"},
+ {"path":"^~ /private/","host":"$sembackend","fp":"","cache":true,"adv":"set $sembackend echo; if ($http_x_token != secret) { return 403; }"},
+ {"path":"^~ /nprivate/","host":"$sembackend","fp":"","adv":"set $sembackend echo; if ($http_x_token != secret) { return 403; }"},
+ {"path":"/crw/","fp":"/k/","cache":true,"adv":"rewrite ^/crw/old/(.*)$ /crw/new/$1 break;"},
+ {"path":"/cif/","fp":"/v1/$semt","cache":true,"adv":"set $semt a; if ($arg_b) { set $semt b; }"},
+ {"path":"/cnest/","fp":"/n/","cache":true,"adv":"location /cnest/in/ { return 200 \"inner $uri\"; }"},
+ {"path":"/nest/","fp":"/n/","adv":"location /nest/in/ { return 200 \"inner $uri\"; }"},
+ {"path":"/cacl/","fp":"/v/","cache":true,"acl":true},
+ {"path":"/cinc/","fp":"/i/","cache":true,"adv":"include /tmp/nginx-sem/snip/proxy.conf; include /tmp/nginx-sem/snip/auth.conf; if ($http_x_ok = deny) { return 403; }"},
+ {"path":"^~ /cincg/","host":"$sembackend","fp":"","cache":true,"adv":"set $sembackend echo; include /tmp/nginx-sem/snip/guard.conf;"},
+ {"path":"/clua/","fp":"","cache":true,"adv":"include /tmp/nginx-sem/snip/hdr.conf; set_by_lua_block $sembad { if ngx.var.http_x_token ~= \"secret\" then return \"1\" end return \"\" } if ($sembad) { return 403; }"},
+ {"path":"/csm/","fp":"","cache":true,"adv":"include /tmp/nginx-sem/snip/hdr.conf; set_if_empty $semtok $http_x_token; set_if_empty $semtok none; if ($semtok != secret) { return 403; }"},
+ {"path":"/cstore/","fp":"/s/","cache":true,"adv":"proxy_store /tmp/nginx-sem-store$uri;"},
+ {"path":"/cstorei/","fp":"/s/","cache":true,"adv":"include /tmp/nginx-sem/snip/hdr.conf; proxy_store on; root /tmp/nginx-sem-store;"},
+ {"path":"/credi/","fp":"/r/","cache":true,"adv":"include /tmp/nginx-sem/snip/redir.conf;"},
+ {"path":"/cref/","fp":"","cache":true,"adv":"include /tmp/nginx-sem/snip/ref.conf;\nvalid_referers *.example.com;\nif ($invalid_referer) { return 403; }"}
 ]

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
-	assetSetDirectives,
+	assetAdvancedConfig,
 	bracesBalanced,
 	chooseLocationMode,
 	describeConfigLine,
@@ -331,7 +331,7 @@ describe("renderLocation", () => {
 		assert.equal(out.match(/proxy_redirect/g).length, 1);
 	});
 
-	it("lets the nested asset location inherit the user's proxy_redirect", async () => {
+	it("leaves proxy_redirect to the user's rule in the nested asset location too", async () => {
 		const cases = [
 			{ mode: "static", forward_path: "/x" },
 			{ mode: "dynamic", forward_path: "/x" },
@@ -347,9 +347,10 @@ describe("renderLocation", () => {
 				const nested = out.slice(out.indexOf("location ~*"));
 				assert.notEqual(out.indexOf("location ~*"), -1, `${mode} ${forward_path}`);
 				assert.match(nested, /proxy_cache public-cache;/);
-				// only the user's line: a proxy_redirect in the nested block would replace it for assets
-				assert.equal(out.match(/proxy_redirect/g).length, 1, `${rule} ${mode} ${forward_path}`);
-				assert.doesNotMatch(nested, /proxy_redirect/);
+				// only the user's line, in the location and in its copy of the advanced config in the nested block
+				assert.equal(out.match(/proxy_redirect/g).length, 2, `${rule} ${mode} ${forward_path}`);
+				assert.equal(nested.match(/proxy_redirect/g).length, 1, `${rule} ${mode} ${forward_path}`);
+				assert.ok(nested.includes(rule), `${rule} ${mode} ${forward_path}`);
 			}
 		}
 	});
@@ -386,9 +387,9 @@ describe("renderLocation", () => {
 			// keyed by the forwarded Host with the client's port, like conf.d/include/assets.conf
 			assert.match(nested, /proxy_cache_key \$forward_host\$request_uri;/);
 			assert.doesNotMatch(out, /proxy_cache_key \$host/);
-			// the nested location sets no headers of its own, so it inherits the parent's Host $forward_host
+			// the nested location repeats the parent's headers (Host $forward_host)
 			assert.match(out.slice(0, out.indexOf("location ~*")), /proxy_set_header Host \$forward_host;/);
-			assert.doesNotMatch(nested, /proxy_set_header/);
+			assert.match(nested, /proxy_set_header Host \$forward_host;/);
 			assert.match(nested, /rewrite "\(\?s\)\^\\\/a\(\.\*\)\$" \/x\$1 break;/);
 			assert.match(nested, /proxy_redirect http:\/\/app:8080\/x \/a;/);
 			if (mode === "dynamic") {
@@ -416,10 +417,10 @@ describe("renderLocation", () => {
 		assert.match(parent, /proxy_pass\s+http:\/\/\$backend:8080\/fp;/);
 		assert.doesNotMatch(out, /^\s*rewrite |npm_loc_0_host/m);
 		assert.doesNotMatch(parent, /proxy_redirect/);
-		// the nested asset location repeats the parent's `set $backend` and its proxy_pass, as it is
+		// the nested asset location repeats the parent's advanced config (`set $backend`) and its proxy_pass, as it is
 		const nested = out.slice(out.indexOf("location ~*"));
 		assert.match(nested, /proxy_cache public-cache;/);
-		assert.match(nested, /set \$backend "app";\n\s+proxy_pass http:\/\/\$backend:8080\/fp;/);
+		assert.match(nested, /set \$backend app;[\s\S]*proxy_pass http:\/\/\$backend:8080\/fp;/);
 		assert.match(nested, /proxy_redirect off;/);
 	});
 
@@ -441,7 +442,7 @@ describe("renderLocation", () => {
 		assert.match(out.slice(0, out.indexOf("location ~*")), /proxy_pass\s+http:\/\/app:8080\/v1\/\$target;/);
 		const nested = out.slice(out.indexOf("location ~*"));
 		assert.match(nested, /proxy_cache public-cache;/);
-		assert.match(nested, /set \$target "t";\n\s+proxy_pass http:\/\/app:8080\/v1\/\$target;/);
+		assert.match(nested, /set \$target t;[\s\S]*proxy_pass http:\/\/app:8080\/v1\/\$target;/);
 		assert.doesNotMatch(out, /^\s*rewrite /m);
 	});
 
@@ -469,43 +470,286 @@ describe("renderLocation", () => {
 		}
 	});
 
-	it("repeats only the top-level set statements of the advanced config in the nested asset location", async () => {
+	it("repeats the whole advanced config in the nested asset location, at the same place", async () => {
+		// a nested location runs none of the parent's set / if / return / rewrite lines: guards would be skipped
 		const advanced_config = [
-			"set $a one;",
-			"# set $commented x;",
-			"if ($arg_x) { set $b two; }",
-			"proxy_set_header X-A $a;",
-			'set $c "a \\"q\\" $host";',
+			"set $backend app;",
+			"if ($http_x_token != secret) { return 403; }",
+			"if ($arg_v) { set $b two; }",
+			"rewrite ^/private/old/(.*)$ /private/new/$1 break;",
+			"proxy_set_header X-A $b;",
+			"add_header X-B b;",
+			"auth_request /auth;",
 			// biome-ignore lint/suspicious/noTemplateCurlyInString: nginx ${var} syntax, not a JS template
-			"set   $d   ${a}x;",
-			"location /inner { set $e e; }",
+			'set $c "a \\"q\\" ${b}x";',
 		].join("\n");
+		for (const [forward_host, mode] of [
+			["$backend", "static"],
+			["app", "static"],
+			["app", "dynamic"],
+		]) {
+			const out = await render(
+				{ ...base, path: "^~ /private/", forward_host, forward_path: "/fp/", advanced_config },
+				{ mode },
+				{ caching_enabled: true, allow_websocket_upgrade: true },
+			);
+			const at = out.indexOf("location ~*");
+			const parent = out.slice(0, at);
+			const nested = out.slice(at);
+			assert.ok(parent.includes(advanced_config), forward_host);
+			assert.ok(nested.includes(advanced_config), forward_host);
+			// before our rewrite / proxy_pass, after the host variable, as in the parent
+			const copy = nested.indexOf(advanced_config);
+			assert.ok(copy < nested.indexOf("proxy_pass "), forward_host);
+			assert.ok(copy < nested.indexOf("proxy_set_header Host"), forward_host);
+			if (mode === "dynamic") {
+				assert.ok(nested.indexOf('set $npm_loc_0_host "app";') < copy);
+				assert.ok(copy < nested.indexOf("rewrite "));
+			}
+			// the rest of the body is repeated too, so the nested location's own lists match the parent's
+			assert.match(nested, /proxy_set_header Upgrade \$http_upgrade;/);
+			// the copy has its own markers, so an nginx error in it maps to the same advanced config line
+			assert.equal(nested.match(/# npm-location-advanced-begin 0/g).length, 1);
+		}
+	});
+
+	it("leaves a nested location out of the repeated advanced config, keeping its lines", async () => {
+		const advanced_config = "set $a 1;\nlocation /a/in/ {\n  return 200 in;\n}\nlocation ~ \\.x$ { return 204; } set $b 2;";
+		const out = await render({ ...base, path: "/a/", advanced_config }, { mode: "dynamic" }, { caching_enabled: true });
+		const nested = out.slice(out.indexOf("location ~*"));
+		assert.ok(out.slice(0, out.indexOf("location ~*")).includes(advanced_config));
+		assert.ok(nested.includes("set $a 1;\n\n\n\n  set $b 2;"));
+		assert.doesNotMatch(nested, /location \/a\/in\/|return 20[04]/);
+		assert.equal(nested.match(/location /g).length, 1);
+	});
+
+	it("leaves out the cache directives the advanced config sets itself", async () => {
 		const out = await render(
-			{ ...base, path: "/a/", forward_path: "/x/", advanced_config },
+			{ ...base, path: "/a/", advanced_config: "expires 1h;\nproxy_read_timeout 300s;\nif ($x) { proxy_cache off; }" },
 			{ mode: "dynamic" },
 			{ caching_enabled: true },
 		);
-		const nested = out.slice(out.lastIndexOf("location ~*"));
-		const sets = nested.match(/^\s*set .*$/gm).map((l) => l.trim());
-		assert.deepEqual(sets, [
-			'set $npm_loc_0_host "app";',
-			'set $a "one";',
-			'set $c "a \\"q\\" $host";',
-			// biome-ignore lint/suspicious/noTemplateCurlyInString: nginx ${var} syntax, not a JS template
-			'set $d "${a}x";',
-		]);
-		// before the rewrite and the proxy_pass, as in the parent
-		// biome-ignore lint/suspicious/noTemplateCurlyInString: nginx ${var} syntax, not a JS template
-		assert.ok(nested.indexOf('set $d "${a}x";') < nested.indexOf("rewrite "));
+		const nested = out.slice(out.indexOf("location ~*"));
+		// nginx rejects a second expires / proxy_read_timeout ("is duplicate"), the location's value applies
+		assert.equal(nested.match(/^\s*expires /gm).length, 1);
+		assert.match(nested, /expires 1h;/);
+		assert.equal(nested.match(/^\s*proxy_read_timeout /gm).length, 1);
+		// only the top level counts, an if block has its own settings
+		assert.match(nested, /proxy_cache public-cache;/);
+		assert.match(nested, /proxy_connect_timeout 5s;/);
 	});
 
-	it("lists the top-level set statements of an advanced config", () => {
-		assert.deepEqual(assetSetDirectives(""), []);
-		assert.deepEqual(assetSetDirectives(null), []);
-		assert.deepEqual(assetSetDirectives("set $x 'it\\'s';\nset $y a\\\\b;\nset $bad;\nset nodollar v;\nset $z 1 2;"), [
-			'set $x "it\'s";',
-			'set $y "a\\\\b";',
-		]);
+	it("prepares the advanced config for the nested asset location", () => {
+		assert.deepEqual(assetAdvancedConfig(""), { text: "", own: {}, inherit: false });
+		assert.deepEqual(assetAdvancedConfig(null), { text: "", own: {}, inherit: false });
+		assert.deepEqual(assetAdvancedConfig("set $x 1; location /a { x; }location /b{}"), {
+			text: "set $x 1;   ",
+			own: {},
+			inherit: false,
+		});
+		assert.deepEqual(assetAdvancedConfig("# location /c { }\n'location' /d { if ($a) { return 1; } }\nexpires 1h;"), {
+			text: "# location /c { }\n \nexpires 1h;",
+			own: { expires: true },
+			inherit: false,
+		});
+		assert.deepEqual(assetAdvancedConfig("access_log off; proxy_cache_key $a; location /e { expires 1h; }").own, {
+			access_log: true,
+			proxy_cache_key: true,
+		});
+		// an include only inside a block doesn't count, that block's context is the same in the copy
+		assert.equal(assetAdvancedConfig("if ($a) { include x.conf; }").inherit, false);
+		assert.equal(assetAdvancedConfig("# include x.conf;").inherit, false);
+	});
+
+	it("repeats an advanced config with an include without the includes and list settings, those are inherited", () => {
+		const text = [
+			"include /snippets/proxy.conf;",
+			"set $a 1; proxy_read_timeout 90s;",
+			"if ($http_x_token != secret) {",
+			"  return 403;",
+			"}",
+			"location /in/ { return 200; }",
+			"limit_except GET { deny all; }",
+			"rewrite ^/a/(.*)$ /b/$1 break; add_header X-A a;",
+			"proxy_set_header X-B b; proxy_hide_header X-Powered-By; more_set_headers 'X-M: 1';",
+			"allow 10.0.0.0/8; deny all; satisfy any; auth_basic x; auth_request /auth; error_page 401 = @x;",
+			"return 418",
+		].join("\n");
+		const copy = assetAdvancedConfig(text);
+		assert.equal(copy.inherit, true);
+		assert.deepEqual(copy.own, { proxy_read_timeout: true });
+		assert.equal(
+			copy.text,
+			// a statement on one line becomes a space, so its neighbours stay apart
+			[
+				" ",
+				"set $a 1; proxy_read_timeout 90s;",
+				"if ($http_x_token != secret) {",
+				"  return 403;",
+				"}",
+				" ",
+				"limit_except GET { deny all; }",
+				"rewrite ^/a/(.*)$ /b/$1 break;  ",
+				"  proxy_hide_header X-Powered-By;  ",
+				"    satisfy any; auth_basic x; auth_request /auth;  ",
+				"return 418",
+			].join("\n"),
+		);
+		// the same line numbers as the advanced config
+		assert.equal(copy.text.split("\n").length, text.split("\n").length);
+	});
+
+	it("leaves out valid_referers and the other inherited lists with an include, the included entries apply too", () => {
+		// a valid_referers of its own would replace the included one (and its none / server_names flags)
+		const lists = [
+			"valid_referers *.example.com;",
+			"mirror /mirror;",
+			"error_log /data/logs/x.log;",
+			"index index.html;",
+			"ssi_types text/x;",
+			"addition_types text/x;",
+			"charset_types text/x;",
+		];
+		const text = ["include /snippets/ref.conf;", ...lists, "if ($invalid_referer) { return 403; }"].join("\n");
+		const copy = assetAdvancedConfig(text);
+		assert.equal(copy.text, [" ", ...lists.map(() => " "), "if ($invalid_referer) { return 403; }"].join("\n"));
+		// without an include they are repeated
+		assert.equal(assetAdvancedConfig(lists.join("\n")).text, lists.join("\n"));
+	});
+
+	it("sets no proxy_redirect of its own in the nested asset location with an include, it inherits the location's", async () => {
+		// Authelia's proxy.conf has "proxy_redirect http:// $scheme://;", an own rule of the nested location would
+		// replace it for the assets
+		for (const [forward_host, forward_path, mode, parentRule] of [
+			["app", "/x", "static", null],
+			["app", "/x", "dynamic", /proxy_redirect\s+http:\/\/app:8080\/x \/a\/;/],
+			["app", "", "dynamic", /proxy_redirect\s+http:\/\/app:8080\/ \/;/],
+			["$backend", "/x", "static", null],
+			["app", "/api/$arg_id", "static", null],
+		]) {
+			const out = await render(
+				{ ...base, path: "/a/", forward_host, forward_path, advanced_config: "include /snippets/proxy.conf;" },
+				{ mode },
+				{ caching_enabled: true },
+			);
+			const at = out.indexOf("location ~*");
+			const end = out.indexOf("\n    }\n", at);
+			assert.notEqual(at, -1);
+			const nested = out.slice(at, end);
+			const parent = out.slice(0, at) + out.slice(end);
+			assert.doesNotMatch(nested, /proxy_redirect/, `${forward_host} ${forward_path} ${mode}`);
+			if (parentRule) {
+				assert.match(parent, parentRule);
+			} else {
+				assert.doesNotMatch(parent, /proxy_redirect/, `${forward_host} ${forward_path} ${mode}`);
+			}
+		}
+	});
+
+	it("repeats every rewrite-phase statement of an advanced config with an include, of any module", () => {
+		// nginx runs none of them from the parent in a nested location: a guard reading their variable would let
+		// assets through (set_by_lua_block, set-misc, form-input, encrypted-session, array-var)
+		const guards = [
+			'set_by_lua_block $bad { if ngx.var.http_x_token ~= "secret" then return "1" end return "" }',
+			"set_by_lua $bad2 'return ngx.var.http_x_token';",
+			"set_by_lua_file $bad3 /data/lua/check.lua;",
+			"set_if_empty $tok $http_x_token;",
+			"set_unescape_uri $u $arg_u;",
+			"set_md5 $m $http_x_token;",
+			"set_form_input $f;",
+			"set_decrypt_session $s $cookie_s;",
+			"array_split , $arg_l to=$list;",
+			"rewrite_by_lua_block { ngx.var.x = 1 }",
+			"access_by_lua_block { return ngx.exit(403) }",
+			"if ($bad) { return 403; }",
+			"rewrite_log on;",
+			"uninitialized_variable_warn off;",
+			"break;",
+		];
+		const text = ["include /snippets/hdr.conf;", ...guards].join("\n");
+		const copy = assetAdvancedConfig(text);
+		assert.equal(copy.inherit, true);
+		assert.equal(copy.text, [" ", ...guards].join("\n"));
+	});
+
+	it("leaves out proxy_cache of the asset block when the advanced config sets proxy_store", () => {
+		// nginx -t: "proxy_store" directive is incompatible with "proxy_cache"
+		for (const prefix of ["", "include /snippets/x.conf;\n"]) {
+			assert.deepEqual(assetAdvancedConfig(`${prefix}proxy_store on;`).own, { proxy_cache: true });
+			assert.deepEqual(assetAdvancedConfig(`${prefix}proxy_store /data/store$uri;`).own, { proxy_cache: true });
+			assert.deepEqual(assetAdvancedConfig(`${prefix}proxy_store off;`).own, {});
+			assert.deepEqual(assetAdvancedConfig(`${prefix}if ($x) { proxy_store on; }`).own, {});
+		}
+	});
+
+	it("keeps the location's proxy_store for its cached assets", async () => {
+		for (const prefix of ["", "include /snippets/x.conf;\n"]) {
+			const advanced_config = `${prefix}proxy_store /data/store$uri;`;
+			const out = await render({ ...base, path: "/a/", advanced_config }, { mode: "dynamic" }, { caching_enabled: true });
+			const nested = out.slice(out.indexOf("location ~*"));
+			assert.match(nested, /proxy_store \/data\/store\$uri;/, prefix);
+			assert.doesNotMatch(nested, /proxy_cache public-cache;/, prefix);
+			assert.match(nested, /expires @30m;/, prefix);
+		}
+		const out = await render(
+			{ ...base, path: "/a/", advanced_config: "proxy_store off;" },
+			{ mode: "dynamic" },
+			{ caching_enabled: true },
+		);
+		assert.match(out.slice(out.indexOf("location ~*")), /proxy_cache public-cache;/);
+	});
+
+	it("does not repeat an included file in the nested asset location, it inherits the location's settings", async () => {
+		// Authelia's snippets: proxy.conf sets proxy_read_timeout / proxy_connect_timeout / proxy_set_header,
+		// authrequest.conf auth_request and proxy_set_header; a second copy would be rejected ("is duplicate"),
+		// an included `location` too ("is outside location")
+		const advanced_config = [
+			"include /snippets/proxy.conf;",
+			"include /snippets/authelia-authrequest.conf;",
+			"set $backend app;",
+			"if ($http_x_token != secret) { return 403; }",
+			"proxy_set_header X-A a;",
+		].join("\n");
+		for (const [forward_host, mode] of [
+			["$backend", "static"],
+			["app", "static"],
+			["app", "dynamic"],
+		]) {
+			const out = await render(
+				{ ...base, path: "^~ /private/", forward_host, forward_path: "/fp/", advanced_config },
+				{ mode },
+				{
+					caching_enabled: true,
+					allow_websocket_upgrade: true,
+					access_list_id: 4,
+					access_list: { items: [{ username: "a" }], clients: [], pass_auth: false, satisfy_any: false },
+					certificate_id: 1,
+					certificate: { id: 1 },
+					ssl_forced: true,
+					hsts_enabled: true,
+					block_exploits: true,
+				},
+			);
+			const at = out.indexOf("location ~*");
+			const end = out.indexOf("\n    }\n", at);
+			const nested = out.slice(at, end);
+			const parent = out.slice(0, at) + out.slice(end);
+			assert.ok(parent.includes(advanced_config), forward_host);
+			assert.match(parent, /proxy_set_header Upgrade/);
+			assert.match(parent, /add_header Strict-Transport-Security/);
+			assert.doesNotMatch(nested, /include \/snippets/, forward_host);
+			// the rewrite statements are repeated, guards apply to assets
+			assert.match(nested, /\n\s*set \$backend app;\nif \(\$http_x_token != secret\) \{ return 403; \}\n/, forward_host);
+			// no list of its own: proxy_set_header / add_header / auth_basic / allow / websocket lines are inherited
+			assert.doesNotMatch(nested, /proxy_set_header|add_header|auth_basic|satisfy|proxy_http_version/, forward_host);
+			// rewrite-phase includes of NPM itself are repeated, they are known
+			assert.match(nested, /include conf\.d\/include\/block-exploits\.conf;/);
+			assert.match(nested, /include conf\.d\/include\/force-ssl\.conf;/);
+			// the cache settings of the asset block are its own, the included file's don't reach the nested location
+			assert.match(nested, /expires @30m;/);
+			assert.match(nested, /proxy_read_timeout 45s;/);
+			assert.match(nested, /proxy_pass /);
+		}
 	});
 
 	it("keeps the rendering of a literal forward path", async () => {
