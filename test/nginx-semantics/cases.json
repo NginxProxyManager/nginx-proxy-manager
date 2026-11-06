@@ -37,5 +37,8 @@
  {"path":"/tofb/","fp":"","adv":"error_page 418 = @fb; return 418;"},
  {"path":"~ ^/vrx/","host":"$sembackend","fp":"/v1/","adv":"set $sembackend echo;"},
  {"path":"@vfb","host":"$sembackend","fp":"/vfb/","adv":"set $sembackend echo;"},
- {"path":"/tovfb/","fp":"","adv":"error_page 418 = @vfb; return 418;"}
+ {"path":"/tovfb/","fp":"","adv":"error_page 418 = @vfb; return 418;"},
+ {"path":"/api/","fp":"/api/$arg_id","cache":true},
+ {"path":"/cvar/","host":"$sembackend","fp":"","cache":true,"adv":"set $sembackend echo;"},
+ {"path":"/cvarfp/","host":"$sembackend","fp":"/x/","cache":true,"adv":"set $sembackend echo;"}
 ]
