@@ -99,6 +99,11 @@
 /avc/foo?id=42|||"url":"/api/42"
 /avc/x.css?id=5|||"url":"/api/5"
 /avc/x.css?id=6||:8443|"url":"/api/6"
+/cvt/app.css|||"url":"/v1/t"
+/cvt/app.css||:8443|"url":"/v1/t"
+/cvt/page|||"url":"/v1/t"
+/cvn/app.css|||"url":"/v1/t"
+/cvn/page||:8443|"url":"/v1/t"
 /rx/users/7?x=1|||"url":"/v1/users/7"
 /rx/
 /rx/r?redir=abs

@@ -53,9 +53,10 @@ format, are not detected: use `$request_uri` there, or set `NPM_LOCATION_DYNAMIC
 
 A forward path with an nginx variable is written into the config exactly as before too
 (`proxy_pass http://app:8080/api/$arg_id;`). nginx sends such a URI as it is: `/a/foo?id=42` on location `/a/` reaches
-the upstream as `/api/42`, without the rest of the path and without the query string. "Cache Assets" passes the same
-URI for assets, and doesn't add the nested asset location when the forward path uses a regex capture such as `$1`,
-because the nested location has captures of its own.
+the upstream as `/api/42`, without the rest of the path and without the query string. "Cache Assets" doesn't add the
+nested asset location for such a forward path: a nested location doesn't run the `set` of its parent (a forward path
+`/v1/$target` with `set $target ...;` in the advanced configuration) and has regex captures of its own (`$1`). Assets
+are then proxied like every other request of the location, without caching.
 
 The same applies to a regular-expression or named location with a forward path: nginx only accepts a URI there when
 it contains a variable, for example `~ ^/api/(.*)$` with forward path `/v1/$1`, which sends `/api/users/7` to the

@@ -27,6 +27,8 @@
  {"path":"/avh/","fp":"/h/$host"},
  {"path":"/avr/","fp":"$request_uri"},
  {"path":"/avc/","fp":"/api/$arg_id","cache":true},
+ {"path":"/cvt/","fp":"/v1/$semtarget","cache":true,"adv":"set $semtarget t;"},
+ {"path":"/cvn/","fp":"/v1/$semtarget","adv":"set $semtarget t;"},
  {"path":"~ ^/rx/(.*)$","fp":"/v1/$1"},
  {"path":"~* ^/rxi/(?<rest>.*)$","fp":"/v2/$rest"},
  {"path":"~ ^/cachere/(.*)$","fp":"/v1/$1","cache":true},
