@@ -25,6 +25,7 @@ const unknownVariable = (name) =>
 // nginx -t over the managed files: `$missing_*` outside a comment is an unknown variable; `uses_shared` in one
 // file only fails together with `breaks_shared` in another file
 let tests = 0;
+let reloads = [];
 const fakeNginxTest = async () => {
 	tests++;
 	const texts = real
@@ -37,6 +38,14 @@ const fakeNginxTest = async () => {
 				.filter((line) => !line.trim().startsWith("#"))
 				.join("\n"),
 		);
+	// a file broken by itself, eg. tampered with: nginx names the file
+	for (const f of real.readdirSync(dir).filter((name) => /^\d+\.conf$/.test(name))) {
+		if (real.readFileSync(join(dir, f), "utf8").includes("tampered")) {
+			throw new Error(
+				`nginx: [emerg] unknown directive "tampered" in /data/nginx/proxy_host/${f}:2\nnginx: configuration file /etc/nginx/nginx.conf test failed`,
+			);
+		}
+	}
 	for (const text of texts) {
 		const m = text.match(/\$(missing_[a-z_]+)/);
 		if (m) {
@@ -59,7 +68,19 @@ before(() => {
 	}
 	real.test = internalNginx.test;
 	real.generateConfig = internalNginx.generateConfig;
+	real.reloadWaiter = internalNginx.reloadWaiter;
 	internalNginx.test = fakeNginxTest;
+	internalNginx.reloadWaiter = {
+		reloadAndWait: async () => {
+			// what nginx loads: the managed files on disk
+			reloads.push(
+				Object.fromEntries(
+					real.readdirSync(dir).map((f) => [f, real.readFileSync(join(dir, f), "utf8")]),
+				),
+			);
+			return { confirmed: true, waitedMs: 1 };
+		},
+	};
 	internalNginx.generateConfig = async (_hostType, host) => {
 		const text = `server {\n  ${host.advanced_config || "# ok"}\n}\n`;
 		fs.writeFileSync(conf(host.id), text);
@@ -73,6 +94,7 @@ after(async () => {
 	}
 	internalNginx.test = real.test;
 	internalNginx.generateConfig = real.generateConfig;
+	internalNginx.reloadWaiter = real.reloadWaiter;
 	fs.rmSync(root, { recursive: true, force: true });
 	await db.destroy();
 });
@@ -149,5 +171,57 @@ describe("an error without a line that the host's own config causes", () => {
 			return true;
 		});
 		assert.equal(onDisk(id), null);
+	});
+});
+
+describe("repairs of other hosts while saving a host whose own config is not applied", () => {
+	afterEach(async () => {
+		for (const name of real.readdirSync(dir)) {
+			real.rmSync(join(dir, name));
+		}
+		await db("proxy_host").delete();
+		reloads = [];
+	});
+
+	// broken by itself, also when regenerated (eg. its certificate files are missing): the save moves its file
+	// aside and marks it offline
+	const brokenHost = () => host("tampered on;", "server {\n  tampered on;\n}\n");
+
+	it("applies them with a reload when nginx rejects the host being saved", async () => {
+		const other = await brokenHost();
+		const id = await host("add_header X-Test $missing_own_x;", "server {\n  # before\n}\n");
+		reloads = [];
+		await assert.rejects(
+			internalNginx.configure(proxyHostModel, "proxy_host", await row(id)),
+			(err) => err.details.scope === "host",
+		);
+		assert.equal(onDisk(other), null);
+		assert.equal((await row(other)).meta.nginx_online, false);
+		// nginx runs what the status describes: the broken host taken out, the saved host's previous config
+		assert.equal(reloads.length, 1);
+		assert.equal(reloads[0][`${other}.conf`], undefined);
+		assert.match(reloads[0][`${id}.conf`], /# before/);
+	});
+
+	it("applies them with a reload after a dry run", async () => {
+		const other = await brokenHost();
+		const id = await host("# fine", "server {\n  # before\n}\n");
+		reloads = [];
+		await internalNginx.configure(proxyHostModel, "proxy_host", await row(id), { dryRun: true });
+		assert.equal((await row(other)).meta.nginx_online, false);
+		assert.equal(reloads.length, 1);
+		assert.equal(reloads[0][`${other}.conf`], undefined);
+		assert.match(reloads[0][`${id}.conf`], /# before/);
+	});
+
+	it("does not reload for a rejected save or a dry run without repairs, or with reload: false", async () => {
+		const id = await host("add_header X-Test $missing_own_x;", "server {\n  # before\n}\n");
+		await assert.rejects(internalNginx.configure(proxyHostModel, "proxy_host", await row(id)));
+		await db("proxy_host").where("id", id).update({ advanced_config: "# fine" });
+		await internalNginx.configure(proxyHostModel, "proxy_host", await row(id), { dryRun: true });
+		await brokenHost();
+		await db("proxy_host").where("id", id).update({ advanced_config: "add_header X-Test $missing_own_x;" });
+		await assert.rejects(configure(id));
+		assert.equal(reloads.length, 0);
 	});
 });
