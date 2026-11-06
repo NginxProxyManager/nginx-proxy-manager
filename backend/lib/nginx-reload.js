@@ -179,7 +179,7 @@ const createReloadWaiter = (opts) => {
 	 * workers from before no longer accept connections.
 	 *
 	 * @returns {Promise<{confirmed: boolean, noMaster?: boolean, rejected?: boolean, oldStillRunning?: boolean,
-	 *          reason?: string, waitedMs: number}>} rejects when signal() rejects
+	 *          emerg?: string, reason?: string, waitedMs: number}>} rejects when signal() rejects
 	 */
 	const reloadAndWait = async () => {
 		const master = await readMasterPid();
@@ -218,6 +218,7 @@ const createReloadWaiter = (opts) => {
 				return {
 					confirmed: false,
 					rejected: true,
+					emerg,
 					reason: `nginx could not apply the config: ${emerg}`,
 					waitedMs: now() - start,
 				};
