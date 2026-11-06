@@ -309,6 +309,29 @@ describe("renderLocation", () => {
 		assert.equal(out.match(/proxy_redirect/g).length, 1);
 	});
 
+	it("lets the nested asset location inherit the user's proxy_redirect", async () => {
+		const cases = [
+			{ mode: "static", forward_path: "/x" },
+			{ mode: "dynamic", forward_path: "/x" },
+			{ mode: "static", forward_path: "/api/$arg_id" },
+		];
+		for (const rule of ["proxy_redirect off;", "proxy_redirect http://app:8080/ /;"]) {
+			for (const { mode, forward_path } of cases) {
+				const out = await render(
+					{ ...base, path: "/a/", forward_path, advanced_config: rule },
+					{ mode },
+					{ caching_enabled: true },
+				);
+				const nested = out.slice(out.indexOf("location ~*"));
+				assert.notEqual(out.indexOf("location ~*"), -1, `${mode} ${forward_path}`);
+				assert.match(nested, /proxy_cache public-cache;/);
+				// only the user's line: a proxy_redirect in the nested block would replace it for assets
+				assert.equal(out.match(/proxy_redirect/g).length, 1, `${rule} ${mode} ${forward_path}`);
+				assert.doesNotMatch(nested, /proxy_redirect/);
+			}
+		}
+	});
+
 	it("renders IPv6 upstreams with brackets", async () => {
 		const out = await render({ ...base, path: "/a", forward_host: "fd00::1" }, { mode: "static" });
 		assert.match(out, /proxy_pass\s+http:\/\/\[fd00::1\]:8080;/);
