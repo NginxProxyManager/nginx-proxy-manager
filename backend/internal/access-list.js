@@ -18,6 +18,23 @@ const omissions = () => {
 };
 
 /**
+ * @param   {Array|String|null}  locations  locations JSON, raw or parsed
+ * @param   {Integer}            accessListId
+ * @returns {Boolean}
+ */
+const locationsUseAccessList = (locations, accessListId) => {
+	let parsed = locations;
+	if (typeof parsed === "string") {
+		try {
+			parsed = JSON.parse(parsed);
+		} catch {
+			return false;
+		}
+	}
+	return Array.isArray(parsed) && parsed.some((loc) => Number(loc?.access_list_id) === Number(accessListId));
+};
+
+/**
  * Find proxy hosts that reference an access list in their locations JSON.
  *
  * @param   {Integer}  accessListId
@@ -37,10 +54,12 @@ const getProxyHostsUsingAccessListInLocations = async (accessListId) => {
 			[JSON.stringify([{ access_list_id: accessListId }])],
 		);
 	} else {
-		result = await db().raw(
-			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations LIKE ?",
-			[`%"access_list_id":${accessListId}%`],
-		);
+		// LIKE is only a prefilter: "access_list_id":1 also matches "access_list_id":10,
+		// so confirm the exact id against the parsed JSON.
+		const rows = await db().raw("SELECT id, locations FROM proxy_host WHERE is_deleted = 0 AND locations LIKE ?", [
+			`%"access_list_id":${accessListId}%`,
+		]);
+		return (rows || []).filter((r) => locationsUseAccessList(r.locations, accessListId)).map((r) => ({ id: r.id }));
 	}
 	// knex raw() returns [rows, metadata] for MySQL, { rows } for Postgres and rows for SQLite
 	if (!Array.isArray(result)) {
@@ -74,6 +93,45 @@ const getProxyHostCount = async (accessListId) => {
 	}
 
 	return hostIds.size;
+};
+
+/**
+ * Counts proxy hosts per access list in one query, covering host-level and
+ * custom-location usage. A host counts once per list even if it uses it twice.
+ *
+ * @returns {Promise<Map<Number, Number>>}  accessListId => host count
+ */
+const getProxyHostCounts = async () => {
+	const hostsByList = new Map();
+	const add = (listId, hostId) => {
+		const id = Number(listId);
+		if (!id) {
+			return;
+		}
+		if (!hostsByList.has(id)) {
+			hostsByList.set(id, new Set());
+		}
+		hostsByList.get(id).add(hostId);
+	};
+
+	const hosts = await proxyHostModel
+		.query()
+		.select("id", "access_list_id", "locations")
+		.where("is_deleted", 0);
+	for (const host of hosts) {
+		add(host.access_list_id, host.id);
+		if (Array.isArray(host.locations)) {
+			for (const loc of host.locations) {
+				add(loc?.access_list_id, host.id);
+			}
+		}
+	}
+
+	const counts = new Map();
+	for (const [listId, hostIds] of hostsByList) {
+		counts.set(listId, hostIds.size);
+	}
+	return counts;
 };
 
 const internalAccessList = {
@@ -285,13 +343,9 @@ const internalAccessList = {
 
 		const query = accessListModel
 			.query()
-			.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
-			.leftJoin("proxy_host", function () {
-				this.on("proxy_host.access_list_id", "=", "access_list.id").andOn("proxy_host.is_deleted", "=", 0);
-			})
+			.select("access_list.*")
 			.where("access_list.is_deleted", 0)
 			.andWhere("access_list.id", thisData.id)
-			.groupBy("access_list.id")
 			.allowGraph("[owner,items,clients,proxy_hosts.[certificate,access_list.[clients,items]]]")
 			.first();
 
@@ -412,12 +466,8 @@ const internalAccessList = {
 
 		const query = accessListModel
 			.query()
-			.select("access_list.*", accessListModel.raw("COUNT(proxy_host.id) as proxy_host_count"))
-			.leftJoin("proxy_host", function () {
-				this.on("proxy_host.access_list_id", "=", "access_list.id").andOn("proxy_host.is_deleted", "=", 0);
-			})
+			.select("access_list.*")
 			.where("access_list.is_deleted", 0)
-			.groupBy("access_list.id")
 			.allowGraph("[owner,items,clients]")
 			.orderBy("access_list.name", "ASC");
 
@@ -437,9 +487,10 @@ const internalAccessList = {
 		}
 
 		const rows = await query.then(utils.omitRows(omissions()));
-		if (rows) {
+		if (rows?.length) {
+			const counts = await getProxyHostCounts();
 			for (let idx = 0; idx < rows.length; idx++) {
-				rows[idx].proxy_host_count = await getProxyHostCount(rows[idx].id);
+				rows[idx].proxy_host_count = counts.get(Number(rows[idx].id)) || 0;
 				if (typeof rows[idx].items !== "undefined" && rows[idx].items) {
 					rows[idx] = internalAccessList.maskItems(rows[idx]);
 				}
