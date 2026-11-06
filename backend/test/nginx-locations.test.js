@@ -334,7 +334,6 @@ describe("renderLocation", () => {
 		const cases = [
 			{ mode: "static", forward_path: "/x" },
 			{ mode: "dynamic", forward_path: "/x" },
-			{ mode: "static", forward_path: "/api/$arg_id" },
 		];
 		for (const rule of ["proxy_redirect off;", "proxy_redirect http://app:8080/ /;"]) {
 			for (const { mode, forward_path } of cases) {
@@ -425,14 +424,22 @@ describe("renderLocation", () => {
 		assert.doesNotMatch(out, /rewrite|npm_loc_0_host|proxy_redirect/);
 	});
 
-	it("passes a variable forward path to the nested asset location as it is", async () => {
-		const loc = { ...base, path: "/a/", forward_path: "/api/$arg_id" };
-		const out = await render(loc, { mode: "static" }, { caching_enabled: true });
-		const nested = out.slice(out.indexOf("location ~*"));
-		assert.match(nested, /proxy_pass http:\/\/app:8080\/api\/\$arg_id;/);
-		// "proxy_redirect default" is not allowed with variables, the parent has none either
-		assert.match(nested, /proxy_redirect off;/);
-		assert.doesNotMatch(nested, /rewrite/);
+	it("does not nest the asset cache when the forward path has a variable set in the advanced config", async () => {
+		// the nested location would not run the parent's `set $target`, assets would reach /v1/ instead of /v1/t
+		const loc = { ...base, path: "/a/", forward_path: "/v1/$target", advanced_config: "set $target t;" };
+		const mode = chooseLocationMode(prepareLocation(loc), { mode: "dynamic", status: "ok" });
+		assert.deepEqual(mode, { mode: "static", status: "ok" });
+		const out = await render(loc, mode, { caching_enabled: true });
+		assert.match(out, /proxy_pass\s+http:\/\/app:8080\/v1\/\$target;/);
+		assert.equal(out.match(/proxy_pass/g).length, 1);
+		assert.doesNotMatch(out, /location ~\*|proxy_cache/);
+	});
+
+	it("does not nest the asset cache for any variable forward path", async () => {
+		for (const forward_path of ["/api/$arg_id", "/api/$" + "{arg_id}/x", "$request_uri"]) {
+			const out = await render({ ...base, path: "/a/", forward_path }, { mode: "static" }, { caching_enabled: true });
+			assert.doesNotMatch(out, /location ~\*/, forward_path);
+		}
 	});
 
 	it("does not nest the asset cache when the forward path uses a capture, the nested regex replaces it", async () => {

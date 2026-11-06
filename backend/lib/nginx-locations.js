@@ -56,9 +56,6 @@ const VARIABLE_HOST = /^\$[A-Za-z_][A-Za-z0-9_]*$/;
 // location prefix replaced, no query string added, no implicit "proxy_redirect default"), see hasVariablePath()
 const VARIABLE_IN_PATH = /\$/;
 
-// A capture reference ($1, ${2}) in the forward path, which a nested regex location would overwrite
-const CAPTURE_IN_PATH = /\$\{?[0-9]/;
-
 // Variables whose value changes when the dynamic rendering rewrites the URI, see chooseLocationMode()
 const URI_VARIABLES = /\$(uri|document_uri)(?![A-Za-z0-9_])|\$\{(uri|document_uri)\}/;
 
@@ -342,13 +339,13 @@ const buildLocationContext = (loc, state) => {
 	const rewrite = canRewrite ? `"(?s)^${escapeRegex(parsed.unquoted).replace(/"/g, '\\"')}(.*)$" ${fp}$1` : "";
 	const redirect = canRewrite ? `${upstreamBase}${fp} ${parsed.uri}` : `${upstreamBase}/ /`;
 	// nginx does not allow nested locations in exact match and named locations. A nested location doesn't
-	// run the parent's `set`, so a variable upstream set in the advanced config would be empty there.
-	// A variable forward path goes into the nested location's proxy_pass as it is (no rewrite); one with a
-	// capture ($1) can't, the nested regex location replaces the captures with its own.
-	const variablePath = hasVariablePath(loc);
+	// run the parent's `set`, so a variable set in the advanced config would be empty there: neither a
+	// variable forward host ($backend) nor a variable forward path (/v1/$target) gets the nested asset
+	// location, their assets go through the parent's proxy_pass (uncached). A capture ($1) in the forward
+	// path would be replaced by the nested regex location's own captures as well.
 	const userRedirect = hasDirective(loc.advanced_config, "proxy_redirect");
 	const assetsAllowed =
-		!parsed.isExact && !parsed.isNamed && !isVariableHost(loc.forward_host) && !CAPTURE_IN_PATH.test(fp);
+		!parsed.isExact && !parsed.isNamed && !isVariableHost(loc.forward_host) && !hasVariablePath(loc);
 
 	return Object.assign({}, loc, {
 		forward_path: fp,
@@ -363,11 +360,9 @@ const buildLocationContext = (loc, state) => {
 		npm_redirect: dynamic && !userRedirect ? redirect : "",
 		npm_assets: assetsAllowed && (loc.caching_enabled === 1 || loc.caching_enabled === true),
 		npm_asset_rewrite: rewrite,
-		npm_asset_uri: variablePath ? fp : "",
-		// like the parent: a proxy_pass with variables has no implicit "proxy_redirect default". When the user
-		// manages proxy_redirect in the advanced config, the nested location sets none and inherits that rule
-		// (a proxy_redirect in the nested block would replace it).
-		npm_asset_redirect: userRedirect ? "" : variablePath ? "off" : redirect,
+		// When the user manages proxy_redirect in the advanced config, the nested location sets none and
+		// inherits that rule (a proxy_redirect in the nested block would replace it).
+		npm_asset_redirect: userRedirect ? "" : redirect,
 	});
 };
 

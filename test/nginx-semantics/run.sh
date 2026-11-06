@@ -69,7 +69,7 @@ while IFS= read -r line; do
 		continue
 	fi
 
-	if [[ ! "$path" =~ ^/(cache|cacheroot|acl|qc%20p|avc|cachere|cro)/ ]]; then
+	if [[ ! "$path" =~ ^/(cache|cacheroot|acl|qc%20p|avc|cachere|cro|cvt)/ ]]; then
 		legacy="$(fetch 8001 "$path" "$creds" "$hostport")"
 		total=$((total + 1))
 		if [ "$legacy" != "$dynamic" ] || [[ "$legacy" == *HOST-MISMATCH* ]]; then
