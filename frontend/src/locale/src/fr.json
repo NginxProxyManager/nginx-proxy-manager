@@ -969,10 +969,10 @@
 		"defaultMessage": "Connecté via l’authentification unique"
 	},
 	"sso.info.internal-users-count": {
-		"defaultMessage": "{count} {count, plural, one {utilisateur connecté} other {utilisateurs connectés}}"
+		"defaultMessage": "{users} {users, plural, one {utilisateur connecté} other {utilisateurs connectés}}"
 	},
 	"sso.info.provisioned-users-count": {
-		"defaultMessage": "{count} {count, plural, one {utilisateur provisionné} other {utilisateurs provisionnés}}"
+		"defaultMessage": "{users} {users, plural, one {utilisateur provisionné} other {utilisateurs provisionnés}}"
 	},
 	"sso.login.heading": {
 		"defaultMessage": "ou continuez avec OAuth"

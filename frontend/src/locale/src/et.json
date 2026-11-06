@@ -969,10 +969,10 @@
 		"defaultMessage": "Sisse logitud ühekordse sisselogimise (SSO) kaudu"
 	},
 	"sso.info.internal-users-count": {
-		"defaultMessage": "{count} sisse logitud {count, plural, one {kasutaja} other {kasutajat}}"
+		"defaultMessage": "{users} sisse logitud {users, plural, one {kasutaja} other {kasutajat}}"
 	},
 	"sso.info.provisioned-users-count": {
-		"defaultMessage": "{count} loodud {count, plural, one {kasutaja} other {kasutajat}}"
+		"defaultMessage": "{users} loodud {users, plural, one {kasutaja} other {kasutajat}}"
 	},
 	"sso.login.heading": {
 		"defaultMessage": "Or continue with OAuth"

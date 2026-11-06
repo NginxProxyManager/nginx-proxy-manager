@@ -969,10 +969,10 @@
 		"defaultMessage": "Signed in via Single Sign On"
 	},
 	"sso.info.internal-users-count": {
-		"defaultMessage": "{count} {count, plural, one {user} other {users}} logged in"
+		"defaultMessage": "{users} {users, plural, one {user} other {users}} logged in"
 	},
 	"sso.info.provisioned-users-count": {
-		"defaultMessage": "{count} {count, plural, one {user} other {users}} provisioned"
+		"defaultMessage": "{users} {users, plural, one {user} other {users}} provisioned"
 	},
 	"sso.login.heading": {
 		"defaultMessage": "or continue with OAuth"

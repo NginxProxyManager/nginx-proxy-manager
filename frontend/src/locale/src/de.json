@@ -969,10 +969,10 @@
 		"defaultMessage": "Über Single Sign-On angemeldet"
 	},
 	"sso.info.internal-users-count": {
-		"defaultMessage": "{count} {count, plural, one {Benutzer} other {Benutzer}} angemeldet"
+		"defaultMessage": "{users} {users, plural, one {Benutzer} other {Benutzer}} angemeldet"
 	},
 	"sso.info.provisioned-users-count": {
-		"defaultMessage": "{count} {count, plural, one {Benutzerkonto bereitgestellt} other {Benutzerkonten bereitgestellt}}"
+		"defaultMessage": "{users} {users, plural, one {Benutzerkonto } other {Benutzerkonten bereitgestellt}}"
 	},
 	"sso.login.heading": {
 		"defaultMessage": "oder mit OAuth fortfahren"

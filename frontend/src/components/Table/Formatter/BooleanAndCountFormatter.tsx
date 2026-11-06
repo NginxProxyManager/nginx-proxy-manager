@@ -20,7 +20,7 @@ export function BooleanAndCountFormatter({ value, count, disabled, translationKe
 						"text-gray-500": disabled,
 					})}
 				>
-					<T id={translationKey} data={{ count }} />
+					<T id={translationKey} data={{ users: count }} />
 				</span>
 			)}
 		</span>

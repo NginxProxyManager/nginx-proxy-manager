@@ -894,10 +894,10 @@
 		"defaultMessage": "Központi Hitelesítéssel jelentkezett be"
 	},
 	"sso.info.internal-users-count": {
-		"defaultMessage": "{count} felhasználó lépett be"
+		"defaultMessage": "{users} felhasználó lépett be"
 	},
 	"sso.info.provisioned-users-count": {
-		"defaultMessage": "{count} felhasználó létrehozva"
+		"defaultMessage": "{users} felhasználó létrehozva"
 	},
 	"sso.login.heading": {
 		"defaultMessage": "vagy folytassa OAuth-tal"
