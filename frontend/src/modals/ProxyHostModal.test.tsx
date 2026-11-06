@@ -54,10 +54,13 @@ let currentHost: typeof host = host;
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
 let putBodies: any[] = [];
+// when set, a PUT waits for it: the save is still in flight
+let putGate: Promise<void> | null = null;
 
 beforeEach(() => {
 	localStorage.clear();
 	putBodies = [];
+	putGate = null;
 	currentUser = me;
 	currentHost = host;
 	vi.stubGlobal(
@@ -66,6 +69,7 @@ beforeEach(() => {
 			const url = String(input);
 			if (init?.method === "PUT" && url.startsWith("/api/nginx/proxy-hosts/1")) {
 				putBodies.push(JSON.parse(String(init.body)));
+				if (putGate) await putGate;
 				// saved, but nginx could not load a custom location: it is quarantined
 				return json({
 					...host,
@@ -225,5 +229,43 @@ describe("ProxyHostModal for a user who isn't an admin", () => {
 		expect(putBodies).toHaveLength(1);
 		expect(putBodies[0]).not.toHaveProperty("advanced_config");
 		expect(putBodies[0].locations.map((l: any) => l.advanced_config)).toEqual(["expires 1d;", "expires 7d;"]);
+	});
+});
+
+describe("ProxyHostModal locations while saving", () => {
+	it("keeps the shown locations and the saved ones the same when the save returns a warning", async () => {
+		currentHost = {
+			...host,
+			locations: [{ path: "/api", forward_scheme: "http", forward_host: "app", forward_port: 80, advanced_config: "" }],
+		} as any;
+		const tabs = await open();
+		fireEvent.click(tabs[1]);
+		fireEvent.click(screen.getByRole("button", { name: /\/api/ }));
+		const path = () => screen.getByPlaceholderText("/path") as HTMLInputElement;
+		fireEvent.change(path(), { target: { value: "/api2" } });
+
+		let release = () => {};
+		putGate = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Save" }));
+		await waitFor(() => expect(putBodies).toHaveLength(1));
+
+		// the save is in flight: the locations can't be edited
+		await waitFor(() => expect(path()).toBeDisabled());
+		fireEvent.change(path(), { target: { value: "/newer" } });
+		expect(screen.getByRole("button", { name: "Add Location" })).toBeDisabled();
+
+		await act(async () => release());
+		await screen.findByTestId("save-warning");
+		await waitFor(() => expect(path()).not.toBeDisabled());
+
+		// what is shown is what was submitted, and what the next save sends
+		expect(putBodies[0].locations.map((l: any) => l.path)).toEqual(["/api2"]);
+		expect(path()).toHaveValue("/api2");
+		putGate = null;
+		fireEvent.click(screen.getByRole("button", { name: "Save" }));
+		await waitFor(() => expect(putBodies).toHaveLength(2));
+		expect(putBodies[1].locations.map((l: any) => l.path)).toEqual(["/api2"]);
 	});
 });

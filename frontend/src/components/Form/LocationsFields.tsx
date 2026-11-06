@@ -145,6 +145,8 @@ interface Props {
 	highlightIndex?: number | null;
 	// Only admins may change the advanced config of a location
 	allowAdvanced?: boolean;
+	// No edits while a save is in flight: the modal resets the form to the submitted values afterwards
+	readOnly?: boolean;
 }
 export function LocationsFields({
 	initialValues,
@@ -152,6 +154,7 @@ export function LocationsFields({
 	statuses,
 	highlightIndex,
 	allowAdvanced = true,
+	readOnly = false,
 }: Props) {
 	const [rows, setRows] = useState<Row[]>(() => (initialValues || []).map((value, id) => ({ id, value })));
 	const { setFieldValue, submitCount } = useFormikContext();
@@ -165,11 +168,25 @@ export function LocationsFields({
 	// Registers the validation with Formik so that a submit with invalid
 	// locations is blocked; the per-row messages are rendered from the same
 	// function below.
-	useField({
+	const [field] = useField({
 		name,
 		validate: (value: ProxyLocation[]) =>
 			validateLocations(value).some(Boolean) ? intl.formatMessage({ id: "location.errors-summary" }) : undefined,
 	});
+
+	// The rows are the source of what is shown, Formik's value of what is saved. When the form value is replaced
+	// from outside (resetForm after a save with warnings), the rows follow it, so the editor never shows rows that
+	// the next save wouldn't send. Row ids are kept by position, so open rows stay open.
+	const lastSet = useRef<ProxyLocation[] | null>(null);
+	const formValue = field.value as ProxyLocation[] | undefined;
+	useEffect(() => {
+		if (formValue === lastSet.current) return;
+		const next = formValue || [];
+		setRows((prev) => {
+			if (JSON.stringify(prev.map((r) => r.value)) === JSON.stringify(next)) return prev;
+			return next.map((value, i) => ({ id: prev[i]?.id ?? nextId.current++, value }));
+		});
+	}, [formValue]);
 
 	const rowErrors = validateLocations(rows.map((r) => r.value));
 
@@ -227,13 +244,13 @@ export function LocationsFields({
 	const setFormField = (newRows: Row[]) => {
 		// Blank rows are kept here so array indexes match the rows (the access
 		// list field relies on that); the modal drops them when saving.
-		setFieldValue(
-			name,
-			newRows.map((r: Row) => r.value),
-		);
+		const values = newRows.map((r: Row) => r.value);
+		lastSet.current = values;
+		setFieldValue(name, values);
 	};
 
 	const handleAdd = () => {
+		if (readOnly) return;
 		const id = nextId.current++;
 		const newRows = [...rows, { id, value: blankItem }];
 		setRows(newRows);
@@ -246,6 +263,7 @@ export function LocationsFields({
 	};
 
 	const handleRemove = (id: number) => {
+		if (readOnly) return;
 		const newRows = rows.filter((r: Row) => r.id !== id);
 		setRows(newRows);
 		setExpanded(expanded.filter((i) => i !== id));
@@ -254,6 +272,7 @@ export function LocationsFields({
 	};
 
 	const handleChanges = (id: number, changes: Partial<ProxyLocation>) => {
+		if (readOnly) return;
 		const newRows = rows.map((r: Row) => (r.id === id ? { ...r, value: { ...r.value, ...changes } } : r));
 		setRows(newRows);
 		setFormField(newRows);
@@ -278,7 +297,7 @@ export function LocationsFields({
 	if (rows.length === 0) {
 		return (
 			<div className="text-center">
-				<button type="button" className="btn my-3" onClick={handleAdd}>
+				<button type="button" className="btn my-3" onClick={handleAdd} disabled={readOnly}>
 					<T id="action.add-location" />
 				</button>
 			</div>
@@ -286,7 +305,8 @@ export function LocationsFields({
 	}
 
 	return (
-		<>
+		// A disabled fieldset disables every input, select, textarea and button in it
+		<fieldset disabled={readOnly} aria-busy={readOnly || undefined} className="m-0 p-0 border-0">
 			<div className="d-flex align-items-center mb-3">
 				{rows.length >= FILTER_THRESHOLD && (
 					<div className={cn("input-group", styles.filter)}>
@@ -360,11 +380,12 @@ export function LocationsFields({
 							onRemove={() => handleRemove(row.id)}
 							onChanges={(changes) => handleChanges(row.id, changes)}
 							onTouched={(field) => markTouched(row.id, field)}
+							readOnly={readOnly}
 						/>
 					);
 				})
 			)}
-		</>
+		</fieldset>
 	);
 }
 
@@ -385,6 +406,7 @@ interface CardProps {
 	onRemove: () => void;
 	onChanges: (changes: Partial<ProxyLocation>) => void;
 	onTouched: (field: keyof LocationErrors) => void;
+	readOnly: boolean;
 }
 function LocationCard({
 	row,
@@ -403,6 +425,7 @@ function LocationCard({
 	onRemove,
 	onChanges,
 	onTouched,
+	readOnly,
 }: CardProps) {
 	const item = row.value;
 	const isEnabled = item.enabled !== false;
@@ -604,6 +627,7 @@ function LocationCard({
 						id={`locations-access-list-${row.id}`}
 						onFormChange={(accessListId) => onChanges({ accessListId })}
 						inheritHost
+						disabled={readOnly}
 					/>
 					{isAdvVisible && (
 						<div className="">

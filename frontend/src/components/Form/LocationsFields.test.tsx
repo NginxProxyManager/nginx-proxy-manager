@@ -315,3 +315,53 @@ describe("LocationsFields", () => {
 		expect(screen.queryByDisplayValue("expires 1d;")).toBeNull();
 	});
 });
+
+describe("LocationsFields and the form value", () => {
+	afterEach(cleanup);
+
+	const renderWithReset = (initial: ProxyLocation[], reset: ProxyLocation[], readOnly = false) => {
+		render(
+			<Formik initialValues={{ locations: initial }} onSubmit={vi.fn()}>
+				{({ values, resetForm }) => (
+					<Form>
+						<LocationsFields initialValues={initial} highlightIndex={0} readOnly={readOnly} />
+						<output data-testid="values">{JSON.stringify(values.locations)}</output>
+						<button type="button" onClick={() => resetForm({ values: { locations: reset } })}>
+							reset
+						</button>
+					</Form>
+				)}
+			</Formik>,
+		);
+		return () => JSON.parse(screen.getByTestId("values").textContent || "[]") as ProxyLocation[];
+	};
+
+	it("shows the reset values after a reset, not newer local edits", async () => {
+		// the modal resets the form to the submitted values after a save with warnings
+		const submitted = [loc({ path: "/a", forwardHost: "app" })];
+		const formValues = renderWithReset(submitted, submitted);
+		fireEvent.change(screen.getByPlaceholderText("/path"), { target: { value: "/edited" } });
+		fireEvent.click(screen.getByRole("button", { name: "Add Location" }));
+		expect(formValues().map((l) => l.path)).toEqual(["/edited", ""]);
+
+		fireEvent.click(screen.getByRole("button", { name: "reset" }));
+
+		await waitFor(() => expect(screen.getAllByPlaceholderText("/path").map((i) => (i as HTMLInputElement).value)).toEqual(["/a"]));
+		expect(formValues().map((l) => l.path)).toEqual(["/a"]);
+		// the row stayed open and further edits go to the form again
+		fireEvent.change(screen.getByPlaceholderText("/path"), { target: { value: "/b" } });
+		expect(formValues().map((l) => l.path)).toEqual(["/b"]);
+	});
+
+	it("can't be edited while read-only", () => {
+		const formValues = renderWithReset([loc({ path: "/a" })], [], true);
+		const path = screen.getByPlaceholderText("/path");
+		expect(path).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Add Location" })).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Delete" })).toBeDisabled();
+		fireEvent.change(path, { target: { value: "/edited" } });
+		fireEvent.click(screen.getByRole("button", { name: "Add Location" }));
+		expect(formValues().map((l) => l.path)).toEqual(["/a"]);
+		expect(path).toHaveValue("/a");
+	});
+});
