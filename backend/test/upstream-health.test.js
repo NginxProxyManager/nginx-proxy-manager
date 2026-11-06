@@ -172,6 +172,64 @@ describe("health: resolver-only upstreams", () => {
 	});
 });
 
+describe("health: variable forward paths", () => {
+	const mismatchCheck = async (target) => ({
+		ok: true,
+		code: "resolver_mismatch",
+		message: `${target.host} only via /etc/hosts`,
+		ms: 1,
+	});
+
+	it("a static location with a variable forward path is resolved per request", async () => {
+		const row = {
+			id: 40,
+			owner_user_id: 1,
+			enabled: true,
+			forward_host: "$up",
+			forward_port: 80,
+			locations: [
+				{ path: "/api", forward_host: "hosts-only", forward_port: 80, forward_path: "/api/$arg_id" },
+				{ path: "/emb", forward_host: "hosts-only/v1/$arg_id", forward_port: 80 },
+				{ path: "/plain", forward_host: "hosts-only", forward_port: 80, forward_path: "/api" },
+				// the path in the forward host wins over the forward path field, as when rendering
+				{ path: "/won", forward_host: "hosts-only/v1", forward_port: 80, forward_path: "/$arg_id" },
+			],
+			// the renderer keeps such locations static
+			meta: {
+				nginx_locations: [0, 1, 2, 3].map((index) => ({ index, status: "ok", mode: "static" })),
+			},
+		};
+		const [host] = buildHealthTargets({ proxyHosts: [row] });
+		assert.deepEqual(
+			host.targets.map((t) => [t.location_index, t.resolver, t.variable_path === true]),
+			[
+				[0, true, true],
+				[1, true, true],
+				[2, false, false],
+				[3, false, false],
+			],
+		);
+
+		const monitor = new HealthMonitor({
+			getInterval: () => 60,
+			loadRows: async () => ({ proxyHosts: [row] }),
+			check: mismatchCheck,
+		});
+		await monitor.runOnce();
+		const h40 = monitor.snapshot({ proxy_host: () => true }).hosts.proxy_host["40"];
+		assert.equal(h40.ok, false, "requests to the variable paths fail with a 502");
+		assert.deepEqual(
+			h40.targets.map((t) => [t.location_index, t.ok]),
+			[
+				[0, false],
+				[1, false],
+				[2, true],
+				[3, true],
+			],
+		);
+	});
+});
+
 describe("health: monitor", () => {
 	it("runs a round, dedupes host:port, and filters the snapshot", async () => {
 		const calls = [];

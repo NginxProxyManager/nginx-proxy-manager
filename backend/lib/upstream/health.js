@@ -33,6 +33,21 @@ const isDynamicLocation = (states, index) =>
 	Array.isArray(states) && states.some((state) => state?.index === index && state.mode === "dynamic");
 
 /**
+ * Whether a custom location's forward path contains an nginx variable (`/api/$arg_id`), like hasVariablePath() in
+ * lib/nginx-locations.js: a path in the forward host ("app/api/$arg_id") wins over the forward path field. Such a
+ * proxy_pass has a variable, so nginx resolves its host per request through its `resolver`, although the location
+ * is rendered in static mode.
+ *
+ * @param   {Object} location  a custom location as stored
+ * @returns {boolean}
+ */
+const hasVariableForwardPath = (location) => {
+	const { path } = splitHostPath(location?.forward_host);
+	const forwardPath = path || (typeof location?.forward_path === "string" ? location.forward_path.trim() : "");
+	return forwardPath.includes("$");
+};
+
+/**
  * @param   {Object|String|null} meta  a proxy host's meta (a string when read without the model's parsing)
  * @returns {Array|null}  meta.nginx_locations
  */
@@ -52,7 +67,8 @@ const savedLocationStates = (meta) => {
  * Turns host rows into the list of targets to probe.
  *
  * `resolver` tells whether nginx resolves the target per request (only through its own `resolver`): the main
- * target of a proxy host always (proxy_pass $server), a custom location in dynamic mode, a stream never.
+ * target of a proxy host always (proxy_pass $server), a custom location in dynamic mode or with a variable forward
+ * path (`variable_path`, whatever its mode), a stream never.
  *
  * @param   {object} rows
  * @param   {Array}  [rows.proxyHosts]  enabled, non-deleted proxy hosts
@@ -83,14 +99,19 @@ const buildHealthTargets = ({ proxyHosts = [], streams = [] } = {}) => {
 			if (!split.host || !locationPort || isVariableHost(split.host)) {
 				return;
 			}
-			targets.push({
+			const variablePath = hasVariableForwardPath(location);
+			const target = {
 				location_index: index,
 				path: `${location.path ?? ""}`.trim(),
 				host: split.host,
 				port: locationPort,
 				scheme: location.forward_scheme,
-				resolver: isDynamicLocation(states, index),
-			});
+				resolver: variablePath || isDynamicLocation(states, index),
+			};
+			if (variablePath) {
+				target.variable_path = true;
+			}
+			targets.push(target);
 		});
 		if (targets.length) {
 			out.push({ type: "proxy_host", id: row.id, owner_user_id: row.owner_user_id, targets });
@@ -301,4 +322,4 @@ const visibilityFilter = (accessData, userId, allowedIds = []) => {
 	return (ownerId, hostId) => ownerId === userId || allowed.has(Number(hostId));
 };
 
-export { buildHealthTargets, HealthMonitor, isDynamicLocation, visibilityFilter };
+export { buildHealthTargets, HealthMonitor, hasVariableForwardPath, isDynamicLocation, visibilityFilter };

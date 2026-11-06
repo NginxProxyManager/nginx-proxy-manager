@@ -57,7 +57,7 @@
 					},
 					"code": {
 						"type": "string",
-						"description": "Same codes as POST /upstreams/check. resolver_mismatch has ok:false here when nginx resolves the target per request (the main target, a custom location in dynamic mode)",
+						"description": "Same codes as POST /upstreams/check. resolver_mismatch has ok:false here when nginx resolves the target per request (the main target, a custom location in dynamic mode or with a variable forward path)",
 						"example": "ok"
 					},
 					"message": {
