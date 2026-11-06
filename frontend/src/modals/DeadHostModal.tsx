@@ -13,7 +13,7 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { FormModal } from "src/components/Form";
-import { useDeadHost, useSetDeadHost } from "src/hooks";
+import { useDeadHost, useSetDeadHost, useUser } from "src/hooks";
 import { T } from "src/locale";
 import { showObjectSuccess } from "src/notifications";
 
@@ -25,10 +25,13 @@ interface Props extends InnerModalProps {
 	id: number | "new";
 }
 const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
+	const { data: currentUser } = useUser("me");
 	const { data, isLoading, error } = useDeadHost(id);
 	const { mutate: setDeadHost } = useSetDeadHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const isAdmin = currentUser?.roles?.includes("admin");
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
@@ -39,6 +42,11 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			id: id === "new" ? undefined : id,
 			...values,
 		};
+
+		if (!isAdmin) {
+			delete payload.advanced_config;
+			delete payload.advancedConfig;
+		}
 
 		setDeadHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
@@ -121,19 +129,21 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													<T id="column.ssl" />
 												</a>
 											</li>
-											<li className="nav-item ms-auto" role="presentation">
-												<a
-													href="#tab-advanced"
-													className="nav-link"
-													title="Settings"
-													data-bs-toggle="tab"
-													aria-selected="false"
-													tabIndex={-1}
-													role="tab"
-												>
-													<IconSettings size={20} />
-												</a>
-											</li>
+											{isAdmin && (
+												<li className="nav-item ms-auto" role="presentation">
+													<a
+														href="#tab-advanced"
+														className="nav-link"
+														title="Settings"
+														data-bs-toggle="tab"
+														aria-selected="false"
+														tabIndex={-1}
+														role="tab"
+													>
+														<IconSettings size={20} />
+													</a>
+												</li>
+											)}
 										</ul>
 									</div>
 									<div className="card-body">
@@ -149,9 +159,11 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												/>
 												<SSLOptionsFields color="bg-red" />
 											</div>
-											<div className="tab-pane" id="tab-advanced" role="tabpanel">
-												<NginxConfigField />
-											</div>
+											{isAdmin && (
+												<div className="tab-pane" id="tab-advanced" role="tabpanel">
+													<NginxConfigField />
+												</div>
+											)}
 										</div>
 									</div>
 								</div>

@@ -38,6 +38,8 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	const isAdmin = currentUser?.roles?.includes("admin");
+
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
@@ -50,6 +52,19 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		payload.locations = (values.locations || []).filter((location: any) => location.path?.trim() !== "");
 
 		payload.http3_support = http3Support ? 1 : 0;
+
+		if (!isAdmin) {
+			delete payload.advanced_config;
+			delete payload.advancedConfig;
+			const existingLocations = data?.locations || [];
+			payload.locations = payload.locations.map((loc: any) => {
+				const existingLoc = existingLocations.find((l: any) => l.path === loc.path);
+				return {
+					...loc,
+					advancedConfig: existingLoc?.advancedConfig || "",
+				};
+			});
+		}
 
 		setProxyHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
@@ -158,19 +173,21 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													<T id="column.ssl" />
 												</a>
 											</li>
-											<li className="nav-item ms-auto" role="presentation">
-												<a
-													href="#tab-advanced"
-													className="nav-link"
-													title="Settings"
-													data-bs-toggle="tab"
-													aria-selected="false"
-													tabIndex={-1}
-													role="tab"
-												>
-													<IconSettings size={20} />
-												</a>
-											</li>
+											{isAdmin && (
+												<li className="nav-item ms-auto" role="presentation">
+													<a
+														href="#tab-advanced"
+														className="nav-link"
+														title="Settings"
+														data-bs-toggle="tab"
+														aria-selected="false"
+														tabIndex={-1}
+														role="tab"
+													>
+														<IconSettings size={20} />
+													</a>
+												</li>
+											)}
 										</ul>
 									</div>
 									<div className="card-body">
@@ -178,12 +195,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
 												<div className="row">
-													<div className="col-md-3">
+													<div className="col-sm-3 col-md-3">
 														<Field name="forwardScheme">
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label
-																		className="form-label"
+																		className="form-label text-nowrap"
 																		htmlFor="forwardScheme"
 																	>
 																		<T id="host.forward-scheme" />
@@ -209,11 +226,14 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															)}
 														</Field>
 													</div>
-													<div className="col-md-6">
+													<div className="col-sm-5 col-md-5">
 														<Field name="forwardHost" validate={validateString(1, 255)}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
-																	<label className="form-label" htmlFor="forwardHost">
+																	<label
+																		className="form-label text-nowrap"
+																		htmlFor="forwardHost"
+																	>
 																		<T id="proxy-host.forward-host" />
 																	</label>
 																	<input
@@ -236,11 +256,14 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															)}
 														</Field>
 													</div>
-													<div className="col-md-3">
+													<div className="col-sm-4 col-md-4">
 														<Field name="forwardPort" validate={validateNumber(1, 65535)}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
-																	<label className="form-label" htmlFor="forwardPort">
+																	<label
+																		className="form-label text-nowrap"
+																		htmlFor="forwardPort"
+																	>
 																		<T id="host.forward-port" />
 																	</label>
 																	<input
@@ -345,7 +368,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												</div>
 											</div>
 											<div className="tab-pane" id="tab-locations" role="tabpanel">
-												<LocationsFields initialValues={data?.locations || []} />
+												<LocationsFields
+													initialValues={data?.locations || []}
+													allowAdvanced={!!isAdmin}
+												/>
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField
@@ -361,9 +387,11 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													isHttp3GloballyDisabled={healthData?.http3_disabled === true}
 												/>
 											</div>
-											<div className="tab-pane" id="tab-advanced" role="tabpanel">
-												<NginxConfigField />
-											</div>
+											{isAdmin && (
+												<div className="tab-pane" id="tab-advanced" role="tabpanel">
+													<NginxConfigField />
+												</div>
+											)}
 										</div>
 									</div>
 								</div>
