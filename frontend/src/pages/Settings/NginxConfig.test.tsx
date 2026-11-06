@@ -71,6 +71,9 @@ describe("Settings: Nginx configuration", () => {
 				warnings: [
 					{ hostType: "proxy_host", id: 9, name: "app.example.com", message: "/api: does not resolve" },
 				],
+				skipped: [
+					{ hostType: "redirection_host", id: 4, name: "cert.example.com", message: "certificate request" },
+				],
 				durationMs: 2345,
 			});
 		});
@@ -81,6 +84,8 @@ describe("Settings: Nginx configuration", () => {
 		expect(screen.getByTestId("regenerate-offline")).toHaveTextContent("unknown directive");
 		expect(screen.getByTestId("regenerate-failed")).toHaveTextContent("keeps its previous config");
 		expect(screen.getByTestId("regenerate-warnings")).toHaveTextContent("/api: does not resolve");
+		expect(screen.getByTestId("regenerate-skipped")).toHaveTextContent("1 host was skipped");
+		expect(screen.getByTestId("regenerate-skipped")).toHaveTextContent("cert.example.com");
 		expect(screen.queryByTestId("regenerate-running")).toBeNull();
 
 		fireEvent.click(screen.getByRole("button", { name: "broken.example.com" }));
@@ -107,6 +112,7 @@ describe("Settings: Nginx configuration", () => {
 		expect(result).toHaveClass("alert-success");
 		expect(result).toHaveTextContent("Checked 1 host in 0.1 s: 1 online, 0 offline, 0 not regenerated.");
 		expect(screen.queryByTestId("regenerate-offline")).toBeNull();
+		expect(screen.queryByTestId("regenerate-skipped")).toBeNull();
 	});
 
 	it("shows the API error, eg. a second regeneration running already", async () => {

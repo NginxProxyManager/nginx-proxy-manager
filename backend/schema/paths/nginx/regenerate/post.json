@@ -62,6 +62,7 @@
 										"message": "/api: Upstream api does not resolve right now"
 									}
 								],
+								"skipped": [],
 								"duration_ms": 2350
 							}
 						}
@@ -125,6 +126,7 @@
 										],
 										"failed": [],
 										"warnings": [],
+										"skipped": [],
 										"duration_ms": 2350
 									}
 								}

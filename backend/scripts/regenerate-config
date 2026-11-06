@@ -82,6 +82,9 @@ try {
 	for (const item of summary.failed) {
 		logIt(`[${item.host_type}] #${item.id} ${item.name} could not be regenerated, kept its previous config: ${item.error}`, "error");
 	}
+	for (const item of summary.skipped) {
+		logIt(`[${item.host_type}] #${item.id} ${item.name} was skipped: ${item.message}`, "warn");
+	}
 	for (const item of summary.warnings) {
 		logIt(`[${item.host_type}] #${item.id} ${item.name}: ${item.message.replace(/\n/g, "; ")}`, "warn");
 	}

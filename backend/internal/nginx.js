@@ -1605,15 +1605,15 @@ const internalNginx = {
 
 	/**
 	 * Configures every non-deleted, enabled host of the given types without reloading nginx. A host that nginx
-	 * rejects is taken offline, any other failure is logged and returned, nothing throws for one host.
+	 * rejects is taken offline, any other failure is logged and returned, nothing throws for one host. Hosts
+	 * that a running certificate request has removed (see suspendHosts()) are left alone and come back as
+	 * {suspended: true}: recreating their config would send the challenge requests to their upstream.
 	 * Only call this while holding the lock.
 	 *
 	 * @param   {Object}    opts
 	 * @param   {Array}     [opts.hostTypes]     file friendly host types, default all
 	 * @param   {Object}    [opts.only]          {host_type: [ids]}, only these hosts
 	 * @param   {Function}  [opts.needsWork]     (hostType, row) => boolean, false skips the host
-	 * @param   {Boolean}   [opts.skipSuspended] leave hosts alone that a certificate request has removed
-	 *                                           (see suspendHosts()), they come back as {suspended: true}
 	 * @param   {String}    opts.logPrefix
 	 * @returns {Promise<{results: Array<{hostType, row, meta?, error?, skipped?, suspended?}>, loadErrors: Array}>}
 	 */
@@ -1646,7 +1646,7 @@ const internalNginx = {
 			}
 
 			for (const row of rows) {
-				if (opts.skipSuspended && internalNginx.isSuspended(hostType, row.id)) {
+				if (internalNginx.isSuspended(hostType, row.id)) {
 					results.push({ hostType, row, suspended: true });
 					continue;
 				}
@@ -1683,7 +1683,8 @@ const internalNginx = {
 	 * @param   {Array}   [opts.hostTypes]     proxy_host, redirection_host, dead_host, stream; default all
 	 * @param   {Boolean} [opts.restoreAside]  put back config files an interrupted test left aside, default
 	 *                                         true; false for the CLI, it doesn't share the backend's lock
-	 * @returns {Promise<Object>} {checked, regenerated, offline, failed, warnings, duration_ms}, see lib/nginx-regenerate.js
+	 * @returns {Promise<Object>} {checked, regenerated, offline, failed, warnings, skipped, duration_ms}, see
+	 *                            lib/nginx-regenerate.js; hosts a running certificate request removed are skipped
 	 */
 	regenerateAll: (opts = {}) =>
 		withLock(async () => {
@@ -1732,7 +1733,7 @@ const internalNginx = {
 				const summary = summariseFinal(results, await internalNginx.loadHostStates(healed));
 				summary.duration_ms = Date.now() - started;
 				logger.info(
-					`Regenerate: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline.length}, failed ${summary.failed.length}, warnings ${summary.warnings.length} (${summary.duration_ms} ms)${failure ? `, failed: ${failure.message}` : ""}`,
+					`Regenerate: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline.length}, failed ${summary.failed.length}, warnings ${summary.warnings.length}${summary.skipped.length ? `, ${summary.skipped.length} skipped for a certificate request` : ""} (${summary.duration_ms} ms)${failure ? `, failed: ${failure.message}` : ""}`,
 				);
 				if (failure) {
 					failure.regenerateSummary = summary;
@@ -1793,7 +1794,6 @@ const internalNginx = {
 			const { results } = await internalNginx.configureEnabledHosts({
 				only: opts.only,
 				logPrefix: "Startup reconcile",
-				skipSuspended: true,
 				needsWork: (hostType, row) => {
 					if (opts.only) {
 						return true;

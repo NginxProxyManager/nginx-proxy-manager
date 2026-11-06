@@ -24,7 +24,7 @@
 		},
 		"message": {
 			"type": "string",
-			"description": "The custom locations that are disabled or don't resolve right now, one per line",
+			"description": "Warnings: the custom locations that are disabled or don't resolve right now, one per line. Skipped: why the host was left alone",
 			"example": "/api: Disabled because nginx rejected it: unknown directive \"proxy_passs\""
 		}
 	}

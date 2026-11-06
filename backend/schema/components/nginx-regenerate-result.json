@@ -2,7 +2,7 @@
 	"type": "object",
 	"description": "Result of regenerating all nginx host configs",
 	"additionalProperties": false,
-	"required": ["checked", "regenerated", "offline", "failed", "warnings", "duration_ms"],
+	"required": ["checked", "regenerated", "offline", "failed", "warnings", "skipped", "duration_ms"],
 	"properties": {
 		"checked": {
 			"type": "integer",
@@ -48,6 +48,21 @@
 					"id": 7,
 					"name": "app.example.com",
 					"message": "/api: Upstream api does not resolve right now"
+				}
+			],
+			"items": {
+				"$ref": "./nginx-regenerate-host.json"
+			}
+		},
+		"skipped": {
+			"type": "array",
+			"description": "Hosts that were left alone because a certificate request for them is running (it removes their config until it is done and configures them again then). Not counted in checked",
+			"example": [
+				{
+					"host_type": "proxy_host",
+					"id": 9,
+					"name": "new-cert.example.com",
+					"message": "A certificate request for this host is running, it is configured again once that is done"
 				}
 			],
 			"items": {

@@ -202,7 +202,9 @@ Every enabled proxy host, redirection host, 404 host and stream is regenerated a
 reloaded once. Working hosts stay online, there is no downtime. A host that nginx rejects is taken offline instead of
 blocking the others, just as when you save the host. Afterwards the page lists the hosts that went offline, the hosts
 that could not be regenerated (they keep their previous config, eg. because a certificate file is missing) and the
-hosts that are online but reported a warning. Click a host to open it.
+hosts that are online but reported a warning. Click a host to open it. Hosts whose Let's Encrypt certificate is being
+requested right now are skipped and listed as such: the request takes them out of nginx for the HTTP challenge and puts
+them back itself once it is done.
 
 NPM only rewrites a host's config file when the host is saved. Fixes to the config templates in a newer NPM version,
 for example the per-host HSTS sub-domains setting, therefore reach hosts that were saved with an older version only

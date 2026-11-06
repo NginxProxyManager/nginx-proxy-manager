@@ -11,6 +11,7 @@ const summary = () => ({
 	offline: [{ host_type: "proxy_host", id: 4, name: "broken.example.com", error: 'unknown directive "proxy_passs"' }],
 	failed: [{ host_type: "stream", id: 2, name: "2222", error: "Certificate file is missing" }],
 	warnings: [],
+	skipped: [],
 	duration_ms: 1200,
 });
 

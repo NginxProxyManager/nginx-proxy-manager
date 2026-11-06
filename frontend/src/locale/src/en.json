@@ -833,6 +833,9 @@
 	"settings.nginx.regenerate.running": {
 		"defaultMessage": "Regenerating. Every host is tested with nginx, this can take a while."
 	},
+	"settings.nginx.regenerate.skipped": {
+		"defaultMessage": "{count, plural, one {# host was skipped, a certificate request for it is running and configures it again once done:} other {# hosts were skipped, a certificate request for them is running and configures them again once done:}}"
+	},
 	"settings.nginx.regenerate.title": {
 		"defaultMessage": "Regenerate all host configs"
 	},

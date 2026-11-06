@@ -833,6 +833,9 @@
 	"settings.nginx.regenerate.running": {
 		"defaultMessage": "Wird neu erzeugt. Jeder Host wird mit Nginx geprüft, das kann eine Weile dauern."
 	},
+	"settings.nginx.regenerate.skipped": {
+		"defaultMessage": "{count, plural, one {# Host wurde übersprungen, für ihn läuft eine Zertifikatsanfrage, die ihn danach wieder einrichtet:} other {# Hosts wurden übersprungen, für sie läuft eine Zertifikatsanfrage, die sie danach wieder einrichtet:}}"
+	},
 	"settings.nginx.regenerate.title": {
 		"defaultMessage": "Alle Host-Konfigurationen neu erzeugen"
 	},

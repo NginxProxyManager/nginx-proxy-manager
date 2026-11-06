@@ -833,6 +833,9 @@
 	"settings.nginx.regenerate.running": {
 		"defaultMessage": "Luuakse uuesti. Iga hosti kontrollitakse nginxiga, see võib veidi aega võtta."
 	},
+	"settings.nginx.regenerate.skipped": {
+		"defaultMessage": "{count, plural, one {# host jäeti vahele, selle sertifikaaditaotlus käib ja seadistab selle pärast uuesti:} other {# hosti jäeti vahele, nende sertifikaaditaotlus käib ja seadistab need pärast uuesti:}}"
+	},
 	"settings.nginx.regenerate.title": {
 		"defaultMessage": "Loo kõigi hostide konfiguratsioonid uuesti"
 	},
