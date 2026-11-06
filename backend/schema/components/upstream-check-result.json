@@ -64,6 +64,98 @@
 			"type": ["number", "null"],
 			"description": "TCP connect time in milliseconds",
 			"example": 1.2
+		},
+		"lookups": {
+			"type": [
+				"object",
+				"null"
+			],
+			"description": "Reachability through each lookup method on its own (null: IP literal, or not probed). system: getaddrinfo incl. /etc/hosts, as a literal proxy_pass resolves at config load; resolver: nginx's resolver, as a proxy_pass with a variable resolves per request (null: no resolver configured). ok/code above only count the method the target uses; without a known mode every method that finds the name has to reach it",
+			"additionalProperties": false,
+			"properties": {
+				"system": {
+					"type": [
+						"object",
+						"null"
+					],
+					"additionalProperties": false,
+					"required": [
+						"ok",
+						"code",
+						"addresses",
+						"ms"
+					],
+					"properties": {
+						"ok": {
+							"type": "boolean"
+						},
+						"code": {
+							"type": "string",
+							"enum": [
+								"ok",
+								"dns_not_found",
+								"dns_timeout",
+								"tcp_refused",
+								"tcp_timeout",
+								"tcp_unreachable"
+							]
+						},
+						"addresses": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"ms": {
+							"type": [
+								"number",
+								"null"
+							]
+						}
+					}
+				},
+				"resolver": {
+					"type": [
+						"object",
+						"null"
+					],
+					"additionalProperties": false,
+					"required": [
+						"ok",
+						"code",
+						"addresses",
+						"ms"
+					],
+					"properties": {
+						"ok": {
+							"type": "boolean"
+						},
+						"code": {
+							"type": "string",
+							"enum": [
+								"ok",
+								"dns_not_found",
+								"dns_timeout",
+								"tcp_refused",
+								"tcp_timeout",
+								"tcp_unreachable"
+							]
+						},
+						"addresses": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"ms": {
+							"type": [
+								"number",
+								"null"
+							]
+						}
+					}
+				}
+			}
 		}
 	}
 }

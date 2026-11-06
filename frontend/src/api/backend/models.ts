@@ -368,6 +368,18 @@ export interface UpstreamCheckResult {
 	resolverOk?: boolean | null;
 	systemOk?: boolean | null;
 	ms?: number | null;
+	// reachability through each lookup method on its own (null: IP literal, or not probed)
+	lookups?: {
+		system: UpstreamLookupResult | null;
+		resolver: UpstreamLookupResult | null;
+	} | null;
+}
+
+export interface UpstreamLookupResult {
+	ok: boolean;
+	code: UpstreamCheckCode;
+	addresses: string[];
+	ms: number | null;
 }
 
 export interface UpstreamCheckResponse {

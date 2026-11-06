@@ -217,6 +217,7 @@ const makeResult = (target, fields) => {
 		resolver_ok: null,
 		system_ok: null,
 		ms: null,
+		lookups: null,
 		...fields,
 	};
 	result.message = MESSAGES[result.code] ? MESSAGES[result.code](target, result) : result.code;
@@ -237,9 +238,111 @@ const orderAddresses = (preferred, other) => {
 };
 
 /**
- * Checks one target: host syntax, DNS (system + nginx resolver view) and a bare TCP connect.
+ * Connects to the addresses of one lookup method in turn until one answers. Connections are shared through
+ * `cache` (address -> promise), so an address both methods return is probed once.
  *
- * @param   {{host: string, port: number, scheme?: string}} rawTarget  host may contain "/path"
+ * @param   {string[]} addresses
+ * @param   {number}   port
+ * @param   {Map}      cache
+ * @param   {number}   [timeoutMs]
+ * @returns {Promise<object>}  the tcpConnect() result of the last attempt
+ */
+const connectAny = async (addresses, port, cache, timeoutMs) => {
+	let tcp = null;
+	for (const address of orderAddresses(addresses, []).slice(0, MAX_TCP_ATTEMPTS)) {
+		if (!cache.has(address)) {
+			cache.set(address, tcpConnect(address, port, timeoutMs));
+		}
+		tcp = await cache.get(address);
+		// A timeout already used the whole budget; don't multiply it
+		if (tcp.ok || tcp.code === "tcp_timeout") {
+			break;
+		}
+	}
+	return tcp;
+};
+
+/**
+ * The outcome of one lookup method: its DNS answer and whether one of its addresses accepted a connection.
+ *
+ * @param   {DnsView}     view
+ * @param   {object|null} tcp   connectAny() result, null when the view found no address
+ * @returns {{ok: boolean, code: string, addresses: string[], ms: number|null}}
+ */
+const lookupOutcome = (view, tcp) => {
+	if (!view.addresses.length) {
+		return { ok: false, code: view.timeout ? "dns_timeout" : "dns_not_found", addresses: [], ms: null };
+	}
+	return { ok: !!tcp?.ok, code: tcp?.code || "tcp_unreachable", addresses: view.addresses, ms: tcp?.ms ?? null };
+};
+
+/**
+ * The top level code / ok of a check from the outcome of each lookup method.
+ *
+ * - `needsResolver === true`: nginx resolves the target per request through its `resolver` only (a proxy_pass with
+ *   a variable). Only the resolver's addresses count; one that only resolves through /etc/hosts or a search
+ *   domain is a resolver_mismatch and not ok. Without a configured resolver the system view stands in.
+ * - `needsResolver === false`: a literal proxy_pass, resolved by the system at config load. Only the system's
+ *   addresses count; a name nginx's resolver doesn't know is a resolver_mismatch that stays ok.
+ * - otherwise (the mode is not known): every method that found the name has to reach it.
+ *
+ * @param   {{system: object, resolver: object|null}} lookups  lookupOutcome() of each method
+ * @param   {boolean|undefined} needsResolver
+ * @returns {{ok: boolean, code: string, ms: number|null, required?: boolean}}
+ */
+const combineLookups = ({ system, resolver }, needsResolver) => {
+	const found = (outcome) => !!outcome?.addresses.length;
+	const dnsFailure = (outcomes) => ({
+		ok: false,
+		code: outcomes.every((o) => o.code === "dns_timeout") ? "dns_timeout" : "dns_not_found",
+		ms: null,
+	});
+	const views = [system, resolver].filter(Boolean);
+
+	if (needsResolver === true && resolver) {
+		if (found(resolver)) {
+			return { ok: resolver.ok, code: resolver.code, ms: resolver.ms };
+		}
+		if (!found(system)) {
+			return dnsFailure(views);
+		}
+		if (!system.ok) {
+			return { ok: false, code: system.code, ms: null };
+		}
+		return { ok: false, code: "resolver_mismatch", ms: system.ms, required: true };
+	}
+
+	if (needsResolver === false || !resolver) {
+		if (!found(system)) {
+			// A static upstream nginx can't resolve at load: the resolver's answer doesn't help it
+			return needsResolver === false ? dnsFailure([system]) : dnsFailure(views);
+		}
+		if (!system.ok) {
+			return { ok: false, code: system.code, ms: null };
+		}
+		return { ok: true, code: resolver && !found(resolver) ? "resolver_mismatch" : "ok", ms: system.ms };
+	}
+
+	// Mode not known: every method that found the name must reach it
+	const answered = views.filter(found);
+	if (!answered.length) {
+		return dnsFailure(views);
+	}
+	const failed = answered.find((o) => !o.ok);
+	if (failed) {
+		return { ok: false, code: failed.code, ms: null };
+	}
+	const ms = (found(resolver) ? resolver.ms : system.ms) ?? null;
+	return { ok: true, code: found(system) && !found(resolver) ? "resolver_mismatch" : "ok", ms };
+};
+
+/**
+ * Checks one target: host syntax, DNS (system + nginx resolver view) and a bare TCP connect to the addresses of
+ * each lookup method. The reachability of each method is kept apart (`lookups`), so a target is not ok because
+ * the other method's address answers, see combineLookups().
+ *
+ * @param   {{host: string, port: number, scheme?: string, resolver?: boolean}} rawTarget  host may contain "/path";
+ *          resolver: whether nginx resolves the target per request (unknown when not given)
  * @param   {object}   [opts]
  * @param   {boolean}  [opts.enabled]     false -> "disabled" result without touching the network
  * @param   {object}   [opts.resolvers]   nginx resolvers ({servers, ipv6}); defaults to resolvers.conf
@@ -266,65 +369,79 @@ const checkTarget = async (rawTarget, opts = {}) => {
 	}
 
 	const literal = unbracket(target.host);
-	let addresses;
-	let systemOk = null;
-	let resolverOk = null;
-	let mismatch = false;
-
 	if (net.isIP(literal)) {
-		addresses = [literal];
-	} else {
-		const resolvers = typeof opts.resolvers === "undefined" ? readNginxResolvers() : opts.resolvers;
-		const [system, viaResolver] = await Promise.all([
-			systemLookup(target.host, { lookup: opts.lookup }),
-			resolverLookup(target.host, resolvers, { resolver: opts.resolver }),
-		]);
-
-		systemOk = system.ok;
-		resolverOk = viaResolver ? viaResolver.ok : null;
-		addresses = orderAddresses(viaResolver?.addresses || [], system.addresses);
-
-		if (!addresses.length) {
-			// Any definitive "no such name" answer wins; it's only a timeout when no view gave an answer
-			const timedOut = system.timeout && (viaResolver ? viaResolver.timeout : true);
-			return makeResult(target, {
-				code: timedOut ? "dns_timeout" : "dns_not_found",
-				system_ok: systemOk,
-				resolver_ok: resolverOk,
-			});
-		}
-		mismatch = systemOk === true && resolverOk === false;
+		const tcp = await tcpConnect(literal, target.port, opts.tcpTimeoutMs);
+		return makeResult(target, { addresses: [literal], ms: tcp.ms, ok: tcp.ok, code: tcp.code });
 	}
 
-	let tcp = null;
-	for (const address of addresses.slice(0, MAX_TCP_ATTEMPTS)) {
-		tcp = await tcpConnect(address, target.port, opts.tcpTimeoutMs);
-		// A timeout already used the whole budget; don't multiply it
-		if (tcp.ok || tcp.code === "tcp_timeout") {
-			break;
-		}
-	}
+	const resolvers = typeof opts.resolvers === "undefined" ? readNginxResolvers() : opts.resolvers;
+	const [system, viaResolver] = await Promise.all([
+		systemLookup(target.host, { lookup: opts.lookup }),
+		resolverLookup(target.host, resolvers, { resolver: opts.resolver }),
+	]);
 
-	const common = { addresses, system_ok: systemOk, resolver_ok: resolverOk, ms: tcp.ms };
-	if (!tcp.ok) {
-		return makeResult(target, { ...common, code: tcp.code });
-	}
-	return makeResult(target, { ...common, ok: true, code: mismatch ? "resolver_mismatch" : "ok" });
+	const cache = new Map();
+	const [systemTcp, resolverTcp] = await Promise.all([
+		system.addresses.length ? connectAny(system.addresses, target.port, cache, opts.tcpTimeoutMs) : null,
+		viaResolver?.addresses.length ? connectAny(viaResolver.addresses, target.port, cache, opts.tcpTimeoutMs) : null,
+	]);
+	const lookups = {
+		system: lookupOutcome(system, systemTcp),
+		resolver: viaResolver ? lookupOutcome(viaResolver, resolverTcp) : null,
+	};
+	return resultFromLookups(target, {
+		addresses: orderAddresses(viaResolver?.addresses || [], system.addresses),
+		system_ok: system.ok,
+		resolver_ok: viaResolver ? viaResolver.ok : null,
+		lookups,
+	}, typeof rawTarget.resolver === "boolean" ? rawTarget.resolver : undefined);
 };
 
 /**
- * A check result as it applies to a target nginx resolves per request: a proxy_pass with a variable, which is the
- * main target of every proxy host and a custom location in dynamic mode. Such a proxy_pass only uses nginx's
- * `resolver`, never /etc/hosts or search domains, so a resolver_mismatch (reachable, but only through those) fails
- * at request time: the result is not ok. The code stays resolver_mismatch, so clients show it as a warning.
- * A static (load-time) upstream is resolved like the check's system lookup, its resolver_mismatch stays ok.
+ * @param   {object}  target   {host, port, scheme}
+ * @param   {object}  fields   addresses, system_ok, resolver_ok and the internal lookups
+ * @param   {boolean|undefined} needsResolver
+ * @returns {object}  the result in API shape, `lookups` with the outcome of each method (resolver: null when
+ *          nginx has no resolver)
+ */
+const resultFromLookups = (target, { lookups, ...fields }, needsResolver) => {
+	const combined = combineLookups(lookups, needsResolver);
+	const result = makeResult(target, {
+		...fields,
+		ok: combined.ok,
+		code: combined.code,
+		ms: combined.ms,
+		lookups,
+	});
+	if (combined.required) {
+		result.message = MESSAGES.resolver_required(target, result);
+	}
+	return result;
+};
+
+/**
+ * A check result as it applies to a target whose lookup method is known: a proxy_pass with a variable (the main
+ * target of every proxy host, a custom location in dynamic mode or with a variable forward path) is resolved by
+ * nginx's `resolver` per request, never through /etc/hosts or search domains; a literal one (a static custom
+ * location, a stream) by the system at config load. Only the reachability through that method counts, see
+ * combineLookups(). A resolver_mismatch keeps its code when it is not ok, so clients show it as a warning.
  *
  * @param   {object}  result          from checkTarget()
  * @param   {object}  target          {host, port}
  * @param   {boolean} needsResolver   nginx resolves the target per request
- * @returns {object}  the result, or a copy marked not ok
+ * @returns {object}  the result for that method (a copy)
  */
 const forResolverTarget = (result, target, needsResolver) => {
+	if (result?.lookups?.system) {
+		const { host, port, scheme, addresses, system_ok, resolver_ok, lookups } = result;
+		const fresh = resultFromLookups(
+			{ host: splitHostPath(target?.host ?? host).host, port: target?.port ?? port, scheme },
+			{ addresses, system_ok, resolver_ok, lookups },
+			!!needsResolver,
+		);
+		return { ...fresh, host };
+	}
+	// No lookup (IP literal, not probed): only a resolver_mismatch can depend on the method
 	if (!needsResolver || result?.code !== "resolver_mismatch") {
 		return result;
 	}
