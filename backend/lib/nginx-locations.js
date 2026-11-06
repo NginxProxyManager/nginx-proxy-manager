@@ -21,6 +21,7 @@ import fs from "node:fs";
 import net from "node:net";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createIncludeReader } from "./nginx-includes.js";
 import { scanNginxConfig } from "./nginx-tokenize.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -297,12 +298,17 @@ const rewritesUri = (loc) => {
  *   try_files, ...). A location whose advanced config reads one of them stays static while its host
  *   resolves, so it sees the same value as before. When the host does not resolve it has to be dynamic
  *   (a literal unknown host fails `nginx -t` for every host), see docs/src/advanced-config/locations.md.
+ * - the dynamic rendering writes a proxy_redirect line unless the location sets one itself, also in a file it
+ *   includes (`proxy_redirect off;` next to it fails `nginx -t`, "is duplicate"), see buildLocationContext(). A
+ *   location with an include that can't be read (missing file, no permission, a glob in a directory that can't be
+ *   listed, a cycle) stays static while its host resolves, as it was rendered before dynamic locations existed.
  *
- * @param   {Object} loc       a prepared location
- * @param   {Object} resolved  {mode, status} from the mode resolver
+ * @param   {Object} loc         a prepared location
+ * @param   {Object} resolved    {mode, status} from the mode resolver
+ * @param   {Object} [includes]  from createIncludeReader() (lib/nginx-includes.js), one per render
  * @returns {{mode: String, status: String}}
  */
-const chooseLocationMode = (loc, resolved) => {
+const chooseLocationMode = (loc, resolved, includes = createIncludeReader()) => {
 	if (isVariableHost(loc.forward_host)) {
 		return { mode: "static", status: "ok" };
 	}
@@ -315,6 +321,9 @@ const chooseLocationMode = (loc, resolved) => {
 		rewritesUri(loc) &&
 		URI_VARIABLES.test(`${loc.advanced_config || ""}`)
 	) {
+		return { mode: "static", status: "ok" };
+	}
+	if (resolved.mode === "dynamic" && resolved.status === "ok" && includes.scan(loc.advanced_config).unreadable) {
 		return { mode: "static", status: "ok" };
 	}
 	return { mode: resolved.mode, status: resolved.status };
@@ -453,7 +462,8 @@ const assetAdvancedConfig = (advancedConfig) => {
  * Template variables (all prefixed npm_) for the dynamic / static rendering of a location.
  *
  * @param   {Object} loc    prepared location (merged with the host's settings)
- * @param   {Object} state  {index, mode}
+ * @param   {Object} state  {index, mode, includes}: includes from createIncludeReader() (lib/nginx-includes.js),
+ *                          one per render, a new one when it is missing
  * @returns {Object}
  */
 const buildLocationContext = (loc, state) => {
@@ -475,7 +485,9 @@ const buildLocationContext = (loc, state) => {
 	// it repeats the location's body with the whole advanced config (with a top-level include without the includes
 	// and the list settings, inheriting those), see assetAdvancedConfig(). A variable proxy_pass is repeated as it is
 	// (nginx sends its URI as it is, no rewrite), like the parent it has no implicit "proxy_redirect default".
-	const userRedirect = hasDirective(loc.advanced_config, "proxy_redirect");
+	// A proxy_redirect at the top level of an included file is the user's too (Authelia's proxy.conf has one)
+	const included = (state.includes || createIncludeReader()).scan(loc.advanced_config);
+	const userRedirect = hasDirective(loc.advanced_config, "proxy_redirect") || included.directives.has("proxy_redirect");
 	const variableProxyPass = isVariableHost(loc.forward_host) || hasVariablePath(loc);
 	const assetsAllowed = !parsed.isExact && !parsed.isNamed;
 	const assetCopy = assetAdvancedConfig(loc.advanced_config);
@@ -489,7 +501,7 @@ const buildLocationContext = (loc, state) => {
 		npm_upstream: dynamic ? hostVar : loc.forward_host,
 		npm_rewrite: rewrite,
 		// A variable proxy_pass disables "proxy_redirect default", so it is spelled out unless
-		// the user manages proxy_redirect in the advanced config
+		// the user manages proxy_redirect in the advanced config or a file it includes
 		npm_redirect: dynamic && !userRedirect ? redirect : "",
 		npm_assets: assetsAllowed && (loc.caching_enabled === 1 || loc.caching_enabled === true),
 		npm_asset_advanced_config: assetCopy.text,

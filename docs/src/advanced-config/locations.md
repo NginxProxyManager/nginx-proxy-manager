@@ -32,11 +32,19 @@ NPM picks the mode for each location every time it writes the host's config:
 | A single nginx variable, for example `$backend` with `set $backend app;` in the advanced configuration | static, written as it is: nginx already resolves it per request |
 | Location whose forward path contains an nginx variable, for example `/api/$arg_id` or `$request_uri` | static, written as it is: nginx already resolves it per request (a name that doesn't resolve still shows **unresolved**) |
 | Location with a forward path whose advanced configuration reads `$uri` or `$document_uri` | static while the name resolves, see below |
+| Location whose advanced configuration includes a file NPM can't read (missing, no permission, not a regular file, larger than 4 MB) | static while the name resolves, see below |
 | `NPM_LOCATION_DYNAMIC_DNS=false`, or the resolver is disabled (`DISABLE_RESOLVER`) | static |
 
 Both modes forward requests the same way: the request path, forward path, query string and redirects from the
 upstream are handled exactly as before. The dynamic mode adds a `rewrite` and a `proxy_redirect` line to do this, and
 a `set $npm_loc_<n>_host` line, which runs before your advanced configuration.
+
+The `proxy_redirect` line is left out when the location sets its own `proxy_redirect`, in the advanced configuration
+or in a file it includes (`include /snippets/proxy.conf;` with `proxy_redirect off;` in it). NPM reads the included
+files as nginx does: relative paths from `/etc/nginx/`, wildcards, includes inside included files; only lines at the
+top level of the file count, not those inside an `if` or `location` block. A device such as `/dev/null` counts as an
+empty file, as it does for nginx. When an included file can't be read (also a FIFO, a socket or a file larger than
+4 MB, which NPM doesn't read), NPM can't tell, and the location is rendered static while its name resolves.
 
 ::: warning $uri with a forward path
 With a forward path, the dynamic mode replaces the location's path with the forward path through

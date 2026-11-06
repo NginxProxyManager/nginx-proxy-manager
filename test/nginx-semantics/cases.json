@@ -57,5 +57,9 @@
  {"path":"/cluab/","fp":"/l/","cache":true,"adv":"access_by_lua_block {\n  -- deny unless the token is right }\n  local t = {1} if #t ~= 1 or ngx.var.http_x_token ~= \"secret\" then return ngx.exit(403) end\n}\nproxy_set_header X-Sem-In lua;"},
  {"path":"/cluabi/","fp":"/l/","cache":true,"adv":"include /tmp/nginx-sem/snip/hdr.conf;\naccess_by_lua_block {\n  -- deny unless the token is right }\n  local t = {1} if #t ~= 1 or ngx.var.http_x_token ~= \"secret\" then return ngx.exit(403) end\n}"},
  {"path":"/credi/","fp":"/r/","cache":true,"adv":"include /tmp/nginx-sem/snip/redir.conf;"},
- {"path":"/cref/","fp":"","cache":true,"adv":"include /tmp/nginx-sem/snip/ref.conf;\nvalid_referers *.example.com;\nif ($invalid_referer) { return 403; }"}
+ {"path":"/cref/","fp":"","cache":true,"adv":"include /tmp/nginx-sem/snip/ref.conf;\nvalid_referers *.example.com;\nif ($invalid_referer) { return 403; }"},
+ {"path":"/rdoi/","fp":"/o/","adv":"include /tmp/nginx-sem/snip/rdoff.conf;"},
+ {"path":"/rdgi/","fp":"/g/","adv":"include /tmp/nginx-sem/snip/rdnest[.]conf;"},
+ {"path":"/rdvi/","fp":"/v/","adv":"include /tmp/nginx-sem/snip/rdother.conf;"},
+ {"path":"/crdoi/","fp":"/c/","cache":true,"adv":"include /tmp/nginx-sem/snip/rdoff.conf;"}
 ]
