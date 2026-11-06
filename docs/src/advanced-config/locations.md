@@ -72,6 +72,8 @@ To go back to the old literal rendering for every location:
       NPM_LOCATION_DYNAMIC_DNS: 'false'
 ```
 
+Existing hosts are written again with the new setting when NPM restarts (unless `NPM_RECONCILE_ON_START=false`).
+
 ::: tip
 With "Cache Assets" enabled, assets (`.css`, `.js`, images, fonts) under a custom location are now fetched from that
 location's own upstream. Before, they were fetched from the host's main upstream.

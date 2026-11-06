@@ -31,6 +31,17 @@ const TEMPLATE_FILE = `${__dirname}/../templates/_location.conf`;
 const CONFIG_VERSION = 2;
 const CONFIG_VERSION_MARKER = `# npm-config-version: ${CONFIG_VERSION}`;
 
+/**
+ * The rendering of custom locations depends on settings read at startup (NPM_LOCATION_DYNAMIC_DNS, DISABLE_RESOLVER
+ * and the generated resolvers.conf). The config of a proxy host with locations records which one it was written for,
+ * so the startup reconcile regenerates it when the setting changed (eg. back to literal upstreams).
+ *
+ * @param   {Function} modeResolver  from createModeResolver() (lib/upstream-dns.js)
+ * @returns {String} eg. `# npm-location-dns: dynamic`
+ */
+const locationDnsMarker = (modeResolver) =>
+	`# npm-location-dns: ${modeResolver?.dynamicEnabled && modeResolver?.hasResolver ? "dynamic" : "static"}`;
+
 // Characters that would break out of the generated nginx directive
 const INVALID_HOST_CHARS = /[\s;{}'"`\\$#]/;
 // The same for the forward path, which may hold nginx variables (`/api/$1`)
@@ -530,6 +541,7 @@ export {
 	hasVariablePath,
 	isolateFaultyLocations,
 	isVariableHost,
+	locationDnsMarker,
 	matchSavedLocations,
 	normaliseLocationPath,
 	parseLocationPath,
