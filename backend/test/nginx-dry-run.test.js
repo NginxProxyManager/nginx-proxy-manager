@@ -47,6 +47,12 @@ const leftovers = () =>
 const serverBlock = (id, name, extra = "") =>
 	`server {\n  listen 80;\n  server_name ${name};\n  access_log /data/logs/proxy-host-${id}_access.log;\n${extra}  location / { return 200; }\n}\n`;
 
+// Shaped like lib/access.js: hostTest.buildHost() checks the advanced config permission on an edit
+const accessStub = (admin) => ({
+	hasRole: (role) => admin && role === "admin",
+	token: { getUserId: () => (admin ? 1 : 2), hasScope: (scope) => admin && scope === "admin" },
+});
+
 const proxyHost = (id, extra = {}) =>
 	Object.assign(
 		{
@@ -174,7 +180,7 @@ describe("Config test dry run with nginx", { skip: ENABLED ? false : "set NPM_TE
 			hsts_enabled: true,
 		});
 		const type = { get: async () => row, expand: [] };
-		const access = { token: { getUserId: () => 1 } };
+		const access = accessStub(true);
 
 		const input = { certificate_id: "new", ssl_forced: true, http2_support: true, hsts_enabled: true };
 		assert.equal(takePendingCertificate(input)[0].code, "certificate_pending");
@@ -196,6 +202,16 @@ describe("Config test dry run with nginx", { skip: ENABLED ? false : "set NPM_TE
 			http2_support: true,
 		});
 		assert.equal(stale.certificate_id, 999999);
+
+		// The permission check really runs: a user without admin rights may test the edit, but not a changed
+		// advanced config
+		const user = accessStub(false);
+		const unchanged = await hostTest.buildHost(user, type, "proxy_host", GOOD_ID, { ssl_forced: false });
+		assert.equal(unchanged.advanced_config, "");
+		await assert.rejects(
+			hostTest.buildHost(user, type, "proxy_host", GOOD_ID, { advanced_config: "return 403;" }),
+			{ status: 403, message: "Permission Denied" },
+		);
 		assert.equal(queries, 0);
 	});
 });
