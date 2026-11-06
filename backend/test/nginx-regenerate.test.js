@@ -94,7 +94,27 @@ describe("summarise", () => {
 	});
 
 	it("handles no hosts", () => {
-		assert.deepEqual(summarise([]), { checked: 0, regenerated: 0, offline: [], failed: [], warnings: [] });
+		assert.deepEqual(summarise([]), {
+			checked: 0,
+			regenerated: 0,
+			offline: [],
+			failed: [],
+			warnings: [],
+			skipped: [],
+		});
+	});
+
+	it("lists hosts left alone for a certificate request as skipped, not as checked", () => {
+		const summary = summarise([
+			{ hostType: "proxy_host", row: { id: 1, domain_names: ["ok.example.com"] }, meta: { nginx_online: true } },
+			{ hostType: "proxy_host", row: { id: 2, domain_names: ["cert.example.com"] }, suspended: true },
+		]);
+		assert.equal(summary.checked, 1);
+		assert.equal(summary.regenerated, 1);
+		assert.equal(summary.skipped.length, 1);
+		assert.equal(summary.skipped[0].id, 2);
+		assert.equal(summary.skipped[0].name, "cert.example.com");
+		assert.match(summary.skipped[0].message, /certificate request/);
 	});
 });
 
@@ -209,9 +229,19 @@ describe("auditMeta", () => {
 				offline: [{}],
 				failed: [{}],
 				warnings: [],
+				skipped: [{}],
 				duration_ms: 5,
 			}),
-			{ host_types: ["stream"], checked: 3, regenerated: 1, offline: 1, failed: 1, warnings: 0, duration_ms: 5 },
+			{
+				host_types: ["stream"],
+				checked: 3,
+				regenerated: 1,
+				offline: 1,
+				failed: 1,
+				warnings: 0,
+				skipped: 1,
+				duration_ms: 5,
+			},
 		);
 	});
 
@@ -223,6 +253,7 @@ describe("auditMeta", () => {
 			offline: null,
 			failed: null,
 			warnings: null,
+			skipped: null,
 			duration_ms: null,
 			error: "reload failed",
 		});

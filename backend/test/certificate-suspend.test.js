@@ -142,6 +142,30 @@ it("the startup reconcile and a bulk regeneration leave a host alone while its c
 	assert.equal(internalNginx.isSuspended("proxy_host", a), false);
 });
 
+it("regenerating all host configs leaves a host alone while its certificate is requested and reports it", async () => {
+	const a = await host("regen-cert.example.com");
+	const other = await host("regen-other.example.com");
+	fs.rmSync(conf(other));
+	let during = null;
+	internalCertificate.requestLetsEncryptSsl = async () => {
+		// Settings > Nginx Configuration > Regenerate all host configs while certbot waits for the challenge
+		const summary = await internalNginx.regenerateAll();
+		during = { summary, a: onDisk(a), other: onDisk(other) };
+	};
+
+	await createCertificate("regen-cert.example.com");
+
+	assert.equal(during.a, false, "regenerateAll must not recreate the host removed for the challenge");
+	assert.equal(during.other, true, "regenerateAll still rewrites the other hosts");
+	assert.equal(during.summary.checked, 1);
+	assert.equal(during.summary.regenerated, 1);
+	assert.deepEqual(
+		during.summary.skipped.map((s) => [s.host_type, s.id, s.name]),
+		[["proxy_host", a, "regen-cert.example.com"]],
+	);
+	assert.equal(onDisk(a), true, "the host is configured again once the request is done");
+});
+
 it("ends the suspension when the certificate request fails", async () => {
 	const a = await host("fail.example.com");
 	internalCertificate.requestLetsEncryptSsl = async () => {

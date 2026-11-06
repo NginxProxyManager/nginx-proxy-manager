@@ -46,16 +46,24 @@ const locationWarning = (locations) => {
 	return bad.map((loc) => `${loc.path}: ${loc.message || loc.status}`).join("\n");
 };
 
+const SUSPENDED_MESSAGE = "A certificate request for this host is running, it is configured again once that is done";
+
 /**
- * @param   {Array<{hostType: String, row: Object, meta?: Object, error?: Error}>} results
- *          one entry per host that was configured: `meta` is what configure returned, `error` what it threw
- * @returns {{checked: Number, regenerated: Number, offline: Array, failed: Array, warnings: Array}}
+ * @param   {Array<{hostType: String, row: Object, meta?: Object, error?: Error, suspended?: Boolean}>} results
+ *          one entry per host: `meta` is what configure returned, `error` what it threw; `suspended` hosts were
+ *          left alone because a certificate request has removed their config (see internalNginx.suspendHosts())
+ * @returns {{checked: Number, regenerated: Number, offline: Array, failed: Array, warnings: Array, skipped: Array}}
+ *          skipped hosts are not counted in `checked`
  */
 const summarise = (results) => {
-	const summary = { checked: 0, regenerated: 0, offline: [], failed: [], warnings: [] };
-	for (const { hostType, row, meta, error } of results) {
-		summary.checked++;
+	const summary = { checked: 0, regenerated: 0, offline: [], failed: [], warnings: [], skipped: [] };
+	for (const { hostType, row, meta, error, suspended } of results) {
 		const item = { host_type: hostType, id: row.id, name: hostName(hostType, row) };
+		if (suspended) {
+			summary.skipped.push(Object.assign(item, { message: SUSPENDED_MESSAGE }));
+			continue;
+		}
+		summary.checked++;
 		if (error) {
 			// Not a host level nginx error (eg. a certificate file is missing): the previous config was kept
 			summary.failed.push(Object.assign(item, { error: `${error.message || error}` }));
@@ -94,7 +102,7 @@ const summariseFinal = (results, finalRows = []) => {
 		const key = hostKey(result.hostType, result.row.id);
 		seen.add(key);
 		const final = finalByKey.get(key);
-		if (!final) {
+		if (!final || result.suspended) {
 			return result;
 		}
 		if (final.meta?.nginx_online === false) {
@@ -136,6 +144,7 @@ const auditMeta = (hostTypes, summary, error = null) => {
 		offline: summary ? summary.offline.length : null,
 		failed: summary ? summary.failed.length : null,
 		warnings: summary ? summary.warnings.length : null,
+		skipped: summary && Array.isArray(summary.skipped) ? summary.skipped.length : null,
 		duration_ms: summary && typeof summary.duration_ms === "number" ? summary.duration_ms : null,
 	};
 	if (error) {

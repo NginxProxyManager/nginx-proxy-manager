@@ -108,6 +108,7 @@ const partialResult = (error: unknown): NginxRegenerateResult | null => {
 		offline: list(raw.offline),
 		failed: list(raw.failed),
 		warnings: list(raw.warnings),
+		skipped: list(raw.skipped),
 		durationMs: count(raw.durationMs),
 	};
 };
@@ -167,6 +168,12 @@ function RegenerateResult({ result, partial }: RegenerateResultProps) {
 				hosts={result.warnings}
 				text={(host) => host.message}
 				testId="regenerate-warnings"
+			/>
+			<HostList
+				titleId="settings.nginx.regenerate.skipped"
+				hosts={result.skipped ?? []}
+				text={(host) => host.message}
+				testId="regenerate-skipped"
 			/>
 		</Alert>
 	);

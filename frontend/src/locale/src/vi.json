@@ -965,6 +965,9 @@
 	"settings.nginx.regenerate.running": {
 		"defaultMessage": "Đang tạo lại. Mỗi host đều được kiểm tra bằng nginx, việc này có thể mất một lúc."
 	},
+	"settings.nginx.regenerate.skipped": {
+		"defaultMessage": "{count} host đã bị bỏ qua, yêu cầu chứng chỉ cho chúng đang chạy và sẽ cấu hình lại khi xong:"
+	},
 	"settings.nginx.regenerate.title": {
 		"defaultMessage": "Tạo lại cấu hình của mọi host"
 	},
