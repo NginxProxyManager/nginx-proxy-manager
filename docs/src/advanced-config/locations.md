@@ -63,13 +63,6 @@ upstream as `/v1/users/7`. Such a location is written as it is.
 A forward host that is a single nginx variable, such as `$backend`, is written into the config exactly as before
 (`proxy_pass http://$backend:8080;`), without the extra lines. With "Cache Assets" its assets use the same `proxy_pass`.
 
-A nested location doesn't run the `set` lines of its parent, so the nested asset location repeats the `set` statements
-at the top level of the location's advanced configuration, in order (`set $backend app;`, or `set $target t;` for a
-forward path `/v1/$target`). A `set` inside an `if` or another block, and variables changed by other directives
-(`rewrite`, `auth_request_set`, the captures of a regex `if`, ...) are not repeated: in asset requests such a variable
-keeps the value from the top-level `set` statements (or none). Use a `map` in the host's advanced configuration or turn "Cache
-Assets" off for such a location.
-
 To go back to the old literal rendering for every location:
 
 ```yml
@@ -79,12 +72,53 @@ To go back to the old literal rendering for every location:
 
 Existing hosts are written again with the new setting when NPM restarts (unless `NPM_RECONCILE_ON_START=false`).
 
-::: tip
-With "Cache Assets" enabled, assets (`.css`, `.js`, images, fonts) under a custom location are now fetched from that
-location's own upstream. Before, they were fetched from the host's main upstream. This holds for prefix locations
-(`/api/`, `^~ /api/`). In a regular-expression location the host-level asset location, which comes first in the
-server block, still takes the assets to the host's main upstream, as before.
-:::
+### Cache Assets
+
+With "Cache Assets" enabled, assets (`.css`, `.js`, images, fonts) under a custom location are fetched from that
+location's own upstream and cached. Before, they were fetched from the host's main upstream, past the location's
+advanced configuration. This holds for prefix locations (`/api/`, `^~ /api/`). In a regular-expression location the
+host-level asset location, which comes first in the server block, still takes the assets to the host's main upstream,
+as before. Exact (`= /x`) and named (`@x`) locations have no asset caching of their own.
+
+NPM puts a nested asset location into the custom location. nginx doesn't run the `set`, `if`, `return` and `rewrite`
+lines of a location in a location nested in it, so the asset location repeats the whole location: its advanced
+configuration (at the same place, before the proxy directives), access list, headers and proxy settings, plus the
+cache settings. Assets go through the same checks and rewrites as every other request of the location, for example
+`if ($http_x_token != secret) { return 403; }`, a `set` inside an `if`, or a `rewrite`.
+
+- `location` blocks in the advanced configuration are not repeated (nginx doesn't allow a prefix location inside the
+  asset location). They still work for the location as before; as before, an asset request such as
+  `/api/inner/app.css` goes to the asset location rather than to a nested `location /api/inner/` (unless that one is
+  `^~` or `=`, or a nested regular-expression location matches first).
+- A cache setting that the advanced configuration sets itself (`expires`, `proxy_cache`, `proxy_cache_key`,
+  `proxy_read_timeout`, `proxy_connect_timeout`, `if_modified_since`, `proxy_ignore_headers`,
+  `proxy_cache_use_stale`, `access_log`) replaces NPM's value for the assets too, for example `proxy_cache off;` turns
+  caching off for the location's assets. So does `proxy_store` (nginx doesn't allow it together with `proxy_cache`):
+  the assets are stored like the location's other responses, not cached.
+- A `proxy_redirect` in the advanced configuration applies to the assets as well; NPM then adds none of its own.
+
+An advanced configuration with an `include` (for example Authelia's `include /snippets/proxy.conf;` and
+`include /snippets/authelia-authrequest.conf;`) is not repeated as a whole: NPM can't see what the included file
+contains, and nginx rejects a second copy of it in the asset location when it sets one of the cache settings above
+(`"expires" directive is duplicate`) or contains a `location` block. The asset location then repeats the advanced
+configuration without the `include` lines and without the list settings `proxy_set_header`, `add_header`,
+`more_set_headers` / `more_set_input_headers`, `allow` / `deny`, `error_page`, `auth_request_set`, `limit_req`,
+`limit_conn`, `set_real_ip_from`, `proxy_redirect`, `proxy_pass_header`, `proxy_cookie_*`, `sub_filter`,
+`valid_referers`, `mirror`, `error_log`, `index`, `*_types`. It sets no headers, access rules or `proxy_redirect` of
+its own, so it inherits these from the location, those from included files too
+(`auth_request` of Authelia or authentik, the access list). Every other line is repeated as without an `include`:
+`set`, `if`, `return`, `rewrite`, `set_by_lua_block`, `set_if_empty` and the other `set_*` directives, Lua handlers,
+`auth_basic`, `limit_except` blocks. Three things differ from the location itself:
+
+- `set`, `if`, `return` and `rewrite` lines inside an included file don't apply to the assets (nginx doesn't run them
+  in a nested location). Write such a guard directly into the advanced configuration, or turn "Cache Assets" off for
+  the location.
+- The cache settings of the asset location replace those of an included file for the assets (an `expires 7d;` in the
+  included file doesn't apply to them, NPM's `expires @30m;` does). A cache setting written directly in the advanced
+  configuration still applies.
+- The asset location hides headers of its own (`proxy_hide_header Last-Modified;` and others), so a
+  `proxy_hide_header` in an included file doesn't apply to the assets. One written directly in the advanced
+  configuration does.
 
 ## Location statuses
 

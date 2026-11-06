@@ -129,3 +129,66 @@
 /cache/main.css?x|||"url":"/c/main.css?x"
 /nolocation/x.css|||"upstream":"main"
 /nolocation/page|||"upstream":"main"
+/private/file.css|||403
+/private/file.css|||"url":"/private/file.css"|X-Token: secret
+/private/file.css?v=2||:8443|"url":"/private/file.css?v=2"|X-Token: secret
+/private/file.css|||403
+/private/file.css?v=2||:8443|403
+/private/page|||403
+/private/page|||"url":"/private/page"|X-Token: secret
+/nprivate/file.css|||403
+/nprivate/file.css|||"url":"/nprivate/file.css"|X-Token: secret
+/nprivate/page|||403
+/crw/old/app.css|||"url":"/crw/new/app.css"
+/crw/old/page|||"url":"/crw/new/page"
+/crw/app.css|||"url":"/k/app.css"
+/crw/page?x=1|||"url":"/k/page?x=1"
+/cif/app.css|||"url":"/v1/a"
+/cif/app.css?b=1|||"url":"/v1/b"
+/cif/page?b=1|||"url":"/v1/b"
+/cnest/in/x|||inner /cnest/in/x
+/cnest/in/x.css|||"url":"/n/in/x.css"
+/cnest/page|||"url":"/n/page"
+/cnest/app.js|||"url":"/n/app.js"
+/nest/in/x|||inner /nest/in/x
+/nest/in/x.css
+/nest/page
+/cacl/x.css|||401
+/cacl/x.css|alice:secret||"url":"/v/x.css"
+/cacl/x.css|alice:wrong||401
+/cacl/page|||401
+/cacl/page|alice:secret||"url":"/v/page"
+/cinc/page|||401
+/cinc/app.css|||401
+/cinc/page|||"url":"/i/page"|X-Ok: 1
+/cinc/app.css|||"url":"/i/app.css"|X-Ok: 1
+/cinc/app.css|||"in":"inc"|X-Ok: 1
+/cinc/page|||"in":"inc"|X-Ok: 1
+/cinc/app.css|||X-Sem-Inc: yes|X-Ok: 1
+/cinc/page|||X-Sem-Inc: yes|X-Ok: 1
+/cinc/app.css|||403|X-Ok: deny
+/cinc/page|||403|X-Ok: deny
+/cinc/inner/x|||inner /cinc/inner/x|X-Ok: 1
+/cinc/inner/x.css|||"url":"/i/inner/x.css"|X-Ok: 1
+/cincg/page|||403
+/cincg/page|||"url":"/cincg/page"|X-Token: secret
+/cincg/app.css|||"url":"/cincg/app.css"
+/clua/app.css|||403
+/clua/app.css|||"in":"inc"|X-Token: secret
+/clua/page|||403
+/clua/page|||"in":"inc"|X-Token: secret
+/csm/app.css|||403
+/csm/app.css|||"url":"/csm/app.css"|X-Token: secret
+/csm/page|||403
+/csm/page|||"url":"/csm/page"|X-Token: secret
+/cstore/app.css|||"url":"/s/app.css"
+/cstore/page|||"url":"/s/page"
+/cstorei/app.css|||"in":"inc"
+/cstorei/page|||"in":"inc"
+/credi/page?redir=abs|||Location: http://srv/moved/r/page/next
+/credi/app.css?redir=abs|||Location: http://srv/moved/r/app.css/next
+/cref/page|||"url":"/cref/page"
+/cref/app.css|||"url":"/cref/app.css"
+/cref/page|||403|Referer: http://evil.test/
+/cref/app.css|||403|Referer: http://evil.test/
+/cref/app.css|||"url":"/cref/app.css"|Referer: http://a.example.com/

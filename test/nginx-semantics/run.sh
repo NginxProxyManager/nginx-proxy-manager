@@ -9,11 +9,47 @@
 
 set -euo pipefail
 
-mkdir -p /var/log/nginx /var/cache/nginx /data/access /data/logs /tmp/nginx-sem-cache /tmp/nginx-sem/conf.d
+mkdir -p /var/log/nginx /var/cache/nginx /data/access /data/logs /tmp/nginx-sem-cache /tmp/nginx-sem-store /tmp/nginx-sem/conf.d
 echo 'alice:{PLAIN}secret' > /data/access/4
 # `include conf.d/include/...` of the host template is relative to the config file
 ln -sfn /npm-include /tmp/nginx-sem/conf.d/include
 test -f /tmp/nginx-sem/conf.d/include/assets.conf
+
+# snippets included by the advanced config of /cinc/ and /cincg/ (cases.json): what the backend can't see. proxy.conf
+# sets directives of the asset cache block as Authelia's proxy.conf does, auth.conf brings an auth_request and
+# nested locations as Authelia / authentik snippets do, guard.conf a rewrite-phase guard, redir.conf a
+# proxy_redirect (as Authelia's proxy.conf has one) and ref.conf valid_referers
+mkdir -p /tmp/nginx-sem/snip
+cat > /tmp/nginx-sem/snip/proxy.conf <<'SNIP'
+proxy_set_header X-Sem-In inc;
+proxy_connect_timeout 5s;
+proxy_read_timeout 30s;
+expires 7d;
+add_header X-Sem-Inc yes always;
+SNIP
+cat > /tmp/nginx-sem/snip/auth.conf <<'SNIP'
+location /cinc/_auth/ {
+  internal;
+  auth_request off;
+  proxy_pass http://echo:9000/auth;
+  proxy_pass_request_body off;
+  proxy_set_header Content-Length "";
+}
+location /cinc/inner/ { return 200 "inner $uri"; }
+auth_request /cinc/_auth/;
+SNIP
+cat > /tmp/nginx-sem/snip/hdr.conf <<'SNIP'
+proxy_set_header X-Sem-In inc;
+SNIP
+cat > /tmp/nginx-sem/snip/redir.conf <<'SNIP'
+proxy_redirect http://echo:9000/ /moved/;
+SNIP
+cat > /tmp/nginx-sem/snip/ref.conf <<'SNIP'
+valid_referers none server_names;
+SNIP
+cat > /tmp/nginx-sem/snip/guard.conf <<'SNIP'
+if ($http_x_token != secret) { return 403; }
+SNIP
 
 node /w/gen.mjs /backend > /tmp/nginx-sem/nginx.conf
 nginx -t -c /tmp/nginx-sem/nginx.conf 2>&1 | tail -2
@@ -26,10 +62,13 @@ sleep 1
 # answers with the Host header it got: it must be the Host the client sent (with its port), also for cached
 # assets (the cache key has to include the port), otherwise the response is marked HOST-MISMATCH.
 fetch () {
-	local port="$1" path="$2" creds="$3" hostport="$4" out host="srv${1}${4}"
+	local port="$1" path="$2" creds="$3" hostport="$4" header="$5" out host="srv${1}${4}"
 	local args=(-s -o /tmp/nginx-sem-body -D /tmp/nginx-sem-head -w '%{http_code}' -H "Host: ${host}" --path-as-is)
 	if [ -n "$creds" ]; then
 		args+=(-u "$creds")
+	fi
+	if [ -n "$header" ]; then
+		args+=(-H "$header")
 	fi
 	out="$(curl "${args[@]}" "http://127.0.0.1:${port}${path}")"
 	local got
@@ -42,23 +81,23 @@ fetch () {
 
 # Cases with "Cache Assets" are served by the full host template (gen.mjs, :8012 static / :8013 dynamic), the others
 # by :8002 / :8003. Neither is compared with the legacy rendering, nor is the access list case.
-CACHED='^/(cache|cacheroot|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation)/'
-NOT_LEGACY='^/(cache|cacheroot|acl|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation)/'
+CACHED='^/(cache|cacheroot|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation|private|crw|cif|cnest|cacl|cinc|cincg|clua|csm|cstore|cstorei|credi|cref)/'
+NOT_LEGACY='^/(cache|cacheroot|acl|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation|private|crw|cif|cnest|cacl|cinc|cincg|clua|csm|cstore|cstorei|credi|cref)/'
 
 diffs=0
 total=0
 while IFS= read -r line; do
 	[ -z "$line" ] && continue
-	# path|user:password|:port|expected (all but the path are optional; the port is added to the Host header,
-	# the expected text must be in the response, eg. the URI the upstream got)
-	IFS='|' read -r path creds hostport expect <<< "$line"
+	# path|user:password|:port|expected|header (all but the path are optional; the port is added to the Host
+	# header, the expected text must be in the response, eg. the URI the upstream got; header is sent as it is)
+	IFS='|' read -r path creds hostport expect header <<< "$line"
 
 	if [[ "$path" =~ $CACHED ]]; then
-		static="$(fetch 8012 "$path" "$creds" "$hostport")"
-		dynamic="$(fetch 8013 "$path" "$creds" "$hostport")"
+		static="$(fetch 8012 "$path" "$creds" "$hostport" "$header")"
+		dynamic="$(fetch 8013 "$path" "$creds" "$hostport" "$header")"
 	else
-		static="$(fetch 8002 "$path" "$creds" "$hostport")"
-		dynamic="$(fetch 8003 "$path" "$creds" "$hostport")"
+		static="$(fetch 8002 "$path" "$creds" "$hostport" "$header")"
+		dynamic="$(fetch 8003 "$path" "$creds" "$hostport" "$header")"
 	fi
 	total=$((total + 1))
 	# a custom location's request (asset or not) must not end up at the host's main upstream, unless expected
@@ -92,7 +131,7 @@ while IFS= read -r line; do
 	fi
 
 	if [[ ! "$path" =~ $NOT_LEGACY ]]; then
-		legacy="$(fetch 8001 "$path" "$creds" "$hostport")"
+		legacy="$(fetch 8001 "$path" "$creds" "$hostport" "$header")"
 		total=$((total + 1))
 		if [ "$legacy" != "$dynamic" ] || [[ "$legacy" == *HOST-MISMATCH* ]]; then
 			echo "DIFF  legacy/dynamic $line"

@@ -6,9 +6,9 @@ existed. The configs are produced by the real backend renderer (`backend/lib/ngi
 `backend/templates/_location.conf`).
 
 - `cases.json`: the custom locations (path, forward path, optional host, advanced config, caching, access list)
-- `reqs.txt`: the requests, one per line: `path|user:password|:port|expected`, everything but the path is optional
-  (`path||:8443`). The port is added to the Host header, the expected text must be in the response (eg.
-  `"url":"/api/42"`, the URI the upstream got)
+- `reqs.txt`: the requests, one per line: `path|user:password|:port|expected|header`, everything but the path is
+  optional (`path||:8443`). The port is added to the Host header, the expected text must be in the response (eg.
+  `"url":"/api/42"`, the URI the upstream got, or `403`), the header is sent as it is (`X-Token: secret`)
 - `echo.js`: the upstream, answers with the URI and the Host header it received and can redirect. On port 9001 it is
   the host's main upstream and adds `"upstream":"main"`
 - `gen.mjs`: writes the nginx config with three servers for the cases without caching (legacy :8001, static :8002,
@@ -23,7 +23,17 @@ existed. The configs are produced by the real backend renderer (`backend/lib/ngi
   must reach that location's upstream.
 
 Cases with caching or an access list are only compared between static and dynamic: caching inside a custom location
-used to proxy assets to the host's main upstream, which was fixed on purpose.
+used to proxy assets to the host's main upstream, which was fixed on purpose. The cached cases also check that assets go through the
+location's advanced config like every other request of it (a `return 403` guard, a `rewrite`, a `set` inside an
+`if`, a nested `location` block, an access list): the nested asset location used to skip it. `/cinc/` and `/cincg/` include
+snippets that `run.sh` writes (`/tmp/nginx-sem/snip/`): settings of the asset cache block, an `auth_request` and
+nested locations (as Authelia's / authentik's snippets have them) and a rewrite-phase guard. The nested asset location
+must pass `nginx -t` and inherit the included settings; the included guard does not apply to assets (documented, the
+expectation says so). `/clua/` and `/csm/` have an include and a guard written directly in the advanced config
+that reads a variable of `set_by_lua_block` / `set_if_empty` (set-misc): the asset location repeats those statements.
+`/cstore/` and `/cstorei/` set `proxy_store` (without / with an include), which nginx doesn't allow next to the asset
+block's `proxy_cache`. `/credi/` includes a `proxy_redirect` and `/cref/` a `valid_referers` that is also written
+directly in the advanced config: the asset location inherits both, the included entries too.
 
 ## Running
 

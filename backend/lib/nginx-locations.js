@@ -320,37 +320,134 @@ const chooseLocationMode = (loc, resolved) => {
 	return { mode: resolved.mode, status: resolved.status };
 };
 
-/**
- * @param   {String} value  a token's value as nginx sees it (unescaped)
- * @returns {String} the value as a double quoted nginx string that reads back as the same value
- */
-const quoteNginxValue = (value) => `"${`${value}`.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+// Directives of the asset cache block (templates/_location_assets.conf) that nginx accepts only once per location
+// ("is duplicate"), or whose values add up (proxy_ignore_headers, proxy_cache_use_stale, access_log). When the
+// location's advanced config sets one at its top level, the repeated advanced config sets it in the nested asset
+// location as well and the cache block leaves its own out: the location's value applies to its assets too.
+const ASSET_CACHE_DIRECTIVES = [
+	"if_modified_since",
+	"proxy_cache",
+	"proxy_cache_key",
+	"proxy_ignore_headers",
+	"proxy_cache_use_stale",
+	"proxy_connect_timeout",
+	"proxy_read_timeout",
+	"expires",
+	"access_log",
+];
+
+// List settings a nested location inherits from its parent only while it sets none of its own: one entry of its own
+// and it has only its own. With a top-level include (see assetAdvancedConfig()) the parent's lists have the included
+// file's entries too, so the nested asset location must not repeat the entries written directly in the advanced
+// config, it inherits all of them. The asset block sets none of these itself; it sets its own proxy_hide_header
+// (and proxy_cache_valid / proxy_cache_bypass / proxy_no_cache) list, so those written directly in the advanced config
+// are repeated. proxy_pass_header is inherited apart from proxy_hide_header. headers-more appends the parent's
+// commands to the child's, a repeated more_set_headers would run twice (after the included ones). valid_referers
+// (its none / blocked / server_names flags too), mirror, error_log, index and the *_types hashes are inherited
+// as a whole in the same way.
+const INHERITED_LISTS = [
+	"proxy_set_header",
+	"proxy_pass_header",
+	"proxy_redirect",
+	"proxy_cookie_domain",
+	"proxy_cookie_path",
+	"proxy_cookie_flags",
+	"add_header",
+	"add_trailer",
+	"more_set_headers",
+	"more_clear_headers",
+	"more_set_input_headers",
+	"more_clear_input_headers",
+	"error_page",
+	"allow",
+	"deny",
+	"auth_request_set",
+	"limit_req",
+	"limit_conn",
+	"set_real_ip_from",
+	"sub_filter",
+	"sub_filter_types",
+	"gzip_types",
+	"valid_referers",
+	"mirror",
+	"error_log",
+	"index",
+	"ssi_types",
+	"addition_types",
+	"charset_types",
+	"xslt_types",
+	"proxy_ssl_conf_command",
+];
 
 /**
- * The `set` statements at the top level of a location's advanced config, in order, for the nested asset location:
- * a nested location doesn't run the rewrite-phase directives of its parent, so a variable used by the forward
- * host / path (`set $target t;` with forward path `/v1/$target`) or by an inherited proxy_set_header would be
- * empty there.
+ * @param   {Object} statement  a top-level statement of the advanced config (lib/nginx-tokenize.js)
+ * @returns {String|null} the ASSET_CACHE_DIRECTIVES entry the cache block leaves out for it
+ */
+const ownCacheDirective = (statement) => {
+	const name = statement.tokens[0];
+	if (ASSET_CACHE_DIRECTIVES.includes(name)) {
+		return name;
+	}
+	// nginx rejects proxy_store and proxy_cache in the same location ("is incompatible"): the location's
+	// proxy_store applies to its assets too, without the public cache
+	if (name === "proxy_store" && statement.tokens[1] !== "off") {
+		return "proxy_cache";
+	}
+	return null;
+};
+
+/**
+ * The advanced config as the nested asset location repeats it. A nested location runs none of the rewrite-phase
+ * directives of its parent (set, if, return, rewrite, set_by_lua*, set_if_empty, ...), so it gets the location's
+ * whole advanced config, at the same place relative to the proxy directives, and behaves like the location itself
+ * (plus caching): an `if (...) { return 403; }` guard, a `rewrite` or a `set` inside an `if` apply to its assets
+ * too. The other directives (proxy_set_header, add_header, auth_request, limit_req, ...) are inherited anyway;
+ * repeating them gives the same result.
  *
- * Only top-level `set $name value;` statements are repeated. Not covered: a `set` inside an `if` (or another
- * block), variables changed by other directives (`rewrite`, `auth_request_set`, a regex `if` and its captures,
- * ...) and a `set` that reads such a variable. For those the nested asset location only sees the value from the
- * repeated top-level `set` statements (or none).
+ * `location` blocks at the top level are left out: nginx rejects a prefix location inside a regex location
+ * ("is outside location"), and an asset request that reaches the nested asset location never enters them
+ * (they are siblings of it in the parent). Their lines are kept as empty lines, so a line number in the copy
+ * maps to the same line of the advanced config.
+ *
+ * An advanced config with an `include` at its top level can't be repeated as a whole: what the included file
+ * contains is not known here, and a second copy of it in the nested location may be rejected by nginx (a cache
+ * directive of the asset block twice, "is duplicate", or a `location` in it, "is outside location"). Then
+ * (`inherit`) the copy leaves out the includes and the list settings of INHERITED_LISTS (kept as empty lines),
+ * and the nested location sets no proxy_set_header / add_header / access rules of its own, so it inherits the
+ * location's lists, the included entries too (see templates/_location_body.conf). Everything else written directly
+ * in the advanced config is repeated as without an include: every rewrite-phase statement of any module, Lua
+ * handlers, auth_request, auth_basic, limit_except blocks. Rewrite-phase lines inside the included file don't apply
+ * to the assets.
  *
  * @param   {String} advancedConfig
- * @returns {String[]} eg. ['set $target "t";']
+ * @returns {{text: String, own: Object, inherit: boolean}} own: the ASSET_CACHE_DIRECTIVES the advanced config
+ *          sets at its top level, eg. {expires: true}; inherit: it has a top-level include
  */
-const assetSetDirectives = (advancedConfig) =>
-	scanNginxConfig(advancedConfig)
-		.statements.filter(
-			(s) =>
-				s.depth === 0 &&
-				s.end === ";" &&
-				s.tokens.length === 3 &&
-				s.tokens[0] === "set" &&
-				/^\$[A-Za-z0-9_]+$/.test(s.tokens[1]),
-		)
-		.map((s) => `set ${s.tokens[1]} ${quoteNginxValue(s.tokens[2])};`);
+const assetAdvancedConfig = (advancedConfig) => {
+	const text = `${advancedConfig || ""}`;
+	const top = scanNginxConfig(text).statements.filter((s) => s.depth === 0);
+	const inherit = top.some((s) => s.end !== "{" && s.tokens[0] === "include");
+	const own = {};
+	let out = "";
+	let pos = 0;
+	for (const statement of top) {
+		const name = statement.tokens[0];
+		const block = statement.end === "{";
+		const cache = block ? null : ownCacheDirective(statement);
+		if (cache) {
+			own[cache] = true;
+		}
+		const stop = block ? statement.close : statement.stop;
+		const drop = block
+			? name === "location"
+			: inherit && (name === "include" || INHERITED_LISTS.includes(name));
+		if (drop && stop > statement.start) {
+			out += text.slice(pos, statement.start) + (text.slice(statement.start, stop).replace(/[^\n]/g, "") || " ");
+			pos = stop;
+		}
+	}
+	return { text: out + text.slice(pos), own, inherit };
+};
 
 /**
  * Template variables (all prefixed npm_) for the dynamic / static rendering of a location.
@@ -374,12 +471,14 @@ const buildLocationContext = (loc, state) => {
 	// "Cache Assets" gets the nested asset location, also one with a variable forward host ($backend) or forward
 	// path (/api/$arg_id): without it the host-level asset regex (conf.d/include/assets.conf, included in the
 	// server block before the custom locations) wins over the prefix location and sends its assets to the host's
-	// main upstream. A nested location doesn't run the parent's `set`, so the top-level `set` statements of the
-	// advanced config are repeated in it, see assetSetDirectives(). A variable proxy_pass is repeated as it is
+	// main upstream. A nested location doesn't run the parent's rewrite-phase directives (set, if, return, ...), so
+	// it repeats the location's body with the whole advanced config (with a top-level include without the includes
+	// and the list settings, inheriting those), see assetAdvancedConfig(). A variable proxy_pass is repeated as it is
 	// (nginx sends its URI as it is, no rewrite), like the parent it has no implicit "proxy_redirect default".
 	const userRedirect = hasDirective(loc.advanced_config, "proxy_redirect");
 	const variableProxyPass = isVariableHost(loc.forward_host) || hasVariablePath(loc);
 	const assetsAllowed = !parsed.isExact && !parsed.isNamed;
+	const assetCopy = assetAdvancedConfig(loc.advanced_config);
 
 	return Object.assign({}, loc, {
 		forward_path: fp,
@@ -393,12 +492,17 @@ const buildLocationContext = (loc, state) => {
 		// the user manages proxy_redirect in the advanced config
 		npm_redirect: dynamic && !userRedirect ? redirect : "",
 		npm_assets: assetsAllowed && (loc.caching_enabled === 1 || loc.caching_enabled === true),
-		npm_asset_sets: assetSetDirectives(loc.advanced_config),
+		npm_asset_advanced_config: assetCopy.text,
+		npm_asset_own: assetCopy.own,
+		npm_asset_inherit: assetCopy.inherit,
 		npm_asset_rewrite: variableProxyPass ? "" : rewrite,
 		npm_asset_uri: variableProxyPass ? fp : "",
-		// When the user manages proxy_redirect in the advanced config, the nested location sets none and
-		// inherits that rule (a proxy_redirect in the nested block would replace it).
-		npm_asset_redirect: userRedirect ? "" : variableProxyPass ? "off" : redirect,
+		// When the user manages proxy_redirect in the advanced config, the nested location sets none of its own:
+		// its copy of the advanced config has the user's rule. With a top-level include it sets none either, an
+		// included file may have one (Authelia's proxy.conf: "proxy_redirect http:// $scheme://;"): it inherits the
+		// location's rules, which are the same as its own would be (the location's implicit "proxy_redirect default"
+		// or its npm_redirect line, none for a variable proxy_pass), plus the included ones.
+		npm_asset_redirect: userRedirect || assetCopy.inherit ? "" : variableProxyPass ? "off" : redirect,
 	});
 };
 
@@ -562,7 +666,7 @@ export {
 	CONFIG_VERSION,
 	CONFIG_VERSION_MARKER,
 	MESSAGES,
-	assetSetDirectives,
+	assetAdvancedConfig,
 	bracesBalanced,
 	buildLocationContext,
 	chooseLocationMode,
