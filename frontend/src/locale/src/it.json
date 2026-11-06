@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Codici di backup rimanenti: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Conserva questi codici di backup in un luogo sicuro. Ogni codice può essere usato una sola volta."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Disattiva Autenticazione a Due Fattori"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Disattiva 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Disattivare l'autenticazione a due fattori renderà il tuo account meno sicuro."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Disattivata"
+	},
+	"2fa.done": {
+		"defaultMessage": "Ho salvato i miei codici di backup"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Attiva Autenticazione a Due Fattori"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Attivata"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Inserisci il codice di verifica"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Inserisci il codice di verifica per disattivarla"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Rigenera"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Rigenera Codici di Backup"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Inserisci un codice di verifica per generare nuovi codici di backup. I vecchi codici non saranno più validi."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Chiave Segreta"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Scansiona questo codice QR con la tua app di autenticazione, oppure inserisci la chiave segreta manualmente."
+	},
+	"2fa.status": {
+		"defaultMessage": "Stato"
+	},
+	"2fa.title": {
+		"defaultMessage": "Autenticazione a Due Fattori"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Verifica e Attiva"
+	},
 	"access-list": {
 		"defaultMessage": "Lista di Accesso"
 	},
@@ -14,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Nota che le direttive di allow e deny saranno applicate nell'ordine in cui sono definite."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Eredita dal Proxy Host"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Usa la lista di accesso del proxy host"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Passa Autenticazione all'Upstream"
 	},
@@ -22,6 +85,9 @@
 	},
 	"access-list.public.subtitle": {
 		"defaultMessage": "Nessuna autenticazione base richiesta"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 o 192.168.1.0/24 o 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Soddisfa Qualsiasi"
@@ -38,11 +104,20 @@
 	"action.add-location": {
 		"defaultMessage": "Aggiungi Percorso"
 	},
+	"action.allow": {
+		"defaultMessage": "Consenti"
+	},
+	"action.clear": {
+		"defaultMessage": "Svuota"
+	},
 	"action.close": {
 		"defaultMessage": "Chiudi"
 	},
 	"action.delete": {
 		"defaultMessage": "Elimina"
+	},
+	"action.deny": {
+		"defaultMessage": "Nega"
 	},
 	"action.disable": {
 		"defaultMessage": "Disabilita"
@@ -56,6 +131,9 @@
 	"action.enable": {
 		"defaultMessage": "Abilita"
 	},
+	"action.logs": {
+		"defaultMessage": "Log"
+	},
 	"action.permissions": {
 		"defaultMessage": "Permessi"
 	},
@@ -67,6 +145,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Log di Audit"
+	},
+	"auto": {
+		"defaultMessage": "Auto"
 	},
 	"cancel": {
 		"defaultMessage": "Annulla"
@@ -127,6 +208,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "Provider DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Seleziona un Provider..."
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Questa sezione richiede conoscenze su Certbot e i relativi plugin DNS. Consulta la documentazione del plugin."
@@ -193,6 +277,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "Email"
+	},
+	"column.error": {
+		"defaultMessage": "Errore"
 	},
 	"column.event": {
 		"defaultMessage": "Evento"
@@ -275,6 +362,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Wildcard non supportate per questa CA"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Avanzate"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Forza SSL"
 	},
@@ -286,6 +376,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Supporto HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Considera Attendibili gli Header Forwarded Proto dell'Upstream"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Usa Challenge DNS"
@@ -383,8 +476,74 @@
 	"loading": {
 		"defaultMessage": "Caricamento…"
 	},
+	"location.advanced-config": {
+		"defaultMessage": "Ha una configurazione Nginx personalizzata"
+	},
+	"location.filter": {
+		"defaultMessage": "Filtra per percorso o destinazione"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Codice di Verifica"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Inserisci il codice"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Inserisci il codice della tua app di autenticazione"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Autenticazione a Due Fattori"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Verifica"
+	},
 	"login.title": {
 		"defaultMessage": "Accedi al tuo account"
+	},
+	"logs": {
+		"defaultMessage": "Log"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Accessi"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Errori"
+	},
+	"logs.download": {
+		"defaultMessage": "Scarica"
+	},
+	"logs.empty": {
+		"defaultMessage": "Nessuna voce di log per ora."
+	},
+	"logs.level": {
+		"defaultMessage": "Livello"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Tutti i Livelli"
+	},
+	"logs.lines": {
+		"defaultMessage": "Righe"
+	},
+	"logs.live": {
+		"defaultMessage": "Live"
+	},
+	"logs.paused": {
+		"defaultMessage": "In Pausa"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Aggiorna"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Cerca nel log…"
+	},
+	"logs.source": {
+		"defaultMessage": "Origine"
+	},
+	"logs.source.system": {
+		"defaultMessage": "Sistema"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Viene mostrata solo la parte più recente di questo file."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Configurazione Nginx Personalizzata"
@@ -530,6 +689,24 @@
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Host di Reindirizzamento} other {Host di Reindirizzamento}}"
 	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Scelte multiple"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Spostato permanentemente"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Spostato temporaneamente"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Vedi altro"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Reindirizzamento temporaneo"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Reindirizzamento permanente"
+	},
 	"role.admin": {
 		"defaultMessage": "Amministratore"
 	},
@@ -586,6 +763,9 @@
 	},
 	"stream.forward-host": {
 		"defaultMessage": "Host di Destinazione"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com o 10.0.0.1 o 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Porta in Ingresso"
@@ -649,6 +829,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "Passa alla modalità Chiara"
+	},
+	"user.two-factor": {
+		"defaultMessage": "Autenticazione 2FA"
 	},
 	"username": {
 		"defaultMessage": "Nome Utente"

@@ -25,3 +25,13 @@
     kill -USR1 `cat /run/nginx/nginx.pid 2>/dev/null` 2>/dev/null || true
     endscript
 }
+
+/data/logs/backend.log {
+    su npm npm
+    size 10M
+    rotate 5
+    missingok
+    notifempty
+    compress
+    copytruncate
+}

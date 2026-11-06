@@ -1,7 +1,7 @@
 import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form, Formik } from "formik";
+import { Field, Form } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
@@ -13,7 +13,8 @@ import {
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
-import { useRedirectionHost, useSetRedirectionHost } from "src/hooks";
+import { FormModal } from "src/components/Form";
+import { useRedirectionHost, useSetRedirectionHost, useUser } from "src/hooks";
 import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
@@ -26,10 +27,13 @@ interface Props extends InnerModalProps {
 	id: number | "new";
 }
 const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
+	const { data: currentUser } = useUser("me");
 	const { data, isLoading, error } = useRedirectionHost(id);
 	const { mutate: setRedirectionHost } = useSetRedirectionHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const isAdmin = currentUser?.roles?.includes("admin");
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
 		if (isSubmitting) return;
@@ -40,6 +44,11 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 			id: id === "new" ? undefined : id,
 			...values,
 		};
+
+		if (!isAdmin) {
+			delete payload.advanced_config;
+			delete payload.advancedConfig;
+		}
 
 		setRedirectionHost(payload, {
 			onError: (err: any) => setErrorMsg(<T id={err.message} />),
@@ -55,15 +64,22 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 	};
 
 	return (
-		<Modal show={visible} onHide={remove}>
-			{!isLoading && error && (
-				<Alert variant="danger" className="m-3">
-					{error?.message || "Unknown error"}
-				</Alert>
+		<>
+			{(isLoading || (error && !data)) && (
+				<Modal show={visible} onHide={remove}>
+					{!isLoading && error && (
+						<Alert variant="danger" className="m-3">
+							{error?.message || "Unknown error"}
+						</Alert>
+					)}
+					{isLoading && <Loading noLogo />}
+				</Modal>
 			)}
-			{isLoading && <Loading noLogo />}
 			{!isLoading && data && (
-				<Formik
+				<FormModal
+					show={visible}
+					onHide={remove}
+					preventHide={isSubmitting}
 					initialValues={
 						{
 							// Details tab
@@ -86,7 +102,7 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
+					{({ onHide }) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -126,19 +142,21 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 													<T id="column.ssl" />
 												</a>
 											</li>
-											<li className="nav-item ms-auto" role="presentation">
-												<a
-													href="#tab-advanced"
-													className="nav-link"
-													title="Settings"
-													data-bs-toggle="tab"
-													aria-selected="false"
-													tabIndex={-1}
-													role="tab"
-												>
-													<IconSettings size={20} />
-												</a>
-											</li>
+											{isAdmin && (
+												<li className="nav-item ms-auto" role="presentation">
+													<a
+														href="#tab-advanced"
+														className="nav-link"
+														title="Settings"
+														data-bs-toggle="tab"
+														aria-selected="false"
+														tabIndex={-1}
+														role="tab"
+													>
+														<IconSettings size={20} />
+													</a>
+												</li>
+											)}
 										</ul>
 									</div>
 									<div className="card-body">
@@ -318,15 +336,17 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 												/>
 												<SSLOptionsFields color="bg-yellow" />
 											</div>
-											<div className="tab-pane" id="tab-advanced" role="tabpanel">
-												<NginxConfigField />
-											</div>
+											{isAdmin && (
+												<div className="tab-pane" id="tab-advanced" role="tabpanel">
+													<NginxConfigField />
+												</div>
+											)}
 										</div>
 									</div>
 								</div>
 							</Modal.Body>
 							<Modal.Footer>
-								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
+								<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
 								<Button
@@ -342,9 +362,9 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 							</Modal.Footer>
 						</Form>
 					)}
-				</Formik>
+				</FormModal>
 			)}
-		</Modal>
+		</>
 	);
 });
 

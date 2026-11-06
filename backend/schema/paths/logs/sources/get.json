@@ -1,0 +1,36 @@
+{
+	"operationId": "getLogSources",
+	"summary": "Get available log sources",
+	"tags": ["logs"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"system": { "label": "System" },
+								"letsencrypt": { "label": "Let's Encrypt" },
+								"hosts": {
+									"proxy": [{ "id": 1, "label": "example.com" }],
+									"redirection": [],
+									"dead": [],
+									"stream": [{ "id": 1, "label": "Port 5432 → 10.0.0.5:5432" }]
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/log-sources-object.json"
+					}
+				}
+			}
+		}
+	}
+}

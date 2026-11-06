@@ -24,6 +24,10 @@ class UserPermission extends Model {
 	static get tableName() {
 		return "user_permission";
 	}
+
+	static get jsonAttributes() {
+		return ["meta"];
+	}
 }
 
 export default UserPermission;
