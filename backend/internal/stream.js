@@ -22,6 +22,7 @@ const internalStream = {
 		internalHost.sanitiseInput(data);
 		const create_certificate = data.certificate_id === "new";
 		let createdId = null;
+		let issuedCertificateId = null;
 
 		if (create_certificate) {
 			delete data.certificate_id;
@@ -53,6 +54,7 @@ const internalStream = {
 						.configure(streamModel, "stream", row, { dryRun: true })
 						.then(() => internalCertificate.createQuickCertificate(access, data))
 						.then((cert) => {
+							issuedCertificateId = cert.id;
 							// update host with cert id
 							return internalStream.update(access, {
 								id: row.id,
@@ -96,6 +98,12 @@ const internalStream = {
 				// nginx rejected the new stream: don't keep a stream that was never active
 				if (createdId && internalNginx.isHostLevelError(err)) {
 					await streamModel.query().where("id", createdId).patch({ is_deleted: 1 });
+				}
+				// the certificate requested for it is left unused when the host is gone or was rejected with it
+				if (issuedCertificateId) {
+					await internalHost.discardUnusedCertificate(issuedCertificateId, () =>
+						internalCertificate.delete(access, { id: issuedCertificateId }),
+					);
 				}
 				throw err;
 			});

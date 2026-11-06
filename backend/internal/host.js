@@ -227,7 +227,7 @@ const internalHost = {
 	},
 
 	/**
-	 * After an update with a new certificate failed: removes that certificate when no host uses it, eg. when
+	 * After a create or update with a new certificate failed: removes that certificate when no host uses it, eg. when
 	 * nginx only rejected the update once the certificate was there and the row was rolled back. Never throws,
 	 * the update's own error is what the caller reports.
 	 *

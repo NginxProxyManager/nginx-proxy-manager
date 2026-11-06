@@ -22,6 +22,7 @@ const internalRedirectionHost = {
 		let thisData = internalHost.sanitiseInput(data || {});
 		const createCertificate = thisData.certificate_id === "new";
 		let createdId = null;
+		let issuedCertificateId = null;
 
 		if (createCertificate) {
 			delete thisData.certificate_id;
@@ -75,6 +76,7 @@ const internalRedirectionHost = {
 						.configure(redirectionHostModel, "redirection_host", row, { dryRun: true })
 						.then(() => internalCertificate.createQuickCertificate(access, thisData))
 						.then((cert) => {
+							issuedCertificateId = cert.id;
 							// update host with cert id
 							return internalRedirectionHost.update(access, {
 								id: row.id,
@@ -120,6 +122,12 @@ const internalRedirectionHost = {
 				// nginx rejected the new host: don't keep a host that was never active
 				if (createdId && internalNginx.isHostLevelError(err)) {
 					await redirectionHostModel.query().where("id", createdId).patch({ is_deleted: 1 });
+				}
+				// the certificate requested for it is left unused when the host is gone or was rejected with it
+				if (issuedCertificateId) {
+					await internalHost.discardUnusedCertificate(issuedCertificateId, () =>
+						internalCertificate.delete(access, { id: issuedCertificateId }),
+					);
 				}
 				throw err;
 			});
