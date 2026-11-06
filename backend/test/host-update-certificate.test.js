@@ -177,6 +177,27 @@ for (const type of types) {
 			assert.deepEqual(await liveCertificates(), []);
 		});
 
+		it("replaces a broken certificate: the check runs without the certificate being replaced", async () => {
+			const [old] = await db("certificate").insert({
+				owner_user_id: 1,
+				provider: "letsencrypt",
+				nice_name: "old",
+				domain_names: "[]",
+				meta: "{}",
+				expires_on: "2027-01-01 00:00:00",
+				...ts,
+			});
+			const id = await insertHost();
+			await db(type.table).where("id", id).update({ certificate_id: old });
+			// eg. the old certificate's files are missing: nginx rejects every config that uses it
+			rejectCertificates.add(old);
+
+			await internal.update(access, { id, certificate_id: "new" });
+			assert.equal(dryRuns, 1);
+			assert.equal(issued.length, 1);
+			assert.equal((await host(id)).certificate_id, issued[0]);
+		});
+
 		it("keeps the new certificate when the update goes through", async () => {
 			const id = await insertHost();
 			await internal.update(access, { id, certificate_id: "new" });

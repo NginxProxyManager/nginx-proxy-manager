@@ -299,7 +299,8 @@ const internalHost = {
 	 * For an update that asks for a new certificate (certificate_id "new"): checks that nginx accepts the rest of
 	 * the update before the certificate is requested. Otherwise the certificate would be issued, the update
 	 * rejected and rolled back, and the certificate left unused but renewed forever. Like create(), the check
-	 * runs with the host's current certificate; the SSL part is checked when the certificate is added.
+	 * runs without a certificate: the current one is about to be replaced and may be the very thing that is
+	 * broken (eg. its files are missing). The SSL part is checked when the new certificate is added.
 	 *
 	 * @param   {Object}   opts
 	 * @param   {Object}   opts.model
@@ -315,6 +316,9 @@ const internalHost = {
 			row,
 			_.omit(patch, ["id", "certificate_id", "certificate", "owner", "access_list", "meta"]),
 		);
+		// No ssl_certificate, 443 listen, forced SSL or HSTS: the templates test both
+		proposed.certificate_id = 0;
+		proposed.certificate = null;
 		if (skipDisabled && !proposed.enabled) {
 			return;
 		}
