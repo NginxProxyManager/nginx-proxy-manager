@@ -25,9 +25,9 @@
  * own snippets (/data/nginx/custom/*.conf, /snippets/*.conf, conf.d/include/*.conf).
  *
  * Paths are read with the same tokenizer as nginx (lib/nginx-tokenize.js), so quotes or `#` in the middle of
- * a token don't hide a directive. The exception are *_by_lua_block bodies, which ngx_lua reads with its own
- * Lua aware reader: a quote inside a Lua comment there can hide the directives that follow the block from
- * this check. Lua code can open any file anyway, see above.
+ * a token don't hide a directive. It reads *_by_lua_block bodies as Lua, like ngx_lua does, so Lua code isn't
+ * checked as directives and a quote or brace in a Lua comment or string doesn't hide the directives after the
+ * block. Lua code can open any file anyway, see above.
  *
  * This module has no database imports so it can be unit tested.
  */

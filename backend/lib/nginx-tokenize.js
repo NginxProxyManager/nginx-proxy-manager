@@ -11,6 +11,9 @@
  * - in the token's value `\"`, `\'` and `\\` lose the backslash, `\t` `\r` `\n` become the control
  *   characters, any other backslash is kept (`\d` stays `\d`).
  *
+ * The body of a `*_by_lua_block` directive (access_by_lua_block, set_by_lua_block $var, ...) is Lua code, which
+ * lua-nginx-module reads with a lexer of its own, see skipLuaBlock().
+ *
  * Text that nginx itself would reject (eg. `"a"b`, a stray `;`) is read on leniently: such a config fails
  * `nginx -t` anyway. `errors` lists what nginx would complain about.
  *
@@ -46,6 +49,84 @@ const unescapeToken = (raw) => {
 };
 
 /**
+ * @param   {String} src
+ * @param   {Number} i  offset of a `[`
+ * @returns {Number} the level of the Lua long bracket that starts there (the number of `=`, `[==[`), -1 for none
+ */
+const longBracketLevel = (src, i) => {
+	let j = i + 1;
+	while (src[j] === "=") {
+		j++;
+	}
+	return src[j] === "[" ? j - i - 1 : -1;
+};
+
+/**
+ * The end of the body of a `*_by_lua_block` directive, read as lua-nginx-module does (ngx_http_lua_conf_lua_block_parse()
+ * in src/ngx_http_lua_directive.c and its lexer src/ngx_http_lua_lex.c): `{` and `}` are counted outside of
+ *
+ * - "..." and '...' strings, on one line, with `\` escaping the next character (a quote without its closing quote on
+ *   the same line is an ordinary character),
+ * - long strings `[[...]]`, `[==[...]==]` and long comments `--[[...]]`, `--[==[...]==]` (the closing bracket must
+ *   have the same number of `=`; nginx -t fails without it),
+ * - line comments `-- ...`.
+ *
+ * `#` is no comment in Lua (`#t` is the length of t), and `${` is nothing special.
+ *
+ * @param   {String} src
+ * @param   {Number} from  offset just after the block's `{`
+ * @returns {Number} offset just after the `}` that closes the block, -1 when the text ends before it
+ */
+const skipLuaBlock = (src, from) => {
+	let level = 1;
+	for (let i = from; i < src.length; i++) {
+		const ch = src[i];
+		if (ch === "{") {
+			level++;
+			continue;
+		}
+		if (ch === "}") {
+			level--;
+			if (level === 0) {
+				return i + 1;
+			}
+			continue;
+		}
+		const comment = ch === "-" && src[i + 1] === "-";
+		const bracket = comment ? i + 2 : i;
+		if (src[bracket] === "[") {
+			const eq = longBracketLevel(src, bracket);
+			if (eq >= 0) {
+				const close = src.indexOf(`]${"=".repeat(eq)}]`, bracket + eq + 2);
+				if (close < 0) {
+					return -1;
+				}
+				i = close + eq + 1;
+				continue;
+			}
+		}
+		if (comment) {
+			const eol = src.indexOf("\n", i);
+			if (eol < 0) {
+				return -1;
+			}
+			i = eol;
+			continue;
+		}
+		if (ch === '"' || ch === "'") {
+			let j = i + 1;
+			while (j < src.length && src[j] !== ch && src[j] !== "\n") {
+				j += src[j] === "\\" && src[j + 1] !== "\n" ? 2 : 1;
+			}
+			if (src[j] === ch) {
+				i = j;
+			}
+		}
+	}
+	return -1;
+};
+
+/**
  * @typedef  {Object} NginxStatement
  * @property {String[]} tokens  the statement's tokens (directive name first), unescaped
  * @property {String}   end     what ended it: ";", "{" (a block starts), "}" (a block ended right after
@@ -53,6 +134,8 @@ const unescapeToken = (raw) => {
  * @property {Number}   depth   block depth the statement is in, 0 at the top
  * @property {Number}   start   offset of the statement's first token in the text (its quote, if quoted)
  * @property {Number}   [close] for a block ("{"): offset just after the `}` that closes it, unset while unclosed
+ * @property {boolean}  [lua]   a `*_by_lua_block` directive: its block is Lua code, no statements are read from it
+ *                              and it doesn't change the depth
  * @property {Number}   [stop]  for any other statement: offset just after it (after its `;`)
  */
 
@@ -69,6 +152,7 @@ const scanNginxConfig = (text) => {
 	let tokens = [];
 	let depth = 0;
 	let negative = false;
+	let luaUnclosed = false;
 
 	// the state of ngx_conf_read_token()
 	let lastSpace = true;
@@ -97,12 +181,26 @@ const scanNginxConfig = (text) => {
 		statementStart = -1;
 		return statement;
 	};
+	// returns the offset to go on from: the `{`, or the last character of a Lua block
 	const blockStart = (at) => {
 		if (!tokens.length) {
 			errors.push('unexpected "{"');
 		}
+		if (tokens.length && tokens[0].endsWith("_by_lua_block")) {
+			const statement = endStatement("{", at);
+			statement.lua = true;
+			const close = skipLuaBlock(src, at + 1);
+			if (close < 0) {
+				luaUnclosed = true;
+				errors.push('unexpected end of file, expecting "}" (Lua block)');
+				return src.length;
+			}
+			statement.close = close;
+			return close - 1;
+		}
 		open.push(endStatement("{", at));
 		depth++;
+		return at;
 	};
 	const blockEnd = (at) => {
 		if (tokens.length) {
@@ -146,7 +244,7 @@ const scanNginxConfig = (text) => {
 			if (ch === "{") {
 				needSpace = false;
 				lastSpace = true;
-				blockStart(i);
+				i = blockStart(i);
 				continue;
 			}
 			needSpace = false;
@@ -170,7 +268,7 @@ const scanNginxConfig = (text) => {
 					endStatement(";", i);
 					continue;
 				case "{":
-					blockStart(i);
+					i = blockStart(i);
 					continue;
 				case "}":
 					blockEnd(i);
@@ -248,7 +346,7 @@ const scanNginxConfig = (text) => {
 			if (ch === ";") {
 				endStatement(";", i);
 			} else if (ch === "{") {
-				blockStart(i);
+				i = blockStart(i);
 			}
 		}
 	}
@@ -268,7 +366,7 @@ const scanNginxConfig = (text) => {
 	if (depth > 0) {
 		errors.push('unexpected end of file, expecting "}"');
 	}
-	return { statements, depth, balanced: !negative && depth === 0, unterminated, errors };
+	return { statements, depth, balanced: !negative && depth === 0 && !luaUnclosed, unterminated, errors };
 };
 
-export { scanNginxConfig, unescapeToken };
+export { scanNginxConfig, skipLuaBlock, unescapeToken };
