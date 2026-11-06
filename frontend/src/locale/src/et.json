@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Sulge"
 	},
+	"action.copied": {
+		"defaultMessage": "Kopeeritud"
+	},
+	"action.copy": {
+		"defaultMessage": "Kopeeri"
+	},
 	"action.delete": {
 		"defaultMessage": "Kustuta"
 	},
@@ -347,6 +353,48 @@
 	"disabled": {
 		"defaultMessage": "Väljas"
 	},
+	"docker-labels.button": {
+		"defaultMessage": "Dockerist"
+	},
+	"docker-labels.create": {
+		"defaultMessage": "Loo"
+	},
+	"docker-labels.empty": {
+		"defaultMessage": "Ühelgi konteineril pole veel npm.domain silti. Lisa sellised sildid konteinerile, mis on Nginx Proxy Manageriga samas võrgus, loo see uuesti ja värskenda:"
+	},
+	"docker-labels.exists": {
+		"defaultMessage": "{type, select, redirection_host {Mõni ümbersuunamise host kasutab juba ühte neist domeenidest} dead_host {Mõni 404 host kasutab juba ühte neist domeenidest} other {Mõni proxy-host kasutab juba ühte neist domeenidest}}"
+	},
+	"docker-labels.ignored": {
+		"defaultMessage": "npm.domain siltist kasutamata: {domains}"
+	},
+	"docker-labels.ignored-hint": {
+		"defaultMessage": "Domeeninimede väli lükkaks need nimed tagasi (metamärk on lubatud ainult alguses, nt *.example.com)"
+	},
+	"docker-labels.intro": {
+		"defaultMessage": "Neil konteineritel on npm.domain silt. Loo avab täidetud proxy-hosti vormi: kontrolli ja salvesta."
+	},
+	"docker-labels.no-port": {
+		"defaultMessage": "Port puudub: lisa npm.port silt või sisesta see vormis"
+	},
+	"docker-labels.open": {
+		"defaultMessage": "Ava"
+	},
+	"docker-labels.other": {
+		"defaultMessage": "Teised konteinerid ({count})"
+	},
+	"docker-labels.other-hint": {
+		"defaultMessage": "Kasutatav npm.domain silt puudub: Loo täidab ainult sihtkoha."
+	},
+	"docker-labels.title": {
+		"defaultMessage": "Proxy-hostid Dockeri siltidest"
+	},
+	"docker-labels.unavailable": {
+		"defaultMessage": "Dockeri silte ei saa lugeda: {message}"
+	},
+	"docker-labels.used-by": {
+		"defaultMessage": "{type, select, redirection_host {Kasutusel ümbersuunamise hostis: muuda või eemalda see enne} dead_host {Kasutusel 404 hostis: muuda või eemalda see enne} other {Kasutusel proxy-hostis}}"
+	},
 	"domain-names": {
 		"defaultMessage": "Domeeninimed"
 	},
@@ -431,6 +479,9 @@
 	"error.required": {
 		"defaultMessage": "See on kohustuslik"
 	},
+	"error.unknown": {
+		"defaultMessage": "Tundmatu viga"
+	},
 	"expires.on": {
 		"defaultMessage": "Aegub: {date}"
 	},
@@ -439,6 +490,66 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "Sul on salvestamata muudatusi. Kas oled kindel, et soovid need tühistada?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Viimati seadistatud {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx ei suutnud selle hosti seadistust laadida, seega on see maas."
+	},
+	"host-status.details": {
+		"defaultMessage": "Näita oleku üksikasju"
+	},
+	"host-status.disabled": {
+		"defaultMessage": "Väljas"
+	},
+	"host-status.error": {
+		"defaultMessage": "Viga"
+	},
+	"host-status.main-target": {
+		"defaultMessage": "Peamine sihtkoht"
+	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx ei suuda {target} lahendada"
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: {target} pole kättesaadav"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Näita vealogi"
+	},
+	"host-status.warning": {
+		"defaultMessage": "Hoiatus"
+	},
+	"host-test.failed": {
+		"defaultMessage": "Testi ei õnnestunud käivitada"
+	},
+	"host-test.main-target": {
+		"defaultMessage": "Edastuse host"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "See oli test, midagi ei salvestatud."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Seadistus korras"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Konfiguratsioon on korras, hoiatustega"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, one {Nginx keelaks # kohandatud asukoha} other {Nginx keelaks # kohandatud asukohta}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Kontrollimata: viimasel minutil liiga palju kontrolle"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Kättesaadavus"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx lükkaks selle seadistuse tagasi"
+	},
+	"host-test.stale": {
+		"defaultMessage": "Vormi muudeti pärast seda testi. Muudatuste kontrollimiseks testi uuesti."
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
@@ -479,11 +590,62 @@
 	"loading": {
 		"defaultMessage": "Laadimine…"
 	},
+	"location-status.disabled": {
+		"defaultMessage": "Väljas"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Aktiivne"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Pole aktiivne"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx lükkas selle asukoha tagasi, seega lülitati see välja. Ülejäänud host töötab edasi."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Lahendamata"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "Sihthosti nime ei saa praegu lahendada. Päringud sellele asukohale ebaõnnestuvad, kuni see õnnestub."
+	},
+	"location.advanced": {
+		"defaultMessage": "Täpsemalt"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Kohandatud Nginx seadistus olemas"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Teine asukoht kasutab juba teed {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Selles asukohas on vigu"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "Host sisaldab lubamatuid märke (jutumärgid, ;, sulud, $, # või \\). Üksik nginxi muutuja, näiteks $backend, on lubatud."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "Host ei tohi sisaldada tühikuid"
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Edastusteel on lubamatud märgid (tühikud, jutumärgid, ;, sulud, # või \\). nginxi muutujad, näiteks $uri, on lubatud."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Mõnes kohandatud asukohas on vigu"
+	},
 	"location.filter": {
 		"defaultMessage": "Filtreeri tee või sihtkoha järgi"
+	},
+	"location.path-label": {
+		"defaultMessage": "Asukoht"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Lülita see asukoht sisse või välja"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, one {# asukoht} other {# asukohta}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, one {# probleem} other {# probleemi}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Kinnituskood"
@@ -553,6 +715,9 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Sisesta siia oma Nginx seadistus omal vastutusel!"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Näita nginxi väljundit"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Selle vaatamiseks sul õigust pole."
@@ -728,6 +893,18 @@
 	"save": {
 		"defaultMessage": "Salvesta"
 	},
+	"save-warning.offline": {
+		"defaultMessage": "Salvestatud, kuid nginx ei suutnud seda hosti laadida, seega on see maas:"
+	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, one {# kohandatud asukoht lülitati välja, sest nginx lükkas selle tagasi.} other {# kohandatud asukohta lülitati välja, sest nginx lükkas need tagasi.}}"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Salvestatud hoiatustega"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, one {# kohandatud asukoht viitab hostile, mida ei saa praegu lahendada.} other {# kohandatud asukohta viitavad hostidele, mida ei saa praegu lahendada.}}"
+	},
 	"setting": {
 		"defaultMessage": "Seade"
 	},
@@ -799,6 +976,87 @@
 	},
 	"update-available": {
 		"defaultMessage": "Uuendus saadaval: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Kontrollin…"
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Kontroll on välja lülitatud"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Hosti ei leitud"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "DNS-päring aegus"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Vigane hostinimi"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Kättesaadav"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Kättesaadav ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Lahendub ainult /etc/hosts või otsingudomeenide kaudu"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Ühendusest keelduti"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Ühendus aegus"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Host pole kättesaadav"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "nginxi muutuja"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Määratakse täpsemas seadistuses ja nginx lahendab selle iga päringu ajal, seega siin seda ei kontrollita."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "nginx lahendab selle iga päringu ajal, seega siin seda ei kontrollita. Sellel peab olema väärtus enne selle hosti täpsema seadistuse käivitumist, näiteks map-ist failis /data/nginx/custom/http.conf; set täpsemas seadistuses on liiga hilja."
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Dockeri tuvastus on väljas."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Seadista"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Dockeri tuvastus ei tööta: {reason}."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "Võid sisestada ka mis tahes hostinime või IP-aadressi."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Võrgust leitud"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Dockeri konteinerid"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Varem kasutatud"
+	},
+	"upstream.loading": {
+		"defaultMessage": "Otsin sihtkohti…"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "Soovitusi pole, sisesta hostinimi või IP-aadress"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Pordid: {ports}"
+	},
+	"upstream.refresh": {
+		"defaultMessage": "Värskenda soovitusi"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "Kasuta „{value}“"
+	},
+	"upstream.used-by": {
+		"defaultMessage": "kasutab {count, plural, one {# host} other {# hosti}}"
 	},
 	"user": {
 		"defaultMessage": "Kasutaja"

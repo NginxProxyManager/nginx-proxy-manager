@@ -1,0 +1,161 @@
+{
+	"type": "object",
+	"description": "Result of an upstream reachability check (DNS + TCP connect)",
+	"additionalProperties": false,
+	"required": ["host", "port", "scheme", "ok", "code", "message", "addresses", "resolver_ok", "system_ok", "ms"],
+	"properties": {
+		"host": {
+			"type": "string",
+			"description": "The host as given (including any /path)",
+			"example": "app"
+		},
+		"port": {
+			"type": ["integer", "null"],
+			"example": 8080
+		},
+		"scheme": {
+			"type": ["string", "null"],
+			"example": "http"
+		},
+		"ok": {
+			"type": "boolean",
+			"description": "True when a TCP connection could be opened",
+			"example": true
+		},
+		"code": {
+			"type": "string",
+			"description": "Machine readable result. resolver_mismatch is ok:true but only works with a static upstream",
+			"example": "ok",
+			"enum": [
+				"ok",
+				"invalid_host",
+				"dns_not_found",
+				"dns_timeout",
+				"resolver_mismatch",
+				"tcp_refused",
+				"tcp_timeout",
+				"tcp_unreachable",
+				"disabled"
+			]
+		},
+		"message": {
+			"type": "string",
+			"description": "Human readable explanation",
+			"example": "app:8080 is reachable (1.2 ms)."
+		},
+		"addresses": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"example": ["172.18.0.5"]
+		},
+		"resolver_ok": {
+			"type": ["boolean", "null"],
+			"description": "Resolves through nginx's resolver (null: IP literal, or no resolver configured)",
+			"example": true
+		},
+		"system_ok": {
+			"type": ["boolean", "null"],
+			"description": "Resolves through the system resolver incl. /etc/hosts (null: IP literal)",
+			"example": true
+		},
+		"ms": {
+			"type": ["number", "null"],
+			"description": "TCP connect time in milliseconds",
+			"example": 1.2
+		},
+		"lookups": {
+			"type": [
+				"object",
+				"null"
+			],
+			"description": "Reachability through each lookup method on its own (null: IP literal, or not probed). system: getaddrinfo incl. /etc/hosts, as a literal proxy_pass resolves at config load; resolver: nginx's resolver, as a proxy_pass with a variable resolves per request (null: no resolver configured). ok/code above only count the method the target uses; without a known mode every method that finds the name has to reach it",
+			"additionalProperties": false,
+			"properties": {
+				"system": {
+					"type": [
+						"object",
+						"null"
+					],
+					"additionalProperties": false,
+					"required": [
+						"ok",
+						"code",
+						"addresses",
+						"ms"
+					],
+					"properties": {
+						"ok": {
+							"type": "boolean"
+						},
+						"code": {
+							"type": "string",
+							"enum": [
+								"ok",
+								"dns_not_found",
+								"dns_timeout",
+								"tcp_refused",
+								"tcp_timeout",
+								"tcp_unreachable"
+							]
+						},
+						"addresses": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"ms": {
+							"type": [
+								"number",
+								"null"
+							]
+						}
+					}
+				},
+				"resolver": {
+					"type": [
+						"object",
+						"null"
+					],
+					"additionalProperties": false,
+					"required": [
+						"ok",
+						"code",
+						"addresses",
+						"ms"
+					],
+					"properties": {
+						"ok": {
+							"type": "boolean"
+						},
+						"code": {
+							"type": "string",
+							"enum": [
+								"ok",
+								"dns_not_found",
+								"dns_timeout",
+								"tcp_refused",
+								"tcp_timeout",
+								"tcp_unreachable"
+							]
+						},
+						"addresses": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"ms": {
+							"type": [
+								"number",
+								"null"
+							]
+						}
+					}
+				}
+			}
+		}
+	}
+}

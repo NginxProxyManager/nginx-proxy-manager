@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Schließen"
 	},
+	"action.copied": {
+		"defaultMessage": "Kopiert"
+	},
+	"action.copy": {
+		"defaultMessage": "Kopieren"
+	},
 	"action.delete": {
 		"defaultMessage": "Löschen"
 	},
@@ -347,6 +353,48 @@
 	"disabled": {
 		"defaultMessage": "Deaktiviert"
 	},
+	"docker-labels.button": {
+		"defaultMessage": "Aus Docker"
+	},
+	"docker-labels.create": {
+		"defaultMessage": "Erstellen"
+	},
+	"docker-labels.empty": {
+		"defaultMessage": "Noch kein Container hat ein npm.domain-Label. Labels wie diese einem Container in einem Netzwerk von Nginx Proxy Manager hinzufügen, ihn neu erstellen und dann aktualisieren:"
+	},
+	"docker-labels.exists": {
+		"defaultMessage": "{type, select, redirection_host {Ein Weiterleitungs-Host verwendet bereits eine dieser Domains} dead_host {Ein 404-Host verwendet bereits eine dieser Domains} other {Ein Proxy-Host verwendet bereits eine dieser Domains}}"
+	},
+	"docker-labels.ignored": {
+		"defaultMessage": "Aus npm.domain nicht verwendet: {domains}"
+	},
+	"docker-labels.ignored-hint": {
+		"defaultMessage": "Das Feld für Domainnamen würde diese Namen ablehnen (Wildcards nur als führendes *. wie *.example.com)"
+	},
+	"docker-labels.intro": {
+		"defaultMessage": "Diese Container haben ein npm.domain-Label. Erstellen öffnet ein ausgefülltes Proxy-Host-Formular: prüfen, dann speichern."
+	},
+	"docker-labels.no-port": {
+		"defaultMessage": "Kein Port: npm.port-Label setzen oder im Formular eintragen"
+	},
+	"docker-labels.open": {
+		"defaultMessage": "Öffnen"
+	},
+	"docker-labels.other": {
+		"defaultMessage": "Weitere Container ({count})"
+	},
+	"docker-labels.other-hint": {
+		"defaultMessage": "Kein verwendbares npm.domain-Label: Erstellen füllt nur das Ziel aus."
+	},
+	"docker-labels.title": {
+		"defaultMessage": "Proxy-Hosts aus Docker-Labels"
+	},
+	"docker-labels.unavailable": {
+		"defaultMessage": "Docker-Labels können nicht gelesen werden: {message}"
+	},
+	"docker-labels.used-by": {
+		"defaultMessage": "{type, select, redirection_host {Von einem Weiterleitungs-Host verwendet: zuerst ändern oder entfernen} dead_host {Von einem 404-Host verwendet: zuerst ändern oder entfernen} other {Von einem Proxy-Host verwendet}}"
+	},
 	"domain-names": {
 		"defaultMessage": "Domain Names"
 	},
@@ -431,11 +479,77 @@
 	"error.required": {
 		"defaultMessage": "Dies ist erforderlich."
 	},
+	"error.unknown": {
+		"defaultMessage": "Unbekannter Fehler"
+	},
 	"expires.on": {
 		"defaultMessage": "Ablauf am: {date}"
 	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
+	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Sie haben ungespeicherte Änderungen. Möchten Sie diese wirklich verwerfen?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Zuletzt konfiguriert {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx konnte die Konfiguration dieses Hosts nicht laden, daher ist er offline."
+	},
+	"host-status.details": {
+		"defaultMessage": "Statusdetails anzeigen"
+	},
+	"host-status.disabled": {
+		"defaultMessage": "Deaktiviert"
+	},
+	"host-status.error": {
+		"defaultMessage": "Fehler"
+	},
+	"host-status.main-target": {
+		"defaultMessage": "Hauptziel"
+	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx kann {target} nicht auflösen"
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: {target} ist nicht erreichbar"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Fehlerprotokoll anzeigen"
+	},
+	"host-status.warning": {
+		"defaultMessage": "Warnung"
+	},
+	"host-test.failed": {
+		"defaultMessage": "Der Test konnte nicht ausgeführt werden"
+	},
+	"host-test.main-target": {
+		"defaultMessage": "Weiterleitungs-Host"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "Das war ein Test, es wurde nichts gespeichert."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Konfiguration OK"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Konfiguration OK, mit Warnungen"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, one {Nginx würde # benutzerdefinierten Pfad deaktivieren} other {Nginx würde # benutzerdefinierte Pfade deaktivieren}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Nicht geprüft: zu viele Prüfungen in der letzten Minute"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Erreichbarkeit"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx würde diese Konfiguration ablehnen"
+	},
+	"host-test.stale": {
+		"defaultMessage": "Das Formular wurde nach diesem Test geändert. Teste erneut, um die Änderungen zu prüfen."
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Gängige Exploits blockieren"
@@ -476,11 +590,62 @@
 	"loading": {
 		"defaultMessage": "Laden…"
 	},
+	"location-status.disabled": {
+		"defaultMessage": "Deaktiviert"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Aktiv"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Nicht aktiv"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx hat diese Location abgelehnt, daher wurde sie deaktiviert. Der Rest des Hosts funktioniert weiter."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Nicht auflösbar"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "Der Ziel-Host kann gerade nicht aufgelöst werden. Anfragen an diese Location schlagen fehl, bis er erreichbar ist."
+	},
+	"location.advanced": {
+		"defaultMessage": "Erweitert"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Hat eine eigene Nginx-Konfiguration"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Eine andere Location verwendet bereits {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Diese Location enthält Fehler"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "Der Host enthält unzulässige Zeichen (Anführungszeichen, ;, Klammern, $, # oder \\). Eine einzelne nginx-Variable wie $backend ist erlaubt."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "Der Host darf keine Leerzeichen enthalten"
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Ungültige Zeichen im Weiterleitungspfad (Leerzeichen, Anführungszeichen, ;, Klammern, # oder \\). nginx-Variablen wie $uri sind erlaubt."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Einige benutzerdefinierte Locations enthalten Fehler"
+	},
 	"location.filter": {
 		"defaultMessage": "Nach Pfad oder Ziel filtern"
+	},
+	"location.path-label": {
+		"defaultMessage": "Location"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Diese Location aktivieren oder deaktivieren"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, one {# Location} other {# Locations}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, one {# Problem} other {# Probleme}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Verifizierungscode"
@@ -550,6 +715,9 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Geben Sie hier Ihre benutzerdefinierte Nginx-Konfiguration auf eigene Gefahr ein!"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Nginx-Ausgabe anzeigen"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Sie haben keinen Zugriff, um dies anzuzeigen."
@@ -641,11 +809,20 @@
 	"password.show": {
 		"defaultMessage": "Passwort anzeigen"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Erlaubte Proxy Hosts"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Gewährt zusätzlich Zugriff auf ausgewählte Proxy Hosts, die andere Benutzer erstellt haben (neben den eigenen Hosts des Benutzers)."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Versteckt"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Verwalten"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Keine Proxy Hosts gefunden"
 	},
 	"permissions.view": {
 		"defaultMessage": "Nur anzeigen"
@@ -715,6 +892,18 @@
 	},
 	"save": {
 		"defaultMessage": "Speichern"
+	},
+	"save-warning.offline": {
+		"defaultMessage": "Gespeichert, aber nginx konnte diesen Host nicht laden, daher ist er offline:"
+	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, one {# benutzerdefinierte Location wurde deaktiviert, weil nginx sie abgelehnt hat.} other {# benutzerdefinierte Locations wurden deaktiviert, weil nginx sie abgelehnt hat.}}"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Mit Warnungen gespeichert"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, one {# benutzerdefinierte Location zeigt auf einen Host, der gerade nicht aufgelöst werden kann.} other {# benutzerdefinierte Locations zeigen auf Hosts, die gerade nicht aufgelöst werden können.}}"
 	},
 	"setting": {
 		"defaultMessage": "Einstellung"
@@ -787,6 +976,87 @@
 	},
 	"update-available": {
 		"defaultMessage": "Update verfügbar: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Prüfe…"
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Prüfung deaktiviert"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Host nicht gefunden"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "DNS-Abfrage abgelaufen"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Ungültiger Hostname"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Erreichbar"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Erreichbar ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Nur über /etc/hosts oder Suchdomänen auflösbar"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Verbindung abgelehnt"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Zeitüberschreitung der Verbindung"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Host nicht erreichbar"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "nginx-Variable"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Wird in der erweiterten Konfiguration gesetzt und von nginx bei jeder Anfrage aufgelöst, daher wird sie hier nicht geprüft."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "Wird von nginx bei jeder Anfrage aufgelöst, daher wird sie hier nicht geprüft. Sie braucht einen Wert, bevor die erweiterte Konfiguration dieses Hosts ausgeführt wird, zum Beispiel aus einer map in /data/nginx/custom/http.conf; ein set in der erweiterten Konfiguration kommt zu spät."
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Docker-Erkennung ist aus."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Einrichten"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Docker-Erkennung funktioniert nicht: {reason}."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "Es kann auch ein beliebiger Hostname oder eine IP-Adresse eingegeben werden."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Im Netzwerk gefunden"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Docker-Container"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Bereits verwendet"
+	},
+	"upstream.loading": {
+		"defaultMessage": "Suche nach Zielen…"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "Keine Vorschläge, Hostname oder IP-Adresse eingeben"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Ports: {ports}"
+	},
+	"upstream.refresh": {
+		"defaultMessage": "Vorschläge aktualisieren"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "„{value}“ verwenden"
+	},
+	"upstream.used-by": {
+		"defaultMessage": "von {count, plural, one {# Host} other {# Hosts}} verwendet"
 	},
 	"user": {
 		"defaultMessage": "User"

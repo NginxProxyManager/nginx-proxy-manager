@@ -3,11 +3,24 @@ import { Field, Form } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { Button, Loading, SSLCertificateField, SSLOptionsFields } from "src/components";
+import type { HostMeta } from "src/api/backend";
+import {
+	Button,
+	HostConfigTestResult,
+	Loading,
+	NginxErrorMessage,
+	SaveWarning,
+	SSLCertificateField,
+	SSLOptionsFields,
+	TestConfigButton,
+	UpstreamField,
+	usePrefillGuard,
+} from "src/components";
 import { FormModal } from "src/components/Form";
-import { useSetStream, useStream } from "src/hooks";
+import { useHostConfigTest, useSetStream, useStream } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateNumber, validateString } from "src/modules/Validations";
+import { formatApiError, getNginxErrorDetails, hasSaveWarnings, stripServerMeta } from "src/modules/HostStatus";
 import { showObjectSuccess } from "src/notifications";
 
 const showStreamModal = (id: number | "new") => {
@@ -22,20 +35,51 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { mutate: setStream } = useSetStream();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const guardPrefill = usePrefillGuard();
+	// Set when a save went through but nginx couldn't load the host
+	const [savedMeta, setSavedMeta] = useState<HostMeta | null>(null);
+	// Id of a host created by this modal, so that saving again updates it
+	const [savedId, setSavedId] = useState<number | null>(null);
+	const configTest = useHostConfigTest("streams");
 
-	const onSubmit = async (values: any, { setSubmitting }: any) => {
+	// What a save sends, also what "Test" checks
+	const buildPayload = (values: any) => ({
+		id: savedId ?? (id === "new" ? undefined : id),
+		...values,
+		// server-owned status keys are never sent back
+		meta: stripServerMeta(values.meta),
+	});
+
+	const onSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		setErrorMsg(null);
+		setSavedMeta(null);
+		configTest.reset();
 
-		const { ...payload } = {
-			id: id === "new" ? undefined : id,
-			...values,
-		};
+		const payload = buildPayload(values);
 
 		setStream(payload, {
-			onError: (err: any) => setErrorMsg(<T id={err.message} />),
-			onSuccess: () => {
+			onError: (err: unknown) => {
+				const details = getNginxErrorDetails(err);
+				setErrorMsg(
+					details ? (
+						<NginxErrorMessage message={formatApiError(err)} details={details} />
+					) : (
+						formatApiError(err)
+					),
+				);
+			},
+			onSuccess: (result: any) => {
+				if (result && hasSaveWarnings(result.meta)) {
+					// Keep the modal open so the problem can be seen
+					setSavedId(result.id || null);
+					// A requested certificate ("new") now exists: saving again must not request another one.
+					// The saved values become the new baseline, so closing now doesn't ask about unsaved changes.
+					resetForm({ values: { ...values, certificateId: result.certificateId || 0 } });
+					setSavedMeta(result.meta);
+					return;
+				}
 				showObjectSuccess("stream", "saved");
 				remove();
 			},
@@ -76,17 +120,27 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{({ onHide, setFieldValue }: any) => (
+					{({ onHide, setFieldValue, ...form }: any) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "stream" }} />
+									<T
+										id={data?.id || savedId ? "object.edit" : "object.add"}
+										tData={{ object: "stream" }}
+									/>
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
+								{savedMeta ? <SaveWarning meta={savedMeta} onClose={onHide} /> : null}
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
 								</Alert>
+								<HostConfigTestResult
+									result={configTest.result}
+									error={configTest.error}
+									testedKey={configTest.testedKey}
+									onClose={configTest.reset}
+								/>
 
 								<div className="card m-0 border-0">
 									<div className="card-header">
@@ -157,15 +211,40 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	>
 																		<T id="stream.forward-host" />
 																	</label>
-																	<input
+																	<UpstreamField
 																		id="forwardingHost"
-																		type="text"
-																		className={`form-control ${form.errors.forwardingHost && form.touched.forwardingHost ? "is-invalid" : ""}`}
-																		required
+																		value={field.value || ""}
+																		isInvalid={
+																			!!(
+																				form.errors.forwardingHost &&
+																				form.touched.forwardingHost
+																			)
+																		}
 																		placeholder={intl.formatMessage({
 																			id: "stream.forward-host.placeholder",
 																		})}
-																		{...field}
+																		onChange={(v) =>
+																			form.setFieldValue("forwardingHost", v)
+																		}
+																		onBlur={() =>
+																			form.setFieldTouched("forwardingHost", true)
+																		}
+																		onSelectCandidate={(picked) => {
+																			const prefill = guardPrefill(
+																				picked,
+																				{ port: form.values.forwardingPort },
+																				{
+																					port: form.initialValues
+																						.forwardingPort,
+																				},
+																			);
+																			if (prefill.port) {
+																				form.setFieldValue(
+																					"forwardingPort",
+																					prefill.port,
+																				);
+																			}
+																		}}
 																	/>
 																	{form.errors.forwardingHost ? (
 																		<div className="invalid-feedback">
@@ -313,10 +392,17 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
+								<TestConfigButton
+									onClick={() => {
+										setErrorMsg(null);
+										configTest.runTest(form, buildPayload(form.values));
+									}}
+									isTesting={configTest.isTesting}
+									disabled={isSubmitting}
+								/>
 								<Button
 									type="submit"
 									actionType="primary"
-									className="ms-auto"
 									data-bs-dismiss="modal"
 									isLoading={isSubmitting}
 									disabled={isSubmitting}

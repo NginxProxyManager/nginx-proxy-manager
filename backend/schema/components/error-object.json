@@ -11,6 +11,59 @@
 		"message": {
 			"type": "string",
 			"example": "Bad Request"
+		},
+		"message_i18n": {
+			"type": "string",
+			"description": "Translation key for the message, when one exists",
+			"example": "error.invalid-auth"
+		},
+		"details": {
+			"type": "object",
+			"description": "Structured details for some errors. Nginx configuration errors use kind \"nginx_config\".",
+			"additionalProperties": true,
+			"properties": {
+				"kind": {
+					"type": "string",
+					"example": "nginx_config"
+				},
+				"scope": {
+					"type": "string",
+					"enum": ["location", "host", "other_host", "global"],
+					"example": "host"
+				},
+				"host_type": {
+					"type": ["string", "null"],
+					"example": "proxy_host"
+				},
+				"host_id": {
+					"type": ["integer", "null"],
+					"example": 12
+				},
+				"file": {
+					"type": ["string", "null"],
+					"example": "/data/nginx/proxy_host/12.conf"
+				},
+				"line": {
+					"type": ["integer", "null"],
+					"example": 31
+				},
+				"location_index": {
+					"type": ["integer", "null"],
+					"example": null
+				},
+				"location_path": {
+					"type": ["string", "null"],
+					"example": null
+				},
+				"nginx_output": {
+					"type": ["string", "null"],
+					"example": "nginx: [emerg] unknown directive \"proxy_passs\" in /data/nginx/proxy_host/12.conf:31"
+				},
+				"hint": {
+					"type": ["string", "null"],
+					"example": "Check the spelling of the directive."
+				}
+			}
 		}
 	}
 }

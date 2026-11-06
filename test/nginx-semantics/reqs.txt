@@ -1,0 +1,208 @@
+/a
+/a/
+/a/sub/x?q=1&r=%2F
+/a%2Fenc
+/a/sp%20ace/%E2%82%AC
+/a//dbl//slash
+/a/../a/up
+/b/
+/b/x?y=1
+/c
+/c/x
+/cx
+/d/
+/d/x/y?z
+/e
+/e/foo?x=1
+/efoo
+/f/
+/f/foo/bar?x=%20
+/g/
+/g/foo
+/h.v1+(p)/t?u
+/exact
+/exact?a=b
+/pre/
+/pre/zz?x
+/re/abc?d
+/x/test.php?a=1
+/x/TEST.PHP
+/auth-test/z
+/rw/old/stuff?x
+/rw/other
+/e/r?redir=abs
+/f/r?redir=abs
+/a/r?redir=abs
+/b/r?redir=abs
+/c/r?redir=abs
+/d/r?redir=abs
+/f/r?redir=rel
+/exact?redir=abs
+/pre/r?redir=abs
+/re/r?redir=abs
+/x/r.php?redir=abs
+/hostpath/
+/hostpath/x?y=1
+/hostpath/r?redir=abs
+/cache/
+/cache/app.css
+/cache/img/logo.png?v=2
+/cache/r.js?redir=abs
+/cache/page
+/cacheroot/app.css
+/cacheroot/x
+/acl/
+/acl/x?y
+/acl/x|alice:secret
+/acl/x|alice:wrong
+/acl/r?redir=abs|alice:secret
+/e/a%0Ab
+/e%0A
+/f/a%0Db?x=1
+/f/a%3Fb?x=1
+/f/a%0A%0Dz
+/d/x%0Ay
+/pre/a%0Ab
+/cache/a%0A.css
+/q%20p/z
+/q%20p/z%0Ab?k=v
+/q%20p/r?redir=abs
+/qc%20p/app.css
+/qc%20p/page
+/uri/
+/uri/hello?x=1
+/var/
+/var/x?y=1
+/varfp/
+/varfp/x?y=1
+/a/sub/x?q=1||:8443
+/f/foo||:8443
+/f/r?redir=abs||:8443
+/f/r?redir=rel||:8443
+/exact||:8443
+/re/abc||:8443
+/acl/x|alice:secret|:8443
+/cache/app.css||:8443
+/cache/app.css||:9443
+/cache/app.css
+/cacheroot/app.css||:8443
+/qc%20p/app.css||:8443
+/av/foo?id=42|||"url":"/api/42"
+/av/
+/av/?id=7|||"url":"/api/7"
+/av/foo?id=42||:8443|"url":"/api/42"
+/avb/foo?id=42|||"url":"/api/42/x"
+/avh/foo?q=1|||"url":"/h/srv"
+/avr/foo?q=1|||"url":"//avr/foo?q=1"
+/avr/r?redir=rel
+/avr/r?redir=abs
+/avc/foo?id=42|||"url":"/api/42"
+/avc/x.css?id=5|||"url":"/api/5"
+/avc/x.css?id=6||:8443|"url":"/api/6"
+/cvt/app.css|||"url":"/v1/t"
+/cvt/app.css||:8443|"url":"/v1/t"
+/cvt/page|||"url":"/v1/t"
+/cvn/app.css|||"url":"/v1/t"
+/cvn/page||:8443|"url":"/v1/t"
+/rx/users/7?x=1|||"url":"/v1/users/7"
+/rx/
+/rx/r?redir=abs
+/RXI/a/b?c=d|||"url":"/v2/a/b"
+/rxi/a%20b
+/tofb/x?q=1|||"url":"/fb/tofb/x?q=1"
+/tofb/x||:8443|"url":"/fb/tofb/x"
+/cachere/app.css|||"upstream":"main"
+/cachere/page||:8443|"url":"/v1/page"
+/cro/r?redir=abs|||http://echo:9000/c/r/next
+/cro/r.css?redir=abs|||http://echo:9000/c/r.css/next
+/vrx/a?q=1|||"url":"/v1/"
+/vrx/b/c
+/tovfb/x?q=1|||"url":"/vfb/"
+/api/app.css?id=5|||"url":"/api/5"
+/api/app.css?id=5||:8443|"url":"/api/5"
+/api/img/x.png?id=6|||"url":"/api/6"
+/api/page?id=7|||"url":"/api/7"
+/cvar/app.css?v=1|||"url":"/cvar/app.css?v=1"
+/cvar/page|||"url":"/cvar/page"
+/cvarfp/app.css?v=1|||"url":"/x/"
+/cvarfp/page?v=1|||"url":"/x/"
+/cache/main.css?x|||"url":"/c/main.css?x"
+/nolocation/x.css|||"upstream":"main"
+/nolocation/page|||"upstream":"main"
+/private/file.css|||403
+/private/file.css|||"url":"/private/file.css"|X-Token: secret
+/private/file.css?v=2||:8443|"url":"/private/file.css?v=2"|X-Token: secret
+/private/file.css|||403
+/private/file.css?v=2||:8443|403
+/private/page|||403
+/private/page|||"url":"/private/page"|X-Token: secret
+/nprivate/file.css|||403
+/nprivate/file.css|||"url":"/nprivate/file.css"|X-Token: secret
+/nprivate/page|||403
+/crw/old/app.css|||"url":"/crw/new/app.css"
+/crw/old/page|||"url":"/crw/new/page"
+/crw/app.css|||"url":"/k/app.css"
+/crw/page?x=1|||"url":"/k/page?x=1"
+/cif/app.css|||"url":"/v1/a"
+/cif/app.css?b=1|||"url":"/v1/b"
+/cif/page?b=1|||"url":"/v1/b"
+/cnest/in/x|||inner /cnest/in/x
+/cnest/in/x.css|||"url":"/n/in/x.css"
+/cnest/page|||"url":"/n/page"
+/cnest/app.js|||"url":"/n/app.js"
+/nest/in/x|||inner /nest/in/x
+/nest/in/x.css
+/nest/page
+/cacl/x.css|||401
+/cacl/x.css|alice:secret||"url":"/v/x.css"
+/cacl/x.css|alice:wrong||401
+/cacl/page|||401
+/cacl/page|alice:secret||"url":"/v/page"
+/cinc/page|||401
+/cinc/app.css|||401
+/cinc/page|||"url":"/i/page"|X-Ok: 1
+/cinc/app.css|||"url":"/i/app.css"|X-Ok: 1
+/cinc/app.css|||"in":"inc"|X-Ok: 1
+/cinc/page|||"in":"inc"|X-Ok: 1
+/cinc/app.css|||X-Sem-Inc: yes|X-Ok: 1
+/cinc/page|||X-Sem-Inc: yes|X-Ok: 1
+/cinc/app.css|||403|X-Ok: deny
+/cinc/page|||403|X-Ok: deny
+/cinc/inner/x|||inner /cinc/inner/x|X-Ok: 1
+/cinc/inner/x.css|||"url":"/i/inner/x.css"|X-Ok: 1
+/cincg/page|||403
+/cincg/page|||"url":"/cincg/page"|X-Token: secret
+/cincg/app.css|||"url":"/cincg/app.css"
+/clua/app.css|||403
+/clua/app.css|||"in":"inc"|X-Token: secret
+/clua/page|||403
+/clua/page|||"in":"inc"|X-Token: secret
+/csm/app.css|||403
+/csm/app.css|||"url":"/csm/app.css"|X-Token: secret
+/csm/page|||403
+/csm/page|||"url":"/csm/page"|X-Token: secret
+/cstore/app.css|||"url":"/s/app.css"
+/cstore/page|||"url":"/s/page"
+/cstorei/app.css|||"in":"inc"
+/cstorei/page|||"in":"inc"
+/cluab/app.css|||403
+/cluab/app.css|||"in":"lua"|X-Token: secret
+/cluab/page|||403
+/cluab/page|||"url":"/l/page"|X-Token: secret
+/cluabi/app.css|||403
+/cluabi/app.css|||"in":"inc"|X-Token: secret
+/cluabi/page|||403
+/cluabi/page|||"url":"/l/page"|X-Token: secret
+/credi/page?redir=abs|||Location: http://srv/moved/r/page/next
+/credi/app.css?redir=abs|||Location: http://srv/moved/r/app.css/next
+/cref/page|||"url":"/cref/page"
+/cref/app.css|||"url":"/cref/app.css"
+/cref/page|||403|Referer: http://evil.test/
+/cref/app.css|||403|Referer: http://evil.test/
+/cref/app.css|||"url":"/cref/app.css"|Referer: http://a.example.com/
+/rdoi/r?redir=abs|||location: http://echo:9000/o/r/next
+/rdoi/r?redir=rel|||location: /o/r/next
+/rdgi/r?redir=abs|||location: http://echo:9000/g/r/next
+/rdvi/r?redir=abs|||location: http://echo:9000/v/r/next
+/crdoi/r?redir=abs|||location: http://echo:9000/c/r/next
+/crdoi/r.css?redir=abs|||location: http://echo:9000/c/r.css/next

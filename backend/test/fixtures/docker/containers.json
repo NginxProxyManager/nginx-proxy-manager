@@ -1,0 +1,60 @@
+[
+	{
+		"Id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+		"Names": ["/npm-app-1"],
+		"Labels": { "com.docker.compose.service": "app" },
+		"State": "running",
+		"Ports": [
+			{ "PrivatePort": 80, "PublicPort": 80, "Type": "tcp" },
+			{ "PrivatePort": 81, "Type": "tcp" }
+		],
+		"NetworkSettings": { "Networks": { "npm_default": { "IPAddress": "172.18.0.2" } } }
+	},
+	{
+		"Id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+		"Names": ["/myproj-web-1"],
+		"Labels": {
+			"com.docker.compose.service": "web",
+			"com.docker.compose.project": "myproj",
+			"traefik.http.routers.web.rule": "Host(`secret.example.com`)"
+		},
+		"State": "running",
+		"Ports": [{ "PrivatePort": 3000, "Type": "tcp" }],
+		"Command": "node server.js --password=hunter2",
+		"Mounts": [{ "Source": "/srv/secret" }],
+		"NetworkSettings": { "Networks": { "npm_default": { "IPAddress": "172.18.0.3" } } }
+	},
+	{
+		"Id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+		"Names": ["/grafana"],
+		"Labels": { "npm.port": "3001", "npm.scheme": "https" },
+		"State": "running",
+		"Ports": [
+			{ "PrivatePort": 3000, "Type": "tcp" },
+			{ "PrivatePort": 9100, "Type": "tcp" },
+			{ "PrivatePort": 514, "Type": "udp" }
+		],
+		"NetworkSettings": {
+			"Networks": {
+				"bridge": { "IPAddress": "172.17.0.4" },
+				"proxy": { "IPAddress": "172.20.0.4" }
+			}
+		}
+	},
+	{
+		"Id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+		"Names": ["/hidden-db"],
+		"Labels": { "npm.hide": "true" },
+		"State": "running",
+		"Ports": [{ "PrivatePort": 5432, "Type": "tcp" }],
+		"NetworkSettings": { "Networks": { "npm_default": { "IPAddress": "172.18.0.5" } } }
+	},
+	{
+		"Id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+		"Names": ["/worker"],
+		"Labels": {},
+		"State": "running",
+		"Ports": [],
+		"NetworkSettings": { "Networks": { "npm_default": { "IPAddress": "172.18.0.6" } } }
+	}
+]

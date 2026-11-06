@@ -1,0 +1,137 @@
+{
+	"operationId": "getUpstreamCandidates",
+	"summary": "Suggested forward hosts (Docker containers, embedded DNS, hosts used before)",
+	"description": "Results of the Docker and DNS providers are cached for 30 seconds. `refresh=true` bypasses the cache and is rate limited (6 per minute per user). Requires admin, or `manage` permission for proxy hosts or streams. Docker containers carry a `suggestion` built from their `npm.*` labels (one-click proxy host); `existing_host_id`/`existing_host_type` are set when a proxy, redirection or 404 host already serves one of its domains; `ignored_domains` lists `npm.domain` entries that were dropped.",
+	"tags": ["upstreams"],
+	"security": [
+		{
+			"bearerAuth": ["proxy_hosts.manage", "streams.manage"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "refresh",
+			"description": "Bypass the discovery cache",
+			"schema": {
+				"type": "boolean",
+				"default": false
+			}
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"providers": {
+									"docker": {
+										"status": "disabled",
+										"message": "Docker discovery is disabled. Set NPM_DOCKER_DISCOVERY=true and DOCKER_HOST (a docker-socket-proxy is recommended) to list containers."
+									},
+									"dns": {
+										"status": "ok",
+										"message": null
+									},
+									"history": {
+										"status": "ok",
+										"message": null
+									}
+								},
+								"items": [
+									{
+										"host": "app",
+										"label": "app (on npm_default)",
+										"source": "dns",
+										"ports": [8080],
+										"hint_port": 8080,
+										"hint_scheme": "http",
+										"network": "npm_default",
+										"state": null,
+										"ip": "172.18.0.5",
+										"used_by": 2
+									}
+								],
+								"generated_at": "2026-11-04T10:00:00.000Z"
+							}
+						},
+						"withDocker": {
+							"value": {
+								"providers": {
+									"docker": {
+										"status": "ok",
+										"message": null
+									},
+									"dns": {
+										"status": "ok",
+										"message": null
+									},
+									"history": {
+										"status": "ok",
+										"message": null
+									}
+								},
+								"items": [
+									{
+										"host": "grafana",
+										"label": "grafana (container)",
+										"source": "docker",
+										"ports": [3000],
+										"hint_port": 3000,
+										"hint_scheme": "http",
+										"network": "npm_default",
+										"state": "running",
+										"ip": "172.18.0.4",
+										"used_by": 0,
+										"suggestion": {
+											"domain_names": ["grafana.example.com"],
+											"forward_scheme": "http",
+											"forward_host": "grafana",
+											"forward_port": 3000,
+											"allow_websocket_upgrade": true,
+											"block_exploits": true,
+											"caching_enabled": false,
+											"http2_support": false,
+											"ignored_domains": [],
+											"existing_host_id": null,
+											"existing_host_type": null
+										}
+									},
+									{
+										"host": "app",
+										"label": "app (on npm_default)",
+										"source": "dns",
+										"ports": [8080],
+										"hint_port": 8080,
+										"hint_scheme": "http",
+										"network": "npm_default",
+										"state": null,
+										"ip": "172.18.0.5",
+										"used_by": 2
+									}
+								],
+								"generated_at": "2026-11-04T10:00:00.000Z"
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/upstream-candidates-object.json"
+					}
+				}
+			}
+		},
+		"429": {
+			"description": "Too many refreshes",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/error.json"
+					}
+				}
+			}
+		}
+	}
+}

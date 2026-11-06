@@ -1,20 +1,33 @@
-import { IconHelp, IconSearch } from "@tabler/icons-react";
+import { IconBrandDocker, IconHelp, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
-import { useProxyHosts } from "src/hooks";
+import { useProxyHosts, useUpstreamCandidates, useUpstreamHealth, useUser } from "src/hooks";
 import { T } from "src/locale";
-import { showDeleteConfirmModal, showHelpModal, showHostLogsModal, showProxyHostModal } from "src/modals";
-import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
-import { showObjectSuccess } from "src/notifications";
+import {
+	showDeleteConfirmModal,
+	showDockerLabelsModal,
+	showHelpModal,
+	showHostLogsModal,
+	showProxyHostModal,
+} from "src/modals";
+import { formatApiError } from "src/modules/HostStatus";
+import { hasPermission, MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
+import { showError, showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
 	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_list", "certificate"]);
+	const { data: health } = useUpstreamHealth();
+	const { data: currentUser } = useUser("me");
+	const canManage = hasPermission(PROXY_HOSTS, MANAGE, currentUser?.permissions, currentUser?.roles);
+	// "From Docker" needs the Docker API (labels); DNS-only discovery can't read them
+	const { data: candidates } = useUpstreamCandidates(canManage);
+	const dockerReady = canManage && candidates?.providers?.docker?.status === "ok";
 
 	if (isLoading) {
 		return <LoadingPage />;
@@ -30,10 +43,16 @@ export default function TableWrapper() {
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
-		await toggleProxyHost(id, enabled);
-		queryClient.invalidateQueries({ queryKey: ["proxy-hosts"] });
-		queryClient.invalidateQueries({ queryKey: ["proxy-host", id] });
-		showObjectSuccess("proxy-host", enabled ? "enabled" : "disabled");
+		try {
+			await toggleProxyHost(id, enabled);
+			showObjectSuccess("proxy-host", enabled ? "enabled" : "disabled");
+		} catch (err) {
+			showError(formatApiError(err));
+		} finally {
+			// Also after a failure: the host's status (meta) may have changed
+			queryClient.invalidateQueries({ queryKey: ["proxy-hosts"] });
+			queryClient.invalidateQueries({ queryKey: ["proxy-host", id] });
+		}
 	};
 
 	let filtered = null;
@@ -42,7 +61,12 @@ export default function TableWrapper() {
 			(item) =>
 				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
 				item.forwardHost.toLowerCase().includes(search) ||
-				`${item.forwardPort}`.includes(search),
+				`${item.forwardPort}`.includes(search) ||
+				(item.locations || []).some(
+					(loc) =>
+						`${loc.path ?? ""}`.toLowerCase().includes(search) ||
+						`${loc.forwardHost ?? ""}`.toLowerCase().includes(search),
+				),
 		);
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching
@@ -79,6 +103,17 @@ export default function TableWrapper() {
 								<Button size="sm" onClick={() => showHelpModal("ProxyHosts", "lime")}>
 									<IconHelp size={20} />
 								</Button>
+								{dockerReady ? (
+									<button
+										type="button"
+										className="btn btn-sm"
+										onClick={() => showDockerLabelsModal()}
+										data-testid="from-docker"
+									>
+										<IconBrandDocker size={18} className="me-1 text-blue" />
+										<T id="docker-labels.button" />
+									</button>
+								) : null}
 								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
 									{data?.length ? (
 										<Button
@@ -100,6 +135,8 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					onEdit={(id: number) => showProxyHostModal(id)}
 					onLogs={(id: number) => showHostLogsModal(id)}
+					onErrorLogs={canManage ? (id: number) => showHostLogsModal(id, "error") : undefined}
+					health={health?.hosts?.proxyHost}
 					onDelete={(id: number) => {
 						const host = data?.find((h) => h.id === id);
 						showDeleteConfirmModal({
