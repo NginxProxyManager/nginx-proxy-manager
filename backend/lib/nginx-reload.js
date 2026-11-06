@@ -5,12 +5,14 @@
  * change that was saved before is never applied, although it was tested and stored.
  *
  * reloadAndWait() therefore signals the master and waits until the reload has really happened: the master
- * starts a new generation of worker processes once it has read and applied the new config. The workers are
- * the master's children in /proc. When the master can't be found (eg. nginx is not running yet) or no new
- * workers show up in time, the result says the reload is not confirmed and the caller decides what to do.
- * After that it also waits (within the same time limit) until the old workers have exited or are shutting
- * down, so they no longer accept connections with the old config and the change is served once the
- * caller's request returns.
+ * starts a new generation of worker processes once it has read and applied the new config, and tells the
+ * workers from before to shut down. The workers are the master's children in /proc. The reload counts as
+ * applied once new children run and every child from before has exited or is shutting down, so they no
+ * longer accept connections with the old config and the change is served once the caller's request returns.
+ * A new child alone proves nothing: the master also restarts a worker that crashed, with the old config
+ * (and logs an [alert] for it, which is not counted as a new generation). When the master can't be found
+ * (eg. nginx is not running yet) or no new generation has replaced the old one in time, the result says the
+ * reload is not confirmed and the caller decides what to do.
  *
  * A config can pass `nginx -t` and still be rejected by the reload, eg. a `listen` on a port that is in use
  * (-t doesn't bind ports). The master then logs an [emerg] line to its error log and keeps the old workers.
@@ -144,10 +146,16 @@ const createReloadWaiter = (opts) => {
 	/**
 	 * @param   {Number} master
 	 * @param   {Number} offset  the size of the error log before the signal
-	 * @returns {Promise<String|null>} the first [emerg] message the master logged after offset, once it has
-	 *          logged one that ends the attempt (anything but a failed bind() that nginx retries)
+	 * @returns {Promise<{emerg: String|null, restarts: Number}>} what the master logged after offset: the first
+	 *          [emerg] message once it has logged one that ends the attempt (anything but a failed bind() that
+	 *          nginx retries), and how many of its children exited unexpectedly (nginx starts a new process
+	 *          for each, which is not a new generation)
 	 */
-	const newEmerg = async (master, offset) => {
+	const readLog = async (master, offset) => {
+		const none = { emerg: null, restarts: 0 };
+		if (offset === null) {
+			return none;
+		}
 		let handle = null;
 		try {
 			handle = await fs.promises.open(opts.errorLog, "r");
@@ -156,30 +164,39 @@ const createReloadWaiter = (opts) => {
 			const from = size < offset ? 0 : offset;
 			const length = Math.min(size - from, MAX_LOG_READ);
 			if (length <= 0) {
-				return null;
+				return none;
 			}
 			const buffer = Buffer.alloc(length);
 			await handle.read(buffer, 0, length, from);
-			const messages = buffer
-				.toString("utf8")
-				.split("\n")
+			const lines = buffer.toString("utf8").split("\n");
+			const messages = lines
 				.filter((l) => l.includes(`[emerg] ${master}#`))
 				.map((l) => l.replace(/^.*?\[emerg\] \d+#\d+: /, "").trim());
 			const done = messages.some((m) => !/^bind\(\) to .* failed/.test(m));
-			return done ? messages[0] : null;
+			// eg. "[alert] 100#100: worker process 101 exited on signal 9", logged when a child dies without
+			// being asked to. Children that exit after a reload (code 0) are logged as [notice], below the level.
+			const restarts = lines.filter(
+				(l) =>
+					l.includes(`[alert] ${master}#`) &&
+					/: [a-z ]+ process \d+ exited (on signal|with code)/.test(l) &&
+					!/cannot be respawned/.test(l),
+			).length;
+			return { emerg: done ? messages[0] : null, restarts };
 		} catch {
-			return null;
+			return none;
 		} finally {
 			await handle?.close().catch(() => {});
 		}
 	};
 
 	/**
-	 * Signals the reload and waits until the master runs workers it started after the signal and the
-	 * workers from before no longer accept connections.
+	 * Signals the reload and waits until a new generation of workers has replaced the workers from before:
+	 * the master runs more new children than it restarted after crashes, and every child from before has
+	 * exited or is shutting down. Until then it keeps checking the error log for a rejection: a worker that
+	 * crashed and was restarted while the reload is rejected must not count as the reload.
 	 *
-	 * @returns {Promise<{confirmed: boolean, noMaster?: boolean, rejected?: boolean, oldStillRunning?: boolean,
-	 *          emerg?: string, reason?: string, waitedMs: number}>} rejects when signal() rejects
+	 * @returns {Promise<{confirmed: boolean, noMaster?: boolean, rejected?: boolean, emerg?: string,
+	 *          reason?: string, waitedMs: number}>} rejects when signal() rejects
 	 */
 	const reloadAndWait = async () => {
 		const master = await readMasterPid();
@@ -191,42 +208,36 @@ const createReloadWaiter = (opts) => {
 			return { confirmed: false, noMaster: true, reason: "no nginx master process found", waitedMs: 0 };
 		}
 		const start = now();
-		let applied = false;
+		let fresh = 0;
 		for (;;) {
 			const children = await childPids(master);
-			if (!applied && [...children].some((pid) => !before.has(pid))) {
-				applied = true;
+			fresh = [...children].filter((pid) => !before.has(pid)).length;
+			if ((await readMasterPid()) !== master) {
+				return { confirmed: false, reason: "the nginx master process has exited", waitedMs: now() - start };
 			}
-			if (applied) {
+			const log = await readLog(master, logOffset);
+			if (log.emerg) {
+				return {
+					confirmed: false,
+					rejected: true,
+					emerg: log.emerg,
+					reason: `nginx could not apply the config: ${log.emerg}`,
+					waitedMs: now() - start,
+				};
+			}
+			if (fresh > log.restarts) {
 				const old = [...before].filter((pid) => children.has(pid));
 				const settled = await Promise.all(old.map(doneOrShuttingDown));
 				if (settled.every(Boolean)) {
 					return { confirmed: true, waitedMs: now() - start };
 				}
-				if (now() - start >= timeoutMs) {
-					// The new config is applied, an old process just takes long to stop accepting
-					return { confirmed: true, oldStillRunning: true, waitedMs: now() - start };
-				}
-				await sleep(intervalMs);
-				continue;
-			}
-			if ((await readMasterPid()) !== master) {
-				return { confirmed: false, reason: "the nginx master process has exited", waitedMs: now() - start };
-			}
-			const emerg = logOffset === null ? null : await newEmerg(master, logOffset);
-			if (emerg) {
-				return {
-					confirmed: false,
-					rejected: true,
-					emerg,
-					reason: `nginx could not apply the config: ${emerg}`,
-					waitedMs: now() - start,
-				};
 			}
 			if (now() - start >= timeoutMs) {
 				return {
 					confirmed: false,
-					reason: `nginx started no new worker processes within ${timeoutMs} ms`,
+					reason: fresh
+						? `the nginx workers from before the reload were still running after ${timeoutMs} ms`
+						: `nginx started no new worker processes within ${timeoutMs} ms`,
 					waitedMs: now() - start,
 				};
 			}
