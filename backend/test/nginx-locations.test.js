@@ -185,6 +185,27 @@ describe("preflightLocation", () => {
 		}
 	});
 
+	it("allows regex and named locations with a variable forward host and a literal forward path, like before", async () => {
+		for (const loc of [
+			{ path: "~ ^/api/", forward_host: "$backend", forward_path: "/v1/" },
+			{ path: "~* \\.php$", forward_host: "$backend/v1/" },
+			{ path: "@fb", forward_host: "$backend", forward_path: "/fallback/" },
+		]) {
+			assert.equal(preflightLocation(prepareLocation({ ...base, ...loc })), null, JSON.stringify(loc));
+		}
+		// still quarantined with a literal host
+		assert.equal(
+			preflightLocation(prepareLocation({ ...base, path: "~ ^/api/", forward_path: "/v1/" })).message,
+			MESSAGES.regexWithForwardPath,
+		);
+		const loc = { ...base, path: "~ ^/api/", forward_host: "$backend", forward_path: "/v1/", advanced_config: "set $backend app;" };
+		const mode = chooseLocationMode(prepareLocation(loc), { mode: "dynamic", status: "ok" });
+		assert.deepEqual(mode, { mode: "static", status: "ok" });
+		const out = await render(loc, mode);
+		assert.match(out, /proxy_pass\s+http:\/\/\$backend:8080\/v1\/;/);
+		assert.doesNotMatch(out, /rewrite|return 503/);
+	});
+
 	it("quarantines invalid host names", () => {
 		for (const host of ["a b", "a;b", 'a"b', "a{", "$x y", "a$x", "$x;", "$" + "{x}", "#x"]) {
 			assert.equal(preflightLocation(prepareLocation({ ...base, path: "/a", forward_host: host })).status, "quarantined");

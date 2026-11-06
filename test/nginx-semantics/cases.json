@@ -32,5 +32,8 @@
  {"path":"~ ^/cachere/(.*)$","fp":"/v1/$1","cache":true},
  {"path":"@fb","fp":"/fb$request_uri"},
  {"path":"/cro/","fp":"/c/","cache":true,"adv":"proxy_redirect off;"},
- {"path":"/tofb/","fp":"","adv":"error_page 418 = @fb; return 418;"}
+ {"path":"/tofb/","fp":"","adv":"error_page 418 = @fb; return 418;"},
+ {"path":"~ ^/vrx/","host":"$sembackend","fp":"/v1/","adv":"set $sembackend echo;"},
+ {"path":"@vfb","host":"$sembackend","fp":"/vfb/","adv":"set $sembackend echo;"},
+ {"path":"/tovfb/","fp":"","adv":"error_page 418 = @vfb; return 418;"}
 ]
