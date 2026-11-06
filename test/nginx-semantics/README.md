@@ -34,7 +34,10 @@ that reads a variable of `set_by_lua_block` / `set_if_empty` (set-misc): the ass
 `/cstore/` and `/cstorei/` set `proxy_store` (without / with an include), which nginx doesn't allow next to the asset
 block's `proxy_cache`. `/cluab/` and `/cluabi/` have an `access_by_lua_block` guard with `}` in a Lua comment and a Lua
 table: read as Lua, not quarantined. `/credi/` includes a `proxy_redirect` and `/cref/` a `valid_referers` that is also written
-directly in the advanced config: the asset location inherits both, the included entries too.
+directly in the advanced config: the asset location inherits both, the included entries too. `/rdoi/`, `/rdgi/` (nested include
+through a glob), `/rdvi/` and `/crdoi/` include a `proxy_redirect off;` or a rule that matches nothing: the backend reads
+the included file and the dynamic rendering adds no `proxy_redirect` line of its own (`off` next to it fails
+`nginx -t`, another rule would replace nginx's default one).
 
 ## Running
 

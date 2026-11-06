@@ -200,3 +200,9 @@
 /cref/page|||403|Referer: http://evil.test/
 /cref/app.css|||403|Referer: http://evil.test/
 /cref/app.css|||"url":"/cref/app.css"|Referer: http://a.example.com/
+/rdoi/r?redir=abs|||location: http://echo:9000/o/r/next
+/rdoi/r?redir=rel|||location: /o/r/next
+/rdgi/r?redir=abs|||location: http://echo:9000/g/r/next
+/rdvi/r?redir=abs|||location: http://echo:9000/v/r/next
+/crdoi/r?redir=abs|||location: http://echo:9000/c/r/next
+/crdoi/r.css?redir=abs|||location: http://echo:9000/c/r.css/next
