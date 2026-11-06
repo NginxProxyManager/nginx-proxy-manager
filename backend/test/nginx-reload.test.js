@@ -199,6 +199,7 @@ describe("createReloadWaiter", () => {
 		assert.deepEqual(outcome, {
 			confirmed: false,
 			rejected: true,
+			emerg: "bind() to 0.0.0.0:3000 failed (98: Address in use)",
 			reason: "nginx could not apply the config: bind() to 0.0.0.0:3000 failed (98: Address in use)",
 			waitedMs: 125,
 		});
