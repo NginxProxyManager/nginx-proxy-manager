@@ -266,8 +266,9 @@ Allowed are, for example: logs in `/data/logs/` or `/data/nginx/custom/*.log`, r
 `/snippets/*.conf`, `conf.d/include/*.conf`).
 
 The directives are read the way nginx reads them: a quote or `#` in the middle of a word (`a"b`, `/#/x`) does not
-start a string or a comment. The exception are `*_by_lua_block` bodies, which ngx_lua reads as Lua: a quote in a
-Lua comment there can hide the directives after the block from this check. Hosts saved earlier keep working; the check runs when a host is created or saved.
+start a string or a comment. The body of a `*_by_lua_block` directive is read as Lua, the way ngx_lua reads it
+(strings, long brackets and `--` comments), and is not checked for directives. Hosts saved earlier keep working; the
+check runs when a host is created or saved.
 
 ## Status in the API
 

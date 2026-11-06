@@ -185,6 +185,14 @@
 /cstore/page|||"url":"/s/page"
 /cstorei/app.css|||"in":"inc"
 /cstorei/page|||"in":"inc"
+/cluab/app.css|||403
+/cluab/app.css|||"in":"lua"|X-Token: secret
+/cluab/page|||403
+/cluab/page|||"url":"/l/page"|X-Token: secret
+/cluabi/app.css|||403
+/cluabi/app.css|||"in":"inc"|X-Token: secret
+/cluabi/page|||403
+/cluabi/page|||"url":"/l/page"|X-Token: secret
 /credi/page?redir=abs|||Location: http://srv/moved/r/page/next
 /credi/app.css?redir=abs|||Location: http://srv/moved/r/app.css/next
 /cref/page|||"url":"/cref/page"

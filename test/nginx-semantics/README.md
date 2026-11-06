@@ -32,7 +32,8 @@ must pass `nginx -t` and inherit the included settings; the included guard does 
 expectation says so). `/clua/` and `/csm/` have an include and a guard written directly in the advanced config
 that reads a variable of `set_by_lua_block` / `set_if_empty` (set-misc): the asset location repeats those statements.
 `/cstore/` and `/cstorei/` set `proxy_store` (without / with an include), which nginx doesn't allow next to the asset
-block's `proxy_cache`. `/credi/` includes a `proxy_redirect` and `/cref/` a `valid_referers` that is also written
+block's `proxy_cache`. `/cluab/` and `/cluabi/` have an `access_by_lua_block` guard with `}` in a Lua comment and a Lua
+table: read as Lua, not quarantined. `/credi/` includes a `proxy_redirect` and `/cref/` a `valid_referers` that is also written
 directly in the advanced config: the asset location inherits both, the included entries too.
 
 ## Running

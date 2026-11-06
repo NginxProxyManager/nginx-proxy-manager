@@ -81,8 +81,8 @@ fetch () {
 
 # Cases with "Cache Assets" are served by the full host template (gen.mjs, :8012 static / :8013 dynamic), the others
 # by :8002 / :8003. Neither is compared with the legacy rendering, nor is the access list case.
-CACHED='^/(cache|cacheroot|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation|private|crw|cif|cnest|cacl|cinc|cincg|clua|csm|cstore|cstorei|credi|cref)/'
-NOT_LEGACY='^/(cache|cacheroot|acl|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation|private|crw|cif|cnest|cacl|cinc|cincg|clua|csm|cstore|cstorei|credi|cref)/'
+CACHED='^/(cache|cacheroot|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation|private|crw|cif|cnest|cacl|cinc|cincg|clua|csm|cstore|cstorei|cluab|cluabi|credi|cref)/'
+NOT_LEGACY='^/(cache|cacheroot|acl|qc%20p|avc|cachere|cro|cvt|api|cvar|cvarfp|nolocation|private|crw|cif|cnest|cacl|cinc|cincg|clua|csm|cstore|cstorei|cluab|cluabi|credi|cref)/'
 
 diffs=0
 total=0

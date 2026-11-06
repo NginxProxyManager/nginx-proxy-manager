@@ -283,6 +283,19 @@ describe("bracesBalanced", () => {
 		}
 	});
 
+	it("reads *_by_lua_block bodies as Lua, like lua-nginx-module", () => {
+		// valid OpenResty blocks, they pass nginx -t
+		for (const text of [
+			'access_by_lua_block {\n  -- deny unless header }\n  if ngx.var.http_x_token ~= "secret" then return ngx.exit(403) end\n}',
+			"rewrite_by_lua_block {\n  local t = {1}\n  if #t ~= 1 then return ngx.exit(500) end -- {\n}",
+			'content_by_lua_block { ngx.say("}", \'{\', [[}]], [==[ ]] } ]==]) --[[ } ]] }',
+		]) {
+			assert.equal(bracesBalanced(text), true, text);
+		}
+		assert.equal(bracesBalanced("access_by_lua_block { --[[ } }"), false);
+		assert.equal(bracesBalanced("access_by_lua_block { # }\n"), true);
+	});
+
 	it("still finds real brace errors", () => {
 		for (const text of ["if ($x) { return 200; # }", "if ($x) { return 200; ", "return 200; }", "if ($x) { add_header 'a; }"]) {
 			assert.equal(bracesBalanced(text), false, text);
@@ -521,6 +534,26 @@ describe("renderLocation", () => {
 		assert.ok(nested.includes("set $a 1;\n\n\n\n  set $b 2;"));
 		assert.doesNotMatch(nested, /location \/a\/in\/|return 20[04]/);
 		assert.equal(nested.match(/location /g).length, 1);
+	});
+
+	it("repeats a Lua guard in the nested asset location as it is", async () => {
+		const guard = 'access_by_lua_block {\n  -- deny unless header }\n  if ngx.var.http_x_token ~= "secret" then return ngx.exit(403) end\n}';
+		const setGuard = 'set_by_lua_block $bad { if ngx.var.http_x_token ~= "}" then return "1" end return "" -- {\n}';
+		for (const advanced_config of [
+			`${guard}\nset_by_lua_block $bad { return "{" }\nif ($bad) { return 403; }`,
+			`include /snippets/hdr.conf;\n${guard}\nif ($bad) { return 403; }`,
+		]) {
+			const loc = { ...base, path: "/a/", advanced_config };
+			assert.equal(preflightLocation(Object.assign({}, hostDefaults, prepareLocation(loc))), null);
+			const out = await render(loc, { mode: "dynamic" }, { caching_enabled: true });
+			const nested = out.slice(out.indexOf("location ~*"));
+			assert.ok(nested.includes(guard), advanced_config);
+			assert.match(nested, /if \(\$bad\) \{ return 403; \}/);
+		}
+		// a `}` in the Lua code is no block end: the statement after the block is repeated too, a location after it
+		// is left out
+		const copy = assetAdvancedConfig(`${setGuard} if ($bad) { return 403; } location /x/ { return 200; }`);
+		assert.equal(copy.text, `${setGuard} if ($bad) { return 403; }  `);
 	});
 
 	it("leaves out the cache directives the advanced config sets itself", async () => {
