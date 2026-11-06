@@ -249,6 +249,7 @@ const internalNginx = {
 		return withLock(() =>
 			internalNginx.configureHost(model, host_type, host, {
 				reload: opts.reload !== false && opts.dryRun !== true,
+				applyRepairs: opts.reload !== false,
 				depth: 0,
 				dryRun: opts.dryRun === true,
 			}),
@@ -269,6 +270,9 @@ const internalNginx = {
 	 * @param   {Boolean}  [opts.offlineOnError] mark the host offline instead of throwing on host level errors
 	 * @param   {Boolean}  [opts.dryRun]  check only: on success the host's previous config files are put back and
 	 *                                    nothing is written to the database. Other hosts may still be repaired.
+	 * @param   {Boolean}  [opts.applyRepairs] when this host's config is not applied (it is rejected, or this is a
+	 *                                    dry run) but other hosts were repaired: reload nginx, so it runs the
+	 *                                    repaired files their status already describes, see applyRepairs()
 	 * @returns {Promise<Object>}
 	 */
 	configureHost: async (model, host_type, host, opts) => {
@@ -289,6 +293,9 @@ const internalNginx = {
 				configText = await internalNginx.generateConfig(hostType, host);
 			} catch (err) {
 				await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
+				if (opts.applyRepairs && heals > 0) {
+					await internalNginx.applyRepairs(hostType, host);
+				}
 				const error =
 					err instanceof errs.ConfigurationError ? err : new errs.ConfigurationError(err.message, err);
 				// the change was not applied, see isHostLevelError()
@@ -461,6 +468,9 @@ const internalNginx = {
 				return meta;
 			}
 			await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
+			if (opts.applyRepairs && heals > 0) {
+				await internalNginx.applyRepairs(hostType, host);
+			}
 			throw error;
 		}
 
@@ -474,6 +484,9 @@ const internalNginx = {
 		if (opts.dryRun) {
 			internalNginx.restoreConfig(filename, previous);
 			internalNginx.restoreConfig(`${filename}.err`, previousErr);
+			if (opts.applyRepairs && heals > 0) {
+				await internalNginx.applyRepairs(hostType, host);
+			}
 			return meta;
 		}
 
@@ -498,6 +511,27 @@ const internalNginx = {
 		}
 		await model.query().where("id", host.id).patch({ meta });
 		return meta;
+	},
+
+	/**
+	 * Other hosts were repaired (regenerated, or moved aside and marked offline) while configuring a host whose
+	 * own config is then not applied: reloads nginx, so it runs the repaired files their status already
+	 * describes. Tests first (the files on disk, with this host's previous config, were not tested together).
+	 * Never throws, the caller's own result is what the user gets. Only call this while holding the lock.
+	 *
+	 * @param   {String}  hostType
+	 * @param   {Object}  host
+	 * @returns {Promise}
+	 */
+	applyRepairs: async (hostType, host) => {
+		try {
+			const outcome = await internalNginx.reloadNginx();
+			if (outcome?.rejected) {
+				logger.error(`${hostLabel(hostType, host)}: nginx did not apply the repairs of other hosts`);
+			}
+		} catch (err) {
+			logger.error(`${hostLabel(hostType, host)}: could not apply the repairs of other hosts: ${err.message}`);
+		}
 	},
 
 	/**
