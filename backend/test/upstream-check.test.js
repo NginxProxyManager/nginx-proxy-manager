@@ -1,7 +1,16 @@
 import assert from "node:assert/strict";
 import net from "node:net";
 import { after, before, describe, it } from "node:test";
-import { checkTarget, checkTargets, formatMs, MESSAGES, resolverLookup, targetKey, tcpConnect } from "../lib/upstream/check.js";
+import {
+	checkTarget,
+	checkTargets,
+	forResolverTarget,
+	formatMs,
+	MESSAGES,
+	resolverLookup,
+	targetKey,
+	tcpConnect,
+} from "../lib/upstream/check.js";
 
 const listen = (server) =>
 	new Promise((resolve) => {
@@ -259,6 +268,78 @@ describe("upstream check: input validation", () => {
 		assert.equal(result.code, "disabled");
 		assert.equal(result.ok, false);
 		assert.equal(called, false);
+	});
+});
+
+describe("upstream check: each lookup method on its own", () => {
+	// Bound to 127.0.0.1 only: the same port on 127.0.0.2 refuses
+	const server = net.createServer((socket) => socket.end());
+	let port;
+	before(async () => {
+		port = await listen(server);
+	});
+	after(() => new Promise((resolve) => server.close(resolve)));
+
+	// /etc/hosts points to the working server, nginx's resolver to an address that refuses
+	const split = (target) =>
+		checkTarget(target, {
+			resolvers: RESOLVERS,
+			lookup: fakeLookup({ app: ["127.0.0.1"] }),
+			resolver: fakeResolver({ app: ["127.0.0.2"] }),
+		});
+
+	it("a target nginx resolves per request only counts the resolver's addresses", async () => {
+		const result = await split({ host: "app", port, resolver: true });
+		assert.equal(result.ok, false);
+		assert.equal(result.code, "tcp_refused");
+		assert.deepEqual(result.lookups.resolver, { ok: false, code: "tcp_refused", addresses: ["127.0.0.2"], ms: null });
+		assert.equal(result.lookups.system.ok, true);
+		assert.deepEqual(result.lookups.system.addresses, ["127.0.0.1"]);
+	});
+
+	it("a static target only counts the system's addresses", async () => {
+		const result = await split({ host: "app", port, resolver: false });
+		assert.equal(result.ok, true);
+		assert.equal(result.code, "ok");
+	});
+
+	it("without a known mode every method that finds the name has to reach it", async () => {
+		const result = await split({ host: "app", port });
+		assert.equal(result.ok, false);
+		assert.equal(result.code, "tcp_refused");
+		// the API output stays as it was, with the detail per method next to it
+		for (const key of ["host", "port", "scheme", "ok", "code", "message", "addresses", "resolver_ok", "system_ok", "ms"]) {
+			assert.ok(key in result, key);
+		}
+		assert.deepEqual(result.addresses, ["127.0.0.2", "127.0.0.1"]);
+		assert.equal(result.resolver_ok, true);
+		assert.equal(result.system_ok, true);
+	});
+
+	it("forResolverTarget re-reads a result for the target's method (health monitor, config test)", async () => {
+		const [shared] = await checkTargets([{ host: "app", port }], {
+			resolvers: RESOLVERS,
+			lookup: fakeLookup({ app: ["127.0.0.1"] }),
+			resolver: fakeResolver({ app: ["127.0.0.2"] }),
+		});
+		const dynamic = forResolverTarget(shared, { host: "app", port }, true);
+		assert.equal(dynamic.ok, false);
+		assert.equal(dynamic.code, "tcp_refused");
+		const literal = forResolverTarget(shared, { host: "app/api", port }, false);
+		assert.equal(literal.ok, true);
+		assert.equal(literal.code, "ok");
+		assert.equal(literal.host, "app", "the host stays as checkTargets echoed it");
+	});
+
+	it("a name only /etc/hosts knows: not ok per request, ok (with the warning code) for a static target", async () => {
+		const opts = { resolvers: RESOLVERS, lookup: fakeLookup({ app: ["127.0.0.1"] }), resolver: fakeResolver({}) };
+		const dynamic = await checkTarget({ host: "app", port, resolver: true }, opts);
+		assert.equal(dynamic.ok, false);
+		assert.equal(dynamic.code, "resolver_mismatch");
+		assert.match(dynamic.message, /nginx resolves this upstream per request/);
+		const literal = await checkTarget({ host: "app", port, resolver: false }, opts);
+		assert.equal(literal.ok, true);
+		assert.equal(literal.code, "resolver_mismatch");
 	});
 });
 
