@@ -38,6 +38,7 @@ const metadata: ApiToken = {
 	visibility: "user",
 	createdOn: "2026-10-14T00:00:00Z",
 	expiresOn: "2099-11-14T00:00:00Z",
+	status: "active",
 	lastUsedOn: null,
 	revokedOn: null,
 };
@@ -232,6 +233,14 @@ describe("Personal API Tokens page", () => {
 		expect(screen.getByText(/Your account has no resource permissions/)).toBeVisible();
 	});
 
+	it("shows backend-invalidated credentials as revoked without inventing a revocation date", async () => {
+		vi.mocked(getApiTokens).mockResolvedValue([{ ...metadata, status: "revoked", revokedOn: null }]);
+		renderPage();
+		expect(await screen.findByText("Revoked")).toBeVisible();
+		expect(screen.queryByText("Active")).not.toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "Revoke" })).not.toBeInTheDocument();
+	});
+
 	it("shows metadata, confirms revocation, and resets an error when cancelled", async () => {
 		vi.mocked(getApiTokens).mockResolvedValue([metadata]);
 		vi.mocked(revokeApiToken).mockRejectedValueOnce(new Error("Could not revoke the API token."));
@@ -247,7 +256,9 @@ describe("Personal API Tokens page", () => {
 		fireEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
 		fireEvent.click(screen.getByRole("button", { name: "Revoke" }));
 		expect(screen.queryByText("Could not revoke the API token.")).not.toBeInTheDocument();
-		vi.mocked(getApiTokens).mockResolvedValue([{ ...metadata, revokedOn: "2026-10-14T01:00:00Z" }]);
+		vi.mocked(getApiTokens).mockResolvedValue([
+			{ ...metadata, revokedOn: "2026-10-14T01:00:00Z", status: "revoked" },
+		]);
 		fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Revoke" }));
 		expect(await screen.findByText("Revoked")).toBeVisible();
 		expect(screen.queryByRole("button", { name: "Revoke" })).not.toBeInTheDocument();

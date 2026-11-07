@@ -10,7 +10,8 @@
 		"expires_on",
 		"revoked_on",
 		"last_used_on",
-		"token"
+		"token",
+		"status"
 	],
 	"properties": {
 		"id": {
@@ -64,12 +65,18 @@
 			"example": "2026-01-31T00:00:00Z"
 		},
 		"revoked_on": {
-			"type": ["string", "null"],
+			"type": [
+				"string",
+				"null"
+			],
 			"format": "date-time",
 			"example": null
 		},
 		"last_used_on": {
-			"type": ["string", "null"],
+			"type": [
+				"string",
+				"null"
+			],
 			"format": "date-time",
 			"example": null
 		},
@@ -77,6 +84,16 @@
 			"type": "string",
 			"description": "Displayed once. Store securely; never embedded in browser code.",
 			"example": "npm_example_not_a_real_token"
+		},
+		"status": {
+			"type": "string",
+			"enum": [
+				"active",
+				"expired",
+				"revoked"
+			],
+			"description": "Effective credential status, including invalidation by account or password changes.",
+			"example": "active"
 		}
 	}
 }

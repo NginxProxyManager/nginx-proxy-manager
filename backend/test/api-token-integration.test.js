@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
+import { execFileSync, spawnSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { once } from "node:events";
-import { mkdir, readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { execFileSync, spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { mkdir, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { mock, test } from "node:test";
+import { fileURLToPath } from "node:url";
 
 // Runs with a disposable /data filesystem. Never points at an existing NPM DB.
 // Command from backend: node --test test/api-token-integration.test.js
@@ -725,6 +725,25 @@ if (process.env.NPM_API_TOKEN_TEST !== "1") {
 				expectStatus(await call("PUT", `/users/${viewer.id}`, admin.jwt, { is_disabled: false }), 200);
 				expectStatus(await call("GET", paths.proxy_hosts, token.token), 401);
 			});
+			await t.test("PAT public command errors never disclose provider output", async () => {
+				const hosts = (await import("../internal/proxy-host.js")).default;
+				const errs = (await import("../lib/error.js")).default;
+				const canary = "PUBLIC_PROVIDER_SECRET_CANARY";
+				const stub = mock.method(hosts, "getAll", async () => {
+					throw new errs.ValidationError(canary);
+				});
+				try {
+					const result = await call("GET", paths.proxy_hosts, all.token);
+					expectStatus(result, 400);
+					assert.equal(result.body.error.message, "Invalid request");
+					assert.ok(!result.text.includes(canary));
+					const session = await call("GET", paths.proxy_hosts, owner.jwt);
+					expectStatus(session, 400);
+					assert.equal(session.body.error.message, canary);
+				} finally {
+					stub.mock.restore();
+				}
+			});
 			await t.test("API password reset invalidates creation already verifying the old password", async () => {
 				const entered = Promise.withResolvers();
 				const release = Promise.withResolvers();
@@ -754,9 +773,14 @@ if (process.env.NPM_API_TOKEN_TEST !== "1") {
 				const created = await pending;
 				verification.mock.restore();
 				expectStatus(created, 201);
+				assert.equal(created.body.status, "revoked");
 				expectStatus(await call("GET", paths.proxy_hosts, created.body.token), 401);
 				const login = await call("POST", "/tokens", null, { identity: viewer.email, secret: password });
 				expectStatus(login, 200);
+				const listed = await call("GET", "/api-tokens", login.body.token);
+				expectStatus(listed, 200);
+				assert.equal(listed.body.find((token) => token.id === created.body.id).status, "revoked");
+				assert.ok(!listed.text.includes("password_version"));
 				const fresh = await mint({ ...viewer, jwt: login.body.token, password }, ["proxy_hosts:read"]);
 				expectStatus(await call("GET", paths.proxy_hosts, fresh.token), 200);
 			});
@@ -802,6 +826,9 @@ if (process.env.NPM_API_TOKEN_TEST !== "1") {
 					expectStatus(await call("GET", paths.proxy_hosts, all.token), 401);
 					const login = await call("POST", "/tokens", null, { identity: owner.email, secret: password });
 					expectStatus(login, 200);
+					const listed = await call("GET", "/api-tokens", login.body.token);
+					expectStatus(listed, 200);
+					assert.equal(listed.body.find((token) => token.id === all.id).status, "revoked");
 					const fresh = await mint({ ...owner, jwt: login.body.token, password }, ["proxy_hosts:read"]);
 					expectStatus(await call("GET", paths.proxy_hosts, fresh.token), 200);
 				},
@@ -845,34 +872,37 @@ if (process.env.NPM_API_TOKEN_TEST !== "1") {
 					}
 				},
 			);
-			await t.test("PAT creation step-up limits failed password attempts before checking valid credentials", async () => {
-				const user = await User.query().insertAndFetch({
-					email: "limited@example.test",
-					name: "limited",
-					nickname: "limited",
-					avatar: "",
-					roles: [],
-				});
-				user.password = randomBytes(20).toString("hex");
-				await Auth.query().insert({ user_id: user.id, type: "password", secret: user.password, meta: {} });
-				await Permission.query().insert({
-					user_id: user.id,
-					visibility: "user",
-					...Object.fromEntries(resources.map((resource) => [resource, "view"])),
-				});
-				const login = await call("POST", "/tokens", null, { identity: user.email, secret: user.password });
-				assert.equal(login.status, 200, "fixture login must succeed");
-				user.jwt = login.body.token;
-				const before = await ApiToken.query().where("owner_user_id", user.id).resultSize();
-				for (let attempt = 0; attempt < 5; attempt++) {
-					const failed = await create(user, ["proxy_hosts:read"], { password: "wrong" });
-					assert.equal(failed.status, 403, "failed step-up must be rejected");
-				}
-				const limited = await create(user, ["proxy_hosts:read"]);
-				assert.equal(limited.status, 429, "valid credentials must not bypass an active limit");
-				assert.ok(Number(limited.retryAfter) > 0 && Number(limited.retryAfter) <= 900);
-				assert.equal(await ApiToken.query().where("owner_user_id", user.id).resultSize(), before);
-			});
+			await t.test(
+				"PAT creation step-up limits failed password attempts before checking valid credentials",
+				async () => {
+					const user = await User.query().insertAndFetch({
+						email: "limited@example.test",
+						name: "limited",
+						nickname: "limited",
+						avatar: "",
+						roles: [],
+					});
+					user.password = randomBytes(20).toString("hex");
+					await Auth.query().insert({ user_id: user.id, type: "password", secret: user.password, meta: {} });
+					await Permission.query().insert({
+						user_id: user.id,
+						visibility: "user",
+						...Object.fromEntries(resources.map((resource) => [resource, "view"])),
+					});
+					const login = await call("POST", "/tokens", null, { identity: user.email, secret: user.password });
+					assert.equal(login.status, 200, "fixture login must succeed");
+					user.jwt = login.body.token;
+					const before = await ApiToken.query().where("owner_user_id", user.id).resultSize();
+					for (let attempt = 0; attempt < 5; attempt++) {
+						const failed = await create(user, ["proxy_hosts:read"], { password: "wrong" });
+						assert.equal(failed.status, 403, "failed step-up must be rejected");
+					}
+					const limited = await create(user, ["proxy_hosts:read"]);
+					assert.equal(limited.status, 429, "valid credentials must not bypass an active limit");
+					assert.ok(Number(limited.retryAfter) > 0 && Number(limited.retryAfter) <= 900);
+					assert.equal(await ApiToken.query().where("owner_user_id", user.id).resultSize(), before);
+				},
+			);
 			await t.test("SQLite PAT migration rolls down and recreates cleanly", async () => {
 				await new Promise((resolve) => setTimeout(resolve, 100));
 				const migration = await import("../migrations/20261014171500_api_tokens.js");

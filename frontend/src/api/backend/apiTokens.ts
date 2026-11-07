@@ -13,6 +13,7 @@ export type ApiTokenResource = (typeof apiTokenResources)[number];
 export type ApiTokenScope = `${ApiTokenResource}:${"read" | "write"}`;
 
 export interface ApiToken {
+	status: "active" | "expired" | "revoked";
 	id: number;
 	name: string;
 	scopes: ApiTokenScope[];

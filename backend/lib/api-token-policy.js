@@ -14,6 +14,23 @@ export const verifySecret = (secret, hash) => {
 	if (typeof hash !== "string" || !/^[a-f0-9]{64}$/.test(hash)) return false;
 	return crypto.timingSafeEqual(Buffer.from(hashSecret(secret), "hex"), Buffer.from(hash, "hex"));
 };
+// Authentication and management responses use the same lifecycle rules. A
+// credential-version mismatch is permanent invalidation, not merely expiry.
+export const tokenStatus = (token, user, auth, now = Date.now()) => {
+	if (
+		token.revoked_on ||
+		!user ||
+		user.is_deleted ||
+		user.is_disabled ||
+		user.api_token_version !== token.owner_version ||
+		!auth ||
+		hashSecret(auth.secret) !== token.password_version
+	)
+		return "revoked";
+	const expires = new Date(token.expires_on).getTime();
+	return !Number.isFinite(expires) || expires <= now ? "expired" : "active";
+};
+
 export const permits = (granted, resource, mode) =>
 	["read", "write"].includes(mode) &&
 	resources.includes(resource) &&
@@ -74,6 +91,22 @@ export const redactResponse = (value) => {
 	}
 	return value;
 };
+
+// Legacy handlers may mark command stderr as public. PAT callers receive only
+// bounded protocol errors, never provider output or validation diagnostics.
+export const redactErrorResponse = (status) => ({
+	error: {
+		code: status,
+		message:
+			{
+				400: "Invalid request",
+				401: "Invalid or expired API token",
+				403: "Permission Denied",
+				404: "Item not found",
+				429: "Too many requests",
+			}[status] || "Internal Error",
+	},
+});
 
 // PATs deliberately cannot submit arbitrary Nginx directives. Validate the
 // other unquoted/interpolated text fields too; legacy schemas are permissive.

@@ -31,7 +31,8 @@
 							"created_on": "2026-01-01T00:00:00Z",
 							"expires_on": "2026-01-31T00:00:00Z",
 							"revoked_on": null,
-							"last_used_on": null
+							"last_used_on": null,
+							"status": "active"
 						}
 					]
 				}

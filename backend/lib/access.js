@@ -12,19 +12,15 @@ import { fileURLToPath } from "node:url";
 import Ajv from "ajv/dist/2020.js";
 import _ from "lodash";
 import { access as logger } from "../logger.js";
-import accessListModel from "../models/access_list.js";
 import authModel from "../models/auth.js";
-import certificateModel from "../models/certificate.js";
-import deadHostModel from "../models/dead_host.js";
 import proxyHostModel from "../models/proxy_host.js";
-import redirectionHostModel from "../models/redirection_host.js";
-import streamModel from "../models/stream.js";
 import TokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import permsSchema from "./access/permissions.json" with { type: "json" };
 import roleSchema from "./access/roles.json" with { type: "json" };
 import { loadApiToken } from "./api-token-auth.js";
 import { permits, tokenPrefix } from "./api-token-policy.js";
+import { resourceModels } from "./api-token-resources.js";
 import errs from "./error.js";
 import { errorDiagnostics } from "./error-diagnostics.js";
 
@@ -303,17 +299,9 @@ export default function (tokenString) {
 					// Several legacy permission schemas do not enforce object IDs.
 					const id = typeof data === "object" && data ? data.id : data;
 					if (action !== "create" && id !== undefined && id !== null) {
-						const models = {
-							proxy_hosts: proxyHostModel,
-							redirection_hosts: redirectionHostModel,
-							dead_hosts: deadHostModel,
-							streams: streamModel,
-							access_lists: accessListModel,
-							certificates: certificateModel,
-						};
 						if (!Number.isSafeInteger(Number(id)) || Number(id) < 1)
 							throw new errs.PermissionError("Permission Denied");
-						const row = await models[resource].query().findById(Number(id)).where("is_deleted", 0);
+						const row = await resourceModels[resource].query().findById(Number(id)).where("is_deleted", 0);
 						if (
 							!row ||
 							(permissions.visibility !== "all" && row.owner_user_id !== apiToken.owner_user_id)

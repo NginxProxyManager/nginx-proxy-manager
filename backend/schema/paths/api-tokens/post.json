@@ -28,7 +28,8 @@
 						"expires_on": "2026-01-31T00:00:00Z",
 						"revoked_on": null,
 						"last_used_on": null,
-						"token": "npm_example_not_a_real_token"
+						"token": "npm_example_not_a_real_token",
+						"status": "active"
 					}
 				}
 			}

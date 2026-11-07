@@ -9,7 +9,8 @@
 		"created_on",
 		"expires_on",
 		"revoked_on",
-		"last_used_on"
+		"last_used_on",
+		"status"
 	],
 	"properties": {
 		"id": {
@@ -55,12 +56,28 @@
 			"format": "date-time"
 		},
 		"revoked_on": {
-			"type": ["string", "null"],
+			"type": [
+				"string",
+				"null"
+			],
 			"format": "date-time"
 		},
 		"last_used_on": {
-			"type": ["string", "null"],
+			"type": [
+				"string",
+				"null"
+			],
 			"format": "date-time"
+		},
+		"status": {
+			"type": "string",
+			"enum": [
+				"active",
+				"expired",
+				"revoked"
+			],
+			"description": "Effective credential status, including invalidation by account or password changes.",
+			"example": "active"
 		}
 	}
 }

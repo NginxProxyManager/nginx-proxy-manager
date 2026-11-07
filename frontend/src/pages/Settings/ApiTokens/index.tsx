@@ -51,7 +51,9 @@ export default function ApiTokens() {
 			await revokeApiToken(revoking.id);
 			queryClient.setQueryData<ApiToken[]>(["api-tokens"], (current) =>
 				current?.map((token) =>
-					token.id === revoking.id ? { ...token, revokedOn: new Date().toISOString() } : token,
+					token.id === revoking.id
+						? { ...token, status: "revoked", revokedOn: new Date().toISOString() }
+						: token,
 				),
 			);
 			refresh();
@@ -141,11 +143,10 @@ export default function ApiTokens() {
 						</thead>
 						<tbody>
 							{tokens.data.map((token) => {
-								const status = token.revokedOn
-									? "revoked"
-									: Date.parse(token.expiresOn) <= Date.now()
+								const status =
+									token.status === "active" && Date.parse(token.expiresOn) <= Date.now()
 										? "expired"
-										: "active";
+										: token.status;
 								return (
 									<tr key={token.id}>
 										<th scope="row" className="text-wrap">
@@ -179,7 +180,7 @@ export default function ApiTokens() {
 											</span>
 										</td>
 										<td className="text-end">
-											{!token.revokedOn && (
+											{status !== "revoked" && (
 												<Button
 													color="red"
 													size="sm"

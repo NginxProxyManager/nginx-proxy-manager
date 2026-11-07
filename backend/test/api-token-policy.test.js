@@ -2,15 +2,17 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
 	generateToken,
-	hasUnsafeConfiguration,
 	hashSecret,
+	hasUnsafeConfiguration,
 	operationFor,
 	permits,
+	redactErrorResponse,
 	redactResponse,
 	resources,
 	scopes,
 	tokenPattern,
 	tokenPrefix,
+	tokenStatus,
 	verifySecret,
 } from "../lib/api-token-policy.js";
 
@@ -557,4 +559,34 @@ test("redaction preserves primitives, nulls, empty containers, and array orderin
 		false,
 		[2, {}],
 	]);
+});
+
+test("token lifecycle status shares authentication and management invalidation rules", () => {
+	const user = { api_token_version: 2, is_disabled: 0, is_deleted: 0 };
+	const auth = { secret: "stored-password-hash" };
+	const token = { owner_version: 2, password_version: hashSecret(auth.secret), expires_on: "2030-01-01T00:00:00Z" };
+	const now = Date.parse("2029-01-01T00:00:00Z");
+	assert.equal(tokenStatus(token, user, auth, now), "active");
+	for (const invalidUser of [
+		null,
+		{ ...user, api_token_version: 3 },
+		{ ...user, is_disabled: 1 },
+		{ ...user, is_deleted: 1 },
+	]) {
+		assert.equal(tokenStatus(token, invalidUser, auth, now), "revoked");
+	}
+	assert.equal(tokenStatus(token, user, null, now), "revoked");
+	assert.equal(tokenStatus(token, user, { secret: "new-password-hash" }, now), "revoked");
+	assert.equal(tokenStatus({ ...token, revoked_on: "2028-01-01T00:00:00Z" }, user, auth, now), "revoked");
+	assert.equal(tokenStatus(token, user, auth, Date.parse(token.expires_on)), "expired");
+	assert.equal(tokenStatus({ ...token, expires_on: "invalid" }, user, auth, now), "expired");
+});
+
+test("PAT error responses expose only bounded protocol messages", () => {
+	for (const status of [400, 401, 403, 404, 429, 500, 502]) {
+		const result = redactErrorResponse(status);
+		assert.equal(result.error.code, status);
+		assert.equal(typeof result.error.message, "string");
+		assert.deepEqual(Object.keys(result.error), ["code", "message"]);
+	}
 });

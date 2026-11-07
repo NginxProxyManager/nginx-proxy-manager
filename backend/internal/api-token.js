@@ -1,4 +1,4 @@
-import { generateToken, hashSecret, resources } from "../lib/api-token-policy.js";
+import { generateToken, hashSecret, resources, tokenStatus } from "../lib/api-token-policy.js";
 import { createStepUpLimiter } from "../lib/api-token-step-up.js";
 import errs from "../lib/error.js";
 import apiTokenModel from "../models/api_token.js";
@@ -8,7 +8,8 @@ import userModel from "../models/user.js";
 import twoFactor from "./2fa.js";
 
 const verifyStepUp = createStepUpLimiter();
-const publicToken = (row) => ({
+const publicToken = (row, user, auth) => ({
+	status: tokenStatus(row, user, auth),
 	id: row.id,
 	name: row.name,
 	scopes: row.scopes,
@@ -50,7 +51,9 @@ const internalApiToken = {
 	},
 	getAll: async (access) => {
 		const user = await sessionUser(access);
-		return (await apiTokenModel.query().where("owner_user_id", user.id).orderBy("id", "desc")).map(publicToken);
+		const auth = await authenticationFor(user.id);
+		const tokens = await apiTokenModel.query().where("owner_user_id", user.id).orderBy("id", "desc");
+		return tokens.map((row) => publicToken(row, user, auth));
 	},
 	create: async (access, data) => {
 		const days = data.expires_in_days ?? 30;
@@ -105,7 +108,13 @@ const internalApiToken = {
 			});
 			return inserted;
 		});
-		return { ...publicToken(row), token: credential.token };
+		// Step-up may overlap a password reset or account disable. Keep the issued
+		// version bound to the verified snapshot, but report current validity.
+		const [currentUser, currentAuth] = await Promise.all([
+			userModel.query().findById(user.id),
+			authenticationFor(user.id),
+		]);
+		return { ...publicToken(row, currentUser, currentAuth), token: credential.token };
 	},
 	revoke: async (access, id) => {
 		const user = await sessionUser(access);
