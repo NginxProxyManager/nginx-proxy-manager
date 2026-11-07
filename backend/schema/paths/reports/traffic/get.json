@@ -74,7 +74,8 @@
 								"enum": [
 									"local",
 									"influxdb"
-								]
+								],
+								"example": "local"
 							},
 							"error": {
 								"type": [
