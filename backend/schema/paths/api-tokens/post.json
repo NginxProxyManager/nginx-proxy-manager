@@ -1,0 +1,126 @@
+{
+	"operationId": "createApiToken",
+	"summary": "Create a personal API token (JWT session and password/2FA required)",
+	"tags": [
+		"api-tokens"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"responses": {
+		"201": {
+			"description": "Successful operation",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../components/api-token-created.json"
+					},
+					"example": {
+						"id": 1,
+						"name": "Home directory",
+						"scopes": [
+							"proxy_hosts:read"
+						],
+						"visibility": "user",
+						"created_on": "2026-01-01T00:00:00Z",
+						"expires_on": "2026-01-31T00:00:00Z",
+						"revoked_on": null,
+						"last_used_on": null,
+						"token": "npm_example_not_a_real_token",
+						"status": "active"
+					}
+				}
+			}
+		},
+		"401": {
+			"description": "Authentication required"
+		},
+		"403": {
+			"description": "Session, owner permissions or step-up verification required"
+		},
+		"429": {
+			"description": "Too many step-up failures or concurrent verification; retry after the Retry-After header duration"
+		}
+	},
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name",
+						"scopes",
+						"password"
+					],
+					"properties": {
+						"name": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 100,
+							"example": "Home directory"
+						},
+						"scopes": {
+							"type": "array",
+							"minItems": 1,
+							"maxItems": 12,
+							"uniqueItems": true,
+							"items": {
+								"type": "string",
+								"enum": [
+									"proxy_hosts:read",
+									"proxy_hosts:write",
+									"redirection_hosts:read",
+									"redirection_hosts:write",
+									"dead_hosts:read",
+									"dead_hosts:write",
+									"streams:read",
+									"streams:write",
+									"access_lists:read",
+									"access_lists:write",
+									"certificates:read",
+									"certificates:write"
+								]
+							},
+							"example": [
+								"proxy_hosts:read"
+							]
+						},
+						"expires_in_days": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 365,
+							"default": 30,
+							"example": 30
+						},
+						"password": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 4096,
+							"example": "example-password-not-a-real-secret"
+						},
+						"code": {
+							"type": "string",
+							"minLength": 6,
+							"maxLength": 8,
+							"example": "123456"
+						}
+					}
+				},
+				"example": {
+					"name": "Home directory",
+					"scopes": [
+						"proxy_hosts:read"
+					],
+					"expires_in_days": 30,
+					"password": "example-password-not-a-real-secret",
+					"code": "123456"
+				}
+			}
+		},
+		"description": "Token scope and expiry with password and optional two-factor verification"
+	}
+}

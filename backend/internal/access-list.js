@@ -2,6 +2,7 @@ import fs from "node:fs";
 import batchflow from "batchflow";
 import _ from "lodash";
 import errs from "../lib/error.js";
+import { errorDiagnostics } from "../lib/error-diagnostics.js";
 import { isMysql, isPostgres } from "../lib/config.js";
 import utils from "../lib/utils.js";
 import db from "../db.js";
@@ -514,13 +515,13 @@ const internalAccessList = {
 									next();
 								})
 								.catch((err) => {
-									logger.error(err);
+									logger.error(`Could not build Access file #${list.id}`, errorDiagnostics(err));
 									next(err);
 								});
 						}
 					})
 					.error((err) => {
-						logger.error(err);
+						logger.error(`Could not build Access file #${list.id}`, errorDiagnostics(err));
 						reject(err);
 					})
 					.end((results) => {
