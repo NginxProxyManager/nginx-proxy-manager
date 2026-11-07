@@ -234,6 +234,45 @@ if (process.env.NPM_API_TOKEN_TEST !== "1") {
 				resources.map((resource) => `${resource}:write`),
 			);
 
+			await t.test("JWT host grants do not widen owner-only PAT visibility", async () => {
+				for (const key of ["proxy_host_ids", "proxyHostIds"]) {
+					await Permission.query()
+						.where("user_id", owner.id)
+						.patch({
+							meta: { [key]: [foreign.proxy_hosts.id] },
+						});
+					try {
+						const sessionList = await call("GET", paths.proxy_hosts, owner.jwt);
+						expectStatus(sessionList, 200);
+						assert.ok(sessionList.body.some((host) => host.id === foreign.proxy_hosts.id));
+						const tokenList = await call("GET", paths.proxy_hosts, read.token);
+						expectStatus(tokenList, 200);
+						assert.ok(tokenList.body.some((host) => host.id === own.proxy_hosts.id));
+						assert.ok(tokenList.body.every((host) => host.owner_user_id === owner.id));
+						expectStatus(
+							await call("GET", `${paths.proxy_hosts}/${foreign.proxy_hosts.id}`, read.token),
+							403,
+						);
+					} finally {
+						await Permission.query().where("user_id", owner.id).patch({ meta: {} });
+					}
+				}
+			});
+
+			await t.test("JWT load validates current account state and initializes roles", async () => {
+				const Access = (await import("../lib/access.js")).default;
+				const access = new Access(admin.jwt);
+				assert.equal((await access.load()).attrs.id, admin.id);
+				assert.equal(access.hasRole("admin"), true);
+				assert.equal(access.getPermissions().visibility, "all");
+				await User.query().findById(viewer.id).patch({ is_disabled: 1 });
+				try {
+					await assert.rejects(new Access(viewer.jwt).load(), /User cannot be loaded/);
+				} finally {
+					await User.query().findById(viewer.id).patch({ is_disabled: 0 });
+				}
+			});
+
 			await t.test(
 				"creation requires JWT session, password step-up, valid scope and bounded expiry",
 				async () => {

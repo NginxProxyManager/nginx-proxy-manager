@@ -128,8 +128,13 @@ export default function (tokenString) {
 				initialised = true;
 				userRoles = user.roles;
 				permissions = user.permissions;
-				if (isApiToken && apiToken.visibility !== "all") {
-					permissions = { ...permissions, visibility: "user" };
+				if (isApiToken) {
+					// Per-host JWT grants must not widen a PAT's owner-only boundary.
+					permissions = {
+						...permissions,
+						meta: _.omit(permissions.meta || {}, ["proxy_host_ids", "proxyHostIds"]),
+						...(apiToken.visibility !== "all" ? { visibility: "user" } : {}),
+					};
 				}
 			} else {
 				throw new errs.AuthError("User cannot be loaded for Token");
@@ -170,7 +175,13 @@ export default function (tokenString) {
 						const query = proxyHostModel.query().select("id").andWhere("is_deleted", 0);
 
 						if (permissions.visibility === "user") {
-							query.andWhere("owner_user_id", tokenUserId);
+							const allowedIds = permissions.meta?.proxy_host_ids || permissions.meta?.proxyHostIds || [];
+							query.andWhere((builder) => {
+								builder.where("owner_user_id", tokenUserId);
+								if (allowedIds.length > 0) {
+									builder.orWhereIn("id", allowedIds);
+								}
+							});
 						}
 
 						const rows = await query;
@@ -246,6 +257,10 @@ export default function (tokenString) {
 		credentialKind: isApiToken ? "api_token" : "jwt",
 		getApiTokenId: () => apiToken?.id ?? null,
 
+		getPermissions: () => permissions,
+		getRoles: () => userRoles,
+		hasRole: (role) => userRoles.includes(role),
+
 		/**
 		 *
 		 * @param   {Boolean}  [allowInternal]
@@ -253,9 +268,8 @@ export default function (tokenString) {
 		 */
 		load: async (allowInternal) => {
 			if (tokenString) {
-				const loaded = await Token.load(tokenString);
-				if (isApiToken) await this.init();
-				return loaded;
+				await this.init();
+				return tokenData;
 			}
 			allowInternalAccess = allowInternal;
 			return allowInternal || null;
@@ -322,6 +336,7 @@ export default function (tokenString) {
 						permission_streams: permissions.streams,
 						permission_access_lists: permissions.access_lists,
 						permission_certificates: permissions.certificates,
+						permission_meta: permissions.meta,
 					},
 				};
 
