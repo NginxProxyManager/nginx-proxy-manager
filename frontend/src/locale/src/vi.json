@@ -140,6 +140,9 @@
 	"action.renew": {
 		"defaultMessage": "Gia hạn"
 	},
+	"action.stats": {
+		"defaultMessage": "Thống kê"
+	},
 	"action.view-details": {
 		"defaultMessage": "Xem chi tiết"
 	},
@@ -758,6 +761,45 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Chuyển hướng"
 	},
+	"settings.traffic-stats": {
+		"defaultMessage": "Thống kê lưu lượng"
+	},
+	"settings.traffic-stats.enable": {
+		"defaultMessage": "Thu thập thống kê lưu lượng"
+	},
+	"settings.traffic-stats.enable.hint": {
+		"defaultMessage": "Đọc nhật ký truy cập của các host và hiển thị thống kê yêu cầu trên bảng điều khiển. Các nhật ký hiện có sẽ được nhập khi bật tính năng này."
+	},
+	"settings.traffic-stats.geoip": {
+		"defaultMessage": "Ghi nhận quốc gia của máy khách"
+	},
+	"settings.traffic-stats.geoip.hint": {
+		"defaultMessage": "Sử dụng cơ sở dữ liệu IP sang quốc gia cục bộ. Nếu bạn đặt tệp .mmdb của riêng mình vào /data/geoip thì tệp đó sẽ được dùng, nếu không cơ sở dữ liệu DB-IP Lite miễn phí sẽ được tải xuống và làm mới hằng tháng. Chỉ áp dụng cho lưu lượng được đọc từ bây giờ."
+	},
+	"settings.traffic-stats.influx": {
+		"defaultMessage": "InfluxDB (tùy chọn)"
+	},
+	"settings.traffic-stats.influx.hint": {
+		"defaultMessage": "Điền cả bốn trường để lưu thống kê vào một bucket InfluxDB 2.x, dùng với Grafana, thay vì cơ sở dữ liệu riêng của NPM. Việc đổi nơi lưu trữ sẽ nhập lại các nhật ký hiện có. Thời gian lưu giữ khi đó do bucket InfluxDB quyết định, và các IP máy khách và đường dẫn hàng đầu sẽ không được xuất."
+	},
+	"settings.traffic-stats.range": {
+		"defaultMessage": "Khoảng thời gian mặc định của bảng điều khiển (giờ)"
+	},
+	"settings.traffic-stats.retention": {
+		"defaultMessage": "Lưu giữ lịch sử trong (ngày)"
+	},
+	"settings.traffic-stats.status-codes": {
+		"defaultMessage": "Ghi nhận mã trạng thái chính xác"
+	},
+	"settings.traffic-stats.status-codes.hint": {
+		"defaultMessage": "Đồng thời đếm từng mã trạng thái chính xác (200, 404, 502, v.v.) theo giờ, để hiển thị phân tích theo mã trên bảng điều khiển. Chỉ áp dụng cho lưu lượng được đọc từ bây giờ."
+	},
+	"settings.traffic-stats.using-influx": {
+		"defaultMessage": "Thống kê sẽ được ghi vào InfluxDB."
+	},
+	"settings.traffic-stats.using-local": {
+		"defaultMessage": "Thống kê được lưu trong cơ sở dữ liệu riêng của NPM."
+	},
 	"setup.preamble": {
 		"defaultMessage": "Bắt đầu bằng cách tạo tài khoản quản trị viên."
 	},
@@ -796,6 +838,87 @@
 	},
 	"test": {
 		"defaultMessage": "Kiểm tra"
+	},
+	"traffic.bandwidth": {
+		"defaultMessage": "Băng thông"
+	},
+	"traffic.by-status": {
+		"defaultMessage": "Theo mã trạng thái"
+	},
+	"traffic.by-status.hint": {
+		"defaultMessage": "Các mã trạng thái chính xác phổ biến nhất, theo từng giờ."
+	},
+	"traffic.class-over-time": {
+		"defaultMessage": "Theo nhóm qua thời gian"
+	},
+	"traffic.class.2xx": {
+		"defaultMessage": "Thành công"
+	},
+	"traffic.class.3xx": {
+		"defaultMessage": "Chuyển hướng"
+	},
+	"traffic.class.4xx": {
+		"defaultMessage": "Lỗi máy khách"
+	},
+	"traffic.class.5xx": {
+		"defaultMessage": "Lỗi máy chủ"
+	},
+	"traffic.client-errors": {
+		"defaultMessage": "Lỗi máy khách (4xx)"
+	},
+	"traffic.disabled": {
+		"defaultMessage": "Thống kê lưu lượng đang tắt. Quản trị viên có thể bật trong Cài đặt."
+	},
+	"traffic.geoip-off": {
+		"defaultMessage": "Quốc gia của máy khách không được ghi nhận. Quản trị viên có thể bật trong Cài đặt > Thống kê lưu lượng."
+	},
+	"traffic.host": {
+		"defaultMessage": "Tên host"
+	},
+	"traffic.hosts": {
+		"defaultMessage": "Các host"
+	},
+	"traffic.local": {
+		"defaultMessage": "Mạng nội bộ"
+	},
+	"traffic.no-data": {
+		"defaultMessage": "Không có dữ liệu"
+	},
+	"traffic.requests": {
+		"defaultMessage": "Yêu cầu"
+	},
+	"traffic.requests-per": {
+		"defaultMessage": "Yêu cầu mỗi {step}"
+	},
+	"traffic.server-errors": {
+		"defaultMessage": "Lỗi máy chủ (5xx)"
+	},
+	"traffic.status-codes": {
+		"defaultMessage": "Mã trạng thái"
+	},
+	"traffic.status-codes.hint": {
+		"defaultMessage": "Cách các phản hồi được phân chia và xu hướng của từng nhóm theo thời gian."
+	},
+	"traffic.subtitle": {
+		"defaultMessage": "Yêu cầu, mã trạng thái và băng thông từ nhật ký truy cập của các host."
+	},
+	"traffic.title": {
+		"defaultMessage": "Lưu lượng"
+	},
+	"traffic.top-countries": {
+		"defaultMessage": "Quốc gia hàng đầu"
+	},
+	"traffic.top-ips": {
+		"defaultMessage": "IP máy khách hàng đầu"
+	},
+	"traffic.top-paths": {
+		"defaultMessage": "Đường dẫn hàng đầu"
+	},
+	"traffic.unknown": {
+		"defaultMessage": "Không rõ"
+	},
+	"traffic.vs-previous": {
+		"defaultMessage": "so với kỳ trước"
 	},
 	"update-available": {
 		"defaultMessage": "Đã có bản cập nhật: {latestVersion}"

@@ -140,6 +140,9 @@
 	"action.renew": {
 		"defaultMessage": "Uuenda"
 	},
+	"action.stats": {
+		"defaultMessage": "Statistika"
+	},
 	"action.view-details": {
 		"defaultMessage": "Vaata üksikasju"
 	},
@@ -758,6 +761,45 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Ümbersuunamine"
 	},
+	"settings.traffic-stats": {
+		"defaultMessage": "Liikluse statistika"
+	},
+	"settings.traffic-stats.enable": {
+		"defaultMessage": "Kogu liikluse statistikat"
+	},
+	"settings.traffic-stats.enable.hint": {
+		"defaultMessage": "Loeb hostide juurdepääsulogisid ja näitab päringute statistikat töölaual. Olemasolevad logid imporditakse, kui see sisse lülitatakse."
+	},
+	"settings.traffic-stats.geoip": {
+		"defaultMessage": "Salvesta klientide riigid"
+	},
+	"settings.traffic-stats.geoip.hint": {
+		"defaultMessage": "Kasutab kohalikku IP-riigi andmebaasi. Kui paned oma .mmdb faili kausta /data/geoip, kasutatakse seda, vastasel juhul laaditakse alla tasuta DB-IP Lite andmebaas ja värskendatakse seda igakuiselt. Kehtib ainult edaspidi loetud liikluse kohta."
+	},
+	"settings.traffic-stats.influx": {
+		"defaultMessage": "InfluxDB (valikuline)"
+	},
+	"settings.traffic-stats.influx.hint": {
+		"defaultMessage": "Täida kõik neli välja, et salvestada statistika NPM-i enda andmebaasi asemel InfluxDB 2.x kogumikku (bucket), mida saab kasutada Grafanaga. Salvestuskoha vahetamisel imporditakse olemasolevad logid uuesti. Säilitamist juhib siis InfluxDB kogumik ning populaarseimaid kliendi IP-sid ja teid ei ekspordita."
+	},
+	"settings.traffic-stats.range": {
+		"defaultMessage": "Töölaua vaikevahemik (tundides)"
+	},
+	"settings.traffic-stats.retention": {
+		"defaultMessage": "Ajaloo säilitamine (päevades)"
+	},
+	"settings.traffic-stats.status-codes": {
+		"defaultMessage": "Salvesta täpsed olekukoodid"
+	},
+	"settings.traffic-stats.status-codes.hint": {
+		"defaultMessage": "Loeb ka iga täpset olekukoodi (200, 404, 502 jne) tunnis, et näidata töölaual koodide kaupa jaotust. Kehtib ainult edaspidi loetud liikluse kohta."
+	},
+	"settings.traffic-stats.using-influx": {
+		"defaultMessage": "Statistika kirjutatakse InfluxDB-sse."
+	},
+	"settings.traffic-stats.using-local": {
+		"defaultMessage": "Statistikat hoitakse NPM-i enda andmebaasis."
+	},
 	"setup.preamble": {
 		"defaultMessage": "Alustuseks loo endale administraatori konto."
 	},
@@ -796,6 +838,87 @@
 	},
 	"test": {
 		"defaultMessage": "Testi"
+	},
+	"traffic.bandwidth": {
+		"defaultMessage": "Ribalaius"
+	},
+	"traffic.by-status": {
+		"defaultMessage": "Olekukoodide kaupa"
+	},
+	"traffic.by-status.hint": {
+		"defaultMessage": "Kõige sagedasemad täpsed olekukoodid tunnipõhise lahutusega."
+	},
+	"traffic.class-over-time": {
+		"defaultMessage": "Klasside kaupa ajas"
+	},
+	"traffic.class.2xx": {
+		"defaultMessage": "Õnnestunud"
+	},
+	"traffic.class.3xx": {
+		"defaultMessage": "Suunatud"
+	},
+	"traffic.class.4xx": {
+		"defaultMessage": "Kliendi viga"
+	},
+	"traffic.class.5xx": {
+		"defaultMessage": "Serveri viga"
+	},
+	"traffic.client-errors": {
+		"defaultMessage": "Kliendi vead (4xx)"
+	},
+	"traffic.disabled": {
+		"defaultMessage": "Liikluse statistika on välja lülitatud. Administraator saab selle seadetes sisse lülitada."
+	},
+	"traffic.geoip-off": {
+		"defaultMessage": "Klientide riike ei salvestata. Administraator saab selle sisse lülitada jaotises Seaded > Liikluse statistika."
+	},
+	"traffic.host": {
+		"defaultMessage": "Hosti nimi"
+	},
+	"traffic.hosts": {
+		"defaultMessage": "Hostid"
+	},
+	"traffic.local": {
+		"defaultMessage": "Kohalik võrk"
+	},
+	"traffic.no-data": {
+		"defaultMessage": "Andmeid pole"
+	},
+	"traffic.requests": {
+		"defaultMessage": "Päringud"
+	},
+	"traffic.requests-per": {
+		"defaultMessage": "Päringuid {step} kohta"
+	},
+	"traffic.server-errors": {
+		"defaultMessage": "Serveri vead (5xx)"
+	},
+	"traffic.status-codes": {
+		"defaultMessage": "Olekukoodid"
+	},
+	"traffic.status-codes.hint": {
+		"defaultMessage": "Kuidas vastused jagunevad ja kuidas iga klass ajas muutub."
+	},
+	"traffic.subtitle": {
+		"defaultMessage": "Päringud, olekukoodid ja ribalaius hostide juurdepääsulogidest."
+	},
+	"traffic.title": {
+		"defaultMessage": "Liiklus"
+	},
+	"traffic.top-countries": {
+		"defaultMessage": "Populaarseimad riigid"
+	},
+	"traffic.top-ips": {
+		"defaultMessage": "Populaarseimad kliendi IP-d"
+	},
+	"traffic.top-paths": {
+		"defaultMessage": "Populaarseimad teed"
+	},
+	"traffic.unknown": {
+		"defaultMessage": "Teadmata"
+	},
+	"traffic.vs-previous": {
+		"defaultMessage": "võrreldes eelmise perioodiga"
 	},
 	"update-available": {
 		"defaultMessage": "Uuendus saadaval: {latestVersion}"

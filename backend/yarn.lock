@@ -1388,6 +1388,14 @@ math-intrinsics@^1.1.0:
   resolved "https://registry.yarnpkg.com/math-intrinsics/-/math-intrinsics-1.1.0.tgz#a0dd74be81e2aa5c2f27e65ce283605ee4e2b7f9"
   integrity sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==
 
+maxmind@^5.0.7:
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/maxmind/-/maxmind-5.0.7.tgz#c7e24e7a15f9af5e66b07aa8a0c188fa2992d68d"
+  integrity sha512-+w637dwfv01MKjkrp4sKDBTEKHLPvWLYb647QTjiz3wG/teSemqudIKNShaS6eqZ7ffxC9oZlQQgIqY0rGojog==
+  dependencies:
+    mmdb-lib "3.0.3"
+    tiny-lru "13.0.0"
+
 media-typer@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-1.1.1.tgz#6f035400dfe3ab9d5607bc77546ce30cc2f9c6b8"
@@ -1443,6 +1451,11 @@ mkdirp-classic@^0.5.2, mkdirp-classic@^0.5.3:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/mkdirp-classic/-/mkdirp-classic-0.5.3.tgz#fa10c9115cc6d8865be221ba47ee9bed78601113"
   integrity sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==
+
+mmdb-lib@3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/mmdb-lib/-/mmdb-lib-3.0.3.tgz#3f19c7bc7733b6da01c9e08f5eeb5163929944e1"
+  integrity sha512-xQPoBXcNjjHiOvOraFBKtA++uNWF6aCVHL9dRKFXEov8eI3QJwtgiw3qApsonFT5SpoqsEVISUTg3HIDs2DiXw==
 
 moment@^2.31.0:
   version "2.31.0"
@@ -2367,6 +2380,11 @@ tildify@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/tildify/-/tildify-2.0.0.tgz#f205f3674d677ce698b7067a99e949ce03b4754a"
   integrity sha512-Cc+OraorugtXNfs50hU9KS369rFXCfgGLpfCfvlc+Ud5u6VWmUQsOAa9HbTvheQdYnrdJqqv1e5oIqXppMYnSw==
+
+tiny-lru@13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-13.0.0.tgz#6f68dc7e9b86c162f8ecae712895e6fa9f3ac2d9"
+  integrity sha512-xDHxKKS1FdF0Tv2P+QT7IeSEg74K/8cEDzbv3Tv6UyHHUgBOjOiQiBp818MGj66dhurQus/IBcoAbwIKtSGc6Q==
 
 tinyglobby@^0.2.12:
   version "0.2.17"

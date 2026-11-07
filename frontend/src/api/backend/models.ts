@@ -234,6 +234,38 @@ export interface Setting {
 	meta?: Record<string, any>;
 }
 
+export interface TrafficCounts {
+	requests: number;
+	s2xx: number;
+	s3xx: number;
+	s4xx: number;
+	s5xx: number;
+	bytes: number;
+}
+
+export interface TrafficReport {
+	enabled: boolean;
+	storage?: "local" | "influxdb";
+	geoip?: boolean;
+	statusCodes?: boolean;
+	statusStep?: number;
+	statuses?: Array<{ code: number; total: number; series: Array<{ ts: number; requests: number }> }>;
+	error?: string | null;
+	range?: { from: number; to: number; step: number; hours: number };
+	totals?: TrafficCounts;
+	previous?: {
+		totals: TrafficCounts;
+		hosts: Array<Partial<TrafficCounts> & { hostType: string; hostId: number }>;
+	} | null;
+	series?: Array<TrafficCounts & { ts: number }>;
+	hosts?: Array<TrafficCounts & { hostType: string; hostId: number; label: string }>;
+	top?: {
+		ip: Array<{ item: string; hits: number; country?: string | null }>;
+		path: Array<{ item: string; hits: number }>;
+		country: Array<{ item: string; hits: number }>;
+	};
+}
+
 export interface DNSProvider {
 	id: string;
 	name: string;
