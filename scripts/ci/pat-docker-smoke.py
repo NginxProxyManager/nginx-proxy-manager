@@ -32,7 +32,7 @@ HOST = "pat-smoke.test"
 ALIAS = "pat-smoke-updated.test"
 TOKEN_FIELDS = {
     "id", "name", "scopes", "visibility", "created_on", "expires_on",
-    "revoked_on", "last_used_on",
+    "revoked_on", "last_used_on", "status",
 }
 PRIVATE_FIELDS = {
     "token", "secret", "secret_hash", "password", "password_version",
@@ -195,6 +195,8 @@ def token_metadata(jwt, token_id, *, revoked=False, used=False):
     require(row["id"] == token_id and row["scopes"] == ["proxy_hosts:write"],
             "Token list did not preserve the requested identity and scope")
     require(bool(row["revoked_on"]) == revoked, "Token revocation metadata was incorrect")
+    require(row["status"] == ("revoked" if revoked else "active"),
+            "Token effective status did not match its lifecycle")
     if used:
         require(bool(row["last_used_on"]), "Token usage metadata was not recorded")
 
@@ -214,6 +216,7 @@ def mint_fixture(user, scopes):
     result = api("POST", "/api-tokens", token=user["jwt"], expected=201, allow_token=True,
                  body={"name": "Disposable matrix", "scopes": scopes,
                        "expires_in_days": 1, "password": user["password"]})
+    require(result.get("status") == "active", "New fixture token must be active")
     pat = result["token"]
     secret = pat.split(".", 1)[1]
     KNOWN_SECRETS.extend([pat, secret, hashlib.sha256(secret.encode()).hexdigest()])
@@ -441,6 +444,10 @@ def run_two_user_matrix(admin):
     api("GET", "/nginx/proxy-hosts", token=before_change["token"], expected=401)
     a["password"] = changed_password
     login_fixture(a)
+    records = api("GET", "/api-tokens", token=a["jwt"])
+    invalidated = next((row for row in records if row["id"] == before_change["id"]), None)
+    require(invalidated is not None and invalidated.get("status") == "revoked",
+            "Password-changed token must be displayed as revoked")
     before_password = mint_fixture(a, ["proxy_hosts:read"])
     new_password = secrets.token_urlsafe(36)
     KNOWN_SECRETS.append(new_password)
@@ -448,6 +455,10 @@ def run_two_user_matrix(admin):
     api("GET", "/nginx/proxy-hosts", token=before_password["token"], expected=401)
     a["password"] = new_password
     login_fixture(a)
+    records = api("GET", "/api-tokens", token=a["jwt"])
+    invalidated = next((row for row in records if row["id"] == before_password["id"]), None)
+    require(invalidated is not None and invalidated.get("status") == "revoked",
+            "Password-reset token must be displayed as revoked")
     before_delete = mint_fixture(a, ["proxy_hosts:read"])
     api("DELETE", f"/users/{a['id']}", token=admin)
     api("GET", "/nginx/proxy-hosts", token=before_delete["token"], expected=401)
@@ -505,6 +516,7 @@ def main():
     require(isinstance(pat, str) and re.fullmatch(r"npm_pat_[a-f0-9]{24}\.[A-Za-z0-9_-]{43}", pat),
             "PAT creation did not return the one-time credential in the expected format")
     require(set(created) == TOKEN_FIELDS | {"token"}, "PAT creation returned unexpected fields")
+    require(created.get("status") == "active", "New token must be displayed as active")
     secret = pat.split(".", 1)[1]
     KNOWN_SECRETS.extend([pat, secret, hashlib.sha256(secret.encode()).hexdigest()])
     token_metadata(jwt, token_id)
