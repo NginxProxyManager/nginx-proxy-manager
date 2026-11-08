@@ -40,6 +40,9 @@ const { spawnSync } = require("child_process");
 const fs = require("fs");
 
 const tmp = require("tmp");
+// Added a isWindows platform check to ensure that the correct yarn command is used on Windows vs Linux/Mac
+const isWindows = process.platform === "win32";
+const yarnCommand = isWindows ? "yarn.cmd" : "yarn";
 
 // Parse backend errors
 const BACKEND_ERRORS_FILE = "../backend/internal/errors/errors.go";
@@ -62,7 +65,18 @@ try {
 
 // get all translations used in frontend code
 const tmpobj = tmp.fileSync({ postfix: ".json" });
-spawnSync("yarn", ["locale-extract", "--out-file", tmpobj.name]);
+const spawnOptions = { encoding: "utf8" };
+
+if (isWindows) {
+  spawnOptions.shell = true;
+}
+
+const localeExtract = spawnSync(yarnCommand, ["locale-extract", "--out-file", tmpobj.name], spawnOptions);
+
+if (localeExtract.error || localeExtract.status !== 0) {
+  console.error(localeExtract.error || localeExtract.stderr);
+  process.exit(1);
+}
 
 const allLocalesInProject = require(tmpobj.name);
 
