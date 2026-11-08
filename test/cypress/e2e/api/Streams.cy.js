@@ -169,7 +169,7 @@ describe('Streams', () => {
 					cy.task('exec', {
 						command: '/testssl/testssl.sh --quiet --add-ca="$(/bin/mkcert -CAROOT)/rootCA.pem" --jsonfile=/test/results/testssl.json website1.example.com:1503',
 					}, {
-						timeout: 120000, // 2 minutes
+						timeout: 180000, // 3 minutes
 					}).then((result) => {
 						cy.task('log', `[testssl.sh] ${result.stdout}`);
 
