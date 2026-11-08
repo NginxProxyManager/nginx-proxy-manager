@@ -23,6 +23,7 @@ const allLocales = [
   ["cs", "cs-CZ"],
   ["vi", "vi-VN"],
   ["zh", "zh-CN"],
+  ["zh-tw", "zh-TW"],
   ["ko", "ko-KR"],
   ["bg", "bg-BG"],
   ["id", "id-ID"],
