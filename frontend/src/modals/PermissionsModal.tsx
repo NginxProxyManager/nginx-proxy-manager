@@ -31,7 +31,13 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 		try {
-			await setPermissions(id, values);
+			// Proxy host grants only apply to "user" visibility with proxy hosts shown. Don't
+			// submit stale ones; the backend clears them too.
+			const grantsApply = values.visibility === "user" && values.proxyHosts !== "hidden";
+			await setPermissions(id, {
+				...values,
+				meta: { ...values.meta, proxy_host_ids: grantsApply ? values.meta?.proxy_host_ids || [] : [] },
+			});
 			remove();
 			queryClient.invalidateQueries({ queryKey: ["users"] });
 			queryClient.invalidateQueries({ queryKey: ["user"] });

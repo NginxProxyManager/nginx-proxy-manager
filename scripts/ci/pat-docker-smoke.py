@@ -565,6 +565,18 @@ def main():
     wait_proxy(HOST, True)
     progress("PAT create/list/read and actual Nginx forwarding to the Docker upstream")
 
+    # Upstream admin roles must never widen an admin-owned PAT's raw-config boundary.
+    for config in ({"advanced_config": "# admin-only fixture"}, {"locations": [{
+            "path": "/fixture", "forward_scheme": "http", "forward_host": "upstream",
+            "forward_port": 80, "advanced_config": "# admin-only fixture"}]}):
+        api("PUT", host_path, token=pat, body=config, expected=403)
+        api("PUT", host_path, token=jwt, body=config)
+        api("PUT", host_path, token=pat, body={"forward_port": 80}, expected=403)
+        api("PUT", host_path, token=jwt, body={"advanced_config": "", "locations": []})
+        api("PUT", host_path, token=pat, body={"forward_port": 80})
+    wait_proxy(HOST, True)
+    progress("admin JWT can manage raw configuration; admin PAT cannot introduce or mutate it")
+
     api("GET", host_path + "?expand=owner", token=pat, expected=403)
     api("PUT", host_path, token=pat, body={"advanced_config": "return 200;"}, expected=403)
     fetched = api("GET", host_path, token=pat)

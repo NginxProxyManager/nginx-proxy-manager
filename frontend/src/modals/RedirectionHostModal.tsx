@@ -27,7 +27,7 @@ interface Props extends InnerModalProps {
 	id: number | "new";
 }
 const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
-	const { data: currentUser } = useUser("me");
+	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
 	const { data, isLoading, error } = useRedirectionHost(id);
 	const { mutate: setRedirectionHost } = useSetRedirectionHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
@@ -65,17 +65,17 @@ const RedirectionHostModal = EasyModal.create(({ id, visible, remove }: Props) =
 
 	return (
 		<>
-			{(isLoading || (error && !data)) && (
+			{(isLoading || userIsLoading || ((error || userError) && (!data || !currentUser))) && (
 				<Modal show={visible} onHide={remove}>
-					{!isLoading && error && (
+					{!isLoading && (error || userError) && (
 						<Alert variant="danger" className="m-3">
-							{error?.message || "Unknown error"}
+							{error?.message || userError?.message || "Unknown error"}
 						</Alert>
 					)}
-					{isLoading && <Loading noLogo />}
+					{(isLoading || userIsLoading) && <Loading noLogo />}
 				</Modal>
 			)}
-			{!isLoading && data && (
+			{!isLoading && !userIsLoading && data && currentUser && (
 				<FormModal
 					show={visible}
 					onHide={remove}

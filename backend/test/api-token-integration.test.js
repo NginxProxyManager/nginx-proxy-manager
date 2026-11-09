@@ -244,7 +244,12 @@ if (process.env.NPM_API_TOKEN_TEST !== "1") {
 					try {
 						const sessionList = await call("GET", paths.proxy_hosts, owner.jwt);
 						expectStatus(sessionList, 200);
-						assert.ok(sessionList.body.some((host) => host.id === foreign.proxy_hosts.id));
+						// Upstream recognizes only the canonical grant key; legacy metadata
+						// must not silently regain authority through PAT integration.
+						assert.equal(
+							sessionList.body.some((host) => host.id === foreign.proxy_hosts.id),
+							key === "proxy_host_ids",
+						);
 						const tokenList = await call("GET", paths.proxy_hosts, read.token);
 						expectStatus(tokenList, 200);
 						assert.ok(tokenList.body.some((host) => host.id === own.proxy_hosts.id));
@@ -256,6 +261,88 @@ if (process.env.NPM_API_TOKEN_TEST !== "1") {
 					} finally {
 						await Permission.query().where("user_id", owner.id).patch({ meta: {} });
 					}
+				}
+			});
+
+			await t.test("permission changes clear grants without widening existing PATs", async () => {
+				const path = `/users/${owner.id}/permissions`;
+				const foreignPath = `${paths.proxy_hosts}/${foreign.proxy_hosts.id}`;
+				const change = async (data) => expectStatus(await call("PUT", path, admin.jwt, data), 200);
+				const grant = async () => {
+					await change({ meta: { proxy_host_ids: [foreign.proxy_hosts.id, 999999] } });
+					const permission = await Permission.query().findOne({ user_id: owner.id });
+					assert.deepEqual(permission.meta.proxy_host_ids, [foreign.proxy_hosts.id]);
+					expectStatus(await call("GET", foreignPath, owner.jwt), 200);
+					expectStatus(await call("GET", foreignPath, all.token), 403);
+				};
+				try {
+					await grant();
+					await change({ proxy_hosts: "hidden" });
+					expectStatus(await call("GET", paths.proxy_hosts, all.token), 403);
+					await change({ proxy_hosts: "manage" });
+					assert.deepEqual((await Permission.query().findOne({ user_id: owner.id })).meta.proxy_host_ids, []);
+					expectStatus(await call("GET", foreignPath, owner.jwt), 404);
+					await grant();
+					await change({ visibility: "all" });
+					assert.deepEqual((await Permission.query().findOne({ user_id: owner.id })).meta.proxy_host_ids, []);
+					expectStatus(await call("GET", foreignPath, all.token), 403);
+					await change({ visibility: "user" });
+					expectStatus(await call("GET", foreignPath, owner.jwt), 404);
+				} finally {
+					await Permission.query().where("user_id", owner.id).patch({
+						visibility: "user",
+						proxy_hosts: "manage",
+						meta: {},
+					});
+				}
+			});
+
+			await t.test("admin roles never let PATs bypass advanced configuration restrictions", async () => {
+				const adminToken = await mint(admin, ["proxy_hosts:write"]);
+				const adminHost = await models.proxy_hosts.query().insertAndFetch({
+					...payloadFor("proxy_hosts", "admin-boundary"),
+					owner_user_id: admin.id,
+				});
+				const location = (advanced_config) => ({
+					path: "/api",
+					forward_scheme: "http",
+					forward_host: "127.0.0.1",
+					forward_port: 8080,
+					advanced_config,
+				});
+				try {
+					for (const body of [{ advanced_config: "return 204;" }, { locations: [location("return 204;")] }]) {
+						const before = mutations;
+						for (const token of [owner.jwt, all.token]) {
+							expectStatus(
+								await call("PUT", `${paths.proxy_hosts}/${own.proxy_hosts.id}`, token, body),
+								403,
+							);
+						}
+						expectStatus(
+							await call("PUT", `${paths.proxy_hosts}/${adminHost.id}`, adminToken.token, body),
+							403,
+						);
+						assert.equal(mutations, before);
+						// The same operation remains available to a full admin JWT session.
+						expectStatus(await call("PUT", `${paths.proxy_hosts}/${adminHost.id}`, admin.jwt, body), 200);
+						const afterAdminWrite = mutations;
+						// Omitting config cannot bypass the existing-config PAT guard either.
+						expectStatus(
+							await call("PUT", `${paths.proxy_hosts}/${adminHost.id}`, adminToken.token, {
+								forward_port: 8081,
+							}),
+							403,
+						);
+						assert.equal(mutations, afterAdminWrite);
+						await models.proxy_hosts
+							.query()
+							.findById(adminHost.id)
+							.patch({ advanced_config: "", locations: [] });
+					}
+				} finally {
+					await models.proxy_hosts.query().deleteById(adminHost.id);
+					await ApiToken.query().deleteById(adminToken.id);
 				}
 			});
 
