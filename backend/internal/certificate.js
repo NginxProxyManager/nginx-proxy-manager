@@ -41,7 +41,10 @@ const certbotNoise = [
 	/^\d+ renew failure\(s\)/,
 ];
 
-// Plain-language hints for failures that are common and fixable outside NPM
+// Plain-language hints for failures that are common and fixable outside NPM.
+// [pattern, hint, dnsProvider?]: a hint with a dnsProvider only applies to certificates using that
+// provider, so a generic message (e.g. "Authentication error" from another DNS plugin) isn't
+// reported as a Cloudflare problem.
 const certbotHints = [
 	[
 		/expected \S+ to be a symlink/i,
@@ -53,21 +56,26 @@ const certbotHints = [
 		() =>
 			"This certificate's files in /etc/letsencrypt are damaged or missing. Restore /etc/letsencrypt from a backup, or delete this certificate and create it again.",
 	],
+	// Checked first: a rate limit is unambiguous and the most useful thing to report
+	[
+		/too many (certificates|failed authorizations|new orders)|rateLimited/i,
+		() => "Let's Encrypt rate limit reached. Wait before retrying (see https://letsencrypt.org/docs/rate-limits/).",
+	],
 	[
 		/\b9109\b.*?location: ([0-9a-f.:]+)/i,
 		(m) => {
 			const ip = m[1].replace(/\.+$/, "");
 			return `Cloudflare refused the API token from this server's public IP (${ip}). The token has Client IP Address Filtering: add ${ip} to the token in Cloudflare (My Profile > API Tokens), or remove the filter, then renew again.`;
 		},
+		"cloudflare",
 	],
 	[
-		/\b(6003|6111|9103|9109|10000)\b|Invalid request headers|Invalid access token|Authentication error/i,
+		// certbot-dns-cloudflare errors read "<context>: <code> <message>", e.g.
+		// "Error determining zone_id: 9109 Invalid access token."
+		/: (6003|6111|9103|9109|10000) [A-Za-z]|Invalid request headers|Invalid access token|Authentication error/i,
 		() =>
 			"Cloudflare rejected the API token. Check the token value and that it has Zone > DNS > Edit for this domain's zone.",
-	],
-	[
-		/too many (certificates|failed authorizations|new orders)|rateLimited/i,
-		() => "Let's Encrypt rate limit reached. Wait before retrying (see https://letsencrypt.org/docs/rate-limits/).",
+		"cloudflare",
 	],
 	[
 		/NXDOMAIN|DNS problem/i,
@@ -85,9 +93,10 @@ const certbotHints = [
  * Certbot never prints DNS provider credentials.
  *
  * @param   {String} stderr
+ * @param   {String} [dnsProvider]  The certificate's DNS provider, if it uses a DNS challenge
  * @returns {String}
  */
-const certbotFailureMessage = (stderr) => {
+const certbotFailureMessage = (stderr, dnsProvider) => {
 	const reason = `${stderr || ""}`
 		.split("\n")
 		.map((line) => line.trim())
@@ -95,7 +104,10 @@ const certbotFailureMessage = (stderr) => {
 		.join(" ")
 		.slice(0, 800);
 
-	for (const [pattern, hint] of certbotHints) {
+	for (const [pattern, hint, provider] of certbotHints) {
+		if (provider && provider !== dnsProvider) {
+			continue;
+		}
 		const match = reason.match(pattern);
 		if (match) {
 			return `${hint(match)} (Certbot: ${reason})`;
@@ -109,14 +121,15 @@ const certbotFailureMessage = (stderr) => {
  *
  * @param   {Array}  args
  * @param   {Object} [opts]
+ * @param   {String} [dnsProvider]  Passed through so provider-specific hints only show for that provider
  * @returns {Promise}
  */
-const runCertbot = async (args, opts) => {
+const runCertbot = async (args, opts, dnsProvider) => {
 	try {
 		return await utils.execFile(certbotCommand, args, opts);
 	} catch (err) {
 		if (err instanceof error.CommandError) {
-			throw new error.ValidationError(certbotFailureMessage(err.message), err);
+			throw new error.ValidationError(certbotFailureMessage(err.message, dnsProvider), err);
 		}
 		throw err;
 	}
@@ -1024,7 +1037,7 @@ const internalCertificate = {
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
 		try {
-			const result = await runCertbot(args, adds.opts);
+			const result = await runCertbot(args, adds.opts, certificate.meta.dns_provider);
 			logger.info(result);
 			return result;
 		} finally {
@@ -1204,7 +1217,7 @@ const internalCertificate = {
 		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
 
 		try {
-			const result = await runCertbot(args, adds.opts);
+			const result = await runCertbot(args, adds.opts, certificate.meta.dns_provider);
 			logger.info(result);
 			return result;
 		} finally {
