@@ -167,18 +167,18 @@ const internalHost = {
 			redirection_hosts: [],
 		};
 
-		const proxyRes = await proxyHostModel
-			.query()
-			.where("is_deleted", 0)
-			.withGraphFetched("[certificate, access_list.[clients,items]]");
+		// No relations are eager-loaded here: this scans every host just to match domains, and
+		// the few that match are rendered through internalNginx.generateConfig(), which loads
+		// their certificate and access list itself (loadRenderRelations).
+		const proxyRes = await proxyHostModel.query().where("is_deleted", 0);
 		responseObject.proxy_hosts = internalHost._getHostsWithDomains(proxyRes, domainNames);
 		responseObject.total_count += responseObject.proxy_hosts.length;
 
-		const redirRes = await redirectionHostModel.query().where("is_deleted", 0).withGraphFetched("[certificate]");
+		const redirRes = await redirectionHostModel.query().where("is_deleted", 0);
 		responseObject.redirection_hosts = internalHost._getHostsWithDomains(redirRes, domainNames);
 		responseObject.total_count += responseObject.redirection_hosts.length;
 
-		const deadRes = await deadHostModel.query().where("is_deleted", 0).withGraphFetched("[certificate]");
+		const deadRes = await deadHostModel.query().where("is_deleted", 0);
 		responseObject.dead_hosts = internalHost._getHostsWithDomains(deadRes, domainNames);
 		responseObject.total_count += responseObject.dead_hosts.length;
 
