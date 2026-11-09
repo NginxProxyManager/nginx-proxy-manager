@@ -735,22 +735,37 @@ const internalCertificate = {
 			throw new error.ValidationError("Certificate file was not provided");
 		}
 
+		// row came through get(), which omits meta.certificate_key so it never goes out over
+		// the API. update() replaces meta wholesale, so build on the stored meta (read from the
+		// model directly) or an upload without a key would erase the stored one.
+		const stored = await certificateModel.query().where("id", row.id).first();
+		const meta = { ...(stored?.meta || {}) };
+		const uploaded = [];
+
 		_.map(data.files, (file, name) => {
 			if (internalCertificate.allowedSslFiles.indexOf(name) !== -1) {
-				row.meta[name] = file.data.toString();
+				meta[name] = file.data.toString();
+				uploaded.push(name);
 			}
 		});
+
+		// Fail before anything is written: without a key, writeCustomCert would overwrite
+		// fullchain.pem and then fail on privkey.pem, leaving nginx with a mismatched pair.
+		if (!meta.certificate_key) {
+			throw new error.ValidationError("Certificate Key file was not provided");
+		}
 
 		const certificate = await internalCertificate.update(access, {
 			id: data.id,
 			expires_on: moment(validations.certificate.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
 			domain_names: validations.certificate.cn ? [validations.certificate.cn] : [],
-			meta: _.clone(row.meta), // Prevent the update method from changing this value that we'll use later
+			meta: _.clone(meta), // Prevent the update method from changing this value that we'll use later
 		});
 
-		certificate.meta = row.meta;
+		certificate.meta = meta;
 		await internalCertificate.writeCustomCert(certificate);
-		return _.pick(row.meta, internalCertificate.allowedSslFiles);
+		// Only echo back what was uploaded in this request, never the stored key
+		return _.pick(meta, uploaded);
 	},
 
 	/**
