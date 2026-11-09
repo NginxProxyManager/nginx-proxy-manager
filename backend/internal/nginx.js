@@ -289,26 +289,28 @@ const internalNginx = {
 			// Set the IPv6 setting for the host
 			host.ipv6 = internalNginx.ipv6Enabled();
 
-			locationsPromise.then(() => {
-				renderEngine
-					.parseAndRender(template, host)
-					.then((config_text) => {
-						fs.writeFileSync(filename, config_text, { encoding: "utf8" });
-						debug(logger, "Wrote config:", filename, config_text);
+			locationsPromise
+				.then(() => {
+					renderEngine
+						.parseAndRender(template, host)
+						.then((config_text) => {
+							fs.writeFileSync(filename, config_text, { encoding: "utf8" });
+							debug(logger, "Wrote config:", filename, config_text);
 
-						// Restore locations array
-						host.locations = origLocations;
+							// Restore locations array
+							host.locations = origLocations;
 
-						resolve(true);
-					})
-					.catch((err) => {
-						debug(logger, `Could not write ${filename}:`, err.message);
-						reject(new errs.ConfigurationError(err.message));
-					});
-			}).catch((err) => {
-				debug(logger, `Could not render locations for ${filename}:`, err.message);
-				reject(new errs.ConfigurationError(err.message));
-			});
+							resolve(true);
+						})
+						.catch((err) => {
+							debug(logger, `Could not write ${filename}:`, err.message);
+							reject(new errs.ConfigurationError(err.message));
+						});
+				})
+				.catch((err) => {
+					debug(logger, `Could not render locations for ${filename}:`, err.message);
+					reject(new errs.ConfigurationError(err.message));
+				});
 		});
 	},
 
