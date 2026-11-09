@@ -28,21 +28,37 @@ const cleanupTimer = setInterval(() => {
 }, 120000);
 cleanupTimer.unref();
 
+// Generated at container start (prepare/45-admin-port.sh) and sent by the admin nginx as
+// X-NPM-Peer-Secret alongside X-NPM-Peer-Addr. Unset (development, or a mounted production.conf)
+// means the header is never trusted.
+const peerSecret = Buffer.from(process.env.NPM_PEER_SECRET || "");
+
+const hasPeerSecret = (value) => {
+	if (!peerSecret.length || typeof value !== "string") {
+		return false;
+	}
+	const given = Buffer.from(value);
+	return given.length === peerSecret.length && crypto.timingSafeEqual(given, peerSecret);
+};
+
 /**
  * The address to rate limit on: the TCP peer of the admin nginx, which it passes as
- * X-NPM-Peer-Addr ($realip_remote_addr), only honoured when the socket is loopback (that nginx,
- * in this container). The realip-resolved client address is deliberately not used: nginx trusts
- * X-Real-IP from private ranges, so a client on the LAN or Docker network could pick a new
- * address, and a fresh bucket, on every request. Behind another proxy this resolves to that
- * proxy's address, which is why limiters also key on the target account.
+ * X-NPM-Peer-Addr ($realip_remote_addr). That header is only honoured from a loopback socket
+ * carrying the startup secret, so it can only have come from the admin nginx: a proxy host or
+ * stream forwarding to the backend port is also a loopback peer, but can't know the secret.
+ * The realip-resolved client address is deliberately not used: nginx trusts X-Real-IP from
+ * private ranges, so a client on the LAN or Docker network could pick a new address, and a fresh
+ * bucket, on every request. Behind another proxy (including an NPM proxy host in front of the
+ * admin UI) this resolves to that proxy's address.
  *
  * @param   {Object} req
  * @returns {String}
  */
 export const getClientIp = (req) => {
 	const socketAddr = req.socket?.remoteAddress || "unknown";
-	const isTrustedLocalProxy = socketAddr === "127.0.0.1" || socketAddr === "::1" || socketAddr === "::ffff:127.0.0.1";
-	const peerAddr = isTrustedLocalProxy ? req.headers["x-npm-peer-addr"]?.trim() : null;
+	const isLoopback = socketAddr === "127.0.0.1" || socketAddr === "::1" || socketAddr === "::ffff:127.0.0.1";
+	const trusted = isLoopback && hasPeerSecret(req.headers["x-npm-peer-secret"]);
+	const peerAddr = trusted ? req.headers["x-npm-peer-addr"]?.trim() : null;
 	return peerAddr || socketAddr;
 };
 

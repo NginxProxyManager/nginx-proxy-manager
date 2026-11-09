@@ -132,6 +132,9 @@ const internalDeadHost = {
 			);
 		}
 
+		// Before the certificate is created, so a refused request doesn't leave one behind
+		internalHost.assertAdvancedConfigAllowed(access, data, row);
+
 		if (createCertificate) {
 			const cert = await internalCertificate.createQuickCertificate(access, {
 				domain_names: data.domain_names || row.domain_names,
@@ -152,8 +155,6 @@ const internalDeadHost = {
 		);
 
 		thisData = internalHost.cleanSslHstsData(thisData, row);
-
-		internalHost.assertAdvancedConfigAllowed(access, data, row);
 
 		// do the row update
 		await deadHostModel.query().where({ id: data.id }).patch(data);

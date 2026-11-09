@@ -45,10 +45,12 @@ const internalHost = {
 	},
 
 	/**
-	 * For non-admins: every location's advanced_config must be one that already exists on this
-	 * host. Matching is by value, not path, so renaming or reordering a location that carries
-	 * admin-written config is allowed, but new or edited config is not. Each existing config can
-	 * be used once (no duplicating it onto other paths), and same-path matches are taken first.
+	 * For non-admins: every location's advanced_config must be empty or one that already exists
+	 * on this host. Matching is by value, not path, so renaming or reordering a location that
+	 * carries admin-written config is allowed, but new or edited config is not. Each existing
+	 * config can be used once (no duplicating it onto other paths), and same-path matches are
+	 * taken first. Clearing a config is allowed: deleting the location is, and has the same
+	 * effect, and a location deleted and re-added at the same path arrives with an empty config.
 	 * A location that omits advanced_config keeps the one at its path, unless another location
 	 * explicitly carries it. Mutates `locations`.
 	 *
@@ -86,10 +88,10 @@ const internalHost = {
 			}
 		}
 
-		// Pass 2: renamed/moved locations may carry an existing config not already claimed.
-		// Clearing a config is not allowed, as before.
+		// Pass 2: renamed/moved locations may carry an existing config not already claimed, or
+		// none at all
 		for (const loc of unresolved) {
-			if (!loc.advanced_config || !take(loc.advanced_config)) {
+			if (loc.advanced_config && !take(loc.advanced_config)) {
 				deny();
 			}
 		}

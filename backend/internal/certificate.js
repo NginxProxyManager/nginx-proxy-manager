@@ -566,7 +566,24 @@ const internalCertificate = {
 			throw new error.ItemNotFoundError(data.id);
 		}
 
-		const inUse = hostRelations.some((rel) => row[rel]?.length);
+		// A certificate that hosts still use can't be deleted: their rendered configs include its
+		// files, and revoking it would leave them serving a revoked certificate. Hosts may belong
+		// to other users, so only counts are reported.
+		const labels = {
+			proxy_hosts: "proxy host",
+			redirection_hosts: "redirection host",
+			dead_hosts: "404 host",
+			streams: "stream",
+		};
+		const usage = hostRelations
+			.map((rel) => ({ rel, count: row[rel]?.length || 0 }))
+			.filter((u) => u.count > 0)
+			.map((u) => `${u.count} ${labels[u.rel]}${u.count === 1 ? "" : "s"}`);
+		if (usage.length) {
+			throw new error.ValidationError(
+				`Certificate is in use by ${usage.join(", ")}. Remove it from them before deleting it.`,
+			);
+		}
 		for (const rel of hostRelations) {
 			delete row[rel];
 		}
@@ -586,20 +603,10 @@ const internalCertificate = {
 		});
 
 		if (row.provider === "letsencrypt") {
-			// Revoke the cert
-			const revoked = await internalCertificate.revokeLetsEncryptSsl(row, true).then(
-				() => true,
-				() => false,
-			);
-			// Certbot leaves the files behind when it can't revoke (e.g. a broken renewal config).
-			// Remove them anyway, unless a host still uses this certificate: its rendered config
-			// includes these files, and removing them would fail nginx -t on the next reload.
-			if (!revoked && inUse) {
-				logger.warn(
-					`Certificate #${row.id} was deleted but could not be revoked, and hosts still use it; its files in /etc/letsencrypt were kept`,
-				);
-				return true;
-			}
+			// Revoke the cert. Errors are logged by revokeLetsEncryptSsl.
+			await internalCertificate.revokeLetsEncryptSsl(row);
+			// Certbot leaves the files behind when it can't revoke (e.g. a broken renewal config),
+			// so remove them either way. No host uses them; that was checked above.
 			// The row is already deleted and audited, so leftover files are logged, not thrown:
 			// an error here would report a completed delete as failed, and a retry would 404.
 			const leftover = internalCertificate.removeLetsEncryptFiles(row.id);

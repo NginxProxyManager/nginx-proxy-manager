@@ -157,6 +157,9 @@ const internalProxyHost = {
 					);
 				}
 
+				// Before the certificate is created, so a refused request doesn't leave one behind
+				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
+
 				if (createCertificate) {
 					return internalCertificate
 						.createQuickCertificate(access, {
@@ -184,8 +187,6 @@ const internalProxyHost = {
 				);
 
 				thisData = internalHost.cleanSslHstsData(thisData, row);
-
-				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
 
 				return proxyHostModel
 					.query()

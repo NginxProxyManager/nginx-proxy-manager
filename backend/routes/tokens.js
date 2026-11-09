@@ -6,10 +6,9 @@ import apiValidator from "../lib/validator/api.js";
 import { debug, express as logger } from "../logger.js";
 import { getValidationSchema } from "../schema/index.js";
 
-// Keyed on IP + target account rather than IP alone: when the admin UI sits behind another
-// proxy every client can resolve to the same IP, and an IP-only bucket would let anyone lock
-// out every user with a handful of bad logins. Brute force against one account is still
-// capped per connecting address (see getClientIp).
+// Two limits apply to logins. Per IP + target account: when the admin UI sits behind another
+// proxy every client can resolve to the same IP, and an IP-only bucket at this size would let
+// anyone lock out every user with a handful of bad logins.
 const tokenRateLimiter = createRateLimiter({
 	windowMs: 60 * 1000,
 	max: 10,
@@ -19,6 +18,16 @@ const tokenRateLimiter = createRateLimiter({
 		const identity = typeof req.body?.identity === "string" ? req.body.identity.trim().toLowerCase() : "";
 		return `${clientIp}|${identity}`;
 	},
+});
+
+// And per IP across all accounts, so one address can't spray passwords over many accounts at
+// 10 a minute each. Only failures count. Behind a shared proxy this cap is shared by everyone
+// using it, which is why it's higher than the per-account one.
+const tokenIpRateLimiter = createRateLimiter({
+	windowMs: 60 * 1000,
+	max: 30,
+	message: "Too many login attempts. Please try again in 1 minute.",
+	skipSuccessfulRequests: true,
 });
 
 // Keyed on the user the challenge belongs to, not the challenge token itself, so fetching
@@ -79,7 +88,7 @@ router
 	 *
 	 * Create a new Token
 	 */
-	.post(tokenRateLimiter, async (req, res, next) => {
+	.post(tokenIpRateLimiter, tokenRateLimiter, async (req, res, next) => {
 		try {
 			const data = await apiValidator(getValidationSchema("/tokens", "post"), req.body);
 			const result = await internalToken.getTokenFromEmail(data);
