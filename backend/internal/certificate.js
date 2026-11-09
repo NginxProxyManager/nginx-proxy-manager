@@ -538,16 +538,24 @@ const internalCertificate = {
 		if (row.provider === "letsencrypt") {
 			// Revoke the cert
 			await internalCertificate.revokeLetsEncryptSsl(row);
-			// Certbot leaves the files behind when it can't revoke (e.g. a broken renewal config); remove them anyway
-			internalCertificate.removeLetsEncryptFiles(row.id);
+			// Certbot leaves the files behind when it can't revoke (e.g. a broken renewal config); remove them anyway.
+			// The row is already deleted and audited, so leftover files are logged, not thrown:
+			// an error here would report a completed delete as failed, and a retry would 404.
+			const leftover = internalCertificate.removeLetsEncryptFiles(row.id);
+			if (leftover.length) {
+				logger.warn(
+					`Certificate #${row.id} was deleted, but these files could not be removed and should be deleted by hand: ${leftover.join(", ")}`,
+				);
+			}
 		}
 		return true;
 	},
 
 	/**
-	 * Removes a certificate's certbot files, as `certbot delete` would.
+	 * Removes a certificate's certbot files, as `certbot delete` would. Never throws.
 	 *
-	 * @param {Number}  certificateId
+	 * @param   {Number}  certificateId
+	 * @returns {String[]}  paths that could not be removed
 	 */
 	removeLetsEncryptFiles: (certificateId) => {
 		const paths = [
@@ -565,11 +573,7 @@ const internalCertificate = {
 				failed.push(p);
 			}
 		}
-		if (failed.length) {
-			throw new error.ValidationError(
-				`The certificate was removed from NPM, but these files could not be deleted: ${failed.join(", ")}. Delete them by hand.`,
-			);
-		}
+		return failed;
 	},
 
 	/**
