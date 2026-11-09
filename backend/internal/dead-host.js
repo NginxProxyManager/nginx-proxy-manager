@@ -54,10 +54,7 @@ const internalDeadHost = {
 			thisData.advanced_config = "";
 		}
 
-		const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
-		if (!isAdmin && thisData.advanced_config && thisData.advanced_config.trim() !== "") {
-			throw new errs.PermissionError("You do not have permission to modify advanced configuration");
-		}
+		internalHost.assertAdvancedConfigAllowed(access, thisData);
 
 		const row = await deadHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 
@@ -156,14 +153,7 @@ const internalDeadHost = {
 
 		thisData = internalHost.cleanSslHstsData(thisData, row);
 
-		const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
-		if (
-			!isAdmin &&
-			typeof data.advanced_config !== "undefined" &&
-			data.advanced_config !== row.advanced_config
-		) {
-			throw new errs.PermissionError("You do not have permission to modify advanced configuration");
-		}
+		internalHost.assertAdvancedConfigAllowed(access, data, row);
 
 		// do the row update
 		await deadHostModel.query().where({ id: data.id }).patch(data);
