@@ -183,6 +183,16 @@ const internalNginx = {
 					}
 					if (locationAccessList) {
 						locationCopy.access_list = locationAccessList;
+					} else if (
+						locationCopy.access_list_id > 0 &&
+						locationCopy.access_list_id !== host.access_list?.id
+					) {
+						// The location names its own list but it's gone. Don't fall back to the
+						// host's (possibly less restrictive) list; _access.conf denies all instead.
+						logger.error(
+							`Proxy Host #${host.id} location "${locationCopy.path}" references Access List #${locationCopy.access_list_id} which does not exist, all access will be denied`,
+						);
+						locationCopy.access_list = null;
 					} else {
 						locationCopy.access_list_id = host.access_list_id;
 						locationCopy.access_list = host.access_list;
@@ -338,8 +348,9 @@ const internalNginx = {
 			}
 
 			if (!host.access_list) {
-				logger.warn(
-					`Proxy Host #${host.id} references Access List #${host.access_list_id} which does not exist`,
+				// _access.conf renders "deny all" when the list is missing, so fail closed
+				logger.error(
+					`Proxy Host #${host.id} references Access List #${host.access_list_id} which does not exist, all access will be denied`,
 				);
 			} else if (!host.access_list.clients.length && !host.access_list.items.length) {
 				logger.warn(
