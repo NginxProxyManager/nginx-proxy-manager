@@ -3,7 +3,7 @@
 
 import { Model } from "objection";
 import db from "../db.js";
-import { convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
+import { cleanDomainNames, convertBoolFieldsToInt, convertIntFieldsToBool } from "../lib/helpers.js";
 import deadHostModel from "./dead_host.js";
 import now from "./now_helper.js";
 import proxyHostModel from "./proxy_host.js";
@@ -14,16 +14,6 @@ import userModel from "./user.js";
 Model.knex(db());
 
 const boolFields = ["is_deleted"];
-
-const cleanDomainNames = (domainNames) => {
-	// Sort domain_names
-	if (typeof domainNames !== "undefined") {
-		const newDomainNames = domainNames.filter((name) => name != null);
-		newDomainNames.sort();
-		return newDomainNames;
-	}
-	return [];
-};
 
 class Certificate extends Model {
 	$beforeInsert() {
