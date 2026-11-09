@@ -186,6 +186,7 @@ const internalCertificate = {
 					 * instance of Certbot is already running.'
 					 */
 					let sequence = Promise.resolve();
+					let renewed = 0;
 
 					certificates.forEach((certificate) => {
 						sequence = sequence.then(() =>
@@ -199,7 +200,11 @@ const internalCertificate = {
 										token: tokenModel(),
 									},
 									{ id: certificate.id },
+									{ reload: false }, // one reload for the whole batch, below
 								)
+								.then(() => {
+									renewed++;
+								})
 								.catch((err) => {
 									// Don't want to stop the train here, just log the error
 									logger.error(err.message);
@@ -207,7 +212,11 @@ const internalCertificate = {
 						);
 					});
 
-					return sequence;
+					return sequence.then(() => {
+						if (renewed) {
+							return internalCertificate.reloadAfterRenew();
+						}
+					});
 				})
 				.then(() => {
 					logger.info("Completed SSL cert renew process");
@@ -1063,7 +1072,8 @@ const internalCertificate = {
 	 * @param   {Number}  data.id
 	 * @returns {Promise}
 	 */
-	renew: async (access, data) => {
+	renew: async (access, data, options = {}) => {
+		const reload = options.reload !== false;
 		await access.can("certificates:update", data);
 		const certificate = await internalCertificate.get(access, data);
 
@@ -1089,12 +1099,32 @@ const internalCertificate = {
 				meta: updatedCertificate,
 			});
 
-			await internalNginx.reload();
+			// The renewal has succeeded and been recorded at this point. A reload failure
+			// (e.g. an unrelated host's config is broken) must not turn it into an error;
+			// nginx picks the new files up on the next successful reload.
+			if (reload) {
+				await internalCertificate.reloadAfterRenew();
+			}
 
 			return updatedCertificate;
 		}
 
 		throw new error.ValidationError("Only Let'sEncrypt certificates can be renewed");
+	},
+
+	/**
+	 * Reloads nginx so it serves renewed certificate files. Errors are logged, not thrown.
+	 *
+	 * @returns {Promise<Boolean>}  whether the reload succeeded
+	 */
+	reloadAfterRenew: async () => {
+		try {
+			await internalNginx.reload();
+			return true;
+		} catch (err) {
+			logger.error(`Certificate renewed but nginx could not be reloaded: ${err.message}`);
+			return false;
+		}
 	},
 
 	/**
