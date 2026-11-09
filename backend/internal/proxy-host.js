@@ -15,6 +15,55 @@ const omissions = () => {
 
 const internalProxyHost = {
 	/**
+	 * For non-admins: every location's advanced_config must be one that already exists on this
+	 * host. Matching is by value, not path, so renaming or reordering a location that carries
+	 * admin-written config is allowed, but new or edited config is not. Each existing config can
+	 * be used once (no duplicating it onto other paths), and same-path matches are taken first.
+	 * A location that omits advanced_config keeps the one at its path. Mutates `locations`.
+	 *
+	 * @param   {Array}  locations          incoming locations
+	 * @param   {Array}  [existingLocations] the host's current locations
+	 * @throws  {PermissionError}
+	 */
+	assertLocationAdvancedConfigUnchanged: (locations, existingLocations) => {
+		const existing = Array.isArray(existingLocations) ? existingLocations : [];
+		const advAtPath = (path) => existing.find((l) => l.path === path)?.advanced_config || "";
+		const pool = existing.map((l) => l.advanced_config || "").filter(Boolean);
+		const take = (value) => {
+			const i = pool.indexOf(value);
+			if (i === -1) {
+				return false;
+			}
+			pool.splice(i, 1);
+			return true;
+		};
+		const deny = () => {
+			throw new errs.PermissionError("You do not have permission to modify advanced configuration");
+		};
+
+		// Pass 1: locations that keep (or omit) the config at their own path
+		const unresolved = [];
+		for (const loc of locations) {
+			const atPath = advAtPath(loc.path);
+			if (typeof loc.advanced_config === "undefined") {
+				loc.advanced_config = atPath && take(atPath) ? atPath : "";
+			} else if ((loc.advanced_config || "") === atPath && (!atPath || take(atPath))) {
+				// unchanged
+			} else {
+				unresolved.push(loc);
+			}
+		}
+
+		// Pass 2: renamed/moved locations may carry an existing config not already claimed.
+		// Clearing a config is not allowed, as before.
+		for (const loc of unresolved) {
+			if (!loc.advanced_config || !take(loc.advanced_config)) {
+				deny();
+			}
+		}
+	},
+
+	/**
 	 * @param   {Access}  access
 	 * @param   {Object}  data
 	 * @returns {Promise}
@@ -205,18 +254,7 @@ const internalProxyHost = {
 					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
 				}
 				if (!isAdmin && Array.isArray(thisData.locations)) {
-					const existingLocations = Array.isArray(row.locations) ? row.locations : [];
-					for (const loc of thisData.locations) {
-						const existingLoc = existingLocations.find((l) => l.path === loc.path);
-						const existingAdv = existingLoc?.advanced_config || "";
-						if (typeof loc.advanced_config === "undefined") {
-							loc.advanced_config = existingAdv;
-						} else if ((loc.advanced_config || "") !== existingAdv) {
-							throw new errs.PermissionError(
-								"You do not have permission to modify advanced configuration",
-							);
-						}
-					}
+					internalProxyHost.assertLocationAdvancedConfigUnchanged(thisData.locations, row.locations);
 				}
 
 				return proxyHostModel
