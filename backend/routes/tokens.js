@@ -9,7 +9,7 @@ import { getValidationSchema } from "../schema/index.js";
 // Keyed on IP + target account rather than IP alone: when the admin UI sits behind another
 // proxy every client can resolve to the same IP, and an IP-only bucket would let anyone lock
 // out every user with a handful of bad logins. Brute force against one account is still
-// capped per IP.
+// capped per connecting address (see getClientIp).
 const tokenRateLimiter = createRateLimiter({
 	windowMs: 60 * 1000,
 	max: 10,

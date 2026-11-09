@@ -49,7 +49,8 @@ const internalHost = {
 	 * host. Matching is by value, not path, so renaming or reordering a location that carries
 	 * admin-written config is allowed, but new or edited config is not. Each existing config can
 	 * be used once (no duplicating it onto other paths), and same-path matches are taken first.
-	 * A location that omits advanced_config keeps the one at its path. Mutates `locations`.
+	 * A location that omits advanced_config keeps the one at its path, unless another location
+	 * explicitly carries it. Mutates `locations`.
 	 *
 	 * @param   {Array}  locations          incoming locations
 	 * @param   {Array}  [existingLocations] the host's current locations
@@ -71,12 +72,13 @@ const internalHost = {
 			throw new errs.PermissionError("You do not have permission to modify advanced configuration");
 		};
 
-		// Pass 1: locations that keep (or omit) the config at their own path
+		// Pass 1: locations that keep the config at their own path
 		const unresolved = [];
+		const omitted = [];
 		for (const loc of locations) {
 			const atPath = advAtPath(loc.path);
 			if (typeof loc.advanced_config === "undefined") {
-				loc.advanced_config = atPath && take(atPath) ? atPath : "";
+				omitted.push(loc);
 			} else if ((loc.advanced_config || "") === atPath && (!atPath || take(atPath))) {
 				// unchanged
 			} else {
@@ -90,6 +92,14 @@ const internalHost = {
 			if (!loc.advanced_config || !take(loc.advanced_config)) {
 				deny();
 			}
+		}
+
+		// Pass 3: locations that omit advanced_config keep the one at their path, if no location
+		// that names it explicitly has claimed it. Running this last stops a new location at an
+		// old path taking the config away from the location it was renamed to.
+		for (const loc of omitted) {
+			const atPath = advAtPath(loc.path);
+			loc.advanced_config = atPath && take(atPath) ? atPath : "";
 		}
 	},
 

@@ -1,8 +1,16 @@
+import crypto from "node:crypto";
 import { isCI } from "../config.js";
 
 /**
- * In-memory sliding window rate limiter for authentication endpoints
+ * In-memory fixed window rate limiter for authentication endpoints
  */
+
+// Keys longer than this are hashed, so a client can't make the store hold arbitrarily large
+// strings (keys can include request body values such as the login identity).
+const MAX_KEY_LENGTH = 128;
+// Entries per limiter. A flood of unique keys sweeps expired entries, then evicts the oldest,
+// instead of growing the store until the periodic cleanup runs.
+const MAX_STORE_SIZE = 50000;
 
 // One store per limiter, so separate endpoints never share buckets
 const stores = new Set();
@@ -21,9 +29,12 @@ const cleanupTimer = setInterval(() => {
 cleanupTimer.unref();
 
 /**
- * The client IP as seen by the backend. X-Forwarded-For is only honoured when the socket is
- * loopback, which is the admin nginx in this container; it sets the header to its own
- * $remote_addr after realip processing, so the first entry is the resolved client.
+ * The address to rate limit on: the TCP peer of the admin nginx, which it passes as
+ * X-NPM-Peer-Addr ($realip_remote_addr), only honoured when the socket is loopback (that nginx,
+ * in this container). The realip-resolved client address is deliberately not used: nginx trusts
+ * X-Real-IP from private ranges, so a client on the LAN or Docker network could pick a new
+ * address, and a fresh bucket, on every request. Behind another proxy this resolves to that
+ * proxy's address, which is why limiters also key on the target account.
  *
  * @param   {Object} req
  * @returns {String}
@@ -31,9 +42,27 @@ cleanupTimer.unref();
 export const getClientIp = (req) => {
 	const socketAddr = req.socket?.remoteAddress || "unknown";
 	const isTrustedLocalProxy = socketAddr === "127.0.0.1" || socketAddr === "::1" || socketAddr === "::ffff:127.0.0.1";
-	const forwardedFor = isTrustedLocalProxy ? req.headers["x-forwarded-for"]?.split(",")[0].trim() : null;
-	return forwardedFor || socketAddr;
+	const peerAddr = isTrustedLocalProxy ? req.headers["x-npm-peer-addr"]?.trim() : null;
+	return peerAddr || socketAddr;
 };
+
+const makeRoom = (store, now) => {
+	for (const [k, r] of store.entries()) {
+		if (now - r.startTime > r.windowMs) {
+			store.delete(k);
+		}
+	}
+	// Maps iterate in insertion order, so this drops the oldest windows first
+	for (const k of store.keys()) {
+		if (store.size < MAX_STORE_SIZE) {
+			break;
+		}
+		store.delete(k);
+	}
+};
+
+const boundedKey = (key) =>
+	key.length > MAX_KEY_LENGTH ? `sha256:${crypto.createHash("sha256").update(key).digest("hex")}` : key;
 
 /**
  * @param {Object}   [options]
@@ -67,29 +96,21 @@ export default function createRateLimiter(options = {}) {
 			return next();
 		}
 
-		const key = keyGenerator(req, getClientIp(req));
+		const key = boundedKey(String(keyGenerator(req, getClientIp(req))));
 
 		const now = Date.now();
 		let record = store.get(key);
 
 		if (!record || now - record.startTime > windowMs) {
 			record = {
-				count: 1,
+				count: 0,
 				startTime: now,
 				windowMs,
 			};
-			store.set(key, record);
-
-			if (skipSuccessfulRequests) {
-				const currentRecord = record;
-				res.on("finish", () => {
-					if (res.statusCode < 400 && currentRecord.count > 0) {
-						currentRecord.count--;
-					}
-				});
+			if (!store.has(key) && store.size >= MAX_STORE_SIZE) {
+				makeRoom(store, now);
 			}
-
-			return next();
+			store.set(key, record);
 		}
 
 		record.count++;

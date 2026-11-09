@@ -3,7 +3,6 @@ import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import utils from "../lib/utils.js";
 import proxyHostModel, { scopeToOwnerOrAllowed } from "../models/proxy_host.js";
-import userPermissionModel from "../models/user_permission.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
 import internalHost from "./host.js";
@@ -455,14 +454,14 @@ const internalProxyHost = {
 	 *
 	 * @param   {Number}  user_id
 	 * @param   {String}  visibility
+	 * @param   {Object}  [permissionsMeta]  the user's permissions meta, as already loaded by access
 	 * @returns {Promise}
 	 */
-	getCount: async (user_id, visibility) => {
+	getCount: async (user_id, visibility, permissionsMeta) => {
 		const query = proxyHostModel.query().count("id as count").where("is_deleted", 0);
 
 		if (visibility !== "all") {
-			const perm = await userPermissionModel.query().where("user_id", user_id).first();
-			scopeToOwnerOrAllowed(query, user_id, perm?.meta);
+			scopeToOwnerOrAllowed(query, user_id, permissionsMeta);
 		}
 
 		const row = await query.first();
