@@ -5,12 +5,13 @@ import "vitest/config";
 import { execFile } from "node:child_process";
 
 const runLocaleScripts = () => {
-	execFile("yarn", ["locale-compile"], (error, stdout, _stderr) => {
+	const shell = process.platform === "win32";
+	execFile("yarn", ["locale-compile"], { shell }, (error, stdout, _stderr) => {
 		if (error) {
 			throw error;
 		}
 		console.log(stdout);
-		execFile("yarn", ["locale-sort"], (error, stdout, _stderr) => {
+		execFile("yarn", ["locale-sort"], { shell }, (error, stdout, _stderr) => {
 			if (error) {
 				throw error;
 			}
@@ -23,7 +24,7 @@ const runLocaleScripts = () => {
 export default defineConfig({
 	plugins: [
 		{
-			name: 'run-on-start',
+			name: "run-on-start",
 			configureServer(_server) {
 				runLocaleScripts();
 			},
