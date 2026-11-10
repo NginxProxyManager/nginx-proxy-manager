@@ -384,8 +384,7 @@
 											}
 										}
 									}
-								},
-								"example": "InfluxDB is not reachable"
+								}
 							},
 							"statusCodes": {
 								"type": "boolean",
