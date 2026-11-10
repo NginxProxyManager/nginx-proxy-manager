@@ -82,7 +82,8 @@
 									"string",
 									"null"
 								],
-								"description": "Last ingest error, if any"
+								"description": "Last ingest error, if any",
+								"example": "InfluxDB is not reachable"
 							},
 							"range": {
 								"type": "object",
@@ -199,13 +200,16 @@
 												"redirection",
 												"dead",
 												"stream"
-											]
+											],
+											"example": "proxy"
 										},
 										"host_id": {
-											"type": "integer"
+											"type": "integer",
+											"example": 1
 										},
 										"label": {
-											"type": "string"
+											"type": "string",
+											"example": "example.com"
 										},
 										"requests": {
 											"type": "integer",
@@ -249,17 +253,20 @@
 											"type": "object",
 											"properties": {
 												"item": {
-													"type": "string"
+													"type": "string",
+													"example": "203.0.113.7"
 												},
 												"hits": {
-													"type": "integer"
+													"type": "integer",
+													"example": 120
 												},
 												"country": {
 													"type": [
 														"string",
 														"null"
 													],
-													"description": "ISO country code, LOCAL for private addresses, ?? if unknown, null when countries are not being recorded"
+													"description": "ISO country code, LOCAL for private addresses, ?? if unknown, null when countries are not being recorded",
+													"example": "US"
 												}
 											}
 										}
@@ -270,10 +277,12 @@
 											"type": "object",
 											"properties": {
 												"item": {
-													"type": "string"
+													"type": "string",
+													"example": "/index.html"
 												},
 												"hits": {
-													"type": "integer"
+													"type": "integer",
+													"example": 120
 												}
 											}
 										}
@@ -284,10 +293,12 @@
 											"type": "object",
 											"properties": {
 												"item": {
-													"type": "string"
+													"type": "string",
+													"example": "US"
 												},
 												"hits": {
-													"type": "integer"
+													"type": "integer",
+													"example": 120
 												}
 											}
 										}
@@ -296,7 +307,8 @@
 							},
 							"geoip": {
 								"type": "boolean",
-								"description": "True when countries are being recorded"
+								"description": "True when countries are being recorded",
+								"example": true
 							},
 							"previous": {
 								"type": [
@@ -346,31 +358,39 @@
 											"type": "object",
 											"properties": {
 												"host_type": {
-													"type": "string"
+													"type": "string",
+													"example": "proxy"
 												},
 												"host_id": {
-													"type": "integer"
+													"type": "integer",
+													"example": 1
 												},
 												"requests": {
-													"type": "integer"
+													"type": "integer",
+													"example": 100
 												},
 												"bytes": {
-													"type": "integer"
+													"type": "integer",
+													"example": 2048
 												},
 												"s4xx": {
-													"type": "integer"
+													"type": "integer",
+													"example": 3
 												},
 												"s5xx": {
-													"type": "integer"
+													"type": "integer",
+													"example": 1
 												}
 											}
 										}
 									}
-								}
+								},
+								"example": "InfluxDB is not reachable"
 							},
 							"statusCodes": {
 								"type": "boolean",
-								"description": "True when exact status codes are being recorded"
+								"description": "True when exact status codes are being recorded",
+								"example": true
 							},
 							"statuses": {
 								"type": "array",
@@ -379,10 +399,12 @@
 									"type": "object",
 									"properties": {
 										"code": {
-											"type": "integer"
+											"type": "integer",
+											"example": 200
 										},
 										"total": {
-											"type": "integer"
+											"type": "integer",
+											"example": 500
 										},
 										"series": {
 											"type": "array",
@@ -390,10 +412,12 @@
 												"type": "object",
 												"properties": {
 													"ts": {
-														"type": "integer"
+														"type": "integer",
+														"example": 1700000000
 													},
 													"requests": {
-														"type": "integer"
+														"type": "integer",
+														"example": 100
 													}
 												}
 											}
@@ -403,7 +427,8 @@
 							},
 							"statusStep": {
 								"type": "integer",
-								"description": "Seconds per point of the per-status-code series (whole hours)"
+								"description": "Seconds per point of the per-status-code series (whole hours)",
+								"example": 3600
 							}
 						}
 					}
