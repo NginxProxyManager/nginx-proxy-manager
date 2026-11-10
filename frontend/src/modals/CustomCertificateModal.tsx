@@ -1,7 +1,7 @@
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form, Formik } from "formik";
+import { Field, Form } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
@@ -12,6 +12,7 @@ import {
 	certificateFilesInitialValues,
 	certificateFilesToFormData,
 } from "src/components";
+import { FormModal } from "src/components/Form";
 import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
@@ -56,81 +57,82 @@ const CustomCertificateModal = EasyModal.create(({ visible, remove }: InnerModal
 	};
 
 	return (
-		<Modal show={visible} onHide={remove}>
-			<Formik
-				initialValues={
-					{
-						niceName: "",
-						provider: "other",
-						...certificateFilesInitialValues,
-					} as any
-				}
-				onSubmit={onSubmit}
-			>
-				{() => (
-					<Form>
-						<Modal.Header closeButton>
-							<Modal.Title>
-								<T id="object.add" tData={{ object: "certificates.custom" }} />
-							</Modal.Title>
-						</Modal.Header>
-						<Modal.Body className="p-0">
-							<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
-								{errorMsg}
-							</Alert>
-							<div className="card m-0 border-0">
-								<div className="card-body">
-									<p className="text-warning">
-										<IconAlertTriangle size={16} className="me-1" />
-										<T id="certificates.custom.warning" />
-									</p>
-									<Field name="niceName" validate={validateString(1, 255)}>
-										{({ field, form }: any) => (
-											<div className="mb-3">
-												<label htmlFor="niceName" className="form-label">
-													<T id="column.name" />
-												</label>
-												<input
-													id="niceName"
-													type="text"
-													required
-													autoComplete="off"
-													className="form-control"
-													{...field}
-												/>
-												{form.errors.niceName ? (
-													<div className="invalid-feedback">
-														{form.errors.niceName && form.touched.niceName
-															? form.errors.niceName
-															: null}
-													</div>
-												) : null}
-											</div>
-										)}
-									</Field>
-									<CertificateFilesFields />
-								</div>
+		<FormModal
+			show={visible}
+			onHide={remove}
+			preventHide={isSubmitting}
+			initialValues={
+				{
+					niceName: "",
+					provider: "other",
+					...certificateFilesInitialValues,
+				} as any
+			}
+			onSubmit={onSubmit}
+		>
+			{({ onHide }) => (
+				<Form>
+					<Modal.Header closeButton>
+						<Modal.Title>
+							<T id="object.add" tData={{ object: "certificates.custom" }} />
+						</Modal.Title>
+					</Modal.Header>
+					<Modal.Body className="p-0">
+						<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
+							{errorMsg}
+						</Alert>
+						<div className="card m-0 border-0">
+							<div className="card-body">
+								<p className="text-warning">
+									<IconAlertTriangle size={16} className="me-1" />
+									<T id="certificates.custom.warning" />
+								</p>
+								<Field name="niceName" validate={validateString(1, 255)}>
+									{({ field, form }: any) => (
+										<div className="mb-3">
+											<label htmlFor="niceName" className="form-label">
+												<T id="column.name" />
+											</label>
+											<input
+												id="niceName"
+												type="text"
+												required
+												autoComplete="off"
+												className="form-control"
+												{...field}
+											/>
+											{form.errors.niceName ? (
+												<div className="invalid-feedback">
+													{form.errors.niceName && form.touched.niceName
+														? form.errors.niceName
+														: null}
+												</div>
+											) : null}
+										</div>
+									)}
+								</Field>
+								<CertificateFilesFields />
 							</div>
-						</Modal.Body>
-						<Modal.Footer>
-							<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
-								<T id="cancel" />
-							</Button>
-							<Button
-								type="submit"
-								actionType="primary"
-								className="ms-auto bg-pink"
-								data-bs-dismiss="modal"
-								isLoading={isSubmitting}
-								disabled={isSubmitting}
-							>
-								<T id="save" />
-							</Button>
-						</Modal.Footer>
-					</Form>
-				)}
-			</Formik>
-		</Modal>
+						</div>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
+							<T id="cancel" />
+						</Button>
+						<Button
+							type="submit"
+							actionType="primary"
+							className="ms-auto bg-pink"
+							data-bs-dismiss="modal"
+							isLoading={isSubmitting}
+							disabled={isSubmitting}
+						>
+							<T id="save" />
+						</Button>
+					</Modal.Footer>
+				</Form>
+			)}
+		</FormModal>
 	);
 });
 

@@ -17,19 +17,53 @@ import * as sk from "./sk/index";
 import * as cs from "./cs/index";
 import * as vi from "./vi/index";
 import * as zh from "./zh/index";
+import * as zhTw from "./zh-tw/index";
 import * as tr from "./tr/index";
 import * as hu from "./hu/index";
 import * as uk from "./uk/index";
 import * as az from "./az/index";
 import * as fa from "./fa/index";
 
-const items: any = { en, de, pt, es, et, ja, sk, cs, zh, pl, ru, it, vi, nl, bg, ko, ga, id, fr, tr, hu, uk, az, fa };
+const items: any = {
+	en,
+	de,
+	pt,
+	es,
+	et,
+	ja,
+	sk,
+	cs,
+	zh,
+	"zh-TW": zhTw,
+	pl,
+	ru,
+	it,
+	vi,
+	nl,
+	bg,
+	ko,
+	ga,
+	id,
+	fr,
+	tr,
+	hu,
+	uk,
+	az,
+	fa,
+};
 
 const fallbackLang = "en";
 
 export const getHelpFile = (lang: string, section: string): string => {
-	if (typeof items[lang] !== "undefined" && typeof items[lang][section] !== "undefined") {
-		return items[lang][section].default;
+	const requestedLang = lang.toLowerCase();
+	const exactLang = Object.keys(items).find((key) => key.toLowerCase() === requestedLang);
+	const shortLang = Object.keys(items).find((key) => key.toLowerCase() === requestedLang.slice(0, 2));
+
+	if (exactLang && typeof items[exactLang][section] !== "undefined") {
+		return items[exactLang][section].default;
+	}
+	if (shortLang && typeof items[shortLang][section] !== "undefined") {
+		return items[shortLang][section].default;
 	}
 	// Fallback to English
 	if (typeof items[fallbackLang] !== "undefined" && typeof items[fallbackLang][section] !== "undefined") {

@@ -28,6 +28,60 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
+	const createCustomCertificate = (niceName) => {
+		return cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/certificates',
+			data:  {
+				provider:  'other',
+				nice_name: niceName,
+			},
+		});
+	};
+
+	// Creates a custom certificate with the test.example.com pair uploaded, yields the created certificate
+	const createUploadedCertificate = (niceName) => {
+		return createCustomCertificate(niceName).then((created) => {
+			return cy.task('backendApiPostFiles', {
+				token: token,
+				path:  `/api/nginx/certificates/${created.id}/upload`,
+				files: {
+					certificate:     certFile,
+					certificate_key: keyFile,
+				},
+			}).then((data) => {
+				cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
+			}).then(() => created);
+		});
+	};
+
+	const createProxyHost = ({domain, certificateId, sslForced}) => {
+		return cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/proxy-hosts',
+			data:  {
+				domain_names:   [domain],
+				forward_scheme: 'http',
+				forward_host:   '1.1.1.1',
+				forward_port:   80,
+				access_list_id: '0',
+				certificate_id: certificateId,
+				meta:           {
+					dns_challenge: false
+				},
+				advanced_config:         '',
+				locations:               [],
+				block_exploits:          false,
+				caching_enabled:         false,
+				allow_websocket_upgrade: false,
+				http2_support:           false,
+				hsts_enabled:            false,
+				hsts_subdomains:         false,
+				ssl_forced:              sslForced
+			}
+		});
+	};
+
 	it('Validate custom certificate', () => {
 		cy.task('backendApiPostFiles', {
 			token: token,
@@ -151,28 +205,45 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
-	it('Custom certificate renewal', () => {
-		cy.task('backendApiPost', {
-			token: token,
-			path:  '/api/nginx/certificates',
-			data:  {
-				provider:  'other',
-				nice_name: 'Renewal Test Certificate',
-			},
-		}).then((created) => {
-			const renewID = created.id;
+	it('Certificate in use by a host cannot be deleted', () => {
+		createUploadedCertificate('In Use Certificate').then((cert) => {
+			createProxyHost({domain: 'cert-in-use.example.com', certificateId: cert.id, sslForced: false}).then((host) => {
+				cy.task('backendApiDelete', {
+					token:         token,
+					path:          `/api/nginx/certificates/${cert.id}`,
+					returnOnError: true,
+				}).then((data) => {
+					cy.validateSwaggerSchema('delete', 400, '/nginx/certificates/{certID}', data);
+					expect(data.error.code).to.equal(400);
+					expect(data.error.message).to.contain('in use by 1 proxy host');
+				});
 
-			// Initial upload
-			cy.task('backendApiPostFiles', {
-				token: token,
-				path:  `/api/nginx/certificates/${renewID}/upload`,
-				files: {
-					certificate:     certFile,
-					certificate_key: keyFile,
-				},
-			}).then((data) => {
-				cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
+				// Still there
+				cy.task('backendApiGet', {
+					token: token,
+					path:  `/api/nginx/certificates/${cert.id}`,
+				}).then((data) => {
+					expect(data.id).to.equal(cert.id);
+				});
+
+				// Once the host no longer uses it, it can be deleted
+				cy.task('backendApiDelete', {
+					token: token,
+					path:  `/api/nginx/proxy-hosts/${host.id}`,
+				});
+				cy.task('backendApiDelete', {
+					token: token,
+					path:  `/api/nginx/certificates/${cert.id}`,
+				}).then((data) => {
+					expect(data).to.be.equal(true);
+				});
 			});
+		});
+	});
+
+	it('Custom certificate renewal', () => {
+		createUploadedCertificate('Renewal Test Certificate').then((created) => {
+			const renewID = created.id;
 
 			// Upload again with an intermediate certificate, any valid certificate will do here
 			cy.task('backendApiPostFiles', {
@@ -206,7 +277,7 @@ describe('Certificates endpoints', () => {
 				returnOnError: true,
 			}).then((data) => {
 				expect(data.error.code).to.equal(400);
-				expect(data.error.message).to.contain('Certificate and private key do not match');
+				expect(data.error.message).to.contain('Certificate does not match the Certificate Key');
 			});
 
 			// New certificate only, which doesn't match the stored private key
@@ -219,7 +290,7 @@ describe('Certificates endpoints', () => {
 				returnOnError: true,
 			}).then((data) => {
 				expect(data.error.code).to.equal(400);
-				expect(data.error.message).to.contain('Certificate and private key do not match');
+				expect(data.error.message).to.contain('Certificate does not match the Certificate Key');
 			});
 
 			// Renew with a matching certificate and key
@@ -281,14 +352,7 @@ describe('Certificates endpoints', () => {
 			secret: 'changeme',
 		};
 
-		cy.task('backendApiPost', {
-			token: token,
-			path:  '/api/nginx/certificates',
-			data:  {
-				provider:  'other',
-				nice_name: 'Viewer Upload Test Certificate',
-			},
-		}).then((created) => {
+		createCustomCertificate('Viewer Upload Test Certificate').then((created) => {
 			cy.task('backendApiPost', {
 				token: token,
 				path:  '/api/users',
@@ -340,51 +404,10 @@ describe('Certificates endpoints', () => {
 		cy.task('getCertificateFingerprint', certFile).as('originalFingerprint');
 		cy.task('getCertificateFingerprint', renewedCertFile).as('renewedFingerprint');
 
-		cy.task('backendApiPost', {
-			token: token,
-			path:  '/api/nginx/certificates',
-			data:  {
-				provider:  'other',
-				nice_name: 'In Use Renewal Test Certificate',
-			},
-		}).then((created) => {
+		createUploadedCertificate('In Use Renewal Test Certificate').then((created) => {
 			const inUseCertID = created.id;
 
-			cy.task('backendApiPostFiles', {
-				token: token,
-				path:  `/api/nginx/certificates/${inUseCertID}/upload`,
-				files: {
-					certificate:     certFile,
-					certificate_key: keyFile,
-				},
-			}).then((data) => {
-				cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
-			});
-
-			cy.task('backendApiPost', {
-				token: token,
-				path:  '/api/nginx/proxy-hosts',
-				data:  {
-					domain_names:   [domain],
-					forward_scheme: 'http',
-					forward_host:   '1.1.1.1',
-					forward_port:   80,
-					access_list_id: '0',
-					certificate_id: inUseCertID,
-					meta:           {
-						dns_challenge: false
-					},
-					advanced_config:         '',
-					locations:               [],
-					block_exploits:          false,
-					caching_enabled:         false,
-					allow_websocket_upgrade: false,
-					http2_support:           false,
-					hsts_enabled:            false,
-					hsts_subdomains:         false,
-					ssl_forced:              true
-				}
-			}).then((host) => {
+			createProxyHost({domain, certificateId: inUseCertID, sslForced: true}).then((host) => {
 				// No schema validation here: the expanded certificate in this response has is_deleted,
 				// which the proxy host schema doesn't allow. Unrelated to certificate uploads.
 				expect(host.certificate_id).to.equal(inUseCertID);
@@ -443,14 +466,7 @@ describe('Certificates endpoints', () => {
 	});
 
 	it('Custom certificate upload errors', () => {
-		cy.task('backendApiPost', {
-			token: token,
-			path:  '/api/nginx/certificates',
-			data:  {
-				provider:  'other',
-				nice_name: 'Upload Errors Test Certificate',
-			},
-		}).then((created) => {
+		createCustomCertificate('Upload Errors Test Certificate').then((created) => {
 			const path = `/api/nginx/certificates/${created.id}/upload`;
 
 			// No files
