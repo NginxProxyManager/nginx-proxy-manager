@@ -4,6 +4,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
 import errs from "../lib/error.js";
+import { assertAccessListRenderable, assertHostRenderable, isTokenSafe, unsafeValueError } from "../lib/nginx-values.js";
 import utils from "../lib/utils.js";
 import { errorDiagnostics } from "../lib/error-diagnostics.js";
 import { debug, nginx as logger } from "../logger.js";
@@ -41,9 +42,30 @@ const internalNginx = {
 				return internalNginx.deleteConfig(host_type, host, true);
 			})
 			.then(() => {
-				return internalNginx.generateConfig(host_type, host);
+				return internalNginx.generateConfig(host_type, host).then(
+					() => true,
+					(err) => {
+						if (!err.unsafeNginxValue) {
+							throw err;
+						}
+						// Nothing was written. Report it on the host like a failed nginx test.
+						logger.error(err.message);
+						combined_meta = _.assign({}, host.meta, {
+							nginx_online: false,
+							nginx_err: err.message,
+						});
+						return model
+							.query()
+							.where("id", host.id)
+							.patch({ meta: combined_meta })
+							.then(() => false);
+					},
+				);
 			})
-			.then(() => {
+			.then((generated) => {
+				if (!generated) {
+					return;
+				}
 				// Test nginx again and update meta with result
 				return internalNginx
 					.test()
@@ -183,6 +205,10 @@ const internalNginx = {
 							.first();
 					}
 					if (locationAccessList) {
+						assertAccessListRenderable(
+							`Proxy Host #${host.id} location ${locationCopy.path}`,
+							locationAccessList,
+						);
 						locationCopy.access_list = locationAccessList;
 					} else if (
 						locationCopy.access_list_id > 0 &&
@@ -227,6 +253,9 @@ const internalNginx = {
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
 		await internalNginx.loadRenderRelations(nice_host_type, host);
+
+		// Values are written into the config as-is; refuse any that could add directives
+		assertHostRenderable(nice_host_type, host);
 
 		debug(logger, `Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));
 
@@ -374,6 +403,15 @@ const internalNginx = {
 	generateLetsEncryptRequestConfig: (certificate) => {
 		debug(logger, "Generating LetsEncrypt Request Config:", certificate);
 		const renderEngine = utils.getRenderEngine();
+
+		const unsafe = (certificate.domain_names || []).find((name) => !isTokenSafe(name));
+		if (typeof unsafe !== "undefined") {
+			return Promise.reject(
+				unsafeValueError(
+					`Certificate #${certificate.id}: domain name ${JSON.stringify(unsafe)} is not allowed`,
+				),
+			);
+		}
 
 		return new Promise((resolve, reject) => {
 			let template = null;

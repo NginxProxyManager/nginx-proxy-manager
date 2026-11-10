@@ -524,6 +524,64 @@ if (process.env.NPM_API_TOKEN_TEST !== "1") {
 					.findById(foreign.proxy_hosts.id)
 					.patch({ domain_names: foreignDomains });
 			});
+			await t.test("upstream value validation complements PAT guards without side effects", async () => {
+				const hostPath = `${paths.proxy_hosts}/${own.proxy_hosts.id}`;
+				const savedHost = await models.proxy_hosts.query().findById(own.proxy_hosts.id);
+				const before = mutations;
+				for (const body of [
+					{ forward_host: "backend; return 200;" },
+					{ domain_names: ["example.test\nreturn 200;"] },
+					{
+						locations: [
+							{ path: "/api;", forward_scheme: "http", forward_host: "backend", forward_port: 80 },
+						],
+					},
+				]) {
+					expectStatus(await call("PUT", hostPath, all.token, body), 403);
+					expectStatus(await call("PUT", hostPath, owner.jwt, body), 400);
+				}
+				assert.deepEqual(await models.proxy_hosts.query().findById(own.proxy_hosts.id), savedHost);
+				const listCount = await models.access_lists.query().resultSize();
+				for (const username of ["bad:name", "bad\nname", "bad\u0000name"]) {
+					const body = {
+						...payloadFor("access_lists", "invalid-username"),
+						items: [{ username, password: "synthetic-password" }],
+					};
+					// Usernames reach the shared schema, rather than the PAT field guard.
+					for (const token of [all.token, owner.jwt]) {
+						expectStatus(await call("POST", paths.access_lists, token, body), 400);
+					}
+				}
+				assert.equal(await models.access_lists.query().resultSize(), listCount);
+				assert.equal(mutations, before);
+				try {
+					const safe = {
+						forward_host: "backend.example.test",
+						locations: [
+							{
+								path: "/api",
+								forward_scheme: "http",
+								forward_host: "127.0.0.1",
+								forward_port: 8080,
+								forward_path: "/v1",
+							},
+						],
+					};
+					for (const token of [all.token, owner.jwt]) {
+						const result = await call("PUT", hostPath, token, safe);
+						expectStatus(result, 200);
+						assert.equal(result.body.forward_host, safe.forward_host);
+						assert.equal(result.body.locations[0].forward_path, "/v1");
+					}
+				} finally {
+					await models.proxy_hosts.query().findById(savedHost.id).patch({
+						forward_host: savedHost.forward_host,
+						locations: savedHost.locations,
+						meta: savedHost.meta,
+					});
+				}
+			});
+
 			await t.test("custom configuration and directive injection cannot mutate Nginx via PAT", async () => {
 				const before = mutations;
 				for (const body of [

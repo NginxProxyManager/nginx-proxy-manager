@@ -31,7 +31,7 @@
 			"uniqueItems": true,
 			"items": {
 				"type": "string",
-				"pattern": "^[^&| @!#%^();:/\\\\}{=+?<>,~`'\"]+$"
+				"pattern": "^[^&| @!#%^();:/\\\\}{=+?<>,~`'\"\\s\\p{Cc}]+$"
 			},
 			"example": ["example.com", "www.example.com"]
 		},

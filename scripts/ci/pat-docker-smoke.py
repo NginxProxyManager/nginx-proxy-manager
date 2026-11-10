@@ -299,6 +299,26 @@ def run_two_user_matrix(admin):
             user["objects"][resource] = positive_id(created, "Matrix resource")
     progress("two ordinary own-visibility users created all six resource types using real PAT HTTP calls")
 
+    # Upstream schema validation and the stricter PAT guard must both reject
+    # directive/htpasswd injection before changing any persisted resource.
+    invalid_values = [
+        ("proxy_hosts", {"forward_host": "upstream; return 200"}, 403),
+        ("proxy_hosts", {"locations": [{"path": "/bad;", "forward_scheme": "http",
+          "forward_host": "upstream", "forward_port": 80}]}, 403),
+        ("redirection_hosts", {"forward_domain_name": "example.test; return 200"}, 403),
+        ("streams", {"forwarding_host": "upstream; return 200"}, 403),
+        ("access_lists", {"items": [{"username": "bad:name", "password": "invalid-fixture"}]}, 400),
+        ("access_lists", {"items": [{"username": "bad\nname", "password": "invalid-fixture"}]}, 400),
+    ]
+    for resource, body, pat_status in invalid_values:
+        path = f"/nginx/{resource.replace('_', '-')}/{a['objects'][resource]}"
+        before = api("GET", path, token=a["read"]["token"])
+        for credential, expected in ((a["write"]["token"], pat_status), (a["jwt"], 400), (admin, 400)):
+            api("PUT", path, token=credential, body=body, expected=expected)
+            require(api("GET", path, token=a["read"]["token"]) == before,
+                    "Rejected injection changed persisted resource data")
+    progress("PAT and admin/non-admin JWT reject directive and htpasswd injection without mutations")
+
     for actor, other in ((a, b), (b, a)):
         for resource in RESOURCES:
             path = "/nginx/" + resource.replace("_", "-")
