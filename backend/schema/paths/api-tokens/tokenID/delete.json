@@ -1,0 +1,56 @@
+{
+	"operationId": "revokeApiToken",
+	"summary": "Revoke your personal API token",
+	"tags": [
+		"api-tokens"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "Successful operation",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": [
+							"revoked"
+						],
+						"properties": {
+							"revoked": {
+								"type": "boolean",
+								"example": true
+							}
+						}
+					},
+					"example": {
+						"revoked": true
+					}
+				}
+			}
+		},
+		"401": {
+			"description": "Authentication required"
+		},
+		"403": {
+			"description": "Session, owner permissions or step-up verification required"
+		}
+	},
+	"parameters": [
+		{
+			"name": "tokenID",
+			"in": "path",
+			"required": true,
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"description": "ID of a personal API token owned by the authenticated user",
+			"example": 1
+		}
+	]
+}

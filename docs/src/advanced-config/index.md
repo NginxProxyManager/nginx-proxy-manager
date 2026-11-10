@@ -4,6 +4,11 @@ outline: deep
 
 # Advanced Configuration
 
+## Personal API tokens
+
+Use [personal API tokens](./api-tokens.md) to give integrations scoped, expiring,
+revocable access to the existing NPM resource APIs.
+
 ## Running processes as a user/group
 
 By default, the services (nginx etc) will run as `root` user inside the docker container.

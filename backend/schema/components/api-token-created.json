@@ -1,0 +1,99 @@
+{
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"name",
+		"scopes",
+		"visibility",
+		"created_on",
+		"expires_on",
+		"revoked_on",
+		"last_used_on",
+		"token",
+		"status"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1,
+			"example": 1
+		},
+		"name": {
+			"type": "string",
+			"example": "Home directory"
+		},
+		"scopes": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": [
+					"proxy_hosts:read",
+					"proxy_hosts:write",
+					"redirection_hosts:read",
+					"redirection_hosts:write",
+					"dead_hosts:read",
+					"dead_hosts:write",
+					"streams:read",
+					"streams:write",
+					"access_lists:read",
+					"access_lists:write",
+					"certificates:read",
+					"certificates:write"
+				]
+			},
+			"example": [
+				"proxy_hosts:read"
+			]
+		},
+		"visibility": {
+			"type": "string",
+			"enum": [
+				"user",
+				"all"
+			],
+			"example": "user"
+		},
+		"created_on": {
+			"type": "string",
+			"format": "date-time",
+			"example": "2026-01-01T00:00:00Z"
+		},
+		"expires_on": {
+			"type": "string",
+			"format": "date-time",
+			"example": "2026-01-31T00:00:00Z"
+		},
+		"revoked_on": {
+			"type": [
+				"string",
+				"null"
+			],
+			"format": "date-time",
+			"example": null
+		},
+		"last_used_on": {
+			"type": [
+				"string",
+				"null"
+			],
+			"format": "date-time",
+			"example": null
+		},
+		"token": {
+			"type": "string",
+			"description": "Displayed once. Store securely; never embedded in browser code.",
+			"example": "npm_example_not_a_real_token"
+		},
+		"status": {
+			"type": "string",
+			"enum": [
+				"active",
+				"expired",
+				"revoked"
+			],
+			"description": "Effective credential status, including invalidation by account or password changes.",
+			"example": "active"
+		}
+	}
+}
