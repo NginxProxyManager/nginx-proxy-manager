@@ -1021,11 +1021,12 @@ const internalCertificate = {
 				} catch (err) {
 					logger.error(`Nginx config test failed with new files for certificate #${row.id}: ${err.message}`);
 					const restored = await rollback();
+					// The raw nginx output is logged above but not attached as `previous`: the API error handler
+					// returns `previous` to the client for certificate routes.
 					throw new error.ValidationError(
 						restored
 							? "Nginx configuration test failed with the new certificate, the previous files were restored"
 							: "Nginx configuration test failed with the new certificate and the previous files could not be restored",
-						err,
 					);
 				}
 			}
@@ -1064,7 +1065,7 @@ const internalCertificate = {
 					await internalNginx.reload();
 				} catch (err) {
 					logger.error(`Nginx reload failed after uploading certificate #${row.id}: ${err.message}`);
-					throw new error.ConfigurationError("The certificate was saved but Nginx failed to reload", err);
+					throw new error.ConfigurationError("The certificate was saved but Nginx failed to reload");
 				}
 			}
 
