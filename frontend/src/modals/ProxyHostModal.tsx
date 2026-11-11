@@ -190,8 +190,8 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			{ port: form.values.forwardPort, scheme: form.values.forwardScheme },
 			{ port: form.initialValues.forwardPort, scheme: form.initialValues.forwardScheme },
 		);
-		if (prefill.port) {
-			form.setFieldValue("forwardPort", prefill.port);
+		if (prefill.port !== undefined) {
+			form.setFieldValue("forwardPort", prefill.port ?? "");
 		}
 		if (prefill.scheme) {
 			form.setFieldValue("forwardScheme", prefill.scheme);

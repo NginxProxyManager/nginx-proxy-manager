@@ -238,10 +238,10 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																						.forwardingPort,
 																				},
 																			);
-																			if (prefill.port) {
+																			if (prefill.port !== undefined) {
 																				form.setFieldValue(
 																					"forwardingPort",
-																					prefill.port,
+																					prefill.port ?? "",
 																				);
 																			}
 																		}}

@@ -636,7 +636,10 @@ function LocationCard({
 											initial,
 										);
 										const changes: Partial<ProxyLocation> = {};
-										if (prefill.port) changes.forwardPort = prefill.port;
+										if (prefill.port !== undefined) {
+											// null: emptied, as typing would (a validation error until filled in)
+											changes.forwardPort = (prefill.port ?? "") as unknown as number;
+										}
 										if (prefill.scheme) changes.forwardScheme = prefill.scheme;
 										if (Object.keys(changes).length) onChanges(changes);
 									}}

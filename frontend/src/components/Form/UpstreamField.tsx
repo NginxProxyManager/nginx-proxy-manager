@@ -72,24 +72,49 @@ export const groupCandidates = (items: UpstreamCandidate[] = []): GroupBase<Upst
 	})).filter((g) => g.options.length > 0);
 
 /**
+ * What a pick writes into the port and scheme fields. `null` empties the port: the new candidate has no port to
+ * offer, and the one in the field came from an earlier pick.
+ */
+export interface PrefillChange {
+	port?: number | null;
+	scheme?: "http" | "https";
+}
+
+/**
  * The port and scheme of a prefill that may actually be written: only fields
  * that are empty, still hold their saved (initial) value, or still hold what an
  * earlier pick filled in. A port or scheme the user set themselves is kept.
+ * When the new candidate has no port or scheme but the field still holds what an
+ * earlier pick filled in, that is reset to the saved value (scheme: http, port:
+ * empty when there is none), so it doesn't stay with a different target.
  */
 export const allowedPrefill = (
 	prefill: UpstreamPrefill,
 	current: { port?: unknown; scheme?: unknown },
 	initial: { port?: unknown; scheme?: unknown },
 	previous: UpstreamPrefill = {},
-): UpstreamPrefill => {
+): PrefillChange => {
 	const same = (a: unknown, b: unknown) => typeof b !== "undefined" && b !== null && `${a}` === `${b}`;
+	const isEmpty = (c: unknown) => c === undefined || c === null || c === "";
 	const isFree = (key: "port" | "scheme") => {
 		const c = current[key];
-		return c === undefined || c === null || c === "" || same(c, initial[key]) || same(c, previous[key]);
+		return isEmpty(c) || same(c, initial[key]) || same(c, previous[key]);
 	};
-	const result: UpstreamPrefill = {};
-	if (prefill.port && isFree("port")) result.port = prefill.port;
-	if (prefill.scheme && isFree("scheme")) result.scheme = prefill.scheme;
+	// still what an earlier pick filled in, and not the saved value
+	const isLeftOver = (key: "port" | "scheme") =>
+		!isEmpty(current[key]) && same(current[key], previous[key]) && !same(current[key], initial[key]);
+	const result: PrefillChange = {};
+	if (prefill.port && isFree("port")) {
+		result.port = prefill.port;
+	} else if (!prefill.port && isLeftOver("port")) {
+		const p = Number(initial.port);
+		result.port = Number.isInteger(p) && p > 0 ? p : null;
+	}
+	if (prefill.scheme && isFree("scheme")) {
+		result.scheme = prefill.scheme;
+	} else if (!prefill.scheme && isLeftOver("scheme")) {
+		result.scheme = initial.scheme === "https" ? "https" : "http";
+	}
 	return result;
 };
 
@@ -103,7 +128,11 @@ export function usePrefillGuard() {
 			initial: { port?: unknown; scheme?: unknown },
 		) => {
 			const result = allowedPrefill(prefill, current, initial, previous.current);
-			previous.current = { ...previous.current, ...result };
+			const next: UpstreamPrefill = { ...previous.current };
+			if (result.port) next.port = result.port;
+			else if (result.port === null) delete next.port;
+			if (result.scheme) next.scheme = result.scheme;
+			previous.current = next;
 			return result;
 		},
 		[],
@@ -160,9 +189,11 @@ const sameDomains = (a: string[], b: string[]) => {
 
 /**
  * The domain names and switches a container's labels fill into a proxy host form. Only free fields are
- * filled: the domain names when the field is empty (or still holds what an earlier pick filled in) and none
- * of the label's domains already has a host, the switches when the user hasn't changed them. A host that is
- * being edited keeps its domains and switches.
+ * filled: the domain names when the field is empty (or still holds what an earlier pick filled in, which is
+ * cleared when this container has no usable domains) and none of the label's domains already has a host, the
+ * switches when the user hasn't changed them. A candidate without labels (a DNS or history entry) counts as a
+ * container with no labels: it drops the domains an earlier pick filled in and turns the untouched switches
+ * off again. A host that is being edited keeps its domains and switches.
  */
 export const labelPrefill = (
 	s: UpstreamSuggestion | undefined,
@@ -170,23 +201,27 @@ export const labelPrefill = (
 	previousDomains: string[] = [],
 ): LabelPrefill => {
 	const none: LabelPrefill = { toggles: {}, existingHost: null, labelDomains: [], ignoredDomains: [] };
-	if (!s || !form.isNew) return none;
+	if (!form.isNew) return none;
 	const existingHost = existingHostOf(s);
+	const labelDomains = s?.domainNames || [];
 	const current = domainList(form.domainNames);
-	const domainsFree = !current.length || (previousDomains.length > 0 && sameDomains(current, previousDomains));
+	const fromEarlierPick = current.length > 0 && previousDomains.length > 0 && sameDomains(current, previousDomains);
 	const result: LabelPrefill = {
 		...none,
 		existingHost,
-		labelDomains: [...s.domainNames],
-		ignoredDomains: [...(s.ignoredDomains || [])],
+		labelDomains: [...labelDomains],
+		ignoredDomains: [...(s?.ignoredDomains || [])],
 	};
-	if (s.domainNames.length && !existingHost && domainsFree) {
-		result.domainNames = [...s.domainNames];
+	if (labelDomains.length && !existingHost && (!current.length || fromEarlierPick)) {
+		result.domainNames = [...labelDomains];
+	} else if (fromEarlierPick) {
+		// another container's domains: they don't belong to this one
+		result.domainNames = [];
 	}
 	for (const key of LABEL_TOGGLES) {
-		if (!form.touched.has(key)) result.toggles[key] = !!s[key];
+		if (!form.touched.has(key)) result.toggles[key] = !!s?.[key];
 	}
-	result.http2Support = !!s.http2Support;
+	result.http2Support = !!s?.http2Support;
 	return result;
 };
 

@@ -467,6 +467,34 @@ describe("allowedPrefill", () => {
 
 	it("returns nothing for an empty prefill", () => {
 		expect(allowedPrefill({}, { port: "" }, {})).toEqual({});
+		expect(allowedPrefill({}, { port: 8080, scheme: "https" }, { port: 80, scheme: "http" })).toEqual({});
+	});
+
+	it("resets what an earlier pick filled in when the new candidate has no port or scheme", () => {
+		// a new host: the scheme goes back to http, the port is emptied
+		expect(
+			allowedPrefill(
+				{ port: 80 },
+				{ port: 3000, scheme: "https" },
+				{ scheme: "http" },
+				{ port: 3000, scheme: "https" },
+			),
+		).toEqual({ port: 80, scheme: "http" });
+		expect(allowedPrefill({}, { port: 3000, scheme: "https" }, {}, { port: 3000, scheme: "https" })).toEqual({
+			port: null,
+			scheme: "http",
+		});
+		// an edited host: back to the saved values
+		expect(
+			allowedPrefill(
+				{},
+				{ port: 3000, scheme: "http" },
+				{ port: 8443, scheme: "https" },
+				{ port: 3000, scheme: "http" },
+			),
+		).toEqual({ port: 8443, scheme: "https" });
+		// values the user changed after the pick stay
+		expect(allowedPrefill({}, { port: 3001, scheme: "http" }, {}, { port: 3000, scheme: "https" })).toEqual({});
 	});
 });
 
@@ -627,6 +655,18 @@ describe("labelPrefill", () => {
 		).toBeUndefined();
 	});
 
+	it("clears domains an earlier pick filled in when this container has none to fill in", () => {
+		const earlier = ["shop.example.com"];
+		const form = { isNew: true, domainNames: ["shop.example.com"], touched: untouched };
+		expect(labelPrefill(suggestion({ forwardHost: "plain" }), form, earlier).domainNames).toEqual([]);
+		const taken = { ...blog, existingHostId: 7, existingHostType: "proxy_host" as const };
+		expect(labelPrefill(taken, form, earlier).domainNames).toEqual([]);
+		// the user's own domains stay
+		expect(
+			labelPrefill(taken, { ...form, domainNames: ["mine.example.com"] }, earlier).domainNames,
+		).toBeUndefined();
+	});
+
 	it("leaves the switches the user changed alone", () => {
 		const touched = new Set(["allowWebsocketUpgrade", "cachingEnabled"]);
 		expect(labelPrefill(blog, { isNew: true, domainNames: [], touched }).toggles).toEqual({ blockExploits: true });
@@ -655,8 +695,32 @@ describe("labelPrefill", () => {
 		expect(labelPrefill(s, { isNew: true, domainNames: [], touched: untouched }).ignoredDomains).toEqual(["*.com"]);
 	});
 
-	it("does nothing for a candidate without labels (DNS, history)", () => {
-		expect(labelPrefill(undefined, { isNew: true, domainNames: [], touched: untouched })).toEqual({
+	it("treats a candidate without labels (DNS, history, an alias) as a container without labels", () => {
+		const fresh = labelPrefill(undefined, { isNew: true, domainNames: [], touched: untouched });
+		expect(fresh).toEqual({
+			toggles: { allowWebsocketUpgrade: false, blockExploits: false, cachingEnabled: false },
+			http2Support: false,
+			existingHost: null,
+			labelDomains: [],
+			ignoredDomains: [],
+		});
+		// after a labelled pick: its domains go, typed ones stay, touched switches stay
+		const touched = new Set(["cachingEnabled"]);
+		const after = labelPrefill(
+			undefined,
+			{ isNew: true, domainNames: blog.domainNames, touched },
+			blog.domainNames,
+		);
+		expect(after.domainNames).toEqual([]);
+		expect(after.toggles).toEqual({ allowWebsocketUpgrade: false, blockExploits: false });
+		expect(
+			labelPrefill(undefined, { isNew: true, domainNames: ["typed.example.com"], touched }, blog.domainNames)
+				.domainNames,
+		).toBeUndefined();
+		// an edited host is left alone
+		expect(
+			labelPrefill(undefined, { isNew: false, domainNames: blog.domainNames, touched }, blog.domainNames),
+		).toEqual({
 			toggles: {},
 			existingHost: null,
 			labelDomains: [],

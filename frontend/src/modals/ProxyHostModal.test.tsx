@@ -477,6 +477,61 @@ describe("ProxyHostModal picking a labelled container", () => {
 		expect(toggle("cachingEnabled").checked).toBe(true);
 	});
 
+	it("drops what an earlier pick filled in when the next candidate has no labels", async () => {
+		const wiki = container("wiki", {
+			domain_names: ["wiki.example.com"],
+			allow_websocket_upgrade: true,
+			caching_enabled: true,
+		});
+		candidateItems = [
+			{ ...wiki, hint_port: 3000, hint_scheme: "https", ports: [3000] },
+			// a compose service alias, a DNS or a history entry: no suggestion
+			{
+				...wiki,
+				host: "notes",
+				label: "notes",
+				source: "history",
+				ports: [],
+				hint_port: null,
+				suggestion: undefined,
+			},
+		];
+		await open("new");
+		await pick("wiki");
+		expect(domainChips()).toEqual(["wiki.example.com"]);
+		expect(document.getElementById("forwardScheme")).toHaveValue("https");
+		expect(document.getElementById("forwardPort")).toHaveValue(3000);
+		expect(toggle("cachingEnabled").checked).toBe(true);
+		// the user's own choice stays
+		fireEvent.click(toggle("blockExploits"));
+
+		await pick("notes");
+
+		expect(domainChips()).toEqual([]);
+		expect(document.getElementById("forwardScheme")).toHaveValue("http");
+		expect(document.getElementById("forwardPort")).toHaveValue(null);
+		expect(toggle("allowWebsocketUpgrade").checked).toBe(false);
+		expect(toggle("cachingEnabled").checked).toBe(false);
+		expect(toggle("blockExploits").checked).toBe(true);
+	});
+
+	it("doesn't keep an earlier pick's domains for a container whose domains have a host", async () => {
+		candidateItems = [
+			blogContainer,
+			container("shop", {
+				domain_names: ["shop.example.com"],
+				existing_host_id: 4,
+				existing_host_type: "redirection_host",
+			}),
+		];
+		await open("new");
+		await pick("blog");
+		await pick("shop");
+
+		expect(domainChips()).toEqual([]);
+		expect(screen.getByTestId("label-existing-host")).toHaveTextContent("Used by a redirection host");
+	});
+
 	it("doesn't fill domains another host already has, and offers to open it", async () => {
 		candidateItems = [
 			container("blog", {
