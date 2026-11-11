@@ -61,5 +61,9 @@
  {"path":"/rdoi/","fp":"/o/","adv":"include /tmp/nginx-sem/snip/rdoff.conf;"},
  {"path":"/rdgi/","fp":"/g/","adv":"include /tmp/nginx-sem/snip/rdnest[.]conf;"},
  {"path":"/rdvi/","fp":"/v/","adv":"include /tmp/nginx-sem/snip/rdother.conf;"},
- {"path":"/crdoi/","fp":"/c/","cache":true,"adv":"include /tmp/nginx-sem/snip/rdoff.conf;"}
+ {"path":"/crdoi/","fp":"/c/","cache":true,"adv":"include /tmp/nginx-sem/snip/rdoff.conf;"},
+ {"path":"/bs\\.x/","fp":"/x/"},
+ {"path":"/bb\\\\x/","fp":"/x/"},
+ {"path":"\"/qe\\\"x/\"","fp":"/x/"},
+ {"path":"^~ /pe\\;x/","fp":"/x/"}
 ]

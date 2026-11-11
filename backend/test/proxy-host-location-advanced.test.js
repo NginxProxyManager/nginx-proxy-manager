@@ -1,6 +1,8 @@
-// Users who aren't admins may not change the advanced config of a custom location. The update matches the
-// incoming locations to the saved ones by path; switched off locations, trimmed paths and repeated regex
-// paths must not make an unchanged advanced config look changed (or let a change through).
+// Users who aren't admins may not change the advanced config of a custom location. Configs are matched by value
+// (internalHost.assertLocationAdvancedConfigUnchanged): a location may keep or carry an admin-written config, or
+// none, but not a new one or a copy. A location sent without one keeps the config of the saved location at its path;
+// switched off locations, trimmed paths and repeated regex paths (the n-th to the n-th saved one) must not make an
+// unchanged advanced config look changed (or let a change through).
 import assert from "node:assert/strict";
 import { after, before, beforeEach, describe, it } from "node:test";
 import { access, db, load, ts, userAccess } from "./support/backend.js";
@@ -105,13 +107,40 @@ describe("proxy host update: custom location advanced config of a user who isn't
 		assert.deepEqual(await advancedOf(id), ["proxy_set_header X-Api 1;"]);
 	});
 
-	it("refuses swapping the advanced config of two locations with the same regex path", async () => {
+	it("lets two locations with the same regex path swap their admin-written configs", async () => {
 		const id = await insertHost();
 		const locations = savedLocations.map((l) => ({ ...l }));
 		locations[1].advanced_config = "expires 7d;";
 		locations[2].advanced_config = "expires 1d;";
+		await internalProxyHost.update(user, { id, locations });
+		assert.deepEqual(await advancedOf(id), ["proxy_set_header X-Api 1;", "expires 7d;", "expires 1d;", "add_header X-Off 1;"]);
+	});
+
+	it("keeps the config of a renamed location, and allows clearing one", async () => {
+		const id = await insertHost();
+		const locations = savedLocations.map((l) => ({ ...l }));
+		locations[0].path = "/v2/api";
+		locations[1].advanced_config = "";
+		await internalProxyHost.update(user, { id, locations });
+		assert.deepEqual(await advancedOf(id), ["proxy_set_header X-Api 1;", "", "expires 7d;", "add_header X-Off 1;"]);
+	});
+
+	it("refuses copying an admin-written config onto another location", async () => {
+		const id = await insertHost();
+		const locations = savedLocations.map((l) => ({ ...l }));
+		locations[1].advanced_config = "expires 7d;";
 		await assert.rejects(internalProxyHost.update(user, { id, locations }), errs.PermissionError);
+		const added = [...savedLocations.map((l) => ({ ...l })), location("/copy", "proxy_set_header X-Api 1;")];
+		await assert.rejects(internalProxyHost.update(user, { id, locations: added }), errs.PermissionError);
 		assert.equal(configures, 0);
+		assert.deepEqual(await advancedOf(id), savedLocations.map((l) => l.advanced_config));
+	});
+
+	it("gives the n-th location with a repeated regex path the config of the n-th saved one when it omits it", async () => {
+		const id = await insertHost();
+		const locations = savedLocations.map((l) => ({ ...l }));
+		delete locations[2].advanced_config;
+		await internalProxyHost.update(user, { id, locations });
 		assert.deepEqual(await advancedOf(id), savedLocations.map((l) => l.advanced_config));
 	});
 

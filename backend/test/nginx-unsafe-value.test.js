@@ -186,6 +186,50 @@ describe("a host stored with a value that could add nginx directives", () => {
 		assert.ok(onDisk(id));
 	});
 
+	// Locations render prepareLocation()'s output (trimmed), so that is what is checked
+	const loc = (o) => ({ path: "/x", forward_scheme: "http", forward_host: "app", forward_port: 80, ...o });
+
+	it("renders a legacy location with whitespace around its values on the startup reconcile", async () => {
+		const id = await host({
+			locations: JSON.stringify([loc({ path: " /api ", forward_host: "app ", forward_path: " /v1 " })]),
+		});
+		const summary = await internalNginx.reconcile();
+		assert.equal(summary.offline, 0);
+		assert.equal(summary.regenerated, 1);
+		const meta = (await row(id)).meta;
+		assert.equal(meta.nginx_online, true);
+		assert.equal(meta.nginx_details?.kind === "unsafe_value", false);
+		assert.equal(meta.nginx_locations[0].status, "ok");
+		assert.match(onDisk(id), /location \/api \{/);
+	});
+
+	it("quarantines a legacy location with an empty path or forward host on its own, also when disabled", async () => {
+		const id = await host({
+			locations: JSON.stringify([
+				loc({ path: "/ok" }),
+				loc({ path: "  " }),
+				loc({ path: "/nohost", forward_host: " " }),
+				loc({ path: "", forward_host: "", enabled: false }),
+			]),
+		});
+		const meta = await internalNginx.configure(proxyHostModel, "proxy_host", await row(id));
+		assert.equal(meta.nginx_online, true);
+		assert.deepEqual(
+			meta.nginx_locations.map((s) => s.status),
+			["ok", "quarantined", "quarantined", "disabled"],
+		);
+		assert.ok(onDisk(id));
+	});
+
+	it("still goes offline for a location value that is unsafe once trimmed", async () => {
+		const id = await host(
+			{ locations: JSON.stringify([loc({ path: " /x { return 200; } location /y " })]) },
+			OLD_CONFIG,
+		);
+		await internalNginx.configure(proxyHostModel, "proxy_host", await row(id));
+		await assertOffline(id, /location path .* is not allowed in nginx config/);
+	});
+
 	it("goes offline for a location's access list client address, with the flag kept", async () => {
 		const [listId] = await db("access_list").insert({ owner_user_id: 1, name: "l", meta: "{}", ...ts });
 		await db("access_list_client").insert({

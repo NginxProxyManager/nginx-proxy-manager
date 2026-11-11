@@ -142,10 +142,11 @@ http {
   access_log off;
   resolver 127.0.0.11 valid=10s;
   port_in_redirect off;
-  # as in docker/rootfs/etc/nginx/nginx.conf: the Host the client sent, with its port
-  map $http_host $forward_host {
-    default $http_host;
-    "" $host;
+  # as in docker/rootfs/etc/nginx/nginx.conf: nginx's normalised $host plus the client's port when the Host
+  # header names the same host
+  map "$host|$http_host" $forward_host {
+    "~*^(?<fwd_name>[^|]+)\\|\\k<fwd_name>(?<fwd_port>:[0-9]+)$" "$host$fwd_port";
+    default $host;
   }
   # as in docker/rootfs/etc/nginx/nginx.conf, used by conf.d/include/proxy.conf
   map $host $forward_scheme {

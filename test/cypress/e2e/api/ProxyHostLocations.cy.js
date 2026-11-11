@@ -197,7 +197,7 @@ describe('Proxy Host custom location resilience', () => {
 			data:          {
 				locations: [
 					location('/same', 'examplesite'),
-					location(' /same ', 'examplesite'),
+					location('/same', 'examplesite'),
 				],
 			},
 		}).then((data) => {

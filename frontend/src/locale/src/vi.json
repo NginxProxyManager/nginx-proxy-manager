@@ -534,10 +534,13 @@
 		"defaultMessage": "Vị trí này có lỗi"
 	},
 	"location.error.host-invalid": {
-		"defaultMessage": "Host chứa ký tự không được phép (dấu nháy, ;, dấu ngoặc nhọn, $, # hoặc \\). Được phép dùng một biến nginx duy nhất như $backend."
+		"defaultMessage": "Host chứa ký tự không được phép (dấu nháy, ;, dấu ngoặc nhọn, $, # hoặc \\)."
 	},
 	"location.error.host-whitespace": {
 		"defaultMessage": "Host không được chứa khoảng trắng"
+	},
+	"location.error.location-path-invalid": {
+		"defaultMessage": "Đường dẫn chứa ký tự không được phép (khoảng trắng, dấu nháy, ;, dấu ngoặc nhọn, # hoặc \\). Hãy đặt đường dẫn có khoảng trắng trong dấu nháy kép, ví dụ \"/my path/\"."
 	},
 	"location.error.path-invalid": {
 		"defaultMessage": "Đường dẫn đích chứa ký tự không hợp lệ (khoảng trắng, dấu nháy, ;, dấu ngoặc nhọn, # hoặc \\). Được phép dùng biến nginx như $uri."

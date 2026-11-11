@@ -14,7 +14,7 @@ import { useField, useFormikContext } from "formik";
 import { useEffect, useRef, useState } from "react";
 import type { NginxLocationStatus, ProxyLocation } from "src/api/backend";
 import { intl, T } from "src/locale";
-import { isVariableHost, locationDuplicateKey, locationHostPart, normaliseLocationPath } from "src/modules/HostStatus";
+import { locationDuplicateKey, locationHostPart, normaliseLocationPath } from "src/modules/HostStatus";
 import { LocationStatusBadge } from "../StatusBadges";
 import { AccessField } from "./AccessField";
 import styles from "./LocationsFields.module.css";
@@ -37,18 +37,32 @@ export interface LocationErrors {
 export const isBlankLocation = (item: ProxyLocation) =>
 	!`${item?.path ?? ""}`.trim() && !`${item?.forwardHost ?? ""}`.trim() && !`${item?.advancedConfig ?? ""}`.trim();
 
-/** The locations to send to the API: blank rows removed, nothing else changed */
-export const cleanLocations = (items?: ProxyLocation[]) => (items || []).filter((l) => !isBlankLocation(l));
+/**
+ * The locations to send to the API: blank rows removed and the path and forward host trimmed (the API refuses
+ * surrounding whitespace before the server could trim it), nothing else changed
+ */
+export const cleanLocations = (items?: ProxyLocation[]) =>
+	(items || [])
+		.filter((l) => !isBlankLocation(l))
+		.map((l) => ({
+			...l,
+			...(typeof l.path === "string" ? { path: l.path.trim() } : {}),
+			...(typeof l.forwardHost === "string" ? { forwardHost: l.forwardHost.trim() } : {}),
+		}));
 
 // Characters that would break out of the generated nginx directive, the same
-// set the backend rejects. A host that is a single nginx variable is allowed.
+// set the API rejects (backend/lib/nginx-values.js, forwardHost). No nginx
+// variables: the API refuses `$` in the host part since v2.17.
 // Like the backend, the host part of `host/path` is checked on its own.
-const INVALID_HOST_CHARS = /[;{}'"`\\$#]/;
-// The path part of `host/path` goes into `proxy_pass ...<path>;`; the backend
-// quarantines a path with these. `$` is allowed, nginx variables are fine there.
-const INVALID_PATH_CHARS = /[\s;{}'"`\\#]/;
-// `${name}` is a variable too, the backend replaces it before the check above
-const BRACED_VARIABLE = /\$\{[A-Za-z0-9_]+\}/g;
+const INVALID_HOST_CHARS = /[\p{Cc};{}'"`\\$#]/u;
+// The path part of `host/path` goes into `proxy_pass ...<path>;`. `$` is
+// allowed, nginx variables such as `$uri` are fine there; `${uri}` is not,
+// the API refuses braces.
+const INVALID_PATH_CHARS = /[\s\p{Cc};{}'"`\\#]/u;
+// The location path as the API accepts it (backend/lib/nginx-values.js, locationPath): an optional modifier, then
+// one token, either unquoted (a "\" escapes a visible character) or double quoted
+const LOCATION_PATH =
+	/^(?!(?:=|~\*?|\^~)$)(?:(?:=|~\*?|\^~) +)?(?:"(?:[^"\\\p{Cc}]|\\[^\p{Cc}])+"|(?:[^\s\p{Cc};{}"'#\\]|\\[^\s\p{Cc}])+)$/u;
 
 export const validateLocations = (items: ProxyLocation[] = []): (LocationErrors | undefined)[] => {
 	// Locations nginx would reject as duplicates, by key: index and path of each
@@ -68,6 +82,8 @@ export const validateLocations = (items: ProxyLocation[] = []): (LocationErrors 
 		const other = key ? byKey.get(key)?.find((d) => d.index !== index) : undefined;
 		if (!path) {
 			errors.path = intl.formatMessage({ id: "error.required" });
+		} else if (!LOCATION_PATH.test(`${item.path ?? ""}`.trim())) {
+			errors.path = intl.formatMessage({ id: "location.error.location-path-invalid" });
 		} else if (other) {
 			errors.path = intl.formatMessage({ id: "location.error.duplicate-path" }, { path: other.path });
 		}
@@ -76,19 +92,14 @@ export const validateLocations = (items: ProxyLocation[] = []): (LocationErrors 
 		const host = `${item.forwardHost ?? ""}`.trim();
 		const hostPart = locationHostPart(host);
 		const pathPart = host.slice(hostPart.length);
-		// A disabled row is never rendered (the backend's preflightLocation() stops at `enabled: false`), so it only
-		// gets the checks the API itself makes for every row: required host, port range and duplicate paths.
-		// Switching it back on brings the format errors back.
-		const isEnabled = item.enabled !== false;
+		// The API checks the format of every row, a disabled one too
 		if (!hostPart) {
 			errors.forwardHost = intl.formatMessage({ id: "error.required" });
-		} else if (!isEnabled) {
-			// no format checks
 		} else if (/\s/.test(hostPart)) {
 			errors.forwardHost = intl.formatMessage({ id: "location.error.host-whitespace" });
-		} else if (!isVariableHost(hostPart) && INVALID_HOST_CHARS.test(hostPart)) {
+		} else if (INVALID_HOST_CHARS.test(hostPart)) {
 			errors.forwardHost = intl.formatMessage({ id: "location.error.host-invalid" });
-		} else if (INVALID_PATH_CHARS.test(pathPart.replace(BRACED_VARIABLE, "$x"))) {
+		} else if (INVALID_PATH_CHARS.test(pathPart)) {
 			errors.forwardHost = intl.formatMessage({ id: "location.error.path-invalid" });
 		}
 

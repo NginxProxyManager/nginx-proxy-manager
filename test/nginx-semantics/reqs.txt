@@ -84,6 +84,12 @@
 /acl/x|alice:secret|:8443
 /cache/app.css||:8443
 /cache/app.css||:9443
+/a/sub/x?q=1||^:8443
+/a/sub/x?q=1||^
+/f/r?redir=abs||^:8443
+/re/abc||^
+/cache/app.css||^:8443
+/cacheroot/app.css||^
 /cache/app.css
 /cacheroot/app.css||:8443
 /qc%20p/app.css||:8443
@@ -206,3 +212,11 @@
 /rdvi/r?redir=abs|||location: http://echo:9000/v/r/next
 /crdoi/r?redir=abs|||location: http://echo:9000/c/r/next
 /crdoi/r.css?redir=abs|||location: http://echo:9000/c/r.css/next
+/bs%5C.x/foo?a=1|||"url":"/x/foo?a=1"
+/bs%5C.x/r?redir=abs
+/bsx/foo
+/bb%5Cx/foo|||"url":"/x/foo"
+/bb%5Cx/r?redir=rel
+/qe%22x/foo|||"url":"/x/foo"
+/qe%22x/r?redir=abs
+/pe%5C;x/foo|||"url":"/x/foo"

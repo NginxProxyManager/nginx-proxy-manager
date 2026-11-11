@@ -68,13 +68,9 @@ describe("validateLocations", () => {
 		expect(validateLocations([loc({ forwardHost: " app/sub/ " })])[0]).toBeUndefined();
 	});
 
-	it("skips the format checks of a disabled row, the backend never renders it", () => {
-		const hosts = ["app;evil", "my app", "app/a b", "app$x"];
-		expect(validateLocations(hosts.map((forwardHost, i) => loc({ path: `/d${i}`, enabled: false, forwardHost })))).toEqual(
-			hosts.map(() => undefined),
-		);
-		// the same rows switched on (or without `enabled`) still have errors
-		for (const enabled of [true, undefined]) {
+	it("checks the format of a disabled row too, the API refuses it", () => {
+		const hosts = ["app;evil", "my app", "app/a b", "app$x", "$backend"];
+		for (const enabled of [false, true, undefined]) {
 			const errors = validateLocations(hosts.map((forwardHost, i) => loc({ path: `/d${i}`, enabled, forwardHost })));
 			expect(errors.every((e) => e?.forwardHost)).toBe(true);
 		}
@@ -92,7 +88,7 @@ describe("validateLocations", () => {
 		expect(high?.forwardPort).toMatch(/65535/);
 		expect(path?.path).toBe("This is required");
 		// the backend rejects duplicate paths among disabled rows too
-		const [, dup] = validateLocations([loc({ path: "/x" }), loc({ path: "/x", enabled: false, forwardHost: "a b" })]);
+		const [, dup] = validateLocations([loc({ path: "/x" }), loc({ path: "/x", enabled: false })]);
 		expect(dup?.path).toMatch(/already uses/);
 		expect(dup?.forwardHost).toBeUndefined();
 	});
@@ -117,8 +113,10 @@ describe("validateLocations", () => {
 			"app/my path",
 			"app/$" + "{a b}",
 			"app/$" + "{}",
+			// braced variables: the API refuses the braces
+			"app/$" + "{uri}",
 			"app/a\tb",
-			"$backend/a;b",
+			"app/a\u0007b",
 		]) {
 			expect(validateLocations([loc({ forwardHost })])[0]?.forwardHost).toMatch(
 				/invalid characters in forward path/i,
@@ -127,32 +125,29 @@ describe("validateLocations", () => {
 		// nginx variables in the path are fine
 		for (const forwardHost of [
 			"app/$uri",
-			"$backend/api/$arg_x",
+			"app/api/$arg_x",
 			"app/a-b_c.d/~e",
-			// braced variables, like the backend
-			"app/$" + "{uri}",
-			"$backend/api/$" + "{arg_x}/x",
 		]) {
 			expect(validateLocations([loc({ forwardHost })])[0]).toBeUndefined();
 		}
 	});
 
-	it("allows a forward host that is a single nginx variable", () => {
-		expect(validateLocations([loc({ forwardHost: "$backend" })])[0]).toBeUndefined();
-		expect(validateLocations([loc({ forwardHost: " $up_2 " })])[0]).toBeUndefined();
-		// anything else with a $ (or # or \) is rejected like the backend does
-		for (const host of ["$backend:80", "app$x", "$1x", "$" + "{backend}", "a#b", "a\\b"]) {
+	it("rejects nginx variables and control characters in the host, like the API", () => {
+		// the API refuses "$" in the host part since v2.17; variable hosts saved before still render
+		for (const host of ["$backend", " $up_2 ", "$backend/api", "$backend:80", "app$x", "app$x/api", "$" + "{backend}", "a#b", "a\\b", "a\u0001b"]) {
 			expect(validateLocations([loc({ forwardHost: host })])[0]?.forwardHost).toMatch(/not allowed/);
 		}
+		expect(validateLocations([loc({ forwardHost: "$back;end/api" })])[0]?.forwardHost).toMatch(/not allowed/);
+		expect(validateLocations([loc({ forwardHost: "$back end" })])[0]?.forwardHost).toBeTruthy();
 	});
 
-	it("checks only the host part of host/path, like the backend", () => {
-		// the backend splits at the first "/" and validates the host part only
-		expect(validateLocations([loc({ forwardHost: "$backend/api" })])[0]).toBeUndefined();
-		expect(validateLocations([loc({ forwardHost: " $up_2/a/b/ " })])[0]).toBeUndefined();
-		expect(validateLocations([loc({ forwardHost: "$back end" })])[0]?.forwardHost).toBeTruthy();
-		expect(validateLocations([loc({ forwardHost: "$back;end/api" })])[0]?.forwardHost).toMatch(/not allowed/);
-		expect(validateLocations([loc({ forwardHost: "app$x/api" })])[0]?.forwardHost).toMatch(/not allowed/);
+	it("checks the location path like the API", () => {
+		for (const path of ["/a", " /a/ ", "= /exact", "^~ /pre/", "~ ^/re/(.*)$", "~* \\.php$", '"/q p/"', "@named", "/a\\.b"]) {
+			expect(validateLocations([loc({ path })])[0]).toBeUndefined();
+		}
+		for (const path of ["/a b", "/a;b", "/a{", "/a}", "/a#b", "/a'b", '/a"b', "~", "^~", "/a\\", "/a\\ b", '"/a', "/a\u0001"]) {
+			expect(validateLocations([loc({ path })])[0]?.path).toMatch(/not allowed/);
+		}
 	});
 
 	it("treats a prefix path and the same path with ^~ as duplicates", () => {
@@ -190,6 +185,13 @@ describe("validateLocations", () => {
 		const rows = [loc({ path: "", forwardHost: "" }), loc({ path: "", forwardHost: "app" })];
 		expect(isBlankLocation(rows[0])).toBe(true);
 		expect(cleanLocations(rows)).toEqual([rows[1]]);
+	});
+
+	it("cleanLocations trims the path and the forward host, the API refuses surrounding whitespace", () => {
+		const [row] = cleanLocations([loc({ path: " /a/ ", forwardHost: " app/sub/ ", advancedConfig: " x " })]);
+		expect(row.path).toBe("/a/");
+		expect(row.forwardHost).toBe("app/sub/");
+		expect(row.advancedConfig).toBe(" x ");
 	});
 
 	it("statusForRow only returns a status that still matches the row's path", () => {
@@ -265,14 +267,11 @@ describe("LocationsFields", () => {
 		expect(screen.getAllByLabelText("This location has errors").length).toBe(2);
 	});
 
-	it("saves a disabled row whose stored host is invalid, and blocks again once it is switched on", async () => {
+	it("blocks a disabled row whose stored host is invalid, the API checks every row", async () => {
 		const { onSubmit } = renderFields([loc({ path: "/old", enabled: false, forwardHost: "app;legacy" })]);
 		fireEvent.click(screen.getByText("save"));
-		await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-		fireEvent.click(screen.getByLabelText("Enable or disable this location"));
-		fireEvent.click(screen.getByText("save"));
 		await waitFor(() => expect(screen.getByText(/The host contains characters that are not allowed/)).toBeInTheDocument());
-		expect(onSubmit).toHaveBeenCalledTimes(1);
+		expect(onSubmit).not.toHaveBeenCalled();
 	});
 
 	it("submits valid locations, storing the port as a number", async () => {

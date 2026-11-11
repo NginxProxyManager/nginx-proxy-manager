@@ -70,10 +70,19 @@ sleep 1
 
 # Prints "<status> <location header> <body>" with the per server host name normalised. The echo upstream
 # answers with the Host header it got: it must be the Host the client sent (with its port), also for cached
-# assets (the cache key has to include the port), otherwise the response is marked HOST-MISMATCH.
+# assets (the cache key has to include the port), otherwise the response is marked HOST-MISMATCH. A port
+# field starting with "^" sends the host name in upper case: nginx's $host is lower case, and so must be the
+# forwarded Host.
 fetch () {
-	local port="$1" path="$2" creds="$3" hostport="$4" header="$5" out host="srv${1}${4}"
-	local args=(-s -o /tmp/nginx-sem-body -D /tmp/nginx-sem-head -w '%{http_code}' -H "Host: ${host}" --path-as-is)
+	local port="$1" path="$2" creds="$3" hostport="$4" header="$5" out host sent
+	if [[ "$hostport" == ^* ]]; then
+		hostport="${hostport#^}"
+		sent="SRV${port}${hostport}"
+	else
+		sent="srv${port}${hostport}"
+	fi
+	host="srv${port}${hostport}"
+	local args=(-s -o /tmp/nginx-sem-body -D /tmp/nginx-sem-head -w '%{http_code}' -H "Host: ${sent}" --path-as-is)
 	if [ -n "$creds" ]; then
 		args+=(-u "$creds")
 	fi
@@ -84,7 +93,7 @@ fetch () {
 	local got
 	got="$(grep -o '"host":"[^"]*"' /tmp/nginx-sem-body || true)"
 	if [ -n "$got" ] && [ "$got" != "\"host\":\"${host}\"" ]; then
-		out="$out HOST-MISMATCH(sent ${host})"
+		out="$out HOST-MISMATCH(sent ${sent})"
 	fi
 	echo "$out $(grep -iE '^(location|x-sem-[a-z-]+):' /tmp/nginx-sem-head | tr -d '\r' | tr '\n' ' ') $(cat /tmp/nginx-sem-body)" | sed -E 's/srv80[0-9]{2}/srv/g'
 }
@@ -99,7 +108,8 @@ total=0
 while IFS= read -r line; do
 	[ -z "$line" ] && continue
 	# path|user:password|:port|expected|header (all but the path are optional; the port is added to the Host
-	# header, the expected text must be in the response, eg. the URI the upstream got; header is sent as it is)
+	# header, "^:port" also sends the host name in upper case; the expected text must be in the response, eg.
+	# the URI the upstream got; header is sent as it is)
 	IFS='|' read -r path creds hostport expect header <<< "$line"
 
 	if [[ "$path" =~ $CACHED ]]; then

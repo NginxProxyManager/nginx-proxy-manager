@@ -26,6 +26,7 @@ import {
 import { createIncludeReader } from "../lib/nginx-includes.js";
 import { createLock } from "../lib/nginx-lock.js";
 import {
+	assertLocationsRenderable,
 	CONFIG_VERSION_MARKER,
 	chooseLocationMode,
 	describeConfigLine,
@@ -2345,8 +2346,12 @@ const internalNginx = {
 
 		await internalNginx.loadRenderRelations(nice_host_type, host);
 
-		// Values are written into the config as-is; refuse any that could add directives
-		assertHostRenderable(nice_host_type, host);
+		// Values are written into the config as-is; refuse any that could add directives. Locations are
+		// checked as they are rendered (trimmed), see assertLocationsRenderable().
+		assertHostRenderable(nice_host_type, nice_host_type === "proxy_host" ? { ...host, locations: [] } : host);
+		if (nice_host_type === "proxy_host") {
+			assertLocationsRenderable(`proxy host #${host.id}`, host.locations);
+		}
 
 		debug(logger, `Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));
 

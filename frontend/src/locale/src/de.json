@@ -534,10 +534,13 @@
 		"defaultMessage": "Diese Location enthält Fehler"
 	},
 	"location.error.host-invalid": {
-		"defaultMessage": "Der Host enthält unzulässige Zeichen (Anführungszeichen, ;, Klammern, $, # oder \\). Eine einzelne nginx-Variable wie $backend ist erlaubt."
+		"defaultMessage": "Der Host enthält unzulässige Zeichen (Anführungszeichen, ;, Klammern, $, # oder \\)."
 	},
 	"location.error.host-whitespace": {
 		"defaultMessage": "Der Host darf keine Leerzeichen enthalten"
+	},
+	"location.error.location-path-invalid": {
+		"defaultMessage": "Der Pfad enthält unzulässige Zeichen (Leerzeichen, Anführungszeichen, ;, Klammern, # oder \\). Einen Pfad mit Leerzeichen in doppelte Anführungszeichen setzen, zum Beispiel \"/mein pfad/\"."
 	},
 	"location.error.path-invalid": {
 		"defaultMessage": "Ungültige Zeichen im Weiterleitungspfad (Leerzeichen, Anführungszeichen, ;, Klammern, # oder \\). nginx-Variablen wie $uri sind erlaubt."

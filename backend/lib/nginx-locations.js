@@ -22,7 +22,8 @@ import net from "node:net";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createIncludeReader } from "./nginx-includes.js";
-import { scanNginxConfig } from "./nginx-tokenize.js";
+import { scanNginxConfig, unescapeToken } from "./nginx-tokenize.js";
+import { isTokenSafe, isValid, unsafeValueError } from "./nginx-values.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -79,14 +80,16 @@ const MESSAGES = {
 };
 
 /**
- * Removes the quotes nginx strips from a quoted location path, `"/my path"` -> `/my path`
+ * The location path's URI as nginx reads it: without the quotes of a quoted path (`"/my path"` -> `/my path`),
+ * and with the escapes nginx resolves in any token (`\"`, `\'`, `\\`, `\t`, ...; the API accepts escaped
+ * characters in a path, eg. `/a\;b`)
  *
  * @param   {String} uri
  * @returns {String}
  */
 const unquote = (uri) => {
 	const m = `${uri}`.match(/^(["'])(.*)\1$/s);
-	return m ? m[2].replace(/\\(["'\\])/g, "$1") : uri;
+	return unescapeToken(m ? m[2] : `${uri}`);
 };
 
 /**
@@ -195,6 +198,39 @@ const prepareLocation = (location) => {
 	}
 
 	return loc;
+};
+
+/**
+ * The location part of assertHostRenderable() (lib/nginx-values.js), run on what the templates write:
+ * prepareLocation()'s output (trimmed, "host/path" split). A stored `/api ` or `app ` renders as `/api` and
+ * `app`, so it is safe. An empty path or forward host is quarantined on its own (preflightLocation()) and
+ * writes nothing of its own, or only the path as a stub (renderLocation()), so it is not a reason to take
+ * the whole host offline. The rules are the same: anything that is written is checked.
+ *
+ * @param   {String} label      e.g. "proxy host #3", as assertHostRenderable() writes it
+ * @param   {Array}  locations  as stored
+ * @throws  {ConfigurationError} with unsafeNginxValue set
+ */
+const assertLocationsRenderable = (label, locations) => {
+	const check = (ok, what, value) => {
+		if (!ok) {
+			const shown = JSON.stringify(String(value)).slice(0, 80);
+			throw unsafeValueError(`${label}: ${what} ${shown} is not allowed in nginx config`);
+		}
+	};
+	for (const raw of locations || []) {
+		const loc = prepareLocation(raw);
+		if (loc.path) {
+			// The path is several tokens (modifier, then a quoted or unquoted URI): its rule is the structural one
+			check(isValid("locationPath", loc.path), "location path", loc.path);
+		}
+		if (loc.forward_host) {
+			check(isTokenSafe(loc.forward_host), "location forward host", loc.forward_host);
+		}
+		if (loc.forward_path) {
+			check(isTokenSafe(loc.forward_path), "location forward path", loc.forward_path);
+		}
+	}
 };
 
 /**
@@ -474,8 +510,12 @@ const buildLocationContext = (loc, state) => {
 	const fp = loc.forward_path || "";
 	const canRewrite = rewritesUri(loc);
 	// (?s): "." also matches a newline (%0A in the URI), otherwise such a URI is not rewritten and reaches
-	// the upstream outside of the forward path. Quoted, so a quoted path with spaces stays one argument.
-	const rewrite = canRewrite ? `"(?s)^${escapeRegex(parsed.unquoted).replace(/"/g, '\\"')}(.*)$" ${fp}$1` : "";
+	// the upstream outside of the forward path. Quoted, so a quoted path with spaces stays one argument. nginx
+	// resolves `\\` and `\"` in the quoted string before PCRE sees it, so a backslash of the path is written as
+	// `\x5c` and a quote as `\"`; the other escapes of escapeRegex() (`\/`, `\.`, ...) reach PCRE as they are.
+	const rewrite = canRewrite
+		? `"(?s)^${escapeRegex(parsed.unquoted).replace(/\\\\/g, "\\x5c").replace(/"/g, '\\"')}(.*)$" ${fp}$1`
+		: "";
 	const redirect = canRewrite ? `${upstreamBase}${fp} ${parsed.uri}` : `${upstreamBase}/ /`;
 	// nginx does not allow nested locations in exact match and named locations. Every other location with
 	// "Cache Assets" gets the nested asset location, also one with a variable forward host ($backend) or forward
@@ -678,6 +718,7 @@ export {
 	CONFIG_VERSION,
 	CONFIG_VERSION_MARKER,
 	MESSAGES,
+	assertLocationsRenderable,
 	assetAdvancedConfig,
 	bracesBalanced,
 	buildLocationContext,

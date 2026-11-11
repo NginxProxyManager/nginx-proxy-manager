@@ -16,8 +16,9 @@ existed. The configs are produced by the real backend renderer (`backend/lib/ngi
   full host template `backend/templates/proxy_host.conf`, so they contain the host-level asset location
   (`conf.d/include/assets.conf`, proxied to the main upstream) before the custom locations, as in a real config
 - `run.sh`: starts nginx, sends every request to the servers and compares status, `Location` and body. It also
-  checks that the upstream got the Host the client sent, port included (`proxy_set_header Host $forward_host`, see
-  `map $http_host $forward_host` in `docker/rootfs/etc/nginx/nginx.conf`). For cached assets that only holds when the
+  checks that the upstream got the Host the client sent, port included, in lower case as nginx's `$host`
+  (`proxy_set_header Host $forward_host`, see `map "$host|$http_host" $forward_host` in
+  `docker/rootfs/etc/nginx/nginx.conf`; a `^` before the port sends the name in upper case). For cached assets that only holds when the
   cache key contains the port, so `/cache/app.css` with `:8443` and `:9443` must not share a cache entry. A response from the main upstream is a
   difference unless the request expects `"upstream":"main"`: the requests of a custom location, assets included,
   must reach that location's upstream.

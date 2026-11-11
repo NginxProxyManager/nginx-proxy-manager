@@ -251,6 +251,7 @@ export const locationDuplicateKey = (path: string): string | null => {
 
 // A forward host that is a single nginx variable, eg. `$backend` set in the
 // advanced config. nginx resolves it at request time, so it can't be checked.
+// The API refuses these since v2.17, only hosts saved before can still have one.
 const VARIABLE_HOST = /^\$[A-Za-z_][A-Za-z0-9_]*$/;
 export const isVariableHost = (host?: string | null) => VARIABLE_HOST.test(`${host ?? ""}`.trim());
 

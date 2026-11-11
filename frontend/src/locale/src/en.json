@@ -534,10 +534,13 @@
 		"defaultMessage": "This location has errors"
 	},
 	"location.error.host-invalid": {
-		"defaultMessage": "The host contains characters that are not allowed (quotes, ;, braces, $, # or \\). A single nginx variable such as $backend is allowed."
+		"defaultMessage": "The host contains characters that are not allowed (quotes, ;, braces, $, # or \\)."
 	},
 	"location.error.host-whitespace": {
 		"defaultMessage": "The host must not contain spaces"
+	},
+	"location.error.location-path-invalid": {
+		"defaultMessage": "The path contains characters that are not allowed (spaces, quotes, ;, braces, # or \\). Put a path with spaces in double quotes, for example \"/my path/\"."
 	},
 	"location.error.path-invalid": {
 		"defaultMessage": "Invalid characters in forward path (spaces, quotes, ;, braces, # or \\). nginx variables such as $uri are allowed."
