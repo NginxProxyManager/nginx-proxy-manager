@@ -100,7 +100,7 @@ const applyDocumentLocale = (locale: string): void => {
 };
 
 const getLocale = (short = false) => {
-	let loc = window.localStorage.getItem("locale");
+	let loc = window.localStorage?.getItem?.("locale");
 	if (!loc) {
 		loc = document.documentElement.lang;
 	}
