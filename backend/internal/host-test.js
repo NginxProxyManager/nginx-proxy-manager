@@ -10,7 +10,6 @@ import {
 	takePendingCertificate,
 	WARNING_MESSAGES,
 } from "../lib/host-test.js";
-import { matchSavedLocations } from "../lib/nginx-locations.js";
 import { checkTargets } from "../lib/upstream/check.js";
 import { consumeCheckBudget } from "../lib/upstream/check-budget.js";
 import { isUpstreamCheckEnabled } from "../lib/upstream/config.js";
@@ -71,12 +70,11 @@ const HOST_TYPES = {
 	},
 };
 
-const ADVANCED_CONFIG_DENIED = "You do not have permission to modify advanced configuration";
-
 /**
- * Users who aren't admins may not change advanced configs, see the create and update of each host type. A test
- * applies the same rule, so that it can't be used to run arbitrary advanced config through nginx -t. As in an
- * update, a location without advanced_config keeps the one of the saved location it replaces.
+ * Users who aren't admins may not change advanced configs: the same rule as a create or update of the host type
+ * (internalHost.assertAdvancedConfigAllowed()), so that a test can't be used to run arbitrary advanced config
+ * through nginx -t. As in an update, a location without advanced_config keeps the one of the saved location at
+ * its path.
  *
  * @param   {Access}       access
  * @param   {String}       hostType
@@ -88,43 +86,7 @@ const checkAdvancedConfigPermission = (access, hostType, input, row) => {
 	if (hostType === "stream") {
 		return;
 	}
-	const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
-	if (isAdmin) {
-		return;
-	}
-	const filled = (value) => typeof value === "string" && value.trim() !== "";
-	if (!row) {
-		if (filled(input.advanced_config)) {
-			throw new errs.PermissionError(ADVANCED_CONFIG_DENIED);
-		}
-		if (
-			hostType === "proxy_host" &&
-			Array.isArray(input.locations) &&
-			input.locations.some((loc) => filled(loc?.advanced_config))
-		) {
-			throw new errs.PermissionError(ADVANCED_CONFIG_DENIED);
-		}
-		return;
-	}
-	if (typeof input.advanced_config !== "undefined" && input.advanced_config !== row.advanced_config) {
-		throw new errs.PermissionError(ADVANCED_CONFIG_DENIED);
-	}
-	if (hostType === "proxy_host" && Array.isArray(input.locations)) {
-		const existing = matchSavedLocations(input.locations, row.locations);
-		input.locations = input.locations.map((loc, i) => {
-			const existingAdv = existing[i]?.advanced_config || "";
-			if (!loc || typeof loc !== "object") {
-				return loc;
-			}
-			if (typeof loc.advanced_config === "undefined") {
-				return Object.assign({}, loc, { advanced_config: existingAdv });
-			}
-			if ((loc.advanced_config || "") !== existingAdv) {
-				throw new errs.PermissionError(ADVANCED_CONFIG_DENIED);
-			}
-			return loc;
-		});
-	}
+	internalHost.assertAdvancedConfigAllowed(access, input, row || undefined);
 };
 
 const internalHostTest = {

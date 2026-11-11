@@ -49,6 +49,7 @@ const serverBlock = (id, name, extra = "") =>
 
 // Shaped like lib/access.js: hostTest.buildHost() checks the advanced config permission on an edit
 const accessStub = (admin) => ({
+	isAdmin: () => admin,
 	hasRole: (role) => admin && role === "admin",
 	token: { getUserId: () => (admin ? 1 : 2), hasScope: (scope) => admin && scope === "admin" },
 });

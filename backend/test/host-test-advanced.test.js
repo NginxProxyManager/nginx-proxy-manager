@@ -156,6 +156,32 @@ describe("config test: advanced config of users who aren't admins", () => {
 		);
 	});
 
+	it("applies the rules of a save: a renamed location keeps its config, clearing is allowed, a copy is refused", async () => {
+		const id = await insertProxyHost({
+			locations: [location("/api", "proxy_set_header X-Api 1;"), location("/img", "expires 1d;")],
+		});
+		await internalHostTest.test(user(), "proxy_host", {
+			id,
+			locations: [location("/v2/api", "proxy_set_header X-Api 1;"), location("/img", "")],
+		});
+		assert.equal(dryRuns.length, 1);
+		assert.deepEqual(
+			dryRuns[0].host.locations.map((l) => [l.path, l.advanced_config]),
+			[
+				["/v2/api", "proxy_set_header X-Api 1;"],
+				["/img", ""],
+			],
+		);
+
+		dryRuns.length = 0;
+		await denied(
+			internalHostTest.test(user(), "proxy_host", {
+				id,
+				locations: [location("/api", "proxy_set_header X-Api 1;"), location("/img", "proxy_set_header X-Api 1;")],
+			}),
+		);
+	});
+
 	it("lets admins test any advanced config", async () => {
 		const id = await insertProxyHost({ advanced_config: "add_header X-A 1;" });
 		await internalHostTest.test(access, "proxy_host", {

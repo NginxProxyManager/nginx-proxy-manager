@@ -254,9 +254,9 @@ const internalUpstream = {
 			}
 		};
 
-		// Proxy hosts can also be shared with a user explicitly, as in the proxy host list
+		// Proxy hosts can also be shared with a user explicitly, as in the proxy host list (scopeToOwnerOrAllowed())
 		const permissions = access.getPermissions ? access.getPermissions() : {};
-		const allowedProxyHostIds = permissions?.meta?.proxy_host_ids || permissions?.meta?.proxyHostIds || [];
+		const allowedProxyHostIds = permissions?.meta?.proxy_host_ids || [];
 		const [proxyFilter, streamFilter] = await Promise.all([
 			visibility("proxy_hosts:list", allowedProxyHostIds),
 			visibility("streams:list"),

@@ -131,7 +131,7 @@ describe('Host config test', () => {
 		testProxyHost(proxyHost({
 			locations: [
 				{ path: '/api', forward_scheme: 'http', forward_host: 'examplesite', forward_port: 80 },
-				{ path: ' /api', forward_scheme: 'http', forward_host: 'examplesite', forward_port: 80 },
+				{ path: '^~ /api', forward_scheme: 'http', forward_host: 'examplesite', forward_port: 80 },
 			],
 		}), true).then((data) => {
 			cy.validateSwaggerSchema('post', 400, '/nginx/proxy-hosts/test', data);
@@ -443,8 +443,19 @@ describe('Host config test', () => {
 				forward_scheme: 'http',
 				forward_host:   'examplesite',
 				forward_port:   80,
-				locations:      [{ path: '/api', forward_scheme: 'http', forward_host: 'examplesite', forward_port: 80, advanced_config: '' }],
+				locations:      [{ path: '/api', forward_scheme: 'http', forward_host: 'examplesite', forward_port: 80, advanced_config: 'add_header X-Shared 1;' }],
 			}).then(expectDenied);
+			// clearing a location's config is allowed (deleting the location is too)
+			testAs(userToken, '/api/nginx/proxy-hosts/test', {
+				id:             sharedHostId,
+				domain_names:   [sharedDomain],
+				forward_scheme: 'http',
+				forward_host:   'examplesite',
+				forward_port:   80,
+				locations:      [{ path: '/api', forward_scheme: 'http', forward_host: 'examplesite', forward_port: 80, advanced_config: '' }],
+			}).then((data) => {
+				expect(data).to.include({ ok: true, nginx_online: true });
+			});
 			// without advanced configs in the payload the saved ones are tested
 			testAs(userToken, '/api/nginx/proxy-hosts/test', {
 				id:             sharedHostId,

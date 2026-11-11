@@ -2050,6 +2050,9 @@ const internalNginx = {
 	canSeeHost: async (access, hostType, hostId) => {
 		try {
 			const permission = hostType === "stream" ? "streams" : `${hostType}s`;
+			if (access.isAdmin?.()) {
+				return true;
+			}
 			const accessData = await access.can(`${permission}:list`);
 			if (
 				accessData === true ||
@@ -2061,11 +2064,9 @@ const internalNginx = {
 			if (HOST_MODELS[hostType]) {
 				const row = await HOST_MODELS[hostType].query().where("id", hostId).first();
 				// Proxy hosts can also be shared with a user explicitly, see permissions.meta.proxy_host_ids
+				// (as scopeToOwnerOrAllowed() in models/proxy_host.js reads it)
 				const permissions = access.getPermissions ? access.getPermissions() : {};
-				const allowedIds =
-					hostType === "proxy_host"
-						? permissions?.meta?.proxy_host_ids || permissions?.meta?.proxyHostIds || []
-						: [];
+				const allowedIds = hostType === "proxy_host" ? permissions?.meta?.proxy_host_ids || [] : [];
 				return (
 					!!row &&
 					(row.owner_user_id === access.token.getUserId(1) ||
