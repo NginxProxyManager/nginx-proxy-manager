@@ -37,7 +37,11 @@ The API answers `400` with the details:
       "file": "/data/nginx/proxy_host/12.conf",
       "line": 31,
       "nginx_output": "nginx: [emerg] unknown directive \"proxy_passs\" in /data/nginx/proxy_host/12.conf:31",
-      "hint": "Check the spelling of the directive. If it comes from an nginx module, that module may not be available."
+      "hint": "Check the spelling of the directive. If it comes from an nginx module, that module may not be available.",
+      "hint_code": "unknown_directive",
+      "area": "host_advanced",
+      "relative_line": 3,
+      "detail": "Unknown directive \"proxy_passs\"."
     }
   }
 }
@@ -45,6 +49,11 @@ The API answers `400` with the details:
 
 `scope` is `host` when this host's own configuration was rejected, and `global` when a file NPM doesn't manage was
 rejected, for example one of your [custom configuration files](/advanced-config/#custom-nginx-configurations).
+
+`message` is English. The UI words the error in its own language from the other fields: `area` and `relative_line`
+say where it is (`host_advanced`: the host's advanced configuration), `reason` marks special cases (`conflict`,
+`regenerated_conflict`, `too_many_broken_hosts`, `redacted`), `detail` is the humanised nginx error on its own and
+`hint_code` names the hint. `detail` is shown as it is, it is not translated.
 
 ### Other broken hosts
 

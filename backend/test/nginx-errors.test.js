@@ -120,7 +120,7 @@ describe("humaniseNginxMessage", () => {
 	}
 
 	it("passes unknown messages through", () => {
-		assert.deepEqual(humaniseNginxMessage("something odd"), { text: "something odd", hint: null });
+		assert.deepEqual(humaniseNginxMessage("something odd"), { text: "something odd", hint: null, code: null });
 	});
 
 	it("gives a hint for unresolvable hosts", () => {

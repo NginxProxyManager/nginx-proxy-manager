@@ -452,9 +452,6 @@
 	"host-status.details": {
 		"defaultMessage": "Show status details"
 	},
-	"host-status.disabled": {
-		"defaultMessage": "Disabled"
-	},
 	"host-status.error": {
 		"defaultMessage": "Error"
 	},
@@ -575,8 +572,128 @@
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Enter your custom Nginx configuration here at your own risk!"
 	},
+	"nginx-error.advanced": {
+		"defaultMessage": "Error in the custom Nginx configuration"
+	},
+	"nginx-error.advanced-line": {
+		"defaultMessage": "Error in the custom Nginx configuration, line {line}"
+	},
+	"nginx-error.auto-disabled": {
+		"defaultMessage": "Disabled automatically: {reason}"
+	},
+	"nginx-error.conflict": {
+		"defaultMessage": "This change conflicts with the configuration of another host"
+	},
+	"nginx-error.default-site": {
+		"defaultMessage": "Could not reconfigure the default site. {reason}"
+	},
+	"nginx-error.field.access-list-client-address": {
+		"defaultMessage": "Access list client address"
+	},
+	"nginx-error.field.location-forward-host": {
+		"defaultMessage": "Custom location forward host"
+	},
+	"nginx-error.field.location-forward-path": {
+		"defaultMessage": "Custom location forward path"
+	},
+	"nginx-error.field.location-path": {
+		"defaultMessage": "Custom location path"
+	},
+	"nginx-error.file": {
+		"defaultMessage": "Error in the nginx configuration file {file}"
+	},
+	"nginx-error.file-line": {
+		"defaultMessage": "Error in the nginx configuration file {file}, line {line}"
+	},
+	"nginx-error.global": {
+		"defaultMessage": "Nginx rejected the configuration"
+	},
+	"nginx-error.hint.address_in_use": {
+		"defaultMessage": "Another host or service already listens on this port."
+	},
+	"nginx-error.hint.certificate_load": {
+		"defaultMessage": "The certificate may have been deleted or not issued yet. Select another certificate or renew it."
+	},
+	"nginx-error.hint.conflict": {
+		"defaultMessage": "Another host already uses this setting (for example the same listen port with default_server), or the advanced configuration includes another host's config file."
+	},
+	"nginx-error.hint.directive_not_allowed": {
+		"defaultMessage": "This directive can't be used in this context."
+	},
+	"nginx-error.hint.duplicate_directive": {
+		"defaultMessage": "Remove the duplicate. NPM may already set this directive for you."
+	},
+	"nginx-error.hint.duplicate_location": {
+		"defaultMessage": "Each location path may only be used once per host, including locations in the advanced configuration."
+	},
+	"nginx-error.hint.host_not_found": {
+		"defaultMessage": "Check that the host name is spelled correctly, that the container or server is running, and that NPM can reach it on a shared network."
+	},
+	"nginx-error.hint.invalid_arguments": {
+		"defaultMessage": "Check for a missing or extra value, or a missing semicolon at the end of the previous line."
+	},
+	"nginx-error.hint.invalid_port": {
+		"defaultMessage": "The port must be a number between 1 and 65535. A forward path must start with \"/\"."
+	},
+	"nginx-error.hint.invalid_regex": {
+		"defaultMessage": "Check the regular expression syntax of the location path or rewrite."
+	},
+	"nginx-error.hint.invalid_url": {
+		"defaultMessage": "Check the scheme and host of the upstream."
+	},
+	"nginx-error.hint.location_nesting": {
+		"defaultMessage": "Exact (=) and named (@) locations can't contain other locations."
+	},
+	"nginx-error.hint.location_not_allowed": {
+		"defaultMessage": "Locations can only be placed in a server block or inside another location."
+	},
+	"nginx-error.hint.no_certificate": {
+		"defaultMessage": "Select a certificate for this host."
+	},
+	"nginx-error.hint.no_resolver": {
+		"defaultMessage": "The nginx resolver is disabled (DISABLE_RESOLVER). Use an IP address or enable the resolver."
+	},
+	"nginx-error.hint.regex_uri_part": {
+		"defaultMessage": "Remove the forward path or use a prefix location."
+	},
+	"nginx-error.hint.unexpected_close_brace": {
+		"defaultMessage": "Check that every '{' has a matching '}'."
+	},
+	"nginx-error.hint.unexpected_eof": {
+		"defaultMessage": "Check for a missing semicolon or closing '}'."
+	},
+	"nginx-error.hint.unexpected_open_brace": {
+		"defaultMessage": "Check that every '{' has a matching '}' and that the previous line ends with a semicolon."
+	},
+	"nginx-error.hint.unexpected_semicolon": {
+		"defaultMessage": "Check for a stray semicolon."
+	},
+	"nginx-error.hint.unknown_directive": {
+		"defaultMessage": "Check the spelling of the directive. If it comes from an nginx module, that module may not be available."
+	},
+	"nginx-error.hint.unknown_variable": {
+		"defaultMessage": "Check the spelling of the variable, or define it with set or map."
+	},
+	"nginx-error.host": {
+		"defaultMessage": "Nginx rejected the configuration of this host"
+	},
+	"nginx-error.other-host": {
+		"defaultMessage": "Nginx rejected the configuration of {host}"
+	},
+	"nginx-error.redacted": {
+		"defaultMessage": "Nginx rejected the configuration of another host. Please ask an administrator to check it."
+	},
+	"nginx-error.regenerated-conflict": {
+		"defaultMessage": "The regenerated configuration conflicts with the configuration of another host"
+	},
 	"nginx-error.show-output": {
 		"defaultMessage": "Show nginx output"
+	},
+	"nginx-error.too-many-broken-hosts": {
+		"defaultMessage": "Too many broken host configs to repair in one go (more than {max}). Regenerate all host configs (restart NPM or run backend/scripts/regenerate-config), then try again."
+	},
+	"nginx-error.unsafe-value": {
+		"defaultMessage": "A saved value of this host can't be written into the nginx configuration safely, so its configuration was removed"
 	},
 	"no-permission-error": {
 		"defaultMessage": "You do not have access to view this."

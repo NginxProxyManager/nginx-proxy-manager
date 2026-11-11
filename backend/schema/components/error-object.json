@@ -54,6 +54,36 @@
 				"hint": {
 					"type": ["string", "null"],
 					"example": "Check the spelling of the directive."
+				},
+				"hint_code": {
+					"type": ["string", "null"],
+					"description": "Names the hint, for clients that word it in their own language",
+					"example": "unknown_directive"
+				},
+				"area": {
+					"type": ["string", "null"],
+					"description": "Part of the host's config the error is in, eg. host_advanced",
+					"example": "host_advanced"
+				},
+				"relative_line": {
+					"type": ["integer", "null"],
+					"description": "Line within that area, eg. of the advanced configuration",
+					"example": 3
+				},
+				"reason": {
+					"type": "string",
+					"description": "Set for special cases: conflict, regenerated_conflict, too_many_broken_hosts, redacted",
+					"example": "conflict"
+				},
+				"detail": {
+					"type": ["string", "null"],
+					"description": "The humanised nginx error on its own, for clients that word the rest of the message themselves. kind unsafe_value: the rejected value, quoted",
+					"example": "Unknown directive \"proxy_passs\"."
+				},
+				"field": {
+					"type": ["string", "null"],
+					"description": "kind unsafe_value: which value can't be written into nginx config, eg. forward_host",
+					"example": "forward_host"
 				}
 			}
 		}

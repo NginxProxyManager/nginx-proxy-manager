@@ -7,6 +7,7 @@ import type { HostMeta } from "src/api/backend";
 import { useLocaleState } from "src/context";
 import { formatDateTime, T } from "src/locale";
 import { getHostStatus, type HostState } from "src/modules/HostStatus";
+import { HostNginxError } from "../../NginxFeedback";
 
 const STATE_COLOR: Record<HostState, string> = {
 	disabled: "secondary",
@@ -15,7 +16,7 @@ const STATE_COLOR: Record<HostState, string> = {
 };
 
 const STATE_LABEL: Record<HostState, string> = {
-	disabled: "host-status.disabled",
+	disabled: "disabled",
 	online: "online",
 	error: "host-status.error",
 };
@@ -89,7 +90,7 @@ export function HostStatusFormatter({ enabled, meta, onLogs }: Props) {
 							<div className="fw-bold">
 								<T id="host-status.config-error" />
 							</div>
-							{status.nginxErr ? <div className="text-break">{status.nginxErr}</div> : null}
+							<HostNginxError meta={meta} detailClassName="d-block text-break text-secondary" />
 						</li>
 					) : null}
 				</ul>

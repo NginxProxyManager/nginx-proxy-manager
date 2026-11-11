@@ -144,14 +144,33 @@ export interface ProxyLocation {
 export type NginxConfigErrorScope = "host" | "other_host" | "global";
 
 export interface NginxConfigErrorDetails {
-	kind: "nginx_config";
+	// unsafe_value: a stored value that can't be written into nginx config safely (host meta only)
+	kind: "nginx_config" | "unsafe_value";
 	scope: NginxConfigErrorScope;
-	hostType?: string;
-	hostId?: number;
+	hostType?: string | null;
+	hostId?: number | null;
 	file?: string | null;
 	line?: number | null;
 	nginxOutput?: string | null;
 	hint?: string | null;
+	// What the UI words the error from (the message is English). Missing in details stored by older versions.
+	// the part of the host's config the error is in, and the line within it
+	area?: string | null;
+	relativeLine?: number | null;
+	// special cases: conflict, regenerated_conflict, too_many_broken_hosts, redacted
+	reason?: string;
+	// too_many_broken_hosts: how many hosts one operation repairs at most
+	max?: number;
+	// the humanised nginx error (unsafe_value: the rejected value, quoted), shown as it is
+	detail?: string | null;
+	// unsafe_value: which value, eg. forward_host
+	field?: string | null;
+	// names the hint: nginx-error.hint.<hintCode>
+	hintCode?: string | null;
+	// host meta: the host was taken offline while another host was saved
+	autoDisabled?: boolean;
+	// default_site: the error came from saving the default site
+	context?: string;
 }
 
 export interface HostMeta {

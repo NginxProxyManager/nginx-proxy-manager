@@ -90,125 +90,149 @@ const stripPort = (upstream) => {
 
 /**
  * Each rule turns a raw nginx message into a short sentence (without a trailing full stop)
- * plus an optional hint.
+ * plus an optional hint. `code` names the rule, the UI words the hint from it (nginx-error.hint.<code>).
  */
 const RULES = [
 	{
+		code: "host_not_found",
 		regex: /host not found in upstream "([^"]+)"/,
 		text: (m) => `host "${stripPort(m[1])}" could not be resolved`,
 		hint: "Check that the host name is spelled correctly, that the container or server is running, and that NPM can reach it on a shared network.",
 	},
 	{
+		code: "no_resolver",
 		regex: /no resolver defined to resolve (\S+)/,
 		text: (m) => `no DNS resolver is configured to resolve "${m[1]}"`,
 		hint: "The nginx resolver is disabled (DISABLE_RESOLVER). Use an IP address or enable the resolver.",
 	},
 	{
+		code: "invalid_port",
 		regex: /invalid port in upstream "([^"]+)"/,
 		text: (m) => `invalid port in upstream "${m[1]}"`,
 		hint: 'The port must be a number between 1 and 65535. A forward path must start with "/".',
 	},
 	{
+		code: "invalid_url",
 		regex: /invalid URL prefix in "([^"]+)"/,
 		text: (m) => `invalid URL "${m[1]}"`,
 		hint: "Check the scheme and host of the upstream.",
 	},
 	{
+		code: "unknown_directive",
 		regex: /unknown directive "([^"]+)"/,
 		text: (m) => `unknown directive "${m[1]}"`,
 		hint: "Check the spelling of the directive. If it comes from an nginx module, that module may not be available.",
 	},
 	{
+		code: "unknown_variable",
 		regex: /unknown "([^"]+)" variable/,
 		text: (m) => `unknown variable "$${m[1]}"`,
 		hint: "Check the spelling of the variable, or define it with set or map.",
 	},
 	{
+		code: "invalid_arguments",
 		regex: /invalid number of arguments in "([^"]+)" directive/,
 		text: (m) => `wrong number of arguments for "${m[1]}"`,
 		hint: "Check for a missing or extra value, or a missing semicolon at the end of the previous line.",
 	},
 	{
+		code: "duplicate_directive",
 		regex: /"([^"]+)" directive is duplicate/,
 		text: (m) => `"${m[1]}" is set more than once`,
 		hint: "Remove the duplicate. NPM may already set this directive for you.",
 	},
 	{
+		code: "duplicate_location",
 		regex: /duplicate location "([^"]+)"/,
 		text: (m) => `the location "${m[1]}" is defined more than once`,
 		hint: "Each location path may only be used once per host, including locations in the advanced configuration.",
 	},
 	{
+		code: "unexpected_close_brace",
 		regex: /unexpected "\}"/,
 		text: () => 'unexpected "}"',
 		hint: "Check that every { has a matching }.",
 	},
 	{
+		code: "unexpected_open_brace",
 		regex: /unexpected "\{"/,
 		text: () => 'unexpected "{"',
 		hint: "Check that every { has a matching } and that the previous line ends with a semicolon.",
 	},
 	{
+		code: "unexpected_semicolon",
 		regex: /unexpected ";"/,
 		text: () => 'unexpected ";"',
 		hint: "Check for a stray semicolon.",
 	},
 	{
+		code: "unexpected_eof",
 		regex: /unexpected end of file, expecting "([^"]+)"/,
 		text: (m) => `the configuration ends unexpectedly, a "${m[1]}" is missing`,
 		hint: "Check for a missing semicolon or closing }.",
 	},
 	{
+		code: "regex_uri_part",
 		regex: /"proxy_pass" cannot have URI part in location given by regular expression/,
 		text: () => "a forward path can't be used with a regular-expression location",
 		hint: "Remove the forward path or use a prefix location.",
 	},
 	{
+		code: "invalid_regex",
 		regex: /pcre2?_compile\(\) failed: (.+?)(?: in "[^"]*")?(?: at "[^"]*")?$/,
 		text: (m) => `invalid regular expression (${m[1].trim()})`,
 		hint: "Check the regular expression syntax of the location path or rewrite.",
 	},
 	{
+		code: "certificate_load",
 		regex: /cannot load certificate(?: key)? "([^"]+)"/,
 		text: (m) => `the certificate file "${m[1]}" could not be loaded`,
 		hint: "The certificate may have been deleted or not issued yet. Select another certificate or renew it.",
 	},
 	{
+		code: "certificate_load",
 		regex: /BIO_new_file\(\) failed/,
 		text: () => "a certificate file could not be loaded",
 		hint: "The certificate may have been deleted or not issued yet. Select another certificate or renew it.",
 	},
 	{
+		code: "no_certificate",
 		regex: /no "ssl_certificate" is defined/,
 		text: () => "SSL is enabled but no certificate is defined",
 		hint: "Select a certificate for this host.",
 	},
 	{
+		code: "invalid_parameter",
 		regex: /invalid parameter "([^"]+)"/,
 		text: (m) => `invalid parameter "${m[1]}"`,
 		hint: null,
 	},
 	{
+		code: "location_nesting",
 		regex: /location "([^"]+)" cannot be inside the (exact|named) location "([^"]+)"/,
 		text: (m) => `the location "${m[1]}" can't be placed inside the ${m[2]} location "${m[3]}"`,
 		hint: "Exact (=) and named (@) locations can't contain other locations.",
 	},
 	{
+		code: "location_not_allowed",
 		regex: /"location" directive is not allowed here/,
 		text: () => 'a "location" block is not allowed here',
 		hint: "Locations can only be placed in a server block or inside another location.",
 	},
 	{
+		code: "directive_not_allowed",
 		regex: /"([^"]+)" directive is not allowed here/,
 		text: (m) => `the "${m[1]}" directive is not allowed here`,
 		hint: "This directive can't be used in this context.",
 	},
 	{
+		code: "server_names_hash",
 		regex: /could not build server_names_hash|could not build map_hash/,
 		text: () => "too many or too long domain names",
 		hint: null,
 	},
 	{
+		code: "address_in_use",
 		regex: /bind\(\) to (\S+) failed/,
 		text: (m) => `the address ${m[1]} is already in use`,
 		hint: "Another host or service already listens on this port.",
@@ -217,17 +241,17 @@ const RULES = [
 
 /**
  * @param   {String} message  nginx message without the "nginx: [emerg]" prefix and without the "in file:line" suffix
- * @returns {{text: String, hint: String|null}}
+ * @returns {{text: String, hint: String|null, code: String|null}} code: the rule that matched
  */
 const humaniseNginxMessage = (message) => {
 	const msg = `${message || ""}`.trim();
 	for (const rule of RULES) {
 		const match = msg.match(rule.regex);
 		if (match) {
-			return { text: rule.text(match), hint: rule.hint };
+			return { text: rule.text(match), hint: rule.hint, code: rule.code };
 		}
 	}
-	return { text: msg || "nginx rejected the configuration", hint: null };
+	return { text: msg || "nginx rejected the configuration", hint: null, code: null };
 };
 
 const capitalise = (str) => (str ? str.charAt(0).toUpperCase() + str.slice(1) : str);

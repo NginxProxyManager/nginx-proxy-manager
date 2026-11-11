@@ -452,9 +452,6 @@
 	"host-status.details": {
 		"defaultMessage": "Statusdetails anzeigen"
 	},
-	"host-status.disabled": {
-		"defaultMessage": "Deaktiviert"
-	},
 	"host-status.error": {
 		"defaultMessage": "Fehler"
 	},
@@ -575,8 +572,128 @@
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Geben Sie hier Ihre benutzerdefinierte Nginx-Konfiguration auf eigene Gefahr ein!"
 	},
+	"nginx-error.advanced": {
+		"defaultMessage": "Fehler in der benutzerdefinierten Nginx-Konfiguration"
+	},
+	"nginx-error.advanced-line": {
+		"defaultMessage": "Fehler in der benutzerdefinierten Nginx-Konfiguration, Zeile {line}"
+	},
+	"nginx-error.auto-disabled": {
+		"defaultMessage": "Automatisch deaktiviert: {reason}"
+	},
+	"nginx-error.conflict": {
+		"defaultMessage": "Diese Änderung steht im Konflikt mit der Konfiguration eines anderen Hosts"
+	},
+	"nginx-error.default-site": {
+		"defaultMessage": "Die Standardseite konnte nicht neu konfiguriert werden. {reason}"
+	},
+	"nginx-error.field.access-list-client-address": {
+		"defaultMessage": "Client-Adresse der Zugriffsliste"
+	},
+	"nginx-error.field.location-forward-host": {
+		"defaultMessage": "Weiterleitungs-Host der benutzerdefinierten Location"
+	},
+	"nginx-error.field.location-forward-path": {
+		"defaultMessage": "Weiterleitungspfad der benutzerdefinierten Location"
+	},
+	"nginx-error.field.location-path": {
+		"defaultMessage": "Pfad der benutzerdefinierten Location"
+	},
+	"nginx-error.file": {
+		"defaultMessage": "Fehler in der nginx-Konfigurationsdatei {file}"
+	},
+	"nginx-error.file-line": {
+		"defaultMessage": "Fehler in der nginx-Konfigurationsdatei {file}, Zeile {line}"
+	},
+	"nginx-error.global": {
+		"defaultMessage": "Nginx hat die Konfiguration abgelehnt"
+	},
+	"nginx-error.hint.address_in_use": {
+		"defaultMessage": "Ein anderer Host oder Dienst lauscht bereits auf diesem Port."
+	},
+	"nginx-error.hint.certificate_load": {
+		"defaultMessage": "Das Zertifikat wurde möglicherweise gelöscht oder noch nicht ausgestellt. Wähle ein anderes Zertifikat oder erneuere es."
+	},
+	"nginx-error.hint.conflict": {
+		"defaultMessage": "Ein anderer Host verwendet diese Einstellung bereits (zum Beispiel denselben listen-Port mit default_server), oder die benutzerdefinierte Konfiguration bindet die Konfigurationsdatei eines anderen Hosts ein."
+	},
+	"nginx-error.hint.directive_not_allowed": {
+		"defaultMessage": "Diese Direktive kann in diesem Kontext nicht verwendet werden."
+	},
+	"nginx-error.hint.duplicate_directive": {
+		"defaultMessage": "Entferne das Duplikat. NPM setzt diese Direktive möglicherweise bereits für dich."
+	},
+	"nginx-error.hint.duplicate_location": {
+		"defaultMessage": "Jeder Location-Pfad darf pro Host nur einmal verwendet werden, auch Locations in der benutzerdefinierten Konfiguration."
+	},
+	"nginx-error.hint.host_not_found": {
+		"defaultMessage": "Prüfe, ob der Hostname richtig geschrieben ist, ob der Container oder Server läuft und ob NPM ihn über ein gemeinsames Netzwerk erreichen kann."
+	},
+	"nginx-error.hint.invalid_arguments": {
+		"defaultMessage": "Prüfe, ob ein Wert fehlt oder zu viel ist oder ob am Ende der vorherigen Zeile ein Semikolon fehlt."
+	},
+	"nginx-error.hint.invalid_port": {
+		"defaultMessage": "Der Port muss eine Zahl zwischen 1 und 65535 sein. Ein Weiterleitungspfad muss mit \"/\" beginnen."
+	},
+	"nginx-error.hint.invalid_regex": {
+		"defaultMessage": "Prüfe die Syntax des regulären Ausdrucks im Location-Pfad oder im Rewrite."
+	},
+	"nginx-error.hint.invalid_url": {
+		"defaultMessage": "Prüfe das Schema und den Host des Ziels."
+	},
+	"nginx-error.hint.location_nesting": {
+		"defaultMessage": "Exakte (=) und benannte (@) Locations können keine anderen Locations enthalten."
+	},
+	"nginx-error.hint.location_not_allowed": {
+		"defaultMessage": "Locations können nur in einem server-Block oder in einer anderen Location stehen."
+	},
+	"nginx-error.hint.no_certificate": {
+		"defaultMessage": "Wähle ein Zertifikat für diesen Host."
+	},
+	"nginx-error.hint.no_resolver": {
+		"defaultMessage": "Der nginx-Resolver ist deaktiviert (DISABLE_RESOLVER). Verwende eine IP-Adresse oder aktiviere den Resolver."
+	},
+	"nginx-error.hint.regex_uri_part": {
+		"defaultMessage": "Entferne den Weiterleitungspfad oder verwende eine Präfix-Location."
+	},
+	"nginx-error.hint.unexpected_close_brace": {
+		"defaultMessage": "Prüfe, ob zu jeder '{' eine passende '}' gehört."
+	},
+	"nginx-error.hint.unexpected_eof": {
+		"defaultMessage": "Prüfe, ob ein Semikolon oder eine schließende '}' fehlt."
+	},
+	"nginx-error.hint.unexpected_open_brace": {
+		"defaultMessage": "Prüfe, ob zu jeder '{' eine passende '}' gehört und ob die vorherige Zeile mit einem Semikolon endet."
+	},
+	"nginx-error.hint.unexpected_semicolon": {
+		"defaultMessage": "Prüfe, ob irgendwo ein überzähliges Semikolon steht."
+	},
+	"nginx-error.hint.unknown_directive": {
+		"defaultMessage": "Prüfe die Schreibweise der Direktive. Wenn sie aus einem nginx-Modul stammt, ist dieses Modul möglicherweise nicht verfügbar."
+	},
+	"nginx-error.hint.unknown_variable": {
+		"defaultMessage": "Prüfe die Schreibweise der Variablen oder definiere sie mit set oder map."
+	},
+	"nginx-error.host": {
+		"defaultMessage": "Nginx hat die Konfiguration dieses Hosts abgelehnt"
+	},
+	"nginx-error.other-host": {
+		"defaultMessage": "Nginx hat die Konfiguration von {host} abgelehnt"
+	},
+	"nginx-error.redacted": {
+		"defaultMessage": "Nginx hat die Konfiguration eines anderen Hosts abgelehnt. Bitte einen Administrator, sie zu prüfen."
+	},
+	"nginx-error.regenerated-conflict": {
+		"defaultMessage": "Die neu erzeugte Konfiguration steht im Konflikt mit der Konfiguration eines anderen Hosts"
+	},
 	"nginx-error.show-output": {
 		"defaultMessage": "Nginx-Ausgabe anzeigen"
+	},
+	"nginx-error.too-many-broken-hosts": {
+		"defaultMessage": "Zu viele fehlerhafte Host-Konfigurationen, um sie auf einmal zu reparieren (mehr als {max}). Erzeuge alle Host-Konfigurationen neu (starte NPM neu oder führe backend/scripts/regenerate-config aus) und versuche es dann erneut."
+	},
+	"nginx-error.unsafe-value": {
+		"defaultMessage": "Ein gespeicherter Wert dieses Hosts kann nicht sicher in die nginx-Konfiguration geschrieben werden, daher wurde seine Konfiguration entfernt"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Sie haben keinen Zugriff, um dies anzuzeigen."
