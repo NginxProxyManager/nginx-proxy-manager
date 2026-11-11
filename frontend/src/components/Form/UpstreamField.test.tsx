@@ -1,8 +1,16 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
-import type { UpstreamCandidate, UpstreamCandidates } from "src/api/backend";
+import type { UpstreamCandidate, UpstreamCandidates, UpstreamSuggestion } from "src/api/backend";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { allowedPrefill, candidatePrefill, groupCandidates, UpstreamField } from "./UpstreamField";
+import {
+	allowedPrefill,
+	candidatePrefill,
+	existingHostOf,
+	groupCandidates,
+	LabelPrefillHint,
+	labelPrefill,
+	UpstreamField,
+} from "./UpstreamField";
 
 const hookState = vi.hoisted(() => ({ data: undefined as unknown, refresh: () => {} }));
 const helpModal = vi.hoisted(() => vi.fn());
@@ -64,11 +72,13 @@ function Harness({
 	onChange,
 	onSelectCandidate,
 	initial = "",
+	labels,
 }: {
 	candidates?: UpstreamCandidates;
 	onChange?: (v: string) => void;
 	onSelectCandidate?: (...args: any[]) => void;
 	initial?: string;
+	labels?: { hostId?: number | null };
 }) {
 	const [value, setValue] = useState(initial);
 	return (
@@ -82,6 +92,7 @@ function Harness({
 					onChange?.(v);
 				}}
 				onSelectCandidate={onSelectCandidate}
+				labels={labels}
 			/>
 			<input id="port" aria-label="Forward Port" />
 			<output data-testid="value">{value}</output>
@@ -204,6 +215,7 @@ describe("UpstreamField", () => {
 		openMenu();
 		expect(screen.queryByTestId("docker-disabled-hint")).toBeNull();
 	});
+
 });
 
 // Candidates whose host starts with what a user would type for something else
@@ -514,5 +526,233 @@ describe("UpstreamField selection guard", () => {
 		typeInto("new-host ");
 		fireEvent.click(screen.getByText(/new-host/, { selector: ".react-select__option" }));
 		expect(screen.getByTestId("value")).toHaveTextContent(/^new-host$/);
+	});
+});
+
+const suggestion = (s: Partial<UpstreamSuggestion> = {}): UpstreamSuggestion => ({
+	domainNames: [],
+	forwardScheme: "http",
+	forwardHost: "x",
+	forwardPort: null,
+	allowWebsocketUpgrade: false,
+	blockExploits: false,
+	cachingEnabled: false,
+	http2Support: false,
+	ignoredDomains: [],
+	existingHostId: null,
+	existingHostType: null,
+	...s,
+});
+
+const blog = suggestion({
+	domainNames: ["blog.example.com", "www.blog.example.com"],
+	forwardHost: "blog",
+	forwardPort: 2368,
+	allowWebsocketUpgrade: true,
+	blockExploits: true,
+	http2Support: true,
+});
+const untouched = new Set<string>();
+
+describe("labelPrefill", () => {
+	it("fills the domains and all switches of a new host", () => {
+		expect(labelPrefill(blog, { isNew: true, domainNames: [], touched: untouched })).toEqual({
+			domainNames: ["blog.example.com", "www.blog.example.com"],
+			toggles: { allowWebsocketUpgrade: true, blockExploits: true, cachingEnabled: false },
+			http2Support: true,
+			existingHost: null,
+			labelDomains: ["blog.example.com", "www.blog.example.com"],
+			ignoredDomains: [],
+		});
+	});
+
+	it("never changes the domains or switches of a host being edited", () => {
+		const result = labelPrefill(blog, { isNew: false, domainNames: [], touched: untouched });
+		expect(result.domainNames).toBeUndefined();
+		expect(result.toggles).toEqual({});
+		expect(result.http2Support).toBeUndefined();
+		expect(result.existingHost).toBeNull();
+	});
+
+	it("keeps domains the user entered", () => {
+		const result = labelPrefill(blog, { isNew: true, domainNames: ["mine.example.com"], touched: untouched });
+		expect(result.domainNames).toBeUndefined();
+		// the switches are still free
+		expect(result.toggles.allowWebsocketUpgrade).toBe(true);
+	});
+
+	it("replaces domains an earlier pick filled in, but not once the user changed them", () => {
+		const earlier = ["shop.example.com"];
+		expect(
+			labelPrefill(blog, { isNew: true, domainNames: ["shop.example.com"], touched: untouched }, earlier)
+				.domainNames,
+		).toEqual(blog.domainNames);
+		expect(
+			labelPrefill(
+				blog,
+				{ isNew: true, domainNames: ["shop.example.com", "more.example.com"], touched: untouched },
+				earlier,
+			).domainNames,
+		).toBeUndefined();
+	});
+
+	it("leaves the switches the user changed alone", () => {
+		const touched = new Set(["allowWebsocketUpgrade", "cachingEnabled"]);
+		expect(labelPrefill(blog, { isNew: true, domainNames: [], touched }).toggles).toEqual({ blockExploits: true });
+	});
+
+	it("turns untouched switches off again for a container without those labels", () => {
+		const plain = suggestion({ forwardHost: "plain" });
+		const result = labelPrefill(plain, { isNew: true, domainNames: [], touched: untouched });
+		expect(result.toggles).toEqual({ allowWebsocketUpgrade: false, blockExploits: false, cachingEnabled: false });
+		expect(result.domainNames).toBeUndefined();
+		expect(result.http2Support).toBe(false);
+	});
+
+	it("doesn't fill domains another host already has, and says which host", () => {
+		for (const type of ["proxy_host", "redirection_host", "dead_host"] as const) {
+			const taken = { ...blog, existingHostId: 7, existingHostType: type };
+			const result = labelPrefill(taken, { isNew: true, domainNames: [], touched: untouched });
+			expect(result.domainNames).toBeUndefined();
+			expect(result.existingHost).toEqual({ id: 7, type });
+			expect(result.labelDomains).toEqual(blog.domainNames);
+		}
+	});
+
+	it("reports the npm.domain entries that were dropped", () => {
+		const s = { ...blog, ignoredDomains: ["*.com"] };
+		expect(labelPrefill(s, { isNew: true, domainNames: [], touched: untouched }).ignoredDomains).toEqual(["*.com"]);
+	});
+
+	it("does nothing for a candidate without labels (DNS, history)", () => {
+		expect(labelPrefill(undefined, { isNew: true, domainNames: [], touched: untouched })).toEqual({
+			toggles: {},
+			existingHost: null,
+			labelDomains: [],
+			ignoredDomains: [],
+		});
+	});
+
+	it("doesn't count the host being edited as the one that has the domains", () => {
+		const own = { ...blog, existingHostId: 3, existingHostType: "proxy_host" as const };
+		expect(existingHostOf(own, 3)).toBeNull();
+		expect(existingHostOf(own, 4)).toEqual({ id: 3, type: "proxy_host" });
+		// a redirection host with the same id is another host
+		expect(existingHostOf({ ...own, existingHostType: "redirection_host" }, 3)).toEqual({
+			id: 3,
+			type: "redirection_host",
+		});
+	});
+});
+
+const labelled: UpstreamCandidates = {
+	providers: data().providers,
+	items: [
+		candidate({
+			host: "blog",
+			label: "blog (container)",
+			source: "docker",
+			ports: [2368],
+			state: "running",
+			suggestion: blog,
+		}),
+		candidate({
+			host: "shop",
+			label: "shop (container)",
+			source: "docker",
+			ports: [80],
+			state: "running",
+			suggestion: suggestion({
+				domainNames: ["shop.example.com"],
+				forwardHost: "shop",
+				ignoredDomains: ["*.com"],
+				existingHostId: 7,
+				existingHostType: "redirection_host",
+			}),
+		}),
+	],
+	generatedAt: "2026-11-04T10:00:00Z",
+};
+
+const option = (host: string) =>
+	Array.from(document.querySelectorAll(".react-select__option")).find(
+		(o) => o.querySelector("strong")?.textContent === host,
+	) as HTMLElement;
+
+describe("UpstreamField label domains", () => {
+	afterEach(() => cleanup());
+
+	it("shows the label domains and marks containers whose domains have a host", () => {
+		render(<Harness candidates={labelled} labels={{ hostId: null }} />);
+		openMenu();
+		expect(option("blog").querySelector("[data-testid=option-domains]")).toHaveTextContent(
+			"blog.example.com, www.blog.example.com",
+		);
+		expect(option("blog").querySelector("[data-testid=existing-host-badge]")).toBeNull();
+		const badge = option("shop").querySelector("[data-testid=existing-host-badge]") as HTMLElement;
+		expect(badge).toHaveTextContent("domain in use");
+		expect(badge).toHaveAttribute("data-type", "redirection_host");
+		expect(badge.getAttribute("title")).toMatch(/redirection host already uses/);
+		expect(option("shop").querySelector("[data-testid=option-ignored-domains]")).toHaveTextContent("*.com");
+	});
+
+	it("doesn't mark the container of the proxy host being edited", () => {
+		const own: UpstreamCandidates = {
+			...labelled,
+			items: [
+				{ ...labelled.items[0], suggestion: { ...blog, existingHostId: 3, existingHostType: "proxy_host" } },
+			],
+		};
+		render(<Harness candidates={own} labels={{ hostId: 3 }} />);
+		openMenu();
+		expect(screen.queryByTestId("existing-host-badge")).toBeNull();
+	});
+
+	it("leaves the label details out where there are no domains (streams, locations)", () => {
+		render(<Harness candidates={labelled} />);
+		openMenu();
+		expect(screen.queryByTestId("option-domains")).toBeNull();
+		expect(screen.queryByTestId("existing-host-badge")).toBeNull();
+		expect(screen.queryByTestId("option-ignored-domains")).toBeNull();
+	});
+});
+
+describe("LabelPrefillHint", () => {
+	afterEach(() => cleanup());
+	const base = { toggles: {}, labelDomains: ["shop.example.com"], ignoredDomains: [] as string[] };
+
+	it("offers to open the proxy host that has the domains", () => {
+		const onOpen = vi.fn();
+		render(<LabelPrefillHint prefill={{ ...base, existingHost: { id: 7, type: "proxy_host" } }} onOpen={onOpen} />);
+		const hint = screen.getByTestId("label-existing-host");
+		expect(hint).toHaveTextContent("A proxy host already uses one of these domains");
+		expect(hint).toHaveTextContent("(shop.example.com) were not filled in");
+		expect(hint).not.toHaveTextContent("change or remove it first");
+		fireEvent.click(screen.getByTestId("open-existing"));
+		expect(onOpen).toHaveBeenCalledWith({ id: 7, type: "proxy_host" });
+	});
+
+	it("says a redirection or 404 host has to be changed first", () => {
+		render(
+			<LabelPrefillHint prefill={{ ...base, existingHost: { id: 2, type: "dead_host" } }} onOpen={() => {}} />,
+		);
+		const hint = screen.getByTestId("label-existing-host");
+		expect(hint).toHaveTextContent("Used by a 404 host: change or remove it first");
+		// said once, not twice
+		expect(hint).not.toHaveTextContent("already uses one of these domains");
+		expect(screen.getByTestId("open-existing")).toBeInTheDocument();
+	});
+
+	it("lists dropped npm.domain entries, and shows nothing when there is nothing to say", () => {
+		const { rerender } = render(
+			<LabelPrefillHint
+				prefill={{ ...base, existingHost: null, ignoredDomains: ["*.com", "bad!.example.com"] }}
+				onOpen={() => {}}
+			/>,
+		);
+		expect(screen.getByTestId("ignored-domains")).toHaveTextContent("*.com, bad!.example.com");
+		expect(screen.queryByTestId("label-existing-host")).toBeNull();
+		rerender(<LabelPrefillHint prefill={{ ...base, existingHost: null }} onOpen={() => {}} />);
+		expect(screen.queryByTestId("label-hint")).toBeNull();
 	});
 });

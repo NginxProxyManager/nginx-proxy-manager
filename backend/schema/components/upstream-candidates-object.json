@@ -152,7 +152,7 @@
 					},
 					"suggestion": {
 						"type": "object",
-						"description": "Docker containers only: a proxy host built from the container's npm.* labels (npm.domain, npm.port, npm.scheme, npm.websocket, npm.block_exploits, npm.caching, npm.http2). domain_names is empty when the container has no valid npm.domain label. existing_host_id/existing_host_type name a host (visible to the user) that already uses one of the domain names: Create would fail for any type, only a proxy host can be opened instead.",
+						"description": "Docker containers and their compose service aliases only: proxy host fields from the container's npm.* labels, filled in when the item is picked as forward host (npm.domain, npm.port, npm.scheme, npm.websocket, npm.block_exploits, npm.caching, npm.http2). domain_names is empty when the container has no valid npm.domain label. existing_host_id/existing_host_type name a host (visible to the user) that already uses one of the domain names: a new proxy host can't use them (the UI doesn't fill them in), the UI offers to open that host instead.",
 						"additionalProperties": false,
 						"required": ["domain_names", "forward_scheme", "forward_host", "forward_port", "allow_websocket_upgrade", "block_exploits", "caching_enabled", "http2_support", "ignored_domains", "existing_host_id", "existing_host_type"],
 						"example": {

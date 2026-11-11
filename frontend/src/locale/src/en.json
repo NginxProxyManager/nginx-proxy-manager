@@ -353,14 +353,8 @@
 	"disabled": {
 		"defaultMessage": "Disabled"
 	},
-	"docker-labels.button": {
-		"defaultMessage": "From Docker"
-	},
-	"docker-labels.create": {
-		"defaultMessage": "Create"
-	},
-	"docker-labels.empty": {
-		"defaultMessage": "No container has an npm.domain label yet. Add labels like these to a container on a network Nginx Proxy Manager is on, recreate it, then refresh:"
+	"docker-labels.badge": {
+		"defaultMessage": "domain in use"
 	},
 	"docker-labels.exists": {
 		"defaultMessage": "{type, select, redirection_host {A redirection host already uses one of these domains} dead_host {A 404 host already uses one of these domains} other {A proxy host already uses one of these domains}}"
@@ -371,26 +365,11 @@
 	"docker-labels.ignored-hint": {
 		"defaultMessage": "The domain names field would refuse these names (wildcards are allowed only as a leading *. like *.example.com)"
 	},
-	"docker-labels.intro": {
-		"defaultMessage": "These containers have an npm.domain label. Create opens a filled-in proxy host form: check it, then save."
-	},
-	"docker-labels.no-port": {
-		"defaultMessage": "No port: set the npm.port label, or enter it in the form"
+	"docker-labels.not-filled": {
+		"defaultMessage": "The domain names from the container's npm.domain label ({domains}) were not filled in."
 	},
 	"docker-labels.open": {
 		"defaultMessage": "Open"
-	},
-	"docker-labels.other": {
-		"defaultMessage": "Other containers ({count})"
-	},
-	"docker-labels.other-hint": {
-		"defaultMessage": "No usable npm.domain label: Create fills in only the target."
-	},
-	"docker-labels.title": {
-		"defaultMessage": "Proxy hosts from Docker labels"
-	},
-	"docker-labels.unavailable": {
-		"defaultMessage": "Docker labels can't be read: {message}"
 	},
 	"docker-labels.used-by": {
 		"defaultMessage": "{type, select, redirection_host {Used by a redirection host: change or remove it first} dead_host {Used by a 404 host: change or remove it first} other {Used by a proxy host}}"

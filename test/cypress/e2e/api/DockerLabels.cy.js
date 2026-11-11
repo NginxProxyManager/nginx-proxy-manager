@@ -4,7 +4,8 @@
 //
 // Docker discovery is opt-in. Without it (the default CI stack) the spec checks that no suggestions are
 // returned. With NPM_DOCKER_DISCOVERY=true and a Docker API that lists a container labelled
-// npm.domain=labels-blog.example.com (as in the e2e fixture), it also walks the one-click flow.
+// npm.domain=labels-blog.example.com (as in the e2e fixture), it also checks the suggestion the forward host
+// picker fills into a new proxy host, and the existing-host marks it shows.
 describe('Docker label suggestions', () => {
 	let token;
 	const fixtureDomain = 'labels-blog.example.com';
@@ -20,6 +21,10 @@ describe('Docker label suggestions', () => {
 	};
 
 	const withSuggestion = (data) => data.items.filter((item) => item.suggestion);
+	// the fixture container's own item (its compose service alias carries the same suggestion)
+	const labelledContainer = (data) => withSuggestion(data).find(
+		(i) => /\(container\)$/.test(i.label) && i.suggestion.domain_names.includes(fixtureDomain)
+	);
 
 	const hostBody = (s) => ({
 		domain_names:            s.domain_names,
@@ -52,7 +57,7 @@ describe('Docker label suggestions', () => {
 			const suggested = withSuggestion(data);
 			for (const item of suggested) {
 				expect(item.source).to.equal('docker');
-				expect(item.label).to.match(/\(container\)$/);
+				expect(item.label).to.match(/\((container|compose service of .+)\)$/);
 				const s = item.suggestion;
 				expect(s.forward_host).to.equal(item.host);
 				expect(s.forward_scheme).to.be.oneOf(['http', 'https']);
@@ -74,9 +79,9 @@ describe('Docker label suggestions', () => {
 
 	it('Should mark a suggestion once a proxy host uses its domain', () => {
 		getCandidates().then((data) => {
-			const item = withSuggestion(data).find((i) => i.suggestion.domain_names.includes(fixtureDomain));
+			const item = labelledContainer(data);
 			if (data.providers.docker.status !== 'ok' || !item) {
-				cy.log('Docker discovery with the label fixture is not running, skipping the one-click flow');
+				cy.log('Docker discovery with the label fixture is not running, skipping the label flow');
 				return;
 			}
 
@@ -93,12 +98,12 @@ describe('Docker label suggestions', () => {
 			expect(s.existing_host_id).to.equal(null);
 			expect(s.existing_host_type).to.equal(null);
 
-			// The compose service alias of the same container carries no suggestion
+			// The compose service alias of the same container carries the same suggestion, aimed at the alias
 			for (const alias of data.items.filter((i) => i.label.includes(`compose service of ${item.host}`))) {
-				expect(alias).not.to.have.property('suggestion');
+				expect(alias.suggestion).to.deep.equal({ ...s, forward_host: alias.host });
 			}
 
-			// One click: the suggestion is a valid proxy host body
+			// What the picker fills in is a valid proxy host body
 			cy.task('backendApiPost', {
 				token: token,
 				path:  '/api/nginx/proxy-hosts',
@@ -131,7 +136,7 @@ describe('Docker label suggestions', () => {
 
 	it('Should report a redirection host that already uses a label domain', () => {
 		getCandidates().then((data) => {
-			const item = withSuggestion(data).find((i) => i.suggestion.domain_names.includes(fixtureDomain));
+			const item = labelledContainer(data);
 			if (data.providers.docker.status !== 'ok' || !item) {
 				cy.log('Docker discovery with the label fixture is not running, skipping');
 				return;
@@ -169,7 +174,7 @@ describe('Docker label suggestions', () => {
 
 	it('Should not point other users at hosts they cannot see', () => {
 		getCandidates().then((data) => {
-			const item = withSuggestion(data).find((i) => i.suggestion.domain_names.includes(fixtureDomain));
+			const item = labelledContainer(data);
 			if (data.providers.docker.status !== 'ok' || !item) {
 				cy.log('Docker discovery with the label fixture is not running, skipping');
 				return;

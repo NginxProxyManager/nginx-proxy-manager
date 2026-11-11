@@ -165,8 +165,8 @@ const excludeHidden = (items, hidden) => {
 	);
 };
 
-// Host types that can hold a domain name, in the order a match is reported (a proxy host can be opened from
-// the label list, the others only explain why Create would fail)
+// Host types that can hold a domain name, in the order a match is reported (a proxy host can be opened
+// instead, the others have to be changed before a proxy host can use the domain)
 const HOST_TYPES = [
 	["proxy_host", "proxyHosts"],
 	["redirection_host", "redirectionHosts"],

@@ -1,7 +1,7 @@
 {
 	"operationId": "getUpstreamCandidates",
 	"summary": "Suggested forward hosts (Docker containers, embedded DNS, hosts used before)",
-	"description": "Results of the Docker and DNS providers are cached for 30 seconds. `refresh=true` bypasses the cache and is rate limited (6 per minute per user). Requires admin, or `manage` permission for proxy hosts or streams. Docker containers carry a `suggestion` built from their `npm.*` labels (one-click proxy host); `existing_host_id`/`existing_host_type` are set when a proxy, redirection or 404 host already serves one of its domains; `ignored_domains` lists `npm.domain` entries that were dropped.",
+	"description": "Results of the Docker and DNS providers are cached for 30 seconds. `refresh=true` bypasses the cache and is rate limited (6 per minute per user). Requires admin, or `manage` permission for proxy hosts or streams. Docker containers and their compose service aliases carry a `suggestion` built from the container's `npm.*` labels (filled into the proxy host form when the item is picked); `existing_host_id`/`existing_host_type` are set when a proxy, redirection or 404 host already serves one of its domains; `ignored_domains` lists `npm.domain` entries that were dropped.",
 	"tags": ["upstreams"],
 	"security": [
 		{

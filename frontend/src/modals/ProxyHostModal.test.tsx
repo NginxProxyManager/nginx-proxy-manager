@@ -57,12 +57,17 @@ let putBodies: any[] = [];
 // when set, a PUT waits for it: the save is still in flight
 let putGate: Promise<void> | null = null;
 let testBodies: any[] = [];
+let postBodies: any[] = [];
+// what GET /api/upstreams/candidates lists
+let candidateItems: any[] = [];
 
 beforeEach(() => {
 	localStorage.clear();
 	putBodies = [];
 	putGate = null;
 	testBodies = [];
+	postBodies = [];
+	candidateItems = [];
 	currentUser = me;
 	currentHost = host;
 	vi.stubGlobal(
@@ -96,13 +101,31 @@ beforeEach(() => {
 					warnings: [],
 				});
 			}
+			if (init?.method === "POST" && url === "/api/nginx/proxy-hosts") {
+				postBodies.push(JSON.parse(String(init.body)));
+				return json({ ...host, ...postBodies[postBodies.length - 1], id: 9, meta: {} }, 201);
+			}
+			if (url.startsWith("/api/upstreams/candidates")) {
+				return json({
+					providers: {
+						docker: { status: "ok", message: null },
+						dns: { status: "ok", message: null },
+						history: { status: "ok", message: null },
+					},
+					items: candidateItems,
+					generated_at: "2026-11-11T10:00:00Z",
+				});
+			}
 			if (url.startsWith("/api/users/me")) return json(currentUser);
 			if (url.startsWith("/api/nginx/proxy-hosts/1")) return json(currentHost);
 			if (url.startsWith("/api/nginx/access-lists") || url.startsWith("/api/nginx/certificates")) return json([]);
 			return json({});
 		}),
 	);
-	vi.stubGlobal("confirm", vi.fn(() => false));
+	vi.stubGlobal(
+		"confirm",
+		vi.fn(() => false),
+	);
 });
 
 afterEach(() => {
@@ -111,7 +134,7 @@ afterEach(() => {
 	vi.restoreAllMocks();
 });
 
-const open = async () => {
+const open = async (id: number | "new" = 1) => {
 	render(
 		<QueryClientProvider client={new QueryClient()}>
 			<LocaleProvider>
@@ -120,7 +143,7 @@ const open = async () => {
 		</QueryClientProvider>,
 	);
 	await act(async () => {
-		showProxyHostModal(1);
+		showProxyHostModal(id);
 	});
 	await screen.findByRole("tablist");
 	return screen.getAllByRole("tab");
@@ -231,8 +254,20 @@ describe("ProxyHostModal for a user who isn't an admin", () => {
 			...host,
 			advanced_config: "add_header X-Host 1;",
 			locations: [
-				{ path: "~ ^/img", forward_scheme: "http", forward_host: "img", forward_port: 80, advanced_config: "expires 1d;" },
-				{ path: "~ ^/img", forward_scheme: "http", forward_host: "img", forward_port: 80, advanced_config: "expires 7d;" },
+				{
+					path: "~ ^/img",
+					forward_scheme: "http",
+					forward_host: "img",
+					forward_port: 80,
+					advanced_config: "expires 1d;",
+				},
+				{
+					path: "~ ^/img",
+					forward_scheme: "http",
+					forward_host: "img",
+					forward_port: 80,
+					advanced_config: "expires 7d;",
+				},
 			],
 		} as any;
 		await open();
@@ -251,7 +286,13 @@ describe("ProxyHostModal for a user who isn't an admin", () => {
 			...host,
 			advanced_config: "add_header X-Host 1;",
 			locations: [
-				{ path: "/api", forward_scheme: "http", forward_host: "api", forward_port: 80, advanced_config: "expires 1d;" },
+				{
+					path: "/api",
+					forward_scheme: "http",
+					forward_host: "api",
+					forward_port: 80,
+					advanced_config: "expires 1d;",
+				},
 			],
 		} as any;
 		await open();
@@ -267,7 +308,9 @@ describe("ProxyHostModal locations while saving", () => {
 	it("keeps the shown locations and the saved ones the same when the save returns a warning", async () => {
 		currentHost = {
 			...host,
-			locations: [{ path: "/api", forward_scheme: "http", forward_host: "app", forward_port: 80, advanced_config: "" }],
+			locations: [
+				{ path: "/api", forward_scheme: "http", forward_host: "app", forward_port: 80, advanced_config: "" },
+			],
 		} as any;
 		const tabs = await open();
 		fireEvent.click(tabs[1]);
@@ -316,5 +359,231 @@ describe("ProxyHostModal locations while saving", () => {
 		await screen.findByTestId("save-warning");
 		await waitFor(() => expect(port()).not.toBeDisabled());
 		expect(port()).toHaveValue(81);
+	});
+});
+
+const container = (host: string, suggestion: Record<string, unknown>) => ({
+	host,
+	label: `${host} (container)`,
+	source: "docker",
+	ports: [2368],
+	hint_port: 2368,
+	hint_scheme: null,
+	network: "npm_default",
+	state: "running",
+	ip: null,
+	used_by: 0,
+	suggestion: {
+		domain_names: [],
+		forward_scheme: "http",
+		forward_host: host,
+		forward_port: 2368,
+		allow_websocket_upgrade: false,
+		block_exploits: false,
+		caching_enabled: false,
+		http2_support: false,
+		ignored_domains: [],
+		existing_host_id: null,
+		existing_host_type: null,
+		...suggestion,
+	},
+});
+
+const blogContainer = container("blog", {
+	domain_names: ["blog.example.com", "www.blog.example.com"],
+	allow_websocket_upgrade: true,
+	block_exploits: true,
+	http2_support: true,
+});
+
+const pick = async (host: string) => {
+	const input = document.getElementById("forwardHost") as HTMLInputElement;
+	fireEvent.focus(input);
+	fireEvent.keyDown(input, { key: "ArrowDown", code: "ArrowDown" });
+	const name = await screen.findByText(host, { selector: ".react-select__option strong" });
+	fireEvent.click(name);
+};
+
+const domainChips = () =>
+	Array.from(document.querySelectorAll("#domainNames .react-select__multi-value__label")).map((e) => e.textContent);
+const toggle = (id: string) => document.getElementById(id) as HTMLInputElement;
+
+const save = async (bodies: () => any[]) => {
+	fireEvent.click(screen.getByRole("button", { name: "Save" }));
+	await waitFor(() => expect(bodies()).toHaveLength(1));
+	return bodies()[0];
+};
+
+describe("ProxyHostModal picking a labelled container", () => {
+	it("fills the domains, target and switches of a new host", async () => {
+		candidateItems = [blogContainer];
+		await open("new");
+		await pick("blog");
+
+		expect(domainChips()).toEqual(["blog.example.com", "www.blog.example.com"]);
+		expect(document.getElementById("forwardPort")).toHaveValue(2368);
+		expect(toggle("allowWebsocketUpgrade").checked).toBe(true);
+		expect(toggle("blockExploits").checked).toBe(true);
+		expect(toggle("cachingEnabled").checked).toBe(false);
+		expect(screen.queryByTestId("label-hint")).toBeNull();
+
+		const body = await save(() => postBodies);
+		expect(body).toMatchObject({
+			domain_names: ["blog.example.com", "www.blog.example.com"],
+			forward_scheme: "http",
+			forward_host: "blog",
+			forward_port: 2368,
+			allow_websocket_upgrade: true,
+			block_exploits: true,
+			caching_enabled: false,
+			// npm.http2 waits for a certificate
+			http2_support: false,
+		});
+	});
+
+	it("keeps the domains and switches the user set", async () => {
+		candidateItems = [blogContainer];
+		await open("new");
+		const domains = document.querySelector("#domainNames input") as HTMLInputElement;
+		fireEvent.change(domains, { target: { value: "mine.example.com" } });
+		fireEvent.keyDown(domains, { key: "Enter", code: "Enter" });
+		expect(domainChips()).toEqual(["mine.example.com"]);
+		// switched on, and switched on and off again: both are the user's choice now
+		fireEvent.click(toggle("cachingEnabled"));
+		fireEvent.click(toggle("blockExploits"));
+		fireEvent.click(toggle("blockExploits"));
+
+		await pick("blog");
+
+		expect(domainChips()).toEqual(["mine.example.com"]);
+		expect(toggle("cachingEnabled").checked).toBe(true);
+		expect(toggle("blockExploits").checked).toBe(false);
+		// untouched: from the label
+		expect(toggle("allowWebsocketUpgrade").checked).toBe(true);
+	});
+
+	it("replaces what an earlier pick filled in", async () => {
+		candidateItems = [
+			blogContainer,
+			container("shop", { domain_names: ["shop.example.com"], caching_enabled: true }),
+		];
+		await open("new");
+		await pick("blog");
+		await pick("shop");
+
+		expect(domainChips()).toEqual(["shop.example.com"]);
+		expect(toggle("allowWebsocketUpgrade").checked).toBe(false);
+		expect(toggle("blockExploits").checked).toBe(false);
+		expect(toggle("cachingEnabled").checked).toBe(true);
+	});
+
+	it("doesn't fill domains another host already has, and offers to open it", async () => {
+		candidateItems = [
+			container("blog", {
+				domain_names: ["blog.example.com"],
+				existing_host_id: 1,
+				existing_host_type: "proxy_host",
+			}),
+		];
+		await open("new");
+		await pick("blog");
+
+		expect(domainChips()).toEqual([]);
+		expect(document.getElementById("forwardPort")).toHaveValue(2368);
+		const hint = screen.getByTestId("label-existing-host");
+		expect(hint).toHaveTextContent("A proxy host already uses one of these domains");
+
+		// the picked target counts as an unsaved change: confirm() says no, the form stays
+		fireEvent.click(screen.getByTestId("open-existing"));
+		expect(window.confirm).toHaveBeenCalledOnce();
+		expect(screen.getByTestId("label-existing-host")).toBeInTheDocument();
+
+		vi.mocked(window.confirm).mockReturnValue(true);
+		fireEvent.click(screen.getByTestId("open-existing"));
+		// the existing host opens instead
+		await waitFor(() => expect(document.getElementById("forwardHost")).toHaveValue("app"));
+		expect(domainChips()).toEqual(["a.example.com"]);
+	});
+
+	it("marks the container in the dropdown", async () => {
+		candidateItems = [
+			blogContainer,
+			container("shop", {
+				domain_names: ["shop.example.com"],
+				existing_host_id: 4,
+				existing_host_type: "dead_host",
+			}),
+		];
+		await open("new");
+		const input = document.getElementById("forwardHost") as HTMLInputElement;
+		fireEvent.focus(input);
+		fireEvent.keyDown(input, { key: "ArrowDown", code: "ArrowDown" });
+		await screen.findByText("shop", { selector: ".react-select__option strong" });
+		const badges = screen.getAllByTestId("existing-host-badge");
+		expect(badges).toHaveLength(1);
+		expect(badges[0]).toHaveAttribute("data-type", "dead_host");
+		expect(screen.getAllByTestId("option-domains").map((e) => e.textContent)).toEqual([
+			"blog.example.com, www.blog.example.com",
+			"shop.example.com",
+		]);
+	});
+
+	it("turns HTTP/2 on for npm.http2 once there is a certificate, picked before or after", async () => {
+		const http2 = () => screen.getByLabelText("HTTP/2 Support") as HTMLInputElement;
+		const pickCertificate = async () => {
+			const ssl = document.getElementById("tab-ssl") as HTMLElement;
+			// the certificate list loads first
+			const control = await waitFor(() => {
+				const c = ssl.querySelector(".react-select__control");
+				expect(c).not.toBeNull();
+				return c as HTMLElement;
+			});
+			fireEvent.mouseDown(control, { button: 0 });
+			fireEvent.click(await within(ssl).findByText("Request a new Certificate"));
+		};
+		candidateItems = [blogContainer, container("plain", {})];
+
+		// container first, then the certificate
+		await open("new");
+		await pick("blog");
+		expect(http2().checked).toBe(false);
+		await pickCertificate();
+		await waitFor(() => expect(http2().checked).toBe(true));
+		// a container without npm.http2 takes it back
+		await pick("plain");
+		expect(http2().checked).toBe(false);
+		cleanup();
+
+		// the certificate first, then the container
+		await open("new");
+		await pickCertificate();
+		expect(http2().checked).toBe(false);
+		await pick("blog");
+		expect(http2().checked).toBe(true);
+		// switched off by the user: a later pick leaves it off
+		fireEvent.click(http2());
+		await pick("plain");
+		await pick("blog");
+		expect(http2().checked).toBe(false);
+	});
+
+	it("never changes the domains or switches of a host being edited", async () => {
+		candidateItems = [blogContainer];
+		await open(1);
+		await pick("blog");
+
+		expect(domainChips()).toEqual(["a.example.com"]);
+		expect(toggle("allowWebsocketUpgrade").checked).toBe(false);
+		expect(toggle("blockExploits").checked).toBe(false);
+
+		const body = await save(() => putBodies);
+		expect(body).toMatchObject({
+			domain_names: ["a.example.com"],
+			forward_host: "blog",
+			// the saved port is free to replace
+			forward_port: 2368,
+			allow_websocket_upgrade: false,
+			block_exploits: false,
+		});
 	});
 });

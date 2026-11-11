@@ -135,7 +135,7 @@ describe("docker: DOCKER_HOST parsing and allowlist", () => {
 		assert.deepEqual(parseNpmLabels(null), { hide: false, port: null, scheme: null, ...none });
 	});
 
-	it("reads the one-click labels and ignores invalid values", () => {
+	it("reads the proxy host labels and ignores invalid values", () => {
 		assert.deepEqual(
 			parseNpmLabels({
 				"npm.domain": " App.Example.com, www.example.com  app.example.com,,",
@@ -286,13 +286,12 @@ describe("docker: candidate parsing from fixture JSON", () => {
 			"used_by",
 		];
 		for (const item of items) {
-			// container items carry the label suggestion, compose service aliases don't
-			const expected = item.label.endsWith("(container)") ? [...keys, "suggestion"].sort() : keys;
-			assert.deepEqual(Object.keys(item).sort(), expected);
+			// container items and their compose service aliases carry the label suggestion
+			assert.deepEqual(Object.keys(item).sort(), [...keys, "suggestion"].sort());
 		}
 	});
 
-	it("suggests a proxy host from the labels on the container item only", () => {
+	it("suggests a proxy host from the labels, on the container and its compose service alias", () => {
 		assert.deepEqual(byHost["myproj-web-1"].suggestion, {
 			domain_names: [],
 			forward_scheme: "http",
@@ -306,7 +305,8 @@ describe("docker: candidate parsing from fixture JSON", () => {
 			existing_host_id: null,
 			existing_host_type: null,
 		});
-		assert.equal(byHost.web.suggestion, undefined);
+		assert.deepEqual(byHost.web.suggestion, { ...byHost["myproj-web-1"].suggestion, forward_host: "web" });
+		assert.notEqual(byHost.web.suggestion.domain_names, byHost["myproj-web-1"].suggestion.domain_names);
 		assert.equal(byHost.grafana.suggestion.forward_scheme, "https");
 		assert.equal(byHost.grafana.suggestion.forward_port, 3001);
 		assert.equal(byHost.worker.suggestion.forward_port, null);

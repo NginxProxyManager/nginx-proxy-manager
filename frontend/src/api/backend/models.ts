@@ -325,7 +325,8 @@ export interface UpstreamProviderStatus {
 }
 
 /**
- * A proxy host built from a container's npm.* labels (Docker discovery only).
+ * Proxy host fields from a container's npm.* labels (Docker discovery only), filled into the free fields of
+ * the form when the container is picked as forward host.
  * `domainNames` is empty when the container has no valid npm.domain label.
  */
 export interface UpstreamSuggestion {
@@ -339,8 +340,8 @@ export interface UpstreamSuggestion {
 	http2Support: boolean;
 	// npm.domain entries the domain names field would refuse (dropped from domainNames)
 	ignoredDomains: string[];
-	// a host (visible to the user) already serving one of the domains; only a proxy host can be opened
-	// from the label list instead of created
+	// a host (visible to the user) already serving one of the domains: the forward host picker marks the
+	// container and doesn't fill the domains in
 	existingHostId: number | null;
 	existingHostType: "proxy_host" | "redirection_host" | "dead_host" | null;
 }

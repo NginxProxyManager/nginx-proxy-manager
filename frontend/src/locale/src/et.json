@@ -353,14 +353,8 @@
 	"disabled": {
 		"defaultMessage": "Väljas"
 	},
-	"docker-labels.button": {
-		"defaultMessage": "Dockerist"
-	},
-	"docker-labels.create": {
-		"defaultMessage": "Loo"
-	},
-	"docker-labels.empty": {
-		"defaultMessage": "Ühelgi konteineril pole veel npm.domain silti. Lisa sellised sildid konteinerile, mis on Nginx Proxy Manageriga samas võrgus, loo see uuesti ja värskenda:"
+	"docker-labels.badge": {
+		"defaultMessage": "domeen kasutusel"
 	},
 	"docker-labels.exists": {
 		"defaultMessage": "{type, select, redirection_host {Mõni ümbersuunamise host kasutab juba ühte neist domeenidest} dead_host {Mõni 404 host kasutab juba ühte neist domeenidest} other {Mõni proxy-host kasutab juba ühte neist domeenidest}}"
@@ -371,26 +365,11 @@
 	"docker-labels.ignored-hint": {
 		"defaultMessage": "Domeeninimede väli lükkaks need nimed tagasi (metamärk on lubatud ainult alguses, nt *.example.com)"
 	},
-	"docker-labels.intro": {
-		"defaultMessage": "Neil konteineritel on npm.domain silt. Loo avab täidetud proxy-hosti vormi: kontrolli ja salvesta."
-	},
-	"docker-labels.no-port": {
-		"defaultMessage": "Port puudub: lisa npm.port silt või sisesta see vormis"
+	"docker-labels.not-filled": {
+		"defaultMessage": "Konteineri npm.domain sildi domeeninimesid ({domains}) ei täidetud."
 	},
 	"docker-labels.open": {
 		"defaultMessage": "Ava"
-	},
-	"docker-labels.other": {
-		"defaultMessage": "Teised konteinerid ({count})"
-	},
-	"docker-labels.other-hint": {
-		"defaultMessage": "Kasutatav npm.domain silt puudub: Loo täidab ainult sihtkoha."
-	},
-	"docker-labels.title": {
-		"defaultMessage": "Proxy-hostid Dockeri siltidest"
-	},
-	"docker-labels.unavailable": {
-		"defaultMessage": "Dockeri silte ei saa lugeda: {message}"
 	},
 	"docker-labels.used-by": {
 		"defaultMessage": "{type, select, redirection_host {Kasutusel ümbersuunamise hostis: muuda või eemalda see enne} dead_host {Kasutusel 404 hostis: muuda või eemalda see enne} other {Kasutusel proxy-hostis}}"

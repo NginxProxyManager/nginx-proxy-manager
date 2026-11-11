@@ -353,14 +353,8 @@
 	"disabled": {
 		"defaultMessage": "Đã tắt"
 	},
-	"docker-labels.button": {
-		"defaultMessage": "Từ Docker"
-	},
-	"docker-labels.create": {
-		"defaultMessage": "Tạo"
-	},
-	"docker-labels.empty": {
-		"defaultMessage": "Chưa có container nào có nhãn npm.domain. Hãy thêm các nhãn như sau vào một container nằm trên mạng mà Nginx Proxy Manager đang dùng, tạo lại container đó rồi làm mới:"
+	"docker-labels.badge": {
+		"defaultMessage": "tên miền đã dùng"
 	},
 	"docker-labels.exists": {
 		"defaultMessage": "{type, select, redirection_host {Một máy chủ chuyển hướng đã dùng một trong các tên miền này} dead_host {Một máy chủ 404 đã dùng một trong các tên miền này} other {Một máy chủ proxy đã dùng một trong các tên miền này}}"
@@ -371,26 +365,11 @@
 	"docker-labels.ignored-hint": {
 		"defaultMessage": "Trường tên miền sẽ từ chối các tên này (ký tự đại diện chỉ được phép ở đầu dưới dạng *., ví dụ *.example.com)"
 	},
-	"docker-labels.intro": {
-		"defaultMessage": "Các container này có nhãn npm.domain. Nút Tạo sẽ mở biểu mẫu máy chủ proxy đã được điền sẵn: hãy kiểm tra rồi lưu."
-	},
-	"docker-labels.no-port": {
-		"defaultMessage": "Không có cổng: hãy đặt nhãn npm.port hoặc nhập cổng trong biểu mẫu"
+	"docker-labels.not-filled": {
+		"defaultMessage": "Các tên miền từ nhãn npm.domain của container ({domains}) chưa được điền."
 	},
 	"docker-labels.open": {
 		"defaultMessage": "Mở"
-	},
-	"docker-labels.other": {
-		"defaultMessage": "Các container khác ({count})"
-	},
-	"docker-labels.other-hint": {
-		"defaultMessage": "Không có nhãn npm.domain dùng được: nút Tạo chỉ điền sẵn đích."
-	},
-	"docker-labels.title": {
-		"defaultMessage": "Máy chủ proxy từ nhãn Docker"
-	},
-	"docker-labels.unavailable": {
-		"defaultMessage": "Không thể đọc nhãn Docker: {message}"
 	},
 	"docker-labels.used-by": {
 		"defaultMessage": "{type, select, redirection_host {Đang được một máy chủ chuyển hướng dùng: hãy thay đổi hoặc xóa nó trước} dead_host {Đang được một máy chủ 404 dùng: hãy thay đổi hoặc xóa nó trước} other {Đang được một máy chủ proxy dùng}}"

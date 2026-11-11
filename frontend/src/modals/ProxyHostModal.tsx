@@ -5,15 +5,18 @@ import { Field, Form, useFormikContext } from "formik";
 import { type KeyboardEvent, type MouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import type { HostMeta, ProxyHost } from "src/api/backend";
+import type { HostMeta, ProxyHost, UpstreamCandidate } from "src/api/backend";
 import {
 	AccessField,
 	Button,
 	cleanLocations,
 	DomainNamesField,
+	type ExistingHost,
 	ForwardHostCheckHint,
 	HasPermission,
 	HostConfigTestResult,
+	type LabelPrefill,
+	LabelPrefillHint,
 	Loading,
 	LocationsFields,
 	NginxConfigField,
@@ -23,9 +26,11 @@ import {
 	SSLOptionsFields,
 	TestConfigButton,
 	UpstreamField,
+	type UpstreamPrefill,
+	useLabelPrefill,
 	usePrefillGuard,
 } from "src/components";
-import { FormModal } from "src/components/Form";
+import { confirmDiscardChanges, FormModal } from "src/components/Form";
 import { useHostConfigTest, useProxyHost, useSetProxyHost, useUser } from "src/hooks";
 import { intl, T } from "src/locale";
 import {
@@ -40,6 +45,8 @@ import {
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateForwardHost, validateNumber } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
+import { showDeadHostModal } from "./DeadHostModal";
+import { showRedirectionHostModal } from "./RedirectionHostModal";
 
 type TabId = "details" | "locations" | "ssl" | "advanced";
 
@@ -78,33 +85,14 @@ function TabErrorSwitcher({ onTab }: { onTab: (tab: TabId) => void }) {
 	return null;
 }
 
-// Values a new proxy host starts with (e.g. from Docker labels); the user still reviews and saves
-type ProxyHostPrefill = Partial<
-	Pick<
-		ProxyHost,
-		| "domainNames"
-		| "forwardScheme"
-		| "forwardHost"
-		| "forwardPort"
-		| "allowWebsocketUpgrade"
-		| "blockExploits"
-		| "cachingEnabled"
-		| "http2Support"
-	>
->;
-
-const showProxyHostModal = (id: number | "new", prefill?: ProxyHostPrefill) => {
-	// `id` doubles as the modal id (InnerModalProps): passed as a variable, an object literal would fail the
-	// excess property check
-	const props = { id, prefill: id === "new" ? prefill : undefined };
-	EasyModal.show(ProxyHostModal, props);
+const showProxyHostModal = (id: number | "new") => {
+	EasyModal.show(ProxyHostModal, { id });
 };
 
 interface Props extends InnerModalProps {
 	id: number | "new";
-	prefill?: ProxyHostPrefill;
 }
-const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props) => {
+const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
 	const { data, isLoading, error } = useProxyHost(id);
 	const { mutate: setProxyHost } = useSetProxyHost();
@@ -117,6 +105,13 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 	const [savedId, setSavedId] = useState<number | null>(null);
 	const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
 	const guardPrefill = usePrefillGuard();
+	const fillFromLabels = useLabelPrefill();
+	// Switches the user changed: a picked container's labels leave them alone
+	const touchedToggles = useRef(new Set<string>());
+	// What the last picked container's labels filled in (or why not), for the hint under the domain names
+	const [labelPick, setLabelPick] = useState<{ host: string; prefill: LabelPrefill } | null>(null);
+	// A picked container's npm.http2 label, applied once a certificate is picked
+	const [http2Wish, setHttp2Wish] = useState(false);
 	const configTest = useHostConfigTest("proxy-hosts");
 
 	const isAdmin = currentUser?.roles?.includes("admin");
@@ -170,6 +165,65 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 		onKeyDown: (e: KeyboardEvent<HTMLAnchorElement>) => onTabKeyDown(e, tab),
 	});
 	const tabPane = (tab: TabId) => cn("tab-pane", { "active show": activeTab === tab });
+
+	// The host that already has a picked container's domains, instead of this form
+	const openExisting = (form: { dirty: boolean }, existing: ExistingHost) => {
+		if (!confirmDiscardChanges(form.dirty)) return;
+		remove();
+		// once this one is gone: a proxy host opens in the same modal slot
+		setTimeout(() => {
+			if (existing.type === "redirection_host") {
+				showRedirectionHostModal(existing.id);
+			} else if (existing.type === "dead_host") {
+				showDeadHostModal(existing.id);
+			} else {
+				showProxyHostModal(existing.id);
+			}
+		});
+	};
+
+	// Picking a container fills the free fields from its npm.* labels (see labelPrefill)
+	const onPickCandidate = (form: any, picked: UpstreamPrefill, candidate: UpstreamCandidate) => {
+		const prefill = guardPrefill(
+			picked,
+			{ port: form.values.forwardPort, scheme: form.values.forwardScheme },
+			{ port: form.initialValues.forwardPort, scheme: form.initialValues.forwardScheme },
+		);
+		if (prefill.port) {
+			form.setFieldValue("forwardPort", prefill.port);
+		}
+		if (prefill.scheme) {
+			form.setFieldValue("forwardScheme", prefill.scheme);
+		}
+		const isNew = id === "new" && !savedId;
+		// A candidate without labels (DNS, history) also drops what an earlier pick's labels filled in
+		const labels = fillFromLabels(candidate.suggestion, {
+			isNew,
+			domainNames: form.values.domainNames,
+			touched: touchedToggles.current,
+		});
+		if (labels.domainNames) {
+			form.setFieldValue("domainNames", labels.domainNames);
+		}
+		for (const [key, value] of Object.entries(labels.toggles)) {
+			if (form.values[key] !== value) {
+				form.setFieldValue(key, value);
+			}
+		}
+		if (isNew) {
+			const wish = !!labels.http2Support;
+			setHttp2Wish(wish);
+			// A certificate is already picked: the wish applies right away, unless the user set HTTP/2 themselves
+			if (
+				form.values.certificateId &&
+				!touchedToggles.current.has("http2Support") &&
+				!!form.values.http2Support !== wish
+			) {
+				form.setFieldValue("http2Support", wish);
+			}
+		}
+		setLabelPick(candidate.suggestion ? { host: candidate.host, prefill: labels } : null);
+	};
 
 	// What a save sends, also what "Test" checks
 	const buildPayload = (values: any) => {
@@ -275,22 +329,21 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 					initialValues={
 						{
 							// Details tab
-							domainNames: prefill?.domainNames || data?.domainNames || [],
-							forwardScheme: prefill?.forwardScheme || data?.forwardScheme || "http",
-							forwardHost: prefill?.forwardHost || data?.forwardHost || "",
-							forwardPort: prefill?.forwardPort || data?.forwardPort || undefined,
+							domainNames: data?.domainNames || [],
+							forwardScheme: data?.forwardScheme || "http",
+							forwardHost: data?.forwardHost || "",
+							forwardPort: data?.forwardPort || undefined,
 							accessListId: data?.accessListId || 0,
-							cachingEnabled: prefill?.cachingEnabled ?? (data?.cachingEnabled || false),
-							blockExploits: prefill?.blockExploits ?? (data?.blockExploits || false),
-							allowWebsocketUpgrade:
-								prefill?.allowWebsocketUpgrade ?? (data?.allowWebsocketUpgrade || false),
+							cachingEnabled: data?.cachingEnabled || false,
+							blockExploits: data?.blockExploits || false,
+							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
 							// Locations tab
 							locations: data?.locations || [],
 							// SSL tab
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
-							// A prefilled (new) host has no certificate yet, and HTTP/2 can't be turned off without one:
-							// a npm.http2 label only takes effect once a certificate is picked (http2OnCertificate)
+							// A new host has no certificate yet, and HTTP/2 can't be turned on without one: a picked
+							// container's npm.http2 label only takes effect once a certificate is picked (http2OnCertificate)
 							http2Support: data?.http2Support || false,
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
@@ -364,6 +417,14 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 										>
 											<div className={tabPane("details")} id="tab-details" role="tabpanel" aria-labelledby="tab-link-details">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
+												<LabelPrefillHint
+													prefill={
+														labelPick && labelPick.host === form.values.forwardHost
+															? labelPick.prefill
+															: null
+													}
+													onOpen={(existing) => openExisting(form, existing)}
+												/>
 												<div className="row">
 													<div className="col-sm-3 col-md-3">
 														<Field name="forwardScheme">
@@ -422,33 +483,10 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 																		onBlur={() =>
 																			form.setFieldTouched("forwardHost", true)
 																		}
-																		onSelectCandidate={(picked) => {
-																			const prefill = guardPrefill(
-																				picked,
-																				{
-																					port: form.values.forwardPort,
-																					scheme: form.values.forwardScheme,
-																				},
-																				{
-																					port: form.initialValues
-																						.forwardPort,
-																					scheme: form.initialValues
-																						.forwardScheme,
-																				},
-																			);
-																			if (prefill.port) {
-																				form.setFieldValue(
-																					"forwardPort",
-																					prefill.port,
-																				);
-																			}
-																			if (prefill.scheme) {
-																				form.setFieldValue(
-																					"forwardScheme",
-																					prefill.scheme,
-																				);
-																			}
-																		}}
+																		onSelectCandidate={(picked, candidate) =>
+																			onPickCandidate(form, picked, candidate)
+																		}
+																		labels={{ hostId: data?.id || savedId }}
 																	/>
 																	{form.errors.forwardHost ? (
 																		<div className="invalid-feedback">
@@ -513,6 +551,12 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
+																					onChange={(e) => {
+																						touchedToggles.current.add(
+																							field.name,
+																						);
+																						field.onChange(e);
+																					}}
 																					id="cachingEnabled"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
@@ -536,6 +580,12 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
+																					onChange={(e) => {
+																						touchedToggles.current.add(
+																							field.name,
+																						);
+																						field.onChange(e);
+																					}}
 																					id="blockExploits"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
@@ -559,6 +609,12 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
+																					onChange={(e) => {
+																						touchedToggles.current.add(
+																							field.name,
+																						);
+																						field.onChange(e);
+																					}}
 																					id="allowWebsocketUpgrade"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
@@ -591,9 +647,13 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 													name="certificateId"
 													label="ssl-certificate"
 													allowNew
-													http2OnCertificate={!!prefill?.http2Support}
+													http2OnCertificate={http2Wish}
 												/>
-												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
+												<SSLOptionsFields
+													color="bg-lime"
+													forProxyHost={true}
+													onToggle={(name) => touchedToggles.current.add(name)}
+												/>
 											</div>
 											{isAdmin && (
 												<div
@@ -639,4 +699,4 @@ const ProxyHostModal = EasyModal.create(({ id, prefill, visible, remove }: Props
 	);
 });
 
-export { type ProxyHostPrefill, showProxyHostModal };
+export { showProxyHostModal };

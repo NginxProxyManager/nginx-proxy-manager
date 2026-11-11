@@ -408,8 +408,7 @@ const containersToCandidates = (containers, { networks, selfId }) => {
 			used_by: 0,
 		};
 
-		// One-click proxy host from the labels. Only on the container item (not on its compose service alias),
-		// so every container is suggested once. Without npm.domain it only prefills the target.
+		// Proxy host fields from the labels, filled in when the container (or its compose service alias) is picked
 		const suggestion = {
 			domain_names: hints.domains,
 			forward_scheme: hintScheme || "http",
@@ -428,7 +427,18 @@ const containersToCandidates = (containers, { networks, selfId }) => {
 
 		const service = `${labels["com.docker.compose.service"] ?? ""}`.trim();
 		if (service && service !== names[0] && /^[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(service) && isValidHost(service)) {
-			items.push({ ...base, host: service, label: `${service} (compose service of ${names[0]})` });
+			items.push({
+				...base,
+				host: service,
+				label: `${service} (compose service of ${names[0]})`,
+				// the same container: picking either name fills in the same labels
+				suggestion: {
+					...suggestion,
+					domain_names: [...suggestion.domain_names],
+					ignored_domains: [...suggestion.ignored_domains],
+					forward_host: service,
+				},
+			});
 		}
 	}
 
