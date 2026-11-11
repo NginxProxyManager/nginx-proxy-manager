@@ -211,6 +211,11 @@ for example the per-host HSTS sub-domains setting, therefore reach hosts that we
 when their file is rewritten. Run a regeneration once after upgrading to apply such template fixes to all existing
 hosts.
 
+The same goes for values that NPM no longer accepts because they could add nginx directives (for example a `;` in a
+forward host or domain name, saved with an older version). A host that still holds such a value is not written: its
+config file is removed and the host is listed as offline with the field that is not allowed, until you correct it and
+save the host.
+
 The same is available from the API (`POST /api/nginx/regenerate`, optional body `{"host_types": ["proxy_host"]}`) and
 from the command line inside the container:
 
