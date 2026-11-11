@@ -47,6 +47,9 @@
 		"@biomejs/biome": "^2.6.6",
 		"nodemon": "^3.1.14"
 	},
+	"resolutions": {
+		"basic-ftp": "6.2.6"
+	},
 	"signale": {
 		"displayDate": true,
 		"displayTimestamp": true
