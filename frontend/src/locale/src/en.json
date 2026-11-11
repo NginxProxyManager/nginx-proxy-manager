@@ -1169,6 +1169,9 @@
 	"upstream.docker-help": {
 		"defaultMessage": "Set it up"
 	},
+	"upstream.docker-labels": {
+		"defaultMessage": "Docker labels"
+	},
 	"upstream.docker-unavailable": {
 		"defaultMessage": "Docker discovery doesn't work: {reason}."
 	},

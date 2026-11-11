@@ -1169,6 +1169,9 @@
 	"upstream.docker-help": {
 		"defaultMessage": "Einrichten"
 	},
+	"upstream.docker-labels": {
+		"defaultMessage": "Docker-Labels"
+	},
 	"upstream.docker-unavailable": {
 		"defaultMessage": "Docker-Erkennung funktioniert nicht: {reason}."
 	},

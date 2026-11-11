@@ -66,14 +66,14 @@ Requests time out after 3 seconds and answers are capped at 2 MB. Results are ca
 
 #### Labels
 
-You can add these labels to your own containers to improve the suggestions and to create a proxy
-host from a container in one click:
+You can add these labels to your own containers. When you pick a labelled container in the forward
+host field of a proxy host, they fill in the rest of the form:
 
 | Label | Example | Effect |
 |---|---|---|
-| `npm.domain` | `npm.domain=app.example.com, www.app.example.com` | Domain names of the proxy host (comma and/or space separated). Needed for one-click creation |
-| `npm.port` | `npm.port=8080` | Port that is filled in when you pick the container |
-| `npm.scheme` | `npm.scheme=https` | Scheme that is filled in when you pick the container |
+| `npm.domain` | `npm.domain=app.example.com, www.app.example.com` | Domain names of the proxy host (comma and/or space separated) |
+| `npm.port` | `npm.port=8080` | Forward port |
+| `npm.scheme` | `npm.scheme=https` | Forward scheme |
 | `npm.websocket` | `npm.websocket=true` | Turns on "Websockets Support" |
 | `npm.block_exploits` | `npm.block_exploits=true` | Turns on "Block Common Exploits" |
 | `npm.caching` | `npm.caching=true` | Turns on "Cache Assets" |
@@ -90,30 +90,9 @@ Without `npm.scheme`, the scheme is `https` for port 443 and 8443, otherwise `ht
 
 Invalid values are ignored rather than rejected: `true`/`false` also accept `1`/`0`, `yes`/`no` and
 `on`/`off`; anything else counts as not set. Domain names that the domain field would refuse are
-dropped from `npm.domain`, and the list shows them under the container. A wildcard is accepted only
-in front: `*.example.com` works, `*.com` and `www.example.*` don't. A wildcard host needs a DNS
+dropped from `npm.domain`, and the dropdown shows them under the container. A wildcard is accepted
+only in front: `*.example.com` works, `*.com` and `www.example.*` don't. A wildcard host needs a DNS
 challenge certificate if you want HTTPS; pick it in the form.
-
-#### Create a proxy host from labels
-
-On the **Proxy Hosts** page, **From Docker** lists the containers that have an `npm.domain` label.
-The button is only shown when Docker discovery works and you may manage proxy hosts. DNS discovery
-alone can't read labels.
-
-- **Create** opens the proxy host form filled in from the labels: domain names, scheme, the
-  container name as forward host, port and the switches above. Check it, add a certificate if you
-  want one, and save. Nothing is created until you save.
-- **Open** is shown instead when a host that you can see already uses one of the domains. For a
-  proxy host that is the host to edit. For a redirection host or a 404 host the list says so: change
-  or remove that host first, since two hosts can't share a domain name. A host you can't see (other
-  users' hosts, when you only see your own) still blocks the domain; saving then fails with
-  "_domain_ is already in use".
-- Containers without a usable `npm.domain` are listed under **Other containers**; there **Create**
-  fills in only the forward host, scheme and port. If a container's `npm.domain` had only names that
-  were dropped, that section opens by itself and shows them.
-
-NPM never creates or changes hosts by itself because of labels; the labels are only read when you
-open the list.
 
 ```yaml
 services:
@@ -132,10 +111,41 @@ networks:
     external: true
 ```
 
-Labels are read when the container is created, so recreate it (`docker compose up -d`) after
-changing them, then use the refresh button in the list.
+#### Picking a labelled container
 
-#### Recommended setup: docker-socket-proxy
+In the forward host field, the **Docker containers** group lists each container with its ports and
+state. For a proxy host it also shows the domains of the container's `npm.domain` label. Picking a
+container fills in only fields that are still free; nothing you entered yourself is overwritten:
+
+- **Port and scheme**: when empty, when they still hold the saved value, or when an earlier pick
+  filled them in. This works the same for custom locations and streams.
+- **Domain names**: on a new proxy host, when the field is still empty (or still holds what an
+  earlier pick filled in).
+- **Websockets, Block Common Exploits, Cache Assets**: on a new proxy host, as long as you haven't
+  changed these switches yourself. `npm.http2` turns HTTP/2 on once you pick a certificate.
+
+When you edit an existing host, picking a container changes only the target (host, and port and
+scheme as above), never its domain names or switches.
+
+If a host you can see already uses one of the domains, the container is marked **domain in use** in
+the dropdown, and picking it fills in the target but not the domain names. A hint under the domain
+names says which kind of host has them and offers to open it: for a proxy host you can usually
+edit that one instead, a redirection host or a 404 host has to be changed (or removed) first,
+since two hosts can't share a domain name. A host you can't see (other users'
+hosts, when you only see your own) still blocks the domain; saving then fails with "_domain_ is
+already in use".
+
+NPM never creates or changes hosts by itself because of labels; they are only read to fill in the
+form, and nothing is saved until you save.
+
+#### Labels on existing containers
+
+Docker reads labels when a container is created; they can't be changed on a running container.
+Add or change them in your compose file and run `docker compose up -d`, or recreate the container
+with the labels set (in a container web UI: edit the container, add the labels, and save or
+redeploy it, which recreates it). Then use the refresh button in the forward host dropdown.
+
+#### Setting up Docker access: socket proxy
 
 ::: danger Docker socket access is root access
 Anyone who can talk to the Docker API can start a privileged container and take over the host.
@@ -143,8 +153,12 @@ Anyone who can talk to the Docker API can start a privileged container and take 
 *file* from being replaced. API calls, including ones that create and start containers, still work.
 :::
 
-Don't give NPM the socket itself. Put [docker-socket-proxy](https://github.com/Tecnativa/docker-socket-proxy)
-in front of it and allow only the read-only container and network endpoints:
+Don't give NPM the socket itself. Put a socket proxy such as
+[docker-socket-proxy](https://github.com/Tecnativa/docker-socket-proxy) in front of it and allow
+only the read-only container and network endpoints. NPM reaches it over a Docker network; the proxy
+publishes no ports.
+
+##### With Docker Compose
 
 ```yml
 services:
@@ -167,7 +181,9 @@ services:
       NETWORKS: 1
       # Everything else, including POST, stays at its default of 0 (denied)
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      npm.hide: 'true'  # don't suggest the proxy itself as a forward host
     networks:
       - socket-proxy
 
@@ -179,7 +195,71 @@ networks:
 The `socket-proxy` network is `internal`, so only containers you attach to it can reach the proxy,
 and the proxy can't reach the internet.
 
-This setup also avoids a permission problem. When you set `PUID`/`PGID`, the backend runs without
+##### With `docker run`
+
+The same setup without Compose. `npm` stands for the name of your NPM container:
+
+```bash
+docker network create --internal socket-proxy
+
+docker run -d --name socket-proxy --restart unless-stopped \
+  --network socket-proxy \
+  -e CONTAINERS=1 -e NETWORKS=1 \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  --label npm.hide=true \
+  tecnativa/docker-socket-proxy
+
+# attach NPM to the proxy's network as a second network
+docker network connect socket-proxy npm
+```
+
+Then add `NPM_DOCKER_DISCOVERY=true` and `DOCKER_HOST=tcp://socket-proxy:2375` to the NPM container.
+Environment variables can't be changed on an existing container, so recreate it with the same
+volumes, ports and networks plus the two variables (`docker run -e ...`), then connect it to the
+`socket-proxy` network again if you recreated it with `docker run`.
+
+##### In a container web UI
+
+Most container managers with a web UI have the same settings under similar names:
+
+1. Create a network for the proxy (an "internal" one if the UI offers that), or use a custom
+   network NPM is already on.
+2. Add a container from the image `tecnativa/docker-socket-proxy`, named for example `socket-proxy`:
+   - a volume or path mapping from `/var/run/docker.sock` on the host to `/var/run/docker.sock` in
+     the container, read-only,
+   - the variables `CONTAINERS=1` and `NETWORKS=1`,
+   - no published ports (remove any the template suggests),
+   - the network from step 1,
+   - optionally the label `npm.hide=true`.
+3. Edit the NPM container: add the variables `NPM_DOCKER_DISCOVERY=true` and
+   `DOCKER_HOST=tcp://socket-proxy:2375` (with the name from step 2), and add the network from step
+   1 as an additional network if NPM isn't on it yet.
+4. Save or redeploy the NPM container, so it restarts with the new settings.
+
+If the UI only allows one network per container, put both containers on the same custom network
+instead.
+
+##### Alternative image: linuxserver/socket-proxy
+
+[linuxserver/socket-proxy](https://docs.linuxserver.io/images/docker-socket-proxy/) works the same
+way, with the same variables, and also listens on port 2375 inside the container. It is meant to run
+with a read-only root file system:
+
+```bash
+docker run -d --name socket-proxy --restart unless-stopped \
+  --network socket-proxy \
+  --read-only --tmpfs /run \
+  -e CONTAINERS=1 -e NETWORKS=1 \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  --label npm.hide=true \
+  lscr.io/linuxserver/socket-proxy
+```
+
+In Compose: `read_only: true` and `tmpfs: [/run]`.
+
+##### Mounting the socket directly
+
+The proxy also avoids a permission problem. When you set `PUID`/`PGID`, the backend runs without
 supplementary groups, so it usually can't open a mounted socket that belongs to the `docker` group.
 TCP to the proxy has no such limit.
 
@@ -187,9 +267,39 @@ If you decide to mount the socket anyway, `DOCKER_HOST` defaults to `unix:///var
 Podman's Docker-compatible socket works too, for example `DOCKER_HOST=unix:///run/podman/podman.sock`.
 TLS (`tcp://` with certificates) is not supported.
 
-If something is wrong, the dropdown shows the reason. For example, "permission denied on the Docker
-socket", "connection refused", or "the Docker API denied the request", which means the proxy needs
-`CONTAINERS=1` and `NETWORKS=1`.
+#### Checking that it works
+
+Open a proxy host (or add one), click into the forward host field and look at the dropdown:
+
+- A **Docker containers** group with your containers, their ports and their state (`running`,
+  `exited`, ...) means Docker discovery works. Containers with `npm.hide=true`, such as the socket
+  proxy, are not listed.
+- Without that group, the footer of the dropdown says why: "Docker discovery is off" means
+  `NPM_DOCKER_DISCOVERY` isn't `true` on the NPM container (was it recreated?); otherwise it shows
+  the error, see below.
+- The footer always links the in-app help with the label reference; on a proxy host, so does the
+  help icon next to "Forward Hostname / IP".
+
+#### Troubleshooting
+
+| Message in the dropdown | Cause |
+|---|---|
+| Docker discovery is off | `NPM_DOCKER_DISCOVERY=true` isn't set, or the container wasn't restarted (recreated) after setting it |
+| Connection to the Docker API was refused | NPM reaches the address in `DOCKER_HOST` but nothing answers there: is the proxy running, is the port 2375? |
+| The DOCKER_HOST host name could not be resolved | NPM and the proxy don't share a network, or `DOCKER_HOST` doesn't use the proxy's container name |
+| The Docker API denied the request | The proxy blocks the request: set `CONTAINERS=1` and `NETWORKS=1` on it |
+| Permission denied on the Docker socket | The socket is mounted into NPM directly and NPM can't open it (see `PUID`/`PGID` above); use the proxy |
+| Docker API did not answer within 3 seconds | Something accepts the connection but doesn't answer, or a firewall drops the traffic |
+| Docker API answered _status_ for _path_ | The proxy (or the Docker API) refused or failed that request with another HTTP status |
+| Docker API response is too large | More than 2 MB of container list: too many containers on NPM's networks |
+| Could not find Nginx Proxy Manager's own container through the Docker API ... | NPM can't find its own container in the list (needed to know its networks): the proxy filters it out, or NPM doesn't run in a container of this Docker host |
+| DOCKER_HOST "..." is not supported / has an invalid port | `DOCKER_HOST` has a typo; use `tcp://<proxy-name>:2375` (TLS isn't supported) |
+| Other text, such as `connect EHOSTUNREACH ...` | The network error as the system reports it, for example no route to the proxy's address |
+| Docker discovery failed: ... | An unexpected error; the text after the colon says more |
+
+A container you expect is missing: check that it shares a network with NPM, that it doesn't have
+`npm.hide=true`, and use the refresh button (results are cached for 30 seconds). New or changed
+labels need a recreated container.
 
 ## Reachability check
 
@@ -271,7 +381,7 @@ doesn't grant new access. The rate limits keep it from being used as a fast port
 
 | Endpoint | Description |
 |---|---|
-| `GET /api/upstreams/candidates?refresh=true` | Suggestions with the status of each source; `refresh=true` bypasses the 30 second cache. Docker containers carry a `suggestion` built from their labels, with `existing_host_id` set when a proxy host already uses one of its domains |
+| `GET /api/upstreams/candidates?refresh=true` | Suggestions with the status of each source; `refresh=true` bypasses the 30 second cache. Docker containers carry a `suggestion` built from their labels (what picking the container fills in), with `existing_host_id`/`existing_host_type` set when a host you can see already uses one of its domains |
 | `POST /api/upstreams/check` | Check up to 20 targets: `{"targets": [{"host": "app", "port": 8080, "scheme": "http"}]}` |
 | `GET /api/upstreams/health` | Latest health monitor results per proxy host and stream |
 

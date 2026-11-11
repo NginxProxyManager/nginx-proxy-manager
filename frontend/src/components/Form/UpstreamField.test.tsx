@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
 	allowedPrefill,
 	candidatePrefill,
+	DockerLabelsHelp,
 	existingHostOf,
 	groupCandidates,
 	LabelPrefillHint,
@@ -216,6 +217,36 @@ describe("UpstreamField", () => {
 		expect(screen.queryByTestId("docker-disabled-hint")).toBeNull();
 	});
 
+	it("has a help icon for the label reference that is a normal Tab stop", () => {
+		render(<DockerLabelsHelp />);
+		const button = screen.getByRole("button", { name: "Docker labels" });
+		expect(button.tabIndex).toBe(0);
+		fireEvent.click(button);
+		expect(helpModal).toHaveBeenLastCalledWith("DockerDiscovery", "lime");
+	});
+
+	it("links the label reference whatever the Docker discovery status", () => {
+		render(<Harness candidates={data("ok")} />);
+		openMenu();
+		const link = screen.getByTestId("docker-labels-link");
+		expect(link).toHaveTextContent("Docker labels");
+		expect(fireEvent.mouseDown(link)).toBe(false);
+		fireEvent.click(link);
+		expect(helpModal).toHaveBeenLastCalledWith("DockerDiscovery", "lime");
+		cleanup();
+		// disabled / unavailable: the setup link opens the same page
+		for (const status of ["disabled", "unavailable"] as const) {
+			render(<Harness candidates={data(status, "connection refused")} />);
+			openMenu();
+			fireEvent.click(screen.getByTestId("docker-help-link"));
+			expect(helpModal).toHaveBeenLastCalledWith("DockerDiscovery", "lime");
+			cleanup();
+		}
+		// without any suggestions (e.g. no permission) as well
+		render(<Harness />);
+		openMenu();
+		expect(screen.getByTestId("docker-labels-link")).toBeInTheDocument();
+	});
 });
 
 // Candidates whose host starts with what a user would type for something else

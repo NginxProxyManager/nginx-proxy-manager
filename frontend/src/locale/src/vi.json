@@ -1169,6 +1169,9 @@
 	"upstream.docker-help": {
 		"defaultMessage": "Thiết lập"
 	},
+	"upstream.docker-labels": {
+		"defaultMessage": "Nhãn Docker"
+	},
 	"upstream.docker-unavailable": {
 		"defaultMessage": "Tính năng phát hiện Docker không hoạt động: {reason}."
 	},

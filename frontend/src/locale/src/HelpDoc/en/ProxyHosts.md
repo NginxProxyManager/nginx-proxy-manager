@@ -17,4 +17,4 @@ The status column shows whether nginx actually serves the host:
 
 A broken custom location no longer takes the whole host offline: a location nginx rejects is set aside, the rest of the host stays online, and the editor shows why (fix it and save the host to bring it back). A location whose forward host doesn't resolve is not set aside: it answers 502 until the host resolves, nothing has to be enabled again. Each location can also be switched off on its own.
 
-The forward host fields suggest hosts that were used before and hosts found on the Docker network. To also list Docker containers, set `NPM_DOCKER_DISCOVERY=true` and give NPM access to the Docker API (a socket proxy is recommended, see the documentation).
+The forward host fields suggest hosts that were used before and hosts found on the Docker network. To also list Docker containers, set `NPM_DOCKER_DISCOVERY=true` and give NPM access to the Docker API (a socket proxy is recommended, see the documentation). Picking a container with `npm.*` labels fills in the free fields of a new proxy host.

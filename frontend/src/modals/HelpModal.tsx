@@ -34,7 +34,17 @@ const HelpModal = EasyModal.create(({ section, color, visible, remove }: Props) 
 	return (
 		<Modal show={visible} onHide={remove}>
 			<Modal.Body>
-				<ReactMarkdown components={{ pre: ({ children }) => <CopyableCode>{children}</CopyableCode> }}>
+				<ReactMarkdown
+					components={{
+						pre: ({ children }) => <CopyableCode>{children}</CopyableCode>,
+						// links lead to the online docs: keep the app open
+						a: ({ href, children }) => (
+							<a href={href} target="_blank" rel="noopener noreferrer">
+								{children}
+							</a>
+						),
+					}}
+				>
 					{markdownText}
 				</ReactMarkdown>
 			</Modal.Body>

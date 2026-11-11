@@ -1,4 +1,4 @@
-import { IconBrandDocker, IconHistory, IconNetwork, IconRefresh, IconWorld } from "@tabler/icons-react";
+import { IconBrandDocker, IconHelp, IconHistory, IconNetwork, IconRefresh, IconWorld } from "@tabler/icons-react";
 import cn from "classnames";
 import {
 	createContext,
@@ -391,7 +391,8 @@ const MenuFooterContext = createContext<MenuFooterInfo>({ dockerDisabled: false 
 // from the input, or the menu closes before the click lands.
 const keepFocus = (e: { preventDefault: () => void }) => e.preventDefault();
 
-function DockerHelpLink() {
+// Opens the in-app Docker discovery help (setup and the npm.* label reference)
+function DockerHelpLink({ labels = false }: { labels?: boolean }) {
 	return (
 		<button
 			type="button"
@@ -399,9 +400,30 @@ function DockerHelpLink() {
 			tabIndex={-1}
 			onMouseDown={keepFocus}
 			onClick={() => showHelpModal("DockerDiscovery", "lime")}
-			data-testid="docker-help-link"
+			data-testid={labels ? "docker-labels-link" : "docker-help-link"}
 		>
-			<T id="upstream.docker-help" />
+			<T id={labels ? "upstream.docker-labels" : "upstream.docker-help"} />
+		</button>
+	);
+}
+
+/**
+ * Help icon for a field label: opens the Docker discovery help with the npm.* label reference. Unlike the links in
+ * the dropdown footer it is a normal Tab stop, so the reference can be reached without a mouse.
+ */
+export function DockerLabelsHelp() {
+	const text = intl.formatMessage({ id: "upstream.docker-labels" });
+	return (
+		<button
+			type="button"
+			// not a .btn: its height would push the label text below the other labels of the row
+			className="border-0 bg-transparent p-0 ms-1 lh-1 align-text-top text-secondary"
+			title={text}
+			aria-label={text}
+			onClick={() => showHelpModal("DockerDiscovery", "lime")}
+			data-testid="docker-labels-help"
+		>
+			<IconHelp size={16} />
 		</button>
 	);
 }
@@ -424,7 +446,9 @@ function MenuList(props: MenuListProps<UpstreamOption, false, GroupBase<Upstream
 							<T id="upstream.docker-unavailable" data={{ reason: dockerError }} /> <DockerHelpLink />
 						</span>
 					) : (
-						<T id="upstream.free-text" />
+						<>
+							<T id="upstream.free-text" /> <DockerHelpLink labels />
+						</>
 					)}
 				</span>
 				{onRefresh ? (
