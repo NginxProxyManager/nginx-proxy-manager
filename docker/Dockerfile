@@ -27,7 +27,8 @@ ENV SUPPRESS_NO_CONFIG_WARNING=1 \
 
 RUN echo "fs.file-max = 65535" > /etc/sysctl.conf \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends jq logrotate \
+	&& DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --no-install-recommends \
+	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jq logrotate \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -47,6 +48,16 @@ WORKDIR /etc/ssl/certs
 RUN ln -s NginxProxyManager.crt 1d0e3f10.0 && update-ca-certificates
 
 WORKDIR /app
+RUN /opt/certbot/bin/python -m pip install --no-cache-dir --upgrade \
+		pip \
+		'certifi>=2026.10.18' \
+		'cryptography>=50,<51' \
+		'filelock>=4.2.1' \
+		'msgpack>=1.2.3' \
+		'setuptools>=84.1.0' \
+		'urllib3>=2.8.0' \
+	&& npm install -g npm@12.2.2 \
+	&& npm cache clean --force
 RUN yarn install \
 	&& yarn cache clean
 
