@@ -7,13 +7,14 @@ import {
 	isApiError,
 	type NginxHostType,
 	type NginxRegenerateHost,
+	type NginxRegenerateLocation,
 	type NginxRegenerateResult,
 	regenerateNginxConfigs,
 } from "src/api/backend";
 import { Button } from "src/components";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { showDeadHostModal, showProxyHostModal, showRedirectionHostModal, showStreamModal } from "src/modals";
-import { formatApiError } from "src/modules/HostStatus";
+import { formatApiError, formatNginxError } from "src/modules/HostStatus";
 
 // Lists that show a host's status, refreshed after the configs were rewritten
 const INVALIDATIONS = [
@@ -40,6 +41,38 @@ const HOST_TYPE_LABELS: Record<NginxHostType, string> = {
 	dead_host: "dead-host",
 	stream: "stream",
 };
+
+const hasMessage = (id: string) => typeof (intl.messages as Record<string, unknown> | undefined)?.[id] !== "undefined";
+
+// Why an offline or failed host is listed: worded from its error details in the UI language, else the backend's text
+const errorText = (host: NginxRegenerateHost) => formatNginxError(host.details) || host.error;
+
+// Codes of a broken custom location that an existing text already says (the same as the host status popover's,
+// see locationStatusText()): invalid_path is the editor's own check of the forward path, a rejected location is
+// what the quarantined state means
+const LOCATION_CHECK_KEYS: Record<string, string> = {
+	invalid_path: "location.error.path-invalid",
+	rejected: "location-status.quarantined.default",
+};
+
+// What is wrong with a broken custom location, in the UI language: location-check.<code> (or its state's default
+// text), then nginx's error as it is on a line of its own; the backend's English message for a code without a text
+const locationText = (location: NginxRegenerateLocation) => {
+	const params = location.params || {};
+	const detail = params.detail ? `\n${params.detail}` : "";
+	const id = location.code ? LOCATION_CHECK_KEYS[location.code] || `location-check.${location.code}` : "";
+	if (id && hasMessage(id)) {
+		return `${intl.formatMessage({ id }, { host: params.host ?? "" })}${detail}`;
+	}
+	const fallback = `location-status.${location.status}.default`;
+	if (!location.message && hasMessage(fallback)) {
+		return `${intl.formatMessage({ id: fallback })}${detail}`;
+	}
+	return location.message || location.status;
+};
+
+const warningText = (host: NginxRegenerateHost) =>
+	host.locations?.length ? host.locations.map((l) => `${l.path}: ${locationText(l)}`).join("\n") : host.message;
 
 const openHost = (host: NginxRegenerateHost) => {
 	switch (host.hostType) {
@@ -146,7 +179,11 @@ function RegenerateResult({ result, partial }: RegenerateResultProps) {
 							regenerated: result.regenerated,
 							offline: result.offline.length,
 							failed: result.failed.length,
-							seconds: (result.durationMs / 1000).toFixed(1),
+							// localised decimal separator
+							seconds: intl.formatNumber(result.durationMs / 1000, {
+								minimumFractionDigits: 1,
+								maximumFractionDigits: 1,
+							}),
 						}}
 					/>
 				</div>
@@ -154,25 +191,26 @@ function RegenerateResult({ result, partial }: RegenerateResultProps) {
 			<HostList
 				titleId="settings.nginx.regenerate.offline"
 				hosts={result.offline}
-				text={(host) => host.error}
+				text={errorText}
 				testId="regenerate-offline"
 			/>
 			<HostList
 				titleId="settings.nginx.regenerate.failed"
 				hosts={result.failed}
-				text={(host) => host.error}
+				text={errorText}
 				testId="regenerate-failed"
 			/>
 			<HostList
 				titleId="settings.nginx.regenerate.warnings"
 				hosts={result.warnings}
-				text={(host) => host.message}
+				text={warningText}
 				testId="regenerate-warnings"
 			/>
 			<HostList
 				titleId="settings.nginx.regenerate.skipped"
 				hosts={result.skipped ?? []}
-				text={(host) => host.message}
+				// the title says why, the backend's per-host text is the same in English
+				text={() => undefined}
 				testId="regenerate-skipped"
 			/>
 		</Alert>

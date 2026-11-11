@@ -705,7 +705,7 @@
 		"defaultMessage": "Show nginx output"
 	},
 	"nginx-error.too-many-broken-hosts": {
-		"defaultMessage": "Too many broken host configs to repair in one go (more than {max}). Regenerate all host configs (restart NPM or run backend/scripts/regenerate-config), then try again."
+		"defaultMessage": "Too many broken host configs to repair in one go (more than {max}). Regenerate all host configs (Settings > Nginx Configuration, or restart NPM), then try again."
 	},
 	"nginx-error.unsafe-value": {
 		"defaultMessage": "A saved value of this host can't be written into the nginx configuration safely, so its configuration was removed"
@@ -930,7 +930,10 @@
 		"defaultMessage": "Nginx Configuration"
 	},
 	"settings.nginx.regenerate.audit": {
-		"defaultMessage": "{checked, plural, one {# host} other {# hosts}}, {offline} offline"
+		"defaultMessage": "{checked, plural, =1 {# host} other {# hosts}}, {offline} offline"
+	},
+	"settings.nginx.regenerate.busy": {
+		"defaultMessage": "All host configs are being regenerated already, wait for that to finish."
 	},
 	"settings.nginx.regenerate.button": {
 		"defaultMessage": "Regenerate all host configs"
@@ -951,28 +954,28 @@
 		"defaultMessage": "Rewrites the nginx config file of every enabled proxy host, redirection host, 404 host and stream from the database, then reloads nginx once. Use it after an upgrade, after restoring a backup, or when config files on disk were changed or lost."
 	},
 	"settings.nginx.regenerate.failed": {
-		"defaultMessage": "{count, plural, one {# host could not be regenerated and keeps its previous config:} other {# hosts could not be regenerated and keep their previous config:}}"
+		"defaultMessage": "{count, plural, =1 {# host could not be regenerated and keeps its previous config:} other {# hosts could not be regenerated and keep their previous config:}}"
 	},
 	"settings.nginx.regenerate.offline": {
-		"defaultMessage": "{count, plural, one {# host is offline now, nginx rejected it:} other {# hosts are offline now, nginx rejected them:}}"
+		"defaultMessage": "{count, plural, =1 {# host is offline now, nginx rejected it:} other {# hosts are offline now, nginx rejected them:}}"
 	},
 	"settings.nginx.regenerate.partial": {
 		"defaultMessage": "The run failed, but it had already changed hosts. This is what it did until then:"
 	},
 	"settings.nginx.regenerate.result": {
-		"defaultMessage": "Checked {checked, plural, one {# host} other {# hosts}} in {seconds} s: {regenerated} online, {offline} offline, {failed} not regenerated."
+		"defaultMessage": "Checked {checked, plural, =1 {# host} other {# hosts}} in {seconds} s: {regenerated} online, {offline} offline, {failed} not regenerated."
 	},
 	"settings.nginx.regenerate.running": {
 		"defaultMessage": "Regenerating. Every host is tested with nginx, this can take a while."
 	},
 	"settings.nginx.regenerate.skipped": {
-		"defaultMessage": "{count, plural, one {# host was skipped, a certificate request for it is running and configures it again once done:} other {# hosts were skipped, a certificate request for them is running and configures them again once done:}}"
+		"defaultMessage": "{count, plural, =1 {# host was skipped, a certificate request for it is running and configures it again once done:} other {# hosts were skipped, a certificate request for them is running and configures them again once done:}}"
 	},
 	"settings.nginx.regenerate.title": {
 		"defaultMessage": "Regenerate all host configs"
 	},
 	"settings.nginx.regenerate.warnings": {
-		"defaultMessage": "{count, plural, one {# host is online, but some of its custom locations don't work:} other {# hosts are online, but some of their custom locations don't work:}}"
+		"defaultMessage": "{count, plural, =1 {# host is online, but some of its custom locations don't work:} other {# hosts are online, but some of their custom locations don't work:}}"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Get started by creating your admin account."

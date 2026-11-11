@@ -5,6 +5,7 @@ import {
 	createSingleFlight,
 	HOST_TYPES,
 	hostName,
+	locationProblems,
 	locationWarning,
 	normaliseHostTypes,
 	runAudited,
@@ -63,6 +64,36 @@ describe("locationWarning", () => {
 	});
 });
 
+describe("locationProblems", () => {
+	it("gives the UI the code and params of each broken location", () => {
+		assert.deepEqual(locationProblems(undefined), []);
+		assert.deepEqual(
+			locationProblems([
+				{ index: 0, path: "/a", status: "ok", code: null },
+				{
+					index: 1,
+					path: "/b",
+					status: "quarantined",
+					mode: null,
+					code: "rejected",
+					params: { detail: "Unknown directive." },
+					message: "Disabled because nginx rejected it: Unknown directive.",
+				},
+			]),
+			[
+				{
+					index: 1,
+					path: "/b",
+					status: "quarantined",
+					code: "rejected",
+					params: { detail: "Unknown directive." },
+					message: "Disabled because nginx rejected it: Unknown directive.",
+				},
+			],
+		);
+	});
+});
+
 describe("summarise", () => {
 	it("counts online, offline and failed hosts and collects location warnings", () => {
 		const summary = summarise([
@@ -78,18 +109,45 @@ describe("summarise", () => {
 			{
 				hostType: "redirection_host",
 				row: { id: 3, domain_names: ["off.example.com"] },
-				meta: { nginx_online: false, nginx_err: "unknown directive" },
+				meta: {
+					nginx_online: false,
+					nginx_err: "unknown directive",
+					nginx_details: { kind: "nginx_config", scope: "host", detail: "Unknown directive." },
+				},
 			},
 			{ hostType: "stream", row: { id: 4, incoming_port: 9000 }, error: new Error("certificate missing") },
 		]);
 		assert.equal(summary.checked, 4);
 		assert.equal(summary.regenerated, 2);
 		assert.deepEqual(summary.offline, [
-			{ host_type: "redirection_host", id: 3, name: "off.example.com", error: "unknown directive" },
+			{
+				host_type: "redirection_host",
+				id: 3,
+				name: "off.example.com",
+				error: "unknown directive",
+				details: { kind: "nginx_config", scope: "host", detail: "Unknown directive." },
+			},
 		]);
-		assert.deepEqual(summary.failed, [{ host_type: "stream", id: 4, name: "9000", error: "certificate missing" }]);
+		assert.deepEqual(summary.failed, [
+			{ host_type: "stream", id: 4, name: "9000", error: "certificate missing", details: null },
+		]);
 		assert.deepEqual(summary.warnings, [
-			{ host_type: "proxy_host", id: 2, name: "warn.example.com", message: "/x: x does not resolve" },
+			{
+				host_type: "proxy_host",
+				id: 2,
+				name: "warn.example.com",
+				message: "/x: x does not resolve",
+				locations: [
+					{
+						index: undefined,
+						path: "/x",
+						status: "unresolved",
+						code: null,
+						params: null,
+						message: "x does not resolve",
+					},
+				],
+			},
 		]);
 	});
 
@@ -166,7 +224,9 @@ describe("summariseFinal", () => {
 		]);
 		assert.equal(summary.checked, 2);
 		assert.equal(summary.regenerated, 1);
-		assert.deepEqual(summary.offline, [{ host_type: "proxy_host", id: 10, name: "ten.test", error: "duplicate" }]);
+		assert.deepEqual(summary.offline, [
+			{ host_type: "proxy_host", id: 10, name: "ten.test", error: "duplicate", details: null },
+		]);
 	});
 
 	it("drops the warning of a host that went offline and keeps hosts that were repaired online", () => {
@@ -194,7 +254,7 @@ describe("summariseFinal", () => {
 		]);
 		assert.deepEqual(summary.failed, []);
 		assert.deepEqual(summary.offline, [
-			{ host_type: "dead_host", id: 3, name: "c.test", error: "old file broken" },
+			{ host_type: "dead_host", id: 3, name: "c.test", error: "old file broken", details: null },
 		]);
 	});
 
@@ -216,7 +276,9 @@ describe("summariseFinal", () => {
 		]);
 		assert.equal(summary.checked, 1);
 		assert.equal(summary.regenerated, 1);
-		assert.deepEqual(summary.offline, [{ host_type: "stream", id: 4, name: "2222", error: "bind failed" }]);
+		assert.deepEqual(summary.offline, [
+			{ host_type: "stream", id: 4, name: "2222", error: "bind failed", details: null },
+		]);
 	});
 });
 

@@ -705,7 +705,7 @@
 		"defaultMessage": "Näita nginxi väljundit"
 	},
 	"nginx-error.too-many-broken-hosts": {
-		"defaultMessage": "Liiga palju vigaseid hostide seadistusi, et neid korraga parandada (rohkem kui {max}). Loo kõigi hostide seadistused uuesti (taaskäivita NPM või käivita backend/scripts/regenerate-config) ja proovi siis uuesti."
+		"defaultMessage": "Liiga palju vigaseid hostide seadistusi, et neid korraga parandada (rohkem kui {max}). Loo kõigi hostide seadistused uuesti (Seaded > Nginxi konfiguratsioon või taaskäivita NPM) ja proovi siis uuesti."
 	},
 	"nginx-error.unsafe-value": {
 		"defaultMessage": "Selle hosti salvestatud väärtust ei saa nginxi seadistusse turvaliselt kirjutada, seetõttu eemaldati selle seadistus"
@@ -931,6 +931,9 @@
 	},
 	"settings.nginx.regenerate.audit": {
 		"defaultMessage": "{checked, plural, one {# host} other {# hosti}}, {offline} võrgust väljas"
+	},
+	"settings.nginx.regenerate.busy": {
+		"defaultMessage": "Kõigi hostide seadistusi juba luuakse uuesti, oota, kuni see lõpeb."
 	},
 	"settings.nginx.regenerate.button": {
 		"defaultMessage": "Loo kõik konfiguratsioonid uuesti"

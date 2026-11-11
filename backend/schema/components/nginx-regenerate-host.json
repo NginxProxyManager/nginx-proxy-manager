@@ -26,6 +26,27 @@
 			"type": "string",
 			"description": "Warnings: the custom locations that are disabled or don't resolve right now, one per line. Skipped: why the host was left alone",
 			"example": "/api: Disabled because nginx rejected it: unknown directive \"proxy_passs\""
+		},
+		"details": {
+			"type": ["object", "null"],
+			"description": "Offline: the host's meta.nginx_details. Failed: the structured details of the error, if any. For clients that word the error themselves",
+			"additionalProperties": true
+		},
+		"locations": {
+			"type": "array",
+			"description": "Warnings: the custom locations of `message`, with the code and params the UI words them from (see meta.nginx_locations)",
+			"items": {
+				"type": "object",
+				"additionalProperties": true,
+				"properties": {
+					"index": { "type": "integer" },
+					"path": { "type": "string" },
+					"status": { "type": "string", "enum": ["quarantined", "unresolved"] },
+					"code": { "type": ["string", "null"] },
+					"params": { "type": ["object", "null"] },
+					"message": { "type": ["string", "null"] }
+				}
+			}
 		}
 	}
 }

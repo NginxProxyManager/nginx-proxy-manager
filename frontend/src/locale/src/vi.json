@@ -705,7 +705,7 @@
 		"defaultMessage": "Hiện đầu ra của nginx"
 	},
 	"nginx-error.too-many-broken-hosts": {
-		"defaultMessage": "Có quá nhiều cấu hình host bị lỗi để sửa trong một lần (hơn {max}). Hãy tạo lại cấu hình của tất cả host (khởi động lại NPM hoặc chạy backend/scripts/regenerate-config), rồi thử lại."
+		"defaultMessage": "Có quá nhiều cấu hình host bị lỗi để sửa trong một lần (hơn {max}). Hãy tạo lại cấu hình của tất cả host (Cài đặt > Cấu hình Nginx, hoặc khởi động lại NPM), rồi thử lại."
 	},
 	"nginx-error.unsafe-value": {
 		"defaultMessage": "Một giá trị đã lưu của host này không thể được ghi an toàn vào cấu hình nginx, nên cấu hình của host đã bị gỡ bỏ"
@@ -931,6 +931,9 @@
 	},
 	"settings.nginx.regenerate.audit": {
 		"defaultMessage": "{checked} host, {offline} ngoại tuyến"
+	},
+	"settings.nginx.regenerate.busy": {
+		"defaultMessage": "Cấu hình của tất cả host đang được tạo lại, hãy đợi đến khi hoàn tất."
 	},
 	"settings.nginx.regenerate.button": {
 		"defaultMessage": "Tạo lại cấu hình của mọi host"

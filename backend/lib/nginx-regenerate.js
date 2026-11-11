@@ -31,20 +31,40 @@ const hostName = (hostType, row) => {
 	return `#${row?.id}`;
 };
 
+const problemLocations = (locations) =>
+	Array.isArray(locations)
+		? locations.filter((loc) => loc?.status === "quarantined" || loc?.status === "unresolved")
+		: [];
+
 /**
  * @param   {Array} locations  meta.nginx_locations
  * @returns {String|null} what is wrong with the custom locations of a host that is online, or null
  */
 const locationWarning = (locations) => {
-	if (!Array.isArray(locations)) {
-		return null;
-	}
-	const bad = locations.filter((loc) => loc?.status === "quarantined" || loc?.status === "unresolved");
+	const bad = problemLocations(locations);
 	if (!bad.length) {
 		return null;
 	}
 	return bad.map((loc) => `${loc.path}: ${loc.message || loc.status}`).join("\n");
 };
+
+/**
+ * @param   {Array} locations  meta.nginx_locations
+ * @returns {Array} the custom locations locationWarning() names, as the UI words them: path, status, code, params
+ *          (see meta.nginx_locations) and the English message
+ */
+const locationProblems = (locations) =>
+	problemLocations(locations).map((loc) => ({
+		index: loc.index,
+		path: loc.path,
+		status: loc.status,
+		code: loc.code ?? null,
+		params: loc.params ?? null,
+		message: loc.message ?? null,
+	}));
+
+// Structured details of an error, for the UI to word it (NginxConfigError.details, meta.nginx_details)
+const errorDetails = (details) => (details && typeof details === "object" ? details : null);
 
 const SUSPENDED_MESSAGE = "A certificate request for this host is running, it is configured again once that is done";
 
@@ -66,17 +86,21 @@ const summarise = (results) => {
 		summary.checked++;
 		if (error) {
 			// Not a host level nginx error (eg. a certificate file is missing): the previous config was kept
-			summary.failed.push(Object.assign(item, { error: `${error.message || error}` }));
+			summary.failed.push(
+				Object.assign(item, { error: `${error.message || error}`, details: errorDetails(error.details) }),
+			);
 			continue;
 		}
 		if (meta?.nginx_online === false) {
-			summary.offline.push(Object.assign(item, { error: meta.nginx_err || "" }));
+			summary.offline.push(
+				Object.assign(item, { error: meta.nginx_err || "", details: errorDetails(meta.nginx_details) }),
+			);
 			continue;
 		}
 		summary.regenerated++;
 		const message = locationWarning(meta?.nginx_locations);
 		if (message) {
-			summary.warnings.push(Object.assign(item, { message }));
+			summary.warnings.push(Object.assign(item, { message, locations: locationProblems(meta?.nginx_locations) }));
 		}
 	}
 	return summary;
@@ -125,6 +149,7 @@ const summariseFinal = (results, finalRows = []) => {
 			id: row.id,
 			name: hostName(hostType, row),
 			error: row.meta.nginx_err || "",
+			details: errorDetails(row.meta.nginx_details),
 		});
 	}
 	return summary;
@@ -215,6 +240,7 @@ export {
 	createSingleFlight,
 	HOST_TYPES,
 	hostName,
+	locationProblems,
 	locationWarning,
 	normaliseHostTypes,
 	runAudited,

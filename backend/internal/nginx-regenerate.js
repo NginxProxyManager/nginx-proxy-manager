@@ -4,9 +4,11 @@ import { nginx as logger } from "../logger.js";
 import internalAuditLog from "./audit-log.js";
 import internalNginx from "./nginx.js";
 
-const flight = createSingleFlight(
-	() => new errs.ConflictError("All host configs are being regenerated already, wait for that to finish."),
-);
+const flight = createSingleFlight(() => {
+	const err = new errs.ConflictError("All host configs are being regenerated already, wait for that to finish.");
+	err.message_i18n = "settings.nginx.regenerate.busy";
+	return err;
+});
 
 const internalNginxRegenerate = {
 	/**

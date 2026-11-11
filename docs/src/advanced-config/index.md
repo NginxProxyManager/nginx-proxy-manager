@@ -229,6 +229,11 @@ or taken them offline already: the page shows these hosts below the error, and t
 `error.regenerate_summary` (same fields as a successful response). The list of offline hosts also
 contains hosts that the final nginx test took offline, even of host types that were not selected.
 
+Each listed host has an English `error` (offline, failed) or `message` (warnings, skipped). For clients that word
+them in their own language, an offline host also has its `details` (the host's `meta.nginx_details`), a failed one
+the structured details of its error (or `null`), and a host with broken custom locations its `locations` (path,
+status, `code` and `params` as in `meta.nginx_locations`).
+
 The command line script runs outside the backend and does not share its lock, so prefer the UI or the API while NPM
 is running and don't save hosts while the script runs. Config files that an interrupted config test left behind as
 `*.conf.npm-aside` are only put back by the UI/API, or by the script with `--restore-aside` while the backend is

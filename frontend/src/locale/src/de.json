@@ -705,7 +705,7 @@
 		"defaultMessage": "Nginx-Ausgabe anzeigen"
 	},
 	"nginx-error.too-many-broken-hosts": {
-		"defaultMessage": "Zu viele fehlerhafte Host-Konfigurationen, um sie auf einmal zu reparieren (mehr als {max}). Erzeuge alle Host-Konfigurationen neu (starte NPM neu oder führe backend/scripts/regenerate-config aus) und versuche es dann erneut."
+		"defaultMessage": "Zu viele fehlerhafte Host-Konfigurationen, um sie auf einmal zu reparieren (mehr als {max}). Erzeuge alle Host-Konfigurationen neu (Einstellungen > Nginx-Konfiguration, oder starte NPM neu) und versuche es dann erneut."
 	},
 	"nginx-error.unsafe-value": {
 		"defaultMessage": "Ein gespeicherter Wert dieses Hosts kann nicht sicher in die nginx-Konfiguration geschrieben werden, daher wurde seine Konfiguration entfernt"
@@ -931,6 +931,9 @@
 	},
 	"settings.nginx.regenerate.audit": {
 		"defaultMessage": "{checked, plural, one {# Host} other {# Hosts}}, {offline} offline"
+	},
+	"settings.nginx.regenerate.busy": {
+		"defaultMessage": "Alle Host-Konfigurationen werden bereits neu erzeugt, warte, bis das abgeschlossen ist."
 	},
 	"settings.nginx.regenerate.button": {
 		"defaultMessage": "Alle Host-Konfigurationen neu erzeugen"
