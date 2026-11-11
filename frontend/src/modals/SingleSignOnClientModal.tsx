@@ -421,7 +421,7 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 												<T id={"sso.config.settings.button-text.hint"} />
 											</small>
 											<div className="row mt-3">
-												<label className="row">
+												<label className="row" htmlFor="buttonText">
 													<h4>
 														<T id="sso.config.settings.button-preview.label" />
 													</h4>
