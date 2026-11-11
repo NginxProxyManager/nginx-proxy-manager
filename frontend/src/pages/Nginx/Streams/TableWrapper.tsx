@@ -14,7 +14,6 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const [_deleteId, _setDeleteIdd] = useState(0);
 	const { isFetching, isLoading, isError, error, data } = useStreams(["owner", "certificate"]);
 
 	if (isLoading) {
@@ -43,7 +42,8 @@ export default function TableWrapper() {
 			return (
 				`${item.incomingPort}`.includes(search) ||
 				`${item.forwardingPort}`.includes(search) ||
-				item.forwardingHost.includes(search)
+				item.forwardingHost.includes(search) ||
+				(item.meta?.folder ?? "").toLowerCase().includes(search)
 			);
 		});
 	} else if (search !== "") {
@@ -95,7 +95,7 @@ export default function TableWrapper() {
 				<Table
 					data={filtered ?? data ?? []}
 					isFetching={isFetching}
-					isFiltered={!!filtered}
+					isFiltered={!!search}
 					onEdit={(id: number) => showStreamModal(id)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
