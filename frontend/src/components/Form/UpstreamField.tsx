@@ -350,7 +350,7 @@ function ExistingHostBadge({ s }: { s: UpstreamSuggestion }) {
 	if (!existing) return null;
 	return (
 		<span
-			className="badge bg-yellow-lt ms-2"
+			className="badge bg-yellow-lt ms-2 text-nowrap"
 			title={intl.formatMessage({ id: "docker-labels.exists" }, { type: existing.type })}
 			data-testid="existing-host-badge"
 			data-type={existing.type}
@@ -385,12 +385,16 @@ const Option = (props: OptionProps<UpstreamOption, false, GroupBase<UpstreamOpti
 	].filter(Boolean);
 	return (
 		<components.Option {...props} innerProps={innerProps} isFocused={isFocused}>
-			<div className="d-flex align-items-center">
+			{/* badges wrap onto the next line in a narrow menu instead of squeezing the host name */}
+			<div className="d-flex flex-wrap align-items-center">
 				<span className="me-1">{SOURCE_ICON[c.source]}</span>
 				<strong className="text-break">{c.host}</strong>
 				{c.state ? (
 					<span
-						className={cn("badge ms-2", c.state === "running" ? "bg-green-lt" : "bg-secondary-lt")}
+						className={cn(
+							"badge ms-2 text-nowrap",
+							c.state === "running" ? "bg-green-lt" : "bg-secondary-lt",
+						)}
 						data-state={c.state}
 					>
 						{c.state}
