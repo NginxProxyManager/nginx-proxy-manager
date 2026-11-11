@@ -30,7 +30,7 @@ const HIDE_DELAY_MS = 200;
 export const describeHealthTarget = (t: UpstreamHealthTarget) => {
 	const where =
 		t.locationIndex === null || typeof t.locationIndex === "undefined"
-			? intl.formatMessage({ id: "host-status.main-target" })
+			? intl.formatMessage({ id: "column.destination" })
 			: t.path || `#${t.locationIndex + 1}`;
 	const reason = isTranslatedCheckCode(t.code) ? intl.formatMessage({ id: `upstream.check.${t.code}` }) : t.message;
 	return { where, target: `${t.host}:${t.port}`, reason: reason || t.message };

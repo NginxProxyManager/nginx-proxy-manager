@@ -271,8 +271,8 @@ TLS (`tcp://` with certificates) is not supported.
 
 Open a proxy host (or add one), click into the forward host field and look at the dropdown:
 
-- A **Docker containers** group with your containers, their ports and their state (`running`,
-  `exited`, ...) means Docker discovery works. Containers with `npm.hide=true`, such as the socket
+- A **Docker containers** group with your containers, their ports and their state (running
+  containers show **Online**) means Docker discovery works. Containers with `npm.hide=true`, such as the socket
   proxy, are not listed.
 - Without that group, the footer of the dropdown says why: "Docker discovery is off" means
   `NPM_DOCKER_DISCOVERY` isn't `true` on the NPM container (was it recreated?); otherwise it shows
@@ -282,20 +282,24 @@ Open a proxy host (or add one), click into the forward host field and look at th
 
 #### Troubleshooting
 
+The dropdown shows these in the UI language; the English wording is listed here. The API
+(`GET /api/upstreams/candidates`) reports the same as `providers.docker.code` (in brackets), with
+an English `message`.
+
 | Message in the dropdown | Cause |
 |---|---|
-| Docker discovery is off | `NPM_DOCKER_DISCOVERY=true` isn't set, or the container wasn't restarted (recreated) after setting it |
-| Connection to the Docker API was refused | NPM reaches the address in `DOCKER_HOST` but nothing answers there: is the proxy running, is the port 2375? |
-| The DOCKER_HOST host name could not be resolved | NPM and the proxy don't share a network, or `DOCKER_HOST` doesn't use the proxy's container name |
-| The Docker API denied the request | The proxy blocks the request: set `CONTAINERS=1` and `NETWORKS=1` on it |
-| Permission denied on the Docker socket | The socket is mounted into NPM directly and NPM can't open it (see `PUID`/`PGID` above); use the proxy |
-| Docker API did not answer within 3 seconds | Something accepts the connection but doesn't answer, or a firewall drops the traffic |
-| Docker API answered _status_ for _path_ | The proxy (or the Docker API) refused or failed that request with another HTTP status |
-| Docker API response is too large | More than 2 MB of container list: too many containers on NPM's networks |
-| Could not find Nginx Proxy Manager's own container through the Docker API ... | NPM can't find its own container in the list (needed to know its networks): the proxy filters it out, or NPM doesn't run in a container of this Docker host |
-| DOCKER_HOST "..." is not supported / has an invalid port | `DOCKER_HOST` has a typo; use `tcp://<proxy-name>:2375` (TLS isn't supported) |
-| Other text, such as `connect EHOSTUNREACH ...` | The network error as the system reports it, for example no route to the proxy's address |
-| Docker discovery failed: ... | An unexpected error; the text after the colon says more |
+| Docker discovery is off (`disabled`) | `NPM_DOCKER_DISCOVERY=true` isn't set, or the container wasn't restarted (recreated) after setting it |
+| The connection to the Docker API was refused (`connection_refused`) | NPM reaches the address in `DOCKER_HOST` but nothing answers there: is the proxy running, is the port 2375? |
+| The host name in DOCKER_HOST could not be resolved (`host_not_found`) | NPM and the proxy don't share a network, or `DOCKER_HOST` doesn't use the proxy's container name |
+| The Docker API denied the request (`api_denied`) | The proxy blocks the request: set `CONTAINERS=1` and `NETWORKS=1` on it |
+| Permission denied on the Docker socket (`permission_denied`) | The socket is mounted into NPM directly and NPM can't open it (see `PUID`/`PGID` above); use the proxy |
+| The Docker socket ... does not exist (`socket_missing`) | `DOCKER_HOST` points at a unix socket that isn't mounted into the NPM container |
+| The Docker API did not answer within 3 seconds (`timeout`) | Something accepts the connection but doesn't answer, or a firewall drops the traffic |
+| The Docker API answered _status_ for _path_ (`bad_status`) | The proxy (or the Docker API) refused or failed that request with another HTTP status |
+| The Docker API response is too large or not valid JSON (`bad_response`) | More than 2 MB of container list (too many containers on NPM's networks), or something other than the Docker API answers |
+| Nginx Proxy Manager's own container was not found through the Docker API ... (`self_not_found`) | NPM can't find its own container in the list (needed to know its networks): the proxy filters it out, or NPM doesn't run in a container of this Docker host |
+| DOCKER_HOST "..." is not supported / has an invalid port / must be an absolute unix socket path (`invalid_docker_host`) | `DOCKER_HOST` has a typo; use `tcp://<proxy-name>:2375` (TLS isn't supported) |
+| Unexpected error, followed by the error text, such as `connect EHOSTUNREACH ...` (`failed`) | The error as the system reports it, for example no route to the proxy's address |
 
 A container you expect is missing: check that it shares a network with NPM, that it doesn't have
 `npm.hide=true`, and use the refresh button (results are cached for 30 seconds). New or changed

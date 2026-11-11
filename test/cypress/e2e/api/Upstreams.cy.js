@@ -79,7 +79,10 @@ describe('Upstreams endpoints', () => {
 			expect(['ok', 'disabled', 'unavailable']).to.include(data.providers.docker.status);
 			if (data.providers.docker.status !== 'ok') {
 				expect(data.providers.docker.message).to.be.a('string');
+				// language neutral reason, the UI words it in its own language
+				expect(data.providers.docker.code).to.be.a('string');
 			}
+			expect(data.providers.history.code).to.equal(null);
 			expect(data.providers.history.status).to.equal('ok');
 			expect(['ok', 'unavailable', 'disabled']).to.include(data.providers.dns.status);
 			expect(data).to.have.property('generated_at');
@@ -246,6 +249,11 @@ describe('Upstreams endpoints', () => {
 					returnOnError: true,
 				}).then((data) => {
 					statuses.push(data?.error ? data.error.code : 200);
+					if (data?.error) {
+						// the wait as a number, so the UI can word it in its own language
+						expect(data.error.details).to.include({ kind: 'rate_limited' });
+						expect(data.error.details.retry_after).to.be.a('number');
+					}
 					return refresh(remaining - 1);
 				});
 			};

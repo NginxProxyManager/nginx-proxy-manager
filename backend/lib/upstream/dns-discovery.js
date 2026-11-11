@@ -36,9 +36,14 @@ const DEFAULTS = {
 };
 
 class DnsDiscoveryUnavailable extends Error {
-	constructor(message) {
+	/**
+	 * @param {string} message  English text
+	 * @param {string} code     language neutral reason: no_docker_dns, no_ipv4_interface
+	 */
+	constructor(message, code) {
 		super(message);
 		this.name = "DnsDiscoveryUnavailable";
+		this.code = code || "failed";
 	}
 }
 
@@ -180,12 +185,13 @@ const discoverDns = async (opts = {}) => {
 	if (!nameservers.includes(server)) {
 		throw new DnsDiscoveryUnavailable(
 			"Nginx Proxy Manager is not on a user-defined Docker network (no Docker embedded DNS in /etc/resolv.conf), so containers can't be discovered by name. Put NPM and your apps on a shared Docker network.",
+			"no_docker_dns",
 		);
 	}
 
 	const subnets = ownIpv4Subnets(opts.interfaces || os.networkInterfaces());
 	if (!subnets.length) {
-		throw new DnsDiscoveryUnavailable("No IPv4 network interface found to scan.");
+		throw new DnsDiscoveryUnavailable("No IPv4 network interface found to scan.", "no_ipv4_interface");
 	}
 
 	let gateways = opts.gateways;
@@ -233,7 +239,8 @@ const discoverDns = async (opts = {}) => {
 		.sort((a, b) => ipv4ToInt(a.ip) - ipv4ToInt(b.ip))
 		.map((entry) => ({
 			host: entry.host,
-			label: `${entry.host} (on ${entry.network})`,
+			kind: "dns",
+			owner: null,
 			source: "dns",
 			ports: [],
 			hint_port: null,

@@ -30,21 +30,25 @@
 								"providers": {
 									"docker": {
 										"status": "disabled",
+										"code": "disabled",
 										"message": "Docker discovery is disabled. Set NPM_DOCKER_DISCOVERY=true and DOCKER_HOST (a docker-socket-proxy is recommended) to list containers."
 									},
 									"dns": {
 										"status": "ok",
+										"code": null,
 										"message": null
 									},
 									"history": {
 										"status": "ok",
+										"code": null,
 										"message": null
 									}
 								},
 								"items": [
 									{
 										"host": "app",
-										"label": "app (on npm_default)",
+										"kind": "dns",
+										"owner": null,
 										"source": "dns",
 										"ports": [8080],
 										"hint_port": 8080,
@@ -63,21 +67,25 @@
 								"providers": {
 									"docker": {
 										"status": "ok",
+										"code": null,
 										"message": null
 									},
 									"dns": {
 										"status": "ok",
+										"code": null,
 										"message": null
 									},
 									"history": {
 										"status": "ok",
+										"code": null,
 										"message": null
 									}
 								},
 								"items": [
 									{
 										"host": "grafana",
-										"label": "grafana (container)",
+										"kind": "container",
+										"owner": null,
 										"source": "docker",
 										"ports": [3000],
 										"hint_port": 3000,
@@ -102,7 +110,8 @@
 									},
 									{
 										"host": "app",
-										"label": "app (on npm_default)",
+										"kind": "dns",
+										"owner": null,
 										"source": "dns",
 										"ports": [8080],
 										"hint_port": 8080,

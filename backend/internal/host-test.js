@@ -171,6 +171,7 @@ const internalHostTest = {
 			warnings.push({
 				code: "upstreams_rate_limited",
 				message: WARNING_MESSAGES.upstreams_rate_limited(checked.rateLimited),
+				retry_after: checked.rateLimited,
 			});
 		}
 

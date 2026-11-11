@@ -2,16 +2,29 @@
 	"type": "object",
 	"description": "Status of one upstream discovery provider",
 	"additionalProperties": false,
-	"required": ["status", "message"],
+	"required": ["status", "code", "message"],
 	"properties": {
 		"status": {
 			"type": "string",
 			"example": "ok",
 			"enum": ["ok", "disabled", "unavailable"]
 		},
+		"code": {
+			"type": ["string", "null"],
+			"description": "Language neutral reason for a disabled or unavailable provider, or a warning (null: none). docker: disabled, socket_missing, permission_denied, connection_refused, host_not_found, api_denied, timeout, invalid_docker_host, bad_status, bad_response, self_not_found, failed. dns: disabled, truncated, no_docker_dns, no_ipv4_interface, failed. history: failed.",
+			"example": null
+		},
+		"params": {
+			"type": "object",
+			"description": "Values for the text of code: path (socket_missing), seconds (timeout), value and problem (invalid_docker_host: unix_path, port or unsupported), status and path (bad_status), detail (failed: the raw error, not translated)",
+			"additionalProperties": {
+				"type": ["string", "integer"]
+			},
+			"example": { "seconds": 3 }
+		},
 		"message": {
 			"type": ["string", "null"],
-			"description": "Why the provider is disabled or unavailable, or a warning",
+			"description": "English explanation of code, for logs and API users",
 			"example": null
 		}
 	}

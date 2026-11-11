@@ -9,6 +9,8 @@ function TooManyRequestsError(message, retryAfter, previous) {
 	this.previous = previous;
 	this.message = message || "Too many requests";
 	this.retry_after = retryAfter || null;
+	// sent as error.details, so a client can show the wait in its own language
+	this.details = { kind: "rate_limited", retry_after: this.retry_after };
 	this.public = true;
 	this.status = 429;
 }

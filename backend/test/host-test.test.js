@@ -333,7 +333,8 @@ describe("buildAsideWarnings", () => {
 			{
 				host_type: "proxy_host",
 				host_id: 4,
-				message: "Nginx rejects the current configuration of Proxy host #4.",
+				message: 'Nginx rejects the current configuration of Proxy host #4: unknown directive "proxy_passs".',
+				detail: 'unknown directive "proxy_passs"',
 			},
 			{ host_type: "stream", host_id: 9, message: "Nginx rejects the current configuration of Stream #9." },
 		];
@@ -341,9 +342,12 @@ describe("buildAsideWarnings", () => {
 		assert.deepEqual(warnings, [
 			{
 				code: "other_host_broken",
-				message: "Nginx rejects the current configuration of Proxy host #4. Saving would repair or disable it.",
+				message:
+					'Nginx rejects the current configuration of Proxy host #4: unknown directive "proxy_passs". Saving would repair or disable it.',
 				host_type: "proxy_host",
 				host_id: 4,
+				// for clients that word the warning in their own language
+				detail: 'unknown directive "proxy_passs"',
 			},
 			{
 				code: "other_host_broken",
@@ -351,6 +355,7 @@ describe("buildAsideWarnings", () => {
 					"Nginx rejects the current configuration of another host. Saving would repair or disable that host. Please ask an administrator to check it.",
 				host_type: null,
 				host_id: null,
+				detail: null,
 			},
 		]);
 		assert.deepEqual(await buildAsideWarnings([], async () => true), []);

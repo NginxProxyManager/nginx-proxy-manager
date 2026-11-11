@@ -321,6 +321,11 @@ export type UpstreamSource = "docker" | "dns" | "history";
 
 export interface UpstreamProviderStatus {
 	status: "ok" | "disabled" | "unavailable";
+	// language neutral reason (null: none), the UI words it, eg. upstream.docker-error.<code>
+	code: string | null;
+	// values for the text of `code`; `detail` is a raw error text, not translated
+	params?: Record<string, string | number>;
+	// English text for logs and API users, not shown in the UI
 	message: string | null;
 }
 
@@ -346,9 +351,14 @@ export interface UpstreamSuggestion {
 	existingHostType: "proxy_host" | "redirection_host" | "dead_host" | null;
 }
 
+// What a candidate's host name is: the UI words it in its own language
+export type UpstreamCandidateKind = "container" | "compose_service" | "dns" | "history";
+
 export interface UpstreamCandidate {
 	host: string;
-	label: string;
+	kind: UpstreamCandidateKind;
+	// compose_service: the container the service name belongs to
+	owner: string | null;
 	source: UpstreamSource;
 	ports: number[];
 	hintPort: number | null;
@@ -457,10 +467,15 @@ export interface HostTestUpstream extends UpstreamCheckResult {
 }
 
 export interface HostTestWarning {
-	code: "certificate_pending" | "other_host_broken" | string;
+	code: "certificate_pending" | "other_host_broken" | "upstreams_rate_limited" | string;
+	// English text, shown only for a code the UI has no text for
 	message: string;
 	hostType?: string | null;
 	hostId?: number | null;
+	// other_host_broken: why nginx rejects that host (raw nginx text, not translated)
+	detail?: string | null;
+	// upstreams_rate_limited: seconds until the next check is possible
+	retryAfter?: number;
 }
 
 export interface HostTestResult {

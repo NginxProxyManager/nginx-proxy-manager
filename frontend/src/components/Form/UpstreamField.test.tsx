@@ -10,6 +10,7 @@ import {
 	groupCandidates,
 	LabelPrefillHint,
 	labelPrefill,
+	optionFilterText,
 	UpstreamField,
 } from "./UpstreamField";
 
@@ -26,9 +27,11 @@ vi.mock("src/hooks", () => ({
 	}),
 }));
 
+const KIND = { docker: "container", dns: "dns", history: "history" } as const;
 const candidate = (c: Partial<UpstreamCandidate>): UpstreamCandidate => ({
 	host: "x",
-	label: "x",
+	kind: KIND[c.source ?? "history"],
+	owner: null,
 	source: "history",
 	ports: [],
 	hintPort: null,
@@ -41,10 +44,9 @@ const candidate = (c: Partial<UpstreamCandidate>): UpstreamCandidate => ({
 });
 
 const items: UpstreamCandidate[] = [
-	candidate({ host: "old-app", label: "old-app", source: "history", ports: [3000], usedBy: 2 }),
+	candidate({ host: "old-app", source: "history", ports: [3000], usedBy: 2 }),
 	candidate({
 		host: "app",
-		label: "app (container)",
 		source: "docker",
 		ports: [8080, 9090],
 		hintPort: 9090,
@@ -52,17 +54,18 @@ const items: UpstreamCandidate[] = [
 		state: "running",
 		network: "npm_default",
 	}),
-	candidate({ host: "db-ui", label: "db-ui", source: "dns", ports: [8081] }),
+	candidate({ host: "db-ui", source: "dns", ports: [8081] }),
 ];
 
 const data = (
 	dockerStatus: "ok" | "disabled" | "unavailable" = "ok",
-	message: string | null = null,
+	code: string | null = null,
+	params?: Record<string, string | number>,
 ): UpstreamCandidates => ({
 	providers: {
-		docker: { status: dockerStatus, message },
-		dns: { status: "ok", message: null },
-		history: { status: "ok", message: null },
+		docker: { status: dockerStatus, code, params, message: code ? "English text, not shown" : null },
+		dns: { status: "ok", code: null, message: null },
+		history: { status: "ok", code: null, message: null },
 	},
 	items,
 	generatedAt: "2026-11-04T10:00:00Z",
@@ -117,6 +120,20 @@ describe("UpstreamField helpers", () => {
 		expect(groupCandidates([])).toEqual([]);
 	});
 
+	it("filters a compose service alias by its container's name and a host by its network", () => {
+		const alias = candidate({ host: "blog", kind: "compose_service", owner: "myproj-blog-1", source: "docker" });
+		const [group] = groupCandidates([alias]);
+		// shown as the host name, the kind is worded by the option itself
+		expect(group.options[0].label).toBe("blog");
+		expect(optionFilterText({ label: "blog", value: "blog", data: group.options[0] })).toBe(
+			"blog blog myproj-blog-1",
+		);
+		const onNet = candidate({ host: "db", source: "dns", network: "backend" });
+		expect(
+			optionFilterText({ label: "db", value: "db", data: { value: "db", label: "db", candidate: onNet } }),
+		).toBe("db db backend");
+	});
+
 	it("prefills the hinted port and scheme, else a single port", () => {
 		expect(candidatePrefill(items[1])).toEqual({ port: 9090, scheme: "https" });
 		expect(candidatePrefill(items[0])).toEqual({ port: 3000 });
@@ -133,7 +150,8 @@ describe("UpstreamField", () => {
 		expect(screen.getByText("Docker containers")).toBeInTheDocument();
 		expect(screen.getByText("Discovered on network")).toBeInTheDocument();
 		expect(screen.getByText("Used before")).toBeInTheDocument();
-		expect(screen.getByText("running")).toBeInTheDocument();
+		// the "running" state as the common "Online"
+		expect(screen.getByText("Online")).toBeInTheDocument();
 		expect(screen.getByText(/Ports: 8080, 9090/)).toBeInTheDocument();
 	});
 
@@ -204,9 +222,14 @@ describe("UpstreamField", () => {
 	});
 
 	it("shows why Docker discovery doesn't work and links the help", () => {
-		render(<Harness candidates={data("unavailable", "permission denied on the Docker socket")} />);
+		render(<Harness candidates={data("unavailable", "permission_denied")} />);
 		openMenu();
-		expect(screen.getByTestId("docker-error-hint")).toHaveTextContent("permission denied on the Docker socket");
+		const hint = screen.getByTestId("docker-error-hint");
+		// worded from the code, not the backend's English message
+		expect(hint).toHaveTextContent("Docker discovery doesn't work. Permission denied on the Docker socket.");
+		expect(hint).not.toHaveTextContent("English text");
+		// no double period (an ellipsis like tcp://... is fine), no "?", no double space
+		expect(hint.textContent).not.toMatch(/(?<!\.)\.\.(?!\.)|\?| {2}/);
 		expect(screen.getByTestId("docker-help-link")).toBeInTheDocument();
 		expect(screen.queryByTestId("docker-disabled-hint")).toBeNull();
 	});
@@ -253,9 +276,9 @@ describe("UpstreamField", () => {
 const prefixData: UpstreamCandidates = {
 	providers: data().providers,
 	items: [
-		candidate({ host: "10.0.0.15", label: "10.0.0.15", source: "history", ports: [3000] }),
-		candidate({ host: "app-db", label: "app-db", source: "docker", ports: [5432] }),
-		candidate({ host: "web", label: "web", source: "docker", ports: [80] }),
+		candidate({ host: "10.0.0.15", source: "history", ports: [3000] }),
+		candidate({ host: "app-db", source: "docker", ports: [5432] }),
+		candidate({ host: "web", source: "docker", ports: [80] }),
 	],
 	generatedAt: "2026-11-04T10:00:00Z",
 };
@@ -366,8 +389,8 @@ describe("UpstreamField keyboard", () => {
 	const homeData: UpstreamCandidates = {
 		...prefixData,
 		items: [
-			candidate({ host: "myhost-db", label: "myhost-db", source: "docker", ports: [5432] }),
-			candidate({ host: "myhost-web", label: "myhost-web", source: "docker", ports: [80] }),
+			candidate({ host: "myhost-db", source: "docker", ports: [5432] }),
+			candidate({ host: "myhost-web", source: "docker", ports: [80] }),
 		],
 	};
 
@@ -559,7 +582,7 @@ describe("UpstreamField selection guard", () => {
 		clickControl();
 		expect(document.querySelector(".react-select__menu")).not.toBeNull();
 		// the refresh button in the menu footer is shown but isn't a Tab stop
-		const refresh = screen.getByLabelText("Refresh suggestions");
+		const refresh = screen.getByLabelText("Refresh");
 		expect(refresh.tabIndex).toBe(-1);
 		pressTab(hostInput());
 		expect(document.querySelector(".react-select__menu")).toBeNull();
@@ -745,7 +768,6 @@ const labelled: UpstreamCandidates = {
 	items: [
 		candidate({
 			host: "blog",
-			label: "blog (container)",
 			source: "docker",
 			ports: [2368],
 			state: "running",
@@ -753,7 +775,6 @@ const labelled: UpstreamCandidates = {
 		}),
 		candidate({
 			host: "shop",
-			label: "shop (container)",
 			source: "docker",
 			ports: [80],
 			state: "running",

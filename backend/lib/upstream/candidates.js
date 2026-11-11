@@ -68,7 +68,8 @@ const buildHistoryCandidates = ({ proxyHosts = [], streams = [] } = {}) => {
 		}
 		return {
 			host: entry.host,
-			label: `${entry.host} (used by ${entry.users.size} host${entry.users.size === 1 ? "" : "s"})`,
+			kind: "history",
+			owner: null,
 			source: "history",
 			ports,
 			hint_port: ports.length === 1 ? ports[0] : null,
@@ -83,7 +84,7 @@ const buildHistoryCandidates = ({ proxyHosts = [], streams = [] } = {}) => {
 
 /**
  * Merges candidates from all providers and dedupes them by host (case-insensitive).
- * Priority docker > dns > history: the best source wins for label/source/network/state/ip/suggestion, ports
+ * Priority docker > dns > history: the best source wins for kind/owner/source/network/state/ip/suggestion, ports
  * are unioned, hints fall back to lower-priority sources, used_by is kept from history.
  *
  * @param   {Array<Array<object>>} lists
@@ -103,7 +104,8 @@ const mergeCandidates = (lists, max = MAX_ITEMS) => {
 		if (!existing) {
 			merged.set(key, {
 				host: item.host,
-				label: item.label || item.host,
+				kind: item.kind || item.source,
+				owner: item.owner ?? null,
 				source: item.source,
 				ports: [...(item.ports || [])],
 				hint_port: item.hint_port ?? null,

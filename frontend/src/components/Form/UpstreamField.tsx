@@ -26,6 +26,13 @@ import type { UpstreamCandidate, UpstreamCandidates, UpstreamSource, UpstreamSug
 import { useUpstreamCandidates } from "src/hooks";
 import { intl, T } from "src/locale";
 import { showHelpModal } from "src/modals";
+import {
+	candidateKindText,
+	containerStateText,
+	dockerErrorText,
+	formatValueList,
+	type ProviderErrorText,
+} from "src/modules/UpstreamText";
 
 export interface UpstreamOption {
 	readonly value: string;
@@ -66,10 +73,17 @@ export const candidatePrefill = (c: UpstreamCandidate): UpstreamPrefill => {
 export const groupCandidates = (items: UpstreamCandidate[] = []): GroupBase<UpstreamOption>[] =>
 	SOURCE_ORDER.map((source) => ({
 		label: intl.formatMessage({ id: `upstream.group.${source}` }),
-		options: items
-			.filter((c) => c.source === source)
-			.map((c) => ({ value: c.host, label: c.label || c.host, candidate: c })),
+		options: items.filter((c) => c.source === source).map((c) => ({ value: c.host, label: c.host, candidate: c })),
 	})).filter((g) => g.options.length > 0);
+
+/**
+ * What typing filters the options by: the host name, and for a compose service alias its container's name,
+ * for a host on a network that network's name (both are shown on the option)
+ */
+export const optionFilterText = (option: { label: string; value: string; data: UpstreamOption }): string => {
+	const c = option.data.candidate;
+	return [option.label, option.value, c?.owner, c?.network].filter(Boolean).join(" ");
+};
 
 /**
  * What a pick writes into the port and scheme fields. `null` empties the port: the new candidate has no port to
@@ -256,15 +270,15 @@ export function LabelPrefillHint({ prefill, onOpen }: LabelHintProps) {
 					<T
 						id={existing.type === "proxy_host" ? "docker-labels.exists" : "docker-labels.used-by"}
 						data={{ type: existing.type }}
-					/>
-					. <T id="docker-labels.not-filled" data={{ domains: prefill.labelDomains.join(", ") }} />{" "}
+					/>{" "}
+					<T id="docker-labels.not-filled" data={{ domains: formatValueList(prefill.labelDomains) }} />{" "}
 					<button
 						type="button"
 						className="btn btn-link btn-sm p-0 align-baseline"
 						onClick={() => onOpen(existing)}
 						data-testid="open-existing"
 					>
-						<T id="docker-labels.open" />
+						<T id="action.edit" />
 					</button>
 				</div>
 			) : null}
@@ -274,7 +288,7 @@ export function LabelPrefillHint({ prefill, onOpen }: LabelHintProps) {
 					title={intl.formatMessage({ id: "docker-labels.ignored-hint" })}
 					data-testid="ignored-domains"
 				>
-					<T id="docker-labels.ignored" data={{ domains: prefill.ignoredDomains.join(", ") }} />
+					<T id="docker-labels.ignored" data={{ domains: formatValueList(prefill.ignoredDomains) }} />
 				</div>
 			) : null}
 		</div>
@@ -325,7 +339,7 @@ function OptionLabels({ s }: { s: UpstreamSuggestion }) {
 	return (
 		<div className="text-secondary small ps-3 text-break" data-testid="option-domains">
 			<IconWorld size={12} className="me-1" />
-			{s.domainNames.join(", ")}
+			{formatValueList(s.domainNames)}
 		</div>
 	);
 }
@@ -339,7 +353,7 @@ function OptionIgnored({ s }: { s: UpstreamSuggestion }) {
 			title={intl.formatMessage({ id: "docker-labels.ignored-hint" })}
 			data-testid="option-ignored-domains"
 		>
-			<T id="docker-labels.ignored" data={{ domains: s.ignoredDomains.join(", ") }} />
+			<T id="docker-labels.ignored" data={{ domains: formatValueList(s.ignoredDomains) }} />
 		</div>
 	);
 }
@@ -379,10 +393,11 @@ const Option = (props: OptionProps<UpstreamOption, false, GroupBase<UpstreamOpti
 		return <components.Option {...props} innerProps={innerProps} isFocused={isFocused} />;
 	}
 	const extra = [
-		c.ports?.length ? intl.formatMessage({ id: "upstream.ports" }, { ports: c.ports.join(", ") }) : null,
-		c.network,
+		c.ports?.length ? intl.formatMessage({ id: "upstream.ports" }, { ports: formatValueList(c.ports) }) : null,
+		c.network ? intl.formatMessage({ id: "upstream.network" }, { network: c.network }) : null,
 		c.usedBy ? intl.formatMessage({ id: "upstream.used-by" }, { count: c.usedBy }) : null,
 	].filter(Boolean);
+	const kind = candidateKindText(c);
 	return (
 		<components.Option {...props} innerProps={innerProps} isFocused={isFocused}>
 			{/* badges wrap onto the next line in a narrow menu instead of squeezing the host name */}
@@ -397,12 +412,16 @@ const Option = (props: OptionProps<UpstreamOption, false, GroupBase<UpstreamOpti
 						)}
 						data-state={c.state}
 					>
-						{c.state}
+						{containerStateText(c.state)}
 					</span>
 				) : null}
 				{c.suggestion ? <ExistingHostBadge s={c.suggestion} /> : null}
 			</div>
-			{c.label && c.label !== c.host ? <div className="text-secondary small ps-3">{c.label}</div> : null}
+			{kind ? (
+				<div className="text-secondary small ps-3" data-testid="option-kind">
+					{kind}
+				</div>
+			) : null}
 			{c.suggestion ? <OptionLabels s={c.suggestion} /> : null}
 			{extra.length ? <div className="text-secondary small ps-3">{extra.join(" · ")}</div> : null}
 			{c.suggestion ? <OptionIgnored s={c.suggestion} /> : null}
@@ -420,7 +439,7 @@ const Input = (props: InputProps<UpstreamOption, false, GroupBase<UpstreamOption
 interface MenuFooterInfo {
 	dockerDisabled: boolean;
 	// Set when Docker discovery is switched on but doesn't work, e.g. no access to the API
-	dockerError?: string | null;
+	dockerError?: ProviderErrorText | null;
 	onRefresh?: () => void;
 	isRefreshing?: boolean;
 }
@@ -482,7 +501,15 @@ function MenuList(props: MenuListProps<UpstreamOption, false, GroupBase<Upstream
 						</span>
 					) : dockerError ? (
 						<span data-testid="docker-error-hint">
-							<T id="upstream.docker-unavailable" data={{ reason: dockerError }} /> <DockerHelpLink />
+							<T id="upstream.docker-unavailable" /> {dockerError.text}{" "}
+							{dockerError.detail ? (
+								<>
+									<code className="text-break" data-testid="docker-error-detail">
+										{dockerError.detail}
+									</code>{" "}
+								</>
+							) : null}
+							<DockerHelpLink />
 						</span>
 					) : (
 						<>
@@ -494,8 +521,8 @@ function MenuList(props: MenuListProps<UpstreamOption, false, GroupBase<Upstream
 					<button
 						type="button"
 						className="btn btn-sm btn-link p-0 ms-2"
-						title={intl.formatMessage({ id: "upstream.refresh" })}
-						aria-label={intl.formatMessage({ id: "upstream.refresh" })}
+						title={intl.formatMessage({ id: "logs.refresh" })}
+						aria-label={intl.formatMessage({ id: "logs.refresh" })}
 						disabled={isRefreshing}
 						// Not a Tab stop: Tab from the input must reach the next field. The menu
 						// closes when the input loses focus, which would unmount the button and
@@ -563,7 +590,8 @@ export function UpstreamField({
 
 	const groups = useMemo(() => groupCandidates(data?.items), [data]);
 	const dockerDisabled = data?.providers?.docker?.status === "disabled";
-	const dockerError = data?.providers?.docker?.status === "unavailable" ? data.providers.docker.message || "?" : null;
+	const docker = data?.providers?.docker;
+	const dockerError = useMemo(() => (docker?.status === "unavailable" ? dockerErrorText(docker) : null), [docker]);
 	const { refresh, isRefreshing } = query;
 
 	const footer = useMemo<MenuFooterInfo>(
@@ -572,7 +600,7 @@ export function UpstreamField({
 	);
 
 	const filterOption = useMemo(() => {
-		const byInput = createFilter<UpstreamOption>();
+		const byInput = createFilter<UpstreamOption>({ stringify: optionFilterText });
 		return (option: Parameters<typeof byInput>[0], text: string) => text === openedWith || byInput(option, text);
 	}, [openedWith]);
 
@@ -723,7 +751,7 @@ export function UpstreamField({
 									);
 								}}
 								noOptionsMessage={() => intl.formatMessage({ id: "upstream.no-options" })}
-								loadingMessage={() => intl.formatMessage({ id: "upstream.loading" })}
+								loadingMessage={() => intl.formatMessage({ id: "loading" })}
 								styles={{
 									option: (base) => ({ ...base, height: "100%" }),
 									control: (base) =>

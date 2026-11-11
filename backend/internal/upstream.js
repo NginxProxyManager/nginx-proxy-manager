@@ -15,7 +15,7 @@ import {
 	isUpstreamCheckEnabled,
 } from "../lib/upstream/config.js";
 import { DnsDiscoveryUnavailable, discoverDns } from "../lib/upstream/dns-discovery.js";
-import { describeDockerError, discoverDocker } from "../lib/upstream/docker.js";
+import { describeDockerError, discoverDocker, dockerErrorInfo } from "../lib/upstream/docker.js";
 import { TooManyRequestsError } from "../lib/upstream/errors.js";
 import { HealthMonitor, visibilityFilter } from "../lib/upstream/health.js";
 import { createRateLimiter } from "../lib/upstream/rate-limit.js";
@@ -49,26 +49,41 @@ const DNS_DISABLED_MESSAGE = "DNS discovery is disabled (NPM_DNS_DISCOVERY=false
 const runDiscoveryProviders = async () => {
 	const dockerPromise = (async () => {
 		if (!isDockerDiscoveryEnabled()) {
-			return { status: { status: "disabled", message: DOCKER_DISABLED_MESSAGE }, items: [], hidden: null };
+			return {
+				status: { status: "disabled", code: "disabled", message: DOCKER_DISABLED_MESSAGE },
+				items: [],
+				hidden: null,
+			};
 		}
 		try {
 			const result = await discoverDocker({ dockerHost: getDockerHost() });
-			return { status: { status: "ok", message: null }, items: result.items, hidden: result.hidden };
+			return {
+				status: { status: "ok", code: null, message: null },
+				items: result.items,
+				hidden: result.hidden,
+			};
 		} catch (err) {
 			debug(logger, `Upstream docker discovery failed: ${err.message}`);
-			return { status: { status: "unavailable", message: describeDockerError(err) }, items: [], hidden: null };
+			// The UI translates code + params; message stays the English text for the API and logs
+			const { code, params } = dockerErrorInfo(err);
+			return {
+				status: { status: "unavailable", code, params, message: describeDockerError(err) },
+				items: [],
+				hidden: null,
+			};
 		}
 	})();
 
 	const dnsPromise = (async () => {
 		if (!isDnsDiscoveryEnabled()) {
-			return { status: { status: "disabled", message: DNS_DISABLED_MESSAGE }, items: [] };
+			return { status: { status: "disabled", code: "disabled", message: DNS_DISABLED_MESSAGE }, items: [] };
 		}
 		try {
 			const result = await discoverDns();
 			return {
 				status: {
 					status: "ok",
+					code: result.truncated ? "truncated" : null,
 					message: result.truncated
 						? "The network scan stopped early; some containers may be missing."
 						: null,
@@ -82,6 +97,7 @@ const runDiscoveryProviders = async () => {
 			return {
 				status: {
 					status: "unavailable",
+					code: err instanceof DnsDiscoveryUnavailable ? err.code : "failed",
 					message: err instanceof DnsDiscoveryUnavailable ? err.message : "DNS discovery failed.",
 				},
 				items: [],
@@ -150,7 +166,7 @@ const getHistory = async (access) => {
 			load("dead_hosts:list", () => internalDeadHost.getAll(access)),
 		]);
 		return {
-			status: { status: "ok", message: null },
+			status: { status: "ok", code: null, message: null },
 			items: buildHistoryCandidates({ proxyHosts: proxyHosts.rows, streams: streams.rows }),
 			hosts: {
 				proxyHosts: proxyHosts.rows,
@@ -161,7 +177,7 @@ const getHistory = async (access) => {
 	} catch (err) {
 		debug(logger, `Upstream history failed: ${err.message}`);
 		return {
-			status: { status: "unavailable", message: "Could not read existing hosts." },
+			status: { status: "unavailable", code: "failed", message: "Could not read existing hosts." },
 			items: [],
 			hosts: {},
 		};

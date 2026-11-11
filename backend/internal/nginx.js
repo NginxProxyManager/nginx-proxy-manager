@@ -417,6 +417,8 @@ const describeAside = (entry) => {
 	return {
 		host_type: entry.host_type,
 		host_id: entry.host_id,
+		// the humanised nginx error on its own (not translated), for clients that word the rest themselves
+		detail: humanised ? humanised.text : null,
 		message: sentence(
 			`Nginx rejects the current configuration of ${hostLabel(entry.host_type, { id: entry.host_id })}${
 				humanised ? `: ${humanised.text}` : ""

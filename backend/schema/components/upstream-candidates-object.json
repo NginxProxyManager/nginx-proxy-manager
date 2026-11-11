@@ -10,14 +10,17 @@
 			"example": {
 				"docker": {
 					"status": "disabled",
-					"message": null
+					"code": "disabled",
+					"message": "Docker discovery is disabled. Set NPM_DOCKER_DISCOVERY=true and DOCKER_HOST (a docker-socket-proxy is recommended) to list containers."
 				},
 				"dns": {
 					"status": "ok",
+					"code": null,
 					"message": null
 				},
 				"history": {
 					"status": "ok",
+					"code": null,
 					"message": null
 				}
 			},
@@ -40,7 +43,8 @@
 			"example": [
 				{
 					"host": "grafana",
-					"label": "grafana (container)",
+					"kind": "container",
+					"owner": null,
 					"source": "docker",
 					"ports": [3000],
 					"hint_port": 3000,
@@ -65,7 +69,8 @@
 				},
 				{
 					"host": "app",
-					"label": "app (on npm_default)",
+					"kind": "dns",
+					"owner": null,
 					"source": "dns",
 					"ports": [8080],
 					"hint_port": 8080,
@@ -82,7 +87,8 @@
 				"additionalProperties": false,
 				"required": [
 					"host",
-					"label",
+					"kind",
+					"owner",
 					"source",
 					"ports",
 					"hint_port",
@@ -98,10 +104,16 @@
 						"description": "Host name to use as forward host",
 						"example": "app"
 					},
-					"label": {
+					"kind": {
 						"type": "string",
-						"description": "Human readable label",
-						"example": "app (container)"
+						"description": "What the host name is: a container name, the compose service alias of a container (see owner), a name found on a shared network, or a host used before. Clients word this themselves (in the UI language).",
+						"example": "container",
+						"enum": ["container", "compose_service", "dns", "history"]
+					},
+					"owner": {
+						"type": ["string", "null"],
+						"description": "compose_service only: the container the service name belongs to",
+						"example": null
 					},
 					"source": {
 						"type": "string",
@@ -137,7 +149,7 @@
 					},
 					"state": {
 						"type": ["string", "null"],
-						"description": "Container state",
+						"description": "Docker container state (running, created, restarting, paused, exited, removing, dead), as Docker reports it",
 						"example": "running"
 					},
 					"ip": {

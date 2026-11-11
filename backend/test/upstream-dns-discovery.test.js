@@ -40,7 +40,10 @@ describe("dns discovery", () => {
 	it("is unavailable off a user-defined network", async () => {
 		await assert.rejects(
 			discoverDns({ nameservers: ["192.168.1.1"], interfaces, gateways: [] }),
-			(err) => err instanceof DnsDiscoveryUnavailable && /user-defined Docker network/.test(err.message),
+			(err) =>
+				err instanceof DnsDiscoveryUnavailable &&
+				/user-defined Docker network/.test(err.message) &&
+				err.code === "no_docker_dns",
 		);
 	});
 
@@ -76,7 +79,8 @@ describe("dns discovery", () => {
 		);
 		assert.equal(resolver.queried.includes("172.24.0.1"), false, "gateway skipped");
 		assert.equal(resolver.queried.includes("172.24.0.4"), false, "own IP skipped");
-		assert.equal(result.items[0].label, "app (on mynet)");
+		assert.equal(result.items[0].kind, "dns");
+		assert.equal(result.items[0].owner, null);
 		assert.deepEqual(result.items[0].ports, []);
 	});
 

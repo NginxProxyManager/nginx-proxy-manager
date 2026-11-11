@@ -86,11 +86,11 @@ anderer Host eine davon, ist der Container in der Liste markiert und die Domains
 
 ### Fehlersuche
 
-Funktioniert die Erkennung nicht, zeigt die Vorschlagsliste den Grund. „Connection to the Docker
-API was refused“ heißt, unter der Adresse in `DOCKER_HOST` antwortet nichts (läuft der Proxy, auf
-Port 2375?); „The DOCKER_HOST host name could not be resolved“ heißt, NPM und der Proxy teilen
-kein Netzwerk oder der Name in `DOCKER_HOST` stimmt nicht.
-„The Docker API denied the request“ heißt, der Proxy braucht `CONTAINERS=1` und `NETWORKS=1`.
+Funktioniert die Erkennung nicht, zeigt die Vorschlagsliste den Grund. „Die Verbindung zur
+Docker-API wurde abgelehnt“ heißt, unter der Adresse in `DOCKER_HOST` antwortet nichts (läuft der
+Proxy, auf Port 2375?); „Der Hostname in DOCKER_HOST konnte nicht aufgelöst werden“ heißt, NPM und
+der Proxy teilen kein Netzwerk oder der Name in `DOCKER_HOST` stimmt nicht.
+„Die Docker-API hat die Anfrage abgelehnt“ heißt, der Proxy braucht `CONTAINERS=1` und `NETWORKS=1`.
 Wenn du den Socket selbst einbindest und `PUID`/`PGID` setzt, kann NPM ihn meist nicht öffnen;
 der Proxy umgeht das.
 

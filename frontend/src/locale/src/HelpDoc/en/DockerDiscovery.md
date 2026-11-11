@@ -83,11 +83,11 @@ uses one of them, the container is marked in the list and the domains are left o
 
 ### Troubleshooting
 
-If discovery doesn't work, the suggestion list shows the reason. "Connection to the Docker API
-was refused" means nothing answers at the address in `DOCKER_HOST` (is the proxy running, on port
-2375?); "The DOCKER_HOST host name could not be resolved" means NPM and the proxy don't share a
-network, or the name in `DOCKER_HOST` is wrong. "The Docker API
-denied the request" means the proxy needs `CONTAINERS=1` and `NETWORKS=1`. If you mount the
+If discovery doesn't work, the suggestion list shows the reason. "The connection to the Docker
+API was refused" means nothing answers at the address in `DOCKER_HOST` (is the proxy running, on
+port 2375?); "The host name in DOCKER_HOST could not be resolved" means NPM and the proxy don't
+share a network, or the name in `DOCKER_HOST` is wrong. "The Docker API denied the request"
+means the proxy needs `CONTAINERS=1` and `NETWORKS=1`. If you mount the
 socket itself and set `PUID`/`PGID`, NPM usually can't open it; the proxy avoids that.
 
 More details: [Upstream Discovery](https://nginxproxymanager.com/advanced-config/upstream-discovery)

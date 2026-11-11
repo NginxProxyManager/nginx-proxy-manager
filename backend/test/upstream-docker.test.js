@@ -9,8 +9,10 @@ import {
 	collectHiddenTargets,
 	containersToCandidates,
 	createDockerClient,
+	DockerApiError,
 	describeDockerError,
 	discoverDocker,
+	dockerErrorInfo,
 	isAllowedPath,
 	isValidLabelDomain,
 	looksLikeSelf,
@@ -89,6 +91,41 @@ describe("docker: DOCKER_HOST parsing and allowlist", () => {
 		assert.deepEqual(parseDockerHost("http://[::1]:2376"), { host: "::1", port: 2376 });
 		assert.throws(() => parseDockerHost("ssh://user@host"), /not supported/);
 		assert.throws(() => parseDockerHost("unix://relative.sock"), /absolute/);
+	});
+
+	it("gives every failure a language neutral code and the values its text needs", () => {
+		const thrown = (value) => {
+			try {
+				parseDockerHost(value);
+			} catch (err) {
+				return dockerErrorInfo(err);
+			}
+			return null;
+		};
+		assert.deepEqual(thrown("ssh://user@host"), {
+			code: "invalid_docker_host",
+			params: { value: "ssh://user@host", problem: "unsupported" },
+		});
+		assert.deepEqual(thrown("unix://relative.sock"), {
+			code: "invalid_docker_host",
+			params: { value: "unix://relative.sock", problem: "unix_path" },
+		});
+		assert.deepEqual(thrown("tcp://h:70000"), {
+			code: "invalid_docker_host",
+			params: { value: "tcp://h:70000", problem: "port" },
+		});
+		const err = (code, extra = {}) => Object.assign(new Error(`raw ${code}`), { code }, extra);
+		assert.equal(dockerErrorInfo(err("EACCES")).code, "permission_denied");
+		assert.equal(dockerErrorInfo(err("ENOTFOUND")).code, "host_not_found");
+		assert.equal(dockerErrorInfo(err("EAI_AGAIN")).code, "host_not_found");
+		assert.equal(dockerErrorInfo(new DockerApiError("x", "ESELF")).code, "self_not_found");
+		assert.deepEqual(dockerErrorInfo(new DockerApiError("x", "ESTATUS", 500, { status: 500, path: "/version" })), {
+			code: "bad_status",
+			params: { status: 500, path: "/version" },
+		});
+		// anything else: the raw text, shown untranslated next to the translated "failed"
+		assert.deepEqual(dockerErrorInfo(err("EPIPE")), { code: "failed", params: { detail: "raw EPIPE" } });
+		assert.deepEqual(dockerErrorInfo(null), { code: "failed", params: {} });
 	});
 
 	it("only allows read-only discovery paths", () => {
@@ -246,8 +283,11 @@ describe("docker: candidate parsing from fixture JSON", () => {
 	});
 
 	it("returns container names and compose service aliases", () => {
-		assert.equal(byHost["myproj-web-1"].label, "myproj-web-1 (container)");
-		assert.equal(byHost.web.label, "web (compose service of myproj-web-1)");
+		// language neutral: the UI words "(container)" / "compose service of ..." itself
+		assert.equal(byHost["myproj-web-1"].kind, "container");
+		assert.equal(byHost["myproj-web-1"].owner, null);
+		assert.equal(byHost.web.kind, "compose_service");
+		assert.equal(byHost.web.owner, "myproj-web-1");
 		assert.deepEqual(byHost.web.ports, [3000]);
 		assert.equal(byHost.web.hint_port, 3000);
 		assert.equal(byHost.web.network, "npm_default");
@@ -278,8 +318,9 @@ describe("docker: candidate parsing from fixture JSON", () => {
 			"hint_scheme",
 			"host",
 			"ip",
-			"label",
+			"kind",
 			"network",
+			"owner",
 			"ports",
 			"source",
 			"state",
@@ -462,6 +503,7 @@ describe("docker: client against a fake API on a unix socket", () => {
 		await assert.rejects(discoverDocker({ dockerHost: `unix://${dir}/missing.sock` }), (err) => {
 			assert.equal(err.code, "ENOENT");
 			assert.match(describeDockerError(err), /does not exist/);
+			assert.deepEqual(dockerErrorInfo(err), { code: "socket_missing", params: { path: `${dir}/missing.sock` } });
 			return true;
 		});
 	});
@@ -513,12 +555,20 @@ describe("docker: client against a fake API over tcp", () => {
 
 	it("caps the response size", async () => {
 		const client = createDockerClient(`tcp://127.0.0.1:${port}`);
-		await assert.rejects(client.get("/networks/big"), (err) => err.code === "ETOOBIG");
+		await assert.rejects(client.get("/networks/big"), (err) => {
+			assert.equal(err.code, "ETOOBIG");
+			assert.equal(dockerErrorInfo(err).code, "bad_response");
+			return true;
+		});
 	});
 
 	it("times out", async () => {
 		const client = createDockerClient(`tcp://127.0.0.1:${port}`, { timeoutMs: 200 });
-		await assert.rejects(client.get("/networks/slow"), (err) => err.code === "ETIMEDOUT");
+		await assert.rejects(client.get("/networks/slow"), (err) => {
+			assert.equal(err.code, "ETIMEDOUT");
+			assert.deepEqual(dockerErrorInfo(err), { code: "timeout", params: { seconds: 3 } });
+			return true;
+		});
 	});
 
 	it("maps a socket-proxy 403 to a helpful message", async () => {
@@ -526,6 +576,7 @@ describe("docker: client against a fake API over tcp", () => {
 		await assert.rejects(client.get("/networks/denied"), (err) => {
 			assert.equal(err.status, 403);
 			assert.match(describeDockerError(err), /CONTAINERS=1/);
+			assert.deepEqual(dockerErrorInfo(err), { code: "api_denied", params: {} });
 			return true;
 		});
 	});
@@ -541,6 +592,7 @@ describe("docker: client against a fake API over tcp", () => {
 		await new Promise((resolve) => closed.close(resolve));
 		await assert.rejects(discoverDocker({ dockerHost: `tcp://127.0.0.1:${freePort}` }), (err) => {
 			assert.match(describeDockerError(err), /refused/);
+			assert.deepEqual(dockerErrorInfo(err), { code: "connection_refused", params: {} });
 			return true;
 		});
 	});

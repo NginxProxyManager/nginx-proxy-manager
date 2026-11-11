@@ -34,7 +34,8 @@ describe("UpstreamCheckHint", () => {
 			addresses: [],
 		};
 		const { container, rerender } = render(<UpstreamCheckHint id="h" result={result} />);
-		expect(container.querySelector("#h")).toHaveTextContent("Reachable (<1 ms) – app:80 is reachable (<1 ms).");
+		// the short text says it all: no English backend message after it
+		expect(container.querySelector("#h")?.textContent).toBe("Reachable (<1 ms)");
 		rerender(<UpstreamCheckBadge id="b" result={result} />);
 		expect(container.querySelector(".badge")).toHaveTextContent("Reachable (<1 ms)");
 		rerender(<UpstreamCheckBadge id="b" result={{ ...result, ms: 2.6 }} />);
@@ -61,6 +62,34 @@ describe("UpstreamCheckHint", () => {
 		rerender(<UpstreamCheckHint id="h" result={{ ...result, ok: false }} />);
 		expect(container.querySelector("#h span.text-warning")).toHaveTextContent("Resolves only via");
 		expect(container.querySelector("#h .text-danger")).toBeNull();
+		// worded from the code: requests fail where nginx resolves per request
+		expect(container.querySelector("#h")).toHaveTextContent(
+			'Only /etc/hosts or a resolv.conf search domain finds "app"',
+		);
+		expect(container.querySelector("#h")).toHaveTextContent("requests fail");
+		expect(container.querySelector("#h")).not.toHaveTextContent("reachable, but");
+		rerender(<UpstreamCheckHint id="h" result={result} />);
+		expect(container.querySelector("#h")).toHaveTextContent("It works only with a static (load-time) upstream.");
+	});
+
+	it("explains a failure from its code, host and port, with the addresses found", () => {
+		const { container } = render(
+			<UpstreamCheckHint
+				id="h"
+				result={{
+					host: "api",
+					port: 8080,
+					ok: false,
+					code: "tcp_refused",
+					ms: null,
+					message: "English text from the backend",
+					addresses: ["10.0.0.2", "10.0.0.3"],
+				}}
+			/>,
+		);
+		expect(container.querySelector("#h")?.textContent).toBe(
+			"Connection refused – The host exists, but nothing is listening on port 8080. – 10.0.0.2, 10.0.0.3",
+		);
 	});
 
 	it("shows a checking state and nothing without a result", () => {

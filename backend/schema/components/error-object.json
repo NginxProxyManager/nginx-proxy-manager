@@ -19,7 +19,7 @@
 		},
 		"details": {
 			"type": "object",
-			"description": "Structured details for some errors. Nginx configuration errors use kind \"nginx_config\".",
+			"description": "Structured details for some errors. Nginx configuration errors use kind \"nginx_config\", HTTP 429 (too many requests) kind \"rate_limited\".",
 			"additionalProperties": true,
 			"properties": {
 				"kind": {
@@ -92,6 +92,11 @@
 					"type": ["string", "null"],
 					"description": "kind unsafe_value: which value can't be written into nginx config, eg. forward_host",
 					"example": "forward_host"
+				},
+				"retry_after": {
+					"type": ["integer", "null"],
+					"description": "kind \"rate_limited\" (HTTP 429): seconds until the request may be repeated",
+					"example": 42
 				}
 			}
 		}

@@ -357,7 +357,7 @@
 		"defaultMessage": "domain in use"
 	},
 	"docker-labels.exists": {
-		"defaultMessage": "{type, select, redirection_host {A redirection host already uses one of these domains} dead_host {A 404 host already uses one of these domains} other {A proxy host already uses one of these domains}}"
+		"defaultMessage": "{type, select, redirection_host {A redirection host already uses one of these domains} dead_host {A 404 host already uses one of these domains} other {A proxy host already uses one of these domains}}."
 	},
 	"docker-labels.ignored": {
 		"defaultMessage": "Not used from npm.domain: {domains}"
@@ -368,11 +368,8 @@
 	"docker-labels.not-filled": {
 		"defaultMessage": "The domain names from the container's npm.domain label ({domains}) were not filled in."
 	},
-	"docker-labels.open": {
-		"defaultMessage": "Open"
-	},
 	"docker-labels.used-by": {
-		"defaultMessage": "{type, select, redirection_host {Used by a redirection host: change or remove it first} dead_host {Used by a 404 host: change or remove it first} other {Used by a proxy host}}"
+		"defaultMessage": "{type, select, redirection_host {Used by a redirection host: change or remove it first} dead_host {Used by a 404 host: change or remove it first} other {Used by a proxy host}}."
 	},
 	"domain-names": {
 		"defaultMessage": "Domain Names"
@@ -482,9 +479,6 @@
 	"host-status.error": {
 		"defaultMessage": "Error"
 	},
-	"host-status.main-target": {
-		"defaultMessage": "Main destination"
-	},
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx did not apply this host's latest configuration and still runs its previous one."
 	},
@@ -503,9 +497,6 @@
 	"host-test.failed": {
 		"defaultMessage": "The test could not be run"
 	},
-	"host-test.main-target": {
-		"defaultMessage": "Forward host"
-	},
 	"host-test.not-saved": {
 		"defaultMessage": "This was a test, nothing was saved."
 	},
@@ -516,7 +507,7 @@
 		"defaultMessage": "Configuration OK, with warnings"
 	},
 	"host-test.quarantined": {
-		"defaultMessage": "{count, plural, one {Nginx would disable # custom location} other {Nginx would disable # custom locations}}"
+		"defaultMessage": "{count, plural, =1 {Nginx would disable # custom location} other {Nginx would disable # custom locations}}"
 	},
 	"host-test.rate-limited": {
 		"defaultMessage": "Not checked: too many checks in the last minute"
@@ -529,6 +520,21 @@
 	},
 	"host-test.stale": {
 		"defaultMessage": "The form was changed after this test. Test again to check the changes."
+	},
+	"host-test.too-many": {
+		"defaultMessage": "Too many tests in the last minute. Try again in {seconds, plural, =1 {# second} other {# seconds}}."
+	},
+	"host-test.warning.certificate-pending": {
+		"defaultMessage": "A new certificate is requested when you save. The test checked the host without SSL; the SSL part is checked once the certificate is added."
+	},
+	"host-test.warning.other-host": {
+		"defaultMessage": "Nginx rejects the current configuration of {host}. Saving would repair or disable it."
+	},
+	"host-test.warning.other-host-hidden": {
+		"defaultMessage": "Nginx rejects the current configuration of another host. Saving would repair or disable that host. Please ask an administrator to check it."
+	},
+	"host-test.warning.rate-limited": {
+		"defaultMessage": "Reachability was not checked: too many upstream checks in the last minute. Try again in {seconds, plural, =1 {# second} other {# seconds}}."
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
@@ -1124,6 +1130,33 @@
 	"upstream.check.checking": {
 		"defaultMessage": "Checking…"
 	},
+	"upstream.check.detail.dns_not_found": {
+		"defaultMessage": "Check the spelling, and that the container is running and on the same Docker network as Nginx Proxy Manager."
+	},
+	"upstream.check.detail.dns_timeout": {
+		"defaultMessage": "The DNS server did not answer in time."
+	},
+	"upstream.check.detail.invalid_host": {
+		"defaultMessage": "\"{host}\" is not a valid host name or IP address."
+	},
+	"upstream.check.detail.invalid_host_empty": {
+		"defaultMessage": "Enter a host name or IP address."
+	},
+	"upstream.check.detail.resolver_mismatch": {
+		"defaultMessage": "Only /etc/hosts or a resolv.conf search domain finds \"{host}\", not nginx's DNS resolver. It works only with a static (load-time) upstream."
+	},
+	"upstream.check.detail.resolver_required": {
+		"defaultMessage": "Only /etc/hosts or a resolv.conf search domain finds \"{host}\". nginx resolves this upstream per request through its DNS resolver, which doesn't find it: requests fail. Use a name the resolver finds (eg. the container name on a shared Docker network) or an IP address."
+	},
+	"upstream.check.detail.tcp_refused": {
+		"defaultMessage": "The host exists, but nothing is listening on port {port}."
+	},
+	"upstream.check.detail.tcp_timeout": {
+		"defaultMessage": "A firewall may be dropping traffic, or the host is down."
+	},
+	"upstream.check.detail.tcp_unreachable": {
+		"defaultMessage": "There is no route from Nginx Proxy Manager to this host."
+	},
 	"upstream.check.disabled": {
 		"defaultMessage": "Check disabled"
 	},
@@ -1163,8 +1196,47 @@
 	"upstream.check.variable-tip-main": {
 		"defaultMessage": "Resolved by nginx for each request, so it isn't checked here. It needs a value before this host's advanced configuration runs, for example from a map in /data/nginx/custom/http.conf; a set in the advanced configuration comes too late."
 	},
+	"upstream.compose-service": {
+		"defaultMessage": "Compose service of {container}"
+	},
+	"upstream.container-state": {
+		"defaultMessage": "{state, select, created {Created} restarting {Restarting} paused {Paused} exited {Exited} removing {Removing} dead {Dead} other {{state}}}"
+	},
 	"upstream.docker-disabled": {
 		"defaultMessage": "Docker discovery is off."
+	},
+	"upstream.docker-error.api_denied": {
+		"defaultMessage": "The Docker API denied the request. If you use a docker-socket-proxy, enable CONTAINERS=1 and NETWORKS=1 on it."
+	},
+	"upstream.docker-error.bad_response": {
+		"defaultMessage": "The Docker API response is too large or not valid JSON."
+	},
+	"upstream.docker-error.bad_status": {
+		"defaultMessage": "The Docker API answered {status} for {path}."
+	},
+	"upstream.docker-error.connection_refused": {
+		"defaultMessage": "The connection to the Docker API was refused. Check DOCKER_HOST and that the socket proxy is running."
+	},
+	"upstream.docker-error.failed": {
+		"defaultMessage": "Unexpected error."
+	},
+	"upstream.docker-error.host_not_found": {
+		"defaultMessage": "The host name in DOCKER_HOST could not be resolved."
+	},
+	"upstream.docker-error.invalid_docker_host": {
+		"defaultMessage": "{problem, select, unix_path {DOCKER_HOST \"{value}\" must be an absolute unix socket path.} port {DOCKER_HOST \"{value}\" has an invalid port.} other {DOCKER_HOST \"{value}\" is not supported. Use unix:///var/run/docker.sock or tcp://host:2375 (TLS is not supported).}}"
+	},
+	"upstream.docker-error.permission_denied": {
+		"defaultMessage": "Permission denied on the Docker socket. The backend runs as PUID/PGID without supplementary groups; use a docker-socket-proxy (DOCKER_HOST=tcp://...) instead."
+	},
+	"upstream.docker-error.self_not_found": {
+		"defaultMessage": "Nginx Proxy Manager's own container was not found through the Docker API, so its networks are unknown."
+	},
+	"upstream.docker-error.socket_missing": {
+		"defaultMessage": "The Docker socket {path} does not exist. Mount it, or point DOCKER_HOST at a docker-socket-proxy."
+	},
+	"upstream.docker-error.timeout": {
+		"defaultMessage": "The Docker API did not answer within {seconds, plural, =1 {# second} other {# seconds}}."
 	},
 	"upstream.docker-help": {
 		"defaultMessage": "Set it up"
@@ -1173,7 +1245,7 @@
 		"defaultMessage": "Docker labels"
 	},
 	"upstream.docker-unavailable": {
-		"defaultMessage": "Docker discovery doesn't work: {reason}."
+		"defaultMessage": "Docker discovery doesn't work."
 	},
 	"upstream.free-text": {
 		"defaultMessage": "You can also type any host name or IP address."
@@ -1187,8 +1259,8 @@
 	"upstream.group.history": {
 		"defaultMessage": "Used before"
 	},
-	"upstream.loading": {
-		"defaultMessage": "Looking for upstreams…"
+	"upstream.network": {
+		"defaultMessage": "Network: {network}"
 	},
 	"upstream.no-options": {
 		"defaultMessage": "No suggestions, type a host name or IP address"
@@ -1196,14 +1268,11 @@
 	"upstream.ports": {
 		"defaultMessage": "Ports: {ports}"
 	},
-	"upstream.refresh": {
-		"defaultMessage": "Refresh suggestions"
-	},
 	"upstream.use-value": {
 		"defaultMessage": "Use \"{value}\""
 	},
 	"upstream.used-by": {
-		"defaultMessage": "used by {count, plural, one {# host} other {# hosts}}"
+		"defaultMessage": "used by {count, plural, =1 {# host} other {# hosts}}"
 	},
 	"user": {
 		"defaultMessage": "User"

@@ -103,7 +103,7 @@ const takePendingCertificate = (input) => {
  * The warnings about other hosts whose broken config the test left out (internal/nginx.js dryRun() `aside`):
  * a save would repair or disable them. Hosts the user can't see are not named.
  *
- * @param   {Array<{host_type: string, host_id: number, message: string}>} aside
+ * @param   {Array<{host_type: string, host_id: number, message: string, detail?: string|null}>} aside
  * @param   {function(Object): Promise<boolean>} canSee
  * @returns {Promise<Array>}
  */
@@ -117,12 +117,14 @@ const buildAsideWarnings = async (aside, canSee) => {
 						message: `${other.message} Saving would repair or disable it.`,
 						host_type: other.host_type,
 						host_id: other.host_id,
+						detail: other.detail ?? null,
 					}
 				: {
 						code: "other_host_broken",
 						message: WARNING_MESSAGES.other_host_hidden,
 						host_type: null,
 						host_id: null,
+						detail: null,
 					},
 		);
 	}

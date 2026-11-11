@@ -24,11 +24,18 @@ const ALLOWED_PATHS = [
 ];
 
 class DockerApiError extends Error {
-	constructor(message, code, status) {
+	/**
+	 * @param {string} message  English text (logs, API `message`)
+	 * @param {string} [code]   errno-like code (EINVAL, ESTATUS, ...)
+	 * @param {number} [status] HTTP status of a Docker API answer
+	 * @param {object} [params] values for a translated text in the UI, see dockerErrorInfo()
+	 */
+	constructor(message, code, status, params) {
 		super(message);
 		this.name = "DockerApiError";
 		this.code = code || null;
 		this.status = status || null;
+		this.params = params || null;
 	}
 }
 
@@ -44,7 +51,10 @@ const parseDockerHost = (dockerHost) => {
 	if (raw.startsWith("unix://")) {
 		const socketPath = raw.slice("unix://".length);
 		if (!socketPath.startsWith("/")) {
-			throw new DockerApiError(`DOCKER_HOST "${raw}" must be an absolute unix socket path.`, "EINVAL");
+			throw new DockerApiError(`DOCKER_HOST "${raw}" must be an absolute unix socket path.`, "EINVAL", null, {
+				value: raw,
+				problem: "unix_path",
+			});
 		}
 		return { socketPath };
 	}
@@ -55,13 +65,18 @@ const parseDockerHost = (dockerHost) => {
 	if (match) {
 		const port = match[2] ? Number.parseInt(match[2], 10) : 2375;
 		if (port < 1 || port > 65535) {
-			throw new DockerApiError(`DOCKER_HOST "${raw}" has an invalid port.`, "EINVAL");
+			throw new DockerApiError(`DOCKER_HOST "${raw}" has an invalid port.`, "EINVAL", null, {
+				value: raw,
+				problem: "port",
+			});
 		}
 		return { host: match[1].replace(/^\[|\]$/g, ""), port };
 	}
 	throw new DockerApiError(
 		`DOCKER_HOST "${raw}" is not supported. Use unix:///var/run/docker.sock or tcp://host:2375 (TLS is not supported).`,
 		"EINVAL",
+		null,
+		{ value: raw, problem: "unsupported" },
 	);
 };
 
@@ -132,6 +147,7 @@ const createDockerClient = (dockerHost, opts = {}) => {
 									`Docker API answered ${res.statusCode} for ${path.split("?")[0]}`,
 									"ESTATUS",
 									res.statusCode,
+									{ status: res.statusCode, path: path.split("?")[0] },
 								),
 							);
 							return;
@@ -148,7 +164,15 @@ const createDockerClient = (dockerHost, opts = {}) => {
 
 			const timer = setTimeout(() => {
 				req.destroy();
-				done(reject, new DockerApiError("Docker API did not answer within 3 seconds.", "ETIMEDOUT"));
+				done(
+					reject,
+					new DockerApiError(
+						`Docker API did not answer within ${REQUEST_TIMEOUT_MS / 1000} seconds.`,
+						"ETIMEDOUT",
+						null,
+						{ seconds: REQUEST_TIMEOUT_MS / 1000 },
+					),
+				);
 			}, timeoutMs);
 
 			req.on("error", (err) => done(reject, new DockerApiError(err.message, err.code)));
@@ -423,14 +447,15 @@ const containersToCandidates = (containers, { networks, selfId }) => {
 			existing_host_type: null,
 		};
 
-		items.push({ ...base, host: names[0], label: `${names[0]} (container)`, suggestion });
+		items.push({ ...base, host: names[0], kind: "container", owner: null, suggestion });
 
 		const service = `${labels["com.docker.compose.service"] ?? ""}`.trim();
 		if (service && service !== names[0] && /^[A-Za-z0-9][A-Za-z0-9_.-]*$/.test(service) && isValidHost(service)) {
 			items.push({
 				...base,
 				host: service,
-				label: `${service} (compose service of ${names[0]})`,
+				kind: "compose_service",
+				owner: names[0],
 				// the same container: picking either name fills in the same labels
 				suggestion: {
 					...suggestion,
@@ -509,6 +534,8 @@ const discoverDocker = async (opts = {}) => {
 			throw new DockerApiError(
 				`Docker socket ${client.target.socketPath} does not exist. Mount it, or point DOCKER_HOST at a docker-socket-proxy.`,
 				"ENOENT",
+				null,
+				{ path: client.target.socketPath },
 			);
 		}
 	}
@@ -614,6 +641,55 @@ const describeDockerError = (err) => {
 	return `Docker discovery failed: ${err.message || err.code || "unknown error"}`;
 };
 
+/**
+ * Why the Docker provider failed, as a language neutral code and the values a translated text needs. The UI
+ * shows `upstream.docker-error.<code>`; `detail` is the raw (untranslated) error text where that helps.
+ *
+ * Codes: socket_missing {path}, permission_denied, connection_refused, host_not_found, api_denied, timeout
+ * {seconds}, invalid_docker_host {value, problem: unix_path|port|unsupported}, bad_status {status, path},
+ * bad_response, self_not_found, failed {detail}
+ *
+ * @param   {Error} err
+ * @returns {{code: string, params: object}}
+ */
+const dockerErrorInfo = (err) => {
+	const p = err?.params || {};
+	if (!err) {
+		return { code: "failed", params: {} };
+	}
+	if (err.code === "ENOENT" && p.path) {
+		return { code: "socket_missing", params: { path: p.path } };
+	}
+	if (err.code === "EACCES") {
+		return { code: "permission_denied", params: {} };
+	}
+	if (err.code === "ECONNREFUSED") {
+		return { code: "connection_refused", params: {} };
+	}
+	if (err.code === "ENOTFOUND" || err.code === "EAI_AGAIN") {
+		return { code: "host_not_found", params: {} };
+	}
+	if (err.status === 403) {
+		return { code: "api_denied", params: {} };
+	}
+	if (err.code === "ETIMEDOUT") {
+		return { code: "timeout", params: { seconds: p.seconds ?? REQUEST_TIMEOUT_MS / 1000 } };
+	}
+	if (err.code === "EINVAL" && p.problem) {
+		return { code: "invalid_docker_host", params: { value: `${p.value ?? ""}`, problem: p.problem } };
+	}
+	if (err.code === "ESTATUS") {
+		return { code: "bad_status", params: { status: err.status ?? p.status ?? 0, path: `${p.path ?? ""}` } };
+	}
+	if (err.code === "ETOOBIG" || err.code === "EJSON") {
+		return { code: "bad_response", params: {} };
+	}
+	if (err.code === "ESELF") {
+		return { code: "self_not_found", params: {} };
+	}
+	return { code: "failed", params: { detail: `${err.message || err.code || ""}` } };
+};
+
 export {
 	ALLOWED_PATHS,
 	collectHiddenTargets,
@@ -622,6 +698,7 @@ export {
 	DockerApiError,
 	describeDockerError,
 	discoverDocker,
+	dockerErrorInfo,
 	isAllowedPath,
 	isValidLabelDomain,
 	looksLikeSelf,

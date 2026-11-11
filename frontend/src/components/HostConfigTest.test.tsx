@@ -127,8 +127,8 @@ describe("HostConfigTestResult", () => {
 			warnings: [
 				{
 					code: "upstreams_rate_limited",
-					message:
-						"Reachability was not checked: too many upstream checks in the last minute. Try again in 12 seconds.",
+					message: "English text from the backend",
+					retryAfter: 12,
 				},
 			],
 		};
@@ -139,6 +139,7 @@ describe("HostConfigTestResult", () => {
 		expect(upstreams).toHaveTextContent("Not checked: too many checks in the last minute");
 		expect(upstreams.querySelector(".badge")).toBeNull();
 		expect(getByTestId("host-test-result")).toHaveTextContent("Try again in 12 seconds.");
+		expect(getByTestId("host-test-result")).not.toHaveTextContent("English text");
 	});
 
 	it("shows a rejected host with the nginx error", () => {
@@ -179,6 +180,50 @@ describe("HostConfigTestResult", () => {
 		const alert = getByTestId("host-test-result");
 		expect(alert).toHaveAttribute("data-state", "error");
 		expect(alert).toHaveTextContent("test.example.com is already in use");
+	});
+
+	it("words a 429 from its retry time", () => {
+		const error = new ApiError("Too many configuration tests. Try again in 30 seconds.", {
+			status: 429,
+			details: { kind: "rate_limited", retryAfter: 1 },
+		});
+		const { getByTestId } = render(
+			inForm(<HostConfigTestResult result={null} error={error} testedKey={null} onClose={() => {}} />),
+		);
+		expect(getByTestId("host-test-result")).toHaveTextContent(
+			"Too many tests in the last minute. Try again in 1 second.",
+		);
+		expect(getByTestId("host-test-result")).not.toHaveTextContent("30 seconds");
+	});
+
+	it("words the warnings from their codes, with the nginx text as is", () => {
+		const result: HostTestResult = {
+			...base,
+			warnings: [
+				{ code: "certificate_pending", message: "English" },
+				{
+					code: "other_host_broken",
+					message: "English",
+					hostType: "redirection_host",
+					hostId: 4,
+					detail: 'unknown directive "proxy_passs"',
+				},
+				{ code: "other_host_broken", message: "English", hostType: null, hostId: null, detail: null },
+				{ code: "something_new", message: "Shown as sent" },
+			],
+		};
+		const { getByTestId } = render(
+			inForm(<HostConfigTestResult result={result} error={null} testedKey={null} onClose={() => {}} />),
+		);
+		const items = Array.from(getByTestId("host-test-result").querySelectorAll("li[data-warning]")).map(
+			(li) => li.textContent,
+		);
+		expect(items).toEqual([
+			"A new certificate is requested when you save. The test checked the host without SSL; the SSL part is checked once the certificate is added.",
+			'Nginx rejects the current configuration of Redirection Host #4. Saving would repair or disable it. unknown directive "proxy_passs"',
+			"Nginx rejects the current configuration of another host. Saving would repair or disable that host. Please ask an administrator to check it.",
+			"Shown as sent",
+		]);
 	});
 
 	it("says when the form changed after the test", () => {

@@ -108,9 +108,9 @@ beforeEach(() => {
 			if (url.startsWith("/api/upstreams/candidates")) {
 				return json({
 					providers: {
-						docker: { status: "ok", message: null },
-						dns: { status: "ok", message: null },
-						history: { status: "ok", message: null },
+						docker: { status: "ok", code: null, message: null },
+						dns: { status: "ok", code: null, message: null },
+						history: { status: "ok", code: null, message: null },
 					},
 					items: candidateItems,
 					generated_at: "2026-11-11T10:00:00Z",
@@ -364,7 +364,8 @@ describe("ProxyHostModal locations while saving", () => {
 
 const container = (host: string, suggestion: Record<string, unknown>) => ({
 	host,
-	label: `${host} (container)`,
+	kind: "container",
+	owner: null,
 	source: "docker",
 	ports: [2368],
 	hint_port: 2368,
@@ -489,7 +490,7 @@ describe("ProxyHostModal picking a labelled container", () => {
 			{
 				...wiki,
 				host: "notes",
-				label: "notes",
+				kind: "history",
 				source: "history",
 				ports: [],
 				hint_port: null,

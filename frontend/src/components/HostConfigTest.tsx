@@ -2,13 +2,14 @@ import { IconCircleCheck, IconPlayerPlay } from "@tabler/icons-react";
 import cn from "classnames";
 import { useFormikContext } from "formik";
 import { Alert } from "react-bootstrap";
-import type { HostTestResult, HostTestUpstream } from "src/api/backend";
+import { type HostTestResult, type HostTestUpstream, isApiError } from "src/api/backend";
 import { formValuesKey } from "src/hooks";
-import { intl, T } from "src/locale";
+import { T } from "src/locale";
 import { formatApiError, getNginxErrorDetails } from "src/modules/HostStatus";
+import { hostTestWarningText } from "src/modules/UpstreamText";
 import { Button } from "./Button";
 import { NginxErrorMessage } from "./NginxFeedback";
-import { LocationStatusBadge, UpstreamCheckBadge } from "./StatusBadges";
+import { LocationStatusBadge, LocationStatusDetail, UpstreamCheckBadge } from "./StatusBadges";
 
 export type HostTestState = "ok" | "warnings" | "rejected" | "quarantined" | "error";
 
@@ -35,7 +36,7 @@ const VARIANT: Record<HostTestState, string> = {
 
 const upstreamLabel = (upstream: HostTestUpstream) =>
 	upstream.locationIndex === null ? (
-		<T id="host-test.main-target" />
+		<T id="column.destination" />
 	) : (
 		<code>{upstream.path || `#${upstream.locationIndex + 1}`}</code>
 	);
@@ -46,6 +47,7 @@ interface ResultProps {
 	testedKey: string | null;
 	onClose: () => void;
 }
+
 /**
  * Result of "Test" in a host modal, shown above the tabs. Must be rendered
  * inside the modal's Formik form: it notices when the form changed since.
@@ -60,6 +62,9 @@ export function HostConfigTestResult({ result, error, testedKey, onClose }: Resu
 
 	if (state === "error") {
 		const details = getNginxErrorDetails(error);
+		// 429: the wait, in the UI language
+		const retryAfter =
+			isApiError(error) && error.details?.kind === "rate_limited" ? error.details.retryAfter : null;
 		return (
 			<Alert
 				variant="danger"
@@ -74,6 +79,8 @@ export function HostConfigTestResult({ result, error, testedKey, onClose }: Resu
 				</h4>
 				{details ? (
 					<NginxErrorMessage message={formatApiError(error)} details={details} />
+				) : typeof retryAfter === "number" ? (
+					<T id="host-test.too-many" data={{ seconds: retryAfter }} />
 				) : (
 					formatApiError(error)
 				)}
@@ -123,7 +130,7 @@ export function HostConfigTestResult({ result, error, testedKey, onClose }: Resu
 								)}
 								{l.status !== "ok" && l.status !== "disabled" ? (
 									<span className="text-break small">
-										{l.message || intl.formatMessage({ id: `location-status.${l.status}.default` })}
+										<LocationStatusDetail location={l} />
 									</span>
 								) : null}
 							</li>
@@ -167,11 +174,24 @@ export function HostConfigTestResult({ result, error, testedKey, onClose }: Resu
 
 			{res.warnings.length ? (
 				<ul className="mb-2 ps-3">
-					{res.warnings.map((w) => (
-						<li key={`${w.code}-${w.hostType ?? ""}-${w.hostId ?? ""}`} className="text-break">
-							{w.message}
-						</li>
-					))}
+					{res.warnings.map((w) => {
+						const { text, detail } = hostTestWarningText(w);
+						return (
+							<li
+								key={`${w.code}-${w.hostType ?? ""}-${w.hostId ?? ""}`}
+								className="text-break"
+								data-warning={w.code}
+							>
+								{text}
+								{detail ? (
+									<>
+										{" "}
+										<code>{detail}</code>
+									</>
+								) : null}
+							</li>
+						);
+					})}
 				</ul>
 			) : null}
 

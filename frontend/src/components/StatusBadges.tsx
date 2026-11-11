@@ -6,6 +6,9 @@ import Tooltip from "react-bootstrap/Tooltip";
 import type { LocationStatusValue, NginxLocationStatus, UpstreamCheckResult } from "src/api/backend";
 import { intl, T } from "src/locale";
 import { isTranslatedCheckCode, locationStatusText } from "src/modules/HostStatus";
+import { checkDetailText, formatCheckMs, formatValueList } from "src/modules/UpstreamText";
+
+export { formatCheckMs };
 
 interface TipProps {
 	id: string;
@@ -69,9 +72,6 @@ export function LocationStatusBadge({ id, status, location }: LocationStatusBadg
 	);
 }
 
-/** Whole milliseconds, "<1" below one, as in the check's message */
-export const formatCheckMs = (ms: number): string => (ms < 1 ? "<1" : `${Math.round(ms)}`);
-
 /** A check result to show as a warning rather than as reachable or failed */
 export const isResolverWarning = (result: Pick<UpstreamCheckResult, "code">): boolean =>
 	result.code === "resolver_mismatch";
@@ -88,6 +88,12 @@ export const checkResultText = (result: UpstreamCheckResult): string => {
 	}
 	return result.message || result.code;
 };
+
+/** What a check result means and the addresses it found, after the short text: for a tooltip or hint line */
+export const checkResultDetails = (result: UpstreamCheckResult): string =>
+	[checkDetailText(result), result.addresses?.length ? formatValueList(result.addresses) : null]
+		.filter(Boolean)
+		.join(" – ");
 
 interface UpstreamCheckBadgeProps {
 	id: string;
@@ -118,9 +124,7 @@ export function UpstreamCheckBadge({ id, result, isChecking }: UpstreamCheckBadg
 	) : (
 		<IconX size={12} className="me-1" />
 	);
-	const tip = [result.message, result.addresses?.length ? result.addresses.join(", ") : null]
-		.filter(Boolean)
-		.join(" – ");
+	const tip = checkResultDetails(result);
 	return (
 		<Tip id={`${id}-tip`} tip={tip || null}>
 			<span className={cn("badge", cls)} data-check={result.code}>
@@ -150,9 +154,7 @@ export function UpstreamCheckHint({ id, result, isChecking }: UpstreamCheckBadge
 	const warn = isResolverWarning(result);
 	const cls = warn ? "text-warning" : result.ok ? "text-success" : "text-danger";
 	const Icon = warn ? IconAlertTriangle : result.ok ? IconCheck : IconX;
-	const details = [result.message, result.addresses?.length ? result.addresses.join(", ") : null]
-		.filter(Boolean)
-		.join(" – ");
+	const details = checkResultDetails(result);
 	return (
 		<div id={id} className="form-hint d-flex align-items-start mt-1" data-check={result.code}>
 			<Icon size={14} className={cn("me-1 mt-1 flex-shrink-0", cls)} />

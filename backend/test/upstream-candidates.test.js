@@ -9,7 +9,8 @@ import {
 
 const item = (host, source, extra = {}) => ({
 	host,
-	label: `${host} (${source})`,
+	kind: source === "docker" ? "container" : source,
+	owner: null,
 	source,
 	ports: [],
 	hint_port: null,

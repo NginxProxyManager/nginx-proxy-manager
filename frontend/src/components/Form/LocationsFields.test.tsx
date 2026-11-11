@@ -277,8 +277,8 @@ describe("LocationsFields", () => {
 		checkState.candidates = {
 			providers: {},
 			items: [
-				{ host: "svc", label: "svc", source: "docker", ports: [3000], hintPort: 3000, hintScheme: null },
-				{ host: "other", label: "other", source: "docker", ports: [4000], hintPort: 4000, hintScheme: null },
+				{ host: "svc", kind: "container", owner: null, source: "docker", ports: [3000], hintPort: 3000, hintScheme: null },
+				{ host: "other", kind: "container", owner: null, source: "docker", ports: [4000], hintPort: 4000, hintScheme: null },
 			],
 			generatedAt: "2026-11-04T10:00:00Z",
 		};
@@ -312,7 +312,7 @@ describe("LocationsFields", () => {
 		checkState.candidates = {
 			providers: {},
 			items: [
-				{ host: "svc", label: "svc", source: "docker", ports: [3000], hintPort: 3000, hintScheme: "https" },
+				{ host: "svc", kind: "container", owner: null, source: "docker", ports: [3000], hintPort: 3000, hintScheme: "https" },
 			],
 			generatedAt: "2026-11-04T10:00:00Z",
 		};

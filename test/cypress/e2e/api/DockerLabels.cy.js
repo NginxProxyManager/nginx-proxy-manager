@@ -23,7 +23,7 @@ describe('Docker label suggestions', () => {
 	const withSuggestion = (data) => data.items.filter((item) => item.suggestion);
 	// the fixture container's own item (its compose service alias carries the same suggestion)
 	const labelledContainer = (data) => withSuggestion(data).find(
-		(i) => /\(container\)$/.test(i.label) && i.suggestion.domain_names.includes(fixtureDomain)
+		(i) => i.kind === 'container' && i.suggestion.domain_names.includes(fixtureDomain)
 	);
 
 	const hostBody = (s) => ({
@@ -57,7 +57,13 @@ describe('Docker label suggestions', () => {
 			const suggested = withSuggestion(data);
 			for (const item of suggested) {
 				expect(item.source).to.equal('docker');
-				expect(item.label).to.match(/\((container|compose service of .+)\)$/);
+				expect(item.kind).to.be.oneOf(['container', 'compose_service']);
+				// a compose service alias names its container, a container has no owner
+				if (item.kind === 'compose_service') {
+					expect(item.owner).to.be.a('string');
+				} else {
+					expect(item.owner).to.equal(null);
+				}
 				const s = item.suggestion;
 				expect(s.forward_host).to.equal(item.host);
 				expect(s.forward_scheme).to.be.oneOf(['http', 'https']);
@@ -99,7 +105,7 @@ describe('Docker label suggestions', () => {
 			expect(s.existing_host_type).to.equal(null);
 
 			// The compose service alias of the same container carries the same suggestion, aimed at the alias
-			for (const alias of data.items.filter((i) => i.label.includes(`compose service of ${item.host}`))) {
+			for (const alias of data.items.filter((i) => i.kind === 'compose_service' && i.owner === item.host)) {
 				expect(alias.suggestion).to.deep.equal({ ...s, forward_host: alias.host });
 			}
 

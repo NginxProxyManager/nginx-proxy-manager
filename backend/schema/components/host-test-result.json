@@ -51,6 +51,8 @@
 					"path": "/api",
 					"status": "ok",
 					"mode": "dynamic",
+					"code": null,
+					"params": null,
 					"message": null
 				}
 			],
@@ -330,6 +332,19 @@
 							"null"
 						],
 						"example": 4
+					},
+					"detail": {
+						"type": [
+							"string",
+							"null"
+						],
+						"description": "other_host_broken: why nginx rejects that host (from the nginx error, not translated); null when the host is hidden from the user",
+						"example": "unknown directive \"proxy_passs\""
+					},
+					"retry_after": {
+						"type": "integer",
+						"description": "upstreams_rate_limited: seconds until upstreams can be checked again",
+						"example": 42
 					}
 				}
 			}
