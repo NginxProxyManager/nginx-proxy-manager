@@ -503,6 +503,30 @@
 	"loading": {
 		"defaultMessage": "Laden…"
 	},
+	"location-check.empty_host": {
+		"defaultMessage": "Der Ziel-Host ist leer."
+	},
+	"location-check.empty_path": {
+		"defaultMessage": "Der Pfad der Location ist leer."
+	},
+	"location-check.invalid_host": {
+		"defaultMessage": "Der Ziel-Host enthält unzulässige Zeichen (Leerzeichen, Anführungszeichen, ;, Klammern, $, # oder \\). Eine einzelne nginx-Variable wie $backend ist erlaubt."
+	},
+	"location-check.named_forward_path": {
+		"defaultMessage": "Ein Weiterleitungspfad ohne nginx-Variable kann nicht mit einer benannten Location verwendet werden; verwende eine Variable wie $request_uri oder entferne den Weiterleitungspfad."
+	},
+	"location-check.omitted": {
+		"defaultMessage": "Nginx hat diese Location sogar als Platzhalter abgelehnt, daher wurde sie entfernt. Der Rest des Hosts funktioniert weiter."
+	},
+	"location-check.regex_forward_path": {
+		"defaultMessage": "Ein Weiterleitungspfad ohne nginx-Variable kann nicht mit einer Location mit regulärem Ausdruck verwendet werden; verwende eine Gruppe wie /v1/$1, entferne den Weiterleitungspfad oder verwende eine Präfix-Location."
+	},
+	"location-check.unbalanced_braces": {
+		"defaultMessage": "Die erweiterte Konfiguration dieser Location hat nicht ausgeglichene geschweifte Klammern."
+	},
+	"location-check.unresolved": {
+		"defaultMessage": "Der Host \"{host}\" kann gerade nicht aufgelöst werden. Anfragen an diese Location schlagen mit 502 fehl, bis er aufgelöst werden kann."
+	},
 	"location-status.disabled": {
 		"defaultMessage": "Deaktiviert"
 	},
@@ -714,7 +738,7 @@
 		"defaultMessage": "Der nginx-Resolver ist deaktiviert (DISABLE_RESOLVER). Verwende eine IP-Adresse oder aktiviere den Resolver."
 	},
 	"nginx-error.hint.regex_uri_part": {
-		"defaultMessage": "Entferne den Weiterleitungspfad oder verwende eine Präfix-Location."
+		"defaultMessage": "Verwende eine Gruppe oder Variable im Weiterleitungspfad (/v1/$1), entferne den Weiterleitungspfad oder verwende eine Präfix-Location."
 	},
 	"nginx-error.hint.rejected_at_startup": {
 		"defaultMessage": "Speichere den Host erneut, um ihn wieder zu aktivieren, oder lass NPM_RECONCILE_ON_START eingeschaltet, damit das automatisch geschieht."
@@ -739,6 +763,12 @@
 	},
 	"nginx-error.host": {
 		"defaultMessage": "Nginx hat die Konfiguration dieses Hosts abgelehnt"
+	},
+	"nginx-error.location": {
+		"defaultMessage": "Fehler in der benutzerdefinierten Location {path}"
+	},
+	"nginx-error.location-advanced-line": {
+		"defaultMessage": "Fehler in der benutzerdefinierten Nginx-Konfiguration der Location {path}, Zeile {line}"
 	},
 	"nginx-error.other-host": {
 		"defaultMessage": "Nginx hat die Konfiguration von {host} abgelehnt"

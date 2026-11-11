@@ -160,7 +160,8 @@ export interface NginxConfigErrorDetails {
 	nginxOutput?: string | null;
 	hint?: string | null;
 	// What the UI words the error from (the message is English). Missing in details stored by older versions.
-	// the part of the host's config the error is in, and the line within it
+	// the part of the host's config the error is in (host_advanced, location, location_advanced), and the line
+	// within it
 	area?: string | null;
 	relativeLine?: number | null;
 	// special cases: conflict, regenerated_conflict, too_many_broken_hosts, redacted, rejected_at_startup
@@ -188,6 +189,11 @@ export interface NginxLocationStatus {
 	path: string;
 	status: LocationStatusValue;
 	mode: "dynamic" | "static" | null;
+	// why the location is not ok, worded by the UI (location-check.<code>); null when it is ok or disabled
+	code?: string | null;
+	// host (unresolved), detail (rejected, omitted: nginx's error text, not translated)
+	params?: { host?: string; detail?: string } | null;
+	// the same in English
 	message: string | null;
 }
 

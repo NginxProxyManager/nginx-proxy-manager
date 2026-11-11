@@ -9,6 +9,8 @@ import {
 	findDuplicatePath,
 	hasVariablePath,
 	isVariableHost,
+	locationMessage,
+	MESSAGE_CODES,
 	MESSAGES,
 	matchSavedLocations,
 	normaliseLocationPath,
@@ -159,18 +161,32 @@ describe("preflightLocation", () => {
 	});
 
 	it("reports disabled locations", () => {
-		assert.equal(preflightLocation(prepareLocation({ ...base, path: "/a", enabled: false })).status, "disabled");
+		assert.deepEqual(preflightLocation(prepareLocation({ ...base, path: "/a", enabled: false })), {
+			status: "disabled",
+			code: null,
+			params: null,
+			message: null,
+		});
 	});
 
 	it("quarantines regex and named locations with a literal forward path, nginx -t rejects that URI", () => {
 		const res = preflightLocation(prepareLocation({ ...base, path: "~ ^/x", forward_path: "/y" }));
-		assert.deepEqual(res, { status: "quarantined", message: MESSAGES.regexWithForwardPath });
+		assert.deepEqual(res, {
+			status: "quarantined",
+			code: "regex_forward_path",
+			params: null,
+			message: MESSAGES.regexWithForwardPath,
+		});
 		assert.deepEqual(preflightLocation(prepareLocation({ ...base, path: "~* ^/x", forward_host: "app/v1/" })), {
 			status: "quarantined",
+			code: "regex_forward_path",
+			params: null,
 			message: MESSAGES.regexWithForwardPath,
 		});
 		assert.deepEqual(preflightLocation(prepareLocation({ ...base, path: "@fb", forward_path: "/y" })), {
 			status: "quarantined",
+			code: "named_forward_path",
+			params: null,
 			message: MESSAGES.namedWithForwardPath,
 		});
 	});
@@ -209,7 +225,10 @@ describe("preflightLocation", () => {
 
 	it("quarantines invalid host names", () => {
 		for (const host of ["a b", "a;b", 'a"b', "a{", "$x y", "a$x", "$x;", "$" + "{x}", "#x"]) {
-			assert.equal(preflightLocation(prepareLocation({ ...base, path: "/a", forward_host: host })).status, "quarantined");
+			const res = preflightLocation(prepareLocation({ ...base, path: "/a", forward_host: host }));
+			assert.equal(res.status, "quarantined", host);
+			assert.equal(res.code, "invalid_host", host);
+			assert.equal(res.message, MESSAGES.invalidHost, host);
 		}
 	});
 
@@ -239,7 +258,11 @@ describe("preflightLocation", () => {
 		];
 		for (const loc of cases) {
 			const res = preflightLocation(prepareLocation({ ...base, path: "/a", ...loc }));
-			assert.deepEqual(res, { status: "quarantined", message: MESSAGES.invalidPath }, JSON.stringify(loc));
+			assert.deepEqual(
+				res,
+				{ status: "quarantined", code: "invalid_path", params: null, message: MESSAGES.invalidPath },
+				JSON.stringify(loc),
+			);
 		}
 	});
 
@@ -258,6 +281,13 @@ describe("preflightLocation", () => {
 	it("quarantines unbalanced advanced config", () => {
 		const res = preflightLocation(prepareLocation({ ...base, path: "/a", advanced_config: "if ($x) {" }));
 		assert.equal(res.message, MESSAGES.unbalancedBraces);
+		assert.equal(res.code, "unbalanced_braces");
+	});
+
+	it("reports an empty path or forward host by code", () => {
+		assert.equal(preflightLocation(prepareLocation({ ...base, path: " " })).code, "empty_path");
+		assert.equal(preflightLocation(prepareLocation({ ...base, path: "/a", forward_host: "" })).code, "empty_host");
+		assert.equal(preflightLocation(prepareLocation({ ...base, path: "/a", forward_host: "" })).message, MESSAGES.emptyHost);
 	});
 });
 
@@ -890,9 +920,41 @@ describe("publicLocationState", () => {
 			path: "/a",
 			status: "quarantined",
 			mode: null,
+			code: null,
+			params: null,
 			message: null,
 		});
 		assert.equal(publicLocationState({ index: 0, path: "/", status: "unresolved", mode: "dynamic" }).mode, "dynamic");
+	});
+
+	it("sends a code and params with the English message", () => {
+		const state = { index: 0, path: "/a", status: "unresolved", mode: "dynamic", stub: true };
+		Object.assign(state, locationMessage("unresolved", { host: "app" }));
+		assert.deepEqual(publicLocationState(state), {
+			index: 0,
+			path: "/a",
+			status: "unresolved",
+			mode: "dynamic",
+			code: "unresolved",
+			params: { host: "app" },
+			message: MESSAGES.unresolved("app"),
+		});
+		assert.deepEqual(locationMessage("rejected", { detail: "Unknown directive." }), {
+			code: "rejected",
+			params: { detail: "Unknown directive." },
+			message: "Disabled because nginx rejected it: Unknown directive.",
+		});
+		assert.equal(
+			locationMessage("omitted", { detail: "X." }).message,
+			"Removed because nginx rejected it, even as a placeholder: X.",
+		);
+		// the English message can say the detail differently, eg. not capitalised
+		assert.equal(
+			locationMessage("rejected", { detail: "Unknown directive." }, "unknown directive.").message,
+			"Disabled because nginx rejected it: unknown directive.",
+		);
+		// every message has a code
+		assert.deepEqual(Object.keys(MESSAGE_CODES).sort(), Object.keys(MESSAGES).sort());
 	});
 });
 

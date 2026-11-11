@@ -70,7 +70,7 @@
 				},
 				"area": {
 					"type": ["string", "null"],
-					"description": "Part of the host's config the error is in, eg. host_advanced",
+					"description": "Part of the host's config the error is in: host_advanced, location (location_index/location_path) or location_advanced",
 					"example": "host_advanced"
 				},
 				"relative_line": {

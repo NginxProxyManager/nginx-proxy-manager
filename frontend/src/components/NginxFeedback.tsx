@@ -4,6 +4,7 @@ import type { HostMeta, NginxConfigErrorDetails } from "src/api/backend";
 import { T } from "src/locale";
 import { describeNginxError, getProblemLocations } from "src/modules/HostStatus";
 import { Button } from "./Button";
+import { LocationStatusDetail } from "./StatusBadges";
 
 interface NginxErrorMessageProps {
 	message: ReactNode;
@@ -134,7 +135,7 @@ export function SaveWarning({ meta, onClose }: SaveWarningProps) {
 						<li key={p.index}>
 							<code>{p.path}</code>
 							{": "}
-							{p.message || <T id={`location-status.${p.status}.default`} />}
+							<LocationStatusDetail location={p} />
 						</li>
 					))}
 				</ul>

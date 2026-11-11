@@ -70,6 +70,12 @@ const nginxErrorWhere = (d: NginxConfigErrorDetails): string => {
 		}
 		return fmt("nginx-error.global");
 	}
+	if (d.area === "location_advanced" && d.locationPath && typeof d.relativeLine === "number") {
+		return fmt("nginx-error.location-advanced-line", { path: d.locationPath, line: d.relativeLine });
+	}
+	if ((d.area === "location" || d.area === "location_advanced") && d.locationPath) {
+		return fmt("nginx-error.location", { path: d.locationPath });
+	}
 	if (d.area === "host_advanced") {
 		return typeof d.relativeLine === "number"
 			? fmt("nginx-error.advanced-line", { line: d.relativeLine })
@@ -181,6 +187,42 @@ export const PROBLEM_LOCATION_STATUSES = ["quarantined", "unresolved"];
 
 export const getProblemLocations = (meta?: HostMeta | null): NginxLocationStatus[] =>
 	(meta?.nginxLocations || []).filter((l) => PROBLEM_LOCATION_STATUSES.includes(l.status));
+
+export interface LocationStatusText {
+	text: string;
+	// nginx's own error text, shown as it is
+	detail: string | null;
+}
+
+// Codes that an existing text already says: invalid_path is the editor's own check of the forward path, a
+// rejected location is what the quarantined state means
+const LOCATION_CHECK_KEYS: Record<string, string> = {
+	invalid_path: "location.error.path-invalid",
+	rejected: "location-status.quarantined.default",
+};
+
+/**
+ * What a custom location's state means, in the UI language: from the backend's code and params
+ * (location-check.<code>), with nginx's error as an untranslated detail. A code this UI doesn't know shows the
+ * backend's English message, a state without one its default text.
+ */
+export const locationStatusText = (
+	l: Pick<NginxLocationStatus, "status" | "code" | "params" | "message">,
+): LocationStatusText => {
+	const params = l.params || {};
+	const id = l.code ? LOCATION_CHECK_KEYS[l.code] || `location-check.${l.code}` : undefined;
+	if (hasMessage(id)) {
+		return {
+			text: intl.formatMessage({ id }, { host: params.host ?? "" }),
+			detail: params.detail || null,
+		};
+	}
+	if (l.message) {
+		return { text: l.message, detail: null };
+	}
+	const fallback = `location-status.${l.status}.default`;
+	return { text: hasMessage(fallback) ? intl.formatMessage({ id: fallback }) : "", detail: null };
+};
 
 export type HostState = "disabled" | "online" | "warning" | "error";
 

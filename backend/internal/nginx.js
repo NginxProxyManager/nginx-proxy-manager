@@ -33,7 +33,7 @@ import {
 	isolateFaultyLocations,
 	isVariableHost,
 	locationDnsMarker,
-	MESSAGES as LOCATION_MESSAGES,
+	locationMessage,
 	parseLocationPath,
 	preflightLocation,
 	prepareLocation,
@@ -1564,7 +1564,16 @@ const internalNginx = {
 		return Promise.all(
 			locations.map(async (raw, index) => {
 				const loc = prepareLocation(raw);
-				const state = { index, path: loc.path, status: "ok", mode: null, message: null, stub: true };
+				const state = {
+					index,
+					path: loc.path,
+					status: "ok",
+					mode: null,
+					code: null,
+					params: null,
+					message: null,
+					stub: true,
+				};
 				const problem = preflightLocation(loc);
 				if (problem) {
 					return Object.assign(state, problem);
@@ -1577,7 +1586,7 @@ const internalNginx = {
 				state.mode = result.mode;
 				state.status = result.status;
 				if (result.status === "unresolved") {
-					state.message = LOCATION_MESSAGES.unresolved(loc.forward_host);
+					Object.assign(state, locationMessage("unresolved", { host: loc.forward_host }));
 				}
 				return state;
 			}),
@@ -1608,7 +1617,7 @@ const internalNginx = {
 			const loc = prepareLocation(host.locations[state.index]);
 			state.mode = "dynamic";
 			state.status = "unresolved";
-			state.message = LOCATION_MESSAGES.unresolved(loc.forward_host);
+			Object.assign(state, locationMessage("unresolved", { host: loc.forward_host }));
 			return true;
 		}
 
@@ -1616,13 +1625,19 @@ const internalNginx = {
 			state.status = "quarantined";
 			state.mode = null;
 			state.stub = true;
-			state.message = LOCATION_MESSAGES.rejected(sentence(humanised.text));
+			Object.assign(
+				state,
+				locationMessage("rejected", { detail: sentence(capitalise(humanised.text)) }, sentence(humanised.text)),
+			);
 			return true;
 		}
 
 		if (state.status === "quarantined" && state.stub) {
 			state.stub = false;
-			state.message = LOCATION_MESSAGES.omitted(sentence(humanised.text));
+			Object.assign(
+				state,
+				locationMessage("omitted", { detail: sentence(capitalise(humanised.text)) }, sentence(humanised.text)),
+			);
 			return true;
 		}
 

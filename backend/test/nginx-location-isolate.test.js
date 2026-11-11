@@ -199,6 +199,9 @@ describe("configure with an error that names no line", () => {
 			["ok", "quarantined", "ok"],
 		);
 		assert.match(meta.nginx_locations[1].message, /unknown variable "\$missing_variable"/);
+		assert.equal(meta.nginx_locations[1].code, "rejected");
+		// the detail is a sentence of its own, like a host-level error's; the English message keeps it lower case
+		assert.match(meta.nginx_locations[1].params.detail, /^Unknown variable "\$missing_variable"/);
 		const text = fs.readFileSync(file(host.id), "utf8");
 		assert.doesNotMatch(text, /\$missing_variable/);
 		assert.match(text, /location \/bad \{\n\s+# npm: quarantined[^\n]*\n\s+return 503;/);

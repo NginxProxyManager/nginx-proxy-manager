@@ -113,8 +113,39 @@
 								"type": ["string", "null"],
 								"enum": ["dynamic", "static", null]
 							},
+							"code": {
+								"type": ["string", "null"],
+								"description": "Why the location is not ok, for the UI to word in its language. Unknown codes may be added later: show the message for them",
+								"enum": [
+									"empty_path",
+									"empty_host",
+									"invalid_host",
+									"invalid_path",
+									"unbalanced_braces",
+									"regex_forward_path",
+									"named_forward_path",
+									"unresolved",
+									"rejected",
+									"omitted",
+									null
+								]
+							},
+							"params": {
+								"type": ["object", "null"],
+								"description": "Values for the code: host (unresolved), detail (rejected, omitted: nginx's error)",
+								"additionalProperties": false,
+								"properties": {
+									"host": {
+										"type": "string"
+									},
+									"detail": {
+										"type": "string"
+									}
+								}
+							},
 							"message": {
-								"type": ["string", "null"]
+								"type": ["string", "null"],
+								"description": "The same in English"
 							}
 						}
 					}

@@ -503,6 +503,30 @@
 	"loading": {
 		"defaultMessage": "Laadimine…"
 	},
+	"location-check.empty_host": {
+		"defaultMessage": "Sihthost on tühi."
+	},
+	"location-check.empty_path": {
+		"defaultMessage": "Asukoha tee on tühi."
+	},
+	"location-check.invalid_host": {
+		"defaultMessage": "Sihthostis on lubamatud märgid (tühikud, jutumärgid, ;, sulud, $, # või \\). Üks nginxi muutuja, näiteks $backend, on lubatud."
+	},
+	"location-check.named_forward_path": {
+		"defaultMessage": "Ilma nginxi muutujata edastusteed ei saa kasutada nimega asukohaga; kasuta muutujat, näiteks $request_uri, või eemalda edastustee."
+	},
+	"location-check.omitted": {
+		"defaultMessage": "Nginx lükkas selle asukoha tagasi isegi kohatäitjana, seega eemaldati see. Ülejäänud host töötab edasi."
+	},
+	"location-check.regex_forward_path": {
+		"defaultMessage": "Ilma nginxi muutujata edastusteed ei saa kasutada regulaaravaldisega asukohaga; kasuta püüdegruppi, näiteks /v1/$1, eemalda edastustee või kasuta prefiksiga asukohta."
+	},
+	"location-check.unbalanced_braces": {
+		"defaultMessage": "Selle asukoha täpsemas seadistuses on looksulud tasakaalust väljas."
+	},
+	"location-check.unresolved": {
+		"defaultMessage": "Hosti \"{host}\" ei saa praegu lahendada. Päringud sellele asukohale ebaõnnestuvad veaga 502, kuni see õnnestub."
+	},
 	"location-status.disabled": {
 		"defaultMessage": "Väljas"
 	},
@@ -714,7 +738,7 @@
 		"defaultMessage": "Nginxi nimelahendaja on keelatud (DISABLE_RESOLVER). Kasuta IP-aadressi või luba nimelahendaja."
 	},
 	"nginx-error.hint.regex_uri_part": {
-		"defaultMessage": "Eemalda edastustee või kasuta prefiksiga asukohta."
+		"defaultMessage": "Kasuta edastusteel püüdegruppi või muutujat (/v1/$1), eemalda edastustee või kasuta prefiksiga asukohta."
 	},
 	"nginx-error.hint.rejected_at_startup": {
 		"defaultMessage": "Salvesta host uuesti, et see tagasi tuua, või jäta NPM_RECONCILE_ON_START sisse, et see toimuks automaatselt."
@@ -739,6 +763,12 @@
 	},
 	"nginx-error.host": {
 		"defaultMessage": "Nginx lükkas selle hosti seadistuse tagasi"
+	},
+	"nginx-error.location": {
+		"defaultMessage": "Viga kohandatud asukohas {path}"
+	},
+	"nginx-error.location-advanced-line": {
+		"defaultMessage": "Viga kohandatud asukoha {path} kohandatud Nginxi seadistuses, rida {line}"
 	},
 	"nginx-error.other-host": {
 		"defaultMessage": "Nginx lükkas tagasi hosti {host} seadistuse"

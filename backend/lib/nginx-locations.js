@@ -23,7 +23,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createIncludeReader } from "./nginx-includes.js";
 import { scanNginxConfig, unescapeToken } from "./nginx-tokenize.js";
-import { isTokenSafe, isValid, unsafeValueError } from "./nginx-values.js";
+import { isTokenSafe, isValid, unsafeValueError, unsafeValueField } from "./nginx-values.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -77,6 +77,44 @@ const MESSAGES = {
 		`Host "${host}" can't be resolved right now. Requests to this location fail with 502 until it resolves.`,
 	rejected: (text) => `Disabled because nginx rejected it: ${text}`,
 	omitted: (text) => `Removed because nginx rejected it, even as a placeholder: ${text}`,
+};
+
+/**
+ * Stable codes of the MESSAGES, sent with them in meta.nginx_locations: the UI words a location's state from its
+ * code and params (location-check.<code>) in its own language. The English message stays for API users and logs.
+ */
+const MESSAGE_CODES = {
+	regexWithForwardPath: "regex_forward_path",
+	namedWithForwardPath: "named_forward_path",
+	invalidHost: "invalid_host",
+	emptyHost: "empty_host",
+	invalidPath: "invalid_path",
+	emptyPath: "empty_path",
+	unbalancedBraces: "unbalanced_braces",
+	unresolved: "unresolved",
+	rejected: "rejected",
+	omitted: "omitted",
+};
+
+/**
+ * The message of a location state with its code and params: `host` for unresolved, `detail` (nginx's error,
+ * not translated by the UI) for rejected and omitted.
+ *
+ * @param   {String}      name    a key of MESSAGES
+ * @param   {Object|null} params  {host} or {detail}
+ * @param   {String}      [text]  what the English message says instead of params.detail, eg. not capitalised
+ * @returns {{code: String, params: Object|null, message: String}}
+ */
+const locationMessage = (name, params = null, text = undefined) => {
+	const message = MESSAGES[name];
+	return {
+		code: MESSAGE_CODES[name],
+		params,
+		message:
+			typeof message === "function"
+				? message(name === "unresolved" ? params?.host : (text ?? params?.detail))
+				: message,
+	};
 };
 
 /**
@@ -215,7 +253,10 @@ const assertLocationsRenderable = (label, locations) => {
 	const check = (ok, what, value) => {
 		if (!ok) {
 			const shown = JSON.stringify(String(value)).slice(0, 80);
-			throw unsafeValueError(`${label}: ${what} ${shown} is not allowed in nginx config`);
+			throw unsafeValueError(`${label}: ${what} ${shown} is not allowed in nginx config`, {
+				field: unsafeValueField(what),
+				value: shown,
+			});
 		}
 	};
 	for (const raw of locations || []) {
@@ -267,28 +308,28 @@ const hasVariablePath = (loc) => VARIABLE_IN_PATH.test(`${loc.forward_path || ""
  * Problems that are known before nginx is asked.
  *
  * @param   {Object} loc  a prepared location
- * @returns {{status: String, message: String|null}|null}
+ * @returns {{status: String, code: String|null, params: Object|null, message: String|null}|null}
  */
 const preflightLocation = (loc) => {
 	if (loc.enabled === false) {
-		return { status: "disabled", message: null };
+		return { status: "disabled", code: null, params: null, message: null };
 	}
 	const parsed = parseLocationPath(loc.path);
 	if (!parsed.uri) {
-		return { status: "quarantined", message: MESSAGES.emptyPath };
+		return { status: "quarantined", ...locationMessage("emptyPath") };
 	}
 	if (!loc.forward_host) {
-		return { status: "quarantined", message: MESSAGES.emptyHost };
+		return { status: "quarantined", ...locationMessage("emptyHost") };
 	}
 	if (!isVariableHost(loc.forward_host) && INVALID_HOST_CHARS.test(loc.forward_host)) {
-		return { status: "quarantined", message: MESSAGES.invalidHost };
+		return { status: "quarantined", ...locationMessage("invalidHost") };
 	}
 	// `${name}` is a variable too
 	if (loc.forward_path && INVALID_PATH_CHARS.test(loc.forward_path.replace(/\$\{[A-Za-z0-9_]+\}/g, "$x"))) {
-		return { status: "quarantined", message: MESSAGES.invalidPath };
+		return { status: "quarantined", ...locationMessage("invalidPath") };
 	}
 	if (!bracesBalanced(loc.advanced_config)) {
-		return { status: "quarantined", message: MESSAGES.unbalancedBraces };
+		return { status: "quarantined", ...locationMessage("unbalancedBraces") };
 	}
 	// nginx -t rejects a URI in the proxy_pass of a regex or named location ("cannot have URI part"), but not
 	// when the proxy_pass has a variable: `location ~ ^/api/(.*)$` with forward path `/v1/$1`, or forward host
@@ -296,10 +337,10 @@ const preflightLocation = (loc) => {
 	// chooseLocationMode().
 	const variableProxyPass = hasVariablePath(loc) || isVariableHost(loc.forward_host);
 	if (loc.forward_path && !variableProxyPass && parsed.isRegex) {
-		return { status: "quarantined", message: MESSAGES.regexWithForwardPath };
+		return { status: "quarantined", ...locationMessage("regexWithForwardPath") };
 	}
 	if (loc.forward_path && !variableProxyPass && parsed.isNamed) {
-		return { status: "quarantined", message: MESSAGES.namedWithForwardPath };
+		return { status: "quarantined", ...locationMessage("namedWithForwardPath") };
 	}
 	return null;
 };
@@ -711,12 +752,15 @@ const publicLocationState = (state) => ({
 	path: state.path,
 	status: state.status,
 	mode: state.status === "ok" || state.status === "unresolved" ? state.mode : null,
+	code: state.code || null,
+	params: state.params || null,
 	message: state.message || null,
 });
 
 export {
 	CONFIG_VERSION,
 	CONFIG_VERSION_MARKER,
+	MESSAGE_CODES,
 	MESSAGES,
 	assertLocationsRenderable,
 	assetAdvancedConfig,
@@ -731,6 +775,7 @@ export {
 	isolateFaultyLocations,
 	isVariableHost,
 	locationDnsMarker,
+	locationMessage,
 	matchSavedLocations,
 	normaliseLocationPath,
 	parseLocationPath,

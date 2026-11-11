@@ -200,7 +200,8 @@ The API answers `400` with the details:
 rejected, for example one of your [custom configuration files](/advanced-config/#custom-nginx-configurations).
 
 `message` is English. The UI words the error in its own language from the other fields: `area` and `relative_line`
-say where it is (`host_advanced`: the host's advanced configuration), `reason` marks special cases (`conflict`,
+say where it is (`host_advanced`: the host's advanced configuration, `location` / `location_advanced`: the custom
+location `location_path`, or its advanced configuration), `reason` marks special cases (`conflict`,
 `regenerated_conflict`, `too_many_broken_hosts`, `redacted`), `detail` is the humanised nginx error on its own and
 `hint_code` names the hint. `detail` is shown as it is, it is not translated.
 
@@ -291,7 +292,7 @@ requests and sets them when it writes the host's config:
 | `nginx_err` | Why the host is offline, otherwise `null` |
 | `nginx_details` | The structured details of the failure (same shape as `error.details` above), otherwise `null` |
 | `nginx_checked_at` | When the config was last written |
-| `nginx_locations` | Proxy hosts only: one entry per custom location, `{ index, path, status, mode, message }` |
+| `nginx_locations` | Proxy hosts only: one entry per custom location, `{ index, path, status, mode, code, params, message }`. `code` says why a location isn't `ok` (`empty_path`, `empty_host`, `invalid_host`, `invalid_path`, `unbalanced_braces`, `regex_forward_path`, `named_forward_path`, `unresolved`, `rejected`, `omitted`; more may be added), `params` holds its values (`host`, or nginx's error as `detail`), `message` is the same in English |
 
 ## Startup
 

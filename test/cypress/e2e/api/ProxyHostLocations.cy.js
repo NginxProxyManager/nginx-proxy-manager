@@ -113,8 +113,12 @@ describe('Proxy Host custom location resilience', () => {
 			const [dash, ghost, broken] = data.meta.nginx_locations;
 			expect(dash).to.include({ index: 0, path: '/dash', status: 'ok' });
 			expect(ghost).to.include({ index: 1, path: '/ghost', status: 'unresolved', mode: 'dynamic' });
+			expect(ghost).to.include({ code: 'unresolved' });
+			expect(ghost.params).to.deep.equal({ host: 'nonexistent-upstream-npm-test' });
 			expect(ghost.message).to.contain('nonexistent-upstream-npm-test');
 			expect(broken).to.include({ index: 2, path: '/broken', status: 'quarantined', mode: null });
+			expect(broken).to.include({ code: 'rejected' });
+			expect(broken.params.detail).to.contain('proxy_passs');
 			expect(broken.message).to.contain('proxy_passs');
 		});
 	});
@@ -180,7 +184,7 @@ describe('Proxy Host custom location resilience', () => {
 		}).then((data) => {
 			cy.validateSwaggerSchema('put', 200, '/nginx/proxy-hosts/{hostID}', data);
 			expect(data.locations[0]).to.have.property('enabled', false);
-			expect(data.meta.nginx_locations[0]).to.include({ index: 0, status: 'disabled', mode: null });
+			expect(data.meta.nginx_locations[0]).to.include({ index: 0, status: 'disabled', mode: null, code: null });
 			expect(data.meta.nginx_locations[1]).to.have.property('status', 'unresolved');
 		});
 
@@ -284,6 +288,8 @@ describe('Proxy Host custom location resilience', () => {
 			expect(data.meta).to.have.property('nginx_online', true);
 			expect(data.meta.nginx_locations[0]).to.include({ index: 0, status: 'ok' });
 			expect(data.meta.nginx_locations[1]).to.include({ index: 1, status: 'quarantined', mode: null });
+			expect(data.meta.nginx_locations[1]).to.include({ code: 'rejected' });
+			expect(data.meta.nginx_locations[1].params.detail).to.contain('Unknown variable "$missing_variable".');
 			expect(data.meta.nginx_locations[1].message).to.contain('unknown variable "$missing_variable"');
 		});
 

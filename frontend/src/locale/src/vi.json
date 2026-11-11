@@ -503,6 +503,30 @@
 	"loading": {
 		"defaultMessage": "Đang tải…"
 	},
+	"location-check.empty_host": {
+		"defaultMessage": "Host đích đang trống."
+	},
+	"location-check.empty_path": {
+		"defaultMessage": "Đường dẫn của vị trí đang trống."
+	},
+	"location-check.invalid_host": {
+		"defaultMessage": "Host đích chứa ký tự không hợp lệ (khoảng trắng, dấu nháy, ;, dấu ngoặc nhọn, $, # hoặc \\). Được phép dùng một biến nginx duy nhất như $backend."
+	},
+	"location-check.named_forward_path": {
+		"defaultMessage": "Không thể dùng đường dẫn đích không có biến nginx với vị trí có tên; hãy dùng một biến như $request_uri hoặc xóa đường dẫn đích."
+	},
+	"location-check.omitted": {
+		"defaultMessage": "Nginx đã từ chối vị trí này ngay cả khi chỉ là chỗ giữ chỗ nên nó đã bị gỡ bỏ. Phần còn lại của host vẫn hoạt động bình thường."
+	},
+	"location-check.regex_forward_path": {
+		"defaultMessage": "Không thể dùng đường dẫn đích không có biến nginx với vị trí dạng biểu thức chính quy; hãy dùng nhóm bắt như /v1/$1, xóa đường dẫn đích hoặc dùng vị trí dạng tiền tố."
+	},
+	"location-check.unbalanced_braces": {
+		"defaultMessage": "Cấu hình nâng cao của vị trí này có dấu ngoặc nhọn không cân bằng."
+	},
+	"location-check.unresolved": {
+		"defaultMessage": "Hiện không thể phân giải host \"{host}\". Các yêu cầu tới vị trí này sẽ lỗi 502 cho đến khi phân giải được."
+	},
 	"location-status.disabled": {
 		"defaultMessage": "Đã tắt"
 	},
@@ -714,7 +738,7 @@
 		"defaultMessage": "Trình phân giải DNS của nginx đang bị tắt (DISABLE_RESOLVER). Hãy dùng địa chỉ IP hoặc bật trình phân giải."
 	},
 	"nginx-error.hint.regex_uri_part": {
-		"defaultMessage": "Hãy xóa đường dẫn đích hoặc dùng vị trí dạng tiền tố."
+		"defaultMessage": "Hãy dùng nhóm bắt hoặc biến trong đường dẫn đích (/v1/$1), xóa đường dẫn đích hoặc dùng vị trí dạng tiền tố."
 	},
 	"nginx-error.hint.rejected_at_startup": {
 		"defaultMessage": "Lưu lại host để khôi phục nó, hoặc để NPM_RECONCILE_ON_START bật để việc này diễn ra tự động."
@@ -739,6 +763,12 @@
 	},
 	"nginx-error.host": {
 		"defaultMessage": "Nginx đã từ chối cấu hình của host này"
+	},
+	"nginx-error.location": {
+		"defaultMessage": "Lỗi trong vị trí tùy chỉnh {path}"
+	},
+	"nginx-error.location-advanced-line": {
+		"defaultMessage": "Lỗi trong cấu hình Nginx tùy chỉnh của vị trí tùy chỉnh {path}, dòng {line}"
 	},
 	"nginx-error.other-host": {
 		"defaultMessage": "Nginx đã từ chối cấu hình của {host}"

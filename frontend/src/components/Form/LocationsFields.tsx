@@ -15,7 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import type { NginxLocationStatus, ProxyLocation } from "src/api/backend";
 import { intl, T } from "src/locale";
 import { locationDuplicateKey, locationHostPart, normaliseLocationPath } from "src/modules/HostStatus";
-import { LocationStatusBadge } from "../StatusBadges";
+import { LocationStatusBadge, LocationStatusDetail } from "../StatusBadges";
 import { AccessField } from "./AccessField";
 import styles from "./LocationsFields.module.css";
 
@@ -485,7 +485,7 @@ function LocationCard({
 						<LocationStatusBadge
 							id={`location-status-${row.id}`}
 							status={status.status}
-							message={status.message}
+							location={status}
 						/>
 					) : null}
 				</span>
@@ -560,14 +560,14 @@ function LocationCard({
 							</div>
 						)}
 					</div>
-					{status && status.status !== "ok" && status.message ? (
+					{status && status.status !== "ok" && (status.message || status.code) ? (
 						<div
 							className={cn(
 								"small mb-3",
 								status.status === "quarantined" ? "text-danger" : "text-warning",
 							)}
 						>
-							{status.message}
+							<LocationStatusDetail location={status} />
 						</div>
 					) : null}
 					<div className="row">
