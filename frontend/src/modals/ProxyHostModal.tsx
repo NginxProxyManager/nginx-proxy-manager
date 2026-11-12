@@ -53,14 +53,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		if (!isAdmin) {
 			delete payload.advanced_config;
 			delete payload.advancedConfig;
-			const existingLocations = data?.locations || [];
-			payload.locations = payload.locations.map((loc: any) => {
-				const existingLoc = existingLocations.find((l: any) => l.path === loc.path);
-				return {
-					...loc,
-					advancedConfig: existingLoc?.advancedConfig || "",
-				};
-			});
+			// Location advanced configs are sent as-is. Non-admins can't edit them (the editor is
+			// hidden), so each one is still the admin-written value and moves with its location
+			// when the path is renamed; the backend matches them by value. Looking them up by
+			// path here would silently drop the config from a renamed location.
 		}
 
 		setProxyHost(payload, {

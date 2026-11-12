@@ -17,6 +17,11 @@ server {
 		proxy_set_header      X-Forwarded-Scheme $scheme;
 		proxy_set_header      X-Forwarded-Proto  $scheme;
 		proxy_set_header      X-Forwarded-For    $remote_addr;
+		# The TCP peer before realip processing; the backend rate limits on this because
+		# X-Real-IP can be set by any client in the trusted private ranges. The secret, generated
+		# at startup, is how the backend knows this header came from here.
+		proxy_set_header      X-NPM-Peer-Addr    $realip_remote_addr;
+		proxy_set_header      X-NPM-Peer-Secret  "{{NPM_PEER_SECRET}}";
 		proxy_pass            http://127.0.0.1:3000/;
 
 		proxy_read_timeout 15m;

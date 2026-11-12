@@ -143,6 +143,79 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
+	it('Certificate in use by a host cannot be deleted', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/certificates',
+			data:  {
+				provider:  'other',
+				nice_name: 'In Use Certificate',
+			},
+		}).then((cert) => {
+			cy.task('backendApiPostFiles', {
+				token: token,
+				path:  `/api/nginx/certificates/${cert.id}/upload`,
+				files: {
+					certificate:     certFile,
+					certificate_key: keyFile,
+				},
+			}).then(() => {
+				cy.task('backendApiPost', {
+					token: token,
+					path:  '/api/nginx/proxy-hosts',
+					data:  {
+						domain_names:   ['cert-in-use.example.com'],
+						forward_scheme: 'http',
+						forward_host:   '1.1.1.1',
+						forward_port:   80,
+						access_list_id: '0',
+						certificate_id: cert.id,
+						meta:           { dns_challenge: false },
+						advanced_config: '',
+						locations:       [],
+						block_exploits:  false,
+						caching_enabled: false,
+						allow_websocket_upgrade: false,
+						http2_support:   false,
+						hsts_enabled:    false,
+						hsts_subdomains: false,
+						ssl_forced:      false,
+					},
+				}).then((host) => {
+					cy.task('backendApiDelete', {
+						token:         token,
+						path:          `/api/nginx/certificates/${cert.id}`,
+						returnOnError: true,
+					}).then((data) => {
+						cy.validateSwaggerSchema('delete', 400, '/nginx/certificates/{certID}', data);
+						expect(data.error.code).to.equal(400);
+						expect(data.error.message).to.contain('in use by 1 proxy host');
+					});
+
+					// Still there
+					cy.task('backendApiGet', {
+						token: token,
+						path:  `/api/nginx/certificates/${cert.id}`,
+					}).then((data) => {
+						expect(data.id).to.equal(cert.id);
+					});
+
+					// Once the host no longer uses it, it can be deleted
+					cy.task('backendApiDelete', {
+						token: token,
+						path:  `/api/nginx/proxy-hosts/${host.id}`,
+					});
+					cy.task('backendApiDelete', {
+						token: token,
+						path:  `/api/nginx/certificates/${cert.id}`,
+					}).then((data) => {
+						expect(data).to.be.equal(true);
+					});
+				});
+			});
+		});
+	});
+
 	it('Request Certificate - CVE-2024-46256/CVE-2024-46257', () => {
 		cy.task('backendApiPost', {
 			token: token,

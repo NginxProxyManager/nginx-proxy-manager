@@ -2,6 +2,7 @@ import fs from "node:fs";
 import batchflow from "batchflow";
 import _ from "lodash";
 import errs from "../lib/error.js";
+import { isValid, unsafeValueError } from "../lib/nginx-values.js";
 import { isMysql, isPostgres } from "../lib/config.js";
 import utils from "../lib/utils.js";
 import db from "../db.js";
@@ -44,15 +45,14 @@ const getProxyHostsUsingAccessListInLocations = async (accessListId) => {
 	let result;
 	if (isMysql()) {
 		const searchObj = JSON.stringify([{ access_list_id: accessListId }]);
-		result = await db().raw(
-			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND JSON_CONTAINS(locations, ?, ?)",
-			[searchObj, "$"],
-		);
+		result = await db().raw("SELECT id FROM proxy_host WHERE is_deleted = 0 AND JSON_CONTAINS(locations, ?, ?)", [
+			searchObj,
+			"$",
+		]);
 	} else if (isPostgres()) {
-		result = await db().raw(
-			"SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations::jsonb @> ?::jsonb",
-			[JSON.stringify([{ access_list_id: accessListId }])],
-		);
+		result = await db().raw("SELECT id FROM proxy_host WHERE is_deleted = 0 AND locations::jsonb @> ?::jsonb", [
+			JSON.stringify([{ access_list_id: accessListId }]),
+		]);
 	} else {
 		// LIKE is only a prefilter: "access_list_id":1 also matches "access_list_id":10,
 		// so confirm the exact id against the parsed JSON.
@@ -114,10 +114,7 @@ const getProxyHostCounts = async () => {
 		hostsByList.get(id).add(hostId);
 	};
 
-	const hosts = await proxyHostModel
-		.query()
-		.select("id", "access_list_id", "locations")
-		.where("is_deleted", 0);
+	const hosts = await proxyHostModel.query().select("id", "access_list_id", "locations").where("is_deleted", 0);
 	for (const host of hosts) {
 		add(host.access_list_id, host.id);
 		if (Array.isArray(host.locations)) {
@@ -310,12 +307,15 @@ const internalAccessList = {
 		// Also regenerate configs for proxy hosts that reference this access list in their locations
 		const locationHostRows = await getProxyHostsUsingAccessListInLocations(data.id);
 		if (locationHostRows?.length) {
-			const locationHostIds = locationHostRows.map((r) => r.id).filter((id) => {
-				// Exclude hosts already regenerated above
-				return !freshRow.proxy_hosts?.find((h) => h.id === id);
-			});
+			const locationHostIds = locationHostRows
+				.map((r) => r.id)
+				.filter((id) => {
+					// Exclude hosts already regenerated above
+					return !freshRow.proxy_hosts?.find((h) => h.id === id);
+				});
 			if (locationHostIds.length) {
-				const locationHosts = await proxyHostModel.query()
+				const locationHosts = await proxyHostModel
+					.query()
 					.where("is_deleted", 0)
 					.whereIn("id", locationHostIds)
 					.allowGraph(proxyHostModel.defaultAllowGraph)
@@ -578,6 +578,11 @@ const internalAccessList = {
 					.sequential()
 					.each((_i, item, next) => {
 						if (item.password?.length) {
+							// One "user:hash" line each; a ":" or line break in the name would corrupt the file
+							if (!isValid("accessUsername", item.username)) {
+								reject(unsafeValueError(`Access List #${list.id}: user name is not allowed`));
+								return;
+							}
 							logger.info(`Adding: ${item.username}`);
 
 							utils
