@@ -222,7 +222,7 @@ describe("upstream check: input validation", () => {
 		'a"b',
 		"a`b",
 		"$host x",
-		"a$host",
+		"a$host;",
 		"-bad",
 		"a..b",
 	]) {
@@ -234,7 +234,7 @@ describe("upstream check: input validation", () => {
 	}
 
 	it("does not check a forward host that is an nginx variable", async () => {
-		for (const host of ["$backend", "$server/sub"]) {
+		for (const host of ["$backend", "$server/sub", "app-$stage", "app-$stage/sub", "a$host"]) {
 			const result = await checkTarget({ host, port: 80 }, { resolvers: null, lookup: fakeLookup({}) });
 			assert.equal(result.code, "disabled", host);
 			assert.match(result.message, /nginx variable/);

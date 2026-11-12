@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import net from "node:net";
+import { isVariableHost } from "../nginx-locations.js";
 
 const RESOLVERS_CONF = "/etc/nginx/conf.d/include/resolvers.conf";
 const RESOLV_CONF = "/etc/resolv.conf";
@@ -11,14 +12,9 @@ const FORBIDDEN_HOST_CHARS = /[\s;{}'"`$\\#\x00-\x1f\x7f]/;
 const HOSTNAME_PATTERN =
 	/^(?=.{1,253}\.?$)[A-Za-z0-9_](?:[A-Za-z0-9_-]{0,62})(?:\.[A-Za-z0-9_](?:[A-Za-z0-9_-]{0,62}))*\.?$/;
 
-/**
- * A forward host that is a single nginx variable, eg. `$backend` set in the advanced config. nginx resolves
- * it per request, it can't be checked from here. Same rule as the location renderer (lib/nginx-locations.js).
- *
- * @param   {string} host  Host without any path
- * @returns {boolean}
- */
-const isVariableHost = (host) => /^\$[A-Za-z_][A-Za-z0-9_]*$/.test(`${host ?? ""}`.trim());
+// isVariableHost(host): a forward host (without any path) with an nginx variable, eg. `$backend` set in the
+// advanced config or `app-$stage`. nginx resolves it per request, it can't be checked from here. The rule of the
+// location renderer, which writes such a host literally.
 
 /**
  * Splits a forward host the way the location renderer does: "host/some/path" -> host + "/some/path".

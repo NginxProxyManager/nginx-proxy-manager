@@ -198,7 +198,7 @@ const MESSAGES = {
 		`${describeHost(t.host, t.port)} is unreachable from Nginx Proxy Manager (no route to host).`,
 	disabled: (t) =>
 		isVariableHost(t.host)
-			? `"${t.host}" is an nginx variable. nginx resolves it per request, it can't be checked here.`
+			? `"${t.host}" contains an nginx variable. nginx resolves it per request, it can't be checked here.`
 			: "Upstream checks are disabled on this server (NPM_UPSTREAM_CHECK=false).",
 };
 

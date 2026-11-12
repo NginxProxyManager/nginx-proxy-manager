@@ -67,6 +67,7 @@ describe("health: variable upstreams", () => {
 					locations: [
 						{ path: "/v", forward_host: "$backend", forward_port: 8080 },
 						{ path: "/a", forward_host: "app", forward_port: 80 },
+						{ path: "/s", forward_host: "app-$stage/api", forward_port: 80 },
 					],
 				},
 				{ id: 21, owner_user_id: 1, enabled: true, forward_host: "$only", forward_port: 80, locations: [] },
