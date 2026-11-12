@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { execSync } from "node:child_process";
 import _ from "lodash";
 import errs from "../lib/error.js";
+import { assertAccessListRenderable, assertHostRenderable, isTokenSafe, unsafeValueError } from "../lib/nginx-values.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
 import accessListModel from "../models/access_list.js";
@@ -53,9 +54,30 @@ const internalNginx = {
 				return internalNginx.deleteConfig(host_type, host, true);
 			})
 			.then(() => {
-				return internalNginx.generateConfig(host_type, host);
+				return internalNginx.generateConfig(host_type, host).then(
+					() => true,
+					(err) => {
+						if (!err.unsafeNginxValue) {
+							throw err;
+						}
+						// Nothing was written. Report it on the host like a failed nginx test.
+						logger.error(err.message);
+						combined_meta = _.assign({}, host.meta, {
+							nginx_online: false,
+							nginx_err: err.message,
+						});
+						return model
+							.query()
+							.where("id", host.id)
+							.patch({ meta: combined_meta })
+							.then(() => false);
+					},
+				);
 			})
-			.then(() => {
+			.then((generated) => {
+				if (!generated) {
+					return;
+				}
 				// Test nginx again and update meta with result
 				return internalNginx
 					.test()
@@ -197,7 +219,21 @@ const internalNginx = {
 							.first();
 					}
 					if (locationAccessList) {
+						assertAccessListRenderable(
+							`Proxy Host #${host.id} location ${locationCopy.path}`,
+							locationAccessList,
+						);
 						locationCopy.access_list = locationAccessList;
+					} else if (
+						locationCopy.access_list_id > 0 &&
+						locationCopy.access_list_id !== host.access_list?.id
+					) {
+						// The location names its own list but it's gone. Don't fall back to the
+						// host's (possibly less restrictive) list; _access.conf denies all instead.
+						logger.error(
+							`Proxy Host #${host.id} location "${locationCopy.path}" references Access List #${locationCopy.access_list_id} which does not exist, all access will be denied`,
+						);
+						locationCopy.access_list = null;
 					} else {
 						locationCopy.access_list_id = host.access_list_id;
 						locationCopy.access_list = host.access_list;
@@ -242,6 +278,9 @@ const internalNginx = {
 		const nice_host_type = internalNginx.getFileFriendlyHostType(host_type);
 
 		await internalNginx.loadRenderRelations(nice_host_type, host);
+
+		// Values are written into the config as-is; refuse any that could add directives
+		assertHostRenderable(nice_host_type, host);
 
 		debug(logger, `Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));
 
@@ -302,26 +341,28 @@ const internalNginx = {
 				locationsPromise = Promise.resolve();
 			}
 
-			locationsPromise.then(() => {
-				renderEngine
-					.parseAndRender(template, host)
-					.then((config_text) => {
-						fs.writeFileSync(filename, config_text, { encoding: "utf8" });
-						debug(logger, "Wrote config:", filename, config_text);
+			locationsPromise
+				.then(() => {
+					renderEngine
+						.parseAndRender(template, host)
+						.then((config_text) => {
+							fs.writeFileSync(filename, config_text, { encoding: "utf8" });
+							debug(logger, "Wrote config:", filename, config_text);
 
-						// Restore locations array
-						host.locations = origLocations;
+							// Restore locations array
+							host.locations = origLocations;
 
-						resolve(true);
-					})
-					.catch((err) => {
-						debug(logger, `Could not write ${filename}:`, err.message);
-						reject(new errs.ConfigurationError(err.message));
-					});
-			}).catch((err) => {
-				debug(logger, `Could not render locations for ${filename}:`, err.message);
-				reject(new errs.ConfigurationError(err.message));
-			});
+							resolve(true);
+						})
+						.catch((err) => {
+							debug(logger, `Could not write ${filename}:`, err.message);
+							reject(new errs.ConfigurationError(err.message));
+						});
+				})
+				.catch((err) => {
+					debug(logger, `Could not render locations for ${filename}:`, err.message);
+					reject(new errs.ConfigurationError(err.message));
+				});
 		});
 	},
 
@@ -361,8 +402,9 @@ const internalNginx = {
 			}
 
 			if (!host.access_list) {
-				logger.warn(
-					`Proxy Host #${host.id} references Access List #${host.access_list_id} which does not exist`,
+				// _access.conf renders "deny all" when the list is missing, so fail closed
+				logger.error(
+					`Proxy Host #${host.id} references Access List #${host.access_list_id} which does not exist, all access will be denied`,
 				);
 			} else if (!host.access_list.clients.length && !host.access_list.items.length) {
 				logger.warn(
@@ -383,6 +425,15 @@ const internalNginx = {
 	generateLetsEncryptRequestConfig: (certificate) => {
 		debug(logger, "Generating LetsEncrypt Request Config:", certificate);
 		const renderEngine = utils.getRenderEngine();
+
+		const unsafe = (certificate.domain_names || []).find((name) => !isTokenSafe(name));
+		if (typeof unsafe !== "undefined") {
+			return Promise.reject(
+				unsafeValueError(
+					`Certificate #${certificate.id}: domain name ${JSON.stringify(unsafe)} is not allowed`,
+				),
+			);
+		}
 
 		return new Promise((resolve, reject) => {
 			let template = null;

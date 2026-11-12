@@ -2,8 +2,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import utils from "../lib/utils.js";
-import proxyHostModel from "../models/proxy_host.js";
-import userPermissionModel from "../models/user_permission.js";
+import proxyHostModel, { scopeToOwnerOrAllowed } from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
 import internalHost from "./host.js";
@@ -58,17 +57,7 @@ const internalProxyHost = {
 					thisData.advanced_config = "";
 				}
 
-				const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
-				if (!isAdmin && thisData.advanced_config && thisData.advanced_config.trim() !== "") {
-					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
-				}
-				if (
-					!isAdmin &&
-					Array.isArray(thisData.locations) &&
-					thisData.locations.some((loc) => loc?.advanced_config && loc.advanced_config.trim() !== "")
-				) {
-					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
-				}
+				internalHost.assertAdvancedConfigAllowed(access, thisData);
 
 				// Directive-anchored sanitizer: strip any manually typed `reuseport` from
 				// listen directives in advanced_config. The global reuseport singleton is
@@ -104,28 +93,28 @@ const internalProxyHost = {
 					expand: ["certificate", "owner", "access_list.[clients,items]"],
 				});
 			})
-		.then(async (row) => {
-			// Configure nginx
-			return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
-				return row;
-			});
-		})
-		.then((row) => {
-			// Audit log
-			thisData.meta = _.assign({}, thisData.meta || {}, row.meta);
-
-			// Add to audit log
-			return internalAuditLog
-				.add(access, {
-					action: "created",
-					object_type: "proxy-host",
-					object_id: row.id,
-					meta: thisData,
-				})
-				.then(() => {
+			.then(async (row) => {
+				// Configure nginx
+				return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
 					return row;
 				});
-		});
+			})
+			.then((row) => {
+				// Audit log
+				thisData.meta = _.assign({}, thisData.meta || {}, row.meta);
+
+				// Add to audit log
+				return internalAuditLog
+					.add(access, {
+						action: "created",
+						object_type: "proxy-host",
+						object_id: row.id,
+						meta: thisData,
+					})
+					.then(() => {
+						return row;
+					});
+			});
 	},
 
 	/**
@@ -176,6 +165,9 @@ const internalProxyHost = {
 					);
 				}
 
+				// Before the certificate is created, so a refused request doesn't leave one behind
+				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
+
 				if (createCertificate) {
 					return internalCertificate
 						.createQuickCertificate(access, {
@@ -204,29 +196,6 @@ const internalProxyHost = {
 
 				thisData = internalHost.cleanSslHstsData(thisData, row);
 
-				const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
-				if (
-					!isAdmin &&
-					typeof thisData.advanced_config !== "undefined" &&
-					thisData.advanced_config !== row.advanced_config
-				) {
-					throw new errs.PermissionError("You do not have permission to modify advanced configuration");
-				}
-				if (!isAdmin && Array.isArray(thisData.locations)) {
-					const existingLocations = Array.isArray(row.locations) ? row.locations : [];
-					for (const loc of thisData.locations) {
-						const existingLoc = existingLocations.find((l) => l.path === loc.path);
-						const existingAdv = existingLoc?.advanced_config || "";
-						if (typeof loc.advanced_config === "undefined") {
-							loc.advanced_config = existingAdv;
-						} else if ((loc.advanced_config || "") !== existingAdv) {
-							throw new errs.PermissionError(
-								"You do not have permission to modify advanced configuration",
-							);
-						}
-					}
-				}
-
 				// Directive-anchored sanitizer: strip any manually typed `reuseport` from
 				// listen directives in advanced_config. The global reuseport singleton is
 				// owned by default.conf — a duplicate declaration crashes nginx on reload.
@@ -234,7 +203,6 @@ const internalProxyHost = {
 					// Global word-boundary parsing catches multiple directives even on a single line
 					thisData.advanced_config = thisData.advanced_config.replace(/\b(listen\s+[^;]*?)\breuseport\s*/gi, '$1').replace(/\s+;/g, ';');
 				}
-
 				return proxyHostModel
 					.query()
 					.where({ id: thisData.id })
@@ -254,24 +222,24 @@ const internalProxyHost = {
 							});
 					});
 			})
-		.then(() => {
-			return internalProxyHost
-				.get(access, {
-					id: thisData.id,
-					expand: ["owner", "certificate", "access_list.[clients,items]"],
-				})
-				.then(async (row) => {
-					if (!row.enabled) {
-						// No need to add nginx config if host is disabled
-						return row;
-					}
-					// Configure nginx
-					return internalNginx.configure(proxyHostModel, "proxy_host", row).then((new_meta) => {
-						row.meta = new_meta;
-						return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
+			.then(() => {
+				return internalProxyHost
+					.get(access, {
+						id: thisData.id,
+						expand: ["owner", "certificate", "access_list.[clients,items]"],
+					})
+					.then(async (row) => {
+						if (!row.enabled) {
+							// No need to add nginx config if host is disabled
+							return row;
+						}
+						// Configure nginx
+						return internalNginx.configure(proxyHostModel, "proxy_host", row).then((new_meta) => {
+							row.meta = new_meta;
+							return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
+						});
 					});
-				});
-		});
+			});
 	},
 
 	/**
@@ -295,14 +263,7 @@ const internalProxyHost = {
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
-					const permissions = access.getPermissions ? access.getPermissions() : {};
-					const allowedIds = permissions.meta?.proxy_host_ids || permissions.meta?.proxyHostIds || [];
-					query.andWhere((builder) => {
-						builder.where("owner_user_id", access.token.getUserId(1));
-						if (allowedIds.length > 0) {
-							builder.orWhereIn("id", allowedIds);
-						}
-					});
+					scopeToOwnerOrAllowed(query, access.token.getUserId(1), access.getPermissions?.()?.meta);
 				}
 
 				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
@@ -385,36 +346,33 @@ const internalProxyHost = {
 					expand: ["certificate", "owner", "access_list.[clients,items]"],
 				});
 			})
-		.then(async (row) => {
-			if (!row?.id) {
-				throw new errs.ItemNotFoundError(data.id);
-			}
-			if (row.enabled) {
-				throw new errs.ValidationError("Host is already enabled");
-			}
+			.then(async (row) => {
+				if (!row?.id) {
+					throw new errs.ItemNotFoundError(data.id);
+				}
+				if (row.enabled) {
+					throw new errs.ValidationError("Host is already enabled");
+				}
 
-			row.enabled = 1;
+				row.enabled = 1;
 
-			await proxyHostModel
-				.query()
-				.where("id", row.id)
-				.patch({
+				await proxyHostModel.query().where("id", row.id).patch({
 					enabled: 1,
 				});
 
-			// Configure nginx
-			await internalNginx.configure(proxyHostModel, "proxy_host", row);
+				// Configure nginx
+				await internalNginx.configure(proxyHostModel, "proxy_host", row);
 
-			// Add to audit log
-			await internalAuditLog.add(access, {
-				action: "enabled",
-				object_type: "proxy-host",
-				object_id: row.id,
-				meta: _.omit(row, omissions()),
+				// Add to audit log
+				await internalAuditLog.add(access, {
+					action: "enabled",
+					object_type: "proxy-host",
+					object_id: row.id,
+					meta: _.omit(row, omissions()),
+				});
+
+				return true;
 			});
-
-			return true;
-		});
 	},
 
 	/**
@@ -486,14 +444,7 @@ const internalProxyHost = {
 			.orderBy(castJsonIfNeed("domain_names"), "ASC");
 
 		if (accessData.permission_visibility !== "all") {
-			const permissions = access.getPermissions ? access.getPermissions() : {};
-			const allowedIds = permissions.meta?.proxy_host_ids || permissions.meta?.proxyHostIds || [];
-			query.andWhere((builder) => {
-				builder.where("owner_user_id", access.token.getUserId(1));
-				if (allowedIds.length > 0) {
-					builder.orWhereIn("id", allowedIds);
-				}
-			});
+			scopeToOwnerOrAllowed(query, access.token.getUserId(1), access.getPermissions?.()?.meta);
 		}
 
 		// Query is used for searching
@@ -519,20 +470,14 @@ const internalProxyHost = {
 	 *
 	 * @param   {Number}  user_id
 	 * @param   {String}  visibility
+	 * @param   {Object}  [permissionsMeta]  the user's permissions meta, as already loaded by access
 	 * @returns {Promise}
 	 */
-	getCount: async (user_id, visibility) => {
+	getCount: async (user_id, visibility, permissionsMeta) => {
 		const query = proxyHostModel.query().count("id as count").where("is_deleted", 0);
 
 		if (visibility !== "all") {
-			const perm = await userPermissionModel.query().where("user_id", user_id).first();
-			const allowedIds = perm?.meta?.proxy_host_ids || perm?.meta?.proxyHostIds || [];
-			query.andWhere((builder) => {
-				builder.where("owner_user_id", user_id);
-				if (allowedIds.length > 0) {
-					builder.orWhereIn("id", allowedIds);
-				}
-			});
+			scopeToOwnerOrAllowed(query, user_id, permissionsMeta);
 		}
 
 		const row = await query.first();
