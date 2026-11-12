@@ -649,7 +649,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													name="certificateId"
 													label="ssl-certificate"
 													allowNew
-													http2OnCertificate={http2Wish}
+													http2OnCertificate={
+														// as for the container pick: never over a choice the user made
+														http2Wish && !touchedToggles.current.has("http2Support")
+													}
 												/>
 												<SSLOptionsFields
 													color="bg-lime"

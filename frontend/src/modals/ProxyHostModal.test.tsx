@@ -623,6 +623,34 @@ describe("ProxyHostModal picking a labelled container", () => {
 		expect(http2().checked).toBe(false);
 	});
 
+	it("leaves HTTP/2 off when the user turned it off and the certificate is picked again", async () => {
+		const http2 = () => screen.getByLabelText("HTTP/2 Support") as HTMLInputElement;
+		const chooseCertificate = async (text: string) => {
+			const ssl = document.getElementById("tab-ssl") as HTMLElement;
+			const control = await waitFor(() => {
+				const c = ssl.querySelector(".react-select__control");
+				expect(c).not.toBeNull();
+				return c as HTMLElement;
+			});
+			fireEvent.mouseDown(control, { button: 0 });
+			const options = await within(ssl).findAllByText(text);
+			fireEvent.click(options[options.length - 1]);
+		};
+		candidateItems = [blogContainer];
+
+		await open("new");
+		await pick("blog");
+		await chooseCertificate("Request a new Certificate");
+		await waitFor(() => expect(http2().checked).toBe(true));
+		// the user turns HTTP/2 off, removes the certificate and picks it again
+		fireEvent.click(http2());
+		expect(http2().checked).toBe(false);
+		await chooseCertificate("None");
+		await chooseCertificate("Request a new Certificate");
+		await waitFor(() => expect(http2().disabled).toBe(false));
+		expect(http2().checked).toBe(false);
+	});
+
 	it("never changes the domains or switches of a host being edited", async () => {
 		candidateItems = [blogContainer];
 		await open(1);
