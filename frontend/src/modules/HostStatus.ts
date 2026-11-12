@@ -333,8 +333,10 @@ export const locationDuplicateKey = (path: string): string | null => {
 // A forward host with an nginx variable, eg. `$backend` set in the advanced
 // config, or `app-$stage`. nginx resolves it at request time, so it can't be
 // checked. The API refuses these since v2.17, only hosts saved before can
-// still have one. The same rule as isVariableHost() in the backend.
-const INVALID_HOST_CHARS = /[\s;{}'"`\\#]/;
+// still have one. The same rule as isVariableHost() in the backend, which gets
+// the host without a path: a host with a `/` (the main forward host is not
+// split, see ForwardHostCheckHint) is not a variable host.
+const INVALID_HOST_CHARS = /[\s;{}'"`\\#/]/;
 export const isVariableHost = (host?: string | null) => {
 	const value = `${host ?? ""}`.trim();
 	return value.includes("$") && !INVALID_HOST_CHARS.test(value);

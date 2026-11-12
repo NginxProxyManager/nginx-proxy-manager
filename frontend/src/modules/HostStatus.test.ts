@@ -135,7 +135,7 @@ describe("isVariableHost", () => {
 	});
 
 	it("leaves out plain hosts and values that can't be written into nginx config", () => {
-		for (const host of ["app", "", null, undefined, "app-$x;", "$x y", "app-$" + "{stage}"]) {
+		for (const host of ["app", "", null, undefined, "app-$x;", "$x y", "app-$" + "{stage}", "$backend/api"]) {
 			expect(isVariableHost(host)).toBe(false);
 		}
 	});
