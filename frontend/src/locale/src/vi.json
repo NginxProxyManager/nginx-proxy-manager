@@ -377,6 +377,12 @@
 	"domains.http2-support": {
 		"defaultMessage": "Hỗ trợ HTTP/2"
 	},
+	"domains.http3-support": {
+		"defaultMessage": "Bật HTTP/3 (QUIC)"
+	},
+	"domains.http3-support-description": {
+		"defaultMessage": "Bật HTTP/3 (QUIC qua UDP)"
+	},
 	"domains.trust-forwarded-proto": {
 		"defaultMessage": "Tin cậy header X-Forwarded-Proto từ proxy phía trước"
 	},
