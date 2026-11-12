@@ -225,6 +225,96 @@ describe("createReloadWaiter", () => {
 		assert.match(outcome2.reason, /no new worker processes within 100 ms/);
 	});
 
+	describe("an error log that grows by more than one read", () => {
+		// each line is about 130 bytes: 1000 of them are more than the 64 KiB read at once
+		const warnings = (n, from = 0) =>
+			Array.from(
+				{ length: n },
+				(_, i) =>
+					`2026/11/05 10:00:01 [warn] 100#100: "ssl_stapling" ignored, issuer certificate not found for certificate "/etc/letsencrypt/live/npm-${from + i}/fullchain.pem"\n`,
+			).join("");
+		const rejection =
+			"2026/11/05 10:00:01 [emerg] 100#100: bind() to 0.0.0.0:3000 failed (98: Address in use)\n" +
+			"2026/11/05 10:00:03 [emerg] 100#100: still could not bind()\n";
+		const waiterFor = (nginx, clock, errorLog, onSleep) =>
+			createReloadWaiter({
+				procDir: nginx.procDir,
+				pidFile: nginx.pidFile,
+				errorLog,
+				now: clock.now,
+				sleep: async (ms) => {
+					onSleep(clock.sleeps.length);
+					await clock.sleep(ms);
+				},
+				intervalMs: 25,
+				timeoutMs: 1000,
+				signal: async () => {},
+			});
+
+		it("finds a rejection logged after more than 64 KiB of warnings", async () => {
+			const nginx = fakeNginx();
+			const clock = fakeClock();
+			const errorLog = path.join(path.dirname(nginx.pidFile), "fallback_error.log");
+			fs.writeFileSync(errorLog, "2026/11/05 09:00:00 [emerg] 100#100: an old error\n");
+			const text = warnings(1000) + rejection;
+			assert.ok(text.length > 2 * 64 * 1024);
+			const waiter = waiterFor(nginx, clock, errorLog, (n) => {
+				if (n === 0) {
+					fs.appendFileSync(errorLog, text);
+				}
+			});
+			const outcome = await waiter.reloadAndWait();
+			assert.equal(outcome.rejected, true);
+			assert.equal(outcome.emerg, "bind() to 0.0.0.0:3000 failed (98: Address in use)");
+			assert.equal(outcome.waitedMs, 25);
+		});
+
+		it("keeps what it read before and finds lines split across reads and polls", async () => {
+			const nginx = fakeNginx();
+			const clock = fakeClock();
+			const errorLog = path.join(path.dirname(nginx.pidFile), "fallback_error.log");
+			fs.writeFileSync(errorLog, "");
+			const first = warnings(500) + rejection.slice(0, 100);
+			assert.ok(first.length > 64 * 1024);
+			const waiter = waiterFor(nginx, clock, errorLog, (n) => {
+				if (n === 0) {
+					// the first bind() failure and half of the line that ends the attempt
+					fs.appendFileSync(errorLog, first);
+				}
+				if (n === 2) {
+					fs.appendFileSync(errorLog, rejection.slice(100));
+				}
+			});
+			const outcome = await waiter.reloadAndWait();
+			assert.equal(outcome.rejected, true);
+			// the first [emerg] of the attempt, read in an earlier poll
+			assert.equal(outcome.emerg, "bind() to 0.0.0.0:3000 failed (98: Address in use)");
+			assert.equal(outcome.waitedMs, 75);
+		});
+
+		it("counts worker restarts logged after more than 64 KiB", async () => {
+			const nginx = fakeNginx([101]);
+			const clock = fakeClock();
+			const errorLog = path.join(path.dirname(nginx.pidFile), "fallback_error.log");
+			fs.writeFileSync(errorLog, "");
+			const waiter = waiterFor(nginx, clock, errorLog, (n) => {
+				if (n === 0) {
+					// the only worker crashed and was restarted: not a reload
+					nginx.removeProcess(101);
+					nginx.addProcess(103, 100);
+					fs.appendFileSync(
+						errorLog,
+						`${warnings(1000)}2026/11/05 10:00:01 [alert] 100#100: worker process 101 exited on signal 9\n`,
+					);
+				}
+			});
+			const outcome = await waiter.reloadAndWait();
+			assert.equal(outcome.confirmed, false);
+			assert.equal(outcome.rejected, undefined);
+			assert.equal(outcome.waitedMs, 1000);
+		});
+	});
+
 	describe("a worker that crashed and was restarted while the reload is rejected", () => {
 		const restart = (nginx, errorLog, pid, replacement) => {
 			nginx.removeProcess(pid);

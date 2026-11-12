@@ -30,7 +30,7 @@ import path from "node:path";
 
 const DEFAULT_TIMEOUT_MS = 5000;
 const DEFAULT_INTERVAL_MS = 25;
-// at most this much of the error log is read per poll
+// the error log is read in chunks of at most this size
 const MAX_LOG_READ = 64 * 1024;
 
 /**
@@ -144,49 +144,80 @@ const createReloadWaiter = (opts) => {
 	};
 
 	/**
+	 * Reads what the master appends to the error log after the signal. Every call continues where the last one
+	 * stopped (in chunks of at most MAX_LOG_READ, until the end of the file), so a rejection that is logged after
+	 * many other lines is still found, and keeps what the earlier calls found.
+	 *
 	 * @param   {Number} master
 	 * @param   {Number} offset  the size of the error log before the signal
-	 * @returns {Promise<{emerg: String|null, restarts: Number}>} what the master logged after offset: the first
-	 *          [emerg] message once it has logged one that ends the attempt (anything but a failed bind() that
-	 *          nginx retries), and how many of its children exited unexpectedly (nginx starts a new process
-	 *          for each, which is not a new generation)
+	 * @returns {Function} async () => {emerg: String|null, restarts: Number}: what the master logged after
+	 *          offset so far: the first [emerg] message once it has logged one that ends the attempt (anything but
+	 *          a failed bind() that nginx retries), and how many of its children exited unexpectedly (nginx starts
+	 *          a new process for each, which is not a new generation)
 	 */
-	const readLog = async (master, offset) => {
-		const none = { emerg: null, restarts: 0 };
-		if (offset === null) {
-			return none;
-		}
-		let handle = null;
-		try {
-			handle = await fs.promises.open(opts.errorLog, "r");
-			const { size } = await handle.stat();
-			// rotated in the meantime: read the new file from the start
-			const from = size < offset ? 0 : offset;
-			const length = Math.min(size - from, MAX_LOG_READ);
-			if (length <= 0) {
-				return none;
-			}
-			const buffer = Buffer.alloc(length);
-			await handle.read(buffer, 0, length, from);
-			const lines = buffer.toString("utf8").split("\n");
-			const messages = lines
-				.filter((l) => l.includes(`[emerg] ${master}#`))
-				.map((l) => l.replace(/^.*?\[emerg\] \d+#\d+: /, "").trim());
-			const done = messages.some((m) => !/^bind\(\) to .* failed/.test(m));
-			// eg. "[alert] 100#100: worker process 101 exited on signal 9", logged when a child dies without
-			// being asked to. Children that exit after a reload (code 0) are logged as [notice], below the level.
-			const restarts = lines.filter(
-				(l) =>
+	const logReader = (master, offset) => {
+		const messages = [];
+		let restarts = 0;
+		let position = offset;
+		// the start of a line whose end has not been written yet
+		let partial = Buffer.alloc(0);
+		const collect = (text) => {
+			for (const l of text.split("\n")) {
+				if (l.includes(`[emerg] ${master}#`)) {
+					messages.push(l.replace(/^.*?\[emerg\] \d+#\d+: /, "").trim());
+				}
+				// eg. "[alert] 100#100: worker process 101 exited on signal 9", logged when a child dies without
+				// being asked to. Children that exit after a reload (code 0) are logged as [notice], below the level.
+				if (
 					l.includes(`[alert] ${master}#`) &&
 					/: [a-z ]+ process \d+ exited (on signal|with code)/.test(l) &&
-					!/cannot be respawned/.test(l),
-			).length;
+					!/cannot be respawned/.test(l)
+				) {
+					restarts++;
+				}
+			}
+		};
+		const result = () => {
+			const done = messages.some((m) => !/^bind\(\) to .* failed/.test(m));
 			return { emerg: done ? messages[0] : null, restarts };
-		} catch {
-			return none;
-		} finally {
-			await handle?.close().catch(() => {});
-		}
+		};
+		return async () => {
+			if (offset === null) {
+				return result();
+			}
+			let handle = null;
+			try {
+				handle = await fs.promises.open(opts.errorLog, "r");
+				const { size } = await handle.stat();
+				if (size < position) {
+					// rotated in the meantime: read the new file from the start
+					position = 0;
+					partial = Buffer.alloc(0);
+				}
+				while (position < size) {
+					const length = Math.min(size - position, MAX_LOG_READ);
+					const buffer = Buffer.alloc(length);
+					const { bytesRead } = await handle.read(buffer, 0, length, position);
+					if (bytesRead <= 0) {
+						break;
+					}
+					position += bytesRead;
+					const data = Buffer.concat([partial, buffer.subarray(0, bytesRead)]);
+					const end = data.lastIndexOf(0x0a);
+					if (end < 0) {
+						partial = data;
+						continue;
+					}
+					collect(data.subarray(0, end).toString("utf8"));
+					partial = data.subarray(end + 1);
+				}
+			} catch {
+				// keep what was found so far
+			} finally {
+				await handle?.close().catch(() => {});
+			}
+			return result();
+		};
 	};
 
 	/**
@@ -207,6 +238,7 @@ const createReloadWaiter = (opts) => {
 			// Nothing was running that could still be reading the config
 			return { confirmed: false, noMaster: true, reason: "no nginx master process found", waitedMs: 0 };
 		}
+		const readLog = logReader(master, logOffset);
 		const start = now();
 		let fresh = 0;
 		for (;;) {
@@ -215,7 +247,7 @@ const createReloadWaiter = (opts) => {
 			if ((await readMasterPid()) !== master) {
 				return { confirmed: false, reason: "the nginx master process has exited", waitedMs: now() - start };
 			}
-			const log = await readLog(master, logOffset);
+			const log = await readLog();
 			if (log.emerg) {
 				return {
 					confirmed: false,
