@@ -1,3 +1,4 @@
+import dns from "node:dns";
 import fs from "node:fs";
 import net from "node:net";
 import { dirname } from "node:path";
@@ -159,6 +160,93 @@ const readFileOrNull = (filename) => {
 	}
 };
 
+/**
+ * The addresses the `listen` directives of a config bind, as nginx writes them in a failed bind() message:
+ * "0.0.0.0:3333", "[::]:3333", "127.0.0.1:80". Comments are ignored, so are unix sockets. Values written as a
+ * host name ("localhost:3341") are added to `names` as [name, port], see resolvedListenAddresses().
+ *
+ * @param   {String} text
+ * @param   {Array}  [names]
+ * @returns {Set<String>}
+ */
+const listenAddresses = (text, names = []) => {
+	const found = new Set();
+	const code = text.replace(/#[^\n]*/g, "");
+	for (const [, value] of code.matchAll(/(?:^|[\s;{}])listen\s+([^\s;]+)/g)) {
+		let m = /^(?:\*:)?(\d+)$/.exec(value);
+		if (m) {
+			found.add(`0.0.0.0:${m[1]}`);
+			continue;
+		}
+		m = /^\[([0-9a-fA-F:.]*)\](?::(\d+))?$/.exec(value);
+		if (m) {
+			found.add(`[${m[1]}]:${m[2] || 80}`);
+			continue;
+		}
+		m = /^(\d+\.\d+\.\d+\.\d+)(?::(\d+))?$/.exec(value);
+		if (m) {
+			found.add(`${m[1]}:${m[2] || 80}`);
+			continue;
+		}
+		m = /^([a-zA-Z0-9][a-zA-Z0-9.-]*)(?::(\d+))?$/.exec(value);
+		if (m) {
+			names.push([m[1], m[2] || "80"]);
+		}
+	}
+	return found;
+};
+
+const LISTEN_LOOKUP_TIMEOUT = 2000;
+
+/**
+ * listenAddresses(), with the listen values written as a host name resolved: nginx binds every address of
+ * the name ("listen localhost:3341;" fails with "bind() to 127.0.0.1:3341 failed"). A name that doesn't
+ * resolve in time adds nothing.
+ *
+ * @param   {String} text
+ * @returns {Promise<Set<String>>}
+ */
+const resolvedListenAddresses = async (text) => {
+	const names = [];
+	const found = listenAddresses(text, names);
+	for (const [name, port] of names) {
+		let timer;
+		const addresses = await Promise.race([
+			dns.promises.lookup(name, { all: true }).catch(() => []),
+			new Promise((resolve) => {
+				timer = setTimeout(() => resolve([]), LISTEN_LOOKUP_TIMEOUT);
+			}),
+		]);
+		clearTimeout(timer);
+		for (const { address, family } of addresses) {
+			found.add(family === 6 ? `[${address}]:${port}` : `${address}:${port}`);
+		}
+	}
+	return found;
+};
+
+/**
+ * @param   {Object|null} outcome  a rejected reload, see lib/nginx-reload.js
+ * @returns {Map<String, String>} the addresses nginx could not bind, each with its bind() message
+ */
+const failedBinds = (outcome) => {
+	const found = new Map();
+	for (const message of [...(outcome?.bindErrors || []), outcome?.emerg || ""]) {
+		const m = /^bind\(\) to (\S+) failed/.exec(message);
+		if (m && !found.has(m[1])) {
+			found.set(m[1], message);
+		}
+	}
+	return found;
+};
+
+/**
+ * @param   {Object|null} outcome  a rejected reload, see lib/nginx-reload.js
+ * @returns {String|null} the file nginx names in its [emerg] message, eg. "/data/nginx/stream/3.conf" for
+ *          "unknown directive \"x\" in /data/nginx/stream/3.conf:2"
+ */
+const rejectedFile = (outcome) => / in (\/\S+):\d+$/.exec(outcome?.emerg || "")?.[1] || null;
+
 const toBool = (v, fallback) => {
 	if (typeof v === "undefined" || v === null || `${v}`.trim() === "") {
 		return fallback;
@@ -198,10 +286,41 @@ const tooManyBrokenDetails = () => ({
 /**
  * @param   {String|null} [saved]  config file of the host the operation saves; null when no host is saved,
  *                                 eg. the startup / reload test, where every repaired host comes from its row
- * @returns {{tried: Set<String>, budget: Number, saved: String|null}} the repair state of one operation: the
- *          config files already regenerated, how many regenerations are left and the host being saved
+ * @returns {{tried: Set<String>, budget: Number, saved: String|null, absent: Set<String>}} the repair state of
+ *          one operation: the config files already regenerated, how many regenerations are left, the host being
+ *          saved and the config files of other hosts that were not on disk before this operation wrote them
  */
-const newRepair = (saved = null) => ({ tried: new Set(), budget: MAX_HEAL_ITERATIONS, saved });
+const newRepair = (saved = null) => ({ tried: new Set(), budget: MAX_HEAL_ITERATIONS, saved, absent: new Set() });
+
+/**
+ * @param   {Object} repair    see newRepair()
+ * @param   {String} filename  config file of the host being configured
+ * @returns {String[]} the config files of other hosts that this operation regenerated
+ */
+const repairedFiles = (repair, filename) => [...repair.tried].filter((file) => file !== filename);
+
+/**
+ * @param   {Object} repair    see newRepair()
+ * @param   {String} filename  config file of the host being configured
+ * @returns {String[]} those of repairedFiles() whose file was not on disk before: nginx doesn't run them in any
+ *          version, see isolateRejectedReload()
+ */
+const unservedRepairs = (repair, filename) => repairedFiles(repair, filename).filter((file) => repair.absent.has(file));
+
+/**
+ * @param   {Array<{host_type: String, host_id: Number}>} hosts
+ * @param   {Object} [into]  {host_type: [ids]} to add them to
+ * @returns {Object} {host_type: [ids]}, see reconcile()'s opts.only
+ */
+const retryList = (hosts, into = {}) => {
+	for (const { host_type, host_id } of hosts) {
+		into[host_type] = into[host_type] || [];
+		if (!into[host_type].includes(host_id)) {
+			into[host_type].push(host_id);
+		}
+	}
+	return into;
+};
 
 /**
  * @param   {String} advancedConfig
@@ -357,6 +476,10 @@ const internalNginx = {
 		let heals = 0;
 		// Without a repair state this is the top of the operation: the host being saved
 		const repair = opts.repair || newRepair(filename);
+		if (previous === null && filename !== repair.saved) {
+			// Regenerated on behalf of another host: nginx can't run a config that was not on disk
+			repair.absent.add(filename);
+		}
 		let configText = "";
 		let failure = null;
 
@@ -370,11 +493,18 @@ const internalNginx = {
 					// it may hold the same value. The change is kept and the host is offline until it is fixed.
 					return internalNginx.takeUnsafeHostOffline(model, hostType, host, filename, err, {
 						reload: opts.reload || (opts.applyRepairs && heals > 0),
+						repaired: repairedFiles(repair, filename),
+						unserved: unservedRepairs(repair, filename),
 					});
 				}
 				await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
 				if (opts.applyRepairs && heals > 0) {
-					await internalNginx.applyRepairs(hostType, host);
+					await internalNginx.applyRepairs(
+						hostType,
+						host,
+						repairedFiles(repair, filename),
+						unservedRepairs(repair, filename),
+					);
 				}
 				const error =
 					err instanceof errs.ConfigurationError ? err : new errs.ConfigurationError(err.message, err);
@@ -549,7 +679,12 @@ const internalNginx = {
 			}
 			await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
 			if (opts.applyRepairs && heals > 0) {
-				await internalNginx.applyRepairs(hostType, host);
+				await internalNginx.applyRepairs(
+					hostType,
+					host,
+					repairedFiles(repair, filename),
+					unservedRepairs(repair, filename),
+				);
 			}
 			throw error;
 		}
@@ -565,7 +700,12 @@ const internalNginx = {
 			internalNginx.restoreConfig(filename, previous);
 			internalNginx.restoreConfig(`${filename}.err`, previousErr);
 			if (opts.applyRepairs && heals > 0) {
-				await internalNginx.applyRepairs(hostType, host);
+				await internalNginx.applyRepairs(
+					hostType,
+					host,
+					repairedFiles(repair, filename),
+					unservedRepairs(repair, filename),
+				);
 			}
 			return meta;
 		}
@@ -599,6 +739,11 @@ const internalNginx = {
 	 * config. Never throws for the reload, the host's status is what the caller reports. Only call this while
 	 * holding the lock.
 	 *
+	 * When nginx doesn't apply that reload (it rejects it for a reason that is not one of the repaired configs,
+	 * see isolateRejectedReload()), it still runs the host's previous config: the host is offline all the same
+	 * (its config is gone, the next reload nginx applies stops it), and its nginx_details say so
+	 * (previous_config_running).
+	 *
 	 * @param   {Object}  model
 	 * @param   {String}  hostType
 	 * @param   {Object}  host
@@ -606,11 +751,32 @@ const internalNginx = {
 	 * @param   {Error}   err       the error of generateConfig(), with err.unsafeNginxValue
 	 * @param   {Object}  opts
 	 * @param   {Boolean} opts.reload
+	 * @param   {String[]} [opts.repaired]  config files of other hosts this operation regenerated, see
+	 *                                     isolateRejectedReload()
+	 * @param   {String[]} [opts.unserved]  those of opts.repaired whose file was not on disk before
 	 * @returns {Promise<Object>} the new meta
 	 */
 	takeUnsafeHostOffline: async (model, hostType, host, filename, err, opts) => {
+		// nothing was written for it: this is the config nginx may run
+		const hadConfig = readFileOrNull(filename) !== null;
 		internalNginx.deleteFile(filename);
 		internalNginx.deleteFile(`${filename}.err`);
+		let notApplied = null;
+		if (opts.reload) {
+			try {
+				const outcome = await internalNginx.reloadNginx();
+				if (outcome?.rejected) {
+					const isolated = await internalNginx.applyRejectedRepairs(outcome, opts.repaired, opts.unserved);
+					if (isolated.applied !== true) {
+						notApplied = isolated.global || outcome;
+					}
+				}
+			} catch (reloadErr) {
+				notApplied = { reason: reloadErr.message };
+			}
+		}
+		// nginx keeps running the removed config until a reload applies
+		const stillRunning = !!notApplied && hadConfig;
 		const meta = internalNginx.buildOfflineMeta(host.meta, {
 			message: err.message,
 			details: {
@@ -619,21 +785,15 @@ const internalNginx = {
 				host_type: hostType,
 				host_id: host.id,
 				...unsafeValueDetails(err),
+				...(stillRunning ? { previous_config_running: true } : {}),
 			},
 		});
 		await model.query().where("id", host.id).patch({ meta });
 		logger.error(`${hostLabel(hostType, host)} is offline: ${err.message}`);
-		if (opts.reload) {
-			try {
-				const outcome = await internalNginx.reloadNginx();
-				if (outcome?.rejected) {
-					logger.error(`${hostLabel(hostType, host)}: nginx did not apply the removal of its config`);
-				}
-			} catch (reloadErr) {
-				logger.error(
-					`${hostLabel(hostType, host)}: could not reload nginx after removing its config: ${reloadErr.message}`,
-				);
-			}
+		if (notApplied) {
+			logger.error(
+				`${hostLabel(hostType, host)}: nginx did not apply the removal of its config (${notApplied.emerg || notApplied.reason || "rejected"})${stillRunning ? " and still runs its previous config until a reload succeeds" : ""}`,
+			);
 		}
 		return meta;
 	},
@@ -644,19 +804,73 @@ const internalNginx = {
 	 * describes. Tests first (the files on disk, with this host's previous config, were not tested together).
 	 * Never throws, the caller's own result is what the user gets. Only call this while holding the lock.
 	 *
-	 * @param   {String}  hostType
-	 * @param   {Object}  host
+	 * @param   {String}   hostType
+	 * @param   {Object}   host
+	 * @param   {String[]} [repaired]  the config files of the repaired hosts, see isolateRejectedReload()
+	 * @param   {String[]} [unserved]  those of `repaired` whose file was not on disk before
 	 * @returns {Promise}
 	 */
-	applyRepairs: async (hostType, host) => {
+	applyRepairs: async (hostType, host, repaired = [], unserved = []) => {
 		try {
 			const outcome = await internalNginx.reloadNginx();
-			if (outcome?.rejected) {
-				logger.error(`${hostLabel(hostType, host)}: nginx did not apply the repairs of other hosts`);
+			if (
+				outcome?.rejected &&
+				(await internalNginx.applyRejectedRepairs(outcome, repaired, unserved)).applied !== true
+			) {
+				logger.error(
+					`${hostLabel(hostType, host)}: nginx did not apply the repairs of other hosts and still runs its previous config`,
+				);
 			}
 		} catch (err) {
 			logger.error(`${hostLabel(hostType, host)}: could not apply the repairs of other hosts: ${err.message}`);
 		}
+	},
+
+	/**
+	 * nginx rejected the reload that should apply the configs of repaired hosts (see applyRepairs() and
+	 * takeUnsafeHostOffline()): finds the configs it rejects, see isolateRejectedReload(). The repaired configs
+	 * whose file was not on disk before (nginx doesn't run them) are, when nginx rejects the reload without them
+	 * as well, set aside and their hosts marked offline with that reason, then tried again with the startup
+	 * reconcile's backoff (see scheduleRetry()); the others stay on disk. Only call this while holding the lock.
+	 *
+	 * @param   {Object}   outcome     the rejected reload
+	 * @param   {String[]} [repaired]
+	 * @param   {String[]} [unserved]  those of `repaired` whose file was not on disk before
+	 * @returns {Promise<Object>} see isolateRejectedReload()
+	 */
+	applyRejectedRepairs: async (outcome, repaired = [], unserved = []) => {
+		const isolated = await internalNginx.isolateRejectedReload(repaired, {
+			outcome,
+			unserved,
+			offlineOnGlobal: true,
+		});
+		if (isolated.global && isolated.offline.length) {
+			internalNginx.scheduleRetry(retryList(isolated.offline));
+		}
+		return isolated;
+	},
+
+	/**
+	 * Tries hosts again later that are offline because nginx rejected a reload for a reason that was not their
+	 * config (see isolateRejectedReload()): runs reconcile() for them with its backoff (RECONCILE_RETRY_DELAYS).
+	 *
+	 * @param   {Object}  only       {host_type: [ids]}
+	 * @param   {Number}  [attempt]  the retry attempt this schedules, 1 for the first
+	 */
+	scheduleRetry: (only, attempt = 1) => {
+		if (attempt > RECONCILE_RETRY_DELAYS.length || !Object.values(only).some((ids) => ids.length)) {
+			return;
+		}
+		// Outside the lock context: the retry has to queue for the lock like any other caller
+		runOutsideLock(() => {
+			const timer = setTimeout(
+				() => {
+					internalNginx.reconcile({ only, attempt });
+				},
+				RECONCILE_RETRY_DELAYS[attempt - 1],
+			);
+			timer.unref?.();
+		});
 	},
 
 	/**
@@ -688,6 +902,187 @@ const internalNginx = {
 		}
 		logger.warn(`${hostLabel(hostType, host)}: nginx rejected the new config, the previous config is back`);
 		return internalNginx.buildConfigError("host", hostType, host, parsed, configText);
+	},
+
+	/**
+	 * nginx rejected a reload although `nginx -t` passed (eg. a `listen` on a port another process uses: -t
+	 * doesn't bind ports), and the hosts of `filenames` already show online for configs written since the
+	 * config nginx runs. Finds the configs nginx rejects and moves them aside (`.err`, so the next reconcile
+	 * regenerates them), marking their hosts offline with the reason; nginx then applies the others.
+	 *
+	 * nginx keeps running its previous config while it rejects a reload, but every reload it applies runs only
+	 * the files on disk. So only configs that are provably rejected are set aside while nginx may run the
+	 * others: the configs that listen on an address nginx could not bind (its bind() messages name them) and
+	 * the config file its [emerg] message names, then the ones the next rejected reload names, and so on. A
+	 * config whose address nginx still can't bind without it goes back, it is not the cause.
+	 *
+	 * When nginx still rejects the reload for another reason, only the configs of opts.unserved (configs
+	 * nginx doesn't run, nor an older version of them: their file was not on disk before, eg. hosts the
+	 * startup reconcile brings back) are set aside together and put back in halves (bisecting the halves nginx
+	 * rejects) with a reload after each, so one rejected config among many costs a few reloads. All other
+	 * configs stay in place in every reload: taking them out would take hosts out of service that nginx serves
+	 * now. When nginx rejects the reload with the unserved configs aside as well, they are not the cause: with
+	 * opts.offlineOnGlobal they stay aside and their hosts are marked offline with that reason (nginx doesn't
+	 * run them), otherwise they are put back. The served configs then stay on disk and nginx keeps running its
+	 * previous config.
+	 *
+	 * Never throws. Only call this while holding the lock.
+	 *
+	 * @param   {String[]} filenames  managed config files written since the last reload nginx applied
+	 * @param   {Object}   [opts]
+	 * @param   {Object}   [opts.outcome]          the rejected reload, see lib/nginx-reload.js
+	 * @param   {String[]} [opts.unserved]         those of `filenames` that nginx doesn't run in any version
+	 * @param   {Boolean}  [opts.offlineOnGlobal]  for the configs of opts.unserved
+	 * @returns {Promise<{applied: boolean, offline: Array<{host_type: String, host_id: Number}>,
+	 *          global: Object|null}>} applied: nginx runs the config files on disk now; offline: the hosts
+	 *          marked offline; global: the reload nginx still rejects, for a reason that is not one of the
+	 *          configs set aside
+	 */
+	isolateRejectedReload: async (filenames, opts = {}) => {
+		const result = { applied: false, offline: [], global: null };
+		const entries = [...new Set(filenames)]
+			.map((filename) => ({ filename, managed: parseManagedFile(filename), text: readFileOrNull(filename) }))
+			.filter((entry) => entry.managed && HOST_MODELS[entry.managed.host_type] && entry.text !== null);
+		if (!entries.length) {
+			return result;
+		}
+		for (const entry of entries) {
+			entry.addresses = await resolvedListenAddresses(entry.text);
+		}
+		const unserved = new Set(opts.unserved || []);
+		const reload = () =>
+			internalNginx.reloadNginx({ skipTest: true }).catch((err) => {
+				logger.error(`Could not reload nginx: ${err.message}`);
+				return null;
+			});
+		const putBack = (entry) => {
+			internalNginx.restoreConfig(entry.filename, entry.text);
+			internalNginx.deleteFile(`${entry.filename}.err`);
+		};
+		// the config file is aside (.err) already
+		const takeOffline = async (entry, scope, outcome) => {
+			result.offline.push(entry.managed);
+			const { host_type: type, host_id: id } = entry.managed;
+			const parsed = {
+				message: outcome.emerg || outcome.reason || null,
+				file: null,
+				line: null,
+				output: outcome.reason || null,
+			};
+			try {
+				const row = await internalNginx.loadHostRow(type, id);
+				const error = internalNginx.buildConfigError(scope, type, row || { id }, parsed, entry.text);
+				if (row) {
+					const meta = internalNginx.buildOfflineMeta(row.meta, error);
+					await HOST_MODELS[type].query().where("id", id).patch({ meta });
+				}
+				logger.warn(`${hostLabel(type, row || { id })} is offline: ${error.message}`);
+			} catch (err) {
+				logger.error(`Could not mark ${hostLabel(type, { id })} offline: ${err.message}`);
+			}
+		};
+
+		// 1. the configs nginx names: the ones that listen on an address it could not bind, and the file its
+		// [emerg] message names. They are set aside while the others stay in place.
+		let remaining = entries;
+		const rejectedAside = [];
+		let last = opts.outcome || { rejected: true };
+		const boundAddress = (entry, binds) => [...entry.addresses].find((a) => binds.has(a));
+		while (last?.rejected) {
+			const binds = failedBinds(last);
+			const file = rejectedFile(last);
+			const named = remaining.filter((entry) => boundAddress(entry, binds) || entry.filename === file);
+			if (!named.length) {
+				break;
+			}
+			for (const entry of named) {
+				internalNginx.renameConfigAsErrorSync(entry.filename);
+				// the reason of this host: the bind() message of its own address, or the message naming its file
+				const address = boundAddress(entry, binds);
+				const emerg = address ? binds.get(address) : last.emerg;
+				entry.outcome = { ...last, emerg, reason: `nginx could not apply the config: ${emerg}` };
+			}
+			remaining = remaining.filter((entry) => !named.includes(entry));
+			const next = await reload();
+			// nginx still can't bind an address without the configs that listen on it: they are not the cause
+			const still = next?.rejected ? failedBinds(next) : new Map();
+			const back = next ? named.filter((entry) => boundAddress(entry, still)) : named;
+			for (const entry of back) {
+				putBack(entry);
+			}
+			remaining.push(...back);
+			rejectedAside.push(...named.filter((entry) => !back.includes(entry)));
+			last = next;
+			if (back.length) {
+				break;
+			}
+		}
+		for (const entry of rejectedAside) {
+			await takeOffline(entry, "host", entry.outcome);
+		}
+		if (!last) {
+			return result;
+		}
+		if (!last.rejected) {
+			result.applied = true;
+			return result;
+		}
+		// 2. the configs nginx doesn't run: set them aside together and put them back in halves. The served
+		// configs stay in place.
+		const candidates = remaining.filter((entry) => unserved.has(entry.filename));
+		if (!candidates.length) {
+			result.global = last;
+			return result;
+		}
+		for (const entry of candidates) {
+			internalNginx.renameConfigAsErrorSync(entry.filename);
+		}
+		const without = await reload();
+		if (!without || without.rejected) {
+			if (without && opts.offlineOnGlobal) {
+				for (const entry of candidates) {
+					await takeOffline(entry, "global", without);
+				}
+			} else {
+				for (const entry of candidates) {
+					putBack(entry);
+				}
+			}
+			result.global = without;
+			return result;
+		}
+		// Bisects: a group nginx applies stays, a group it rejects goes aside again (nginx keeps running the files
+		// it applied before, which are on disk again then) and its halves are tried on their own
+		const tryGroup = async (group) => {
+			for (const entry of group) {
+				putBack(entry);
+			}
+			const outcome = await reload();
+			if (!outcome?.rejected) {
+				return;
+			}
+			for (const entry of group) {
+				internalNginx.renameConfigAsErrorSync(entry.filename);
+			}
+			if (group.length === 1) {
+				await takeOffline(group[0], "host", outcome);
+				return;
+			}
+			await splitGroup(group);
+		};
+		const splitGroup = async (group) => {
+			const middle = Math.ceil(group.length / 2);
+			await tryGroup(group.slice(0, middle));
+			await tryGroup(group.slice(middle));
+		};
+		// all of them together were rejected already
+		if (candidates.length === 1) {
+			await tryGroup(candidates);
+		} else {
+			await splitGroup(candidates);
+		}
+		result.applied = true;
+		return result;
 	},
 
 	/**
@@ -1739,6 +2134,13 @@ const internalNginx = {
 	 * Hosts that end offline because of that are tried again a few times with backoff
 	 * (RECONCILE_RETRY_DELAYS), so they come back on their own.
 	 *
+	 * The regenerated configs pass `nginx -t`, but nginx can still reject the reload (eg. a stream's port is used
+	 * by another process, -t doesn't bind ports). The hosts whose configs it rejects are then taken offline, see
+	 * isolateRejectedReload(). nginx starts with the backend and serves the configs on disk, so only the
+	 * regenerated configs that were not on disk before may be set aside while it looks for them. When it
+	 * rejects the reload without those as well, they are offline and tried again like the hosts above; the
+	 * hosts whose configs were on disk stay as they are (nginx keeps running their previous config).
+	 *
 	 * @param   {Object}  [opts]
 	 * @param   {Object}  [opts.only]     {host_type: [ids]}, configure exactly these hosts (retry pass)
 	 * @param   {Number}  [opts.attempt]  retry attempt, 0 for the startup pass
@@ -1748,6 +2150,10 @@ const internalNginx = {
 		withLock(async () => {
 			const attempt = opts.attempt || 0;
 			const summary = { checked: 0, regenerated: 0, offline: 0, failed: 0, suspended: 0, retry: {} };
+			// the hosts saved as online, for a reload that nginx rejects
+			const written = [];
+			// those of them whose config was not on disk before: nginx doesn't run them
+			const unserved = [];
 			if (!opts.only) {
 				internalNginx.restoreStaleAside();
 			}
@@ -1796,6 +2202,10 @@ const internalNginx = {
 							summary.offline++;
 						} else {
 							summary.regenerated++;
+							written.push(filename);
+							if (text === null) {
+								unserved.push(filename);
+							}
 						}
 						if (mayResolveLater(meta)) {
 							summary.retry[hostType] = summary.retry[hostType] || [];
@@ -1810,24 +2220,36 @@ const internalNginx = {
 
 			if (summary.regenerated || summary.offline) {
 				try {
-					await internalNginx.reloadNginx();
+					const outcome = await internalNginx.reloadNginx();
+					if (outcome?.rejected) {
+						// `nginx -t` passed but nginx rejects the files, eg. a stream's port is used by another
+						// process: take the hosts whose configs it rejects offline, so nginx applies the others
+						// nginx serves the hosts whose config was on disk already (it starts with the backend,
+						// and hosts are regenerated for other reasons too): only the others may be set aside
+						// together while it bisects
+						const isolated = await internalNginx.isolateRejectedReload(written, {
+							outcome,
+							unserved,
+							offlineOnGlobal: true,
+						});
+						summary.regenerated -= isolated.offline.length;
+						summary.offline += isolated.offline.length;
+						if (isolated.global) {
+							// not caused by these hosts: try them again later
+							retryList(isolated.offline, summary.retry);
+						}
+					}
 				} catch (err) {
 					logger.error(`Startup reconcile: nginx reload failed: ${err.message}`);
 				}
 			}
 			const retries = Object.values(summary.retry).reduce((sum, ids) => sum + ids.length, 0);
 			logger.info(
-				`Startup reconcile${attempt ? ` (retry ${attempt})` : ""}: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline}, failed ${summary.failed}${summary.suspended ? `, ${summary.suspended} skipped for a certificate request` : ""}${retries ? `, ${retries} waiting for DNS` : ""}`,
+				`Startup reconcile${attempt ? ` (retry ${attempt})` : ""}: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline}, failed ${summary.failed}${summary.suspended ? `, ${summary.suspended} skipped for a certificate request` : ""}${retries ? `, ${retries} to try again` : ""}`,
 			);
 
-			if (retries && attempt < RECONCILE_RETRY_DELAYS.length) {
-				// Outside the lock context: the retry has to queue for the lock like any other caller
-				runOutsideLock(() => {
-					const timer = setTimeout(() => {
-						internalNginx.reconcile({ only: summary.retry, attempt: attempt + 1 });
-					}, RECONCILE_RETRY_DELAYS[attempt]);
-					timer.unref?.();
-				});
+			if (retries) {
+				internalNginx.scheduleRetry(summary.retry, attempt + 1);
 			}
 			return summary;
 		}).catch((err) => {

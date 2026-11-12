@@ -191,6 +191,7 @@ describe("createReloadWaiter", () => {
 					fs.appendFileSync(
 						errorLog,
 						"2026/11/05 10:00:01 [emerg] 100#100: bind() to 0.0.0.0:3000 failed (98: Address in use)\n" +
+							"2026/11/05 10:00:01 [emerg] 100#100: bind() to [::]:3000 failed (98: Address in use)\n" +
 							"2026/11/05 10:00:02 [emerg] 100#100: still could not bind()\n",
 					);
 				}
@@ -204,6 +205,11 @@ describe("createReloadWaiter", () => {
 			confirmed: false,
 			rejected: true,
 			emerg: "bind() to 0.0.0.0:3000 failed (98: Address in use)",
+			// every address it could not bind, once
+			bindErrors: [
+				"bind() to 0.0.0.0:3000 failed (98: Address in use)",
+				"bind() to [::]:3000 failed (98: Address in use)",
+			],
 			reason: "nginx could not apply the config: bind() to 0.0.0.0:3000 failed (98: Address in use)",
 			waitedMs: 125,
 		});

@@ -150,10 +150,11 @@ const createReloadWaiter = (opts) => {
 	 *
 	 * @param   {Number} master
 	 * @param   {Number} offset  the size of the error log before the signal
-	 * @returns {Function} async () => {emerg: String|null, restarts: Number}: what the master logged after
-	 *          offset so far: the first [emerg] message once it has logged one that ends the attempt (anything but
-	 *          a failed bind() that nginx retries), and how many of its children exited unexpectedly (nginx starts
-	 *          a new process for each, which is not a new generation)
+	 * @returns {Function} async () => {emerg: String|null, bindErrors: String[], restarts: Number}: what the
+	 *          master logged after offset so far: the first [emerg] message once it has logged one that ends the
+	 *          attempt (anything but a failed bind() that nginx retries), one message per address it could not
+	 *          bind (eg. "bind() to [::]:3333 failed (98: Address in use)"), and how many of its children exited
+	 *          unexpectedly (nginx starts a new process for each, which is not a new generation)
 	 */
 	const logReader = (master, offset) => {
 		const messages = [];
@@ -179,7 +180,9 @@ const createReloadWaiter = (opts) => {
 		};
 		const result = () => {
 			const done = messages.some((m) => !/^bind\(\) to .* failed/.test(m));
-			return { emerg: done ? messages[0] : null, restarts };
+			// a message for every address nginx could not bind (it logs them again on every attempt)
+			const bindErrors = [...new Set(messages.filter((m) => /^bind\(\) to \S+ failed/.test(m)))];
+			return { emerg: done ? messages[0] : null, bindErrors, restarts };
 		};
 		return async () => {
 			if (offset === null) {
@@ -227,7 +230,7 @@ const createReloadWaiter = (opts) => {
 	 * crashed and was restarted while the reload is rejected must not count as the reload.
 	 *
 	 * @returns {Promise<{confirmed: boolean, noMaster?: boolean, rejected?: boolean, emerg?: string,
-	 *          reason?: string, waitedMs: number}>} rejects when signal() rejects
+	 *          bindErrors?: string[], reason?: string, waitedMs: number}>} rejects when signal() rejects
 	 */
 	const reloadAndWait = async () => {
 		const master = await readMasterPid();
@@ -253,6 +256,7 @@ const createReloadWaiter = (opts) => {
 					confirmed: false,
 					rejected: true,
 					emerg: log.emerg,
+					bindErrors: log.bindErrors,
 					reason: `nginx could not apply the config: ${log.emerg}`,
 					waitedMs: now() - start,
 				};
