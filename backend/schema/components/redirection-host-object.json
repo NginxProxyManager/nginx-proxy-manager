@@ -57,7 +57,7 @@
 		"forward_domain_name": {
 			"description": "Domain Name",
 			"type": "string",
-			"pattern": "^(?:[^.*]+\\.?)+[^.]$",
+			"pattern": "^(?=[^\\s\\p{Cc};{}\"'#\\\\]+$)[^.*]+(?:\\.[^.*]+)*\\.?[^.]$",
 			"example": "jc21.com"
 		},
 		"preserve_path": {

@@ -54,6 +54,8 @@ const internalDeadHost = {
 			thisData.advanced_config = "";
 		}
 
+		internalHost.assertAdvancedConfigAllowed(access, thisData);
+
 		const row = await deadHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 
 		// Add to audit log
@@ -129,6 +131,9 @@ const internalDeadHost = {
 				`404 Host could not be updated, IDs do not match: ${row.id} !== ${data.id}`,
 			);
 		}
+
+		// Before the certificate is created, so a refused request doesn't leave one behind
+		internalHost.assertAdvancedConfigAllowed(access, data, row);
 
 		if (createCertificate) {
 			const cert = await internalCertificate.createQuickCertificate(access, {

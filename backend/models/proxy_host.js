@@ -124,4 +124,23 @@ class ProxyHost extends Model {
 	}
 }
 
+/**
+ * Restricts a proxy host query to hosts the user owns or has been granted by id
+ * (user permission meta.proxy_host_ids).
+ *
+ * @param   {Object}  query           objection query on proxy_host
+ * @param   {Number}  userId
+ * @param   {Object}  [permissionMeta] the user's permission meta
+ * @returns {Object}  the query
+ */
+export const scopeToOwnerOrAllowed = (query, userId, permissionMeta) => {
+	const allowedIds = permissionMeta?.proxy_host_ids || [];
+	return query.andWhere((builder) => {
+		builder.where("owner_user_id", userId);
+		if (allowedIds.length > 0) {
+			builder.orWhereIn("id", allowedIds);
+		}
+	});
+};
+
 export default ProxyHost;

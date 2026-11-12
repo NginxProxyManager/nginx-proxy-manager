@@ -62,7 +62,10 @@ router
 							enum: ["system", "letsencrypt", "host"],
 						},
 						host_type: {
-							anyOf: [{ type: "null" }, { type: "string", enum: ["proxy", "redirection", "dead", "stream"] }],
+							anyOf: [
+								{ type: "null" },
+								{ type: "string", enum: ["proxy", "redirection", "dead", "stream"] },
+							],
 						},
 						host_id: {
 							anyOf: [{ type: "null" }, { type: "integer", minimum: 1 }],
@@ -76,7 +79,10 @@ router
 						level: {
 							anyOf: [
 								{ type: "null" },
-								{ type: "string", enum: ["INFO", "WARN", "ERROR", "DEBUG", "SUCCESS", "FATAL", "COMPLETE"] },
+								{
+									type: "string",
+									enum: ["INFO", "WARN", "ERROR", "DEBUG", "SUCCESS", "FATAL", "COMPLETE"],
+								},
 							],
 						},
 						search: {

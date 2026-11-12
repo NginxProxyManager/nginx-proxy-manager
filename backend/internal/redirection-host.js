@@ -53,9 +53,11 @@ const internalRedirectionHost = {
 
 				// Fix for db field not having a default value
 				// for this optional field.
-				if (typeof data.advanced_config === "undefined") {
-					data.advanced_config = "";
+				if (typeof thisData.advanced_config === "undefined") {
+					thisData.advanced_config = "";
 				}
+
+				internalHost.assertAdvancedConfigAllowed(access, thisData);
 
 				return redirectionHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
@@ -154,6 +156,9 @@ const internalRedirectionHost = {
 						`Redirection Host could not be updated, IDs do not match: ${row.id} !== ${thisData.id}`,
 					);
 				}
+
+				// Before the certificate is created, so a refused request doesn't leave one behind
+				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
 
 				if (createCertificate) {
 					return internalCertificate
