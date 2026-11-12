@@ -71,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Upozornenie: pravidlá povoliť a zamietnuť budú uplatňované v poradí, v akom sú definované."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Prevziať od proxy hostiteľa"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Používa zoznam prístupov proxy hostiteľa"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Odoslať overenie na Upstream"
 	},
@@ -101,6 +107,9 @@
 	"action.allow": {
 		"defaultMessage": "Povoliť"
 	},
+	"action.clear": {
+		"defaultMessage": "Vyčistiť"
+	},
 	"action.close": {
 		"defaultMessage": "Zavrieť"
 	},
@@ -121,6 +130,9 @@
 	},
 	"action.enable": {
 		"defaultMessage": "Aktivovať"
+	},
+	"action.logs": {
+		"defaultMessage": "Záznamy"
 	},
 	"action.permissions": {
 		"defaultMessage": "Oprávnenia"
@@ -266,6 +278,9 @@
 	"column.email": {
 		"defaultMessage": "Email"
 	},
+	"column.error": {
+		"defaultMessage": "Chyba"
+	},
 	"column.event": {
 		"defaultMessage": "Udalosť"
 	},
@@ -333,7 +348,7 @@
 		"defaultMessage": "Deaktivované"
 	},
 	"domain-names": {
-		"defaultMessage": "Doménové mená"
+		"defaultMessage": "Názvy domén"
 	},
 	"domain-names.max": {
 		"defaultMessage": "Maximálne {count} doménových mien"
@@ -347,6 +362,9 @@
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Wildcards nie sú podporované pre túto certifikačnú autoritu"
 	},
+	"domains.advanced": {
+		"defaultMessage": "Pokročilé"
+	},
 	"domains.force-ssl": {
 		"defaultMessage": "Vynútiť SSL"
 	},
@@ -358,6 +376,9 @@
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Podpora HTTP/2"
+	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Dôverovať preposielaným Upstream Proto hlavičkám"
 	},
 	"domains.use-dns": {
 		"defaultMessage": "Použiť DNS výzvu"
@@ -416,6 +437,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Forknite ma na GitHube"
 	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Máte neuložené zmeny. Naozaj ich chcete zrušiť?"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokovať bežné exploity"
 	},
@@ -455,6 +479,12 @@
 	"loading": {
 		"defaultMessage": "Načítava sa…"
 	},
+	"location.advanced-config": {
+		"defaultMessage": "Má vlastné Nginx nastavenie"
+	},
+	"location.filter": {
+		"defaultMessage": "Filtrovať podľa cesty alebo cieľa"
+	},
 	"login.2fa-code": {
 		"defaultMessage": "Overovací kód"
 	},
@@ -472,6 +502,51 @@
 	},
 	"login.title": {
 		"defaultMessage": "Prihláste sa do svojho účtu"
+	},
+	"logs": {
+		"defaultMessage": "Záznamy"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Prístup"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Chyba"
+	},
+	"logs.download": {
+		"defaultMessage": "Stiahnuť"
+	},
+	"logs.empty": {
+		"defaultMessage": "Zatiaľ žiadne záznamy."
+	},
+	"logs.level": {
+		"defaultMessage": "Úroveň"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Všetky úrovne"
+	},
+	"logs.lines": {
+		"defaultMessage": "Riadkov"
+	},
+	"logs.live": {
+		"defaultMessage": "Naživo"
+	},
+	"logs.paused": {
+		"defaultMessage": "Pozastavené"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Obnoviť"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Hľadať záznam…"
+	},
+	"logs.source": {
+		"defaultMessage": "Zdroj"
+	},
+	"logs.source.system": {
+		"defaultMessage": "Systém"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Zobrazuje sa len najnovšia časť tohto súboru."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Vlastná Nginx konfigurácia"
@@ -569,11 +644,20 @@
 	"password.show": {
 		"defaultMessage": "Zobraziť heslo"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Povolení proxy hostitelia"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Umožňuje dodatočný prístup k vybraným proxy serverom vytvoreným inými používateľmi (navyše k serverom, ktoré si používateľ vytvoril sám)."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Skryté"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Spravovať"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Nenašli sa žiadny proxy hostitelia"
 	},
 	"permissions.view": {
 		"defaultMessage": "Len na zobrazenie"
