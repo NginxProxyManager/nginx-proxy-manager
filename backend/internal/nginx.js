@@ -42,6 +42,7 @@ import {
 	renderLocation,
 } from "../lib/nginx-locations.js";
 import { createReloadWaiter } from "../lib/nginx-reload.js";
+import { scanNginxConfig } from "../lib/nginx-tokenize.js";
 import { assertAccessListRenderable, assertHostRenderable, isTokenSafe, unsafeValueError } from "../lib/nginx-values.js";
 import { createModeResolver, toBool } from "../lib/upstream-dns.js";
 import utils from "../lib/utils.js";
@@ -330,6 +331,14 @@ const newRepair = (saved = null) => ({
 });
 
 /**
+ * @param   {String} advancedConfig
+ * @returns {boolean} true when the advanced config has an `include` statement (not counting comments)
+ */
+const includesFiles = (advancedConfig) =>
+	/include/.test(advancedConfig || "") &&
+	scanNginxConfig(advancedConfig).statements.some((statement) => statement.tokens[0] === "include");
+
+/**
  * @param   {Object} repair    see newRepair()
  * @param   {String} filename  config file of the host being configured
  * @returns {String[]} the config files of other hosts that this operation regenerated
@@ -558,9 +567,9 @@ const internalNginx = {
 
 		// An error without a line (eg. `unknown "x" variable`) can still come from a custom location. Before the
 		// whole host is rejected, the locations are stubbed one by one to find it, see isolateFaultyLocations().
-		const isolateLocations = async (parsed) => {
+		const isolateLocations = async (parsed, only = () => true) => {
 			const candidates = (states || [])
-				.filter((s) => s.status === "ok" || s.status === "unresolved")
+				.filter((s) => (s.status === "ok" || s.status === "unresolved") && only(s))
 				.map((s) => s.index);
 			if (!candidates.length) {
 				return null;
@@ -768,6 +777,20 @@ const internalNginx = {
 				}
 				failure = { scope: "global", parsed: blame.parsed };
 				break;
+			}
+
+			if (parsed.file && !parseManagedFile(parsed.file)) {
+				// nginx names a file that is no host's config, eg. a snippet that a custom location includes
+				// (`include /snippets/app.conf;` reports `/snippets/app.conf:<line>`): stub the locations that
+				// include files. When the error stays with all of them stubbed it is global, eg. a broken file
+				// that nginx.conf includes.
+				const faulty = await isolateLocations(parsed, (state) =>
+					includesFiles(host.locations[state.index]?.advanced_config),
+				);
+				if (faulty) {
+					quarantineFaulty(faulty, parsed);
+					continue;
+				}
 			}
 
 			failure = { scope: "global", parsed };

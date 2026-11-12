@@ -285,4 +285,83 @@ describe("configure with an error that names no line", () => {
 			return true;
 		});
 	});
+
+	describe("an error in a file that a location includes", () => {
+		// nginx names the included file and its line
+		const includeTest =
+			(global = false) =>
+			async () => {
+				tests++;
+				if (global) {
+					throw new Error(
+						'nginx: [emerg] unknown directive "bogus" in /etc/nginx/conf.d/broken.conf:3\nnginx: configuration file /etc/nginx/nginx.conf test failed',
+					);
+				}
+				for (const name of fs.readdirSync(dir).filter((f) => f.endsWith(".conf"))) {
+					const text = fs
+						.readFileSync(join(dir, name), "utf8")
+						.split("\n")
+						.filter((line) => !line.trim().startsWith("#"))
+						.join("\n");
+					if (text.includes("include /snippets/broken.conf;")) {
+						throw new Error(
+							'nginx: [emerg] unknown directive "bogus" in /snippets/broken.conf:1\nnginx: configuration file /etc/nginx/nginx.conf test failed',
+						);
+					}
+				}
+				return "";
+			};
+		const withTest = async (fake, fn) => {
+			internalNginx.test = fake;
+			try {
+				return await fn();
+			} finally {
+				internalNginx.test = fakeNginxTest;
+			}
+		};
+
+		it("quarantines the location whose included snippet is broken, the host stays online", async () => {
+			const host = await insertHost([
+				location("/ok", "include /snippets/fine.conf;"),
+				location("/bad", "include /snippets/broken.conf;"),
+				location("/plain"),
+			]);
+			const meta = await withTest(includeTest(), () => configure(host));
+			assert.equal(meta.nginx_online, true);
+			assert.deepEqual(
+				meta.nginx_locations.map((l) => l.status),
+				["ok", "quarantined", "ok"],
+			);
+			assert.match(meta.nginx_locations[1].message, /unknown directive "bogus"/);
+			const text = fs.readFileSync(file(host.id), "utf8");
+			assert.doesNotMatch(text, /include \/snippets\/broken\.conf/);
+			assert.match(text, /include \/snippets\/fine\.conf/);
+		});
+
+		it("keeps a global error in an included file global, stubbing only the locations that include files", async () => {
+			const host = await insertHost([
+				location("/ok", "# include /snippets/x.conf;"),
+				location("/inc", "include /snippets/fine.conf;"),
+			]);
+			await assert.rejects(
+				withTest(includeTest(true), () => configure(host)),
+				(err) => {
+					assert.equal(err.details.scope, "global");
+					return true;
+				},
+			);
+			// the error, then all locations that include files stubbed
+			assert.equal(tests, 2);
+			assert.equal(fs.existsSync(file(host.id)), false);
+		});
+
+		it("tests nothing more for a global error when no location includes a file", async () => {
+			const host = await insertHost([location("/ok")]);
+			await assert.rejects(
+				withTest(includeTest(true), () => configure(host)),
+				(err) => err.details.scope === "global",
+			);
+			assert.equal(tests, 1);
+		});
+	});
 });

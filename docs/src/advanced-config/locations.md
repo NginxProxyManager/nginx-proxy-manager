@@ -145,7 +145,9 @@ it in `meta.nginx_locations` of the proxy host:
 Some nginx errors name no line, for example `unknown "x" variable` for a misspelled variable (nginx checks variables
 after reading all files). Then NPM replaces the host's custom locations with placeholders to find the one that causes
 it and quarantines only that one. If the error stays with every location replaced, it comes from the host itself and the
-save fails as described below.
+save fails as described below. The same happens for an error in a file that a location includes (nginx names the file,
+for example `/snippets/app.conf:3`): NPM replaces the locations that include files, and an error that stays with all of
+them replaced (for example in a file that nginx itself includes) fails the save.
 
 Fix the cause and save the host again to bring a quarantined location back. An unresolved location comes back by
 itself once the upstream name resolves.
