@@ -516,7 +516,7 @@
 		"defaultMessage": "Stiahnuť"
 	},
 	"logs.empty": {
-		"defaultMessage": "No log entries yet."
+		"defaultMessage": "Zatiaľ žiadne záznamy."
 	},
 	"logs.level": {
 		"defaultMessage": "Úroveň"
