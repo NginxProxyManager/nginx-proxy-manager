@@ -281,6 +281,11 @@
 				"$ref": "./paths/reports/hosts/get.json"
 			}
 		},
+		"/reports/traffic": {
+			"get": {
+				"$ref": "./paths/reports/traffic/get.json"
+			}
+		},
 		"/schema": {
 			"get": {
 				"$ref": "./paths/schema/get.json"

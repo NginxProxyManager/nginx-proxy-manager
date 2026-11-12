@@ -2,6 +2,15 @@ import fs from "node:fs";
 import errs from "../lib/error.js";
 import settingModel from "../models/setting.js";
 import internalNginx from "./nginx.js";
+import internalTrafficStats from "./traffic-stats.js";
+
+// Never send stored secrets (eg. the InfluxDB token) back out through the API
+const maskSecrets = (row) => {
+	if (row.id === internalTrafficStats.SETTING_ID) {
+		row.meta = internalTrafficStats.maskMeta(row.meta);
+	}
+	return row;
+};
 
 const internalSetting = {
 	/**
@@ -11,17 +20,26 @@ const internalSetting = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
+		let previousRow = null;
 		return access
 			.can("settings:update", data.id)
 			.then((/*access_data*/) => {
 				return internalSetting.get(access, { id: data.id });
 			})
-			.then((row) => {
+			.then(async (row) => {
 				if (row.id !== data.id) {
 					// Sanity check that something crazy hasn't happened
 					throw new errs.InternalValidationError(
 						`Setting could not be updated, IDs do not match: ${row.id} !== ${data.id}`,
 					);
+				}
+
+				if (row.id === internalTrafficStats.SETTING_ID) {
+					// the row from get() has its secrets masked, so compare against the stored one
+					previousRow = await settingModel.query().where({ id: data.id }).first();
+					if (data.meta) {
+						data.meta = internalTrafficStats.normalizeMeta(data.meta, previousRow.meta);
+					}
 				}
 
 				return settingModel.query().where({ id: data.id }).patch(data);
@@ -68,6 +86,15 @@ const internalSetting = {
 								});
 						});
 				}
+				if (row.id === internalTrafficStats.SETTING_ID) {
+					// settingModel row is re-read unmasked here so the worker gets the real token
+					return settingModel
+						.query()
+						.where({ id: row.id })
+						.first()
+						.then((raw) => internalTrafficStats.apply(raw, previousRow))
+						.then(() => row);
+				}
 				return row;
 			});
 	},
@@ -86,7 +113,7 @@ const internalSetting = {
 			})
 			.then((row) => {
 				if (row) {
-					return row;
+					return maskSecrets(row);
 				}
 				throw new errs.ItemNotFoundError(data.id);
 			});
@@ -117,7 +144,10 @@ const internalSetting = {
 	 */
 	getAll: (access) => {
 		return access.can("settings:list").then(() => {
-			return settingModel.query().orderBy("description", "ASC");
+			return settingModel
+				.query()
+				.orderBy("description", "ASC")
+				.then((rows) => rows.map(maskSecrets));
 		});
 	},
 };

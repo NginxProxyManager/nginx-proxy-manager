@@ -86,6 +86,24 @@ const setupDefaultSettings = async () => {
 		});
 		logger.info("Default settings added");
 	}
+
+	const traffic = await settingModel.query().select("id").where({ id: "traffic-stats" }).first();
+
+	if (!traffic?.id) {
+		await settingModel.query().insert({
+			id: "traffic-stats",
+			name: "Traffic Statistics",
+			description: "Collect request statistics from the host access logs and show them on the dashboard",
+			value: "disabled",
+			meta: {
+				retention_days: 30,
+				range_hours: 24,
+				geoip: false,
+				influx: { url: "", org: "", bucket: "", token: "" },
+			},
+		});
+		logger.info("Traffic statistics setting added");
+	}
 };
 
 /**

@@ -14,7 +14,7 @@
 			"schema": {
 				"type": "string",
 				"minLength": 1,
-				"enum": ["default-site"]
+				"enum": ["default-site", "traffic-stats"]
 			},
 			"required": true,
 			"description": "Setting ID",
@@ -34,7 +34,7 @@
 						"value": {
 							"type": "string",
 							"minLength": 1,
-							"enum": ["congratulations", "404", "444", "redirect", "html"],
+							"enum": ["congratulations", "404", "444", "redirect", "html", "enabled", "disabled"],
 							"example": "html"
 						},
 						"meta": {
@@ -46,6 +46,44 @@
 								},
 								"html": {
 									"type": "string"
+								},
+								"retention_days": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 3650,
+									"description": "Traffic stats: days of history to keep"
+								},
+								"range_hours": {
+									"type": "integer",
+									"minimum": 1,
+									"description": "Traffic stats: default hours shown on the dashboard"
+								},
+								"influx": {
+									"type": "object",
+									"additionalProperties": false,
+									"description": "Traffic stats: optional InfluxDB 2.x target. Used instead of the local database when all fields are filled in",
+									"properties": {
+										"url": {
+											"type": "string"
+										},
+										"org": {
+											"type": "string"
+										},
+										"bucket": {
+											"type": "string"
+										},
+										"token": {
+											"type": "string"
+										}
+									}
+								},
+								"geoip": {
+									"type": "boolean",
+									"description": "Traffic stats: record the country of each client, using a local GeoIP database (DB-IP Lite is downloaded if none is supplied)"
+								},
+								"status_codes": {
+									"type": "boolean",
+									"description": "Traffic stats: also record each exact status code (200, 404, 502 ...), hourly"
 								}
 							},
 							"example": {

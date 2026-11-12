@@ -1,0 +1,627 @@
+{
+	"operationId": "reportsTraffic",
+	"summary": "Report on Host Traffic",
+	"tags": [
+		"reports"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"parameters": [
+		{
+			"in": "query",
+			"name": "hours",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": false,
+			"description": "Hours to cover. Defaults to the configured display range"
+		},
+		{
+			"in": "query",
+			"name": "host_type",
+			"schema": {
+				"type": "string",
+				"enum": [
+					"proxy",
+					"redirection",
+					"dead",
+					"stream"
+				]
+			},
+			"required": false,
+			"description": "With host_id, only report on this host"
+		},
+		{
+			"in": "query",
+			"name": "host_id",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": false,
+			"description": "Host ID, used with host_type"
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"enabled": false
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"required": [
+							"enabled"
+						],
+						"properties": {
+							"enabled": {
+								"type": "boolean",
+								"description": "False when traffic statistics are switched off",
+								"example": false
+							},
+							"storage": {
+								"type": "string",
+								"enum": [
+									"local",
+									"influxdb"
+								],
+								"example": "local"
+							},
+							"error": {
+								"type": [
+									"string",
+									"null"
+								],
+								"description": "Last ingest error, if any",
+								"example": "InfluxDB is not reachable"
+							},
+							"range": {
+								"type": "object",
+								"properties": {
+									"from": {
+										"type": "integer",
+										"description": "Start, unix seconds",
+										"example": 0
+									},
+									"to": {
+										"type": "integer",
+										"description": "End, unix seconds",
+										"example": 0
+									},
+									"step": {
+										"type": "integer",
+										"description": "Seconds per series point",
+										"example": 0
+									},
+									"hours": {
+										"type": "integer",
+										"description": "Hours covered",
+										"example": 0
+									}
+								},
+								"example": {
+									"from": 0,
+									"to": 0,
+									"step": 0,
+									"hours": 0
+								}
+							},
+							"totals": {
+								"type": "object",
+								"properties": {
+									"requests": {
+										"type": "integer",
+										"description": "Requests",
+										"example": 0
+									},
+									"s2xx": {
+										"type": "integer",
+										"description": "2xx responses",
+										"example": 0
+									},
+									"s3xx": {
+										"type": "integer",
+										"description": "3xx responses",
+										"example": 0
+									},
+									"s4xx": {
+										"type": "integer",
+										"description": "4xx responses",
+										"example": 0
+									},
+									"s5xx": {
+										"type": "integer",
+										"description": "5xx responses",
+										"example": 0
+									},
+									"bytes": {
+										"type": "integer",
+										"description": "Bytes sent",
+										"example": 0
+									}
+								},
+								"example": {
+									"requests": 0,
+									"s2xx": 0,
+									"s3xx": 0,
+									"s4xx": 0,
+									"s5xx": 0,
+									"bytes": 0
+								}
+							},
+							"series": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"ts": {
+											"type": "integer",
+											"description": "Point start, unix seconds",
+											"example": 0
+										},
+										"requests": {
+											"type": "integer",
+											"description": "Requests",
+											"example": 0
+										},
+										"s2xx": {
+											"type": "integer",
+											"description": "2xx responses",
+											"example": 0
+										},
+										"s3xx": {
+											"type": "integer",
+											"description": "3xx responses",
+											"example": 0
+										},
+										"s4xx": {
+											"type": "integer",
+											"description": "4xx responses",
+											"example": 0
+										},
+										"s5xx": {
+											"type": "integer",
+											"description": "5xx responses",
+											"example": 0
+										},
+										"bytes": {
+											"type": "integer",
+											"description": "Bytes sent",
+											"example": 0
+										}
+									},
+									"example": {
+										"ts": 0,
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
+									}
+								},
+								"example": [
+									{
+										"ts": 0,
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
+									}
+								]
+							},
+							"hosts": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"host_type": {
+											"type": "string",
+											"enum": [
+												"proxy",
+												"redirection",
+												"dead",
+												"stream"
+											],
+											"example": "proxy"
+										},
+										"host_id": {
+											"type": "integer",
+											"example": 1
+										},
+										"label": {
+											"type": "string",
+											"example": "example.com"
+										},
+										"requests": {
+											"type": "integer",
+											"description": "Requests",
+											"example": 0
+										},
+										"s2xx": {
+											"type": "integer",
+											"description": "2xx responses",
+											"example": 0
+										},
+										"s3xx": {
+											"type": "integer",
+											"description": "3xx responses",
+											"example": 0
+										},
+										"s4xx": {
+											"type": "integer",
+											"description": "4xx responses",
+											"example": 0
+										},
+										"s5xx": {
+											"type": "integer",
+											"description": "5xx responses",
+											"example": 0
+										},
+										"bytes": {
+											"type": "integer",
+											"description": "Bytes sent",
+											"example": 0
+										}
+									},
+									"example": {
+										"host_type": "proxy",
+										"host_id": 1,
+										"label": "example.com",
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
+									}
+								},
+								"example": [
+									{
+										"host_type": "proxy",
+										"host_id": 1,
+										"label": "example.com",
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
+									}
+								]
+							},
+							"top": {
+								"type": "object",
+								"properties": {
+									"ip": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"item": {
+													"type": "string",
+													"example": "203.0.113.7"
+												},
+												"hits": {
+													"type": "integer",
+													"example": 120
+												},
+												"country": {
+													"type": [
+														"string",
+														"null"
+													],
+													"description": "ISO country code, LOCAL for private addresses, ?? if unknown, null when countries are not being recorded",
+													"example": "US"
+												}
+											},
+											"example": {
+												"item": "203.0.113.7",
+												"hits": 120,
+												"country": "US"
+											}
+										},
+										"example": [
+											{
+												"item": "203.0.113.7",
+												"hits": 120,
+												"country": "US"
+											}
+										]
+									},
+									"path": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"item": {
+													"type": "string",
+													"example": "/index.html"
+												},
+												"hits": {
+													"type": "integer",
+													"example": 120
+												}
+											},
+											"example": {
+												"item": "/index.html",
+												"hits": 120
+											}
+										},
+										"example": [
+											{
+												"item": "/index.html",
+												"hits": 120
+											}
+										]
+									},
+									"country": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"item": {
+													"type": "string",
+													"example": "US"
+												},
+												"hits": {
+													"type": "integer",
+													"example": 120
+												}
+											},
+											"example": {
+												"item": "US",
+												"hits": 120
+											}
+										},
+										"example": [
+											{
+												"item": "US",
+												"hits": 120
+											}
+										]
+									}
+								},
+								"example": {
+									"ip": [
+										{
+											"item": "203.0.113.7",
+											"hits": 120,
+											"country": "US"
+										}
+									],
+									"path": [
+										{
+											"item": "/index.html",
+											"hits": 120
+										}
+									],
+									"country": [
+										{
+											"item": "US",
+											"hits": 120
+										}
+									]
+								}
+							},
+							"geoip": {
+								"type": "boolean",
+								"description": "True when countries are being recorded",
+								"example": true
+							},
+							"previous": {
+								"type": [
+									"object",
+									"null"
+								],
+								"description": "Totals and per-host counts for the span of equal length just before this one",
+								"properties": {
+									"totals": {
+										"type": "object",
+										"properties": {
+											"requests": {
+												"type": "integer",
+												"description": "Requests",
+												"example": 0
+											},
+											"s2xx": {
+												"type": "integer",
+												"description": "2xx responses",
+												"example": 0
+											},
+											"s3xx": {
+												"type": "integer",
+												"description": "3xx responses",
+												"example": 0
+											},
+											"s4xx": {
+												"type": "integer",
+												"description": "4xx responses",
+												"example": 0
+											},
+											"s5xx": {
+												"type": "integer",
+												"description": "5xx responses",
+												"example": 0
+											},
+											"bytes": {
+												"type": "integer",
+												"description": "Bytes sent",
+												"example": 0
+											}
+										},
+										"example": {
+											"requests": 0,
+											"s2xx": 0,
+											"s3xx": 0,
+											"s4xx": 0,
+											"s5xx": 0,
+											"bytes": 0
+										}
+									},
+									"hosts": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"host_type": {
+													"type": "string",
+													"example": "proxy"
+												},
+												"host_id": {
+													"type": "integer",
+													"example": 1
+												},
+												"requests": {
+													"type": "integer",
+													"example": 100
+												},
+												"bytes": {
+													"type": "integer",
+													"example": 2048
+												},
+												"s4xx": {
+													"type": "integer",
+													"example": 3
+												},
+												"s5xx": {
+													"type": "integer",
+													"example": 1
+												}
+											},
+											"example": {
+												"host_type": "proxy",
+												"host_id": 1,
+												"requests": 100,
+												"bytes": 2048,
+												"s4xx": 3,
+												"s5xx": 1
+											}
+										},
+										"example": [
+											{
+												"host_type": "proxy",
+												"host_id": 1,
+												"requests": 100,
+												"bytes": 2048,
+												"s4xx": 3,
+												"s5xx": 1
+											}
+										]
+									}
+								},
+								"example": {
+									"totals": {
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
+									},
+									"hosts": [
+										{
+											"host_type": "proxy",
+											"host_id": 1,
+											"requests": 100,
+											"bytes": 2048,
+											"s4xx": 3,
+											"s5xx": 1
+										}
+									]
+								}
+							},
+							"statusCodes": {
+								"type": "boolean",
+								"description": "True when exact status codes are being recorded",
+								"example": true
+							},
+							"statuses": {
+								"type": "array",
+								"description": "Per exact status code, busiest first. Only when status codes are recorded",
+								"items": {
+									"type": "object",
+									"properties": {
+										"code": {
+											"type": "integer",
+											"example": 200
+										},
+										"total": {
+											"type": "integer",
+											"example": 500
+										},
+										"series": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"ts": {
+														"type": "integer",
+														"example": 1700000000
+													},
+													"requests": {
+														"type": "integer",
+														"example": 100
+													}
+												},
+												"example": {
+													"ts": 1700000000,
+													"requests": 100
+												}
+											},
+											"example": [
+												{
+													"ts": 1700000000,
+													"requests": 100
+												}
+											]
+										}
+									},
+									"example": {
+										"code": 200,
+										"total": 500,
+										"series": [
+											{
+												"ts": 1700000000,
+												"requests": 100
+											}
+										]
+									}
+								},
+								"example": [
+									{
+										"code": 200,
+										"total": 500,
+										"series": [
+											{
+												"ts": 1700000000,
+												"requests": 100
+											}
+										]
+									}
+								]
+							},
+							"statusStep": {
+								"type": "integer",
+								"description": "Seconds per point of the per-status-code series (whole hours)",
+								"example": 3600
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

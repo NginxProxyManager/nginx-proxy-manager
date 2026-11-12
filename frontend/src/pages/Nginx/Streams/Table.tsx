@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
+import { IconChartBar, IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import type { Stream } from "src/api/backend";
@@ -20,11 +20,21 @@ interface Props {
 	isFiltered?: boolean;
 	isFetching?: boolean;
 	onEdit?: (id: number) => void;
+	onStats?: (id: number) => void;
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
 }
-export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onDisableToggle, onNew }: Props) {
+export default function Table({
+	data,
+	isFetching,
+	isFiltered,
+	onEdit,
+	onStats,
+	onDelete,
+	onDisableToggle,
+	onNew,
+}: Props) {
 	const columnHelper = createColumnHelper<Features, Stream>();
 	const columns = useMemo(
 		() => [
@@ -130,6 +140,17 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 									<IconEdit size={16} />
 									<T id="action.edit" />
 								</a>
+								<a
+									className="dropdown-item"
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										onStats?.(info.row.original.id);
+									}}
+								>
+									<IconChartBar size={16} />
+									<T id="action.stats" />
+								</a>
 								<HasPermission section={STREAMS} permission={MANAGE} hideError>
 									<a
 										className="dropdown-item"
@@ -164,7 +185,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onStats, onDisableToggle, onDelete],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);
