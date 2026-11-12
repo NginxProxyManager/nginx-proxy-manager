@@ -1,0 +1,69 @@
+{
+	"type": "object",
+	"description": "Available log sources for the log viewer",
+	"required": ["system", "letsencrypt", "hosts"],
+	"additionalProperties": false,
+	"properties": {
+		"system": {
+			"type": "object",
+			"properties": {
+				"label": {
+					"type": "string",
+					"example": "System"
+				}
+			}
+		},
+		"letsencrypt": {
+			"type": "object",
+			"properties": {
+				"label": {
+					"type": "string",
+					"example": "Let's Encrypt"
+				}
+			}
+		},
+		"hosts": {
+			"type": "object",
+			"required": ["proxy", "redirection", "dead", "stream"],
+			"additionalProperties": false,
+			"properties": {
+				"proxy": {
+					"$ref": "#/$defs/host-option-list"
+				},
+				"redirection": {
+					"$ref": "#/$defs/host-option-list"
+				},
+				"dead": {
+					"$ref": "#/$defs/host-option-list"
+				},
+				"stream": {
+					"$ref": "#/$defs/host-option-list"
+				}
+			},
+			"example": {
+				"proxy": [{ "id": 1, "label": "example.com" }],
+				"redirection": [],
+				"dead": [],
+				"stream": [{ "id": 1, "label": "Port 5432 → 10.0.0.5:5432" }]
+			}
+		}
+	},
+	"$defs": {
+		"host-option-list": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"required": ["id", "label"],
+				"properties": {
+					"id": {
+						"$ref": "../common.json#/properties/id"
+					},
+					"label": {
+						"type": "string",
+						"example": "example.com"
+					}
+				}
+			}
+		}
+	}
+}

@@ -3,6 +3,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import authModel from "../models/auth.js";
+import proxyHostModel from "../models/proxy_host.js";
 import userModel from "../models/user.js";
 import userPermissionModel from "../models/user_permission.js";
 import internalAuditLog from "./audit-log.js";
@@ -444,7 +445,7 @@ const internalUser = {
 				return internalUser.get(access, { id: data.id });
 			})
 			.then((user) => {
-				if (user.id !== data.id) {
+				if (Number(user.id) !== Number(data.id)) {
 					// Sanity check that something crazy hasn't happened
 					throw new errs.InternalValidationError(
 						`User could not be updated, IDs do not match: ${user.id} !== ${data.id}`,
@@ -454,21 +455,23 @@ const internalUser = {
 				return user;
 			})
 			.then((user) => {
+				const permData = _.omit(data, ["id"]);
 				// Get perms row, patch if it exists
 				return userPermissionModel
 					.query()
 					.where("user_id", user.id)
 					.first()
-					.then((existing_auth) => {
+					.then(async (existing_auth) => {
+						permData.meta = await internalUser.normalisePermissionMeta(existing_auth, permData);
 						if (existing_auth) {
 							// patch
 							return userPermissionModel
 								.query()
 								.where("user_id", user.id)
-								.patchAndFetchById(existing_auth.id, _.assign({ user_id: user.id }, data));
+								.patchAndFetchById(existing_auth.id, _.assign({ user_id: user.id }, permData));
 						}
 						// insert
-						return userPermissionModel.query().insertAndFetch(_.assign({ user_id: user.id }, data));
+						return userPermissionModel.query().insertAndFetch(_.assign({ user_id: user.id }, permData));
 					})
 					.then((permissions) => {
 						// Add to Audit Log
@@ -486,6 +489,36 @@ const internalUser = {
 			.then(() => {
 				return true;
 			});
+	},
+
+	/**
+	 * The permission meta to store. Proxy host grants (meta.proxy_host_ids) only apply while
+	 * visibility is "user" and proxy hosts are not hidden, so they're cleared otherwise; kept,
+	 * they would silently come back when proxy hosts are shown again. Ids of hosts that no
+	 * longer exist are dropped. `permData` may be partial, so the stored values fill the gaps.
+	 *
+	 * @param   {Object}  [existing]  the stored user_permission row
+	 * @param   {Object}  permData    incoming permission fields
+	 * @returns {Promise<Object>}
+	 */
+	normalisePermissionMeta: async (existing, permData) => {
+		const effective = _.assign(
+			{ visibility: "user", proxy_hosts: "hidden" },
+			existing || {},
+			_.omit(permData, ["meta"]),
+		);
+		const meta = _.assign({}, existing?.meta || {}, permData.meta || {});
+		const requested = Array.isArray(meta.proxy_host_ids) ? _.uniq(meta.proxy_host_ids) : [];
+
+		if (effective.visibility !== "user" || effective.proxy_hosts === "hidden" || !requested.length) {
+			meta.proxy_host_ids = [];
+			return meta;
+		}
+
+		const rows = await proxyHostModel.query().select("id").where("is_deleted", 0).whereIn("id", requested);
+		const found = new Set(rows.map((r) => r.id));
+		meta.proxy_host_ids = requested.filter((id) => found.has(id));
+		return meta;
 	},
 
 	/**

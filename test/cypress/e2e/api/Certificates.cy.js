@@ -35,6 +35,63 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
+	it('Unauthenticated user cannot validate custom certificate', () => {
+		cy.task('backendApiPostFiles', {
+			path:          '/api/nginx/certificates/validate',
+			files:         {
+				certificate:     certFile,
+				certificate_key: keyFile,
+			},
+			returnOnError: true,
+		}).then((data) => {
+			expect(data.error.code).to.equal(403);
+		});
+	});
+
+	it('User with certificates view permission cannot validate custom certificate', () => {
+		const viewer = {
+			email:  'viewer@example.com',
+			secret: 'changeme',
+		};
+
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/users',
+			data:  {
+				name:     'Certificate Viewer',
+				nickname: 'Viewer',
+				email:    viewer.email,
+				roles:    ['user'],
+				auth:     {
+					type:   'password',
+					secret: viewer.secret,
+				},
+			},
+		}).then((user) => {
+			cy.task('backendApiPut', {
+				token: token,
+				path:  `/api/users/${user.id}/permissions`,
+				data:  {
+					certificates: 'view',
+				},
+			});
+
+			cy.getToken(null, {identity: viewer.email, secret: viewer.secret}).then((viewerToken) => {
+				cy.task('backendApiPostFiles', {
+					token:         viewerToken,
+					path:          '/api/nginx/certificates/validate',
+					files:         {
+						certificate:     certFile,
+						certificate_key: keyFile,
+					},
+					returnOnError: true,
+				}).then((data) => {
+					expect(data.error.code).to.equal(403);
+				});
+			});
+		});
+	});
+
 	it('Custom certificate lifecycle', () => {
 		// Create custom cert
 		cy.task('backendApiPost', {
@@ -69,6 +126,9 @@ describe('Certificates endpoints', () => {
 				}).then((data) => {
 					cy.validateSwaggerSchema('get', 200, '/nginx/certificates', data);
 					expect(data.length).to.be.greaterThan(0);
+					const cert = data.find((c) => c.id === certID);
+					expect(cert.meta).to.have.property('certificate');
+					expect(cert.meta).to.not.have.property('certificate_key');
 
 					// Delete cert
 					cy.task('backendApiDelete', {
@@ -76,6 +136,79 @@ describe('Certificates endpoints', () => {
 						path:  `/api/nginx/certificates/${certID}`
 					}).then((data) => {
 						cy.validateSwaggerSchema('delete', 200, '/nginx/certificates/{certID}', data);
+						expect(data).to.be.equal(true);
+					});
+				});
+			});
+		});
+	});
+
+	it('Certificate in use by a host cannot be deleted', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/certificates',
+			data:  {
+				provider:  'other',
+				nice_name: 'In Use Certificate',
+			},
+		}).then((cert) => {
+			cy.task('backendApiPostFiles', {
+				token: token,
+				path:  `/api/nginx/certificates/${cert.id}/upload`,
+				files: {
+					certificate:     certFile,
+					certificate_key: keyFile,
+				},
+			}).then(() => {
+				cy.task('backendApiPost', {
+					token: token,
+					path:  '/api/nginx/proxy-hosts',
+					data:  {
+						domain_names:   ['cert-in-use.example.com'],
+						forward_scheme: 'http',
+						forward_host:   '1.1.1.1',
+						forward_port:   80,
+						access_list_id: '0',
+						certificate_id: cert.id,
+						meta:           { dns_challenge: false },
+						advanced_config: '',
+						locations:       [],
+						block_exploits:  false,
+						caching_enabled: false,
+						allow_websocket_upgrade: false,
+						http2_support:   false,
+						hsts_enabled:    false,
+						hsts_subdomains: false,
+						ssl_forced:      false,
+					},
+				}).then((host) => {
+					cy.task('backendApiDelete', {
+						token:         token,
+						path:          `/api/nginx/certificates/${cert.id}`,
+						returnOnError: true,
+					}).then((data) => {
+						cy.validateSwaggerSchema('delete', 400, '/nginx/certificates/{certID}', data);
+						expect(data.error.code).to.equal(400);
+						expect(data.error.message).to.contain('in use by 1 proxy host');
+					});
+
+					// Still there
+					cy.task('backendApiGet', {
+						token: token,
+						path:  `/api/nginx/certificates/${cert.id}`,
+					}).then((data) => {
+						expect(data.id).to.equal(cert.id);
+					});
+
+					// Once the host no longer uses it, it can be deleted
+					cy.task('backendApiDelete', {
+						token: token,
+						path:  `/api/nginx/proxy-hosts/${host.id}`,
+					});
+					cy.task('backendApiDelete', {
+						token: token,
+						path:  `/api/nginx/certificates/${cert.id}`,
+					}).then((data) => {
 						expect(data).to.be.equal(true);
 					});
 				});

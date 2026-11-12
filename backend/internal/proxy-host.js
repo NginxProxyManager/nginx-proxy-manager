@@ -2,7 +2,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import utils from "../lib/utils.js";
-import proxyHostModel from "../models/proxy_host.js";
+import proxyHostModel, { scopeToOwnerOrAllowed } from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
 import internalHost from "./host.js";
@@ -65,6 +65,8 @@ const internalProxyHost = {
 					thisData.advanced_config = "";
 				}
 
+				internalHost.assertAdvancedConfigAllowed(access, thisData);
+
 				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
@@ -97,7 +99,7 @@ const internalProxyHost = {
 					expand: ["certificate", "owner", "access_list.[clients,items]"],
 				});
 			})
-			.then((row) => {
+			.then(async (row) => {
 				// Configure nginx
 				return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
 					return row;
@@ -169,6 +171,9 @@ const internalProxyHost = {
 					);
 				}
 
+				// Before the certificate is created, so a refused request doesn't leave one behind
+				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
+
 				if (createCertificate) {
 					return internalCertificate
 						.createQuickCertificate(access, {
@@ -222,7 +227,7 @@ const internalProxyHost = {
 						id: thisData.id,
 						expand: ["owner", "certificate", "access_list.[clients,items]"],
 					})
-					.then((row) => {
+					.then(async (row) => {
 						if (!row.enabled) {
 							// No need to add nginx config if host is disabled
 							return row;
@@ -257,7 +262,7 @@ const internalProxyHost = {
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
-					query.andWhere("owner_user_id", access.token.getUserId(1));
+					scopeToOwnerOrAllowed(query, access.token.getUserId(1), access.getPermissions?.()?.meta);
 				}
 
 				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
@@ -337,10 +342,10 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id: data.id,
-					expand: ["certificate", "owner", "access_list"],
+					expand: ["certificate", "owner", "access_list.[clients,items]"],
 				});
 			})
-			.then((row) => {
+			.then(async (row) => {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
@@ -350,27 +355,21 @@ const internalProxyHost = {
 
 				row.enabled = 1;
 
-				return proxyHostModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 1,
-					})
-					.then(() => {
-						// Configure nginx
-						return internalNginx.configure(proxyHostModel, "proxy_host", row);
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "enabled",
-							object_type: "proxy-host",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
+				await proxyHostModel.query().where("id", row.id).patch({
+					enabled: 1,
+				});
+
+				// Configure nginx
+				await internalNginx.configure(proxyHostModel, "proxy_host", row);
+
+				// Add to audit log
+				await internalAuditLog.add(access, {
+					action: "enabled",
+					object_type: "proxy-host",
+					object_id: row.id,
+					meta: _.omit(row, omissions()),
+				});
+
 				return true;
 			});
 	},
@@ -444,7 +443,7 @@ const internalProxyHost = {
 			.orderBy(castJsonIfNeed("domain_names"), "ASC");
 
 		if (accessData.permission_visibility !== "all") {
-			query.andWhere("owner_user_id", access.token.getUserId(1));
+			scopeToOwnerOrAllowed(query, access.token.getUserId(1), access.getPermissions?.()?.meta);
 		}
 
 		// Query is used for searching
@@ -470,18 +469,18 @@ const internalProxyHost = {
 	 *
 	 * @param   {Number}  user_id
 	 * @param   {String}  visibility
+	 * @param   {Object}  [permissionsMeta]  the user's permissions meta, as already loaded by access
 	 * @returns {Promise}
 	 */
-	getCount: (user_id, visibility) => {
+	getCount: async (user_id, visibility, permissionsMeta) => {
 		const query = proxyHostModel.query().count("id as count").where("is_deleted", 0);
 
 		if (visibility !== "all") {
-			query.andWhere("owner_user_id", user_id);
+			scopeToOwnerOrAllowed(query, user_id, permissionsMeta);
 		}
 
-		return query.first().then((row) => {
-			return Number.parseInt(row.count, 10);
-		});
+		const row = await query.first();
+		return Number.parseInt(row.count, 10);
 	},
 };
 
