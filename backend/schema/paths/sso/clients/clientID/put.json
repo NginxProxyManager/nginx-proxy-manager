@@ -28,7 +28,7 @@
         "schema": {
           "type": "object",
           "additionalProperties": false,
-          "minProperties": 1,
+          "minProperties": 11,
           "properties": {
             "name": {
               "$ref": "../../../../components/sso-client-object.json#/properties/name"
@@ -77,7 +77,7 @@
                   "properties": {
                     "meta": {
                       "type": "object",
-                      "additionalProperties": {}
+                      "minProperties": 0
                     }
                   }
     						},
@@ -93,7 +93,13 @@
         				{
         					"$ref": "../../../../components/sso-client-saml.json"
         				}
-        			]
+        			],
+              "example": {
+                "client_id": "123",
+                "client_secret":"",
+                "configuration_url": "http://test",
+                "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
+              }
         		},
             "meta": {
               "type": "object",
@@ -103,25 +109,45 @@
                   "type": "array",
                   "minItems": 0,
                   "items": {
-                    "role": "string",
-                    "group": "string"
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "group": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
                   }
                 }
               },
               "example": {
-                "": {
-                  "name": "Authentik",
-                  "client_type": "OpenID",
-                  "enabled": true,
-                  "configuration": {
-                    "client_id": "123",
-                    "client_secret":"",
-                    "configuration_url": "",
-                    "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
-                  }
-                }
+                "role_map": []
               }
             }
+          }
+        },
+        "example": {
+          "name": "Authentik",
+          "client_type": "OpenID",
+          "enabled": true,
+          "allow_internal": true,
+          "allow_internal_if_admin": false,
+          "require_group": false,
+          "provision_users": false,
+          "require_provision_group": false,
+          "provision_role_map": [],
+          "configuration": {
+            "client_id": "123",
+            "client_secret":"",
+            "configuration_url": "http://test",
+            "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
+          },
+          "meta": {
+            "role_map": []
           }
         }
       }
@@ -140,7 +166,7 @@
                 "modified_on": "2026-10-25 13:51:09",
                 "owner_user_id": 1,
                 "client_type": "OpenID",
-                "name":"Authentik",
+                "name": "Authentik",
                 "enabled": true,
                 "allow_internal": true,
                 "allow_internal_if_admin": false,

@@ -74,7 +74,14 @@
          				{
          					"$ref": "../../../components/sso-client-saml.json"
          				}
-        			]
+        			],
+              "example": {
+                "client_id": "foo",
+                "client_secret": "bar",
+                "configuration_url": "http://test",
+                "redirect_url": "http://test",
+                "meta": {}
+              }
         		},
             "meta": {
               "type": "object",
@@ -83,23 +90,49 @@
                   "type": "array",
                   "minItems": 0,
                   "items": {
-                    "role": "string",
-                    "group": "string"
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "group": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
                   }
                 }
               },
               "example": {
-                "role_map": {
-                  "role": "user",
-                  "group": "NginxProxyManager-access"
-                }
+                "role_map": [
+                  {
+                    "role": "user",
+                    "group": "NginxProxyManager-access"
+                  }
+                ]
               }
             }
           }
         },
         "example": {
-          "value": "congratulations",
-          "meta": {}
+          "name": "Authentik",
+          "client_type": "OpenID",
+          "enabled": true,
+          "allow_internal": true,
+          "allow_internal_if_admin": false,
+          "require_group": false,
+          "require_group_name": "",
+          "provision_users": false,
+          "require_provision_group": false,
+          "require_provision_group_name": "",
+          "provision_role_map": [],
+          "meta": {
+            "role_map": []
+          },
+          "require_verified_email": false,
+          "button_text": ""
         }
       }
     }

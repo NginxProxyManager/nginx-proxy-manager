@@ -27,10 +27,13 @@
 		},
 		"name": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "example": "Authentik"
 		},
 		"client_type": {
-  		"type": "string"
+  		"type": "string",
+      "minLength": 1,
+      "example": "OpenID"
 		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
@@ -94,12 +97,14 @@
 						"role": {
 							"type": "string"
 						}
-					},
-					"example": {
-						"group": "NginxProxyManager-admin",
-						"role": "admin"
 					}
-			}
+			},
+			"example": [
+			  {
+					"group": "NginxProxyManager-admin",
+					"role": "admin"
+				}
+			]
 		},
 		"meta": {
 			"type": "object",
@@ -119,7 +124,13 @@
 				{
 					"$ref": "./sso-client-saml.json"
 				}
-			]
+			],
+			"example": {
+        "client_id": "123",
+        "client_secret":"",
+        "configuration_url": "http://test.com/",
+        "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
+			}
 		},
 		"owner": {
 			"$ref": "./user-object.json"
