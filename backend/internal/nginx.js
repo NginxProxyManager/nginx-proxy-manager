@@ -2583,9 +2583,16 @@ const internalNginx = {
 	 * nginx once. Hosts that nginx rejects are taken offline, as on save. Used by POST /api/nginx/regenerate
 	 * and backend/scripts/regenerate-config.
 	 *
-	 * When the final test/reload fails (also when nginx rejects the reload) or loading the rows of a host type
-	 * fails, the error is thrown with the
-	 * summary of what was done until then as `err.regenerateSummary` (hosts may have changed already).
+	 * nginx can reject the reload although `nginx -t` passed (eg. a stream's port is used by another process):
+	 * the hosts whose regenerated configs it rejects (they listen on an address nginx could not bind) are then
+	 * taken offline, see isolateRejectedReload(). The others stay in service. When nginx rejects the reload
+	 * for another reason, the regenerated configs that were not on disk before (nginx doesn't run them) are
+	 * set aside and their hosts are offline with that reason, tried again with the startup reconcile's backoff;
+	 * the configs nginx serves stay on disk.
+	 *
+	 * When the final test/reload fails (also when nginx still rejects the reload for another reason) or
+	 * loading the rows of a host type fails, the error is thrown with the summary of what was done until then
+	 * as `err.regenerateSummary` (hosts may have changed already).
 	 *
 	 * @param   {Object}  [opts]
 	 * @param   {Array}   [opts.hostTypes]     proxy_host, redirection_host, dead_host, stream; default all
@@ -2603,17 +2610,49 @@ const internalNginx = {
 				if (opts.restoreAside !== false) {
 					internalNginx.restoreStaleAside();
 				}
+				// the configs that were not on disk before: nginx doesn't run them in any version
+				const absent = new Set();
 				const { results, loadErrors } = await internalNginx.configureEnabledHosts({
 					hostTypes: opts.hostTypes,
 					logPrefix: "Regenerate",
+					needsWork: (hostType, row) => {
+						const filename = internalNginx.getConfigName(hostType, row.id);
+						if (readFileOrNull(filename) === null) {
+							absent.add(filename);
+						}
+						return true;
+					},
 				});
 				let failure = null;
 				try {
 					// Also when no host was configured: restored aside files have to be loaded
-					const outcome = await internalNginx.reloadNginx();
-					if (outcome?.rejected) {
-						// nginx -t passed but the master rejected the files (eg. a listen port another process
-						// uses, -t doesn't bind ports): nginx still runs the config from before the regeneration
+					const reloaded = await internalNginx.reloadNginx();
+					// nginx -t passed but the master rejected the files (eg. a listen port another process uses, -t
+					// doesn't bind ports): the hosts whose configs it rejects are taken offline, as on save. nginx
+					// serves (older versions of) the hosts whose config was on disk: they are never taken out all at
+					// once. The others (eg. a host that was offline with its config aside) may be: when nginx
+					// rejects the reload without them as well, they are offline with that reason and tried again
+					// later, as in the startup reconcile, instead of showing online for a config nginx never loaded
+					const written = results
+						.filter((r) => !r.error && !r.skipped && !r.suspended && r.meta?.nginx_online !== false)
+						.map((r) => internalNginx.getConfigName(r.hostType, r.row.id));
+					const isolated = reloaded?.rejected
+						? await internalNginx.isolateRejectedReload(written, {
+								outcome: reloaded,
+								unserved: written.filter((filename) => absent.has(filename)),
+								offlineOnGlobal: true,
+							})
+						: null;
+					for (const { host_type, host_id } of isolated?.offline || []) {
+						healed.push({ host_type, id: host_id });
+					}
+					if (isolated?.global && isolated.offline.length) {
+						internalNginx.scheduleRetry(retryList(isolated.offline));
+					}
+					// nginx still rejects the reload for a reason it doesn't tie to one of the regenerated configs: the
+					// ones it serves are on disk and nginx still runs the config from before the regeneration
+					const outcome = isolated && !isolated.applied ? isolated.global || reloaded : null;
+					if (outcome) {
 						failure = internalNginx.buildConfigError(
 							"global",
 							"default",
