@@ -834,13 +834,13 @@
 		"defaultMessage": "Client ID do IdP cung cấp"
 	},
 	"sso.config.client_id.label": {
-		"defaultMessage": "Client ID"
+		"defaultMessage": "ID khách hàng (Client ID)"
 	},
 	"sso.config.client_secret.hint": {
 		"defaultMessage": "Để trống nếu muốn giữ nguyên"
 	},
 	"sso.config.client_secret.label": {
-		"defaultMessage": "Client Secret"
+		"defaultMessage": "Bí mật khách hàng (Client Secret)"
 	},
 	"sso.config.configuration_url.hint": {
 		"defaultMessage": "Ví dụ: https://your-authentik.com/application/o/nginx-pm hoặc https://your-keycloak.com/realms/your-realm"
@@ -861,7 +861,7 @@
 		"defaultMessage": "Client ID của ứng dụng OAuth trên GitHub"
 	},
 	"sso.config.github_client_id.label": {
-		"defaultMessage": "Client ID"
+		"defaultMessage": "ID khách hàng (Client ID)"
 	},
 	"sso.config.name.hint": {
 		"defaultMessage": "Ví dụ: Authentik"
