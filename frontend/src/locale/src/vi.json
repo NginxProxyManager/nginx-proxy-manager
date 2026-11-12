@@ -329,6 +329,9 @@
 	"column.status": {
 		"defaultMessage": "Trạng thái"
 	},
+	"column.type": {
+		"defaultMessage": "kiểu"
+	},
 	"created-on": {
 		"defaultMessage": "Tạo lúc: {date}"
 	},
@@ -767,8 +770,236 @@
 	"sign-in": {
 		"defaultMessage": "Đăng nhập"
 	},
+	"sign-in-with": {
+		"defaultMessage": "Đăng nhập bằng {name}"
+	},
+	"single-sign-on": {
+		"defaultMessage": "Đăng nhập một lần"
+	},
 	"ssl-certificate": {
 		"defaultMessage": "Chứng chỉ SSL"
+	},
+	"sso-client": {
+		"defaultMessage": "Ứng dụng khách SSO"
+	},
+	"sso-clients": {
+		"defaultMessage": "Các ứng dụng khách SSO"
+	},
+	"sso-clients.count": {
+		"defaultMessage": "{count} {count, plural, one {ứng dụng khách SSO} other {ứng dụng khách SSO}}"
+	},
+	"sso.action.add": {
+		"defaultMessage": "Tạo {type} mới"
+	},
+	"sso.column.internal": {
+		"defaultMessage": "Quyền truy cập người dùng"
+	},
+	"sso.column.provision": {
+		"defaultMessage": "Cấp tài khoản"
+	},
+	"sso.config.access.allow-internal-if-admin.hint": {
+		"defaultMessage": "Người dùng hiện có phải là Quản trị viên thì mới được phép đăng nhập."
+	},
+	"sso.config.access.allow-internal-if-admin.label": {
+		"defaultMessage": "Chỉ quản trị viên"
+	},
+	"sso.config.access.allow-internal.hint": {
+		"defaultMessage": "Cho phép tài khoản người dùng nội bộ đang hoạt động đăng nhập nếu có địa chỉ email trùng khớp."
+	},
+	"sso.config.access.allow-internal.label": {
+		"defaultMessage": "Người dùng hiện có"
+	},
+	"sso.config.access.label": {
+		"defaultMessage": "Kiểm soát những ai có thể truy cập Nginx Proxy Manager sau khi IdP xác thực và cấp quyền thành công."
+	},
+	"sso.config.access.provision-user.hint": {
+		"defaultMessage": "Cấp tài khoản người dùng mới trong Nginx Proxy Manager."
+	},
+	"sso.config.access.provision-user.label": {
+		"defaultMessage": "Cấp tài khoản cho người dùng mới"
+	},
+	"sso.config.access.require-group.hint": {
+		"defaultMessage": "Yêu cầu IdP gửi claim groups và claim này phải bao gồm nhóm được chỉ định."
+	},
+	"sso.config.access.require-group.label": {
+		"defaultMessage": "Yêu cầu thành viên của nhóm"
+	},
+	"sso.config.access.role-map.hint": {
+		"defaultMessage": "Ánh xạ tên nhóm do IdP gửi đến vai trò Nginx Proxy Manager sẽ được gán cho người dùng mới."
+	},
+	"sso.config.access.role-map.label": {
+		"defaultMessage": "Ánh xạ nhóm sang vai trò"
+	},
+	"sso.config.client_id.hint": {
+		"defaultMessage": "Client ID do IdP cung cấp"
+	},
+	"sso.config.client_id.label": {
+		"defaultMessage": "Client ID"
+	},
+	"sso.config.client_secret.hint": {
+		"defaultMessage": "Để trống nếu muốn giữ nguyên"
+	},
+	"sso.config.client_secret.label": {
+		"defaultMessage": "Client Secret"
+	},
+	"sso.config.configuration_url.hint": {
+		"defaultMessage": "Ví dụ: https://your-authentik.com/application/o/nginx-pm hoặc https://your-keycloak.com/realms/your-realm"
+	},
+	"sso.config.configuration_url.label": {
+		"defaultMessage": "URL nhà phát hành cấu hình OpenID"
+	},
+	"sso.config.domain.hint": {
+		"defaultMessage": "Tên miền ứng dụng Auth0, ví dụ: dev-foo123.us.auth0.com"
+	},
+	"sso.config.domain.label": {
+		"defaultMessage": "Tên miền"
+	},
+	"sso.config.enabled.label": {
+		"defaultMessage": "Đã bật"
+	},
+	"sso.config.github_client_id.hint": {
+		"defaultMessage": "Client ID của ứng dụng OAuth trên GitHub"
+	},
+	"sso.config.github_client_id.label": {
+		"defaultMessage": "Client ID"
+	},
+	"sso.config.name.hint": {
+		"defaultMessage": "Ví dụ: Authentik"
+	},
+	"sso.config.name.label": {
+		"defaultMessage": "Tên"
+	},
+	"sso.config.placeholder.group-name": {
+		"defaultMessage": "Tên nhóm"
+	},
+	"sso.config.protocol-disabled": {
+		"defaultMessage": "Giao thức {protocol} chưa được triển khai. Cấu hình ứng dụng khách này sẽ không được sử dụng."
+	},
+	"sso.config.protocol.label": {
+		"defaultMessage": "Giao thức"
+	},
+	"sso.config.redirect_url.hint": {
+		"defaultMessage": "Giữ nguyên phần '{id}' trong URL được tạo; chúng tôi sẽ thay thế phần này sau khi lưu biểu mẫu. Sau đó, bạn có thể sao chép URL hoàn chỉnh vào danh sách callback được phép của IdP."
+	},
+	"sso.config.redirect_url.label": {
+		"defaultMessage": "URL chuyển hướng"
+	},
+	"sso.config.saml_endpoint.hint": {
+		"defaultMessage": "URL endpoint của nhà cung cấp SAML"
+	},
+	"sso.config.saml_endpoint.label": {
+		"defaultMessage": "Endpoint SAML"
+	},
+	"sso.config.settings.button-preview.label": {
+		"defaultMessage": "Xem trước nút"
+	},
+	"sso.config.settings.button-text.hint": {
+		"defaultMessage": "Bạn có thể tùy chỉnh nhãn nút đăng nhập; nếu không, tên ứng dụng khách SSO sẽ được dùng và dịch theo ngữ cảnh."
+	},
+	"sso.config.settings.button-text.label": {
+		"defaultMessage": "Nội dung nút"
+	},
+	"sso.config.settings.require-verified-email.hint": {
+		"defaultMessage": "Yêu cầu IdP gửi claim 'email_verified' có giá trị true. Yêu cầu này chỉ được kiểm tra trước khi người dùng đăng nhập thành công bằng IdP này."
+	},
+	"sso.config.settings.require-verified-email.label": {
+		"defaultMessage": "Yêu cầu email đã xác minh"
+	},
+	"sso.config.tabs.idp": {
+		"defaultMessage": "Nhà cung cấp danh tính"
+	},
+	"sso.config.tabs.provisioning": {
+		"defaultMessage": "Cấp tài khoản"
+	},
+	"sso.config.tabs.settings": {
+		"defaultMessage": "Cài đặt"
+	},
+	"sso.config.tabs.users": {
+		"defaultMessage": "Quyền truy cập người dùng"
+	},
+	"sso.error.config.group-reqired": {
+		"defaultMessage": "Cấu hình không hợp lệ: cần có tên nhóm hoặc ánh xạ vai trò (4)"
+	},
+	"sso.error.default": {
+		"defaultMessage": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau."
+	},
+	"sso.error.email-claim-required": {
+		"defaultMessage": "Nhà cung cấp danh tính không gửi claim 'email'."
+	},
+	"sso.error.group-or-role-map": {
+		"defaultMessage": "Bạn phải cấu hình mục này hoặc mục 'Ánh xạ nhóm sang vai trò'."
+	},
+	"sso.error.login.group-required": {
+		"defaultMessage": "Không được phép đăng nhập vì không đáp ứng yêu cầu thành viên nhóm (14)"
+	},
+	"sso.error.login.not-found": {
+		"defaultMessage": "Không tìm thấy người dùng phù hợp với địa chỉ email do IdP cung cấp (11)"
+	},
+	"sso.error.login.not-permitted": {
+		"defaultMessage": "Không được phép đăng nhập theo chính sách (10)"
+	},
+	"sso.error.login.not-permitted-2": {
+		"defaultMessage": "Không được chính sách cho phép (12)"
+	},
+	"sso.error.login.verified-email": {
+		"defaultMessage": "Không được phép đăng nhập bằng email chưa xác minh (17)"
+	},
+	"sso.error.no-groups-claim": {
+		"defaultMessage": "IdP không gửi claim 'groups' hoặc claim này trống (13)"
+	},
+	"sso.error.no-groups-claim-2": {
+		"defaultMessage": "IdP không gửi claim 'groups' hoặc claim này trống. (5)"
+	},
+	"sso.error.not-permitted": {
+		"defaultMessage": "Không được chính sách cho phép (2)"
+	},
+	"sso.error.signup.group-required": {
+		"defaultMessage": "Không được phép đăng ký vì không đáp ứng yêu cầu thành viên nhóm (6)"
+	},
+	"sso.error.signup.group-required-2": {
+		"defaultMessage": "Không được phép đăng ký vì không đáp ứng yêu cầu thành viên nhóm (7)"
+	},
+	"sso.error.signup.group-required-3": {
+		"defaultMessage": "Không được phép đăng ký vì không đáp ứng yêu cầu thành viên nhóm (8)"
+	},
+	"sso.error.signup.group-required-4": {
+		"defaultMessage": "Không được phép đăng ký vì không đáp ứng yêu cầu thành viên nhóm (9)"
+	},
+	"sso.error.signup.not-permitted": {
+		"defaultMessage": "Không được chính sách cho phép đăng ký (1)"
+	},
+	"sso.error.signup.not-permitted-2": {
+		"defaultMessage": "Không được chính sách cho phép đăng ký (3)"
+	},
+	"sso.error.signup.unique-email": {
+		"defaultMessage": "Địa chỉ email do IdP cung cấp đã được đăng ký (15)"
+	},
+	"sso.error.signup.verified-email": {
+		"defaultMessage": "Không được phép đăng ký bằng email chưa xác minh (16)"
+	},
+	"sso.header.auth-hint": {
+		"defaultMessage": "Đã đăng nhập bằng SSO"
+	},
+	"sso.info.internal-users-count": {
+		"defaultMessage": "{users} {users, plural, one {người dùng} other {người dùng}} đã đăng nhập"
+	},
+	"sso.info.provisioned-users-count": {
+		"defaultMessage": "Đã cấp tài khoản cho {users} {users, plural, one {người dùng} other {người dùng}}"
+	},
+	"sso.login.heading": {
+		"defaultMessage": "hoặc tiếp tục bằng OAuth"
+	},
+	"sso.menu.label": {
+		"defaultMessage": "Đăng nhập một lần"
+	},
+	"sso.stats.accessed": {
+		"defaultMessage": "Đã truy cập {date}"
+	},
+	"sso.stats.never-accessed": {
+		"defaultMessage": "Chưa từng truy cập"
+	},
+	"sso.warning.partial-access": {
+		"defaultMessage": "Khi cả 'Quyền truy cập người dùng' và 'Cấp tài khoản cho người dùng mới' đều bị tắt, người dùng sẽ không thể được cấp tài khoản hoặc đăng nhập bằng tài khoản nội bộ thông qua ứng dụng khách SSO này. Tuy nhiên, những người dùng đã được cấp tài khoản trước đó vẫn có thể truy cập tài khoản của mình."
 	},
 	"stream": {
 		"defaultMessage": "Luồng TCP/UDP"
