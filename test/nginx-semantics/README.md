@@ -39,6 +39,8 @@ directly in the advanced config: the asset location inherits both, the included 
 through a glob), `/rdvi/` and `/crdoi/` include a `proxy_redirect off;` or a rule that matches nothing: the backend reads
 the included file and the dynamic rendering adds no `proxy_redirect` line of its own (`off` next to it fails
 `nginx -t`, another rule would replace nginx's default one).
+`/varmix/`, `/varmixfp/` and `/vmrx/` have a forward host that combines text and a variable (`ec$semhost`, saved before
+v2.17): written literally like `/var/`, as the rendering before dynamic locations did.
 
 ## Running
 

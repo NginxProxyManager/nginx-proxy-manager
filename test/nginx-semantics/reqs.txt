@@ -75,6 +75,11 @@
 /var/x?y=1
 /varfp/
 /varfp/x?y=1
+/varmix/
+/varmix/x?y=1
+/varmixfp/
+/varmixfp/x?y=1
+/vmrx/a?q=1|||"url":"/v1/"
 /a/sub/x?q=1||:8443
 /f/foo||:8443
 /f/r?redir=abs||:8443

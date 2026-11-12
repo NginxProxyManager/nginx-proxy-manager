@@ -291,11 +291,15 @@ export const locationDuplicateKey = (path: string): string | null => {
 	return `${modifier === "=" ? "=" : "prefix"} ${unquoted}`;
 };
 
-// A forward host that is a single nginx variable, eg. `$backend` set in the
-// advanced config. nginx resolves it at request time, so it can't be checked.
-// The API refuses these since v2.17, only hosts saved before can still have one.
-const VARIABLE_HOST = /^\$[A-Za-z_][A-Za-z0-9_]*$/;
-export const isVariableHost = (host?: string | null) => VARIABLE_HOST.test(`${host ?? ""}`.trim());
+// A forward host with an nginx variable, eg. `$backend` set in the advanced
+// config, or `app-$stage`. nginx resolves it at request time, so it can't be
+// checked. The API refuses these since v2.17, only hosts saved before can
+// still have one. The same rule as isVariableHost() in the backend.
+const INVALID_HOST_CHARS = /[\s;{}'"`\\#]/;
+export const isVariableHost = (host?: string | null) => {
+	const value = `${host ?? ""}`.trim();
+	return value.includes("$") && !INVALID_HOST_CHARS.test(value);
+};
 
 /**
  * The host part of a location's forward host. The backend splits `host/path`

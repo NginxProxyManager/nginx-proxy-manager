@@ -49,10 +49,11 @@ const INVALID_HOST_CHARS = /[\s;{}'"`\\$#]/;
 // The same for the forward path, which may hold nginx variables (`/api/$1`)
 const INVALID_PATH_CHARS = /[\s;{}'"`\\#]/;
 
-// A forward host that is a single nginx variable, eg. `$backend` with `set $backend app;` in the advanced
-// config (a common workaround for "host not found in upstream"). It is rendered literally as it always was:
-// no DNS check, no rewrite.
-const VARIABLE_HOST = /^\$[A-Za-z_][A-Za-z0-9_]*$/;
+// A forward host with an nginx variable, eg. `$backend` with `set $backend app;` in the advanced config (a
+// common workaround for "host not found in upstream"), or `app-$stage`. The API refuses them since v2.17
+// (lib/nginx-values.js); a location saved before is rendered literally as it always was: no DNS check, no
+// rewrite.
+const VARIABLE_IN_HOST = /\$/;
 
 // A `$` in the forward path makes nginx treat `proxy_pass` as a script: the computed URI is sent as it is (no
 // location prefix replaced, no query string added, no implicit "proxy_redirect default"), see hasVariablePath()
@@ -289,9 +290,13 @@ const bracesBalanced = (text) => {
 
 /**
  * @param   {String} host
- * @returns {boolean} true when the forward host is a single nginx variable, eg. `$backend`
+ * @returns {boolean} true when the forward host has an nginx variable and nothing else that would break out of
+ *          the directive, eg. `$backend` or `app-$stage`
  */
-const isVariableHost = (host) => VARIABLE_HOST.test(`${host || ""}`.trim());
+const isVariableHost = (host) => {
+	const value = `${host || ""}`.trim();
+	return VARIABLE_IN_HOST.test(value) && !INVALID_HOST_CHARS.test(value.replace(/\$/g, ""));
+};
 
 /**
  * nginx compiles a `proxy_pass` that contains a variable anywhere as a script and resolves its host per request:

@@ -29,7 +29,7 @@ NPM picks the mode for each location every time it writes the host's config:
 | Name that nginx's resolver knows | dynamic |
 | Name that only the system resolver knows, for example through a search domain in `/etc/resolv.conf` | static |
 | Name that doesn't resolve at all | dynamic, with status **unresolved** |
-| A single nginx variable, for example `$backend` with `set $backend app;` in the advanced configuration (only locations saved before v2.17, the API no longer accepts a `$` in a forward host) | static, written as it is: nginx already resolves it per request |
+| An nginx variable, for example `$backend` with `set $backend app;` in the advanced configuration, or `app-$stage` (only locations saved before v2.17, the API no longer accepts a `$` in a forward host) | static, written as it is: nginx already resolves it per request |
 | Location whose forward path contains an nginx variable, for example `/api/$arg_id` or `$request_uri` | static, written as it is: nginx already resolves it per request (a name that doesn't resolve still shows **unresolved**) |
 | Location with a forward path whose advanced configuration reads `$uri` or `$document_uri` | static while the name resolves, see below |
 | Location whose advanced configuration includes a file NPM can't read (missing, no permission, not a regular file, larger than 4 MB) | static while the name resolves, see below |
@@ -68,8 +68,8 @@ The same applies to a regular-expression or named location with a forward path: 
 it contains a variable, for example `~ ^/api/(.*)$` with forward path `/v1/$1`, which sends `/api/users/7` to the
 upstream as `/v1/users/7`. Such a location is written as it is.
 
-A forward host that is a single nginx variable, such as `$backend`, is written into the config exactly as before
-(`proxy_pass http://$backend:8080;`), without the extra lines. With "Cache Assets" its assets use the same `proxy_pass`.
+A forward host with an nginx variable, such as `$backend` or `app-$stage`, is written into the config exactly as before
+(`proxy_pass http://$backend:8080;`), without the extra lines, also with `NPM_LOCATION_DYNAMIC_DNS=false`. With "Cache Assets" its assets use the same `proxy_pass`.
 Since v2.17 the API refuses a `$` in a forward host, so this only applies to locations saved before. A forward path
 can still use variables such as `$1` or `$request_uri`, but not the braced form (`${name}`): the API refuses braces.
 

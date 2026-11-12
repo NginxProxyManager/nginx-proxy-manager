@@ -224,7 +224,7 @@ describe("preflightLocation", () => {
 	});
 
 	it("quarantines invalid host names", () => {
-		for (const host of ["a b", "a;b", 'a"b', "a{", "$x y", "a$x", "$x;", "$" + "{x}", "#x"]) {
+		for (const host of ["a b", "a;b", 'a"b', "a{", "$x y", "a$x;", "$x;", "$" + "{x}", "app-$" + "{stage}", "#x"]) {
 			const res = preflightLocation(prepareLocation({ ...base, path: "/a", forward_host: host }));
 			assert.equal(res.status, "quarantined", host);
 			assert.equal(res.code, "invalid_host", host);
@@ -232,13 +232,31 @@ describe("preflightLocation", () => {
 		}
 	});
 
-	it("allows a forward host that is a single nginx variable", () => {
-		for (const host of ["$backend", "$server", "$x_1", "$backend/sub"]) {
+	it("allows a forward host with nginx variables, rendered literally as before", () => {
+		// what the renderer before custom location modes wrote for any value that can't add directives
+		for (const host of ["$backend", "$server", "$x_1", "$backend/sub", "app-$stage", "$svc.internal", "a$x$y"]) {
 			assert.equal(preflightLocation(prepareLocation({ ...base, path: "/a", forward_host: host })), null, host);
+			assert.equal(isVariableHost(host.split("/")[0]), true, host);
 		}
-		assert.equal(isVariableHost("$backend"), true);
-		assert.equal(isVariableHost("$1x"), false);
 		assert.equal(isVariableHost("app"), false);
+		assert.equal(isVariableHost("app-$x;"), false);
+	});
+
+	it("renders a forward host that combines text and a variable literally, also with dynamic DNS", async () => {
+		const location = { ...base, path: "/a/", forward_host: "app-$stage", advanced_config: "set $stage prod;" };
+		const loc = prepareLocation(location);
+		assert.equal(preflightLocation(loc), null);
+		for (const mode of ["dynamic", "static"]) {
+			assert.deepEqual(chooseLocationMode(loc, { mode, status: "ok" }), { mode: "static", status: "ok" });
+		}
+		const text = await render(location, { mode: "static" });
+		assert.match(text, /proxy_pass\s+http:\/\/app-\$stage:8080;/);
+		assert.doesNotMatch(text, /return 503/);
+		// with a forward path on a regex location: nginx accepts the URI because the proxy_pass has a variable
+		assert.equal(
+			preflightLocation(prepareLocation({ ...base, path: "~ ^/r/", forward_host: "app-$stage/v1/" })),
+			null,
+		);
 	});
 
 	it("quarantines forward paths that would break the proxy_pass / rewrite directive", () => {
