@@ -108,6 +108,12 @@
 										"description": "Hours covered",
 										"example": 0
 									}
+								},
+								"example": {
+									"from": 0,
+									"to": 0,
+									"step": 0,
+									"hours": 0
 								}
 							},
 							"totals": {
@@ -143,6 +149,14 @@
 										"description": "Bytes sent",
 										"example": 0
 									}
+								},
+								"example": {
+									"requests": 0,
+									"s2xx": 0,
+									"s3xx": 0,
+									"s4xx": 0,
+									"s5xx": 0,
+									"bytes": 0
 								}
 							},
 							"series": {
@@ -185,8 +199,28 @@
 											"description": "Bytes sent",
 											"example": 0
 										}
+									},
+									"example": {
+										"ts": 0,
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
 									}
-								}
+								},
+								"example": [
+									{
+										"ts": 0,
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
+									}
+								]
 							},
 							"hosts": {
 								"type": "array",
@@ -241,8 +275,32 @@
 											"description": "Bytes sent",
 											"example": 0
 										}
+									},
+									"example": {
+										"host_type": "proxy",
+										"host_id": 1,
+										"label": "example.com",
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
 									}
-								}
+								},
+								"example": [
+									{
+										"host_type": "proxy",
+										"host_id": 1,
+										"label": "example.com",
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
+									}
+								]
 							},
 							"top": {
 								"type": "object",
@@ -268,8 +326,20 @@
 													"description": "ISO country code, LOCAL for private addresses, ?? if unknown, null when countries are not being recorded",
 													"example": "US"
 												}
+											},
+											"example": {
+												"item": "203.0.113.7",
+												"hits": 120,
+												"country": "US"
 											}
-										}
+										},
+										"example": [
+											{
+												"item": "203.0.113.7",
+												"hits": 120,
+												"country": "US"
+											}
+										]
 									},
 									"path": {
 										"type": "array",
@@ -284,8 +354,18 @@
 													"type": "integer",
 													"example": 120
 												}
+											},
+											"example": {
+												"item": "/index.html",
+												"hits": 120
 											}
-										}
+										},
+										"example": [
+											{
+												"item": "/index.html",
+												"hits": 120
+											}
+										]
 									},
 									"country": {
 										"type": "array",
@@ -300,9 +380,40 @@
 													"type": "integer",
 													"example": 120
 												}
+											},
+											"example": {
+												"item": "US",
+												"hits": 120
 											}
-										}
+										},
+										"example": [
+											{
+												"item": "US",
+												"hits": 120
+											}
+										]
 									}
+								},
+								"example": {
+									"ip": [
+										{
+											"item": "203.0.113.7",
+											"hits": 120,
+											"country": "US"
+										}
+									],
+									"path": [
+										{
+											"item": "/index.html",
+											"hits": 120
+										}
+									],
+									"country": [
+										{
+											"item": "US",
+											"hits": 120
+										}
+									]
 								}
 							},
 							"geoip": {
@@ -350,6 +461,14 @@
 												"description": "Bytes sent",
 												"example": 0
 											}
+										},
+										"example": {
+											"requests": 0,
+											"s2xx": 0,
+											"s3xx": 0,
+											"s4xx": 0,
+											"s5xx": 0,
+											"bytes": 0
 										}
 									},
 									"hosts": {
@@ -381,9 +500,47 @@
 													"type": "integer",
 													"example": 1
 												}
+											},
+											"example": {
+												"host_type": "proxy",
+												"host_id": 1,
+												"requests": 100,
+												"bytes": 2048,
+												"s4xx": 3,
+												"s5xx": 1
 											}
-										}
+										},
+										"example": [
+											{
+												"host_type": "proxy",
+												"host_id": 1,
+												"requests": 100,
+												"bytes": 2048,
+												"s4xx": 3,
+												"s5xx": 1
+											}
+										]
 									}
+								},
+								"example": {
+									"totals": {
+										"requests": 0,
+										"s2xx": 0,
+										"s3xx": 0,
+										"s4xx": 0,
+										"s5xx": 0,
+										"bytes": 0
+									},
+									"hosts": [
+										{
+											"host_type": "proxy",
+											"host_id": 1,
+											"requests": 100,
+											"bytes": 2048,
+											"s4xx": 3,
+											"s5xx": 1
+										}
+									]
 								}
 							},
 							"statusCodes": {
@@ -418,11 +575,43 @@
 														"type": "integer",
 														"example": 100
 													}
+												},
+												"example": {
+													"ts": 1700000000,
+													"requests": 100
 												}
-											}
+											},
+											"example": [
+												{
+													"ts": 1700000000,
+													"requests": 100
+												}
+											]
 										}
+									},
+									"example": {
+										"code": 200,
+										"total": 500,
+										"series": [
+											{
+												"ts": 1700000000,
+												"requests": 100
+											}
+										]
 									}
-								}
+								},
+								"example": [
+									{
+										"code": 200,
+										"total": 500,
+										"series": [
+											{
+												"ts": 1700000000,
+												"requests": 100
+											}
+										]
+									}
+								]
 							},
 							"statusStep": {
 								"type": "integer",
