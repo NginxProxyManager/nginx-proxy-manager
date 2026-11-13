@@ -329,10 +329,14 @@ const internalProxyHost = {
 					.patch({
 						is_deleted: 1,
 					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.removeConfigAndReload("proxy_host", row);
-					})
+					.then(() =>
+						// Delete Nginx Config. When nginx can't apply the removal it still serves the host
+						// (removeConfigAndReload() put its config back): the delete is undone
+						internalNginx.removeConfigAndReload("proxy_host", row).catch(async (err) => {
+							await proxyHostModel.query().where("id", row.id).patch({ is_deleted: 0 });
+							throw err;
+						}),
+					)
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {

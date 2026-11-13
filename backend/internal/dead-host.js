@@ -278,8 +278,14 @@ const internalDeadHost = {
 			is_deleted: 1,
 		});
 
-		// Delete Nginx Config
-		await internalNginx.removeConfigAndReload("dead_host", row);
+		// Delete Nginx Config. When nginx can't apply the removal it still serves the host
+		// (removeConfigAndReload() put its config back): the delete is undone
+		try {
+			await internalNginx.removeConfigAndReload("dead_host", row);
+		} catch (err) {
+			await deadHostModel.query().where("id", row.id).patch({ is_deleted: 0 });
+			throw err;
+		}
 
 		// Add to audit log
 		await internalAuditLog.add(access, {

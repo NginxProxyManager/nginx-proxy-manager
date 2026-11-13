@@ -425,19 +425,16 @@ const internalHost = {
 			await model.query().where("id", row.id).patch({ enabled: row.enabled });
 
 			if (!enable) {
-				const filename = internalNginx.getConfigName(hostType, row.id);
-				const previous = internalNginx.readConfigFile(filename);
-				const outcome = await internalNginx.removeConfigAndReload(hostType, row);
-				// An offline host (no config, only <id>.conf.err) isn't served: nothing to put back, the disable
-				// stands whatever another file does to the reload
-				if (outcome?.rejected && previous !== null) {
-					// Removing a config can't make nginx reject a reload: another file is the cause, and nginx still
-					// serves this host. Its config goes back and it stays enabled, as nginx runs it; the disable can
-					// be tried again.
-					internalNginx.restoreConfig(filename, previous);
+				try {
+					await internalNginx.removeConfigAndReload(hostType, row);
+				} catch (err) {
+					// nginx rejected the reload (for another file: removing a config can't cause it) or the test
+					// failed: nginx still serves this host and removeConfigAndReload() put its config back. It stays
+					// enabled, as nginx runs it; the disable can be tried again. (An offline host, only
+					// <id>.conf.err, isn't served: its disable stands, removeConfigAndReload() doesn't throw then.)
 					row.enabled = 1;
 					await model.query().where("id", row.id).patch({ enabled: 1 });
-					throw internalNginx.rejectedReloadError(hostType, row, outcome);
+					throw err;
 				}
 				return row;
 			}

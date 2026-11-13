@@ -1865,16 +1865,39 @@ const internalNginx = {
 	reload: () => withLock(() => internalNginx.reloadNginx()),
 
 	/**
-	 * Removes the config of a host and reloads nginx
+	 * Removes the config of a host and reloads nginx.
+	 *
+	 * Removing a config can't make nginx reject a reload, but another file can (or the test fails and can't be
+	 * healed): then nginx still serves the host. Its config goes back and the error is thrown (a rejected reload
+	 * as rejectedReloadError()), so the caller can undo its delete or disable instead of reporting a removal
+	 * nginx didn't apply. A host without a config (offline, only its .err file) isn't served: its removal stands
+	 * whatever the reload does.
 	 *
 	 * @param   {String}  host_type
 	 * @param   {Object}  host
-	 * @returns {Promise}
+	 * @returns {Promise} the reload outcome
 	 */
 	removeConfigAndReload: (host_type, host) =>
 		withLock(async () => {
+			const filename = internalNginx.getConfigName(internalNginx.getFileFriendlyHostType(host_type), host.id);
+			const previous = internalNginx.readConfigFile(filename);
 			await internalNginx.deleteConfig(host_type, host);
-			return internalNginx.reloadNginx();
+			let outcome;
+			try {
+				outcome = await internalNginx.reloadNginx();
+			} catch (err) {
+				if (previous === null) {
+					logger.warn(`Removed ${hostLabel(host_type, host)}, but nginx could not reload: ${err.message}`);
+					return { failed: true };
+				}
+				internalNginx.restoreConfig(filename, previous);
+				throw err;
+			}
+			if (outcome?.rejected && previous !== null) {
+				internalNginx.restoreConfig(filename, previous);
+				throw internalNginx.rejectedReloadError(host_type, host, outcome);
+			}
+			return outcome;
 		}),
 
 	/**
