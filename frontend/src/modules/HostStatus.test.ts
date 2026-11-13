@@ -7,6 +7,7 @@ import {
 	isVariableHost,
 	locationHostPart,
 	sortByHostStatus,
+	sortByHostStatusWithHealth,
 } from "./HostStatus";
 
 const row = (name: string, enabled: boolean, meta: HostMeta | null) => ({ name, original: { enabled, meta } });
@@ -39,6 +40,25 @@ describe("sorting the status column", () => {
 			row("error", true, { nginxOnline: false }),
 		];
 		expect([...rows].sort(sortByHostStatus).map((r) => r.name)).toEqual(["error", "warning", "disabled", "online"]);
+	});
+
+	it("ranks a proxy host whose upstream is down as a warning, with the health of its id", () => {
+		const down = health([target({ locationIndex: null })]);
+		const rows = [
+			{ name: "online", original: { id: 1, enabled: true, meta: { nginxOnline: true } } },
+			{ name: "upstream down", original: { id: 2, enabled: true, meta: { nginxOnline: true } } },
+			{ name: "disabled", original: { id: 3, enabled: false, meta: null } },
+		];
+		expect([...rows].sort(sortByHostStatusWithHealth({ 2: down })).map((r) => r.name)).toEqual([
+			"upstream down",
+			"disabled",
+			"online",
+		]);
+		expect([...rows].sort(sortByHostStatusWithHealth(undefined)).map((r) => r.name)).toEqual([
+			"disabled",
+			"online",
+			"upstream down",
+		]);
 	});
 
 	it("ranks a disabled host as disabled whatever its stored status", () => {

@@ -14,7 +14,7 @@ import {
 import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
-import { getProblemLocations, sortByHostStatus } from "src/modules/HostStatus";
+import { getProblemLocations, sortByHostStatusWithHealth } from "src/modules/HostStatus";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
 // "+2 locations · 1 problem" under the main destination
@@ -127,7 +127,7 @@ export default function Table({
 			columnHelper.accessor((row: any) => row.enabled, {
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
-				sortFn: sortByHostStatus,
+				sortFn: sortByHostStatusWithHealth(health),
 				cell: (info: any) => {
 					const row: ProxyHost = info.row.original;
 					return (
