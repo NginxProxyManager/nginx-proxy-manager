@@ -2388,9 +2388,9 @@ const internalNginx = {
 			const unserved = [];
 			// the others' text before they were regenerated: the version nginx may run
 			const previous = new Map();
-			if (!opts.only) {
-				internalNginx.restoreStaleAside();
-			}
+			// config files put back from an interrupted test: nginx may not run them (eg. another process reloaded
+			// it while they were aside), the reload below brings them in
+			const restored = opts.only ? 0 : internalNginx.restoreStaleAside();
 
 			for (const [hostType, model] of Object.entries(HOST_MODELS)) {
 				const only = opts.only ? opts.only[hostType] : null;
@@ -2454,7 +2454,7 @@ const internalNginx = {
 				}
 			}
 
-			if (summary.regenerated || summary.offline) {
+			if (summary.regenerated || summary.offline || restored) {
 				try {
 					const outcome = await internalNginx.reloadNginx();
 					if (outcome?.rejected) {
@@ -2499,10 +2499,10 @@ const internalNginx = {
 	 * them there: put them back, or delete them when the config was written again since. Only call this
 	 * while holding the lock.
 	 *
-	 * @returns {Number} how many files were handled
+	 * @returns {Number} how many files were put back (not counting the ones deleted)
 	 */
 	restoreStaleAside: () => {
-		let handled = 0;
+		let restored = 0;
 		for (const hostType of [...Object.keys(HOST_MODELS), "default_host"]) {
 			const dir = `/data/nginx/${hostType}`;
 			let files = [];
@@ -2520,14 +2520,14 @@ const internalNginx = {
 					} else {
 						fs.renameSync(aside, conf);
 						logger.warn(`Restored ${conf} from an interrupted config test`);
+						restored++;
 					}
-					handled++;
 				} catch (err) {
 					logger.error(`Could not restore ${conf} from ${aside}: ${err.message}`);
 				}
 			}
 		}
-		return handled;
+		return restored;
 	},
 
 	/**

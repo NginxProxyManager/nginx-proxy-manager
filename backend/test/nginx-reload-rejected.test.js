@@ -344,6 +344,24 @@ describe("a reload that nginx rejects after configs were written without reloadi
 		}
 	});
 
+	it("startup reconcile reloads nginx when it puts back a config an interrupted test left aside", async () => {
+		const id = await stream(2222, false);
+		fs.writeFileSync(`${conf(id)}.npm-aside`, "server {\n  listen 2222;\n}\n");
+		const summary = await internalNginx.reconcile();
+		assert.equal(summary.regenerated, 0);
+		assert.match(onDisk(id), /listen 2222/);
+		assert.equal(reloads.length, 1);
+		assert.match(reloads[0], /listen 2222/);
+	});
+
+	it("startup reconcile doesn't reload for a stale aside file of a config written since", async () => {
+		const id = await stream(2222, true);
+		fs.writeFileSync(`${conf(id)}.npm-aside`, "server {\n  listen 1111;\n}\n");
+		await internalNginx.reconcile();
+		assert.equal(fs.existsSync(`${conf(id)}.npm-aside`), false);
+		assert.equal(reloads.length, 0);
+	});
+
 	it("startup reconcile keeps one reload when nginx applies it", async () => {
 		const id = await stream(2222, false);
 		const summary = await internalNginx.reconcile();
