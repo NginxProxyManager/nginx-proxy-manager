@@ -2608,7 +2608,9 @@ const internalNginx = {
 					if (
 						internalNginx.isSuspended(hostType, row.id) ||
 						fs.existsSync(filename) ||
-						!fs.existsSync(`${filename}.err`)
+						!fs.existsSync(`${filename}.err`) ||
+						// offline before the restart already: keep the specific reason (bind error, unsafe value, ...)
+						row.meta?.nginx_online === false
 					) {
 						continue;
 					}

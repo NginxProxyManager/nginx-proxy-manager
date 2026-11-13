@@ -382,6 +382,26 @@ describe("a reload that nginx rejects after configs were written without reloadi
 		assert.deepEqual((await row(ok)).meta, ONLINE);
 	});
 
+	it("keeps the reason of hosts that were offline before the restart when the reconcile is off", async () => {
+		const offlineId = await stream(2222, false);
+		const details = { kind: "nginx_config", scope: "host", reason: "bind_failed", host_type: "stream" };
+		const before = {
+			nginx_online: false,
+			nginx_err: "address already in use",
+			nginx_details: details,
+			nginx_checked_at: "2026-01-01T00:00:00.000Z",
+		};
+		await db("stream")
+			.where("id", offlineId)
+			.update({ meta: JSON.stringify(before) });
+		fs.writeFileSync(`${conf(offlineId)}.err`, "server {\n  listen 2222;\n}\n");
+		const rejectedId = await stream(2223, false);
+		fs.writeFileSync(`${conf(rejectedId)}.err`, "server {\n  listen 2223;\n}\n");
+		assert.equal(await internalNginx.markRejectedAtStartup(), 1);
+		assert.deepEqual((await row(offlineId)).meta, before);
+		assert.equal((await row(rejectedId)).meta.nginx_details.reason, "rejected_at_startup");
+	});
+
 	it("startup reconcile keeps one reload when nginx applies it", async () => {
 		const id = await stream(2222, false);
 		const summary = await internalNginx.reconcile();
