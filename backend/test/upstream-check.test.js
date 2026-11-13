@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
 import fs from "node:fs";
 import net from "node:net";
 import os from "node:os";
@@ -376,11 +377,19 @@ describe("upstream check: batching", () => {
 });
 
 describe("upstream check: primitives", () => {
-	it("tcpConnect times out against a non-routable address", async () => {
-		// 10.255.255.1 is normally dropped; if the sandbox has no route we get unreachable instead
-		const result = await tcpConnect("10.255.255.1", 9, 300);
-		assert.equal(result.ok, false);
-		assert.ok(["tcp_timeout", "tcp_unreachable"].includes(result.code));
+	it("tcpConnect times out when the connection neither opens nor fails", async () => {
+		// a socket that never answers, independent of the host's network
+		let destroyed = false;
+		const silent = () =>
+			Object.assign(new EventEmitter(), {
+				connect: () => {},
+				destroy: () => {
+					destroyed = true;
+				},
+			});
+		const result = await tcpConnect("192.0.2.1", 9, 50, silent);
+		assert.deepEqual(result, { ok: false, code: "tcp_timeout", ms: null, error: "ETIMEDOUT" });
+		assert.equal(destroyed, true);
 	});
 
 	it("systemLookup keeps its DNS slot until a timed-out lookup settles", async () => {

@@ -127,13 +127,19 @@ const resolverLookup = async (host, resolvers, opts = {}) => {
  * @param   {number} [timeoutMs]
  * @returns {Promise<{ok: boolean, code: string, ms: number|null, error: string|null}>}
  */
-const tcpConnect = (address, port, timeoutMs = TCP_TIMEOUT_MS) =>
+/**
+ * @param   {string}   address
+ * @param   {number}   port
+ * @param   {number}   [timeoutMs]
+ * @param   {Function} [createSocket]  () => net.Socket-like, injectable for the tests
+ */
+const tcpConnect = (address, port, timeoutMs = TCP_TIMEOUT_MS, createSocket = () => new net.Socket()) =>
 	tcpLimit(
 		() =>
 			new Promise((resolve) => {
 				const started = process.hrtime.bigint();
 				let settled = false;
-				const socket = new net.Socket();
+				const socket = createSocket();
 
 				const finish = (result) => {
 					if (settled) {
