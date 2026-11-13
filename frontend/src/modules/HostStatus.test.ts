@@ -20,6 +20,20 @@ describe("sorting the status column", () => {
 		]);
 	});
 
+	it("puts hosts with problem locations right after the ones nginx rejected", () => {
+		const problem = {
+			nginxOnline: true,
+			nginxLocations: [{ index: 0, path: "/api", status: "quarantined", mode: null, message: "rejected" }],
+		} as HostMeta;
+		const rows = [
+			row("online", true, { nginxOnline: true }),
+			row("disabled", false, null),
+			row("warning", true, problem),
+			row("error", true, { nginxOnline: false }),
+		];
+		expect([...rows].sort(sortByHostStatus).map((r) => r.name)).toEqual(["error", "warning", "disabled", "online"]);
+	});
+
 	it("ranks a disabled host as disabled whatever its stored status", () => {
 		expect(hostStatusRank(false, { nginxOnline: false })).toBe(hostStatusRank(false, null));
 	});

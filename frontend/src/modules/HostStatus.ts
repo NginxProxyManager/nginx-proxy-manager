@@ -244,7 +244,7 @@ export const getHostStatus = (enabled: boolean, meta?: HostMeta | null): HostSta
 };
 
 // The order of the status column, ascending: the hosts that need attention first
-const HOST_STATE_RANK: Record<HostState, number> = { error: 0, disabled: 1, online: 2 };
+const HOST_STATE_RANK: Record<HostState, number> = { error: 0, warning: 1, disabled: 2, online: 3 };
 
 export const hostStatusRank = (enabled: boolean, meta?: HostMeta | null): number =>
 	HOST_STATE_RANK[getHostStatus(enabled, meta).state];
