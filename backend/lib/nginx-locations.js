@@ -504,14 +504,18 @@ const ownCacheDirective = (statement) => {
  * and the nested location sets no proxy_set_header / add_header / access rules of its own, so it inherits the
  * location's lists, the included entries too (see templates/_location_body.conf). Everything else written directly
  * in the advanced config is repeated as without an include: every rewrite-phase statement of any module, Lua
- * handlers, auth_request, auth_basic, limit_except blocks. Rewrite-phase lines inside the included file don't apply
- * to the assets.
+ * handlers, auth_request, auth_basic, limit_except blocks. The rewrite-phase statements of the included files (set,
+ * if, rewrite, return, ..., see rewritePhase() in lib/nginx-includes.js) are not inherited either: they are copied in
+ * place of the include, on its line (a guard like `if ($http_x_token != secret) { return 403; }` in an included file
+ * must stop asset requests too). An include whose files can't be read is kept as it is (nginx then reads it in the
+ * nested location as well, and when that fails nginx -t, the location is set aside, never served without it).
  *
  * @param   {String} advancedConfig
+ * @param   {Object} [includes]  from createIncludeReader() (lib/nginx-includes.js), one per render
  * @returns {{text: String, own: Object, inherit: boolean}} own: the ASSET_CACHE_DIRECTIVES the advanced config
  *          sets at its top level, eg. {expires: true}; inherit: it has a top-level include
  */
-const assetAdvancedConfig = (advancedConfig) => {
+const assetAdvancedConfig = (advancedConfig, includes = createIncludeReader()) => {
 	const text = `${advancedConfig || ""}`;
 	const top = scanNginxConfig(text).statements.filter((s) => s.depth === 0);
 	const inherit = top.some((s) => s.end !== "{" && s.tokens[0] === "include");
@@ -530,7 +534,17 @@ const assetAdvancedConfig = (advancedConfig) => {
 			? name === "location"
 			: inherit && (name === "include" || INHERITED_LISTS.includes(name));
 		if (drop && stop > statement.start) {
-			out += text.slice(pos, statement.start) + (text.slice(statement.start, stop).replace(/[^\n]/g, "") || " ");
+			const lines = text.slice(statement.start, stop).replace(/[^\n]/g, "");
+			let copied = "";
+			if (!block && name === "include") {
+				const statements = statement.tokens.length === 2 ? includes.rewritePhase(statement.tokens[1]) : null;
+				if (statements === null) {
+					// can't be read: kept, see above
+					continue;
+				}
+				copied = statements.join(" ");
+			}
+			out += text.slice(pos, statement.start) + (copied ? `${copied}${lines}` : lines || " ");
 			pos = stop;
 		}
 	}
@@ -624,7 +638,7 @@ const buildLocationContext = (loc, state) => {
 	const userRedirect = hasDirective(loc.advanced_config, "proxy_redirect") || included.directives.has("proxy_redirect");
 	const variableProxyPass = isVariableHost(loc.forward_host) || hasVariablePath(loc);
 	const assetsAllowed = !parsed.isExact && !parsed.isNamed;
-	const assetCopy = assetAdvancedConfig(loc.advanced_config);
+	const assetCopy = assetAdvancedConfig(loc.advanced_config, state.includes || createIncludeReader());
 	const assetRewrite = variableProxyPass ? "" : rewrite;
 	// the asset location's rewrite changes $uri: its copy of the advanced config reads the value from before it
 	const assetUri = assetRewrite ? keepUriVariables(assetCopy.text, `npm_loc_${state.index}_uri`) : null;

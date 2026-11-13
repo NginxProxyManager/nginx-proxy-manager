@@ -217,6 +217,40 @@ const readRegularFile = (file, maxSize = MAX_FILE_SIZE) => {
  *          (nested includes too); files: the files read; usesUriVariable: a statement of an included file (at any
  *          depth) reads $uri or $document_uri
  */
+// statements of the rewrite phase (ngx_http_rewrite_module, set-misc's set_*, set_by_lua*): a nested location doesn't
+// run its parent's, see rewritePhase()
+const REWRITE_PHASE = /^(?:set|if|rewrite|return|break|set_[a-z0-9_]+)$/;
+
+/**
+ * @param   {String} token  a token's value
+ * @returns {String} the token as nginx reads it back to that value: as it is, or in double quotes
+ */
+const quoteToken = (token) =>
+	token !== "" && !/[\s;{}"'\\]/.test(token) && !token.startsWith("#")
+		? token
+		: `"${token.replace(/[\\"]/g, "\\$&").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t")}"`;
+
+/**
+ * @param   {String} text        the file's text
+ * @param   {Object} statement   a statement of scanNginxConfig(text)
+ * @param   {Object[]} statements  all of them
+ * @returns {String} the statement on one line (an if block with the statements in it), comments left out; a Lua
+ *          block as it is written
+ */
+const compactStatement = (text, statement, statements) => {
+	const words = (st) => [st.tokens[0], ...st.tokens.slice(1).map(quoteToken)].join(" ");
+	if (statement.lua) {
+		return text.slice(statement.start, statement.close);
+	}
+	if (statement.end !== "{") {
+		return `${words(statement)};`;
+	}
+	const inner = statements
+		.filter((st) => st.start > statement.start && st.start < statement.close && st.depth === statement.depth + 1)
+		.map((st) => compactStatement(text, st, statements));
+	return `${words(statement)} { ${inner.join(" ")} }`;
+};
+
 const createIncludeReader = (io = {}) => {
 	const readFile = io.readFile || ((p) => readRegularFile(p));
 	const readdir = io.readdir || ((p) => fs.readdirSync(p));
@@ -299,7 +333,52 @@ const createIncludeReader = (io = {}) => {
 		return result;
 	};
 
-	return { scan };
+	/**
+	 * The rewrite-phase statements (set, if, rewrite, return, break, set_*, see REWRITE_PHASE) at the top level of
+	 * the files an `include <arg>;` brings in, in nginx's order (a nested include in its place). A nested location
+	 * runs none of its parent's, so the nested asset location repeats them, eg. an included
+	 * `if ($http_x_token != secret) { return 403; }` guard (see assetAdvancedConfig() in lib/nginx-locations.js).
+	 *
+	 * @param   {String}  arg  the include's argument
+	 * @returns {String[]|null} the statements, each on one line (Lua blocks as written); null when a file can't be read
+	 */
+	const rewritePhase = (arg, chain = []) => {
+		let files;
+		try {
+			files = targets(arg);
+		} catch {
+			return null;
+		}
+		const out = [];
+		for (const file of files) {
+			if (chain.includes(file) || chain.length >= MAX_DEPTH) {
+				return null;
+			}
+			const got = read(file);
+			if (got.error) {
+				return null;
+			}
+			const { statements } = scanNginxConfig(got.text);
+			for (const statement of statements) {
+				if (statement.depth !== 0) {
+					continue;
+				}
+				const name = statement.tokens[0] || "";
+				if (name === "include" && statement.end !== "{") {
+					const nested = statement.tokens.length === 2 ? rewritePhase(statement.tokens[1], [...chain, file]) : null;
+					if (nested === null) {
+						return null;
+					}
+					out.push(...nested);
+				} else if (REWRITE_PHASE.test(name) && (statement.end !== "{" || name === "if" || statement.lua)) {
+					out.push(compactStatement(got.text, statement, statements));
+				}
+			}
+		}
+		return out;
+	};
+
+	return { scan, rewritePhase };
 };
 
-export { createIncludeReader, expandGlob, MAX_DEPTH, MAX_FILE_SIZE, NGINX_CONF_PREFIX, readRegularFile, URI_VARIABLES };
+export { compactStatement, createIncludeReader, expandGlob, MAX_DEPTH, MAX_FILE_SIZE, NGINX_CONF_PREFIX, readRegularFile, URI_VARIABLES };

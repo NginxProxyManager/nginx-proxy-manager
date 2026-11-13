@@ -17,7 +17,7 @@ test -f /tmp/nginx-sem/conf.d/include/assets.conf
 
 # snippets included by the advanced config of /cinc/ and /cincg/ (cases.json): what the backend can't see. proxy.conf
 # sets directives of the asset cache block as Authelia's proxy.conf does, auth.conf brings an auth_request and
-# nested locations as Authelia / authentik snippets do, guard.conf a rewrite-phase guard, redir.conf a
+# nested locations as Authelia / authentik snippets do, guard.conf a rewrite-phase guard (copied into the asset location), redir.conf a
 # proxy_redirect (as Authelia's proxy.conf has one), ref.conf valid_referers, rdoff.conf / rdnest.conf (included
 # through a glob) / rdother.conf a proxy_redirect the backend reads from the file (no redirect line of its own)
 mkdir -p /tmp/nginx-sem/snip

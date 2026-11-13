@@ -190,7 +190,8 @@
 /cinc/inner/x.css|||"url":"/i/inner/x.css"|X-Ok: 1
 /cincg/page|||403
 /cincg/page|||"url":"/cincg/page"|X-Token: secret
-/cincg/app.css|||"url":"/cincg/app.css"
+/cincg/app.css|||403
+/cincg/app.css|||"url":"/cincg/app.css"|X-Token: secret
 /clua/app.css|||403
 /clua/app.css|||"in":"inc"|X-Token: secret
 /clua/page|||403

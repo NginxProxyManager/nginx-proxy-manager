@@ -21,6 +21,7 @@ import {
 	readLocationTemplate,
 	renderLocation,
 } from "../lib/nginx-locations.js";
+import { createIncludeReader } from "../lib/nginx-includes.js";
 import utils from "../lib/utils.js";
 
 const engine = utils.getRenderEngine();
@@ -46,6 +47,20 @@ const render = (location, state, host = {}) => {
 };
 
 const base = { forward_scheme: "http", forward_host: "app", forward_port: 8080 };
+
+// an include reader for which every included file exists and is empty
+const emptyIncludes = () => createIncludeReader({ readFile: () => "", readdir: () => [] });
+// an include reader over the given files
+const fileIncludes = (files) =>
+	createIncludeReader({
+		readFile: (p) => {
+			if (!(p in files)) {
+				throw Object.assign(new Error("ENOENT"), { code: "ENOENT" });
+			}
+			return files[p];
+		},
+		readdir: () => [],
+	});
 
 describe("parseLocationPath", () => {
 	it("splits modifiers", () => {
@@ -656,7 +671,7 @@ describe("renderLocation", () => {
 			"allow 10.0.0.0/8; deny all; satisfy any; auth_basic x; auth_request /auth; error_page 401 = @x;",
 			"return 418",
 		].join("\n");
-		const copy = assetAdvancedConfig(text);
+		const copy = assetAdvancedConfig(text, emptyIncludes());
 		assert.equal(copy.inherit, true);
 		assert.deepEqual(copy.own, { proxy_read_timeout: true });
 		assert.equal(
@@ -692,7 +707,7 @@ describe("renderLocation", () => {
 			"charset_types text/x;",
 		];
 		const text = ["include /snippets/ref.conf;", ...lists, "if ($invalid_referer) { return 403; }"].join("\n");
-		const copy = assetAdvancedConfig(text);
+		const copy = assetAdvancedConfig(text, emptyIncludes());
 		assert.equal(copy.text, [" ", ...lists.map(() => " "), "if ($invalid_referer) { return 403; }"].join("\n"));
 		// without an include they are repeated
 		assert.equal(assetAdvancedConfig(lists.join("\n")).text, lists.join("\n"));
@@ -748,9 +763,32 @@ describe("renderLocation", () => {
 			"break;",
 		];
 		const text = ["include /snippets/hdr.conf;", ...guards].join("\n");
-		const copy = assetAdvancedConfig(text);
+		const copy = assetAdvancedConfig(text, emptyIncludes());
 		assert.equal(copy.inherit, true);
 		assert.equal(copy.text, [" ", ...guards].join("\n"));
+	});
+
+	it("copies the rewrite-phase statements of included files in place of the include, on its line", () => {
+		const includes = fileIncludes({
+			"/snippets/guard.conf":
+				"# a guard\nproxy_set_header X-In in;\nif ($http_x_token != secret) {\n  return 403; # no\n}\ninclude /snippets/more.conf;\nlocation /in/ { return 200; }",
+			"/snippets/more.conf": 'set $a "x y";\nset_if_empty $t none;\nrewrite ^/old/(.*)$ /new/$1;\nadd_header X-M m;',
+		});
+		const text = "set $b 1;\ninclude /snippets/guard.conf;\nreturn 418;";
+		const copy = assetAdvancedConfig(text, includes);
+		assert.equal(copy.inherit, true);
+		assert.equal(
+			copy.text,
+			'set $b 1;\nif ($http_x_token != secret) { return 403; } set $a "x y"; set_if_empty $t none; rewrite ^/old/(.*)$ /new/$1;\nreturn 418;',
+		);
+		// the same line numbers as the advanced config
+		assert.equal(copy.text.split("\n").length, text.split("\n").length);
+	});
+
+	it("keeps an include it can't read in the asset copy, so the location is never served without it", () => {
+		const copy = assetAdvancedConfig("include /snippets/missing.conf;\nset $b 1;", fileIncludes({}));
+		assert.equal(copy.text, "include /snippets/missing.conf;\nset $b 1;");
+		assert.equal(copy.inherit, true);
 	});
 
 	it("leaves out proxy_cache of the asset block when the advanced config sets proxy_store", () => {
@@ -798,7 +836,8 @@ describe("renderLocation", () => {
 		]) {
 			const out = await render(
 				{ ...base, path: "^~ /private/", forward_host, forward_path: "/fp/", advanced_config },
-				{ mode },
+				// the files exist (empty): an include that can't be read is kept, see the test below
+				{ mode, includes: emptyIncludes() },
 				{
 					caching_enabled: true,
 					allow_websocket_upgrade: true,

@@ -29,8 +29,9 @@ location's advanced config like every other request of it (a `return 403` guard,
 `if`, a nested `location` block, an access list): the nested asset location used to skip it. `/cinc/` and `/cincg/` include
 snippets that `run.sh` writes (`/tmp/nginx-sem/snip/`): settings of the asset cache block, an `auth_request` and
 nested locations (as Authelia's / authentik's snippets have them) and a rewrite-phase guard. The nested asset location
-must pass `nginx -t` and inherit the included settings; the included guard does not apply to assets (documented, the
-expectation says so). `/clua/` and `/csm/` have an include and a guard written directly in the advanced config
+must pass `nginx -t` and inherit the included settings; the rewrite-phase statements of the included files (the
+guard of `/cincg/`) are copied into it, so they stop asset requests too. `/crwg/` has a guard after a `rewrite` of its own
+and a forward path: the asset copy's guard must read the rewritten `$uri`. `/clua/` and `/csm/` have an include and a guard written directly in the advanced config
 that reads a variable of `set_by_lua_block` / `set_if_empty` (set-misc): the asset location repeats those statements.
 `/cstore/` and `/cstorei/` set `proxy_store` (without / with an include), which nginx doesn't allow next to the asset
 block's `proxy_cache`. `/cluab/` and `/cluabi/` have an `access_by_lua_block` guard with `}` in a Lua comment and a Lua
