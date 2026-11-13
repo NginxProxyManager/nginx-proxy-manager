@@ -86,7 +86,8 @@ is unavailable, a hidden container can still be suggested; turn DNS discovery of
 (`NPM_DNS_DISCOVERY=false`) or keep the container on a network NPM isn't on.
 
 Without `npm.port`, the port is filled in only when the container exposes exactly one TCP port.
-Without `npm.scheme`, the scheme is `https` for port 443 and 8443, otherwise `http`.
+Without `npm.scheme`, the scheme is `https` for port 443 and 8443, otherwise `http`. Without either label, a
+container with several ports leaves the port and the scheme as they are.
 
 Invalid values are ignored rather than rejected: `true`/`false` also accept `1`/`0`, `yes`/`no` and
 `on`/`off`; anything else counts as not set. Domain names that the domain field would refuse are

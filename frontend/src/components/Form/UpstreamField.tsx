@@ -65,11 +65,13 @@ export const candidatePrefill = (c: UpstreamCandidate, currentHost?: string | nu
 	}
 	if (c.hintScheme === "http" || c.hintScheme === "https") {
 		prefill.scheme = c.hintScheme;
-	} else if (c.source === "docker" && c.host !== `${currentHost ?? ""}`.trim()) {
-		// A container without a scheme hint (no npm.scheme label, a port other than 443/8443) serves http: picking
-		// it must not keep the https of the target it replaces. Picking the current host again changes nothing,
-		// it may serve TLS on another port. DNS and history candidates don't say.
-		prefill.scheme = "http";
+	} else if (prefill.port !== undefined && c.source === "docker" && c.host !== `${currentHost ?? ""}`.trim()) {
+		// A container port without a scheme hint (no npm.scheme label) serves http unless it is 443/8443: picking
+		// it must not keep the https of the target it replaces. Only together with the port: a container with
+		// several ports and no hint leaves both fields alone (editing https:443 must not become http:443).
+		// Picking the current host again changes nothing, it may serve TLS on another port. DNS and history
+		// candidates don't say.
+		prefill.scheme = prefill.port === 443 || prefill.port === 8443 ? "https" : "http";
 	}
 	return prefill;
 };
