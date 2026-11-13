@@ -591,8 +591,16 @@ export function UpstreamField({
 	// are offered, not only those matching the value already in the field.
 	const [openedWith, setOpenedWith] = useState<string | null>(null);
 
+	// The target the field was loaded with or last set to by a pick: candidatePrefill() compares a picked
+	// candidate with it, not with the typed text (typing "web" and then picking web must still infer its scheme)
+	const target = useRef(value || "");
 	useEffect(() => {
-		setInput((current) => (current === (value || "") ? current : value || ""));
+		setInput((current) => {
+			if (current === (value || "")) return current;
+			// changed from outside (eg. the form was reset), not by typing
+			target.current = value || "";
+			return value || "";
+		});
 	}, [value]);
 
 	const groups = useMemo(() => groupCandidates(data?.items), [data]);
@@ -692,8 +700,9 @@ export function UpstreamField({
 		}
 		setValue(opt.value);
 		if (opt.candidate && !opt.__isNew__) {
-			onSelectCandidate?.(candidatePrefill(opt.candidate, value), opt.candidate);
+			onSelectCandidate?.(candidatePrefill(opt.candidate, target.current), opt.candidate);
 		}
+		target.current = opt.value;
 	};
 
 	const selected: UpstreamOption | null = value ? { value, label: value } : null;

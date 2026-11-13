@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { useState } from "react";
 import type { UpstreamCandidate, UpstreamCandidates, UpstreamSuggestion } from "src/api/backend";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -483,6 +483,23 @@ describe("UpstreamField keyboard", () => {
 		fireEvent.click(screen.getByText("app-db"));
 		expect(screen.getByTestId("value")).toHaveTextContent(/^app-db$/);
 		expect(onSelect).toHaveBeenCalledTimes(1);
+	});
+
+	it("infers the scheme of a candidate picked after typing its name", () => {
+		// typing "web" sets the field's value: the pick is still a new target, compared with the one loaded
+		const onSelect = vi.fn();
+		render(<Harness candidates={prefixData} initial="secure" onSelectCandidate={onSelect} />);
+		typeInto("web");
+		fireEvent.click(within(document.querySelector(".react-select__menu") as HTMLElement).getByText("web"));
+		expect(onSelect).toHaveBeenCalledWith({ port: 80, scheme: "http" }, expect.objectContaining({ host: "web" }));
+	});
+
+	it("leaves the scheme alone when the loaded host is picked again", () => {
+		const onSelect = vi.fn();
+		render(<Harness candidates={prefixData} initial="web" onSelectCandidate={onSelect} />);
+		typeInto("we");
+		fireEvent.click(within(document.querySelector(".react-select__menu") as HTMLElement).getByText("web"));
+		expect(onSelect).toHaveBeenCalledWith({ port: 80 }, expect.objectContaining({ host: "web" }));
 	});
 
 	it("a filled field offers all candidates until the user types", () => {
