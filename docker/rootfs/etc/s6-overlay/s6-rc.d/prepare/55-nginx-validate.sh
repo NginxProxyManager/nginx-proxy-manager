@@ -173,7 +173,8 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 					break
 				fi
 			fi
-		done <<<"$(echo "$NGINX_VALIDATE_ERROR" | grep -oE '"/[^" ]+"' | tr -d '"' || true)"
+		# nginx quotes the path as it is, spaces included (a path written quoted in the config can have them)
+		done <<<"$(echo "$NGINX_VALIDATE_ERROR" | grep -oE '"/[^"]+"' | sed -E 's/^"//; s/"$//' || true)"
 	fi
 
 	if [ -z "$NGINX_VALIDATE_FILES" ]; then
