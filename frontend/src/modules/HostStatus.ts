@@ -180,5 +180,18 @@ export const getHostStatus = (enabled: boolean, meta?: HostMeta | null): HostSta
 	return { state: "online", nginxErr: null };
 };
 
+// The order of the status column, ascending: the hosts that need attention first
+const HOST_STATE_RANK: Record<HostState, number> = { error: 0, disabled: 1, online: 2 };
+
+export const hostStatusRank = (enabled: boolean, meta?: HostMeta | null): number =>
+	HOST_STATE_RANK[getHostStatus(enabled, meta).state];
+
+interface HostRow {
+	original: { enabled: boolean; meta?: HostMeta | null };
+}
+/** sortFn of a table's status column: sorts by the status it shows, not only enabled / disabled */
+export const sortByHostStatus = (a: HostRow, b: HostRow): number =>
+	hostStatusRank(a.original.enabled, a.original.meta) - hostStatusRank(b.original.enabled, b.original.meta);
+
 /** Whether a successful save still needs the user's attention */
 export const hasSaveWarnings = (meta?: HostMeta | null) => meta?.nginxOnline === false;

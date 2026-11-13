@@ -14,6 +14,7 @@ import {
 import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
+import { sortByHostStatus } from "src/modules/HostStatus";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
 interface Props {
@@ -98,6 +99,7 @@ export default function Table({
 			columnHelper.accessor((row: any) => row.enabled, {
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
+				sortFn: sortByHostStatus,
 				cell: (info: any) => {
 					const row: ProxyHost = info.row.original;
 					return (
