@@ -287,7 +287,13 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										</div>
 									</div>
 									<div className="card-body">
-										<div className="tab-content">
+										{/* Read-only while a save is in flight: a save with warnings keeps the modal open and resets
+										    the form to the submitted values, so an edit made meanwhile would be lost */}
+										<fieldset
+											className={cn("tab-content", { "pe-none": isSubmitting })}
+											disabled={isSubmitting}
+											aria-busy={isSubmitting}
+										>
 											<div className={tabPane("details")} id="tab-details" role="tabpanel" aria-labelledby="tab-link-details">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
 												<div className="row">
@@ -490,7 +496,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													<NginxConfigField />
 												</div>
 											)}
-										</div>
+										</fieldset>
 									</div>
 								</div>
 							</Modal.Body>

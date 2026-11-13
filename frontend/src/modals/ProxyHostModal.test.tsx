@@ -268,4 +268,22 @@ describe("ProxyHostModal locations while saving", () => {
 		await waitFor(() => expect(putBodies).toHaveLength(2));
 		expect(putBodies[1].locations.map((l: any) => l.path)).toEqual(["/api2"]);
 	});
+
+	it("blocks the Details fields while a save is in flight, so no edit is lost to a save with warnings", async () => {
+		await open();
+		const input = screen.getByDisplayValue("80") as HTMLInputElement;
+		const port = () => input;
+		fireEvent.change(port(), { target: { value: "81" } });
+		let release = () => {};
+		putGate = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Save" }));
+		await waitFor(() => expect(putBodies).toHaveLength(1));
+		await waitFor(() => expect(port()).toBeDisabled());
+		await act(async () => release());
+		await screen.findByTestId("save-warning");
+		await waitFor(() => expect(port()).not.toBeDisabled());
+		expect(port()).toHaveValue(81);
+	});
 });
