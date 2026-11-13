@@ -1832,9 +1832,11 @@ const internalNginx = {
 	 */
 	configureDefaultSite: (setting) =>
 		withLock(async () => {
-			await internalNginx.deleteConfig("default");
-			await internalNginx.generateConfig("default", setting);
 			try {
+				// Inside the try: a config that fails to render (or is written only in part) is removed again and
+				// nginx reloaded, so it neither keeps the old default site nor breaks every later `nginx -t`
+				await internalNginx.deleteConfig("default");
+				await internalNginx.generateConfig("default", setting);
 				await internalNginx.reloadNginx();
 			} catch (err) {
 				await internalNginx.deleteConfig("default");
