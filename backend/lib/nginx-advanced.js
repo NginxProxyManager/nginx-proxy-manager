@@ -2,8 +2,7 @@
  * Narrow server-side check of user supplied advanced configuration (host and custom location level).
  *
  * Advanced configuration is trusted nginx configuration: whoever may edit it can do anything nginx and its
- * modules can do (lua, `set $p ...; access_log $p;`, proxy_store, ...). This check is NOT a security
- * boundary. It guards against accidental and obvious damage to other hosts' configs:
+ * modules can do (lua, proxy_store, ...). This check is NOT a security boundary. It guards against accidental and obvious damage to other hosts' configs:
  * - `access_log /data/nginx/proxy_host/2.conf;` makes nginx append log lines to another host's config
  *   (breaking it at the next test), and to /data/nginx/custom/*.conf or /etc/nginx/ (every host)
  * - `include /data/nginx/proxy_host/2.conf;` pulls another host's config into this one
@@ -21,8 +20,15 @@
  *   lets any client pick the file. `/data/logs/$host.log` is fine.
  * - access_log paths with a variable from the request ($http_*, $arg_*, $cookie_*, $uri, ...: anything but the
  *   few of REQUEST_SAFE_VARIABLES, which can't hold `/` or `..`) whose literal tail could complete a config
- *   file name (no `.` after the last variable, or a .conf/.types/_params ending), whatever the fixed part:
- *   `/data/logs$http_x` reaches `/data/nginx/proxy_host/2.conf` with `X: /../nginx/proxy_host/2.conf`.
+ *   file name (no `.` after the last variable, a `/` after it, or a .conf/.types/_params ending), whatever
+ *   the fixed part: `/data/logs$http_x` reaches `/data/nginx/proxy_host/2.conf` with `X: /../nginx/proxy_host/2.conf`.
+ * - access_log paths that start with such a variable (`$http_x`, `"$arg_f"`, `$cookie_c.log`): the client
+ *   picks the whole path, eg. `X: ../../../data/nginx/proxy_host/2.conf` (relative to /etc/nginx/nginx/).
+ *   Variables set in the same text (`set $p ...; access_log $p;`) are replaced by each value they are set to
+ *   first, so a path set from literals and REQUEST_SAFE_VARIABLES is checked like a literal path; any other
+ *   variable (set elsewhere, map, regex captures such as $1, nginx variables not listed) counts as one the
+ *   client controls.
+ * - access_log paths that climb out of a variable with `..` after it (`/data/$host/../nginx/proxy_host/2.conf`)
  *
  * Allowed, notably: relative log paths (they resolve below the nginx prefix /etc/nginx/nginx/), logs in
  * /data/logs/ or /data/nginx/custom/*.log, `off`, stderr, syslog:, `root`, `alias` and include of the user's
@@ -82,7 +88,8 @@ const isIndirect = (resolved) =>
  */
 const inManagedDir = (resolved) => MANAGED_DIRS.some((dir) => resolved.startsWith(dir) || `${resolved}/` === dir);
 
-const CONFIG_SUFFIX = /(\.conf|\.types|_params)$/;
+// .npm-aside: a config set aside during a test, which NPM puts back as the .conf at startup when that is missing
+const CONFIG_SUFFIX = /(\.conf|\.types|_params|\.npm-aside)$/;
 
 // Variables whose values can't hold `/` or `..` (nginx rejects them in Host, the others are numbers, addresses
 // or fixed words): an access_log path built from them can't be steered into another directory
@@ -203,9 +210,14 @@ const isForbiddenLogTarget = (target, directive) => {
 		const resolved = resolvePath(target, LOG_PREFIX);
 		return isIndirect(resolved) || isConfigFile(resolved);
 	}
-	if (at === 0) {
-		// `access_log $path;` can't be known, see the top of this file
-		return false;
+	const variables = [...target.matchAll(/\$(?:\{(\w*)\}|(\w*))/g)].map((m) => m[1] ?? m[2]);
+	if (at === 0 && !REQUEST_SAFE_VARIABLES.has(variables[0])) {
+		// the client picks the whole path
+		return true;
+	}
+	// `..` after a variable can leave whatever directory the variable named
+	if (/(^|\/)\.\.(\/|$)/.test(target.slice(at))) {
+		return true;
 	}
 	const fixed = target.slice(0, at);
 	const absolute = fixed.startsWith("/") ? fixed : `${LOG_PREFIX}${fixed}`;
@@ -231,10 +243,10 @@ const isForbiddenLogTarget = (target, directive) => {
 	}
 	// A variable a client fills in (eg. $http_x = "/../nginx/proxy_host/2") can leave any fixed part that is (or
 	// completes to) an existing directory: unless the tail rules out a config file name, only variables that
-	// can't hold `/` or `..` are fine
-	const variables = [...target.matchAll(/\$(?:\{(\w*)\}|(\w*))/g)].map((m) => m[1] ?? m[2]);
+	// can't hold `/` or `..` are fine. A tail with a `/` (`$http_x.d/foo`) leaves the client the directory of a
+	// file name without an extension.
 	if (
-		(!tail.includes(".") || CONFIG_SUFFIX.test(target)) &&
+		(!tail.includes(".") || tail.includes("/") || CONFIG_SUFFIX.test(target)) &&
 		variables.some((name) => !REQUEST_SAFE_VARIABLES.has(name))
 	) {
 		return true;
@@ -248,17 +260,78 @@ const isForbiddenLogTarget = (target, directive) => {
 	);
 };
 
+// at most this many paths are checked for one access_log after replacing variables set in the text
+const MAX_EXPANSIONS = 64;
+
+/**
+ * @param   {String} target  access_log path
+ * @param   {Map<String, String[]>} sets  values of the variables `set` in the same text
+ * @returns {String[]|null} the path with every variable set in the text replaced by each of its values
+ *                          (variables set to themselves, eg. `set $p $p.x`, stay), null when there are too many
+ */
+const expandSetVariables = (target, sets) => {
+	let paths = [target];
+	for (let round = 0; round < 8; round++) {
+		let changed = false;
+		const next = [];
+		for (const path of paths) {
+			const m = /\$(?:\{(\w*)\}|(\w*))/g;
+			let match = m.exec(path);
+			while (match && !sets.has(match[1] ?? match[2])) {
+				match = m.exec(path);
+			}
+			if (!match) {
+				next.push(path);
+				continue;
+			}
+			changed = true;
+			for (const value of sets.get(match[1] ?? match[2])) {
+				next.push(path.slice(0, match.index) + value + path.slice(match.index + match[0].length));
+			}
+		}
+		if (next.length > MAX_EXPANSIONS) {
+			return null;
+		}
+		paths = next;
+		if (!changed) {
+			return paths;
+		}
+	}
+	// still variables set from other set variables after 8 rounds (eg. `set $p $p.x`): check them as they are
+	return paths;
+};
+
 /**
  * @param   {String} text  advanced configuration
  * @returns {{directive: String, path: String, reason: String}|null} the first forbidden file directive
  */
 const findForbiddenFileDirective = (text) => {
-	for (const [directive, target] of tokenize(text)) {
-		if ((directive === "access_log" || directive === "error_log") && isForbiddenLogTarget(target, directive)) {
+	const statements = tokenize(text);
+	const sets = new Map();
+	const selfSet = new Set();
+	for (const [directive, name, value] of statements) {
+		if (directive === "set" && typeof name === "string" && /^\$\w+$/.test(name) && typeof value === "string") {
+			const key = name.slice(1);
+			// a variable set from itself would be replaced forever: keep it, it counts as one a client controls
+			if (new RegExp(`\\$(\\{${key}\\}|${key}(?!\\w))`).test(value)) {
+				selfSet.add(key);
+			}
+			sets.set(key, [...(sets.get(key) || []), value]);
+		}
+	}
+	for (const key of selfSet) {
+		sets.delete(key);
+	}
+	for (const [directive, target] of statements) {
+		const targets = directive === "access_log" && target ? expandSetVariables(target, sets) : [target];
+		if (
+			(directive === "access_log" || directive === "error_log") &&
+			(targets === null || targets.some((t) => isForbiddenLogTarget(t, directive)))
+		) {
 			return {
 				directive,
 				path: target,
-				reason: `${directive} can't write to "${target}": log files must not be placed where nginx reads configuration (generated host configs, *.conf files in /data/nginx/, /etc/nginx/), and a log path with a variable from the request (eg. $http_*, $arg_*, $cookie_*) must end with a file extension such as .log, use /data/logs/ instead`,
+				reason: `${directive} can't write to "${target}": log files must not be placed where nginx reads configuration (generated host configs, *.conf files in /data/nginx/, /etc/nginx/), and a log path with a variable from the request (eg. $http_*, $arg_*, $cookie_*) must start with a fixed directory and end with a file name extension such as .log, use /data/logs/ instead`,
 			};
 		}
 		if (directive === "include" && isForbiddenInclude(target)) {

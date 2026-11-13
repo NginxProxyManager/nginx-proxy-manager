@@ -93,7 +93,7 @@ Save the affected host again once the cause is fixed.
 ### File directives in advanced configuration
 
 Advanced configuration is trusted nginx configuration. Whoever may edit a host's advanced configuration can do
-anything nginx and its modules can (Lua, `proxy_store`, a log path held in a variable, ...), so only give that
+anything nginx and its modules can (Lua, `proxy_store`, ...), so only give that
 permission to people you trust with the whole proxy. NPM checks a few file directives to catch accidental and
 obvious damage to other hosts. **This check is not a security boundary.**
 
@@ -112,10 +112,18 @@ These are rejected with `400` (a validation error naming the directive):
   nginx doesn't strip `/` or `..` from them, so any client could pick the file: a header such as
   `X: /../proxy_host/1.conf` would append log lines to another host's config. Give the path a fixed ending
   instead, for example `/data/logs/$host.log`.
+- `access_log` paths with a variable from the request (`$http_*`, `$arg_*`, `$cookie_*`, `$uri`, `$args`, regex
+  captures such as `$1`, ...: anything but `$host`, `$server_name`, `$server_port`, `$server_addr`, `$remote_addr`,
+  `$remote_port`, `$scheme`, `$status`, `$request_method`, `$msec`, `$pid` and `$connection`) that start with it
+  (`$http_x`, `$http_x.log`, `$host$http_x`), don't end with a fixed file name extension after it
+  (`/data/logs$http_x`, `/data/logs/$http_x.d/access`, `/data/logs/$http_x.conf`, `/data/logs/$http_x.npm-aside`), or have `..` after a
+  variable. A variable that is `set` in the same advanced configuration counts as each value it is set to
+  (`set $log /data/logs/$host.log; access_log $log;` is fine, `set $log $http_x; access_log $log;` is not); any
+  other variable counts as one the request fills in.
 
 Allowed are, for example: logs in `/data/logs/` or `/data/nginx/custom/*.log`, relative log paths such as
-`logs/custom.log` (nginx resolves them in `/etc/nginx/nginx/`), `off`, `stderr`, `syslog:`, `/dev/stdout`, a log
-path that starts with a variable, `root`, `alias` and `include` of your own snippets (`/data/nginx/custom/*.conf`,
+`logs/custom.log` (nginx resolves them in `/etc/nginx/nginx/`), `off`, `stderr`, `syslog:`, `/dev/stdout`,
+`/data/logs/$http_x.log`, `root`, `alias` and `include` of your own snippets (`/data/nginx/custom/*.conf`,
 `/snippets/*.conf`, `conf.d/include/*.conf`).
 
 The directives are read the way nginx reads them: a quote or `#` in the middle of a word (`a"b`, `/#/x`) does not
