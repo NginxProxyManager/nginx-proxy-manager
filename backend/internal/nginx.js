@@ -744,7 +744,21 @@ const internalNginx = {
 			try {
 				outcome = await internalNginx.reloadNginx({ skipTest: true });
 			} catch (err) {
-				await model.query().where("id", host.id).patch({ meta });
+				// nginx could not be reloaded at all (eg. it is not running): it doesn't run this config yet. The
+				// config stays (nginx loads it when it starts), the host is offline with the reason and tried again
+				// later, which brings it online once nginx applies it
+				const error = internalNginx.buildConfigError(
+					"global",
+					hostType,
+					host,
+					{ message: `Could not reload nginx: ${err.message}`, file: null, line: null, output: err.message },
+					configText,
+				);
+				await model
+					.query()
+					.where("id", host.id)
+					.patch({ meta: internalNginx.buildOfflineMeta(meta, error) });
+				internalNginx.scheduleRetry(retryList([{ host_type: hostType, host_id: host.id }]));
 				throw err;
 			}
 			if (outcome?.rejected) {

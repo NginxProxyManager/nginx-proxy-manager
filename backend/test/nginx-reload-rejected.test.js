@@ -178,6 +178,30 @@ describe("a reload that nginx rejects", () => {
 		assert.equal((await row(id)).meta.nginx_online, true);
 		assert.notEqual((await row(id)).meta.nginx_checked_at, ONLINE.nginx_checked_at);
 	});
+
+	it("marks the host offline and tries it again when nginx can't be reloaded at all", async () => {
+		const id = await stream(2222, true);
+		const fakeReload = internalNginx.reloadWaiter.reloadAndWait;
+		internalNginx.reloadWaiter.reloadAndWait = async () => {
+			throw new Error("nginx: [error] invalid PID number");
+		};
+		try {
+			await assert.rejects(
+				internalNginx.configure(streamModel, "stream", await proposed(id, 3333)),
+				/invalid PID number/,
+			);
+		} finally {
+			internalNginx.reloadWaiter.reloadAndWait = fakeReload;
+		}
+		const meta = (await row(id)).meta;
+		assert.equal(meta.nginx_online, false);
+		assert.match(meta.nginx_err, /invalid PID number/);
+		assert.equal(meta.nginx_details.scope, "global");
+		// nginx loads the new config when it starts: it stays
+		assert.match(onDisk(id), /listen 3333/);
+		assert.equal(fs.existsSync(`${conf(id)}.err`), false);
+		assert.deepEqual(retries, [{ only: { stream: [id] }, attempt: 1 }]);
+	});
 });
 
 describe("a reload that nginx rejects after configs were written without reloading", () => {
