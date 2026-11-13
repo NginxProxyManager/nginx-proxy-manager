@@ -109,7 +109,9 @@ describe('Regenerate all host configs', () => {
 			cy.validateSwaggerSchema('post', 200, '/nginx/regenerate', data);
 			expect(data.checked).to.be.at.least(1);
 			expect(data.failed).to.have.length(0);
-			const types = [...data.offline, ...data.failed, ...data.warnings].map((h) => h.host_type);
+			// the selection: what was regenerated or failed. `offline` may also list hosts of other types that the
+			// final test took offline (see summariseFinal() in backend/lib/nginx-regenerate.js), so it is not checked here
+			const types = [...data.failed, ...data.warnings].map((h) => h.host_type);
 			types.forEach((type) => expect(type).to.equal('dead_host'));
 		});
 
