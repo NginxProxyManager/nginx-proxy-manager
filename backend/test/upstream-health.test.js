@@ -173,6 +173,61 @@ describe("health: resolver-only upstreams", () => {
 	});
 });
 
+describe("health: a resolver in the advanced configuration", () => {
+	// a hostname nginx resolves per request, with no resolvers.conf (DISABLE_RESOLVER)
+	const noResolverCheck = async (target) => ({
+		host: target.host,
+		port: target.port,
+		ok: false,
+		code: "no_resolver",
+		addresses: ["10.0.0.5"],
+		ms: 2,
+		lookups: { system: { ok: true, code: "ok", addresses: ["10.0.0.5"], ms: 2 }, resolver: null },
+	});
+
+	it("counts a target healthy that the host's or the location's resolver resolves", async () => {
+		const row = (id, advanced) => ({
+			id,
+			owner_user_id: 1,
+			enabled: true,
+			forward_host: "app",
+			forward_port: 80,
+			advanced_config: advanced,
+			locations: [
+				{ path: "/a", forward_host: "a", forward_port: 80, advanced_config: "resolver 127.0.0.11;" },
+				{ path: "/b", forward_host: "b", forward_port: 80 },
+			],
+			meta: {
+				nginx_locations: [
+					{ index: 0, path: "/a", status: "ok", mode: "dynamic" },
+					{ index: 1, path: "/b", status: "ok", mode: "dynamic" },
+				],
+			},
+		});
+		const monitor = new HealthMonitor({
+			getInterval: () => 60,
+			loadRows: async () => ({
+				proxyHosts: [row(41, ""), row(42, "resolver 127.0.0.11 valid=10s;")],
+				streams: [],
+			}),
+			check: noResolverCheck,
+		});
+		await monitor.runOnce();
+		const all = monitor.snapshot({ proxy_host: () => true, stream: () => true });
+		const codes = (id) => all.hosts.proxy_host[id].targets.map((t) => [t.location_index, t.ok, t.code]);
+		assert.deepEqual(codes("41"), [
+			[null, false, "no_resolver"],
+			[0, true, "ok"],
+			[1, false, "no_resolver"],
+		]);
+		assert.deepEqual(codes("42"), [
+			[null, true, "ok"],
+			[0, true, "ok"],
+			[1, true, "ok"],
+		]);
+	});
+});
+
 describe("health: variable forward paths", () => {
 	const mismatchCheck = async (target) => ({
 		ok: true,

@@ -1,5 +1,5 @@
 import { forResolverTarget } from "./check.js";
-import { createLimiter, isVariableHost, splitHostPath } from "./util.js";
+import { createLimiter, hostSetsResolver, isVariableHost, splitHostPath } from "./util.js";
 
 /**
  * Background upstream health monitor. In memory only: nothing is written to the database.
@@ -68,7 +68,8 @@ const savedLocationStates = (meta) => {
  *
  * `resolver` tells whether nginx resolves the target per request (only through its own `resolver`): the main
  * target of a proxy host always (proxy_pass $server), a custom location in dynamic mode or with a variable forward
- * path (`variable_path`, whatever its mode), a stream never.
+ * path (`variable_path`, whatever its mode), a stream never. `custom_resolver` is set when the host's or the
+ * location's advanced configuration sets a `resolver` that nginx uses for it, see hostSetsResolver().
  *
  * @param   {object} rows
  * @param   {Array}  [rows.proxyHosts]  enabled, non-deleted proxy hosts
@@ -88,7 +89,11 @@ const buildHealthTargets = ({ proxyHosts = [], streams = [] } = {}) => {
 		const port = toPort(row.forward_port);
 		// A variable upstream (`$backend`) is resolved by nginx per request and can't be probed
 		if (host && port && !isVariableHost(host)) {
-			targets.push({ location_index: null, host, port, scheme: row.forward_scheme, resolver: true });
+			const target = { location_index: null, host, port, scheme: row.forward_scheme, resolver: true };
+			if (hostSetsResolver(row)) {
+				target.custom_resolver = true;
+			}
+			targets.push(target);
 		}
 		(Array.isArray(row.locations) ? row.locations : []).forEach((location, index) => {
 			if (!location || location.enabled === false || !location.forward_host || !location.forward_port) {
@@ -110,6 +115,9 @@ const buildHealthTargets = ({ proxyHosts = [], streams = [] } = {}) => {
 			};
 			if (variablePath) {
 				target.variable_path = true;
+			}
+			if (hostSetsResolver(row, index)) {
+				target.custom_resolver = true;
 			}
 			targets.push(target);
 		});
@@ -245,7 +253,12 @@ class HealthMonitor {
 			hosts.map(async (entry) => {
 				const targets = await Promise.all(
 					entry.targets.map(async (target) => {
-						const result = forResolverTarget(await probe(target), target, target.resolver);
+						const result = forResolverTarget(
+							await probe(target),
+							target,
+							target.resolver,
+							target.custom_resolver || undefined,
+						);
 						const out = {
 							location_index: target.location_index,
 							host: target.host,

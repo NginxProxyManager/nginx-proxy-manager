@@ -189,7 +189,7 @@ const MESSAGES = {
 	resolver_mismatch: (t, r) =>
 		`${describeHost(t.host, t.port)} is reachable${typeof r.ms === "number" ? ` (${formatMs(r.ms)})` : ""}, but "${t.host}" only resolves through /etc/hosts or a resolv.conf search domain, not through nginx's DNS resolver. It works only with a static (load-time) upstream.`,
 	no_resolver: (t, r) =>
-		`${describeHost(t.host, t.port)} is reachable${typeof r.ms === "number" ? ` (${formatMs(r.ms)})` : ""}, but nginx resolves this upstream per request and has no DNS resolver (DISABLE_RESOLVER is set and the custom http config sets none): requests fail. Use an IP address or enable the resolver.`,
+		`${describeHost(t.host, t.port)} is reachable${typeof r.ms === "number" ? ` (${formatMs(r.ms)})` : ""}, but nginx resolves this upstream per request and has no DNS resolver (DISABLE_RESOLVER is set and neither the custom config nor the advanced configuration sets one): requests fail. Use an IP address, enable the resolver or set a resolver in the advanced configuration.`,
 	// resolver_mismatch of a target nginx resolves per request, see forResolverTarget()
 	resolver_required: (t, r) =>
 		`${describeHost(t.host, t.port)} is reachable${typeof r.ms === "number" ? ` (${formatMs(r.ms)})` : ""}, but "${t.host}" only resolves through /etc/hosts or a resolv.conf search domain. nginx resolves this upstream per request through its DNS resolver, which doesn't find it: requests fail. Use a name the resolver finds (eg. the container name on a shared Docker network) or an IP address.`,
@@ -285,15 +285,16 @@ const lookupOutcome = (view, tcp) => {
  * - `needsResolver === true`: nginx resolves the target per request through its `resolver` only (a proxy_pass with
  *   a variable). Only the resolver's addresses count; one that only resolves through /etc/hosts or a search
  *   domain is a resolver_mismatch and not ok. Without any resolver (DISABLE_RESOLVER, and none in the custom
- *   http config) nginx can't resolve a name at all: no_resolver, not ok. With a resolver only in the custom http
- *   config (not probed) the system view stands in.
+ *   http or server_proxy config or in the host's or location's advanced configuration) nginx can't resolve a name
+ *   at all: no_resolver, not ok. With a resolver only there (not probed) the system view stands in.
  * - `needsResolver === false`: a literal proxy_pass, resolved by the system at config load. Only the system's
  *   addresses count; a name nginx's resolver doesn't know is a resolver_mismatch that stays ok.
  * - otherwise (the mode is not known): every method that found the name has to reach it.
  *
  * @param   {{system: object, resolver: object|null}} lookups  lookupOutcome() of each method
  * @param   {boolean|undefined} needsResolver
- * @param   {boolean} [customResolver]  the custom http config sets a resolver, see hasCustomResolver()
+ * @param   {boolean} [customResolver]  a resolver from the custom config or the advanced configuration serves the
+ *          target, see hasCustomResolver() and hostSetsResolver()
  * @returns {{ok: boolean, code: string, ms: number|null, required?: boolean}}
  */
 const combineLookups = ({ system, resolver }, needsResolver, customResolver = false) => {
@@ -447,7 +448,8 @@ const resultFromLookups = (target, { lookups, ...fields }, needsResolver, custom
  * @param   {object}  result          from checkTarget()
  * @param   {object}  target          {host, port}
  * @param   {boolean} needsResolver   nginx resolves the target per request
- * @param   {boolean} [customResolver]  see combineLookups(); read from the custom http config when not given
+ * @param   {boolean} [customResolver]  see combineLookups(); read from the custom http and server_proxy config
+ *          when not given
  * @returns {object}  the result for that method (a copy)
  */
 const forResolverTarget = (result, target, needsResolver, customResolver) => {

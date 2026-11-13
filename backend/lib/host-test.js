@@ -197,7 +197,8 @@ const mergeTargetResults = (targets, results, locations = null) =>
 				? target.resolver !== false
 				: target.variable_path === true ||
 					(Array.isArray(locations) ? isDynamicLocation(locations, target.location_index) : !!target.resolver);
-		return Object.assign({}, forResolverTarget(results[index], target, needsResolver), {
+		const result = forResolverTarget(results[index], target, needsResolver, target.custom_resolver || undefined);
+		return Object.assign({}, result, {
 			location_index: target.location_index ?? null,
 			path: typeof target.path === "string" ? target.path : null,
 		});

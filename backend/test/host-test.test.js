@@ -75,6 +75,50 @@ describe("buildTestTargets", () => {
 });
 
 describe("mergeTargetResults", () => {
+	it("keeps a target ok that a resolver in the host's or the location's advanced configuration resolves", () => {
+		const found = { ok: true, code: "ok", addresses: ["10.0.0.5"], ms: 2 };
+		const noResolver = (host) => ({
+			host,
+			port: 80,
+			ok: false,
+			code: "no_resolver",
+			addresses: ["10.0.0.5"],
+			system_ok: true,
+			resolver_ok: null,
+			ms: 2,
+			lookups: { system: found, resolver: null },
+		});
+		const host = (advanced) => ({
+			forward_host: "app",
+			forward_port: 80,
+			advanced_config: advanced,
+			locations: [
+				{ path: "/a", forward_host: "a", forward_port: 80, advanced_config: "resolver 127.0.0.11;" },
+				{ path: "/b", forward_host: "b", forward_port: 80 },
+			],
+		});
+		const states = [
+			{ index: 0, path: "/a", status: "ok", mode: "dynamic" },
+			{ index: 1, path: "/b", status: "ok", mode: "dynamic" },
+		];
+		const codes = (advanced) =>
+			mergeTargetResults(
+				buildTestTargets("proxy_host", host(advanced)),
+				[noResolver("app"), noResolver("a"), noResolver("b")],
+				states,
+			).map((r) => [r.location_index, r.ok, r.code]);
+		assert.deepEqual(codes(""), [
+			[null, false, "no_resolver"],
+			[0, true, "ok"],
+			[1, false, "no_resolver"],
+		]);
+		assert.deepEqual(codes("resolver 127.0.0.11 valid=10s;"), [
+			[null, true, "ok"],
+			[0, true, "ok"],
+			[1, true, "ok"],
+		]);
+	});
+
 	it("adds the location of each target to its result", () => {
 		const merged = mergeTargetResults(
 			[

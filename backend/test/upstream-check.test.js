@@ -15,7 +15,7 @@ import {
 	targetKey,
 	tcpConnect,
 } from "../lib/upstream/check.js";
-import { hasCustomResolver } from "../lib/upstream/util.js";
+import { hasCustomResolver, hostSetsResolver } from "../lib/upstream/util.js";
 
 const listen = (server) =>
 	new Promise((resolve) => {
@@ -457,6 +457,32 @@ describe("upstream check: no nginx resolver (DISABLE_RESOLVER)", () => {
 		}
 	});
 
+	it("finds a resolver in a host's or a custom location's advanced configuration", () => {
+		const host = {
+			advanced_config: "",
+			locations: [{ advanced_config: "resolver 127.0.0.11;" }, { advanced_config: "proxy_set_header X y;" }],
+		};
+		assert.equal(hostSetsResolver(host), false);
+		// a location's resolver only serves that location
+		assert.equal(hostSetsResolver(host, 0), true);
+		assert.equal(hostSetsResolver(host, 1), false);
+		// the host's (server level) serves the main target and every location
+		const server = { ...host, advanced_config: "client_max_body_size 1m;\nresolver 1.1.1.1 valid=30s;" };
+		assert.equal(hostSetsResolver(server), true);
+		assert.equal(hostSetsResolver(server, 1), true);
+		// not in a nested location, a comment, a string or a Lua block
+		for (const text of [
+			"location /x {\n  resolver 1.1.1.1;\n}",
+			"# resolver 1.1.1.1;",
+			'add_header X "resolver 1.1.1.1;";',
+			"content_by_lua_block {\n  ngx.say('resolver 1.1.1.1;')\n}",
+		]) {
+			assert.equal(hostSetsResolver({ advanced_config: text }), false, text);
+		}
+		assert.equal(hostSetsResolver(null), false);
+		assert.equal(hostSetsResolver({ advanced_config: null, locations: [{}] }, 0), false);
+	});
+
 	it("finds a resolver in the custom http config", () => {
 		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "npm-custom-resolver-"));
 		try {
@@ -469,6 +495,10 @@ describe("upstream check: no nginx resolver (DISABLE_RESOLVER)", () => {
 			// only at the http level
 			fs.writeFileSync(http, "server {\n  resolver 127.0.0.11;\n}\n");
 			assert.equal(hasCustomResolver([top, http]), false);
+			// or at the server level of every proxy host
+			const serverProxy = path.join(dir, "server_proxy.conf");
+			fs.writeFileSync(serverProxy, "resolver 127.0.0.11 ipv6=off;\n");
+			assert.equal(hasCustomResolver([top, http, serverProxy]), true);
 		} finally {
 			fs.rmSync(dir, { recursive: true, force: true });
 		}
