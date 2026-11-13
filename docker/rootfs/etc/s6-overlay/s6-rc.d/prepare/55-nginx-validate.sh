@@ -51,6 +51,31 @@ NGINX_VALIDATE_MAX=100
 NGINX_VALIDATE_COUNT=0
 NGINX_VALIDATE_HOSTS='/data/nginx/(proxy_host|redirection_host|dead_host|stream)/[0-9]+\.conf'
 
+# awk program: succeeds when the file mentions the path in ENVIRON["NGINX_VALIDATE_P"] outside
+# of comments. Read like nginx does (see lib/nginx-tokenize.js in the backend): `#` starts a
+# comment only at the start of a token, so it is part of `/data/certs/#old.pem` and of a quoted
+# path like "/data/logs/#x/access.log".
+NGINX_VALIDATE_MENTIONS='
+BEGIN { p = ENVIRON["NGINX_VALIDATE_P"] }
+{
+	out = ""; q = ""; start = 1
+	for (i = 1; i <= length($0); i++) {
+		c = substr($0, i, 1)
+		if (q != "") {
+			out = out c
+			if (c == "\\") { i++; out = out substr($0, i, 1) } else if (c == q) { q = "" }
+			start = 0
+			continue
+		}
+		if (c == "#" && start) break
+		if ((c == "\"" || c == "\047") && start) q = c
+		out = out c
+		start = (c == " " || c == "\t" || c == ";" || c == "{" || c == "}")
+	}
+	if (index(out, p)) found = 1
+}
+END { exit !found }'
+
 # Runs nginx -t as PUID:PGID, prints the output
 nginx_validate_test() {
 	s6-setuidgid "$PUID:$PGID" nginx -t -g 'error_log /dev/null;' 2>&1 || true
@@ -112,7 +137,7 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 			NGINX_VALIDATE_CANDIDATES=()
 			while IFS= read -r NGINX_VALIDATE_CANDIDATE; do
 				[ -n "$NGINX_VALIDATE_CANDIDATE" ] || continue
-				if awk -v p="$NGINX_VALIDATE_PATH" '{ sub(/#.*/, "") } index($0, p) { found = 1 } END { exit !found }' "$NGINX_VALIDATE_CANDIDATE"; then
+				if NGINX_VALIDATE_P="$NGINX_VALIDATE_PATH" awk "$NGINX_VALIDATE_MENTIONS" "$NGINX_VALIDATE_CANDIDATE"; then
 					NGINX_VALIDATE_CANDIDATES+=("$NGINX_VALIDATE_CANDIDATE")
 				fi
 			done <<<"$(grep -lF -- "$NGINX_VALIDATE_PATH" /data/nginx/proxy_host/*.conf /data/nginx/redirection_host/*.conf /data/nginx/dead_host/*.conf /data/nginx/stream/*.conf 2>/dev/null || true)"
@@ -181,4 +206,4 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 done
 
 unset -f nginx_validate_test nginx_validate_error nginx_validate_fixes nginx_validate_test_aside
-unset NGINX_VALIDATE_MAX NGINX_VALIDATE_COUNT NGINX_VALIDATE_HOSTS NGINX_VALIDATE_OUTPUT NGINX_VALIDATE_ERROR NGINX_VALIDATE_FILES NGINX_VALIDATE_FILE NGINX_VALIDATE_PATH NGINX_VALIDATE_CANDIDATE NGINX_VALIDATE_CANDIDATES NGINX_VALIDATE_GROUP NGINX_VALIDATE_REST NGINX_VALIDATE_RETRY NGINX_VALIDATE_ASIDE NGINX_VALIDATE_CONF NGINX_VALIDATE_MOVED
+unset NGINX_VALIDATE_MENTIONS NGINX_VALIDATE_P NGINX_VALIDATE_MAX NGINX_VALIDATE_COUNT NGINX_VALIDATE_HOSTS NGINX_VALIDATE_OUTPUT NGINX_VALIDATE_ERROR NGINX_VALIDATE_FILES NGINX_VALIDATE_FILE NGINX_VALIDATE_PATH NGINX_VALIDATE_CANDIDATE NGINX_VALIDATE_CANDIDATES NGINX_VALIDATE_GROUP NGINX_VALIDATE_REST NGINX_VALIDATE_RETRY NGINX_VALIDATE_ASIDE NGINX_VALIDATE_CONF NGINX_VALIDATE_MOVED
