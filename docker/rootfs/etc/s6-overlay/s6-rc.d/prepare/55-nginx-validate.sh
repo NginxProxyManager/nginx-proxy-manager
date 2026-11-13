@@ -84,9 +84,15 @@ nginx_validate_test() {
 	s6-setuidgid "$PUID:$PGID" nginx -t -g 'error_log /dev/null;' 2>&1 || true
 }
 
+# Drops the docker startup alert about /var/log/nginx/error.log (always a false positive). Real
+# errors that mention that path (a host's own error_log) are kept, they name the broken host.
+nginx_validate_clean() {
+	grep -vE '\[alert\].*could not open error log file: open\(\) "/var/log/nginx/error\.log"' || true
+}
+
 # Prints the first error line (emerg/alert/crit) of nginx -t output given as $1
 nginx_validate_error() {
-	echo "$1" | grep -v '/var/log/nginx/error.log' | grep -E '\[(emerg|alert|crit)\]' | head -n 1 || true
+	echo "$1" | nginx_validate_clean | grep -E '\[(emerg|alert|crit)\]' | head -n 1 || true
 }
 
 # Succeeds when the nginx -t output given as $1 no longer fails because of the path $2:
@@ -182,7 +188,7 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 
 	if [ -z "$NGINX_VALIDATE_FILES" ]; then
 		log_error 'nginx config test failed and no host config could be blamed:'
-		echo "$NGINX_VALIDATE_OUTPUT" | grep -v '/var/log/nginx/error.log' >&2 || true
+		echo "$NGINX_VALIDATE_OUTPUT" | nginx_validate_clean >&2
 		break
 	fi
 
@@ -202,12 +208,12 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 
 	if [ "$NGINX_VALIDATE_MOVED" -eq 0 ]; then
 		log_error 'nginx config test failed and the blamed host config could not be moved:'
-		echo "$NGINX_VALIDATE_OUTPUT" | grep -v '/var/log/nginx/error.log' >&2 || true
+		echo "$NGINX_VALIDATE_OUTPUT" | nginx_validate_clean >&2
 		break
 	fi
 
 	NGINX_VALIDATE_COUNT=$((NGINX_VALIDATE_COUNT + 1))
 done
 
-unset -f nginx_validate_test nginx_validate_error nginx_validate_fixes nginx_validate_test_aside
+unset -f nginx_validate_test nginx_validate_clean nginx_validate_error nginx_validate_fixes nginx_validate_test_aside
 unset NGINX_VALIDATE_MENTIONS NGINX_VALIDATE_P NGINX_VALIDATE_MAX NGINX_VALIDATE_COUNT NGINX_VALIDATE_HOSTS NGINX_VALIDATE_OUTPUT NGINX_VALIDATE_ERROR NGINX_VALIDATE_FILES NGINX_VALIDATE_FILE NGINX_VALIDATE_PATH NGINX_VALIDATE_CANDIDATE NGINX_VALIDATE_CANDIDATES NGINX_VALIDATE_GROUP NGINX_VALIDATE_REST NGINX_VALIDATE_RETRY NGINX_VALIDATE_ASIDE NGINX_VALIDATE_CONF NGINX_VALIDATE_MOVED
