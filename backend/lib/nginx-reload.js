@@ -234,8 +234,10 @@ const createReloadWaiter = (opts) => {
 	 */
 	const reloadAndWait = async () => {
 		const master = await readMasterPid();
-		const before = master ? await childPids(master) : null;
+		// The log baseline first: a worker that crashes after the child snapshot below has its crash alert after
+		// the offset, so its replacement counts as a restart, not as a fresh child of the reload
 		const logOffset = master ? await errorLogSize() : null;
+		const before = master ? await childPids(master) : null;
 		await opts.signal();
 		if (!master) {
 			// Nothing was running that could still be reading the config

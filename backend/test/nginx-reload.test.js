@@ -319,6 +319,47 @@ describe("createReloadWaiter", () => {
 			assert.equal(outcome.rejected, undefined);
 			assert.equal(outcome.waitedMs, 1000);
 		});
+
+		it("counts a worker that crashes while the baselines are taken as a restart", async () => {
+			const nginx = fakeNginx([101]);
+			const clock = fakeClock();
+			const errorLog = path.join(path.dirname(nginx.pidFile), "fallback_error.log");
+			fs.writeFileSync(errorLog, "");
+			// the only worker crashes right after the first of the two baselines (log size, child pids) is read
+			const { stat, readdir } = fs.promises;
+			let crashed = false;
+			const crashOnce = () => {
+				if (!crashed) {
+					crashed = true;
+					nginx.removeProcess(101);
+					nginx.addProcess(103, 100);
+					fs.appendFileSync(errorLog, "2026/11/05 10:00:01 [alert] 100#100: worker process 101 exited on signal 11\n");
+				}
+			};
+			fs.promises.stat = async (...args) => {
+				const out = await stat(...args);
+				if (args[0] === errorLog) {
+					crashOnce();
+				}
+				return out;
+			};
+			fs.promises.readdir = async (...args) => {
+				const out = await readdir(...args);
+				if (args[0] === nginx.procDir) {
+					crashOnce();
+				}
+				return out;
+			};
+			try {
+				const outcome = await waiterFor(nginx, clock, errorLog, () => {}).reloadAndWait();
+				// the master never applied the reload: the restarted worker must not confirm it
+				assert.equal(outcome.confirmed, false);
+				assert.equal(outcome.waitedMs, 1000);
+			} finally {
+				fs.promises.stat = stat;
+				fs.promises.readdir = readdir;
+			}
+		});
 	});
 
 	describe("a worker that crashed and was restarted while the reload is rejected", () => {
