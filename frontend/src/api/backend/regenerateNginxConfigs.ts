@@ -8,6 +8,7 @@ import type { NginxHostType, NginxRegenerateResult } from "./models";
 export async function regenerateNginxConfigs(hostTypes?: NginxHostType[]): Promise<NginxRegenerateResult> {
 	return await api.post({
 		url: "/nginx/regenerate",
-		data: hostTypes?.length ? { hostTypes } : {},
+		// an explicit [] goes out as it is: the API refuses it (400), it must not mean "all types"
+		data: hostTypes === undefined ? {} : { hostTypes },
 	});
 }
