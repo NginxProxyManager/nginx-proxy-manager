@@ -80,6 +80,30 @@ describe("nginx errors in the UI language", () => {
 		expect(error).not.toHaveTextContent(ENGLISH);
 	});
 
+	it("German: the save warning and the status popover of an offline host show the recovery hint", async () => {
+		changeLocale("de");
+		render(<SaveWarning meta={meta} onClose={() => {}} />);
+		expect(screen.getByTestId("save-warning")).toHaveTextContent("Prüfe die Schreibweise der Direktive.");
+		cleanup();
+		const popover = await openPopover(meta);
+		expect(popover).toHaveTextContent("Prüfe die Schreibweise der Direktive.");
+	});
+
+	it("English: the status popover shows the hint of a certificate that can't be loaded", async () => {
+		const popover = await openPopover({
+			nginxOnline: false,
+			nginxErr: "Cannot load certificate.",
+			nginxDetails: {
+				kind: "nginx_config",
+				scope: "host",
+				detail: "Cannot load certificate",
+				hintCode: "certificate_load",
+			},
+		});
+		expect(popover).toHaveTextContent(/Cannot load certificate/);
+		expect(popover).toHaveTextContent("Select another certificate or renew it.");
+	});
+
 	it("German: an error toast is one line, translated prefix then nginx's error", () => {
 		changeLocale("de");
 		const err = new ApiError(ENGLISH, { status: 400, details: advanced });

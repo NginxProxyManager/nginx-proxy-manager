@@ -44,12 +44,18 @@ interface HostNginxErrorProps {
 	meta?: HostMeta | null;
 	// classes of the line with nginx's error
 	detailClassName?: string;
+	// classes of the line with the hint how to fix it
+	hintClassName?: string;
 }
 /**
  * Why nginx did not load a host (meta.nginxErr), in the UI language with
- * nginx's error as an untranslated second line
+ * nginx's error as an untranslated second line and the hint how to fix it
  */
-export function HostNginxError({ meta, detailClassName = "d-block text-break" }: HostNginxErrorProps) {
+export function HostNginxError({
+	meta,
+	detailClassName = "d-block text-break",
+	hintClassName = "d-block text-secondary small mt-1",
+}: HostNginxErrorProps) {
 	const described = describeNginxError(meta?.nginxDetails);
 	if (!described) {
 		return meta?.nginxErr ? <span className="d-block text-break">{meta.nginxErr}</span> : null;
@@ -58,6 +64,11 @@ export function HostNginxError({ meta, detailClassName = "d-block text-break" }:
 		<>
 			<span className="d-block text-break">{described.text}</span>
 			{described.detail ? <span className={detailClassName}>{described.detail}</span> : null}
+			{described.hint ? (
+				<span className={hintClassName} data-testid="host-nginx-hint">
+					{described.hint}
+				</span>
+			) : null}
 		</>
 	);
 }
