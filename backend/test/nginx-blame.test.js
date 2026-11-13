@@ -32,6 +32,16 @@ describe("mentionsPath", () => {
 		assert.equal(mentionsPath(`  access_log ${CERT};`, CERT), true);
 		assert.equal(mentionsPath(`  # ssl_certificate ${CERT};`, CERT), false);
 	});
+
+	it("reads `#` as nginx does: a comment only at the start of a token", () => {
+		assert.equal(mentionsPath("ssl_certificate /a/#old.pem;", "/a/#old.pem"), true);
+		assert.equal(mentionsPath('ssl_certificate_key "/q/#k.pem";', "/q/#k.pem"), true);
+		assert.equal(mentionsPath("return 200; # /x/y.log", "/x/y.log"), false);
+	});
+
+	it("matches a quoted path with a space", () => {
+		assert.equal(mentionsPath('access_log "/data/logs/my site.log";', "/data/logs/my site.log"), true);
+	});
 });
 
 describe("attributeToHostFile", () => {
@@ -62,6 +72,39 @@ describe("errorPaths", () => {
 	it("extracts quoted absolute paths", () => {
 		assert.deepEqual(errorPaths(LOG_ERROR.message), [LOG]);
 		assert.deepEqual(errorPaths("no paths here"), []);
+	});
+
+	it("keeps spaces and # in a quoted path, as nginx prints it", () => {
+		assert.deepEqual(errorPaths('open() "/data/logs/my site.log" failed (2: No such file or directory)'), [
+			"/data/logs/my site.log",
+		]);
+		assert.deepEqual(errorPaths('cannot load certificate "/t/a b/#c.pem": BIO_new_file() failed'), [
+			"/t/a b/#c.pem",
+		]);
+	});
+});
+
+describe("a quoted error path with a space", () => {
+	const SPACED = "/data/logs/my site.log";
+	const spacedError = { file: null, line: null, message: `open() "${SPACED}" failed (2: No such file)`, output: "" };
+
+	it("blames the host being saved when its config writes that log", () => {
+		const own = { file: "/data/nginx/proxy_host/1.conf", text: `access_log "${SPACED}";` };
+		assert.equal(attributeToHostFile(spacedError, own).file, own.file);
+	});
+
+	it("finds the other host whose config mentions it", async () => {
+		const files = [
+			{ file: "/data/nginx/proxy_host/5.conf", text: `access_log "${SPACED}" proxy;` },
+			{ file: "/data/nginx/dead_host/3.conf", text: "return 404;" },
+		];
+		const result = await blameUnattributed(spacedError, {
+			listFiles: () => files,
+			testWithoutCandidate: async (file) =>
+				file === files[0].file ? { ok: true } : { ok: false, parsed: spacedError },
+		});
+		assert.equal(result.action, "heal");
+		assert.equal(result.other.host_id, 5);
 	});
 });
 

@@ -10,21 +10,27 @@
  */
 
 import { parseManagedFile } from "./nginx-errors.js";
+import { scanNginxConfig } from "./nginx-tokenize.js";
 
 /**
  * @param   {String} message  nginx error message
  * @returns {String[]} the absolute paths quoted in the message, eg. the log file of
  *                     `open() "/data/logs/proxy-host-5_access.log" failed (13: Permission denied)`
  */
-const errorPaths = (message) => [...`${message || ""}`.matchAll(/"(\/[^"\s]+)"/g)].map((m) => m[1]);
+// nginx quotes the path as it is, spaces included (a path written quoted in the config can have them)
+const errorPaths = (message) => [...`${message || ""}`.matchAll(/"(\/[^"\n]+)"/g)].map((m) => m[1]);
 
 /**
  * @param   {String} configText
  * @param   {String} path
- * @returns {boolean} true when the config (not counting comments) mentions the path
+ * @returns {boolean} true when the config (not counting comments) mentions the path. Read with nginx's own
+ *          rules (lib/nginx-tokenize.js): `#` starts a comment only at the start of a token, so it is part of
+ *          `/a/#old.pem` and of a quoted path, and quoted tokens are unescaped, as nginx prints them.
  */
 const mentionsPath = (configText, path) =>
-	`${configText || ""}`.split("\n").some((line) => line.replace(/#.*$/, "").includes(path));
+	scanNginxConfig(`${configText || ""}`).statements.some((statement) =>
+		statement.tokens.some((token) => token.includes(path)),
+	);
 
 /**
  * Some errors (eg. `cannot load certificate "/etc/letsencrypt/live/npm-1/fullchain.pem"` or
