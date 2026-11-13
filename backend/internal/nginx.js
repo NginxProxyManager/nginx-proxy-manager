@@ -993,7 +993,9 @@ const internalNginx = {
 	 * now. When nginx rejects the reload with the unserved configs aside as well, they are not the cause: with
 	 * opts.offlineOnGlobal they stay aside and their hosts are marked offline with that reason (nginx doesn't
 	 * run them), otherwise they are put back. The served configs then stay on disk and nginx keeps running its
-	 * previous config.
+	 * previous config. The same holds when a reload throws (nginx could not be reloaded at all) in any step: the
+	 * configs of opts.unserved that are not offline yet are offline with the reload error (or put back), and the
+	 * result is not applied, with that error as its global reason.
 	 *
 	 * Never throws. Only call this while holding the lock.
 	 *
@@ -1057,6 +1059,25 @@ const internalNginx = {
 			} catch (err) {
 				logger.error(`Could not mark ${hostLabel(type, { id })} offline: ${err.message}`);
 			}
+		};
+		// A reload threw (nginx could not be reloaded at all, see reloadFailure()): nginx keeps running its previous
+		// config, so it runs none of the configs of opts.unserved in `list`, whether they are on disk or aside now.
+		// As when nginx rejects the reload without them, they are offline (aside, tried again later) with
+		// opts.offlineOnGlobal, or back on disk. The served configs stay as they are, and the result is not applied.
+		const abortUnserved = async (list) => {
+			const failure = reloadFailure();
+			for (const entry of list.filter((e) => unserved.has(e.filename))) {
+				if (opts.offlineOnGlobal) {
+					if (fs.existsSync(entry.filename)) {
+						internalNginx.renameConfigAsErrorSync(entry.filename);
+					}
+					await takeOffline(entry, "global", failure);
+				} else {
+					putBack(entry);
+				}
+			}
+			result.global = failure;
+			return result;
 		};
 
 		// 1. the configs nginx names: the ones that listen on an address it could not bind, and the file its
@@ -1187,7 +1208,8 @@ const internalNginx = {
 			await takeOffline(entry, "host", entry.outcome);
 		}
 		if (!last) {
-			return result;
+			// the configs not set aside for a reason nginx gave, see abortUnserved()
+			return abortUnserved(remaining);
 		}
 		if (!last.rejected) {
 			result.applied = true;
@@ -1204,8 +1226,11 @@ const internalNginx = {
 			internalNginx.renameConfigAsErrorSync(entry.filename);
 		}
 		const without = await reload();
-		if (!without || without.rejected) {
-			if (without && opts.offlineOnGlobal) {
+		if (!without) {
+			return abortUnserved(candidates);
+		}
+		if (without.rejected) {
+			if (opts.offlineOnGlobal) {
 				for (const entry of candidates) {
 					await takeOffline(entry, "global", without);
 				}
@@ -1214,7 +1239,7 @@ const internalNginx = {
 					putBack(entry);
 				}
 			}
-			result.global = without || reloadFailure();
+			result.global = without;
 			return result;
 		}
 		// Bisects: a group nginx applies stays, a group it rejects goes aside again (nginx keeps running the files
@@ -1264,22 +1289,9 @@ const internalNginx = {
 			await splitGroup(candidates);
 		}
 		if (aborted) {
-			// Whether nginx runs the configs not settled yet (the group of the reload that threw, which is on disk,
-			// and the groups not tried yet, which are aside) is unknown: as when nginx rejects the reload without
-			// them, they are offline (aside, tried again later) or back on disk, and the result is not applied
-			const failure = reloadFailure();
-			for (const entry of candidates.filter((c) => !settled.has(c))) {
-				if (opts.offlineOnGlobal) {
-					if (fs.existsSync(entry.filename)) {
-						internalNginx.renameConfigAsErrorSync(entry.filename);
-					}
-					await takeOffline(entry, "global", failure);
-				} else {
-					putBack(entry);
-				}
-			}
-			result.global = failure;
-			return result;
+			// the configs not settled yet: the group of the reload that threw (on disk) and the groups not tried
+			// yet (aside), see abortUnserved()
+			return abortUnserved(candidates.filter((c) => !settled.has(c)));
 		}
 		result.applied = true;
 		return result;

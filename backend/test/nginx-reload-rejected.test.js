@@ -954,4 +954,62 @@ describe("a reload that throws while looking for the rejected configs", () => {
 			assert.deepEqual((await row(id)).meta, ONLINE);
 		}
 	});
+
+	// a startup reconcile pass over a served stream (its config on disk, nginx runs it) and two new ones, where
+	// nginx rejects the reload naming `emerg` and then can't be reloaded at all
+	const reconcileFailing = async (emerg) => {
+		const served = await stream(5555, true);
+		const busy = await stream(3333, false);
+		const other = await stream(2222, false);
+		sequence([rejected(emerg), new Error('nginx: [alert] could not open "/run/nginx/nginx.pid" (2: No such file)')]);
+		const summary = await internalNginx.reconcile({ only: { stream: [served, busy, other] } });
+		assert.equal(reloads.length, 2);
+		assert.equal(summary.regenerated, 1);
+		assert.equal(summary.offline, 2);
+		// nginx never loaded the new configs: aside, offline with the reload error and tried again later
+		const unserved = [busy, other].sort((a, b) => a - b);
+		assert.deepEqual([...summary.retry.stream].sort((a, b) => a - b), unserved);
+		assert.equal(retries.length, 1);
+		assert.equal(retries[0].attempt, 1);
+		assert.deepEqual([...retries[0].only.stream].sort((a, b) => a - b), unserved);
+		for (const id of unserved) {
+			assert.equal(onDisk(id), null, `stream ${id} is aside`);
+			assert.notEqual(errFile(id), null, `stream ${id} is aside`);
+			const meta = (await row(id)).meta;
+			assert.equal(meta.nginx_online, false, `stream ${id} is offline`);
+			assert.equal(meta.nginx_details.scope, "global");
+			assert.match(meta.nginx_details.nginx_output, /Could not reload nginx: .*nginx\.pid/);
+		}
+		// the config nginx serves stays as it is
+		assert.match(onDisk(served), /listen 5555/);
+		assert.equal(errFile(served), null);
+		assert.equal((await row(served)).meta.nginx_online, true);
+	};
+
+	it("takes the configs nginx doesn't run offline and tries them again when it can't be reloaded while it sets aside the config it names", async () => {
+		// nginx names the address of the new stream on 3333: it is set aside, then the reload throws
+		await reconcileFailing(BUSY);
+	});
+
+	it("takes the configs nginx doesn't run offline and tries them again when it can't be reloaded with them all aside", async () => {
+		// nginx names nothing: all new configs are set aside together, then the reload throws
+		await reconcileFailing("could not apply the config");
+	});
+
+	it("reports a reload that throws while setting aside the config nginx names as not applied", async () => {
+		const served = await stream(5555, true);
+		const busy = await stream(3333, true);
+		sequence([new Error("nginx is not running")]);
+		const result = await internalNginx.isolateRejectedReload([conf(served), conf(busy)], {
+			outcome: rejected(),
+			unserved: [conf(busy)],
+			previous: new Map([[conf(served), onDisk(served)]]),
+			offlineOnGlobal: true,
+		});
+		assert.equal(result.applied, false);
+		assert.match(result.global.reason, /Could not reload nginx: nginx is not running/);
+		assert.deepEqual(result.offline, [{ host_type: "stream", host_id: busy }]);
+		assert.equal(onDisk(busy), null);
+		assert.match(onDisk(served), /listen 5555/);
+	});
 });
