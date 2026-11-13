@@ -455,6 +455,9 @@
 	"host-status.error": {
 		"defaultMessage": "Fehler"
 	},
+	"host-status.previous-config-running": {
+		"defaultMessage": "Nginx hat die neueste Konfiguration dieses Hosts nicht übernommen und verwendet weiterhin die vorherige."
+	},
 	"host-status.view-error-log": {
 		"defaultMessage": "Fehlerprotokoll anzeigen"
 	},

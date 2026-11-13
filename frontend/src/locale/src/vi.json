@@ -455,6 +455,9 @@
 	"host-status.error": {
 		"defaultMessage": "Lỗi"
 	},
+	"host-status.previous-config-running": {
+		"defaultMessage": "Nginx chưa áp dụng cấu hình mới nhất của host này và vẫn đang chạy cấu hình trước đó."
+	},
 	"host-status.view-error-log": {
 		"defaultMessage": "Xem nhật ký lỗi"
 	},

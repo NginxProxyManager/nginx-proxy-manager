@@ -51,4 +51,21 @@ describe("HostStatusFormatter", () => {
 		fireEvent.click(screen.getByText("View error log"));
 		expect(onLogs).toHaveBeenCalledTimes(1);
 	});
+
+	it("doesn't call a host offline whose previous config nginx still runs", async () => {
+		render(
+			<HostStatusFormatter
+				enabled
+				meta={{
+					nginxOnline: false,
+					nginxErr: 'host not found in upstream "app"',
+					nginxDetails: { kind: "nginx_config", scope: "host", previousConfigRunning: true },
+				}}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button"));
+		const popover = await screen.findByTestId("host-status-popover");
+		expect(popover).toHaveTextContent("still runs its previous one");
+		expect(popover).not.toHaveTextContent("so it is offline");
+	});
 });

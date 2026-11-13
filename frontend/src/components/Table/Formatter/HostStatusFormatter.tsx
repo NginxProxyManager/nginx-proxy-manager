@@ -88,9 +88,20 @@ export function HostStatusFormatter({ enabled, meta, onLogs }: Props) {
 					{status.state === "error" ? (
 						<li className="mb-2">
 							<div className="fw-bold">
-								<T id="host-status.config-error" />
+								{/* nginx may still serve the host with its previous config: then it isn't offline */}
+								<T
+									id={
+										meta?.nginxDetails?.previousConfigRunning
+											? "host-status.previous-config-running"
+											: "host-status.config-error"
+									}
+								/>
 							</div>
-							<HostNginxError meta={meta} detailClassName="d-block text-break text-secondary" />
+							<HostNginxError
+								meta={meta}
+								detailClassName="d-block text-break text-secondary"
+								showPreviousConfig={false}
+							/>
 						</li>
 					) : null}
 				</ul>
