@@ -92,6 +92,20 @@ describe("disabling a host", () => {
 		assert.equal(onDisk(CONF), "server {\n  listen 2222;\n}\n");
 	});
 
+	it("disables an offline host (only its .err file) when nginx rejects the reload for another file", async () => {
+		await addStream();
+		fs.renameSync(CONF, `${CONF}.err`);
+		const emerg = 'unknown directive "x" in /data/nginx/stream/7.conf:2';
+		outcome = { rejected: true, emerg, reason: `nginx could not apply the config: ${emerg}` };
+		const row = await disable();
+		assert.equal(reloads, 1);
+		assert.equal(!!row.enabled, false);
+		assert.equal(!!(await streamModel.query().where("id", 1).first()).enabled, false);
+		assert.equal(onDisk(CONF), null);
+		assert.equal(onDisk(`${CONF}.err`), "server {\n  listen 2222;\n}\n");
+		fs.rmSync(`${CONF}.err`, { force: true });
+	});
+
 	it("removes the config when nginx applies the reload", async () => {
 		await addStream();
 		outcome = { confirmed: true };

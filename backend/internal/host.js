@@ -401,7 +401,8 @@ const internalHost = {
 	 * enable or disable has written in between, and an enable always configures the latest row.
 	 *
 	 * When nginx rejects the reload that removes a disabled host's config (for another file), it still serves
-	 * the host: the config goes back and the host stays enabled. When nginx rejects an enabled host and keeps
+	 * the host: the config goes back and the host stays enabled. A host without a config (offline, only its
+	 * .err file) is disabled all the same. When nginx rejects an enabled host and keeps
 	 * the previous config, the host stays disabled. Any other
 	 * failure (eg. only the reload failed) leaves the new config file in place: then it stays enabled,
 	 * otherwise the next reload activates a host that the UI shows as disabled.
@@ -427,7 +428,9 @@ const internalHost = {
 				const filename = internalNginx.getConfigName(hostType, row.id);
 				const previous = internalNginx.readConfigFile(filename);
 				const outcome = await internalNginx.removeConfigAndReload(hostType, row);
-				if (outcome?.rejected) {
+				// An offline host (no config, only <id>.conf.err) isn't served: nothing to put back, the disable
+				// stands whatever another file does to the reload
+				if (outcome?.rejected && previous !== null) {
 					// Removing a config can't make nginx reject a reload: another file is the cause, and nginx still
 					// serves this host. Its config goes back and it stays enabled, as nginx runs it; the disable can
 					// be tried again.
