@@ -164,6 +164,10 @@ def check_image(image):
                                    stdout=subprocess.DEVNULL)
         subprocess.run(["docker", "exec", "-i", "-w", "/app", name,
                         "node", "--input-type=module"], input=RENDER, text=True, check=True)
+        # map_hash_bucket_size can only be set before the first map block, so this fails if a
+        # map is ever defined ahead of the custom http_top.conf include again
+        docker("exec", name, "sh", "-c", "mkdir -p /data/nginx/custom && "
+               "echo 'map_hash_bucket_size 128;' > /data/nginx/custom/http_top.conf")
         docker("exec", name, "nginx", "-t")
         docker("exec", name, "nginx", "-s", "reload")
         wait_for_generated_host(name)
