@@ -89,7 +89,9 @@ const blameOtherHost = async (parsed, testWithout) => {
  *    error no longer names that path (another, unrelated host is broken too and is handled next).
  * When no single candidate passes, eg. a certificate several hosts share (the same
  * /etc/letsencrypt/live/npm-N/fullchain.pem in each of their files) went missing, all candidates are taken
- * out together. When that passes they are all blamed (`others`) and repaired or moved aside one by one.
+ * out together. When that passes the group is reduced (each member is put back in turn and stays out of the
+ * group when the error stays away without it), and the remaining members are blamed (`others`) and repaired
+ * or moved aside one by one.
  *
  * @param   {Object}   parsed                     parsed nginx -t output, without a file
  * @param   {Object}   opts
@@ -151,7 +153,20 @@ const blameUnattributed = async (
 	// A path several hosts mention (a shared certificate): only all of them together make the error go away
 	if (candidates.length > 1 && testWithoutCandidates) {
 		if (fixes(await testWithoutCandidates(candidates.map((c) => c.file)))) {
-			return heal(candidates);
+			// A mention alone doesn't make a host part of the cause (eg. a healthy host that only names the
+			// certificate path in an add_header): put each member back in turn and keep it out of the group
+			// when the error stays away without it. Groups of two can't shrink, every single one failed above.
+			let group = candidates;
+			for (const candidate of candidates) {
+				if (group.length < 3) {
+					break;
+				}
+				const rest = group.filter((c) => c !== candidate);
+				if (fixes(await testWithoutCandidates(rest.map((c) => c.file)))) {
+					group = rest;
+				}
+			}
+			return heal(group);
 		}
 	}
 	return { action: "global", parsed: failure };

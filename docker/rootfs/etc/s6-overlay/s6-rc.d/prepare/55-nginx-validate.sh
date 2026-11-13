@@ -61,6 +61,13 @@ nginx_validate_error() {
 	echo "$1" | grep -v '/var/log/nginx/error.log' | grep -E '\[(emerg|alert|crit)\]' | head -n 1 || true
 }
 
+# Succeeds when the nginx -t output given as $1 no longer fails because of the path $2:
+# the test passes, or the remaining error doesn't name the path
+nginx_validate_fixes() {
+	echo "$1" | grep -q 'test is successful' \
+		|| ! nginx_validate_error "$1" | grep -qF -- "$2"
+}
+
 # Moves the files given as arguments aside, runs nginx -t, puts them back and prints the
 # output. A file that can't be put back is logged (the backend regenerates it later).
 nginx_validate_test_aside() {
@@ -97,7 +104,8 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 	# candidate is moved aside in turn and only the one whose removal makes the error go away
 	# (the test passes, or the remaining error no longer names the path) is blamed. The others
 	# are put back. When no single candidate helps (eg. a certificate several hosts share),
-	# all of them are moved aside together, and if that helps, all of them are blamed.
+	# all of them are moved aside together, and if that helps, the group is reduced to the
+	# members whose removal is needed and those are blamed.
 	if [ -z "$NGINX_VALIDATE_FILES" ] && ! echo "$NGINX_VALIDATE_ERROR" | grep -qE ' in /[^ ]+:[0-9]+$'; then
 		while IFS= read -r NGINX_VALIDATE_PATH; do
 			[ -n "$NGINX_VALIDATE_PATH" ] || continue
@@ -111,8 +119,7 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 
 			for NGINX_VALIDATE_CANDIDATE in "${NGINX_VALIDATE_CANDIDATES[@]}"; do
 				NGINX_VALIDATE_RETRY="$(nginx_validate_test_aside "$NGINX_VALIDATE_CANDIDATE")"
-				if echo "$NGINX_VALIDATE_RETRY" | grep -q 'test is successful' \
-					|| ! nginx_validate_error "$NGINX_VALIDATE_RETRY" | grep -qF -- "$NGINX_VALIDATE_PATH"; then
+				if nginx_validate_fixes "$NGINX_VALIDATE_RETRY" "$NGINX_VALIDATE_PATH"; then
 					NGINX_VALIDATE_FILES="$NGINX_VALIDATE_CANDIDATE"
 					break 2
 				fi
@@ -120,9 +127,24 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 
 			if [ "${#NGINX_VALIDATE_CANDIDATES[@]}" -gt 1 ]; then
 				NGINX_VALIDATE_RETRY="$(nginx_validate_test_aside "${NGINX_VALIDATE_CANDIDATES[@]}")"
-				if echo "$NGINX_VALIDATE_RETRY" | grep -q 'test is successful' \
-					|| ! nginx_validate_error "$NGINX_VALIDATE_RETRY" | grep -qF -- "$NGINX_VALIDATE_PATH"; then
-					NGINX_VALIDATE_FILES="$(printf '%s\n' "${NGINX_VALIDATE_CANDIDATES[@]}")"
+				if nginx_validate_fixes "$NGINX_VALIDATE_RETRY" "$NGINX_VALIDATE_PATH"; then
+					# A mention alone doesn't make a host part of the cause (eg. a healthy host that only
+					# names the certificate path in an add_header): put each member back in turn and keep
+					# it out of the group when the error stays away without it. Groups of two can't
+					# shrink, every single candidate failed above.
+					NGINX_VALIDATE_GROUP=("${NGINX_VALIDATE_CANDIDATES[@]}")
+					for NGINX_VALIDATE_CANDIDATE in "${NGINX_VALIDATE_CANDIDATES[@]}"; do
+						[ "${#NGINX_VALIDATE_GROUP[@]}" -ge 3 ] || break
+						NGINX_VALIDATE_REST=()
+						for NGINX_VALIDATE_FILE in "${NGINX_VALIDATE_GROUP[@]}"; do
+							[ "$NGINX_VALIDATE_FILE" = "$NGINX_VALIDATE_CANDIDATE" ] || NGINX_VALIDATE_REST+=("$NGINX_VALIDATE_FILE")
+						done
+						NGINX_VALIDATE_RETRY="$(nginx_validate_test_aside "${NGINX_VALIDATE_REST[@]}")"
+						if nginx_validate_fixes "$NGINX_VALIDATE_RETRY" "$NGINX_VALIDATE_PATH"; then
+							NGINX_VALIDATE_GROUP=("${NGINX_VALIDATE_REST[@]}")
+						fi
+					done
+					NGINX_VALIDATE_FILES="$(printf '%s\n' "${NGINX_VALIDATE_GROUP[@]}")"
 					break
 				fi
 			fi
@@ -158,5 +180,5 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 	NGINX_VALIDATE_COUNT=$((NGINX_VALIDATE_COUNT + 1))
 done
 
-unset -f nginx_validate_test nginx_validate_error nginx_validate_test_aside
-unset NGINX_VALIDATE_MAX NGINX_VALIDATE_COUNT NGINX_VALIDATE_HOSTS NGINX_VALIDATE_OUTPUT NGINX_VALIDATE_ERROR NGINX_VALIDATE_FILES NGINX_VALIDATE_FILE NGINX_VALIDATE_PATH NGINX_VALIDATE_CANDIDATE NGINX_VALIDATE_CANDIDATES NGINX_VALIDATE_RETRY NGINX_VALIDATE_ASIDE NGINX_VALIDATE_CONF NGINX_VALIDATE_MOVED
+unset -f nginx_validate_test nginx_validate_error nginx_validate_fixes nginx_validate_test_aside
+unset NGINX_VALIDATE_MAX NGINX_VALIDATE_COUNT NGINX_VALIDATE_HOSTS NGINX_VALIDATE_OUTPUT NGINX_VALIDATE_ERROR NGINX_VALIDATE_FILES NGINX_VALIDATE_FILE NGINX_VALIDATE_PATH NGINX_VALIDATE_CANDIDATE NGINX_VALIDATE_CANDIDATES NGINX_VALIDATE_GROUP NGINX_VALIDATE_REST NGINX_VALIDATE_RETRY NGINX_VALIDATE_ASIDE NGINX_VALIDATE_CONF NGINX_VALIDATE_MOVED

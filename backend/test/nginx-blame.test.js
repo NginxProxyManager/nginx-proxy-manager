@@ -229,6 +229,25 @@ describe("blameUnattributed", () => {
 			assert.deepEqual(out.other, { host_type: "proxy_host", host_id: 6 });
 		});
 
+		it("drops members that only mention the path from the group", async () => {
+			const M = { file: "/data/nginx/dead_host/3.conf", text: `add_header X-Cert "${CERT}";` };
+			const groups = [];
+			const out = await blameUnattributed(certError, {
+				listFiles: () => [M, B, C],
+				testWithoutCandidate: async () => fail(certError.message),
+				testWithoutCandidates: async (files) => {
+					groups.push(files);
+					return files.includes(B.file) && files.includes(C.file) ? { ok: true } : fail(certError.message);
+				},
+			});
+			assert.equal(out.action, "heal");
+			assert.deepEqual(groups[0], [M.file, B.file, C.file]);
+			assert.deepEqual(
+				out.others.map((o) => o.file),
+				[B.file, C.file],
+			);
+		});
+
 		it("works without a saved host (reload / boot)", async () => {
 			const out = await blameUnattributed(certError, {
 				listFiles: () => [B, C],
