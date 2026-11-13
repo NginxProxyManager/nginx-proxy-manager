@@ -402,6 +402,22 @@ describe("a reload that nginx rejects after configs were written without reloadi
 		assert.equal((await row(rejectedId)).meta.nginx_details.reason, "rejected_at_startup");
 	});
 
+	it("startup reconcile tries the regenerated hosts again when the reload throws", async () => {
+		const id = await stream(2222, false);
+		const reloadNginx = internalNginx.reloadNginx;
+		internalNginx.reloadNginx = async () => {
+			throw new Error("nginx: [alert] kill(12, 1) failed (3: No such process)");
+		};
+		try {
+			const summary = await internalNginx.reconcile();
+			assert.equal(summary.regenerated, 1);
+			assert.deepEqual(summary.retry, { stream: [id] });
+			assert.deepEqual(retries, [{ only: { stream: [id] }, attempt: 1 }]);
+		} finally {
+			internalNginx.reloadNginx = reloadNginx;
+		}
+	});
+
 	it("startup reconcile keeps one reload when nginx applies it", async () => {
 		const id = await stream(2222, false);
 		const summary = await internalNginx.reconcile();

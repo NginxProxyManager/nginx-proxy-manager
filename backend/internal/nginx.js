@@ -2559,6 +2559,9 @@ const internalNginx = {
 					}
 				} catch (err) {
 					logger.error(`Startup reconcile: nginx reload failed: ${err.message}`);
+					// nginx may still run its previous config without the regenerated hosts: try them again later,
+					// that reloads again
+					retryList(written.map(parseManagedFile).filter(Boolean), summary.retry);
 				}
 			}
 			const retries = Object.values(summary.retry).reduce((sum, ids) => sum + ids.length, 0);
