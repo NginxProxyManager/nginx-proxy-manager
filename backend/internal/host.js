@@ -356,6 +356,42 @@ const internalHost = {
 	},
 
 	/**
+	 * Rolls back the create of a host that nginx rejected: marks the row deleted and, when a config file of it
+	 * is on disk, removes it and reloads nginx. A config can be there although the host was rejected: a new
+	 * certificate's request writes the configs of the hosts using its domains (the new host among them,
+	 * without the certificate) and nginx loads them, and the rejected configure() then puts that config back
+	 * as the host's previous one. Nothing removes the config of a deleted row later, so it would keep
+	 * answering for the host's domains. Never throws for the reload.
+	 *
+	 * @param   {Object}  model
+	 * @param   {String}  hostType  proxy_host, redirection_host, dead_host or stream
+	 * @param   {Number}  id
+	 * @returns {Promise}
+	 */
+	discardRejectedCreate: (model, hostType, id) =>
+		internalNginx.withLock(async () => {
+			await model.query().where("id", id).patch({ is_deleted: 1 });
+			const filename = internalNginx.getConfigName(hostType, id);
+			const served = internalNginx.readConfigFile(filename) !== null;
+			await internalNginx.deleteConfig(hostType, { id }, true);
+			if (!served) {
+				return;
+			}
+			try {
+				const outcome = await internalNginx.reloadNginx();
+				if (outcome?.rejected) {
+					logger.warn(
+						`${hostType} #${id}: nginx did not apply the removal of the rejected new host's config`,
+					);
+				}
+			} catch (err) {
+				logger.warn(
+					`${hostType} #${id}: could not reload nginx to remove the rejected new host: ${err.message}`,
+				);
+			}
+		}),
+
+	/**
 	 * The state change of an enable or disable: re-reads the host, checks that the change is needed, patches
 	 * `enabled` and installs or removes the nginx config. All of it runs under the nginx lock, the same lock
 	 * updateAndConfigure() holds, so a rejected update can't put back an `enabled` value that a concurrent

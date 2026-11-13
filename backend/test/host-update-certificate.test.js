@@ -331,6 +331,59 @@ for (const type of types) {
 			}
 		});
 
+		describe("its config on disk", () => {
+			// the config files of the hosts, and the reloads with the files nginx was asked to load then
+			const files = new Map();
+			let reloads = [];
+			const stubbed = {};
+			before(() => {
+				for (const name of ["readConfigFile", "deleteConfig", "reloadNginx"]) {
+					stubbed[name] = internalNginx[name];
+				}
+				internalNginx.readConfigFile = (filename) => files.get(filename) ?? null;
+				internalNginx.deleteConfig = async (hostType, host, withErr) => {
+					const filename = internalNginx.getConfigName(hostType, host.id);
+					files.delete(filename);
+					if (withErr) {
+						files.delete(`${filename}.err`);
+					}
+				};
+				internalNginx.reloadNginx = async () => {
+					reloads.push([...files.keys()]);
+					return { confirmed: true };
+				};
+			});
+			after(() => {
+				Object.assign(internalNginx, stubbed);
+			});
+			beforeEach(() => {
+				files.clear();
+				reloads = [];
+			});
+
+			it("removes the config a certificate request left for a rejected new host and reloads nginx", async () => {
+				const next = await nextCertificate();
+				rejectCertificates.add(next);
+				// the certificate request writes (and nginx loads) the configs of the hosts using its domains, the
+				// new one without the certificate; the rejected configure() puts that config back as its previous
+				afterIssue = async () => {
+					const { id } = await db(type.table).max("id as id").first();
+					files.set(internalNginx.getConfigName(type.table, id), "# without the certificate");
+				};
+				await assert.rejects(create(), errs.NginxConfigError);
+				assert.deepEqual(await liveHosts(), []);
+				assert.deepEqual([...files.keys()], []);
+				assert.deepEqual(reloads, [[]]);
+			});
+
+			it("doesn't reload when nothing of the rejected new host is on disk", async () => {
+				rejectCertificates.add(await nextCertificate());
+				await assert.rejects(create(), errs.NginxConfigError);
+				assert.deepEqual(await liveHosts(), []);
+				assert.deepEqual(reloads, []);
+			});
+		});
+
 		it("keeps the host and the new certificate when the create goes through", async () => {
 			const row = await create();
 			assert.equal(issued.length, 1);

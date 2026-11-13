@@ -118,7 +118,7 @@ const internalRedirectionHost = {
 			.catch(async (err) => {
 				// nginx rejected the new host: don't keep a host that was never active
 				if (createdId && internalNginx.isHostLevelError(err)) {
-					await redirectionHostModel.query().where("id", createdId).patch({ is_deleted: 1 });
+					await internalHost.discardRejectedCreate(redirectionHostModel, "redirection_host", createdId);
 				}
 				// the certificate requested for it is left unused when the host is gone or was rejected with it
 				if (issuedCertificateId) {

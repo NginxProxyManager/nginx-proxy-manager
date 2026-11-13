@@ -93,7 +93,7 @@ const internalDeadHost = {
 		} catch (err) {
 			// nginx rejected the new host: don't keep a host that was never active
 			if (internalNginx.isHostLevelError(err)) {
-				await deadHostModel.query().where("id", row.id).patch({ is_deleted: 1 });
+				await internalHost.discardRejectedCreate(deadHostModel, "dead_host", row.id);
 			}
 			// the certificate requested for it is left unused when the host is gone or was rejected with it
 			if (issuedCertificateId) {

@@ -97,7 +97,7 @@ const internalStream = {
 			.catch(async (err) => {
 				// nginx rejected the new stream: don't keep a stream that was never active
 				if (createdId && internalNginx.isHostLevelError(err)) {
-					await streamModel.query().where("id", createdId).patch({ is_deleted: 1 });
+					await internalHost.discardRejectedCreate(streamModel, "stream", createdId);
 				}
 				// the certificate requested for it is left unused when the host is gone or was rejected with it
 				if (issuedCertificateId) {
