@@ -120,8 +120,9 @@ describe("nginx errors in the UI language", () => {
 		cleanup();
 		const popover = await openPopover(running);
 		expect(popover).toHaveTextContent(
-			"Nginx führt die vorherige Konfiguration dieses Hosts weiter aus, bis ein Neuladen gelingt.",
+			"Nginx hat die neueste Konfiguration dieses Hosts nicht übernommen und verwendet weiterhin die vorherige.",
 		);
+		expect(popover).not.toHaveTextContent("daher ist er offline");
 		cleanup();
 		const notRunning = {
 			...running,
