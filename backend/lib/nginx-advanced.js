@@ -19,6 +19,10 @@
  *   /data/nginx/ or /etc/nginx/ (or a prefix of either) or ends with `/`: variables are filled in from the
  *   request and nginx doesn't sanitise `..` or `/` in them, so eg. `access_log /data/nginx/custom/$http_x;`
  *   lets any client pick the file. `/data/logs/$host.log` is fine.
+ * - access_log paths with a variable from the request ($http_*, $arg_*, $cookie_*, $uri, ...: anything but the
+ *   few of REQUEST_SAFE_VARIABLES, which can't hold `/` or `..`) whose literal tail could complete a config
+ *   file name (no `.` after the last variable, or a .conf/.types/_params ending), whatever the fixed part:
+ *   `/data/logs$http_x` reaches `/data/nginx/proxy_host/2.conf` with `X: /../nginx/proxy_host/2.conf`.
  *
  * Allowed, notably: relative log paths (they resolve below the nginx prefix /etc/nginx/nginx/), logs in
  * /data/logs/ or /data/nginx/custom/*.log, `off`, stderr, syslog:, `root`, `alias` and include of the user's
@@ -79,6 +83,23 @@ const isIndirect = (resolved) =>
 const inManagedDir = (resolved) => MANAGED_DIRS.some((dir) => resolved.startsWith(dir) || `${resolved}/` === dir);
 
 const CONFIG_SUFFIX = /(\.conf|\.types|_params)$/;
+
+// Variables whose values can't hold `/` or `..` (nginx rejects them in Host, the others are numbers, addresses
+// or fixed words): an access_log path built from them can't be steered into another directory
+const REQUEST_SAFE_VARIABLES = new Set([
+	"host",
+	"server_name",
+	"server_port",
+	"server_addr",
+	"remote_addr",
+	"remote_port",
+	"scheme",
+	"status",
+	"request_method",
+	"msec",
+	"pid",
+	"connection",
+]);
 
 /**
  * @param   {String} resolved
@@ -208,6 +229,16 @@ const isForbiddenLogTarget = (target, directive) => {
 	if (roots.some((root) => root.startsWith(resolved) || resolved.startsWith(root))) {
 		return true;
 	}
+	// A variable a client fills in (eg. $http_x = "/../nginx/proxy_host/2") can leave any fixed part that is (or
+	// completes to) an existing directory: unless the tail rules out a config file name, only variables that
+	// can't hold `/` or `..` are fine
+	const variables = [...target.matchAll(/\$(?:\{(\w*)\}|(\w*))/g)].map((m) => m[1] ?? m[2]);
+	if (
+		(!tail.includes(".") || CONFIG_SUFFIX.test(target)) &&
+		variables.some((name) => !REQUEST_SAFE_VARIABLES.has(name))
+	) {
+		return true;
+	}
 	// or to a config file below /data/nginx/ or /etc/nginx/
 	return (
 		(resolved.startsWith("/data/nginx/") ||
@@ -227,7 +258,7 @@ const findForbiddenFileDirective = (text) => {
 			return {
 				directive,
 				path: target,
-				reason: `${directive} can't write to "${target}": log files must not be placed where nginx reads configuration (generated host configs, *.conf files in /data/nginx/, /etc/nginx/), use /data/logs/ instead`,
+				reason: `${directive} can't write to "${target}": log files must not be placed where nginx reads configuration (generated host configs, *.conf files in /data/nginx/, /etc/nginx/), and a log path with a variable from the request (eg. $http_*, $arg_*, $cookie_*) must end with a file extension such as .log, use /data/logs/ instead`,
 			};
 		}
 		if (directive === "include" && isForbiddenInclude(target)) {
