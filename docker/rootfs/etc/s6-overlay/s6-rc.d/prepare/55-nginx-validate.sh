@@ -47,7 +47,10 @@ for NGINX_VALIDATE_ASIDE in /data/nginx/proxy_host/*.conf.npm-aside /data/nginx/
 	fi
 done
 
-NGINX_VALIDATE_MAX=100
+# Every round moves at least one host config aside (or stops), so there can't be more rounds than
+# host configs; one more for the final test
+NGINX_VALIDATE_MAX="$(find /data/nginx/proxy_host /data/nginx/redirection_host /data/nginx/dead_host /data/nginx/stream -maxdepth 1 -name '*.conf' 2>/dev/null | wc -l)"
+NGINX_VALIDATE_MAX=$((NGINX_VALIDATE_MAX + 1))
 NGINX_VALIDATE_COUNT=0
 NGINX_VALIDATE_HOSTS='/data/nginx/(proxy_host|redirection_host|dead_host|stream)/[0-9]+\.conf'
 
