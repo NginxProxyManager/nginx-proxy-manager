@@ -192,6 +192,20 @@ for (const type of types) {
 			});
 		}
 
+		it("doesn't undo a disable that commits while an update waits for the lock", async () => {
+			const id = await insertHost(type, 1);
+			served.set(`${type.hostType}#${id}`, "good");
+			const disable = settle(internal.disable(access, { id }));
+			// reads the (still enabled) row before the disable is done, patches after it
+			const update = settle(
+				internal.update(access, { id, [type.field]: type.field === "advanced_config" ? "# x" : "good2" }),
+			);
+			const results = await Promise.all([disable, update]);
+			assert.deepEqual(results, ["ok", "ok"]);
+			assert.equal(await dbEnabled(type, id), false);
+			assert.equal(served.get(`${type.hostType}#${id}`), null);
+		});
+
 		it("lets only one of two concurrent enables through", async () => {
 			const id = await insertHost(type, 0);
 			const results = await Promise.all([

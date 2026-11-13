@@ -216,22 +216,23 @@ const internalRedirectionHost = {
 				return row;
 			})
 			.then((row) => {
+				const requested = thisData;
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				thisData = _.assign(
-					{},
-					{
-						domain_names: row.domain_names,
-					},
-					thisData,
-				);
-
-				thisData = internalHost.cleanSslHstsData(thisData, row);
+				thisData = internalHost.cleanSslHstsData(_.assign({}, { domain_names: row.domain_names }, requested), row);
 
 				return internalHost.updateAndConfigure({
 					model: redirectionHostModel,
 					hostType: "redirection_host",
 					id: thisData.id,
-					patch: thisData,
+					// merged with the row as it is under the lock, not the one read above (before the certificate
+					// request): a disable or another change in between must not be undone
+					patch: (current) => {
+						thisData = internalHost.cleanSslHstsData(
+							_.assign({}, { domain_names: current.domain_names }, requested),
+							current,
+						);
+						return thisData;
+					},
 					fetch: () =>
 						internalRedirectionHost.get(access, {
 							id: thisData.id,

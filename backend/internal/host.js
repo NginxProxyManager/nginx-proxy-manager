@@ -247,7 +247,10 @@ const internalHost = {
 	 * @param   {Object}    opts.model
 	 * @param   {String}    opts.hostType   proxy_host, redirection_host, dead_host or stream
 	 * @param   {Number}    opts.id
-	 * @param   {Object}    opts.patch      the data to patch
+	 * @param   {Object|Function}  opts.patch  the data to patch, or (current) => data: built from the row as it is
+	 *                                      under the lock (eg. merged with cleanSslHstsData()), so a row read before
+	 *                                      the lock can't put back values a concurrent change wrote in between (eg.
+	 *                                      a disable)
 	 * @param   {Function}  opts.fetch      async () => row, loads the updated row with the relations nginx needs
 	 * @param   {Function}  opts.audit      async () => {}, writes the audit entry
 	 * @param   {Boolean}   [opts.skipDisabled]  don't configure nginx when the host is disabled
@@ -266,7 +269,8 @@ const internalHost = {
 		try {
 			const row = await internalNginx.withLock(async () => {
 				const before = await model.query().where("id", id).first();
-				await model.query().where("id", id).patch(patch);
+				const values = typeof patch === "function" ? patch(before || {}) : patch;
+				await model.query().where("id", id).patch(values);
 				patched = true;
 				const updated = await fetch();
 				if (skipDisabled && !updated.enabled) {
@@ -277,7 +281,7 @@ const internalHost = {
 				} catch (err) {
 					// nginx rejected the change and kept the previous config, so keep the previous data too
 					if (before && internalNginx.isHostLevelError(err)) {
-						await internalHost.restoreRow(model, before, patch);
+						await internalHost.restoreRow(model, before, values);
 						patched = false;
 					}
 					throw err;
