@@ -800,3 +800,72 @@ describe("a rejected bind() of an address that a TCP and a UDP config listen on"
 		assert.equal((await row(udp)).meta.nginx_online, false);
 	});
 });
+
+describe("a reload that throws while looking for the rejected configs", () => {
+	const errFile = (id) => (fs.existsSync(`${conf(id)}.err`) ? fs.readFileSync(`${conf(id)}.err`, "utf8") : null);
+	let fakeReload;
+	beforeEach(() => {
+		reloads = [];
+		retries = [];
+		fakeReload = internalNginx.reloadWaiter.reloadAndWait;
+	});
+	afterEach(async () => {
+		internalNginx.reloadWaiter.reloadAndWait = fakeReload;
+		for (const name of real.readdirSync(dir)) {
+			real.rmSync(join(dir, name));
+		}
+		await db("stream").delete();
+	});
+	// the outcomes of the next reloads, an Error is thrown
+	const sequence = (list) => {
+		internalNginx.reloadWaiter.reloadAndWait = async () => {
+			reloads.push("");
+			const next = list.shift() || confirmed();
+			if (next instanceof Error) {
+				throw next;
+			}
+			return next;
+		};
+	};
+
+	it("reports the regeneration as not applied and leaves no host online with its config aside", async () => {
+		const ids = [await stream(4000, true), await stream(4001, true), await stream(4002, true)];
+		// the rejected reload named nothing: applied without all of them, then nginx can't be reloaded at all
+		sequence([confirmed(), new Error("nginx: [error] invalid PID number")]);
+		const result = await internalNginx.isolateRejectedReload(ids.map(conf), {
+			outcome: rejected("could not apply the config"),
+			unserved: ids.map(conf),
+			offlineOnGlobal: true,
+		});
+		assert.equal(result.applied, false);
+		assert.match(result.global.reason, /Could not reload nginx: nginx: \[error\] invalid PID number/);
+		assert.equal(reloads.length, 2);
+		for (const id of ids) {
+			const meta = (await row(id)).meta;
+			const aside = errFile(id) !== null && onDisk(id) === null;
+			assert.equal(aside, true, `stream ${id} is aside`);
+			assert.equal(meta.nginx_online, false, `stream ${id} is offline`);
+			assert.equal(meta.nginx_details.scope, "global");
+		}
+		assert.deepEqual(
+			result.offline.map((h) => h.host_id),
+			ids,
+		);
+	});
+
+	it("puts the configs not settled back without opts.offlineOnGlobal", async () => {
+		const ids = [await stream(4000, true), await stream(4001, true)];
+		sequence([confirmed(), new Error("nginx is not running")]);
+		const result = await internalNginx.isolateRejectedReload(ids.map(conf), {
+			outcome: rejected("could not apply the config"),
+			unserved: ids.map(conf),
+		});
+		assert.equal(result.applied, false);
+		assert.ok(result.global);
+		for (const id of ids) {
+			assert.match(onDisk(id), /listen 400/);
+			assert.equal(errFile(id), null);
+			assert.deepEqual((await row(id)).meta, ONLINE);
+		}
+	});
+});

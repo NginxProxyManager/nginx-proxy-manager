@@ -997,11 +997,15 @@ const internalNginx = {
 			const previous = unserved.has(entry.filename) ? null : opts.previous?.get(entry.filename);
 			entry.previousAddresses = typeof previous === "string" ? await resolvedListenAddresses(previous) : null;
 		}
+		// the error of the last reload that threw, see reloadFailure()
+		let reloadError = null;
 		const reload = () =>
 			internalNginx.reloadNginx({ skipTest: true }).catch((err) => {
 				logger.error(`Could not reload nginx: ${err.message}`);
+				reloadError = err;
 				return null;
 			});
+		const reloadFailure = () => ({ reason: `Could not reload nginx: ${reloadError?.message || "unknown error"}` });
 		const putBack = (entry) => {
 			internalNginx.restoreConfig(entry.filename, entry.text);
 			internalNginx.deleteFile(`${entry.filename}.err`);
@@ -1184,23 +1188,39 @@ const internalNginx = {
 					putBack(entry);
 				}
 			}
-			result.global = without;
+			result.global = without || reloadFailure();
 			return result;
 		}
 		// Bisects: a group nginx applies stays, a group it rejects goes aside again (nginx keeps running the files
-		// it applied before, which are on disk again then) and its halves are tried on their own
+		// it applied before, which are on disk again then) and its halves are tried on their own. A reload that
+		// is not rejected counts as applied, also when it is not confirmed (eg. a timeout): as everywhere else, see
+		// lib/nginx-reload.js, which reports a rejection as soon as the error log shows one.
+		const settled = new Set();
+		let aborted = false;
 		const tryGroup = async (group) => {
+			if (aborted) {
+				return;
+			}
 			for (const entry of group) {
 				putBack(entry);
 			}
 			const outcome = await reload();
-			if (!outcome?.rejected) {
+			if (!outcome) {
+				// nginx could not be reloaded at all: the search stops, see below
+				aborted = true;
+				return;
+			}
+			if (!outcome.rejected) {
+				for (const entry of group) {
+					settled.add(entry);
+				}
 				return;
 			}
 			for (const entry of group) {
 				internalNginx.renameConfigAsErrorSync(entry.filename);
 			}
 			if (group.length === 1) {
+				settled.add(group[0]);
 				await takeOffline(group[0], "host", outcome);
 				return;
 			}
@@ -1216,6 +1236,24 @@ const internalNginx = {
 			await tryGroup(candidates);
 		} else {
 			await splitGroup(candidates);
+		}
+		if (aborted) {
+			// Whether nginx runs the configs not settled yet (the group of the reload that threw, which is on disk,
+			// and the groups not tried yet, which are aside) is unknown: as when nginx rejects the reload without
+			// them, they are offline (aside, tried again later) or back on disk, and the result is not applied
+			const failure = reloadFailure();
+			for (const entry of candidates.filter((c) => !settled.has(c))) {
+				if (opts.offlineOnGlobal) {
+					if (fs.existsSync(entry.filename)) {
+						internalNginx.renameConfigAsErrorSync(entry.filename);
+					}
+					await takeOffline(entry, "global", failure);
+				} else {
+					putBack(entry);
+				}
+			}
+			result.global = failure;
+			return result;
 		}
 		result.applied = true;
 		return result;
