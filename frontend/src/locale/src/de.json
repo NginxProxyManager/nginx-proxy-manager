@@ -1142,6 +1142,9 @@
 	"upstream.check.detail.invalid_host_empty": {
 		"defaultMessage": "Gib einen Hostnamen oder eine IP-Adresse ein."
 	},
+	"upstream.check.detail.no_resolver": {
+		"defaultMessage": "Der nginx-Resolver ist deaktiviert (DISABLE_RESOLVER), und nginx löst dieses Ziel bei jeder Anfrage auf: Anfragen schlagen fehl. Verwende eine IP-Adresse oder aktiviere den Resolver."
+	},
 	"upstream.check.detail.resolver_mismatch": {
 		"defaultMessage": "Nur /etc/hosts oder eine Suchdomäne aus resolv.conf findet „{host}“, nicht der DNS-Resolver von nginx. Das funktioniert nur mit einem statischen (beim Laden aufgelösten) Upstream."
 	},
@@ -1168,6 +1171,9 @@
 	},
 	"upstream.check.invalid_host": {
 		"defaultMessage": "Ungültiger Hostname"
+	},
+	"upstream.check.no_resolver": {
+		"defaultMessage": "Kein nginx-Resolver"
 	},
 	"upstream.check.ok": {
 		"defaultMessage": "Erreichbar"

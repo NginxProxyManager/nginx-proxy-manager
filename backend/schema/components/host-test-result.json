@@ -125,7 +125,7 @@
 					},
 					"code": {
 						"type": "string",
-						"description": "Machine readable result. resolver_mismatch: reachable, but the name only resolves through /etc/hosts or a search domain; ok:false for a target nginx resolves per request (the main target, a custom location in dynamic mode or with a variable forward path). rate_limited: not probed, the user's upstream check budget (shared with /upstreams/check) is used up",
+						"description": "Machine readable result. resolver_mismatch: reachable, but the name only resolves through /etc/hosts or a search domain; ok:false for a target nginx resolves per request (the main target, a custom location in dynamic mode or with a variable forward path). no_resolver: such a target with no nginx resolver at all (DISABLE_RESOLVER and none in the custom http config). rate_limited: not probed, the user's upstream check budget (shared with /upstreams/check) is used up",
 						"example": "ok",
 						"enum": [
 							"ok",
@@ -133,6 +133,7 @@
 							"dns_not_found",
 							"dns_timeout",
 							"resolver_mismatch",
+							"no_resolver",
 							"tcp_refused",
 							"tcp_timeout",
 							"tcp_unreachable",

@@ -24,7 +24,7 @@
 		},
 		"code": {
 			"type": "string",
-			"description": "Machine readable result. resolver_mismatch is ok:true but only works with a static upstream",
+			"description": "Machine readable result. resolver_mismatch is ok:true but only works with a static upstream. no_resolver: nginx resolves the target per request but has no resolver (DISABLE_RESOLVER), not ok",
 			"example": "ok",
 			"enum": [
 				"ok",
@@ -32,6 +32,7 @@
 				"dns_not_found",
 				"dns_timeout",
 				"resolver_mismatch",
+				"no_resolver",
 				"tcp_refused",
 				"tcp_timeout",
 				"tcp_unreachable",

@@ -380,4 +380,4 @@ To skip the second step:
 | --- | --- | --- |
 | `NPM_LOCATION_DYNAMIC_DNS` | `true` | Resolve custom location upstreams per request where possible. `false` renders every location with the literal host name. |
 | `NPM_RECONCILE_ON_START` | `true` | Regenerate missing, broken or outdated host configs after the backend starts. When `false`, hosts whose config the startup check moved to `.err` are only shown as offline; save such a host again to bring it back. |
-| `DISABLE_RESOLVER` | unset | No nginx resolver is generated. Custom locations then always use the static form. |
+| `DISABLE_RESOLVER` | unset | No nginx resolver is generated. Custom locations then always use the static form. A proxy host's main target is still resolved per request, so the upstream check and the health status report a host name there as **No nginx resolver** unless `/data/nginx/custom/http_top.conf` or `http.conf` sets a `resolver`. |

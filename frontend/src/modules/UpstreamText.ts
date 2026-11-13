@@ -98,6 +98,7 @@ export const checkDetailText = (result: Pick<UpstreamCheckResult, "code" | "ok" 
 				},
 				values,
 			);
+		case "no_resolver":
 		case "dns_not_found":
 		case "dns_timeout":
 		case "tcp_refused":

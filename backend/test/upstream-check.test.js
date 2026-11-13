@@ -1,9 +1,13 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import net from "node:net";
+import os from "node:os";
+import path from "node:path";
 import { after, before, describe, it } from "node:test";
 import {
 	checkTarget,
 	checkTargets,
+	combineLookups,
 	forResolverTarget,
 	formatMs,
 	MESSAGES,
@@ -11,6 +15,7 @@ import {
 	targetKey,
 	tcpConnect,
 } from "../lib/upstream/check.js";
+import { hasCustomResolver } from "../lib/upstream/util.js";
 
 const listen = (server) =>
 	new Promise((resolve) => {
@@ -406,5 +411,66 @@ describe("upstream check: messages", () => {
 		assert.equal(MESSAGES.ok({ host: "app", port: 80 }, { ms: 0.3 }), "app:80 is reachable (<1 ms).");
 		assert.equal(MESSAGES.ok({ host: "app", port: 80 }, { ms: null }), "app:80 is reachable.");
 		assert.match(MESSAGES.resolver_mismatch({ host: "app", port: 80 }, { ms: 12.2 }), /^app:80 is reachable \(12 ms\), but/);
+	});
+});
+
+describe("upstream check: no nginx resolver (DISABLE_RESOLVER)", () => {
+	const system = { ok: true, code: "ok", addresses: ["10.0.0.5"], ms: 3 };
+	const lookups = { system, resolver: null };
+
+	it("is not ok for a hostname nginx resolves per request", () => {
+		assert.deepEqual(combineLookups(lookups, true), { ok: false, code: "no_resolver", ms: 3 });
+		// a name that doesn't exist at all is still not found
+		const missing = { ok: false, code: "dns_not_found", addresses: [], ms: null };
+		assert.equal(combineLookups({ system: missing, resolver: null }, true).code, "dns_not_found");
+	});
+
+	it("stays ok for a literal upstream, a resolver in the custom http config, or an unknown mode", () => {
+		assert.equal(combineLookups(lookups, false).ok, true);
+		assert.equal(combineLookups(lookups, true, true).ok, true);
+		assert.equal(combineLookups(lookups, undefined).ok, true);
+	});
+
+	it("checkTarget and forResolverTarget report it with a message, an IP target is fine", async () => {
+		const server = net.createServer((s) => s.destroy());
+		const port = await listen(server);
+		try {
+			const opts = {
+				resolvers: null,
+				customResolver: false,
+				lookup: async () => [{ address: "127.0.0.1", family: 4 }],
+			};
+			const dynamic = await checkTarget({ host: "app", port, resolver: true }, opts);
+			assert.equal(dynamic.ok, false);
+			assert.equal(dynamic.code, "no_resolver");
+			assert.match(dynamic.message, /no DNS resolver/);
+			const literal = await checkTarget({ host: "app", port, resolver: false }, opts);
+			assert.equal(literal.ok, true);
+			assert.equal(forResolverTarget(literal, { host: "app", port }, true, false).code, "no_resolver");
+			assert.equal(forResolverTarget(literal, { host: "app", port }, true, true).ok, true);
+			const ip = await checkTarget({ host: "127.0.0.1", port, resolver: true }, opts);
+			assert.equal(ip.ok, true);
+			const custom = await checkTarget({ host: "app", port, resolver: true }, { ...opts, customResolver: true });
+			assert.equal(custom.ok, true);
+		} finally {
+			server.close();
+		}
+	});
+
+	it("finds a resolver in the custom http config", () => {
+		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "npm-custom-resolver-"));
+		try {
+			const top = path.join(dir, "http_top.conf");
+			const http = path.join(dir, "http.conf");
+			fs.writeFileSync(top, "# resolver 1.1.1.1;\nmap $a $b { default x; }\n");
+			assert.equal(hasCustomResolver([top, http]), false);
+			fs.writeFileSync(http, "resolver 127.0.0.11 valid=10s;\n");
+			assert.equal(hasCustomResolver([top, http]), true);
+			// only at the http level
+			fs.writeFileSync(http, "server {\n  resolver 127.0.0.11;\n}\n");
+			assert.equal(hasCustomResolver([top, http]), false);
+		} finally {
+			fs.rmSync(dir, { recursive: true, force: true });
+		}
 	});
 });

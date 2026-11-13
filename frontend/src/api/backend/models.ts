@@ -382,6 +382,8 @@ export type UpstreamCheckCode =
 	| "dns_not_found"
 	| "dns_timeout"
 	| "resolver_mismatch"
+	// nginx resolves the target per request but has no resolver at all (DISABLE_RESOLVER)
+	| "no_resolver"
 	| "tcp_refused"
 	| "tcp_timeout"
 	| "tcp_unreachable"

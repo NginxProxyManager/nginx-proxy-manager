@@ -1142,6 +1142,9 @@
 	"upstream.check.detail.invalid_host_empty": {
 		"defaultMessage": "Hãy nhập tên máy chủ hoặc địa chỉ IP."
 	},
+	"upstream.check.detail.no_resolver": {
+		"defaultMessage": "Trình phân giải DNS của nginx đang bị tắt (DISABLE_RESOLVER), mà nginx phân giải upstream này cho mỗi yêu cầu: các yêu cầu sẽ thất bại. Hãy dùng địa chỉ IP hoặc bật trình phân giải."
+	},
 	"upstream.check.detail.resolver_mismatch": {
 		"defaultMessage": "Chỉ /etc/hosts hoặc tên miền tìm kiếm trong resolv.conf tìm thấy \"{host}\", trình phân giải DNS của nginx thì không. Chỉ hoạt động với upstream tĩnh (phân giải khi tải cấu hình)."
 	},
@@ -1168,6 +1171,9 @@
 	},
 	"upstream.check.invalid_host": {
 		"defaultMessage": "Tên host không hợp lệ"
+	},
+	"upstream.check.no_resolver": {
+		"defaultMessage": "Không có trình phân giải của nginx"
 	},
 	"upstream.check.ok": {
 		"defaultMessage": "Có thể kết nối"

@@ -2,6 +2,7 @@ import dns from "node:dns";
 import net from "node:net";
 import {
 	createLimiter,
+	hasCustomResolver,
 	isValidHost,
 	isVariableHost,
 	readNginxResolvers,
@@ -187,6 +188,8 @@ const MESSAGES = {
 	dns_timeout: (t) => `Looking up "${t.host}" timed out. The DNS server did not answer in time.`,
 	resolver_mismatch: (t, r) =>
 		`${describeHost(t.host, t.port)} is reachable${typeof r.ms === "number" ? ` (${formatMs(r.ms)})` : ""}, but "${t.host}" only resolves through /etc/hosts or a resolv.conf search domain, not through nginx's DNS resolver. It works only with a static (load-time) upstream.`,
+	no_resolver: (t, r) =>
+		`${describeHost(t.host, t.port)} is reachable${typeof r.ms === "number" ? ` (${formatMs(r.ms)})` : ""}, but nginx resolves this upstream per request and has no DNS resolver (DISABLE_RESOLVER is set and the custom http config sets none): requests fail. Use an IP address or enable the resolver.`,
 	// resolver_mismatch of a target nginx resolves per request, see forResolverTarget()
 	resolver_required: (t, r) =>
 		`${describeHost(t.host, t.port)} is reachable${typeof r.ms === "number" ? ` (${formatMs(r.ms)})` : ""}, but "${t.host}" only resolves through /etc/hosts or a resolv.conf search domain. nginx resolves this upstream per request through its DNS resolver, which doesn't find it: requests fail. Use a name the resolver finds (eg. the container name on a shared Docker network) or an IP address.`,
@@ -281,16 +284,19 @@ const lookupOutcome = (view, tcp) => {
  *
  * - `needsResolver === true`: nginx resolves the target per request through its `resolver` only (a proxy_pass with
  *   a variable). Only the resolver's addresses count; one that only resolves through /etc/hosts or a search
- *   domain is a resolver_mismatch and not ok. Without a configured resolver the system view stands in.
+ *   domain is a resolver_mismatch and not ok. Without any resolver (DISABLE_RESOLVER, and none in the custom
+ *   http config) nginx can't resolve a name at all: no_resolver, not ok. With a resolver only in the custom http
+ *   config (not probed) the system view stands in.
  * - `needsResolver === false`: a literal proxy_pass, resolved by the system at config load. Only the system's
  *   addresses count; a name nginx's resolver doesn't know is a resolver_mismatch that stays ok.
  * - otherwise (the mode is not known): every method that found the name has to reach it.
  *
  * @param   {{system: object, resolver: object|null}} lookups  lookupOutcome() of each method
  * @param   {boolean|undefined} needsResolver
+ * @param   {boolean} [customResolver]  the custom http config sets a resolver, see hasCustomResolver()
  * @returns {{ok: boolean, code: string, ms: number|null, required?: boolean}}
  */
-const combineLookups = ({ system, resolver }, needsResolver) => {
+const combineLookups = ({ system, resolver }, needsResolver, customResolver = false) => {
 	const found = (outcome) => !!outcome?.addresses.length;
 	const dnsFailure = (outcomes) => ({
 		ok: false,
@@ -298,6 +304,11 @@ const combineLookups = ({ system, resolver }, needsResolver) => {
 		ms: null,
 	});
 	const views = [system, resolver].filter(Boolean);
+
+	if (needsResolver === true && !resolver && !customResolver) {
+		// nginx answers "no resolver defined" for every request of this upstream
+		return found(system) ? { ok: false, code: "no_resolver", ms: system.ms ?? null } : dnsFailure([system]);
+	}
 
 	if (needsResolver === true && resolver) {
 		if (found(resolver)) {
@@ -375,6 +386,7 @@ const checkTarget = async (rawTarget, opts = {}) => {
 	}
 
 	const resolvers = typeof opts.resolvers === "undefined" ? readNginxResolvers() : opts.resolvers;
+	const needsResolver = typeof rawTarget.resolver === "boolean" ? rawTarget.resolver : undefined;
 	const [system, viaResolver] = await Promise.all([
 		systemLookup(target.host, { lookup: opts.lookup }),
 		resolverLookup(target.host, resolvers, { resolver: opts.resolver }),
@@ -389,23 +401,29 @@ const checkTarget = async (rawTarget, opts = {}) => {
 		system: lookupOutcome(system, systemTcp),
 		resolver: viaResolver ? lookupOutcome(viaResolver, resolverTcp) : null,
 	};
-	return resultFromLookups(target, {
-		addresses: orderAddresses(viaResolver?.addresses || [], system.addresses),
-		system_ok: system.ok,
-		resolver_ok: viaResolver ? viaResolver.ok : null,
-		lookups,
-	}, typeof rawTarget.resolver === "boolean" ? rawTarget.resolver : undefined);
+	return resultFromLookups(
+		target,
+		{
+			addresses: orderAddresses(viaResolver?.addresses || [], system.addresses),
+			system_ok: system.ok,
+			resolver_ok: viaResolver ? viaResolver.ok : null,
+			lookups,
+		},
+		needsResolver,
+		needsResolver === true && !viaResolver ? (opts.customResolver ?? hasCustomResolver()) : false,
+	);
 };
 
 /**
  * @param   {object}  target   {host, port, scheme}
  * @param   {object}  fields   addresses, system_ok, resolver_ok and the internal lookups
  * @param   {boolean|undefined} needsResolver
+ * @param   {boolean} [customResolver]  see combineLookups()
  * @returns {object}  the result in API shape, `lookups` with the outcome of each method (resolver: null when
  *          nginx has no resolver)
  */
-const resultFromLookups = (target, { lookups, ...fields }, needsResolver) => {
-	const combined = combineLookups(lookups, needsResolver);
+const resultFromLookups = (target, { lookups, ...fields }, needsResolver, customResolver = false) => {
+	const combined = combineLookups(lookups, needsResolver, customResolver);
 	const result = makeResult(target, {
 		...fields,
 		ok: combined.ok,
@@ -429,15 +447,17 @@ const resultFromLookups = (target, { lookups, ...fields }, needsResolver) => {
  * @param   {object}  result          from checkTarget()
  * @param   {object}  target          {host, port}
  * @param   {boolean} needsResolver   nginx resolves the target per request
+ * @param   {boolean} [customResolver]  see combineLookups(); read from the custom http config when not given
  * @returns {object}  the result for that method (a copy)
  */
-const forResolverTarget = (result, target, needsResolver) => {
+const forResolverTarget = (result, target, needsResolver, customResolver) => {
 	if (result?.lookups?.system) {
 		const { host, port, scheme, addresses, system_ok, resolver_ok, lookups } = result;
 		const fresh = resultFromLookups(
 			{ host: splitHostPath(target?.host ?? host).host, port: target?.port ?? port, scheme },
 			{ addresses, system_ok, resolver_ok, lookups },
 			!!needsResolver,
+			needsResolver && !lookups.resolver ? (customResolver ?? hasCustomResolver()) : false,
 		);
 		return { ...fresh, host };
 	}
@@ -487,6 +507,7 @@ const checkTargets = async (targets, opts = {}) => {
 export {
 	checkTarget,
 	checkTargets,
+	combineLookups,
 	forResolverTarget,
 	formatMs,
 	MESSAGES,

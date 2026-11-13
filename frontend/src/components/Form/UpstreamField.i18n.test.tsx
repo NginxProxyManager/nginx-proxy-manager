@@ -171,6 +171,11 @@ describe("forward host picker in German", () => {
 		expect(container.querySelector("#h")?.textContent).toBe("Erreichbar (1.234 ms) – 10.0.0.2");
 		rerender(<UpstreamCheckHint id="h" result={{ ...refused, code: "invalid_host", host: "", port: 80 }} />);
 		expect(container.querySelector("#h")).toHaveTextContent("Gib einen Hostnamen oder eine IP-Adresse ein.");
+		// nginx resolves the target per request and has no resolver (DISABLE_RESOLVER)
+		rerender(<UpstreamCheckHint id="h" result={{ ...refused, ok: false, code: "no_resolver", ms: 2 }} />);
+		expect(container.querySelector("#h")?.textContent).toMatch(
+			/^Kein nginx-Resolver – Der nginx-Resolver ist deaktiviert \(DISABLE_RESOLVER\)/,
+		);
 	});
 
 	it("words the config test result in German", () => {

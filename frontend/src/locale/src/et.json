@@ -1142,6 +1142,9 @@
 	"upstream.check.detail.invalid_host_empty": {
 		"defaultMessage": "Sisesta hostinimi või IP-aadress."
 	},
+	"upstream.check.detail.no_resolver": {
+		"defaultMessage": "Nginxi nimelahendaja on keelatud (DISABLE_RESOLVER) ja nginx lahendab selle upstreami iga päringu ajal: päringud ebaõnnestuvad. Kasuta IP-aadressi või luba nimelahendaja."
+	},
 	"upstream.check.detail.resolver_mismatch": {
 		"defaultMessage": "„{host}“ leitakse ainult /etc/hosts või resolv.conf otsingudomeeni kaudu, mitte nginxi DNS-lahendajaga. See töötab ainult staatilise (laadimisel lahendatava) upstreamiga."
 	},
@@ -1168,6 +1171,9 @@
 	},
 	"upstream.check.invalid_host": {
 		"defaultMessage": "Vigane hostinimi"
+	},
+	"upstream.check.no_resolver": {
+		"defaultMessage": "Nginxi nimelahendaja puudub"
 	},
 	"upstream.check.ok": {
 		"defaultMessage": "Kättesaadav"
