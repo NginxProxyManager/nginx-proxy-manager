@@ -2612,13 +2612,18 @@ const internalNginx = {
 				}
 				// the configs that were not on disk before: nginx doesn't run them in any version
 				const absent = new Set();
+				// the others' text before they were rewritten: the version nginx may run
+				const previous = new Map();
 				const { results, loadErrors } = await internalNginx.configureEnabledHosts({
 					hostTypes: opts.hostTypes,
 					logPrefix: "Regenerate",
 					needsWork: (hostType, row) => {
 						const filename = internalNginx.getConfigName(hostType, row.id);
-						if (readFileOrNull(filename) === null) {
+						const text = readFileOrNull(filename);
+						if (text === null) {
 							absent.add(filename);
+						} else {
+							previous.set(filename, text);
 						}
 						return true;
 					},
@@ -2640,6 +2645,7 @@ const internalNginx = {
 						? await internalNginx.isolateRejectedReload(written, {
 								outcome: reloaded,
 								unserved: written.filter((filename) => absent.has(filename)),
+								previous,
 								offlineOnGlobal: true,
 							})
 						: null;

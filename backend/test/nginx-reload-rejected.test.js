@@ -1234,4 +1234,48 @@ describe("a regeneration whose reload nginx rejects", () => {
 			assert.notEqual(onDisk(id), null);
 		}
 	});
+
+	it("keeps a served TCP stream in service when a UDP stream rewritten onto its port is rejected", async () => {
+		// both on disk: the TCP stream as it is regenerated, the UDP stream with an older port
+		const tcp = await stream(3333, false);
+		const udp = await stream(3333, false);
+		fs.writeFileSync(conf(tcp), "server {\n  listen 3333;\n}\n");
+		fs.writeFileSync(conf(udp), "server {\n  listen 4444 udp;\n}\n");
+		const fakeGenerate = internalNginx.generateConfig;
+		internalNginx.generateConfig = async (_hostType, host) => {
+			const text = `server {\n  listen 3333${host.id === udp ? " udp" : ""};\n}\n`;
+			fs.writeFileSync(conf(host.id), text);
+			return text;
+		};
+		// another process holds UDP 3333: nginx rejects every reload with the UDP stream on it, and its bind()
+		// message names no protocol
+		const fake = internalNginx.reloadWaiter.reloadAndWait;
+		internalNginx.reloadWaiter.reloadAndWait = async () => {
+			const text = fs
+				.readdirSync(dir)
+				.filter((f) => f.endsWith(".conf"))
+				.map((f) => fs.readFileSync(join(dir, f), "utf8"))
+				.join("");
+			reloads.push(text);
+			return /listen 3333 udp;/.test(text) ? rejected() : confirmed();
+		};
+		let summary;
+		try {
+			summary = await internalNginx.regenerateAll({ hostTypes: ["stream"], restoreAside: false });
+		} finally {
+			internalNginx.reloadWaiter.reloadAndWait = fake;
+			internalNginx.generateConfig = fakeGenerate;
+		}
+		assert.deepEqual(
+			summary.offline.map((o) => o.id),
+			[udp],
+		);
+		// every reload nginx was asked to apply has the TCP stream
+		for (const text of reloads) {
+			assert.match(text, /listen 3333;/);
+		}
+		assert.equal(reloads.length, 2);
+		assert.equal((await row(tcp)).meta.nginx_online, true);
+		assert.equal(errFile(tcp), null);
+	});
 });
