@@ -2,6 +2,7 @@
 
 import * as process from "node:process"; // Use the node: protocol for built-ins
 import internalNginx from "../internal/nginx.js";
+import { regenerateExitCode } from "../lib/nginx-regenerate.js";
 import { global as logger } from "../logger.js";
 import deadHostModel from "../models/dead_host.js";
 import proxyHostModel from "../models/proxy_host.js";
@@ -88,11 +89,12 @@ try {
 	for (const item of summary.warnings) {
 		logIt(`[${item.host_type}] #${item.id} ${item.name}: ${item.message.replace(/\n/g, "; ")}`, "warn");
 	}
+	const exitCode = regenerateExitCode(summary);
 	logIt(
-		`Completed: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline.length}, failed ${summary.failed.length}`,
-		"success",
+		`Completed${exitCode ? ` with ${summary.failed.length} failed hosts` : ""}: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline.length}, failed ${summary.failed.length}`,
+		exitCode ? "error" : "success",
 	);
-	process.exit(0);
+	process.exit(exitCode);
 } catch (err) {
 	logIt(`Regenerating failed: ${err.message}`, "error");
 	if (err.regenerateSummary) {

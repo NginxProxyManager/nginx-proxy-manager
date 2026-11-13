@@ -235,6 +235,13 @@ const createSingleFlight = (makeBusyError) => {
 	};
 };
 
+/**
+ * @param   {Object} summary  of a regeneration that completed, see regenerateAll() in internal/nginx.js
+ * @returns {Number} the exit code of backend/scripts/regenerate-config: 1 when hosts could not be regenerated
+ *          (they kept their previous config), 0 otherwise. Hosts taken offline are a handled outcome.
+ */
+const regenerateExitCode = (summary) => (summary?.failed?.length ? 1 : 0);
+
 export {
 	auditMeta,
 	createSingleFlight,
@@ -243,6 +250,7 @@ export {
 	locationProblems,
 	locationWarning,
 	normaliseHostTypes,
+	regenerateExitCode,
 	runAudited,
 	summarise,
 	summariseFinal,

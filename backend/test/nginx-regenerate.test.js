@@ -8,6 +8,7 @@ import {
 	locationProblems,
 	locationWarning,
 	normaliseHostTypes,
+	regenerateExitCode,
 	runAudited,
 	summarise,
 	summariseFinal,
@@ -366,5 +367,13 @@ describe("runAudited", () => {
 		});
 		assert.equal(result, summary);
 		assert.deepEqual(auditErrors, ["db down"]);
+	});
+});
+
+describe("regenerateExitCode", () => {
+	it("fails the script when hosts could not be regenerated, not for hosts taken offline", () => {
+		assert.equal(regenerateExitCode({ failed: [], offline: [] }), 0);
+		assert.equal(regenerateExitCode({ failed: [], offline: [{ id: 1 }] }), 0);
+		assert.equal(regenerateExitCode({ failed: [{ id: 2 }], offline: [] }), 1);
 	});
 });

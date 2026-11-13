@@ -223,6 +223,9 @@ from the command line inside the container:
 docker exec -it <container> /app/scripts/regenerate-config --yes
 ```
 
+The script exits with code 1 when the regeneration failed or a host could not be regenerated (it kept its previous
+config), and with 0 otherwise, also when hosts were taken offline.
+
 Only one regeneration runs at a time, a second request gets `409 Conflict`. Each run is recorded in the audit log,
 also a run that failed half way (eg. nginx could not be reloaded), with the error. Such a run may have rewritten hosts
 or taken them offline already: the page shows these hosts below the error, and the API sends them as
