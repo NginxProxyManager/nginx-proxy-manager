@@ -393,3 +393,34 @@ for (const type of types) {
 		});
 	});
 }
+
+describe("discarding an unused certificate", () => {
+	it("holds the nginx lock from the usage check to the removal, so no update can take the certificate up in between", async () => {
+		const internalHost = await load("internal/host.js");
+		const order = [];
+		let release;
+		const removing = new Promise((resolve) => {
+			release = resolve;
+		});
+		let started;
+		const inRemove = new Promise((resolve) => {
+			started = resolve;
+		});
+		const discard = internalHost.discardUnusedCertificate(999, async () => {
+			order.push("remove started");
+			started();
+			await removing;
+			order.push("remove done");
+		});
+		await inRemove;
+		// eg. updateAndConfigure() patching certificate_id
+		const update = internalNginx.withLock(async () => {
+			order.push("update");
+		});
+		await new Promise((resolve) => setTimeout(resolve, 20));
+		release();
+		assert.equal(await discard, true);
+		await update;
+		assert.deepEqual(order, ["remove started", "remove done", "update"]);
+	});
+});

@@ -334,26 +334,29 @@ const internalHost = {
 	 * @param   {Function}  remove  async (): deletes (and revokes) the certificate
 	 * @returns {Promise<boolean>} true when the certificate was removed
 	 */
-	discardUnusedCertificate: async (certificateId, remove) => {
-		try {
-			for (const model of [proxyHostModel, redirectionHostModel, deadHostModel, streamModel]) {
-				const user = await model
-					.query()
-					.where("is_deleted", 0)
-					.andWhere("certificate_id", certificateId)
-					.first();
-				if (user) {
-					return false;
+	discardUnusedCertificate: (certificateId, remove) =>
+		// Under the nginx lock, like the updates that assign a certificate (see updateAndConfigure()): a host
+		// can't take the certificate up between the check and the removal
+		internalNginx
+			.withLock(async () => {
+				for (const model of [proxyHostModel, redirectionHostModel, deadHostModel, streamModel]) {
+					const user = await model
+						.query()
+						.where("is_deleted", 0)
+						.andWhere("certificate_id", certificateId)
+						.first();
+					if (user) {
+						return false;
+					}
 				}
-			}
-			await remove();
-			logger.warn(`Removed certificate #${certificateId}: the update it was requested for was rejected`);
-			return true;
-		} catch (err) {
-			logger.warn(`Could not remove the unused certificate #${certificateId}: ${err.message}`);
-			return false;
-		}
-	},
+				await remove();
+				logger.warn(`Removed certificate #${certificateId}: the update it was requested for was rejected`);
+				return true;
+			})
+			.catch((err) => {
+				logger.warn(`Could not remove the unused certificate #${certificateId}: ${err.message}`);
+				return false;
+			}),
 
 	/**
 	 * Rolls back the create of a host that nginx rejected: marks the row deleted and, when a config file of it
