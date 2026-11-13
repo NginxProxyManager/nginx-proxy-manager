@@ -155,6 +155,12 @@
 /crw/old/page|||"url":"/crw/new/page"
 /crw/app.css|||"url":"/k/app.css"
 /crw/page?x=1|||"url":"/k/page?x=1"
+/crwg/alias/secret.css|||403
+/crwg/alias/page|||403
+/crwg/private/x.css|||403
+/crwg/pub/app.css|||"url":"/v1/pub/app.css"
+/crwg/pub/app.css|||"in":"/crwg/pub/app.css"
+/crwg/pub/page|||"in":"/crwg/pub/page"
 /cif/app.css|||"url":"/v1/a"
 /cif/app.css?b=1|||"url":"/v1/b"
 /cif/page?b=1|||"url":"/v1/b"

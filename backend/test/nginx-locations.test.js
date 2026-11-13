@@ -998,6 +998,23 @@ describe("the nested asset location of a location with a forward path", () => {
 		});
 	}
 
+	it("leaves $uri live in rewrite-phase statements, so a guard after the user's rewrite sees the new URI", async () => {
+		const adv =
+			"rewrite ^/api/alias/(.*)$ /api/private/$1;\nif ($uri ~ ^/api/private/) { return 403; }\n" +
+			"set $u $uri;\nset_unescape_uri $e $uri;\nreturn 418 $uri;\nproxy_set_header X-U $uri;";
+		const out = await render({ ...loc, advanced_config: adv }, { mode: "static" });
+		const asset = assetBlock(out);
+		assert.match(asset, /if \(\$uri ~ \^\/api\/private\/\) \{ return 403; \}/);
+		assert.match(asset, /set \$u \$uri;/);
+		assert.match(asset, /set_unescape_uri \$e \$uri;/);
+		assert.match(asset, /return 418 \$uri;/);
+		// a later phase reads the URI from before the generated rewrite, set again after the user's statements
+		assert.match(asset, /proxy_set_header X-U \$npm_loc_0_uri;/);
+		const refresh = asset.lastIndexOf("set $npm_loc_0_uri $uri;");
+		assert.ok(refresh > asset.indexOf("proxy_set_header X-U"));
+		assert.ok(refresh < asset.indexOf("rewrite \"(?s)"));
+	});
+
 	it("leaves Lua code, other variables and locations without the rewrite alone", async () => {
 		const lua = "access_by_lua_block { local u = ngx.var.uri -- $uri\n }\nadd_header X $uri_x;";
 		const out = await render({ ...loc, advanced_config: lua }, { mode: "static" });

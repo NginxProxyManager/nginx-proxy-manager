@@ -48,6 +48,7 @@
  {"path":"^~ /private/","host":"$sembackend","fp":"","cache":true,"adv":"set $sembackend echo; if ($http_x_token != secret) { return 403; }"},
  {"path":"^~ /nprivate/","host":"$sembackend","fp":"","adv":"set $sembackend echo; if ($http_x_token != secret) { return 403; }"},
  {"path":"/crw/","fp":"/k/","cache":true,"adv":"rewrite ^/crw/old/(.*)$ /crw/new/$1 break;"},
+ {"path":"^~ /crwg/","fp":"/v1/","cache":true,"adv":"rewrite ^/crwg/alias/(.*)$ /crwg/private/$1; if ($uri ~ ^/crwg/private/) { return 403; } proxy_set_header X-Sem-In $uri;"},
  {"path":"/cif/","fp":"/v1/$semt","cache":true,"adv":"set $semt a; if ($arg_b) { set $semt b; }"},
  {"path":"/cnest/","fp":"/n/","cache":true,"adv":"location /cnest/in/ { return 200 \"inner $uri\"; }"},
  {"path":"/nest/","fp":"/n/","adv":"location /nest/in/ { return 200 \"inner $uri\"; }"},

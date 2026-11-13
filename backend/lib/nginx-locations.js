@@ -545,15 +545,24 @@ const assetAdvancedConfig = (advancedConfig) => {
  * every $uri, ${uri}, $document_uri and ${document_uri} of an nginx statement is replaced, not in comments and
  * not in *_by_lua_block bodies (Lua reads ngx.var.uri, which still has the rewritten value).
  *
+ * Rewrite-phase statements (set, if, rewrite, return, break and set-misc's set_*) are not replaced: they run in
+ * order before the generated rewrite, so they read $uri as it is right then, after the user's own rewrites. A
+ * guard like `rewrite ^/a/(.*)$ /private/$1; if ($uri ~ ^/private/) { return 403; }` must see the rewritten URI.
+ * The variable is set again right before the generated rewrite (see templates/_location_body.conf), so the later
+ * phases read the URI after the user's rewrites too.
+ *
  * @param   {String} text  the advanced config as the asset location repeats it, see assetAdvancedConfig()
  * @param   {String} name  variable name without `$`, eg. npm_loc_0_uri
  * @returns {{text: String, replaced: Number}}
  */
+// statements of the rewrite phase that keepUriVariables() leaves as they are
+const REWRITE_PHASE = /^(?:set|if|rewrite|return|break|set_[a-z0-9_]+)$/;
+
 const keepUriVariables = (text, name) => {
 	const { statements } = scanNginxConfig(text);
 	const ranges = [];
 	statements.forEach((statement, i) => {
-		if (statement.lua) {
+		if (statement.lua || REWRITE_PHASE.test(statement.tokens[0] || "")) {
 			return;
 		}
 		if (statement.end === "{") {
