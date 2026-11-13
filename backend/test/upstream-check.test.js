@@ -12,6 +12,7 @@ import {
 	formatMs,
 	MESSAGES,
 	resolverLookup,
+	systemLookup,
 	targetKey,
 	tcpConnect,
 } from "../lib/upstream/check.js";
@@ -380,6 +381,39 @@ describe("upstream check: primitives", () => {
 		const result = await tcpConnect("10.255.255.1", 9, 300);
 		assert.equal(result.ok, false);
 		assert.ok(["tcp_timeout", "tcp_unreachable"].includes(result.code));
+	});
+
+	it("systemLookup keeps its DNS slot until a timed-out lookup settles", async () => {
+		// the cap is 16: lookups that time out for the caller still run (getaddrinfo can't be cancelled)
+		let running = 0;
+		let most = 0;
+		const pending = [];
+		const lookup = () =>
+			new Promise((resolve) => {
+				running++;
+				most = Math.max(most, running);
+				pending.push(() => {
+					running--;
+					resolve([{ address: "10.0.0.1" }]);
+				});
+			});
+		const first = await Promise.all(
+			Array.from({ length: 16 }, () => systemLookup("slow", { lookup, timeoutMs: 20 })),
+		);
+		assert.ok(first.every((r) => r.timeout && r.error === "ETIMEOUT"));
+		// more lookups wait for a free slot instead of starting while those still run (another test may hold a
+		// slot with a lookup that never settles, so not all 16 need to have started)
+		const started = running;
+		assert.ok(started > 0 && started <= 16);
+		const more = Promise.all(Array.from({ length: 4 }, () => systemLookup("slow", { lookup, timeoutMs: 20 })));
+		await new Promise((resolve) => setTimeout(resolve, 40));
+		assert.equal(running, started);
+		while (pending.length) {
+			pending.shift()();
+			await new Promise((resolve) => setImmediate(resolve));
+		}
+		await more;
+		assert.ok(most <= 16);
 	});
 
 	it("resolverLookup returns null without resolvers", async () => {
