@@ -56,7 +56,7 @@ const SOURCE_ICON: Record<UpstreamSource, ReactNode> = {
 };
 
 /** Port and scheme to fill in when a candidate is picked */
-export const candidatePrefill = (c: UpstreamCandidate): UpstreamPrefill => {
+export const candidatePrefill = (c: UpstreamCandidate, currentHost?: string | null): UpstreamPrefill => {
 	const prefill: UpstreamPrefill = {};
 	if (typeof c.hintPort === "number" && c.hintPort > 0) {
 		prefill.port = c.hintPort;
@@ -65,6 +65,11 @@ export const candidatePrefill = (c: UpstreamCandidate): UpstreamPrefill => {
 	}
 	if (c.hintScheme === "http" || c.hintScheme === "https") {
 		prefill.scheme = c.hintScheme;
+	} else if (c.source === "docker" && c.host !== `${currentHost ?? ""}`.trim()) {
+		// A container without a scheme hint (no npm.scheme label, a port other than 443/8443) serves http: picking
+		// it must not keep the https of the target it replaces. Picking the current host again changes nothing,
+		// it may serve TLS on another port. DNS and history candidates don't say.
+		prefill.scheme = "http";
 	}
 	return prefill;
 };
@@ -685,7 +690,7 @@ export function UpstreamField({
 		}
 		setValue(opt.value);
 		if (opt.candidate && !opt.__isNew__) {
-			onSelectCandidate?.(candidatePrefill(opt.candidate), opt.candidate);
+			onSelectCandidate?.(candidatePrefill(opt.candidate, value), opt.candidate);
 		}
 	};
 
