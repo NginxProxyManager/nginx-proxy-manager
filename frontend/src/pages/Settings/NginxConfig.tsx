@@ -1,4 +1,4 @@
-import { IconAlertTriangle, IconCircleCheck, IconRefresh } from "@tabler/icons-react";
+import { IconAlertTriangle, IconCircleCheck, IconInfoCircle, IconRefresh } from "@tabler/icons-react";
 import { type MutationState, useMutation, useMutationState, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
@@ -153,7 +153,12 @@ interface RegenerateResultProps {
 }
 function RegenerateResult({ result, partial }: RegenerateResultProps) {
 	const problems = result.offline.length + result.failed.length;
-	const variant = partial || problems ? "warning" : result.warnings.length ? "info" : "success";
+	// a run that failed half way, or hosts that are offline or kept their previous config
+	const alert = partial || problems > 0;
+	// nothing wrong, but not everything is regenerated and clean: warnings, or hosts skipped for a running
+	// certificate request (also when every host was skipped)
+	const notice = result.warnings.length > 0 || (result.skipped?.length ?? 0) > 0;
+	const variant = alert ? "warning" : notice ? "info" : "success";
 	return (
 		<Alert
 			variant={variant}
@@ -166,10 +171,12 @@ function RegenerateResult({ result, partial }: RegenerateResultProps) {
 				</div>
 			) : null}
 			<div className="d-flex align-items-center">
-				{problems ? (
-					<IconAlertTriangle size={20} className="me-2 flex-shrink-0" />
+				{alert ? (
+					<IconAlertTriangle size={20} className="me-2 flex-shrink-0" data-testid="regenerate-icon-alert" />
+				) : notice ? (
+					<IconInfoCircle size={20} className="me-2 flex-shrink-0" data-testid="regenerate-icon-info" />
 				) : (
-					<IconCircleCheck size={20} className="me-2 flex-shrink-0" />
+					<IconCircleCheck size={20} className="me-2 flex-shrink-0" data-testid="regenerate-icon-ok" />
 				)}
 				<div>
 					<T

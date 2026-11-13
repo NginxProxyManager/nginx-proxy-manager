@@ -111,9 +111,51 @@ describe("Settings: Nginx configuration", () => {
 		await confirm();
 		const result = await screen.findByTestId("regenerate-result");
 		expect(result).toHaveClass("alert-success");
+		expect(screen.getByTestId("regenerate-icon-ok")).toBeInTheDocument();
 		expect(result).toHaveTextContent("Checked 1 host in 0.1 s: 1 online, 0 offline, 0 not regenerated.");
 		expect(screen.queryByTestId("regenerate-offline")).toBeNull();
 		expect(screen.queryByTestId("regenerate-skipped")).toBeNull();
+	});
+
+	it("doesn't show a run as clean when every host was skipped for a certificate request", async () => {
+		api.regenerateNginxConfigs.mockResolvedValue({
+			checked: 0,
+			regenerated: 0,
+			offline: [],
+			failed: [],
+			warnings: [],
+			skipped: [{ hostType: "proxy_host", id: 3, name: "a.example.com", message: "certificate request running" }],
+			durationMs: 10,
+		});
+		renderPage();
+		await confirm();
+		const result = await screen.findByTestId("regenerate-result");
+		expect(result).not.toHaveClass("alert-success");
+		expect(result).toHaveClass("alert-info");
+		expect(screen.getByTestId("regenerate-icon-info")).toBeInTheDocument();
+		expect(screen.getByTestId("regenerate-skipped")).toHaveTextContent("a.example.com");
+	});
+
+	it("shows the alert icon for a run that failed half way, also without offline or failed hosts", async () => {
+		api.regenerateNginxConfigs.mockRejectedValue(
+			new ApiError("Internal Error", {
+				status: 500,
+				regenerateSummary: {
+					checked: 2,
+					regenerated: 2,
+					offline: [],
+					failed: [],
+					warnings: [],
+					durationMs: 50,
+				},
+			}),
+		);
+		renderPage();
+		await confirm();
+		const partial = await screen.findByTestId("regenerate-partial");
+		expect(partial).toHaveClass("alert-warning");
+		expect(screen.getByTestId("regenerate-icon-alert")).toBeInTheDocument();
+		expect(screen.queryByTestId("regenerate-icon-ok")).toBeNull();
 	});
 
 	it("shows the API error, eg. a second regeneration running already", async () => {
