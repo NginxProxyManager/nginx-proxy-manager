@@ -1581,7 +1581,9 @@ const internalNginx = {
 			},
 		});
 		if (healRecorder && row) {
-			healRecorder.push({ host_type: other.host_type, id: row.id });
+			// file and its text before the repair: regenerateAll() hands a regenerated file to the isolation of a
+			// rejected reload, also when its host type wasn't selected
+			healRecorder.push({ host_type: other.host_type, id: row.id, file: filename, previous: fileText });
 		}
 		return true;
 	},
@@ -2641,6 +2643,18 @@ const internalNginx = {
 					const written = results
 						.filter((r) => !r.error && !r.skipped && !r.suspended && r.meta?.nginx_online !== false)
 						.map((r) => internalNginx.getConfigName(r.hostType, r.row.id));
+					// Hosts that configuring or the final test regenerated on the way (healOtherHost()), eg. a broken
+					// stream during a proxy_host-only run: nginx may reject their new config too, so they are part of
+					// the isolation, with the text they had before (a file moved to .err is not)
+					for (const entry of healed) {
+						if (!entry.file || written.includes(entry.file) || !fs.existsSync(entry.file)) {
+							continue;
+						}
+						written.push(entry.file);
+						if (!previous.has(entry.file) && !absent.has(entry.file)) {
+							previous.set(entry.file, entry.previous);
+						}
+					}
 					const isolated = reloaded?.rejected
 						? await internalNginx.isolateRejectedReload(written, {
 								outcome: reloaded,

@@ -402,6 +402,30 @@ describe("a reload that nginx rejects after configs were written without reloadi
 		assert.equal((await row(rejectedId)).meta.nginx_details.reason, "rejected_at_startup");
 	});
 
+	it("regenerating other host types isolates a stream the final test repaired when nginx rejects its port", async () => {
+		const id = await stream(3333, false);
+		fs.writeFileSync(conf(id), "server {\n  tampered;\n  listen 3333;\n}\n");
+		const test = internalNginx.test;
+		// nginx -t fails while the tampered file is there, naming it
+		internalNginx.test = async () => {
+			if (onDisk(id)?.includes("tampered")) {
+				throw new Error(
+					`nginx: [emerg] unknown directive "tampered" in /data/nginx/stream/${id}.conf:2\nnginx: configuration file /etc/nginx/nginx.conf test failed`,
+				);
+			}
+		};
+		try {
+			// the repaired stream listens on the busy port, then without it nginx applies the reload
+			outcomes = [rejected(), confirmed()];
+			const summary = await internalNginx.regenerateAll({ hostTypes: ["dead_host"] });
+			assert.equal((await row(id)).meta.nginx_online, false);
+			assert.equal(onDisk(id), null);
+			assert.ok(summary.offline.some((o) => o.host_type === "stream" && o.id === id));
+		} finally {
+			internalNginx.test = test;
+		}
+	});
+
 	it("startup reconcile tries the regenerated hosts again when the reload throws", async () => {
 		const id = await stream(2222, false);
 		const reloadNginx = internalNginx.reloadNginx;
