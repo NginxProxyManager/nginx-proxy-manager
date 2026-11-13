@@ -9,7 +9,9 @@ const MANAGED_FILE_REGEX = /^\/data\/nginx\/(proxy_host|redirection_host|dead_ho
 
 /**
  * Removes noise from nginx stderr output:
- * - the docker-ism alert about /var/log/nginx/error.log which is always a false positive
+ * - the docker-ism startup alert "could not open error log file: open() "/var/log/nginx/error.log"" which is
+ *   always a false positive (real failures that mention that path, e.g. an [emerg] for a host's own
+ *   error_log, are kept so the broken host can still be identified)
  * - the warning that the "user" directive is ignored, which nginx always prints when it runs as PUID
  * - the trailing "configuration file ... test failed" line
  *
@@ -19,7 +21,7 @@ const MANAGED_FILE_REGEX = /^\/data\/nginx\/(proxy_host|redirection_host|dead_ho
 const cleanNginxOutput = (output) => {
 	return `${output || ""}`
 		.split("\n")
-		.filter((line) => line.indexOf("/var/log/nginx/error.log") === -1)
+		.filter((line) => !/\[alert\].*could not open error log file: open\(\) "\/var\/log\/nginx\/error\.log"/.test(line))
 		.filter((line) => !/\[warn\] the "user" directive makes sense only if the master process runs with super-user privileges/.test(line))
 		.filter((line) => !/configuration file .* test failed/.test(line))
 		.filter((line) => line.trim() !== "")

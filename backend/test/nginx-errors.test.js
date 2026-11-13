@@ -20,6 +20,15 @@ describe("cleanNginxOutput", () => {
 		);
 		assert.equal(out, 'nginx: [emerg] unknown directive "foo" in /data/nginx/proxy_host/1.conf:3');
 	});
+
+	it("keeps real errors that mention /var/log/nginx/error.log", () => {
+		const emerg =
+			'nginx: [emerg] open() "/var/log/nginx/error.log" failed (13: Permission denied) in /data/nginx/proxy_host/4.conf:9';
+		assert.equal(cleanNginxOutput(`${DOCKERISM}\n${emerg}`), emerg);
+		const parsed = parseNginxTestOutput(`${DOCKERISM}\n${emerg}`);
+		assert.equal(parsed.file, "/data/nginx/proxy_host/4.conf");
+		assert.equal(parsed.line, 9);
+	});
 });
 
 describe("parseNginxTestOutput", () => {
