@@ -137,13 +137,29 @@ describe('Regenerate all host configs', () => {
 	});
 
 	it('Should refuse a second regeneration while one is running', () => {
-		// Two requests at once, straight to the API: one runs, the other one gets a 409
+		// Two requests at once, straight to the API: when they overlap, one runs and the other one gets a 409.
+		// They may not overlap (both wait for the auth checks first, a run of two hosts is short), so this tries a
+		// few pairs until it sees the 409. The 409 itself is tested with a held run in
+		// backend/test/nginx-regenerate-busy.test.js.
 		const curl = `curl --noproxy '*' -s -o /dev/null -w '%{http_code}\\n' -X POST -H 'Authorization: Bearer ${token}' -H 'Content-Type: application/json' -d '{}' ${Cypress.config('baseUrl')}/api/nginx/regenerate`;
-		cy.task('exec', {
-			command: `${curl} > /tmp/regen-a.txt & ${curl} > /tmp/regen-b.txt & wait ; cat /tmp/regen-a.txt /tmp/regen-b.txt ; rm -f /tmp/regen-a.txt /tmp/regen-b.txt`,
-		}, { log: false, timeout: 120000 }).then((result) => {
-			const codes = result.stdout.trim().split('\n').sort();
-			expect(codes).to.deep.equal(['200', '409']);
+		const attempt = (n) => {
+			const out = `/tmp/regen-${Date.now()}-${n}`;
+			return cy.task('exec', {
+				command: `${curl} > ${out}-a.txt & ${curl} > ${out}-b.txt & wait ; cat ${out}-a.txt ${out}-b.txt ; rm -f ${out}-a.txt ${out}-b.txt`,
+			}, { log: false, timeout: 120000 }).then((result) => {
+				const codes = result.stdout.trim().split('\n').sort();
+				expect(codes).to.have.length(2);
+				codes.forEach((code) => expect(code).to.be.oneOf(['200', '409']));
+				// one of them always runs
+				expect(codes).to.include('200');
+				if (codes.includes('409') || n >= 5) {
+					return codes;
+				}
+				return attempt(n + 1);
+			});
+		};
+		attempt(1).then((codes) => {
+			expect(codes, 'a 409 for the request that overlapped a running regeneration').to.deep.equal(['200', '409']);
 		});
 	});
 
