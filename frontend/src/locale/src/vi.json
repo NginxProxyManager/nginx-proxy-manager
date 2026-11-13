@@ -932,6 +932,12 @@
 	"settings.nginx.regenerate.audit": {
 		"defaultMessage": "{checked} host, {offline} ngoại tuyến"
 	},
+	"settings.nginx.regenerate.audit-failed": {
+		"defaultMessage": "Thất bại"
+	},
+	"settings.nginx.regenerate.audit-partial": {
+		"defaultMessage": "Thất bại sau {checked} host, {offline} ngoại tuyến"
+	},
 	"settings.nginx.regenerate.busy": {
 		"defaultMessage": "Cấu hình của tất cả host đang được tạo lại, hãy đợi đến khi hoàn tất."
 	},

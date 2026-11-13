@@ -27,6 +27,15 @@ const getEventValue = (event: AuditLog) => {
 		case "certificate":
 			return event.meta?.domainNames?.join(", ") || event.meta?.niceName || "N/A";
 		case "nginx-config":
+			if (event.meta?.error) {
+				// a run that failed half way has the counts of what it did until then
+				return typeof event.meta.checked === "number"
+					? intl.formatMessage(
+							{ id: "settings.nginx.regenerate.audit-partial" },
+							{ checked: event.meta.checked, offline: event.meta.offline ?? 0 },
+						)
+					: intl.formatMessage({ id: "settings.nginx.regenerate.audit-failed" });
+			}
 			return intl.formatMessage(
 				{ id: "settings.nginx.regenerate.audit" },
 				{ checked: event.meta?.checked ?? 0, offline: event.meta?.offline ?? 0 },
@@ -48,7 +57,8 @@ const getColorForAction = (action: string) => {
 };
 
 const getIcon = (row: AuditLog) => {
-	const c = cn(getColorForAction(row.action), "me-1");
+	const failed = row.objectType === "nginx-config" && !!row.meta?.error;
+	const c = cn(failed ? "text-red" : getColorForAction(row.action), "me-1");
 	let ico = null;
 	switch (row.objectType) {
 		case "user":

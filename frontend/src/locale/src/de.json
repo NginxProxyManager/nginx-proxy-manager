@@ -932,6 +932,12 @@
 	"settings.nginx.regenerate.audit": {
 		"defaultMessage": "{checked, plural, one {# Host} other {# Hosts}}, {offline} offline"
 	},
+	"settings.nginx.regenerate.audit-failed": {
+		"defaultMessage": "Fehlgeschlagen"
+	},
+	"settings.nginx.regenerate.audit-partial": {
+		"defaultMessage": "Fehlgeschlagen nach {checked, plural, =1 {# Host} other {# Hosts}}, {offline} offline"
+	},
 	"settings.nginx.regenerate.busy": {
 		"defaultMessage": "Alle Host-Konfigurationen werden bereits neu erzeugt, warte, bis das abgeschlossen ist."
 	},

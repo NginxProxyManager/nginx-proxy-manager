@@ -932,6 +932,12 @@
 	"settings.nginx.regenerate.audit": {
 		"defaultMessage": "{checked, plural, one {# host} other {# hosti}}, {offline} võrgust väljas"
 	},
+	"settings.nginx.regenerate.audit-failed": {
+		"defaultMessage": "Ebaõnnestus"
+	},
+	"settings.nginx.regenerate.audit-partial": {
+		"defaultMessage": "Ebaõnnestus pärast {checked, plural, =1 {# hosti} other {# hosti}}, {offline} võrgust väljas"
+	},
 	"settings.nginx.regenerate.busy": {
 		"defaultMessage": "Kõigi hostide seadistusi juba luuakse uuesti, oota, kuni see lõpeb."
 	},
