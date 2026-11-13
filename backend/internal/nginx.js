@@ -632,6 +632,10 @@ const internalNginx = {
 					}
 				} catch (err) {
 					if (!err.protectedConflict) {
+						// Unexpected (eg. the other host's offline status could not be written): this host's candidate
+						// config is on disk, also in a dry run. Put its previous files back first, so a later reload
+						// can't apply a candidate whose configure failed.
+						await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
 						throw err;
 					}
 					if (filename !== repair.saved) {

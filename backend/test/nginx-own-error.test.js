@@ -225,3 +225,25 @@ describe("repairs of other hosts while saving a host whose own config is not app
 		assert.equal(reloads.length, 0);
 	});
 });
+
+describe("an unexpected error while repairing another host", () => {
+	afterEach(() => {
+		internalNginx.healOtherHost = real.healOtherHost;
+	});
+	for (const dryRun of [false, true]) {
+		it(`puts the saved host's previous config back${dryRun ? " (dry run)" : ""}`, async () => {
+			const other = await host("tampered on;", "server {\n  tampered on;\n}\n");
+			const id = await host("# new", "server {\n  # before\n}\n");
+			real.healOtherHost = internalNginx.healOtherHost;
+			internalNginx.healOtherHost = async () => {
+				throw new Error("SQLITE_BUSY: database is locked");
+			};
+			await assert.rejects(
+				internalNginx.configure(proxyHostModel, "proxy_host", await row(id), { dryRun }),
+				/SQLITE_BUSY/,
+			);
+			assert.equal(onDisk(id), "server {\n  # before\n}\n");
+			fs.rmSync(conf(other), { force: true });
+		});
+	}
+});
