@@ -160,37 +160,48 @@ const readFileOrNull = (filename) => {
 	}
 };
 
+const addListen = (found, address, protocol) => {
+	if (!found.has(address)) {
+		found.set(address, new Set());
+	}
+	found.get(address).add(protocol);
+};
+
 /**
  * The addresses the `listen` directives of a config bind, as nginx writes them in a failed bind() message:
- * "0.0.0.0:3333", "[::]:3333", "127.0.0.1:80". Comments are ignored, so are unix sockets. Values written as a
- * host name ("localhost:3341") are added to `names` as [name, port], see resolvedListenAddresses().
+ * "0.0.0.0:3333", "[::]:3333", "127.0.0.1:80", each with the protocols it listens with there ("tcp", or
+ * "udp" for `listen 53 udp;` and `listen 443 quic;`). nginx's bind() message doesn't name the protocol, so
+ * a TCP and a UDP listen on the same port have the same address. Comments are ignored, so are unix sockets.
+ * Values written as a host name ("localhost:3341") are added to `names` as [name, port, protocol], see
+ * resolvedListenAddresses().
  *
  * @param   {String} text
  * @param   {Array}  [names]
- * @returns {Set<String>}
+ * @returns {Map<String, Set<String>>}
  */
 const listenAddresses = (text, names = []) => {
-	const found = new Set();
+	const found = new Map();
 	const code = text.replace(/#[^\n]*/g, "");
-	for (const [, value] of code.matchAll(/(?:^|[\s;{}])listen\s+([^\s;]+)/g)) {
+	for (const [, value, params] of code.matchAll(/(?:^|[\s;{}])listen\s+([^\s;]+)([^;]*)/g)) {
+		const protocol = /(?:^|\s)(?:udp|quic)(?=\s|$)/.test(params) ? "udp" : "tcp";
 		let m = /^(?:\*:)?(\d+)$/.exec(value);
 		if (m) {
-			found.add(`0.0.0.0:${m[1]}`);
+			addListen(found, `0.0.0.0:${m[1]}`, protocol);
 			continue;
 		}
 		m = /^\[([0-9a-fA-F:.]*)\](?::(\d+))?$/.exec(value);
 		if (m) {
-			found.add(`[${m[1]}]:${m[2] || 80}`);
+			addListen(found, `[${m[1]}]:${m[2] || 80}`, protocol);
 			continue;
 		}
 		m = /^(\d+\.\d+\.\d+\.\d+)(?::(\d+))?$/.exec(value);
 		if (m) {
-			found.add(`${m[1]}:${m[2] || 80}`);
+			addListen(found, `${m[1]}:${m[2] || 80}`, protocol);
 			continue;
 		}
 		m = /^([a-zA-Z0-9][a-zA-Z0-9.-]*)(?::(\d+))?$/.exec(value);
 		if (m) {
-			names.push([m[1], m[2] || "80"]);
+			names.push([m[1], m[2] || "80", protocol]);
 		}
 	}
 	return found;
@@ -204,12 +215,12 @@ const LISTEN_LOOKUP_TIMEOUT = 2000;
  * resolve in time adds nothing.
  *
  * @param   {String} text
- * @returns {Promise<Set<String>>}
+ * @returns {Promise<Map<String, Set<String>>>}
  */
 const resolvedListenAddresses = async (text) => {
 	const names = [];
 	const found = listenAddresses(text, names);
-	for (const [name, port] of names) {
+	for (const [name, port, protocol] of names) {
 		let timer;
 		const addresses = await Promise.race([
 			dns.promises.lookup(name, { all: true }).catch(() => []),
@@ -219,7 +230,7 @@ const resolvedListenAddresses = async (text) => {
 		]);
 		clearTimeout(timer);
 		for (const { address, family } of addresses) {
-			found.add(family === 6 ? `[${address}]:${port}` : `${address}:${port}`);
+			addListen(found, family === 6 ? `[${address}]:${port}` : `${address}:${port}`, protocol);
 		}
 	}
 	return found;
@@ -286,11 +297,18 @@ const tooManyBrokenDetails = () => ({
 /**
  * @param   {String|null} [saved]  config file of the host the operation saves; null when no host is saved,
  *                                 eg. the startup / reload test, where every repaired host comes from its row
- * @returns {{tried: Set<String>, budget: Number, saved: String|null, absent: Set<String>}} the repair state of
- *          one operation: the config files already regenerated, how many regenerations are left, the host being
- *          saved and the config files of other hosts that were not on disk before this operation wrote them
+ * @returns {{tried: Set<String>, budget: Number, saved: String|null, absent: Set<String>,
+ *          previous: Map<String, String>}} the repair state of one operation: the config files already
+ *          regenerated, how many regenerations are left, the host being saved, the config files of other hosts
+ *          that were not on disk before this operation wrote them and the text of the others before it did
  */
-const newRepair = (saved = null) => ({ tried: new Set(), budget: MAX_HEAL_ITERATIONS, saved, absent: new Set() });
+const newRepair = (saved = null) => ({
+	tried: new Set(),
+	budget: MAX_HEAL_ITERATIONS,
+	saved,
+	absent: new Set(),
+	previous: new Map(),
+});
 
 /**
  * @param   {Object} repair    see newRepair()
@@ -479,6 +497,9 @@ const internalNginx = {
 		if (previous === null && filename !== repair.saved) {
 			// Regenerated on behalf of another host: nginx can't run a config that was not on disk
 			repair.absent.add(filename);
+		} else if (filename !== repair.saved && !repair.previous.has(filename) && !repair.absent.has(filename)) {
+			// the version nginx may run, see isolateRejectedReload()
+			repair.previous.set(filename, previous);
 		}
 		let configText = "";
 		let failure = null;
@@ -495,6 +516,7 @@ const internalNginx = {
 						reload: opts.reload || (opts.applyRepairs && heals > 0),
 						repaired: repairedFiles(repair, filename),
 						unserved: unservedRepairs(repair, filename),
+						previous: repair.previous,
 					});
 				}
 				await internalNginx.restoreHost(model, host, filename, previous, previousErr, heals > 0);
@@ -504,6 +526,7 @@ const internalNginx = {
 						host,
 						repairedFiles(repair, filename),
 						unservedRepairs(repair, filename),
+						repair.previous,
 					);
 				}
 				const error =
@@ -684,6 +707,7 @@ const internalNginx = {
 					host,
 					repairedFiles(repair, filename),
 					unservedRepairs(repair, filename),
+					repair.previous,
 				);
 			}
 			throw error;
@@ -705,6 +729,7 @@ const internalNginx = {
 					host,
 					repairedFiles(repair, filename),
 					unservedRepairs(repair, filename),
+					repair.previous,
 				);
 			}
 			return meta;
@@ -754,6 +779,7 @@ const internalNginx = {
 	 * @param   {String[]} [opts.repaired]  config files of other hosts this operation regenerated, see
 	 *                                     isolateRejectedReload()
 	 * @param   {String[]} [opts.unserved]  those of opts.repaired whose file was not on disk before
+	 * @param   {Map<String, String>} [opts.previous]  the text of the others before they were repaired
 	 * @returns {Promise<Object>} the new meta
 	 */
 	takeUnsafeHostOffline: async (model, hostType, host, filename, err, opts) => {
@@ -766,7 +792,12 @@ const internalNginx = {
 			try {
 				const outcome = await internalNginx.reloadNginx();
 				if (outcome?.rejected) {
-					const isolated = await internalNginx.applyRejectedRepairs(outcome, opts.repaired, opts.unserved);
+					const isolated = await internalNginx.applyRejectedRepairs(
+						outcome,
+						opts.repaired,
+						opts.unserved,
+						opts.previous,
+					);
 					if (isolated.applied !== true) {
 						notApplied = isolated.global || outcome;
 					}
@@ -808,14 +839,15 @@ const internalNginx = {
 	 * @param   {Object}   host
 	 * @param   {String[]} [repaired]  the config files of the repaired hosts, see isolateRejectedReload()
 	 * @param   {String[]} [unserved]  those of `repaired` whose file was not on disk before
+	 * @param   {Map<String, String>} [previous]  the text of the others before they were repaired
 	 * @returns {Promise}
 	 */
-	applyRepairs: async (hostType, host, repaired = [], unserved = []) => {
+	applyRepairs: async (hostType, host, repaired = [], unserved = [], previous = new Map()) => {
 		try {
 			const outcome = await internalNginx.reloadNginx();
 			if (
 				outcome?.rejected &&
-				(await internalNginx.applyRejectedRepairs(outcome, repaired, unserved)).applied !== true
+				(await internalNginx.applyRejectedRepairs(outcome, repaired, unserved, previous)).applied !== true
 			) {
 				logger.error(
 					`${hostLabel(hostType, host)}: nginx did not apply the repairs of other hosts and still runs its previous config`,
@@ -836,12 +868,14 @@ const internalNginx = {
 	 * @param   {Object}   outcome     the rejected reload
 	 * @param   {String[]} [repaired]
 	 * @param   {String[]} [unserved]  those of `repaired` whose file was not on disk before
+	 * @param   {Map<String, String>} [previous]  the text of the others before they were repaired
 	 * @returns {Promise<Object>} see isolateRejectedReload()
 	 */
-	applyRejectedRepairs: async (outcome, repaired = [], unserved = []) => {
+	applyRejectedRepairs: async (outcome, repaired = [], unserved = [], previous = new Map()) => {
 		const isolated = await internalNginx.isolateRejectedReload(repaired, {
 			outcome,
 			unserved,
+			previous,
 			offlineOnGlobal: true,
 		});
 		if (isolated.global && isolated.offline.length) {
@@ -916,6 +950,15 @@ const internalNginx = {
 	 * the config file its [emerg] message names, then the ones the next rejected reload names, and so on. A
 	 * config whose address nginx still can't bind without it goes back, it is not the cause.
 	 *
+	 * nginx's bind() message doesn't name the protocol: a TCP and a UDP stream on the same port (eg. DNS on 53)
+	 * listen on the same address. When several configs listen on an address nginx could not bind, only the
+	 * ones that may not hold its socket in nginx yet are suspects: configs of opts.unserved, and configs whose
+	 * previous version (opts.previous) did not listen there with the same protocols (nginx keeps the sockets
+	 * it holds across a reload, so such a config can't be the cause). When that leaves one, it is set aside;
+	 * when it leaves several, they are set aside one at a time (unserved first) until nginx binds the
+	 * address, then each but the last is put back again and stays when nginx applies it. Configs that hold
+	 * the socket already are tried only when no suspect frees the address.
+	 *
 	 * When nginx still rejects the reload for another reason, only the configs of opts.unserved (configs
 	 * nginx doesn't run, nor an older version of them: their file was not on disk before, eg. hosts the
 	 * startup reconcile brings back) are set aside together and put back in halves (bisecting the halves nginx
@@ -932,6 +975,8 @@ const internalNginx = {
 	 * @param   {Object}   [opts]
 	 * @param   {Object}   [opts.outcome]          the rejected reload, see lib/nginx-reload.js
 	 * @param   {String[]} [opts.unserved]         those of `filenames` that nginx doesn't run in any version
+	 * @param   {Map<String, String>} [opts.previous]  the text of each of `filenames` (the others) before this
+	 *                                             operation wrote it, ie. the version nginx may run
 	 * @param   {Boolean}  [opts.offlineOnGlobal]  for the configs of opts.unserved
 	 * @returns {Promise<{applied: boolean, offline: Array<{host_type: String, host_id: Number}>,
 	 *          global: Object|null}>} applied: nginx runs the config files on disk now; offline: the hosts
@@ -946,10 +991,12 @@ const internalNginx = {
 		if (!entries.length) {
 			return result;
 		}
+		const unserved = new Set(opts.unserved || []);
 		for (const entry of entries) {
 			entry.addresses = await resolvedListenAddresses(entry.text);
+			const previous = unserved.has(entry.filename) ? null : opts.previous?.get(entry.filename);
+			entry.previousAddresses = typeof previous === "string" ? await resolvedListenAddresses(previous) : null;
 		}
-		const unserved = new Set(opts.unserved || []);
 		const reload = () =>
 			internalNginx.reloadNginx({ skipTest: true }).catch((err) => {
 				logger.error(`Could not reload nginx: ${err.message}`);
@@ -987,11 +1034,99 @@ const internalNginx = {
 		let remaining = entries;
 		const rejectedAside = [];
 		let last = opts.outcome || { rejected: true };
-		const boundAddress = (entry, binds) => [...entry.addresses].find((a) => binds.has(a));
+		const boundAddress = (entry, binds) => [...entry.addresses.keys()].find((a) => binds.has(a));
+		const bindOutcome = (outcome, message) => ({
+			...outcome,
+			emerg: message,
+			reason: `nginx could not apply the config: ${message}`,
+		});
+		// Can the config be the one nginx could not bind `address` for? Not when nginx holds the socket for it
+		// already: its previous version listened there with the same protocols (nginx keeps the sockets it holds
+		// across a reload). Unknown previous versions are suspects.
+		const mayFailBind = (entry, address) => {
+			if (unserved.has(entry.filename) || !entry.previousAddresses) {
+				return true;
+			}
+			const before = entry.previousAddresses.get(address);
+			return !before || [...entry.addresses.get(address)].some((protocol) => !before.has(protocol));
+		};
+		// Several configs listen on `address` (eg. a TCP and a UDP stream on one port): sets them aside one at a
+		// time, in this order, until nginx binds it, then puts back each but the last again, one at a time: it
+		// stays when nginx applies the reload with it (or rejects it for another reason). Returns the configs
+		// that stay aside (none when nginx can't bind the address without any of them) and the outcome of the
+		// last reload of the files now on disk (null when a reload threw: all are back then).
+		const isolateShared = async (address, group) => {
+			const aside = [];
+			let outcome = null;
+			for (const entry of group) {
+				internalNginx.renameConfigAsErrorSync(entry.filename);
+				aside.push(entry);
+				outcome = await reload();
+				if (!outcome || !failedBinds(outcome).has(address)) {
+					break;
+				}
+			}
+			if (!outcome || failedBinds(outcome).has(address)) {
+				for (const entry of aside) {
+					putBack(entry);
+				}
+				return { aside: [], outcome };
+			}
+			const kept = [...aside];
+			for (const entry of aside.slice(0, -1)) {
+				putBack(entry);
+				const again = await reload();
+				if (!again) {
+					for (const other of kept) {
+						putBack(other);
+					}
+					return { aside: [], outcome: null };
+				}
+				if (again.rejected && failedBinds(again).has(address)) {
+					internalNginx.renameConfigAsErrorSync(entry.filename);
+					continue;
+				}
+				kept.splice(kept.indexOf(entry), 1);
+				outcome = again;
+			}
+			return { aside: kept, outcome };
+		};
+		const suspectOrder = (address, group) => {
+			const rank = (entry) => (unserved.has(entry.filename) ? 0 : mayFailBind(entry, address) ? 1 : 2);
+			return [...group].sort((a, b) => rank(a) - rank(b));
+		};
 		while (last?.rejected) {
 			const binds = failedBinds(last);
 			const file = rejectedFile(last);
-			const named = remaining.filter((entry) => boundAddress(entry, binds) || entry.filename === file);
+			const named = remaining.filter((entry) => entry.filename === file);
+			// an address several configs listen on, when nothing else is named
+			let shared = null;
+			for (const address of binds.keys()) {
+				const group = remaining.filter((entry) => entry.addresses.has(address));
+				if (!group.length || group.some((entry) => named.includes(entry))) {
+					continue;
+				}
+				const suspects = group.length === 1 ? group : group.filter((entry) => mayFailBind(entry, address));
+				if (suspects.length === 1) {
+					named.push(suspects[0]);
+				} else if (!shared) {
+					shared = [address, suspectOrder(address, group)];
+				}
+			}
+			if (!named.length && shared) {
+				const [address, group] = shared;
+				const { aside, outcome } = await isolateShared(address, group);
+				for (const entry of aside) {
+					entry.outcome = bindOutcome(last, binds.get(address));
+				}
+				remaining = remaining.filter((entry) => !aside.includes(entry));
+				rejectedAside.push(...aside);
+				last = outcome;
+				if (!aside.length) {
+					break;
+				}
+				continue;
+			}
 			if (!named.length) {
 				break;
 			}
@@ -999,8 +1134,9 @@ const internalNginx = {
 				internalNginx.renameConfigAsErrorSync(entry.filename);
 				// the reason of this host: the bind() message of its own address, or the message naming its file
 				const address = boundAddress(entry, binds);
-				const emerg = address ? binds.get(address) : last.emerg;
-				entry.outcome = { ...last, emerg, reason: `nginx could not apply the config: ${emerg}` };
+				entry.outcome = address
+					? bindOutcome(last, binds.get(address))
+					: { ...last, reason: `nginx could not apply the config: ${last.emerg}` };
 			}
 			remaining = remaining.filter((entry) => !named.includes(entry));
 			const next = await reload();
@@ -2154,6 +2290,8 @@ const internalNginx = {
 			const written = [];
 			// those of them whose config was not on disk before: nginx doesn't run them
 			const unserved = [];
+			// the others' text before they were regenerated: the version nginx may run
+			const previous = new Map();
 			if (!opts.only) {
 				internalNginx.restoreStaleAside();
 			}
@@ -2205,6 +2343,8 @@ const internalNginx = {
 							written.push(filename);
 							if (text === null) {
 								unserved.push(filename);
+							} else {
+								previous.set(filename, text);
 							}
 						}
 						if (mayResolveLater(meta)) {
@@ -2230,6 +2370,7 @@ const internalNginx = {
 						const isolated = await internalNginx.isolateRejectedReload(written, {
 							outcome,
 							unserved,
+							previous,
 							offlineOnGlobal: true,
 						});
 						summary.regenerated -= isolated.offline.length;

@@ -667,3 +667,136 @@ describe("a reload that nginx rejects after configs were written without reloadi
 		assert.equal(meta.nginx_details.previous_config_running, undefined);
 	});
 });
+
+// nginx's bind() message doesn't name the protocol: a TCP and a UDP stream on one port share the address
+describe("a rejected bind() of an address that a TCP and a UDP config listen on", () => {
+	const TCP = "server {\n  listen 3333;\n}\n";
+	const UDP = "server {\n  listen 3333 udp;\n}\n";
+	const errFile = (id) => (fs.existsSync(`${conf(id)}.err`) ? fs.readFileSync(`${conf(id)}.err`, "utf8") : null);
+	let blocked;
+	let renamed;
+	let fakeReload;
+	let fakeRename;
+	beforeEach(() => {
+		outcomes = [];
+		reloads = [];
+		retries = [];
+		renamed = [];
+		// the configs whose socket another process holds: nginx rejects every reload that includes one of them
+		blocked = [UDP];
+		fakeReload = internalNginx.reloadWaiter.reloadAndWait;
+		internalNginx.reloadWaiter.reloadAndWait = async () => {
+			const files = fs
+				.readdirSync(dir)
+				.filter((f) => f.endsWith(".conf"))
+				.map((f) => fs.readFileSync(join(dir, f), "utf8"));
+			reloads.push(files.join(""));
+			return files.some((text) => blocked.includes(text)) ? rejected() : confirmed();
+		};
+		fakeRename = internalNginx.renameConfigAsErrorSync;
+		internalNginx.renameConfigAsErrorSync = (file) => {
+			renamed.push(file);
+			return fakeRename(file);
+		};
+	});
+	afterEach(async () => {
+		internalNginx.reloadWaiter.reloadAndWait = fakeReload;
+		internalNginx.renameConfigAsErrorSync = fakeRename;
+		for (const name of real.readdirSync(dir)) {
+			real.rmSync(join(dir, name));
+		}
+		await db("stream").delete();
+	});
+	const withConfig = async (text) => {
+		const id = await stream(3333, false);
+		fs.writeFileSync(conf(id), text);
+		return id;
+	};
+	const isolate = (ids, opts) =>
+		internalNginx.isolateRejectedReload(ids.map(conf), { outcome: rejected(), offlineOnGlobal: true, ...opts });
+
+	it("never sets aside a served TCP config that nginx already listens with, only the new UDP one", async () => {
+		const tcp = await withConfig(TCP);
+		const udp = await withConfig(UDP);
+		const result = await isolate([tcp, udp], {
+			unserved: [conf(udp)],
+			previous: new Map([[conf(tcp), TCP]]),
+		});
+		assert.equal(result.applied, true);
+		assert.deepEqual(result.offline, [{ host_type: "stream", host_id: udp }]);
+		assert.deepEqual(renamed, [conf(udp)]);
+		for (const text of reloads) {
+			assert.match(text, /listen 3333;/);
+		}
+		assert.equal(onDisk(tcp), TCP);
+		assert.deepEqual((await row(tcp)).meta, ONLINE);
+		assert.equal(errFile(udp), UDP);
+		assert.equal((await row(udp)).meta.nginx_err, "The address 0.0.0.0:3333 is already in use.");
+	});
+
+	it("keeps a served TCP config regenerated with an unknown previous version, when the new UDP one frees the address", async () => {
+		// as regenerating all host configs passes them: every rewritten served config, the new one unserved
+		const tcp = await withConfig(TCP);
+		const udp = await withConfig(UDP);
+		const result = await isolate([tcp, udp], { unserved: [conf(udp)] });
+		assert.equal(result.applied, true);
+		assert.deepEqual(result.offline, [{ host_type: "stream", host_id: udp }]);
+		assert.deepEqual(renamed, [conf(udp)]);
+		assert.equal(onDisk(tcp), TCP);
+	});
+
+	it("tries the configs nginx doesn't run one at a time and puts back the one that is not the cause", async () => {
+		const tcp = await withConfig(TCP);
+		const udp = await withConfig(UDP);
+		const result = await isolate([tcp, udp], { unserved: [conf(tcp), conf(udp)] });
+		assert.equal(result.applied, true);
+		assert.deepEqual(result.offline, [{ host_type: "stream", host_id: udp }]);
+		// without TCP (still rejected), without both (applied), TCP back (applied)
+		assert.equal(reloads.length, 3);
+		assert.equal(onDisk(tcp), TCP);
+		assert.equal(errFile(tcp), null);
+		assert.deepEqual((await row(tcp)).meta, ONLINE);
+		assert.equal((await row(udp)).meta.nginx_online, false);
+	});
+
+	it("takes both offline when nginx can bind the address with neither of them", async () => {
+		blocked = [TCP, UDP];
+		const tcp = await withConfig(TCP);
+		const udp = await withConfig(UDP);
+		const result = await isolate([tcp, udp], { unserved: [conf(tcp), conf(udp)] });
+		assert.equal(result.applied, true);
+		assert.deepEqual(
+			result.offline.map((h) => h.host_id).sort(),
+			[tcp, udp].sort((a, b) => a - b),
+		);
+		assert.equal(onDisk(tcp), null);
+		assert.equal(onDisk(udp), null);
+		for (const id of [tcp, udp]) {
+			const meta = (await row(id)).meta;
+			assert.equal(meta.nginx_online, false);
+			assert.equal(meta.nginx_details.scope, "host");
+		}
+	});
+
+	it("startup reconcile keeps the TCP stream nginx serves when a new UDP stream on its port is rejected", async () => {
+		const tcp = await stream(3333, false);
+		fs.writeFileSync(conf(tcp), TCP);
+		// regenerated (eg. a retry pass) with the same listen, and a new UDP stream
+		const udp = await stream(3333, false);
+		const fakeGenerate = internalNginx.generateConfig;
+		internalNginx.generateConfig = async (_hostType, host) => {
+			const text = host.id === udp ? UDP : TCP;
+			fs.writeFileSync(conf(host.id), text);
+			return text;
+		};
+		try {
+			const summary = await internalNginx.reconcile({ only: { stream: [tcp, udp] } });
+			assert.equal(summary.offline, 1);
+		} finally {
+			internalNginx.generateConfig = fakeGenerate;
+		}
+		assert.deepEqual(renamed, [conf(udp)]);
+		assert.equal((await row(tcp)).meta.nginx_online, true);
+		assert.equal((await row(udp)).meta.nginx_online, false);
+	});
+});
