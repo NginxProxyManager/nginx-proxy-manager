@@ -20,8 +20,13 @@ it("reloads nginx after a renew through the nginx lock, with the test-and-repair
 		...ts,
 	});
 	const events = [];
+	let renewed;
+	const renewStarted = new Promise((resolve) => {
+		renewed = resolve;
+	});
 	internalCertificate.renewLetsEncryptSsl = async () => {
 		events.push("certbot renew");
+		renewed();
 	};
 	internalCertificate.getCertificateInfoFromFile = async () => ({ dates: { to: 1830297600 } });
 	internalAuditLog.add = async () => {};
@@ -43,12 +48,14 @@ it("reloads nginx after a renew through the nginx lock, with the test-and-repair
 		events.push("configure end");
 	});
 	const renew = internalCertificate.renew(access, { id });
-	await tick(50);
+	// however long the certificate lookup takes; then give the renew time to (wrongly) reload without the lock
+	await renewStarted;
+	await tick(20);
 	assert.deepEqual(events, ["configure start", "certbot renew"]);
 
 	release();
 	await held;
-	const renewed = await renew;
+	const result = await renew;
 	assert.deepEqual(events, [
 		"configure start",
 		"certbot renew",
@@ -56,6 +63,6 @@ it("reloads nginx after a renew through the nginx lock, with the test-and-repair
 		"nginx -t (and repair)",
 		"/usr/sbin/nginx -s reload",
 	]);
-	assert.equal(renewed.id, id);
-	assert.match(renewed.expires_on, /^2028-/);
+	assert.equal(result.id, id);
+	assert.match(result.expires_on, /^2028-/);
 });
