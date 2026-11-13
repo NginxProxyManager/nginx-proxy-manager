@@ -538,6 +538,48 @@ const assetAdvancedConfig = (advancedConfig) => {
 };
 
 /**
+ * The nested asset location of a location with a forward path runs `rewrite ... break` (a regex location can't
+ * have a URI part in proxy_pass), which changes $uri and $document_uri for everything after it. So that the
+ * repeated advanced config sees the URI the location sees, the asset location keeps the value it was asked
+ * for in `name` (`set $<name> $uri;` first, see templates/_location_body.conf) and the copy reads that instead:
+ * every $uri, ${uri}, $document_uri and ${document_uri} of an nginx statement is replaced, not in comments and
+ * not in *_by_lua_block bodies (Lua reads ngx.var.uri, which still has the rewritten value).
+ *
+ * @param   {String} text  the advanced config as the asset location repeats it, see assetAdvancedConfig()
+ * @param   {String} name  variable name without `$`, eg. npm_loc_0_uri
+ * @returns {{text: String, replaced: Number}}
+ */
+const keepUriVariables = (text, name) => {
+	const { statements } = scanNginxConfig(text);
+	const ranges = [];
+	statements.forEach((statement, i) => {
+		if (statement.lua) {
+			return;
+		}
+		if (statement.end === "{") {
+			// the block's own line, up to its first statement (or its end): the statements inside come on their own
+			const next = statements[i + 1];
+			const close = statement.close ?? text.length;
+			ranges.push([statement.start, next && next.start < close ? next.start : close]);
+			return;
+		}
+		ranges.push([statement.start, statement.stop ?? text.length]);
+	});
+	let out = text;
+	let replaced = 0;
+	for (const [from, to] of ranges.reverse()) {
+		const part = out
+			.slice(from, to)
+			.replace(/\$\{(?:uri|document_uri)\}|\$(?:uri|document_uri)(?![A-Za-z0-9_])/g, (m) => {
+				replaced++;
+				return m.startsWith("${") ? `\${${name}}` : `$${name}`;
+			});
+		out = out.slice(0, from) + part + out.slice(to);
+	}
+	return { text: out, replaced };
+};
+
+/**
  * Template variables (all prefixed npm_) for the dynamic / static rendering of a location.
  *
  * @param   {Object} loc    prepared location (merged with the host's settings)
@@ -574,6 +616,9 @@ const buildLocationContext = (loc, state) => {
 	const variableProxyPass = isVariableHost(loc.forward_host) || hasVariablePath(loc);
 	const assetsAllowed = !parsed.isExact && !parsed.isNamed;
 	const assetCopy = assetAdvancedConfig(loc.advanced_config);
+	const assetRewrite = variableProxyPass ? "" : rewrite;
+	// the asset location's rewrite changes $uri: its copy of the advanced config reads the value from before it
+	const assetUri = assetRewrite ? keepUriVariables(assetCopy.text, `npm_loc_${state.index}_uri`) : null;
 
 	return Object.assign({}, loc, {
 		forward_path: fp,
@@ -587,10 +632,11 @@ const buildLocationContext = (loc, state) => {
 		// the user manages proxy_redirect in the advanced config or a file it includes
 		npm_redirect: dynamic && !userRedirect ? redirect : "",
 		npm_assets: assetsAllowed && (loc.caching_enabled === 1 || loc.caching_enabled === true),
-		npm_asset_advanced_config: assetCopy.text,
+		npm_asset_advanced_config: assetUri?.replaced ? assetUri.text : assetCopy.text,
+		npm_asset_uri_var: assetUri?.replaced ? `$npm_loc_${state.index}_uri` : "",
 		npm_asset_own: assetCopy.own,
 		npm_asset_inherit: assetCopy.inherit,
-		npm_asset_rewrite: variableProxyPass ? "" : rewrite,
+		npm_asset_rewrite: assetRewrite,
 		npm_asset_uri: variableProxyPass ? fp : "",
 		// When the user manages proxy_redirect in the advanced config, the nested location sets none of its own:
 		// its copy of the advanced config has the user's rule. With a top-level include it sets none either, an

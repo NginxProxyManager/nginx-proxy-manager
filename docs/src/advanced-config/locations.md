@@ -58,6 +58,12 @@ as long as its upstream name resolves. When the name doesn't resolve, the locati
 unknown name makes nginx reject the whole configuration), and `$uri` then holds the rewritten path. Variables read
 outside the location's advanced configuration, for example in the host's advanced configuration or a custom log
 format, are not detected: use `$request_uri` there, or set `NPM_LOCATION_DYNAMIC_DNS=false`.
+
+With **Cache Assets**, the nested location for assets always runs that rewrite (in both modes: nginx doesn't allow
+a path in `proxy_pass` there). Its copy of the advanced configuration reads `$uri` and `$document_uri` from a
+variable set before the rewrite, so it sees the same path as the location. Two cases still see the forwarded path:
+a `proxy_set_header` (or other setting) inherited from a file included at the top level of the advanced
+configuration, and Lua code reading `ngx.var.uri`.
 :::
 
 A forward path with an nginx variable is written into the config exactly as before too

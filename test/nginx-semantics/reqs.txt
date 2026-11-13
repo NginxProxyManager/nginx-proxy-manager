@@ -71,6 +71,7 @@
 /qc%20p/page
 /uri/
 /uri/hello?x=1
+/curi/app.css|||"in":"/curi/app.css"
 /var/
 /var/x?y=1
 /varfp/

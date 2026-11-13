@@ -976,6 +976,42 @@ describe("publicLocationState", () => {
 	});
 });
 
+describe("the nested asset location of a location with a forward path", () => {
+	const loc = { ...base, path: "/api/", forward_path: "/v1/", caching_enabled: 1 };
+	// the asset location's body: from its `location ~*` line to the end
+	const assetBlock = (out) => out.slice(out.indexOf("location ~* ^.*\\."));
+	const parentBlock = (out) => out.slice(0, out.indexOf("location ~* ^.*\\."));
+
+	for (const mode of ["static", "dynamic"]) {
+		it(`keeps $uri of the advanced config at the URI the location got (${mode})`, async () => {
+			const adv = "proxy_set_header X-Original-URI $uri;\nadd_header X-Doc ${document_uri} always; # $uri";
+			const out = await render({ ...loc, advanced_config: adv }, { mode });
+			const asset = assetBlock(out);
+			assert.match(asset, /set \$npm_loc_0_uri \$uri;/);
+			// before the rewrite that changes $uri
+			assert.ok(asset.indexOf("set $npm_loc_0_uri $uri;") < asset.indexOf("rewrite "), mode);
+			assert.match(asset, /proxy_set_header X-Original-URI \$npm_loc_0_uri;/);
+			assert.match(asset, /add_header X-Doc \$\{npm_loc_0_uri\} always; # \$uri/);
+			// the location itself is unchanged
+			assert.match(parentBlock(out), /proxy_set_header X-Original-URI \$uri;/);
+			assert.doesNotMatch(parentBlock(out), /npm_loc_0_uri/);
+		});
+	}
+
+	it("leaves Lua code, other variables and locations without the rewrite alone", async () => {
+		const lua = "access_by_lua_block { local u = ngx.var.uri -- $uri\n }\nadd_header X $uri_x;";
+		const out = await render({ ...loc, advanced_config: lua }, { mode: "static" });
+		assert.doesNotMatch(out, /npm_loc_0_uri/);
+		// no forward path: the asset location doesn't rewrite
+		const plain = await render(
+			{ ...loc, forward_path: "", advanced_config: "proxy_set_header X $uri;" },
+			{ mode: "static" },
+		);
+		assert.doesNotMatch(plain, /npm_loc_0_uri/);
+		assert.match(assetBlock(plain), /proxy_set_header X \$uri;/);
+	});
+});
+
 describe("chooseLocationMode", () => {
 	const loc = (extra) => prepareLocation({ ...base, path: "/u/", forward_path: "/x/", ...extra });
 	const dynamicOk = { mode: "dynamic", status: "ok" };

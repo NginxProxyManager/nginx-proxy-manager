@@ -20,6 +20,7 @@
  {"path":"\"/q p/\"","fp":"/x/"},
  {"path":"\"/qc p/\"","fp":"/c/","cache":true},
  {"path":"/uri/","fp":"/x/","adv":"add_header X-Sem-Uri $uri always;"},
+ {"path":"/curi/","fp":"/x/","cache":true,"adv":"proxy_set_header X-Sem-In $uri;"},
  {"path":"/var/","host":"$sembackend","fp":"","adv":"set $sembackend echo;"},
  {"path":"/varfp/","host":"$sembackend","fp":"/x/","adv":"set $sembackend echo;"},
  {"path":"/varmix/","host":"ec$semhost","fp":"","adv":"set $semhost ho;"},
