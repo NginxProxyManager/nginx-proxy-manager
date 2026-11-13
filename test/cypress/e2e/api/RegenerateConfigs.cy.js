@@ -136,10 +136,11 @@ describe('Regenerate all host configs', () => {
 		});
 	});
 
-	it('Should refuse a second regeneration while one is running', () => {
+	it('Should answer regenerations sent at once with 200 or 409', () => {
 		// Two requests at once, straight to the API: when they overlap, one runs and the other one gets a 409.
 		// They may not overlap (both wait for the auth checks first, a run of two hosts is short), so this tries a
-		// few pairs until it sees the 409. The 409 itself is tested with a held run in
+		// few pairs, stops at the first 409 and accepts two 200s as well: every pair needs at least one 200 and
+		// nothing but 200 or 409. The 409 itself is tested deterministically with a held run in
 		// backend/test/nginx-regenerate-busy.test.js.
 		const curl = `curl --noproxy '*' -s -o /dev/null -w '%{http_code}\\n' -X POST -H 'Authorization: Bearer ${token}' -H 'Content-Type: application/json' -d '{}' ${Cypress.config('baseUrl')}/api/nginx/regenerate`;
 		const attempt = (n) => {
@@ -159,7 +160,7 @@ describe('Regenerate all host configs', () => {
 			});
 		};
 		attempt(1).then((codes) => {
-			expect(codes, 'a 409 for the request that overlapped a running regeneration').to.deep.equal(['200', '409']);
+			expect(codes.join(',')).to.be.oneOf(['200,200', '200,409']);
 		});
 	});
 
