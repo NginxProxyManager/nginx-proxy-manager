@@ -1825,19 +1825,25 @@ const internalNginx = {
 
 	/**
 	 * Regenerates the default site config and reloads nginx.
-	 * On failure the default site config is removed, nginx falls back to the built-in default.
+	 * On failure the default site config is removed, nginx falls back to the built-in default. When nginx
+	 * rejects the reload for another file, the new config stays (it is not the cause) and a global
+	 * NginxConfigError says that nginx still runs the previous default site.
 	 *
 	 * @param   {Object}  setting  the default-site setting row
 	 * @returns {Promise}
 	 */
 	configureDefaultSite: (setting) =>
 		withLock(async () => {
+			let outcome;
 			try {
 				// Inside the try: a config that fails to render (or is written only in part) is removed again and
 				// nginx reloaded, so it neither keeps the old default site nor breaks every later `nginx -t`
 				await internalNginx.deleteConfig("default");
 				await internalNginx.generateConfig("default", setting);
-				await internalNginx.reloadNginx();
+				outcome = await internalNginx.reloadNginx();
+				if (outcome?.rejected && rejectedFile(outcome) === internalNginx.getConfigName("default")) {
+					throw internalNginx.rejectedReloadError("default", { id: 0 }, outcome);
+				}
 			} catch (err) {
 				await internalNginx.deleteConfig("default");
 				await internalNginx.reloadNginx().catch((reloadErr) => {
@@ -1852,7 +1858,43 @@ const internalNginx = {
 				}
 				throw new errs.ValidationError("Could not reconfigure Nginx. Please check logs.", err);
 			}
+			if (outcome?.rejected) {
+				// nginx -t passed (reloadNginx() tests first) and the master rejected the reload for another file,
+				// eg. a host config nginx can't bind: the new default site is not the cause, it stays and applies
+				// with the next reload nginx accepts. Until then nginx runs the previous default site.
+				const error = internalNginx.rejectedReloadError("default", { id: 0 }, outcome);
+				throw new errs.NginxConfigError(
+					`Could not apply the default site. ${error.message} The new default site applies with the next reload nginx accepts.`,
+					Object.assign({}, error.details, { context: "default_site" }),
+				);
+			}
 		}),
+
+	/**
+	 * @param   {String}  hostType
+	 * @param   {Object}  host
+	 * @param   {Object}  outcome  a reload nginx rejected, see lib/nginx-reload.js
+	 * @returns {errs.NginxConfigError} scope "global": the reload nginx rejected, with the file it names
+	 */
+	rejectedReloadError: (hostType, host, outcome) =>
+		internalNginx.buildConfigError(
+			"global",
+			hostType,
+			host,
+			{
+				message: outcome.emerg || outcome.reason || null,
+				file: rejectedFile(outcome),
+				line: null,
+				output: outcome.reason || null,
+			},
+			"",
+		),
+
+	/**
+	 * @param   {String}  filename
+	 * @returns {String|null} the file's text, null when it doesn't exist
+	 */
+	readConfigFile: (filename) => readFileOrNull(filename),
 
 	/**
 	 * @param   {String}       filename

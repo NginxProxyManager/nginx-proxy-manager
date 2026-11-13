@@ -81,6 +81,43 @@ describe("configuring the default site", () => {
 		assert.equal(onDisk(SITE), null);
 	});
 
+	const rejected = (emerg) => ({ rejected: true, emerg, reason: `nginx could not apply the config: ${emerg}` });
+	const writeNew = () => {
+		internalNginx.generateConfig = async () => {
+			fs.writeFileSync(SITE, "# new default site\n");
+			return "# new default site\n";
+		};
+	};
+
+	it("keeps the new config when nginx rejects the reload for another file, and says it doesn't run it yet", async () => {
+		writeNew();
+		outcomes = [rejected("bind() to 0.0.0.0:3333 failed (98: Address already in use)")];
+		await assert.rejects(internalNginx.configureDefaultSite({ id: "default-site", value: "404" }), (err) => {
+			assert.ok(err instanceof errs.NginxConfigError);
+			assert.equal(err.details.scope, "global");
+			assert.equal(err.details.context, "default_site");
+			assert.match(err.message, /0\.0\.0\.0:3333 is already in use/);
+			assert.match(err.message, /applies with the next reload nginx accepts/);
+			return true;
+		});
+		// no cleanup: the new default site is not the cause
+		assert.equal(reloads.length, 1);
+		assert.equal(onDisk(SITE), "# new default site\n");
+	});
+
+	it("removes the new config when nginx rejects the reload naming it", async () => {
+		writeNew();
+		outcomes = [rejected(`invalid number of arguments in "return" directive in ${SITE}:3`)];
+		await assert.rejects(internalNginx.configureDefaultSite({ id: "default-site", value: "404" }), (err) => {
+			assert.ok(err instanceof errs.NginxConfigError);
+			assert.equal(err.details.context, "default_site");
+			assert.match(err.message, /^Could not reconfigure the default site/);
+			return true;
+		});
+		assert.deepEqual(reloads, ["# new default site\n", null]);
+		assert.equal(onDisk(SITE), null);
+	});
+
 	it("applies a config that renders and that nginx accepts with one reload", async () => {
 		internalNginx.generateConfig = async () => {
 			fs.writeFileSync(SITE, "# new default site\n");
