@@ -656,6 +656,9 @@
 	"nginx-error.hint.regex_uri_part": {
 		"defaultMessage": "Entferne den Weiterleitungspfad oder verwende eine Präfix-Location."
 	},
+	"nginx-error.hint.rejected_at_startup": {
+		"defaultMessage": "Speichere den Host erneut, um ihn wieder zu aktivieren, oder lass NPM_RECONCILE_ON_START eingeschaltet, damit das automatisch geschieht."
+	},
 	"nginx-error.hint.unexpected_close_brace": {
 		"defaultMessage": "Prüfe, ob zu jeder '{' eine passende '}' gehört."
 	},
@@ -685,6 +688,9 @@
 	},
 	"nginx-error.regenerated-conflict": {
 		"defaultMessage": "Die neu erzeugte Konfiguration steht im Konflikt mit der Konfiguration eines anderen Hosts"
+	},
+	"nginx-error.rejected-at-startup": {
+		"defaultMessage": "Nginx hat die Konfiguration dieses Hosts beim Start des Containers abgelehnt"
 	},
 	"nginx-error.show-output": {
 		"defaultMessage": "Nginx-Ausgabe anzeigen"

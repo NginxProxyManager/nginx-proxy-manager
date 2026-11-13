@@ -140,7 +140,7 @@ while [ "$NGINX_VALIDATE_COUNT" -lt "$NGINX_VALIDATE_MAX" ]; do
 		if [ -z "$NGINX_VALIDATE_FILE" ] || [ ! -f "$NGINX_VALIDATE_FILE" ]; then
 			continue
 		fi
-		log_error "Disabling ${NGINX_VALIDATE_FILE}, nginx rejected it:"
+		log_error "Disabling ${NGINX_VALIDATE_FILE}, nginx rejected it (save the host again, or leave NPM_RECONCILE_ON_START on, to bring it back):"
 		echo "$NGINX_VALIDATE_ERROR" >&2
 		if mv -f "$NGINX_VALIDATE_FILE" "${NGINX_VALIDATE_FILE}.err"; then
 			NGINX_VALIDATE_MOVED=$((NGINX_VALIDATE_MOVED + 1))

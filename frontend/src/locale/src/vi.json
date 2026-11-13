@@ -656,6 +656,9 @@
 	"nginx-error.hint.regex_uri_part": {
 		"defaultMessage": "Hãy xóa đường dẫn đích hoặc dùng vị trí dạng tiền tố."
 	},
+	"nginx-error.hint.rejected_at_startup": {
+		"defaultMessage": "Lưu lại host để khôi phục nó, hoặc để NPM_RECONCILE_ON_START bật để việc này diễn ra tự động."
+	},
 	"nginx-error.hint.unexpected_close_brace": {
 		"defaultMessage": "Hãy kiểm tra mỗi '{' đều có '}' tương ứng."
 	},
@@ -685,6 +688,9 @@
 	},
 	"nginx-error.regenerated-conflict": {
 		"defaultMessage": "Cấu hình vừa tạo lại xung đột với cấu hình của một host khác"
+	},
+	"nginx-error.rejected-at-startup": {
+		"defaultMessage": "Nginx đã từ chối cấu hình của host này khi container khởi động"
 	},
 	"nginx-error.show-output": {
 		"defaultMessage": "Hiện đầu ra của nginx"

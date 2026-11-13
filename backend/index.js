@@ -36,11 +36,14 @@ async function appStart() {
 			const server = app.listen(3000, () => {
 				logger.info(`Backend PID ${process.pid} listening on port 3000 ...`);
 
-				if (internalNginx.reconcileOnStartEnabled()) {
-					setTimeout(() => {
+				setTimeout(() => {
+					if (internalNginx.reconcileOnStartEnabled()) {
 						internalNginx.reconcile();
-					}, RECONCILE_DELAY_MS).unref();
-				}
+					} else {
+						// no regeneration: still show the hosts offline whose config the startup check moved aside
+						internalNginx.markRejectedAtStartup();
+					}
+				}, RECONCILE_DELAY_MS).unref();
 
 				process.on("SIGTERM", () => {
 					logger.info(`PID ${process.pid} received SIGTERM`);

@@ -656,6 +656,9 @@
 	"nginx-error.hint.regex_uri_part": {
 		"defaultMessage": "Remove the forward path or use a prefix location."
 	},
+	"nginx-error.hint.rejected_at_startup": {
+		"defaultMessage": "Save the host again to bring it back, or leave NPM_RECONCILE_ON_START on so this is done automatically."
+	},
 	"nginx-error.hint.unexpected_close_brace": {
 		"defaultMessage": "Check that every '{' has a matching '}'."
 	},
@@ -685,6 +688,9 @@
 	},
 	"nginx-error.regenerated-conflict": {
 		"defaultMessage": "The regenerated configuration conflicts with the configuration of another host"
+	},
+	"nginx-error.rejected-at-startup": {
+		"defaultMessage": "Nginx rejected this host's configuration when the container started"
 	},
 	"nginx-error.show-output": {
 		"defaultMessage": "Show nginx output"

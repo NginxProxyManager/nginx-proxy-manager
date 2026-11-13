@@ -163,4 +163,4 @@ To skip the second step:
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `NPM_RECONCILE_ON_START` | `true` | Regenerate missing or broken host configs after the backend starts. |
+| `NPM_RECONCILE_ON_START` | `true` | Regenerate missing or broken host configs after the backend starts. When `false`, hosts whose config the startup check moved to `.err` are only shown as offline; save such a host again to bring it back. |

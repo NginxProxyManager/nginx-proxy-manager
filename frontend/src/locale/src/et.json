@@ -656,6 +656,9 @@
 	"nginx-error.hint.regex_uri_part": {
 		"defaultMessage": "Eemalda edastustee või kasuta prefiksiga asukohta."
 	},
+	"nginx-error.hint.rejected_at_startup": {
+		"defaultMessage": "Salvesta host uuesti, et see tagasi tuua, või jäta NPM_RECONCILE_ON_START sisse, et see toimuks automaatselt."
+	},
 	"nginx-error.hint.unexpected_close_brace": {
 		"defaultMessage": "Kontrolli, et igal '{' on vastav '}'."
 	},
@@ -685,6 +688,9 @@
 	},
 	"nginx-error.regenerated-conflict": {
 		"defaultMessage": "Uuesti loodud seadistus on vastuolus teise hosti seadistusega"
+	},
+	"nginx-error.rejected-at-startup": {
+		"defaultMessage": "Nginx lükkas selle hosti seadistuse konteineri käivitumisel tagasi"
 	},
 	"nginx-error.show-output": {
 		"defaultMessage": "Näita nginxi väljundit"

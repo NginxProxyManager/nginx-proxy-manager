@@ -120,6 +120,23 @@ describe("nginx errors in the UI language", () => {
 		).toEqual({ text: unsafe, detail: 'proxy host #1: forward host "a b"', hint: null });
 	});
 
+	it("German: a host whose config nginx rejected at startup, with the hint how to bring it back", () => {
+		changeLocale("de");
+		expect(
+			describeNginxError({
+				kind: "nginx_config",
+				scope: "host",
+				reason: "rejected_at_startup",
+				hintCode: "rejected_at_startup",
+				detail: null,
+			}),
+		).toEqual({
+			text: "Nginx hat die Konfiguration dieses Hosts beim Start des Containers abgelehnt",
+			detail: null,
+			hint: "Speichere den Host erneut, um ihn wieder zu aktivieren, oder lass NPM_RECONCILE_ON_START eingeschaltet, damit das automatisch geschieht.",
+		});
+	});
+
 	it("a disabled host's badge uses the existing, translated 'disabled' text", () => {
 		changeLocale("fr");
 		render(<HostStatusFormatter enabled={false} meta={null} />);

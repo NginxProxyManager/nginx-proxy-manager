@@ -157,7 +157,7 @@ export interface NginxConfigErrorDetails {
 	// the part of the host's config the error is in, and the line within it
 	area?: string | null;
 	relativeLine?: number | null;
-	// special cases: conflict, regenerated_conflict, too_many_broken_hosts, redacted
+	// special cases: conflict, regenerated_conflict, too_many_broken_hosts, redacted, rejected_at_startup
 	reason?: string;
 	// too_many_broken_hosts: how many hosts one operation repairs at most
 	max?: number;

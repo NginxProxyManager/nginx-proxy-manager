@@ -2531,6 +2531,70 @@ const internalNginx = {
 	},
 
 	/**
+	 * Called after the backend started instead of reconcile() when NPM_RECONCILE_ON_START is false: marks the
+	 * enabled hosts offline whose config the prepare/55-nginx-validate.sh startup check moved aside (`.err`, no
+	 * live config), so they don't show online for a config nginx doesn't run. Nothing is regenerated or
+	 * reloaded. Never throws.
+	 *
+	 * @returns {Promise<Number|null>} how many hosts were marked offline
+	 */
+	markRejectedAtStartup: () =>
+		withLock(async () => {
+			let marked = 0;
+			for (const [hostType, model] of Object.entries(HOST_MODELS)) {
+				let rows = [];
+				try {
+					rows = await model.query().where("is_deleted", 0).andWhere("enabled", 1);
+				} catch (err) {
+					logger.error(`Startup check: could not load ${hostType} rows: ${err.message}`);
+					continue;
+				}
+				for (const row of rows) {
+					const filename = internalNginx.getConfigName(hostType, row.id);
+					if (
+						internalNginx.isSuspended(hostType, row.id) ||
+						fs.existsSync(filename) ||
+						!fs.existsSync(`${filename}.err`)
+					) {
+						continue;
+					}
+					const error = new errs.NginxConfigError(
+						"Nginx rejected this host's config when the container started. Save the host again to bring it back.",
+						{
+							kind: "nginx_config",
+							scope: "host",
+							reason: "rejected_at_startup",
+							host_type: hostType,
+							host_id: row.id,
+							detail: null,
+							hint_code: "rejected_at_startup",
+						},
+					);
+					try {
+						await model
+							.query()
+							.where("id", row.id)
+							.patch({ meta: internalNginx.buildOfflineMeta(row.meta, error) });
+						marked++;
+					} catch (err) {
+						logger.error(
+							`Startup check: could not mark ${hostLabel(hostType, row)} offline: ${err.message}`,
+						);
+					}
+				}
+			}
+			if (marked) {
+				logger.warn(
+					`Startup check: ${marked} hosts are offline, nginx rejected their config at startup (NPM_RECONCILE_ON_START is off)`,
+				);
+			}
+			return marked;
+		}).catch((err) => {
+			logger.error(`Startup check failed: ${err.message}`);
+			return null;
+		}),
+
+	/**
 	 * @returns {boolean}
 	 */
 	reconcileOnStartEnabled: () => toBool(process.env.NPM_RECONCILE_ON_START, true),

@@ -105,6 +105,9 @@ export const describeNginxError = (details?: NginxConfigErrorDetails | null): Ng
 			case "regenerated_conflict":
 				text = fmt("nginx-error.regenerated-conflict");
 				break;
+			case "rejected_at_startup":
+				text = fmt("nginx-error.rejected-at-startup");
+				break;
 			default:
 				text = nginxErrorWhere(d);
 		}
