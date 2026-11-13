@@ -21,7 +21,7 @@ import fs from "node:fs";
 import net from "node:net";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createIncludeReader } from "./nginx-includes.js";
+import { createIncludeReader, URI_VARIABLES } from "./nginx-includes.js";
 import { scanNginxConfig, unescapeToken } from "./nginx-tokenize.js";
 import { isTokenSafe, isValid, unsafeValueError, unsafeValueField } from "./nginx-values.js";
 
@@ -58,9 +58,6 @@ const VARIABLE_IN_HOST = /\$/;
 // A `$` in the forward path makes nginx treat `proxy_pass` as a script: the computed URI is sent as it is (no
 // location prefix replaced, no query string added, no implicit "proxy_redirect default"), see hasVariablePath()
 const VARIABLE_IN_PATH = /\$/;
-
-// Variables whose value changes when the dynamic rendering rewrites the URI, see chooseLocationMode()
-const URI_VARIABLES = /\$(uri|document_uri)(?![A-Za-z0-9_])|\$\{(uri|document_uri)\}/;
 
 const MESSAGES = {
 	regexWithForwardPath:
@@ -377,8 +374,8 @@ const rewritesUri = (loc) => {
  *   A host that doesn't resolve keeps the status "unresolved" (502 until it resolves).
  * - with a forward path the dynamic rendering replaces the location prefix through `rewrite ... break`,
  *   which changes $uri and $document_uri for everything that runs later (proxy_set_header, add_header,
- *   try_files, ...). A location whose advanced config reads one of them stays static while its host
- *   resolves, so it sees the same value as before. When the host does not resolve it has to be dynamic
+ *   try_files, ...). A location whose advanced config (or a file it includes) reads one of them stays static
+ *   while its host resolves, so it sees the same value as before. When the host does not resolve it has to be dynamic
  *   (a literal unknown host fails `nginx -t` for every host), see docs/src/advanced-config/locations.md.
  * - the dynamic rendering writes a proxy_redirect line unless the location sets one itself, also in a file it
  *   includes (`proxy_redirect off;` next to it fails `nginx -t`, "is duplicate"), see buildLocationContext(). A
@@ -401,7 +398,7 @@ const chooseLocationMode = (loc, resolved, includes = createIncludeReader()) => 
 		resolved.mode === "dynamic" &&
 		resolved.status === "ok" &&
 		rewritesUri(loc) &&
-		URI_VARIABLES.test(`${loc.advanced_config || ""}`)
+		(URI_VARIABLES.test(`${loc.advanced_config || ""}`) || includes.scan(loc.advanced_config).usesUriVariable)
 	) {
 		return { mode: "static", status: "ok" };
 	}

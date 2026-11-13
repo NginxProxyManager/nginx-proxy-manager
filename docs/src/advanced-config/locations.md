@@ -31,7 +31,7 @@ NPM picks the mode for each location every time it writes the host's config:
 | Name that doesn't resolve at all | dynamic, with status **unresolved** |
 | An nginx variable, for example `$backend` with `set $backend app;` in the advanced configuration, or `app-$stage` (only locations saved before v2.17, the API no longer accepts a `$` in a forward host) | static, written as it is: nginx already resolves it per request |
 | Location whose forward path contains an nginx variable, for example `/api/$arg_id` or `$request_uri` | static, written as it is: nginx already resolves it per request (a name that doesn't resolve still shows **unresolved**) |
-| Location with a forward path whose advanced configuration reads `$uri` or `$document_uri` | static while the name resolves, see below |
+| Location with a forward path whose advanced configuration (or a file it includes) reads `$uri` or `$document_uri` | static while the name resolves, see below |
 | Location whose advanced configuration includes a file NPM can't read (missing, no permission, not a regular file, larger than 4 MB) | static while the name resolves, see below |
 | `NPM_LOCATION_DYNAMIC_DNS=false`, or the resolver is disabled (`DISABLE_RESOLVER`) | static |
 
@@ -52,7 +52,8 @@ With a forward path, the dynamic mode replaces the location's path with the forw
 location `/u/` with forward path `/x/`) in everything that runs after it: `proxy_set_header`, `add_header`,
 `try_files`, `proxy_cache_key`, log formats, and so on. `$request_uri` is not affected.
 
-To keep the old value, a location whose advanced configuration reads `$uri` or `$document_uri` is rendered static
+To keep the old value, a location whose advanced configuration reads `$uri` or `$document_uri`, also in a file it
+includes, is rendered static
 as long as its upstream name resolves. When the name doesn't resolve, the location has to be dynamic (a literal
 unknown name makes nginx reject the whole configuration), and `$uri` then holds the rewritten path. Variables read
 outside the location's advanced configuration, for example in the host's advanced configuration or a custom log

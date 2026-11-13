@@ -242,6 +242,60 @@ describe("locations with an included proxy_redirect", () => {
 	});
 });
 
+describe("locations with an included file that reads $uri", () => {
+	const io = fakeFs({
+		"/snippets/headers.conf": "proxy_set_header X-Original-URI $uri;",
+		"/snippets/outer.conf": "include /snippets/inner.conf;",
+		"/snippets/inner.conf": "if ($http_x) {\n  add_header X-Doc ${document_uri};\n}",
+		"/snippets/plain.conf": "proxy_set_header X-A a; # $uri in a comment",
+		"/snippets/request.conf": "proxy_set_header X-R $request_uri; proxy_set_header X-U $uri_x;",
+	});
+	const loc = (adv) =>
+		prepareLocation({
+			path: "/api/",
+			forward_scheme: "http",
+			forward_host: "app",
+			forward_port: 80,
+			forward_path: "/v1/",
+			advanced_config: adv,
+		});
+	const dynamicOk = { mode: "dynamic", status: "ok" };
+	const staticOk = { mode: "static", status: "ok" };
+
+	it("stays static while the host resolves, as for $uri written directly", () => {
+		assert.deepEqual(
+			chooseLocationMode(loc("include /snippets/headers.conf;"), dynamicOk, createIncludeReader(io)),
+			staticOk,
+		);
+		assert.deepEqual(
+			chooseLocationMode(loc("include /snippets/outer.conf;"), dynamicOk, createIncludeReader(io)),
+			staticOk,
+		);
+		assert.deepEqual(
+			chooseLocationMode(loc("include /snippets/h*.conf;"), dynamicOk, createIncludeReader(io)),
+			staticOk,
+		);
+	});
+
+	it("stays dynamic for included files without $uri or $document_uri, and while the host doesn't resolve", () => {
+		for (const adv of ["include /snippets/plain.conf;", "include /snippets/request.conf;"]) {
+			assert.deepEqual(chooseLocationMode(loc(adv), dynamicOk, createIncludeReader(io)), dynamicOk, adv);
+		}
+		const unresolved = { mode: "dynamic", status: "unresolved" };
+		assert.deepEqual(
+			chooseLocationMode(loc("include /snippets/headers.conf;"), unresolved, createIncludeReader(io)),
+			unresolved,
+		);
+	});
+
+	it("reports the variable from the include reader", () => {
+		assert.equal(createIncludeReader(io).scan("include /snippets/outer.conf;").usesUriVariable, true);
+		assert.equal(createIncludeReader(io).scan("include /snippets/plain.conf;").usesUriVariable, false);
+		// the advanced config itself is checked by chooseLocationMode()
+		assert.equal(createIncludeReader(io).scan("add_header X $uri;").usesUriVariable, false);
+	});
+});
+
 describe("readRegularFile", () => {
 	it("reads a regular file and refuses a bigger one", () => {
 		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "npm-inc-"));

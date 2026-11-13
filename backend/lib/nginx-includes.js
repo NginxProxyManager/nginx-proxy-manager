@@ -30,6 +30,10 @@ const MAX_FILE_SIZE = 4 * 1024 * 1024;
 const GLOB_CHARS = /[*?[]/;
 const INCLUDE_WORD = /include/;
 
+// Variables whose value changes when the dynamic rendering of a location rewrites the URI, see
+// chooseLocationMode() in lib/nginx-locations.js
+const URI_VARIABLES = /\$(uri|document_uri)(?![A-Za-z0-9_])|\$\{(uri|document_uri)\}/;
+
 const escapeRegexChar = (ch) => (/[.*+?^${}()|[\]\\/-]/.test(ch) ? `\\${ch}` : ch);
 
 /**
@@ -208,9 +212,10 @@ const readRegularFile = (file, maxSize = MAX_FILE_SIZE) => {
  * @param   {Function} [io.readFile]  (path) => String, throws when it can't be read
  * @param   {Function} [io.readdir]   (dir) => String[] of names, throws when it can't be listed
  * @param   {String}   [io.prefix]    the nginx config prefix relative includes are resolved against
- * @returns {{scan: (advancedConfig: String) => {directives: Set<String>, unreadable: boolean, files: String[]}}}
- *          directives: the names of the top-level statements of every included file (nested includes too);
- *          files: the files read
+ * @returns {{scan: (advancedConfig: String) => {directives: Set<String>, unreadable: boolean, files: String[],
+ *          usesUriVariable: boolean}}} directives: the names of the top-level statements of every included file
+ *          (nested includes too); files: the files read; usesUriVariable: a statement of an included file (at any
+ *          depth) reads $uri or $document_uri
  */
 const createIncludeReader = (io = {}) => {
 	const readFile = io.readFile || ((p) => readRegularFile(p));
@@ -240,12 +245,15 @@ const createIncludeReader = (io = {}) => {
 		if (scanCache.has(text)) {
 			return scanCache.get(text);
 		}
-		const result = { directives: new Set(), unreadable: false, files: [] };
+		const result = { directives: new Set(), unreadable: false, files: [], usesUriVariable: false };
 		const walk = (configText, chain, own) => {
 			if (!INCLUDE_WORD.test(configText) && own) {
 				return;
 			}
 			for (const statement of scanNginxConfig(configText).statements) {
+				if (!own && !result.usesUriVariable && statement.tokens.some((token) => URI_VARIABLES.test(token))) {
+					result.usesUriVariable = true;
+				}
 				if (statement.depth !== 0) {
 					continue;
 				}
@@ -294,4 +302,4 @@ const createIncludeReader = (io = {}) => {
 	return { scan };
 };
 
-export { createIncludeReader, expandGlob, MAX_DEPTH, MAX_FILE_SIZE, NGINX_CONF_PREFIX, readRegularFile };
+export { createIncludeReader, expandGlob, MAX_DEPTH, MAX_FILE_SIZE, NGINX_CONF_PREFIX, readRegularFile, URI_VARIABLES };
