@@ -91,6 +91,13 @@ const suspendedHosts = new Map();
 const suspendKey = (hostType, id) => `${hostType}#${id}`;
 
 /**
+ * Hosts taken offline whose removed config nginx still ran because it did not apply the removal (their
+ * nginx_details have previous_config_running, see takeUnsafeHostOffline()): "<host type>#<id>". The next
+ * reload nginx applies stops that config, and the flag is cleared then, see clearPreviousConfigRunning().
+ */
+const previousConfigRunning = new Set();
+
+/**
  * Set when the extra reload of settleReload() was not confirmed either: nginx doesn't apply the config at all
  * (eg. a listen port in use, which nginx -t doesn't catch). Until a reload is confirmed again, an unconfirmed
  * reload is not settled, otherwise every later save would wait for nginx twice.
@@ -834,6 +841,11 @@ const internalNginx = {
 			},
 		});
 		await model.query().where("id", host.id).patch({ meta });
+		if (stillRunning) {
+			previousConfigRunning.add(suspendKey(hostType, host.id));
+		} else {
+			previousConfigRunning.delete(suspendKey(hostType, host.id));
+		}
 		logger.error(`${hostLabel(hostType, host)} is offline: ${err.message}`);
 		if (notApplied) {
 			logger.error(
@@ -1800,7 +1812,37 @@ const internalNginx = {
 			reloadInDoubt = true;
 			logger.warn(`Could not confirm the nginx reload: ${outcome.reason}`);
 		}
+		if (!outcome.rejected && previousConfigRunning.size) {
+			await internalNginx.clearPreviousConfigRunning();
+		}
 		return outcome;
+	},
+
+	/**
+	 * nginx applied a reload: it no longer runs the removed configs of the hosts in previousConfigRunning, so
+	 * their nginx_details stop saying so. Never throws. Only call this while holding the lock.
+	 *
+	 * @returns {Promise}
+	 */
+	clearPreviousConfigRunning: async () => {
+		const keys = [...previousConfigRunning];
+		previousConfigRunning.clear();
+		for (const key of keys) {
+			const [type, id] = key.split("#");
+			try {
+				const row = await HOST_MODELS[type]?.query().where("id", Number(id)).first();
+				if (!row?.meta?.nginx_details?.previous_config_running) {
+					continue;
+				}
+				const { previous_config_running: _gone, ...details } = row.meta.nginx_details;
+				await HOST_MODELS[type]
+					.query()
+					.where("id", row.id)
+					.patch({ meta: _.assign({}, row.meta, { nginx_details: details }) });
+			} catch (err) {
+				logger.warn(`Could not update ${hostLabel(type, { id })}: ${err.message}`);
+			}
+		}
 	},
 
 	/**

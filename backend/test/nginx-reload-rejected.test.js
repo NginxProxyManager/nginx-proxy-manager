@@ -698,6 +698,30 @@ describe("a reload that nginx rejects after configs were written without reloadi
 		assert.deepEqual(retries, [{ only: { stream: [fresh] }, attempt: 1 }]);
 	});
 
+	it("clears the previous config note of an offline host once nginx applies a reload", async () => {
+		const unsafe = await stream(2222, true);
+		outcomes = [rejected(GLOBAL)];
+		const meta = await internalNginx.takeUnsafeHostOffline(
+			streamModel,
+			"stream",
+			await row(unsafe),
+			conf(unsafe),
+			unsafeErr(),
+			{ reload: true, repaired: [] },
+		);
+		assert.equal(meta.nginx_details.previous_config_running, true);
+		// still rejected: nginx still runs it
+		outcomes = [rejected(GLOBAL)];
+		await internalNginx.reload();
+		assert.equal((await row(unsafe)).meta.nginx_details.previous_config_running, true);
+		// applied: the removed config is gone from nginx as well, the host stays offline
+		await internalNginx.reload();
+		const after = (await row(unsafe)).meta;
+		assert.equal(after.nginx_online, false);
+		assert.equal(after.nginx_details.kind, "unsafe_value");
+		assert.equal(after.nginx_details.previous_config_running, undefined);
+	});
+
 	it("taking a host with an unsafe value offline doesn't claim nginx runs a previous config it never had", async () => {
 		const unsafe = await stream(2222, false);
 		outcomes = [rejected(GLOBAL)];

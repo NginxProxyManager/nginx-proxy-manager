@@ -171,6 +171,8 @@ export interface NginxConfigErrorDetails {
 	autoDisabled?: boolean;
 	// default_site: the error came from saving the default site
 	context?: string;
+	// host meta: nginx did not apply the removal of the host's config and still runs its previous config
+	previousConfigRunning?: boolean;
 }
 
 export interface HostMeta {

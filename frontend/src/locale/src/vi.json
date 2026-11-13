@@ -683,6 +683,9 @@
 	"nginx-error.other-host": {
 		"defaultMessage": "Nginx đã từ chối cấu hình của {host}"
 	},
+	"nginx-error.previous-config-running": {
+		"defaultMessage": "Nginx vẫn chạy cấu hình trước đó của host này cho đến khi tải lại thành công."
+	},
 	"nginx-error.redacted": {
 		"defaultMessage": "Nginx đã từ chối cấu hình của một host khác. Vui lòng nhờ quản trị viên kiểm tra."
 	},
@@ -877,6 +880,9 @@
 	},
 	"save-warning.offline": {
 		"defaultMessage": "Đã lưu, nhưng nginx không thể tải host này nên host đang ngoại tuyến:"
+	},
+	"save-warning.previous-config-running": {
+		"defaultMessage": "Đã lưu, nhưng nginx không áp dụng thay đổi và vẫn chạy cấu hình trước đó của host này:"
 	},
 	"save-warning.title": {
 		"defaultMessage": "Đã lưu nhưng có cảnh báo"

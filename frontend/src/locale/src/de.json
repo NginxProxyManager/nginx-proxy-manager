@@ -683,6 +683,9 @@
 	"nginx-error.other-host": {
 		"defaultMessage": "Nginx hat die Konfiguration von {host} abgelehnt"
 	},
+	"nginx-error.previous-config-running": {
+		"defaultMessage": "Nginx führt die vorherige Konfiguration dieses Hosts weiter aus, bis ein Neuladen gelingt."
+	},
 	"nginx-error.redacted": {
 		"defaultMessage": "Nginx hat die Konfiguration eines anderen Hosts abgelehnt. Bitte einen Administrator, sie zu prüfen."
 	},
@@ -877,6 +880,9 @@
 	},
 	"save-warning.offline": {
 		"defaultMessage": "Gespeichert, aber nginx konnte diesen Host nicht laden, daher ist er offline:"
+	},
+	"save-warning.previous-config-running": {
+		"defaultMessage": "Gespeichert, aber nginx hat die Änderung nicht übernommen und führt weiter die vorherige Konfiguration dieses Hosts aus:"
 	},
 	"save-warning.title": {
 		"defaultMessage": "Mit Warnungen gespeichert"

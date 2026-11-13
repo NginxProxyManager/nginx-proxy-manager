@@ -46,6 +46,8 @@ interface HostNginxErrorProps {
 	detailClassName?: string;
 	// classes of the line with the hint how to fix it
 	hintClassName?: string;
+	// the line that nginx still runs the host's previous config, when it does
+	showPreviousConfig?: boolean;
 }
 /**
  * Why nginx did not load a host (meta.nginxErr), in the UI language with
@@ -55,10 +57,22 @@ export function HostNginxError({
 	meta,
 	detailClassName = "d-block text-break",
 	hintClassName = "d-block text-secondary small mt-1",
+	showPreviousConfig = true,
 }: HostNginxErrorProps) {
 	const described = describeNginxError(meta?.nginxDetails);
+	const previous =
+		showPreviousConfig && meta?.nginxDetails?.previousConfigRunning ? (
+			<span className="d-block" data-testid="host-previous-config">
+				<T id="nginx-error.previous-config-running" />
+			</span>
+		) : null;
 	if (!described) {
-		return meta?.nginxErr ? <span className="d-block text-break">{meta.nginxErr}</span> : null;
+		return meta?.nginxErr ? (
+			<>
+				<span className="d-block text-break">{meta.nginxErr}</span>
+				{previous}
+			</>
+		) : null;
 	}
 	return (
 		<>
@@ -69,6 +83,7 @@ export function HostNginxError({
 					{described.hint}
 				</span>
 			) : null}
+			{previous}
 		</>
 	);
 }
@@ -89,8 +104,14 @@ export function SaveWarning({ meta, onClose }: SaveWarningProps) {
 			</h4>
 			{meta?.nginxOnline === false ? (
 				<p className="mb-2">
-					<T id="save-warning.offline" />
-					<HostNginxError meta={meta} />
+					<T
+						id={
+							meta.nginxDetails?.previousConfigRunning
+								? "save-warning.previous-config-running"
+								: "save-warning.offline"
+						}
+					/>
+					<HostNginxError meta={meta} showPreviousConfig={false} />
 				</p>
 			) : null}
 			<div className="d-flex">

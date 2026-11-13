@@ -683,6 +683,9 @@
 	"nginx-error.other-host": {
 		"defaultMessage": "Nginx rejected the configuration of {host}"
 	},
+	"nginx-error.previous-config-running": {
+		"defaultMessage": "Nginx still runs this host's previous configuration until a reload succeeds."
+	},
 	"nginx-error.redacted": {
 		"defaultMessage": "Nginx rejected the configuration of another host. Please ask an administrator to check it."
 	},
@@ -877,6 +880,9 @@
 	},
 	"save-warning.offline": {
 		"defaultMessage": "Saved, but nginx could not load this host, so it is offline:"
+	},
+	"save-warning.previous-config-running": {
+		"defaultMessage": "Saved, but nginx did not apply the change and still runs this host's previous configuration:"
 	},
 	"save-warning.title": {
 		"defaultMessage": "Saved with warnings"

@@ -104,6 +104,34 @@ describe("nginx errors in the UI language", () => {
 		expect(popover).toHaveTextContent("Select another certificate or renew it.");
 	});
 
+	it("German: an offline host whose previous config nginx still runs says so", async () => {
+		changeLocale("de");
+		const running: HostMeta = {
+			nginxOnline: false,
+			nginxErr: "unsafe",
+			nginxDetails: { kind: "unsafe_value", scope: "host", detail: '"a b"', previousConfigRunning: true },
+		};
+		render(<SaveWarning meta={running} onClose={() => {}} />);
+		const warning = screen.getByTestId("save-warning");
+		expect(warning).toHaveTextContent(
+			"Gespeichert, aber nginx hat die Änderung nicht übernommen und führt weiter die vorherige Konfiguration dieses Hosts aus:",
+		);
+		expect(warning).not.toHaveTextContent("daher ist er offline");
+		cleanup();
+		const popover = await openPopover(running);
+		expect(popover).toHaveTextContent(
+			"Nginx führt die vorherige Konfiguration dieses Hosts weiter aus, bis ein Neuladen gelingt.",
+		);
+		cleanup();
+		const notRunning = {
+			...running,
+			nginxDetails: { ...running.nginxDetails, previousConfigRunning: false },
+		} as HostMeta;
+		render(<SaveWarning meta={notRunning} onClose={() => {}} />);
+		expect(screen.getByTestId("save-warning")).toHaveTextContent("daher ist er offline");
+		expect(screen.queryByTestId("host-previous-config")).toBeNull();
+	});
+
 	it("German: an error toast is one line, translated prefix then nginx's error", () => {
 		changeLocale("de");
 		const err = new ApiError(ENGLISH, { status: 400, details: advanced });

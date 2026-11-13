@@ -683,6 +683,9 @@
 	"nginx-error.other-host": {
 		"defaultMessage": "Nginx lükkas tagasi hosti {host} seadistuse"
 	},
+	"nginx-error.previous-config-running": {
+		"defaultMessage": "Nginx kasutab selle hosti eelmist seadistust edasi, kuni uuesti laadimine õnnestub."
+	},
 	"nginx-error.redacted": {
 		"defaultMessage": "Nginx lükkas tagasi teise hosti seadistuse. Palu administraatoril seda kontrollida."
 	},
@@ -877,6 +880,9 @@
 	},
 	"save-warning.offline": {
 		"defaultMessage": "Salvestatud, kuid nginx ei suutnud seda hosti laadida, seega on see maas:"
+	},
+	"save-warning.previous-config-running": {
+		"defaultMessage": "Salvestatud, kuid nginx ei rakendanud muudatust ja kasutab selle hosti eelmist seadistust edasi:"
 	},
 	"save-warning.title": {
 		"defaultMessage": "Salvestatud hoiatustega"
