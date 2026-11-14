@@ -84,6 +84,37 @@ const listen = (server, target) =>
 	});
 
 describe("docker: DOCKER_HOST parsing and allowlist", () => {
+	it("never shows the credentials of a DOCKER_HOST in errors", () => {
+		const values = [
+			["tcp://user:s3cret@docker.example:2375", "tcp://***@docker.example:2375"],
+			["https://user:s3cret@docker.example:2376", "https://***@docker.example:2376"],
+			["http://s3cret@docker.example", "http://***@docker.example"],
+			["tcp://docker.example:2375/?token=s3cret", "tcp://docker.example:2375/"],
+			["tcp://docker.example:2375#s3cret", "tcp://docker.example:2375"],
+			["tcp://user:s3cret@docker.example:99999", "tcp://***@docker.example:99999"],
+		];
+		for (const [value, shown] of values) {
+			let caught = null;
+			try {
+				parseDockerHost(value);
+			} catch (err) {
+				caught = err;
+			}
+			assert.ok(caught instanceof DockerApiError, value);
+			const info = dockerErrorInfo(caught);
+			assert.equal(info.code, "invalid_docker_host");
+			assert.equal(info.params.value, shown);
+			for (const text of [caught.message, describeDockerError(caught), JSON.stringify(info)]) {
+				assert.doesNotMatch(text, /s3cret/, text);
+			}
+		}
+		// any other error text that names a URL with credentials
+		const other = Object.assign(new Error("request to http://user:s3cret@proxy:3128/ failed"), { code: "EPROTO" });
+		assert.doesNotMatch(describeDockerError(other), /s3cret/);
+		assert.equal(dockerErrorInfo(other).params.detail, "request to http://***@proxy:3128/ failed");
+	});
+
+
 	it("parses unix and tcp forms", () => {
 		assert.deepEqual(parseDockerHost("unix:///var/run/docker.sock"), { socketPath: "/var/run/docker.sock" });
 		assert.deepEqual(parseDockerHost("tcp://socket-proxy:2375"), { host: "socket-proxy", port: 2375 });
@@ -104,7 +135,7 @@ describe("docker: DOCKER_HOST parsing and allowlist", () => {
 		};
 		assert.deepEqual(thrown("ssh://user@host"), {
 			code: "invalid_docker_host",
-			params: { value: "ssh://user@host", problem: "unsupported" },
+			params: { value: "ssh://***@host", problem: "unsupported" },
 		});
 		assert.deepEqual(thrown("unix://relative.sock"), {
 			code: "invalid_docker_host",

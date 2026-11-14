@@ -15,7 +15,7 @@ import {
 	isUpstreamCheckEnabled,
 } from "../lib/upstream/config.js";
 import { DnsDiscoveryUnavailable, discoverDns } from "../lib/upstream/dns-discovery.js";
-import { describeDockerError, discoverDocker, dockerErrorInfo } from "../lib/upstream/docker.js";
+import { describeDockerError, discoverDocker, dockerErrorInfo, withoutUrlCredentials } from "../lib/upstream/docker.js";
 import { TooManyRequestsError } from "../lib/upstream/errors.js";
 import { HealthMonitor, visibilityFilter } from "../lib/upstream/health.js";
 import { createRateLimiter } from "../lib/upstream/rate-limit.js";
@@ -63,7 +63,7 @@ const runDiscoveryProviders = async () => {
 				hidden: result.hidden,
 			};
 		} catch (err) {
-			debug(logger, `Upstream docker discovery failed: ${err.message}`);
+			debug(logger, `Upstream docker discovery failed: ${withoutUrlCredentials(err.message)}`);
 			// The UI translates code + params; message stays the English text for the API and logs
 			const { code, params } = dockerErrorInfo(err);
 			return {
