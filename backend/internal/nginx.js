@@ -43,8 +43,17 @@ const internalNginx = {
 	 * @param   {Object}         host
 	 * @returns {Promise}
 	 */
-	_configure: (model, host_type, host) => {
+	_configure: async (model, host_type, host) => {
 		let combined_meta = {};
+
+		if (model && typeof model.query === "function" && host?.id) {
+			const current = await model.query().select("is_deleted", "enabled").where("id", host.id).first();
+			if (!current || current.is_deleted || current.enabled === 0 || current.enabled === false) {
+				await internalNginx._deleteConfig(host_type, host, true);
+				await internalNginx.reload();
+				return host.meta || {};
+			}
+		}
 
 		let backup_config = null;
 		const config_file = internalNginx.getConfigName(
@@ -63,7 +72,7 @@ const internalNginx = {
 		// updating/recovering a broken or unresolved host config is not blocked by its own
 		// existing file. If another host's config is broken, restore this host's config and abort.
 		return internalNginx
-			.deleteConfig(host_type, host, true)
+			._deleteConfig(host_type, host, true)
 			.then(() => {
 				return internalNginx.test().catch((err) => {
 					if (backup_config !== null) {
@@ -155,7 +164,7 @@ const internalNginx = {
 							})
 							.then(() => {
 								// The rename removed the live config already, don't touch the .err file
-								return internalNginx.deleteConfig(host_type, host, false);
+								return internalNginx._deleteConfig(host_type, host, false);
 							});
 					});
 			})
@@ -532,6 +541,19 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	deleteConfig: (host_type, host, delete_err_file) => {
+		const run = () => internalNginx._deleteConfig(host_type, host, delete_err_file);
+		const next = configureQueue.then(run, run);
+		configureQueue = next.catch(() => {});
+		return next;
+	},
+
+	/**
+	 * @param   {String}  host_type
+	 * @param   {Object}  [host]
+	 * @param   {Boolean} [delete_err_file]
+	 * @returns {Promise}
+	 */
+	_deleteConfig: (host_type, host, delete_err_file) => {
 		const config_file = internalNginx.getConfigName(
 			internalNginx.getFileFriendlyHostType(host_type),
 			typeof host === "undefined" ? 0 : host.id,
