@@ -103,7 +103,8 @@ const internalHostTest = {
 		}
 
 		// Same input hygiene as create/update: strips server-owned meta, trims hosts, duplicate location paths
-		// and forbidden file directives are 400s
+		// are 400s. Forbidden file directives are 400s too, but only checked after the permission checks, in
+		// buildHost(): see internalHost.assertAdvancedConfigAllowed()
 		const input = internalHost.sanitiseInput(structuredClone(data || {}));
 		const id = input.id ? Number.parseInt(input.id, 10) : null;
 		delete input.id;

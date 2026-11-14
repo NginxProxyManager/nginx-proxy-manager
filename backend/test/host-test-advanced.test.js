@@ -196,3 +196,63 @@ describe("config test: advanced config of users who aren't admins", () => {
 		assert.equal(dryRuns.length, 2);
 	});
 });
+
+describe("config test: forbidden file directives are only checked after the permission checks", () => {
+	const calls = { checks: 0 };
+	let hostModule;
+	before(async () => {
+		hostModule = await load("internal/host.js");
+		original.check = hostModule.assertNoForbiddenFileDirective;
+		hostModule.assertNoForbiddenFileDirective = (data) => {
+			calls.checks++;
+			return original.check(data);
+		};
+	});
+	after(() => {
+		hostModule.assertNoForbiddenFileDirective = original.check;
+	});
+	beforeEach(() => {
+		calls.checks = 0;
+	});
+
+	const anonymous = {
+		can: async () => {
+			throw new errs.PermissionError("Permission Denied");
+		},
+		hasRole: () => false,
+		isAdmin: () => false,
+		getPermissions: () => ({ visibility: "user", meta: null }),
+		token: { getUserId: (fallback) => fallback, hasScope: () => false },
+	};
+	const slow = `include /data/nginx/${"*".repeat(5000)}z/*.conf;`;
+
+	it("refuses an anonymous test without reading the advanced config", async () => {
+		const id = await insertProxyHost();
+		const start = performance.now();
+		await denied(internalHostTest.test(anonymous, "proxy_host", proxyPayload({ advanced_config: slow })));
+		await denied(internalHostTest.test(anonymous, "proxy_host", { id, advanced_config: slow }));
+		await denied(
+			internalHostTest.test(anonymous, "proxy_host", proxyPayload({ locations: [location("/a", slow)] })),
+		);
+		assert.ok(performance.now() - start < 200);
+		assert.equal(calls.checks, 0);
+	});
+
+	it("gives a user who isn't an admin the advanced config rule, not the check", async () => {
+		await denied(internalHostTest.test(user(), "proxy_host", proxyPayload({ advanced_config: slow })));
+		assert.equal(calls.checks, 0);
+	});
+
+	it("still gives an admin the check's validation error, before the dry run", async () => {
+		await assert.rejects(
+			internalHostTest.test(
+				access,
+				"proxy_host",
+				proxyPayload({ advanced_config: "include /data/nginx/proxy_host/1.conf;" }),
+			),
+			(err) => err instanceof errs.ValidationError && /^Advanced configuration: include of/.test(err.message),
+		);
+		assert.equal(calls.checks, 1);
+		assert.equal(dryRuns.length, 0);
+	});
+});
