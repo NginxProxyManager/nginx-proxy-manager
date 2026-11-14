@@ -153,6 +153,8 @@ export interface ProxyHost {
 	advancedConfig: string;
 	meta: Record<string, any>;
 	allowWebsocketUpgrade: boolean;
+	enableProxyProtocol: boolean;
+	loadBalancerIp: string;
 	http2Support: boolean;
 	enabled: boolean;
 	locations?: ProxyLocation[];
@@ -220,6 +222,7 @@ export interface Stream {
 	udpForwarding: boolean;
 	meta: Record<string, any>;
 	enabled: boolean;
+	enableProxyProtocol: boolean;
 	certificateId: number;
 	// Expansions:
 	owner?: User;

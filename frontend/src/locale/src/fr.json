@@ -443,6 +443,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Mise en cache des ressources"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Préserver le chemin"
 	},
@@ -457,6 +460,9 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Schéma"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Hôtes"

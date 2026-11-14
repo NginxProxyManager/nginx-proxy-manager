@@ -365,6 +365,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Кеширане на ресурси"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Запазване на пътя"
 	},
@@ -379,6 +382,9 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Схема"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Хостове"
