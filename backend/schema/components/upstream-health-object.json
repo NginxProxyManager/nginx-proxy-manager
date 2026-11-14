@@ -1,0 +1,83 @@
+{
+	"type": "object",
+	"description": "Latest results of the background upstream health monitor (in memory only)",
+	"additionalProperties": false,
+	"required": ["enabled", "interval", "checked_at", "hosts"],
+	"properties": {
+		"enabled": {
+			"type": "boolean",
+			"example": true
+		},
+		"interval": {
+			"type": "integer",
+			"minimum": 0,
+			"description": "Seconds between rounds, 0 = disabled",
+			"example": 60
+		},
+		"checked_at": {
+			"type": ["string", "null"],
+			"format": "date-time",
+			"description": "End of the last completed round",
+			"example": "2026-11-04T10:00:00.000Z"
+		},
+		"hosts": {
+			"type": "object",
+			"example": {
+				"proxy_host": {
+					"12": {
+						"checked_at": "2026-11-04T10:00:00.000Z",
+						"ok": true,
+						"targets": [
+							{
+								"location_index": null,
+								"host": "app",
+								"port": 80,
+								"ok": true,
+								"code": "ok",
+								"message": "app:80 is reachable (2 ms).",
+								"ms": 2
+							}
+						]
+					}
+				},
+				"stream": {}
+			},
+			"additionalProperties": false,
+			"required": ["proxy_host", "stream"],
+			"properties": {
+				"proxy_host": {
+					"type": "object",
+					"description": "Keyed by proxy host id",
+					"example": {
+						"12": {
+							"checked_at": "2026-11-04T10:00:00.000Z",
+							"ok": true,
+							"targets": [
+								{
+									"location_index": null,
+									"host": "app",
+									"port": 80,
+									"ok": true,
+									"code": "ok",
+									"message": "app:80 is reachable (2 ms).",
+									"ms": 2
+								}
+							]
+						}
+					},
+					"additionalProperties": {
+						"$ref": "./upstream-health-host.json"
+					}
+				},
+				"stream": {
+					"type": "object",
+					"description": "Keyed by stream id",
+					"example": {},
+					"additionalProperties": {
+						"$ref": "./upstream-health-host.json"
+					}
+				}
+			}
+		}
+	}
+}

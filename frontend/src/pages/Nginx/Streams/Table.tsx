@@ -1,18 +1,19 @@
 import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import type { Stream } from "src/api/backend";
+import type { Stream, UpstreamHostHealth } from "src/api/backend";
 import {
 	CertificateFormatter,
 	EmptyData,
 	GravatarFormatter,
 	HasPermission,
-	TrueFalseFormatter,
+	HostStatusFormatter,
 	ValueWithDateFormatter,
 } from "src/components";
 import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
+import { sortByHostStatus } from "src/modules/HostStatus";
 import { MANAGE, STREAMS } from "src/modules/Permissions";
 
 interface Props {
@@ -23,8 +24,19 @@ interface Props {
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
+	// Upstream health by stream id
+	health?: Record<string, UpstreamHostHealth>;
 }
-export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, onDisableToggle, onNew }: Props) {
+export default function Table({
+	data,
+	isFetching,
+	isFiltered,
+	onEdit,
+	onDelete,
+	onDisableToggle,
+	onNew,
+	health,
+}: Props) {
 	const columnHelper = createColumnHelper<Features, Stream>();
 	const columns = useMemo(
 		() => [
@@ -94,8 +106,12 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 			columnHelper.accessor((row: any) => row.enabled, {
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
+				sortFn: sortByHostStatus,
 				cell: (info: any) => {
-					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
+					const row: Stream = info.row.original;
+					return (
+						<HostStatusFormatter enabled={info.getValue()} meta={row.meta} health={health?.[`${row.id}`]} />
+					);
 				},
 			}),
 			columnHelper.display({
@@ -164,7 +180,7 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onDisableToggle, onDelete, health],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);

@@ -3,12 +3,16 @@
 import app from "./app.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
+import internalNginx from "./internal/nginx.js";
+import internalUpstream from "./internal/upstream.js";
 import { global as logger } from "./logger.js";
 import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
 import setup from "./setup.js";
 
 const IP_RANGES_FETCH_ENABLED = process.env.IP_RANGES_FETCH_ENABLED !== "false";
+// Delay before regenerating missing / broken / outdated host configs after startup
+const RECONCILE_DELAY_MS = 5000;
 
 async function appStart() {
 	return migrateUp()
@@ -32,9 +36,20 @@ async function appStart() {
 
 			const server = app.listen(3000, () => {
 				logger.info(`Backend PID ${process.pid} listening on port 3000 ...`);
+				internalUpstream.initHealthMonitor();
+
+				setTimeout(() => {
+					if (internalNginx.reconcileOnStartEnabled()) {
+						internalNginx.reconcile();
+					} else {
+						// no regeneration: still show the hosts offline whose config the startup check moved aside
+						internalNginx.markRejectedAtStartup();
+					}
+				}, RECONCILE_DELAY_MS).unref();
 
 				process.on("SIGTERM", () => {
 					logger.info(`PID ${process.pid} received SIGTERM`);
+					internalUpstream.stopHealthMonitor();
 					server.close(() => {
 						logger.info("Stopping.");
 						process.exit(0);

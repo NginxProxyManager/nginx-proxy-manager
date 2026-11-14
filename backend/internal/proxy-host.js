@@ -19,8 +19,10 @@ const internalProxyHost = {
 	 * @returns {Promise}
 	 */
 	create: (access, data) => {
-		let thisData = data;
+		let thisData = internalHost.sanitiseInput(data);
 		const createCertificate = thisData.certificate_id === "new";
+		let createdId = null;
+		let issuedCertificateId = null;
 
 		if (createCertificate) {
 			delete thisData.certificate_id;
@@ -62,10 +64,16 @@ const internalProxyHost = {
 				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
+				createdId = row.id;
 				if (createCertificate) {
-					return internalCertificate
-						.createQuickCertificate(access, thisData)
+					// Check that nginx accepts the host before a certificate is requested: when the host is
+					// rejected the create is rolled back, and a certificate issued for it would be left behind
+					// (and renewed forever). The SSL part is checked again when the certificate is added.
+					return internalNginx
+						.configure(proxyHostModel, "proxy_host", row, { dryRun: true })
+						.then(() => internalCertificate.createQuickCertificate(access, thisData))
 						.then((cert) => {
+							issuedCertificateId = cert.id;
 							// update host with cert id
 							return internalProxyHost.update(access, {
 								id: row.id,
@@ -85,9 +93,10 @@ const internalProxyHost = {
 					expand: ["certificate", "owner", "access_list.[clients,items]"],
 				});
 			})
-			.then(async (row) => {
+			.then((row) => {
 				// Configure nginx
-				return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
+				return internalNginx.configure(proxyHostModel, "proxy_host", row).then((newMeta) => {
+					row.meta = newMeta;
 					return row;
 				});
 			})
@@ -106,6 +115,19 @@ const internalProxyHost = {
 					.then(() => {
 						return row;
 					});
+			})
+			.catch(async (err) => {
+				// nginx rejected the new host: don't keep a host that was never active
+				if (createdId && internalNginx.isHostLevelError(err)) {
+					await internalHost.discardRejectedCreate(proxyHostModel, "proxy_host", createdId);
+				}
+				// the certificate requested for it is left unused when the host is gone or was rejected with it
+				if (issuedCertificateId) {
+					await internalHost.discardUnusedCertificate(issuedCertificateId, () =>
+						internalCertificate.delete(access, { id: issuedCertificateId }),
+					);
+				}
+				throw err;
 			});
 	},
 
@@ -116,8 +138,9 @@ const internalProxyHost = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
-		let thisData = data;
+		let thisData = internalHost.sanitiseInput(data);
 		const createCertificate = thisData.certificate_id === "new";
+		let newCertificateId = null;
 
 		if (createCertificate) {
 			delete thisData.certificate_id;
@@ -157,18 +180,35 @@ const internalProxyHost = {
 					);
 				}
 
-				// Before the certificate is created, so a refused request doesn't leave one behind
+				// Before anything is configured or a certificate is requested
 				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
 
 				if (createCertificate) {
-					return internalCertificate
-						.createQuickCertificate(access, {
-							domain_names: thisData.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, thisData.meta),
-						})
+					// Check that nginx accepts the rest of the update before the certificate is requested
+					return internalProxyHost
+						.get(access, { id: row.id, expand: ["owner", "certificate", "access_list.[clients,items]"] })
+						.then((fullRow) =>
+							internalHost.checkProposedHost({
+								model: proxyHostModel,
+								hostType: "proxy_host",
+								row: fullRow,
+								patch: internalHost.cleanSslHstsData(
+									_.assign({}, { domain_names: row.domain_names }, data),
+									row,
+								),
+								skipDisabled: true,
+							}),
+						)
+						.then(() =>
+							internalCertificate.createQuickCertificate(access, {
+								domain_names: thisData.domain_names || row.domain_names,
+								meta: _.assign({}, row.meta, thisData.meta),
+							}),
+						)
 						.then((cert) => {
 							// update host with cert id
 							thisData.certificate_id = cert.id;
+							newCertificateId = cert.id;
 						})
 						.then(() => {
 							return row;
@@ -177,53 +217,49 @@ const internalProxyHost = {
 				return row;
 			})
 			.then((row) => {
+				const requested = data;
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				thisData = _.assign(
-					{},
-					{
-						domain_names: row.domain_names,
+				thisData = internalHost.cleanSslHstsData(_.assign({}, { domain_names: row.domain_names }, requested), row);
+
+				return internalHost.updateAndConfigure({
+					model: proxyHostModel,
+					hostType: "proxy_host",
+					id: thisData.id,
+					// merged with the row as it is under the lock, not the one read above (before the certificate
+					// request): a disable or another change in between must not be undone
+					patch: (current) => {
+						thisData = internalHost.cleanSslHstsData(
+							_.assign({}, { domain_names: current.domain_names }, requested),
+							current,
+						);
+						return thisData;
 					},
-					data,
-				);
-
-				thisData = internalHost.cleanSslHstsData(thisData, row);
-
-				return proxyHostModel
-					.query()
-					.where({ id: thisData.id })
-					.patch(thisData)
-					.then(utils.omitRow(omissions()))
-					.then((saved_row) => {
-						// Add to audit log
-						return internalAuditLog
-							.add(access, {
-								action: "updated",
-								object_type: "proxy-host",
-								object_id: row.id,
-								meta: thisData,
-							})
-							.then(() => {
-								return saved_row;
-							});
-					});
+					// there's no need to add nginx config if host is disabled
+					skipDisabled: true,
+					fetch: () =>
+						internalProxyHost.get(access, {
+							id: thisData.id,
+							expand: ["owner", "certificate", "access_list.[clients,items]"],
+						}),
+					audit: () =>
+						internalAuditLog.add(access, {
+							action: "updated",
+							object_type: "proxy-host",
+							object_id: thisData.id,
+							meta: thisData,
+						}),
+				});
 			})
-			.then(() => {
-				return internalProxyHost
-					.get(access, {
-						id: thisData.id,
-						expand: ["owner", "certificate", "access_list.[clients,items]"],
-					})
-					.then(async (row) => {
-						if (!row.enabled) {
-							// No need to add nginx config if host is disabled
-							return row;
-						}
-						// Configure nginx
-						return internalNginx.configure(proxyHostModel, "proxy_host", row).then((new_meta) => {
-							row.meta = new_meta;
-							return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
-						});
-					});
+			.catch(async (err) => {
+				if (newCertificateId) {
+					await internalHost.discardUnusedCertificate(newCertificateId, () =>
+						internalCertificate.delete(access, { id: newCertificateId }),
+					);
+				}
+				throw err;
+			})
+			.then((row) => {
+				return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
 			});
 	},
 
@@ -294,12 +330,14 @@ const internalProxyHost = {
 					.patch({
 						is_deleted: 1,
 					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("proxy_host", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
+					.then(() =>
+						// Delete Nginx Config. When nginx can't apply the removal it still serves the host
+						// (removeConfigAndReload() put its config back): the delete is undone
+						internalNginx.removeConfigAndReload("proxy_host", row).catch(async (err) => {
+							await proxyHostModel.query().where("id", row.id).patch({ is_deleted: 0 });
+							throw err;
+						}),
+					)
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
@@ -322,42 +360,30 @@ const internalProxyHost = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	enable: (access, data) => {
-		return access
-			.can("proxy_hosts:update", data.id)
-			.then(() => {
-				return internalProxyHost.get(access, {
+	enable: async (access, data) => {
+		await access.can("proxy_hosts:update", data.id);
+		// 404 and permission check before the lock is taken
+		await internalProxyHost.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: proxyHostModel,
+			hostType: "proxy_host",
+			enable: true,
+			fetch: () =>
+				internalProxyHost.get(access, {
 					id: data.id,
 					expand: ["certificate", "owner", "access_list.[clients,items]"],
-				});
-			})
-			.then(async (row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(data.id);
-				}
-				if (row.enabled) {
-					throw new errs.ValidationError("Host is already enabled");
-				}
+				}),
+			alreadyMessage: "Host is already enabled",
+		});
 
-				row.enabled = 1;
-
-				await proxyHostModel.query().where("id", row.id).patch({
-					enabled: 1,
-				});
-
-				// Configure nginx
-				await internalNginx.configure(proxyHostModel, "proxy_host", row);
-
-				// Add to audit log
-				await internalAuditLog.add(access, {
-					action: "enabled",
-					object_type: "proxy-host",
-					object_id: row.id,
-					meta: _.omit(row, omissions()),
-				});
-
-				return true;
-			});
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "enabled",
+			object_type: "proxy-host",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+		return true;
 	},
 
 	/**
@@ -367,47 +393,25 @@ const internalProxyHost = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	disable: (access, data) => {
-		return access
-			.can("proxy_hosts:update", data.id)
-			.then(() => {
-				return internalProxyHost.get(access, { id: data.id });
-			})
-			.then((row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(data.id);
-				}
-				if (!row.enabled) {
-					throw new errs.ValidationError("Host is already disabled");
-				}
+	disable: async (access, data) => {
+		await access.can("proxy_hosts:update", data.id);
+		await internalProxyHost.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: proxyHostModel,
+			hostType: "proxy_host",
+			enable: false,
+			fetch: () => internalProxyHost.get(access, { id: data.id }),
+			alreadyMessage: "Host is already disabled",
+		});
 
-				row.enabled = 0;
-
-				return proxyHostModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 0,
-					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("proxy_host", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "disabled",
-							object_type: "proxy-host",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
-				return true;
-			});
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "disabled",
+			object_type: "proxy-host",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+		return true;
 	},
 
 	/**

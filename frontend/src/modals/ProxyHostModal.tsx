@@ -1,27 +1,90 @@
 import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form } from "formik";
-import { type ReactNode, useState } from "react";
+import { Field, Form, useFormikContext } from "formik";
+import { type KeyboardEvent, type MouseEvent, type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
+import type { HostMeta, ProxyHost, UpstreamCandidate } from "src/api/backend";
 import {
 	AccessField,
 	Button,
+	cleanLocations,
+	DockerLabelsHelp,
 	DomainNamesField,
+	type ExistingHost,
+	ForwardHostCheckHint,
 	HasPermission,
+	HostConfigTestResult,
+	type LabelPrefill,
+	LabelPrefillHint,
 	Loading,
 	LocationsFields,
 	NginxConfigField,
+	NginxErrorMessage,
+	SaveWarning,
 	SSLCertificateField,
 	SSLOptionsFields,
+	TestConfigButton,
+	UpstreamField,
+	type UpstreamPrefill,
+	useLabelPrefill,
+	usePrefillGuard,
 } from "src/components";
-import { FormModal } from "src/components/Form";
-import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
-import { T } from "src/locale";
+import { confirmDiscardChanges, FormModal } from "src/components/Form";
+import { useHostConfigTest, useProxyHost, useSetProxyHost, useUser } from "src/hooks";
+import { intl, T } from "src/locale";
+import {
+	formatApiError,
+	getErrorLocationIndex,
+	getNginxErrorDetails,
+	getProblemLocations,
+	getTestLocationIndex,
+	hasSaveWarnings,
+	stripServerMeta,
+} from "src/modules/HostStatus";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
-import { validateNumber, validateString } from "src/modules/Validations";
+import { validateForwardHost, validateNumber } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
+import { showDeadHostModal } from "./DeadHostModal";
+import { showRedirectionHostModal } from "./RedirectionHostModal";
+
+type TabId = "details" | "locations" | "ssl" | "advanced";
+
+// In the order of the tab strip, for the arrow keys
+const TAB_ORDER: TabId[] = ["details", "locations", "ssl", "advanced"];
+
+// Fields on the Details tab, to show it when one of them is invalid
+const DETAILS_FIELDS = ["domainNames", "forwardScheme", "forwardHost", "forwardPort", "accessListId"];
+
+// The tab holding the first invalid field
+const tabForErrors = (errors: Record<string, unknown> | undefined): TabId | null => {
+	const keys = Object.keys(errors || {});
+	if (keys.some((k) => DETAILS_FIELDS.includes(k))) {
+		return "details";
+	}
+	if (keys.includes("locations")) {
+		return "locations";
+	}
+	return null;
+};
+
+// Switches to the tab holding the first invalid field after a submit was
+// blocked by validation, which would otherwise look like nothing happened.
+function TabErrorSwitcher({ onTab }: { onTab: (tab: TabId) => void }) {
+	const { isSubmitting, errors } = useFormikContext<any>();
+	const wasSubmitting = useRef(false);
+	useEffect(() => {
+		if (wasSubmitting.current && !isSubmitting) {
+			const tab = tabForErrors(errors);
+			if (tab) {
+				onTab(tab);
+			}
+		}
+		wasSubmitting.current = isSubmitting;
+	}, [isSubmitting, errors, onTab]);
+	return null;
+}
 
 const showProxyHostModal = (id: number | "new") => {
 	EasyModal.show(ProxyHostModal, { id });
@@ -36,20 +99,143 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { mutate: setProxyHost } = useSetProxyHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [activeTab, setActiveTab] = useState<TabId>("details");
+	// Set when a save went through but nginx didn't take all of it
+	const [savedMeta, setSavedMeta] = useState<HostMeta | null>(null);
+	// Id of a host created by this modal, so that saving again updates it
+	const [savedId, setSavedId] = useState<number | null>(null);
+	const [highlightIndex, setHighlightIndex] = useState<number | null>(null);
+	const guardPrefill = usePrefillGuard();
+	const fillFromLabels = useLabelPrefill();
+	// Switches the user changed: a picked container's labels leave them alone
+	const touchedToggles = useRef(new Set<string>());
+	// What the last picked container's labels filled in (or why not), for the hint under the domain names
+	const [labelPick, setLabelPick] = useState<{ host: string; prefill: LabelPrefill } | null>(null);
+	// A picked container's npm.http2 label, applied once a certificate is picked
+	const [http2Wish, setHttp2Wish] = useState(false);
+	const configTest = useHostConfigTest("proxy-hosts");
 
 	const isAdmin = currentUser?.roles?.includes("admin");
+	// Only admins may change the advanced config, the others don't get its tab
+	const tabOrder = isAdmin ? TAB_ORDER : TAB_ORDER.filter((tab) => tab !== "advanced");
 
-	const onSubmit = async (values: any, { setSubmitting }: any) => {
-		if (isSubmitting) return;
-		setIsSubmitting(true);
-		setErrorMsg(null);
+	const showTab = useCallback((tab: TabId) => setActiveTab(tab), []);
+	const tabRefs = useRef<Partial<Record<TabId, HTMLAnchorElement | null>>>({});
+	// Tabs pattern with a roving tabindex: only the active tab is in the tab order, the arrow keys (and Home /
+	// End) move between the tabs and take the focus along, like Bootstrap's tab component did
+	const onTabKeyDown = (e: KeyboardEvent<HTMLAnchorElement>, tab: TabId) => {
+		const i = tabOrder.indexOf(tab);
+		let next: TabId;
+		switch (e.key) {
+			case "ArrowRight":
+			case "ArrowDown":
+				next = tabOrder[(i + 1) % tabOrder.length];
+				break;
+			case "ArrowLeft":
+			case "ArrowUp":
+				next = tabOrder[(i + tabOrder.length - 1) % tabOrder.length];
+				break;
+			case "Home":
+				next = tabOrder[0];
+				break;
+			case "End":
+				next = tabOrder[tabOrder.length - 1];
+				break;
+			default:
+				return;
+		}
+		e.preventDefault();
+		setActiveTab(next);
+		tabRefs.current[next]?.focus();
+	};
+	const tabLink = (tab: TabId) => ({
+		href: `#tab-${tab}`,
+		id: `tab-link-${tab}`,
+		className: cn("nav-link", { active: activeTab === tab }),
+		role: "tab",
+		"aria-selected": activeTab === tab,
+		"aria-controls": `tab-${tab}`,
+		tabIndex: activeTab === tab ? undefined : -1,
+		ref: (el: HTMLAnchorElement | null) => {
+			tabRefs.current[tab] = el;
+		},
+		onClick: (e: MouseEvent) => {
+			e.preventDefault();
+			setActiveTab(tab);
+		},
+		onKeyDown: (e: KeyboardEvent<HTMLAnchorElement>) => onTabKeyDown(e, tab),
+	});
+	const tabPane = (tab: TabId) => cn("tab-pane", { "active show": activeTab === tab });
 
-		const { ...payload } = {
-			id: id === "new" ? undefined : id,
+	// The host that already has a picked container's domains, instead of this form
+	const openExisting = (form: { dirty: boolean }, existing: ExistingHost) => {
+		if (!confirmDiscardChanges(form.dirty)) return;
+		remove();
+		// once this one is gone: a proxy host opens in the same modal slot
+		setTimeout(() => {
+			if (existing.type === "redirection_host") {
+				showRedirectionHostModal(existing.id);
+			} else if (existing.type === "dead_host") {
+				showDeadHostModal(existing.id);
+			} else {
+				showProxyHostModal(existing.id);
+			}
+		});
+	};
+
+	// Picking a container fills the free fields from its npm.* labels (see labelPrefill)
+	const onPickCandidate = (form: any, picked: UpstreamPrefill, candidate: UpstreamCandidate) => {
+		const prefill = guardPrefill(
+			picked,
+			{ port: form.values.forwardPort, scheme: form.values.forwardScheme },
+			{ port: form.initialValues.forwardPort, scheme: form.initialValues.forwardScheme },
+		);
+		if (prefill.port !== undefined) {
+			form.setFieldValue("forwardPort", prefill.port ?? "");
+		}
+		if (prefill.scheme) {
+			form.setFieldValue("forwardScheme", prefill.scheme);
+		}
+		const isNew = id === "new" && !savedId;
+		// A candidate without labels (DNS, history) also drops what an earlier pick's labels filled in
+		const labels = fillFromLabels(candidate.suggestion, {
+			isNew,
+			domainNames: form.values.domainNames,
+			touched: touchedToggles.current,
+		});
+		if (labels.domainNames) {
+			form.setFieldValue("domainNames", labels.domainNames);
+		}
+		for (const [key, value] of Object.entries(labels.toggles)) {
+			if (form.values[key] !== value) {
+				form.setFieldValue(key, value);
+			}
+		}
+		if (isNew) {
+			const wish = !!labels.http2Support;
+			setHttp2Wish(wish);
+			// A certificate is already picked: the wish applies right away, unless the user set HTTP/2 themselves
+			if (
+				form.values.certificateId &&
+				!touchedToggles.current.has("http2Support") &&
+				!!form.values.http2Support !== wish
+			) {
+				form.setFieldValue("http2Support", wish);
+			}
+		}
+		setLabelPick(candidate.suggestion ? { host: candidate.host, prefill: labels } : null);
+	};
+
+	// What a save sends, also what "Test" checks
+	const buildPayload = (values: any) => {
+		const payload = {
+			id: savedId ?? (id === "new" ? undefined : id),
 			...values,
+			// rows that were added but never filled in
+			locations: cleanLocations(values.locations),
+			// server-owned status keys are never sent back
+			meta: stripServerMeta(values.meta),
 		};
-		payload.locations = (values.locations || []).filter((location: any) => location.path?.trim() !== "");
-
 		if (!isAdmin) {
 			delete payload.advanced_config;
 			delete payload.advancedConfig;
@@ -58,10 +244,62 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			// when the path is renamed; the backend matches them by value. Looking them up by
 			// path here would silently drop the config from a renamed location.
 		}
+		return payload;
+	};
+
+	const onTest = async (form: any) => {
+		setErrorMsg(null);
+		setHighlightIndex(null);
+		const result = await configTest.runTest(form, buildPayload(form.values), (errors) => {
+			const tab = tabForErrors(errors);
+			if (tab) {
+				setActiveTab(tab);
+			}
+		});
+		const index = getTestLocationIndex(result);
+		if (index !== null) {
+			setActiveTab("locations");
+			setHighlightIndex(index);
+		}
+	};
+
+	const onSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
+		setErrorMsg(null);
+		setSavedMeta(null);
+		setHighlightIndex(null);
+		configTest.reset();
+
+		const payload = buildPayload(values);
 
 		setProxyHost(payload, {
-			onError: (err: any) => setErrorMsg(<T id={err.message} />),
-			onSuccess: () => {
+			onError: (err: unknown) => {
+				const details = getNginxErrorDetails(err);
+				if (!details) {
+					setErrorMsg(formatApiError(err));
+					return;
+				}
+				setErrorMsg(<NginxErrorMessage message={formatApiError(err)} details={details} />);
+				const index = getErrorLocationIndex(details);
+				if (index !== null || details.scope === "location") {
+					setActiveTab("locations");
+					setHighlightIndex(index);
+				}
+			},
+			onSuccess: (result: ProxyHost) => {
+				if (result && hasSaveWarnings(result.meta)) {
+					// Keep the modal open so the problems can be seen (and fixed)
+					setSavedId(result.id || null);
+					// A requested certificate ("new") now exists: saving again must not request another one.
+					// The saved values become the new baseline, so closing now doesn't ask about unsaved changes.
+					resetForm({ values: { ...values, certificateId: result.certificateId || 0 } });
+					setSavedMeta(result.meta);
+					if (getProblemLocations(result.meta).length) {
+						setActiveTab("locations");
+					}
+					return;
+				}
 				showObjectSuccess("proxy-host", "saved");
 				remove();
 			},
@@ -105,6 +343,8 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							// SSL tab
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
+							// A new host has no certificate yet, and HTTP/2 can't be turned on without one: a picked
+							// container's npm.http2 label only takes effect once a certificate is picked (http2OnCertificate)
 							http2Support: data?.http2Support || false,
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
@@ -116,76 +356,76 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{({ onHide }) => (
+					{({ onHide, ...form }) => (
 						<Form>
+							<TabErrorSwitcher onTab={showTab} />
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "proxy-host" }} />
+									<T
+										id={data?.id || savedId ? "object.edit" : "object.add"}
+										tData={{ object: "proxy-host" }}
+									/>
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
+								{savedMeta ? <SaveWarning meta={savedMeta} onClose={onHide} /> : null}
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
 								</Alert>
+								<HostConfigTestResult
+									result={configTest.result}
+									error={configTest.error}
+									testedKey={configTest.testedKey}
+									onClose={configTest.reset}
+								/>
 								<div className="card m-0 border-0">
 									<div className="card-header">
-										<ul className="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
-											<li className="nav-item" role="presentation">
-												<a
-													href="#tab-details"
-													className="nav-link active"
-													data-bs-toggle="tab"
-													aria-selected="true"
-													role="tab"
-												>
+										<div className="nav nav-tabs card-header-tabs" role="tablist">
+											<div className="nav-item" role="presentation">
+												<a {...tabLink("details")}>
 													<T id="column.details" />
 												</a>
-											</li>
-											<li className="nav-item" role="presentation">
-												<a
-													href="#tab-locations"
-													className="nav-link"
-													data-bs-toggle="tab"
-													aria-selected="false"
-													tabIndex={-1}
-													role="tab"
-												>
+											</div>
+											<div className="nav-item" role="presentation">
+												<a {...tabLink("locations")}>
 													<T id="column.custom-locations" />
 												</a>
-											</li>
-											<li className="nav-item" role="presentation">
-												<a
-													href="#tab-ssl"
-													className="nav-link"
-													data-bs-toggle="tab"
-													aria-selected="false"
-													tabIndex={-1}
-													role="tab"
-												>
+											</div>
+											<div className="nav-item" role="presentation">
+												<a {...tabLink("ssl")}>
 													<T id="column.ssl" />
 												</a>
-											</li>
+											</div>
 											{isAdmin && (
-												<li className="nav-item ms-auto" role="presentation">
+												<div className="nav-item ms-auto" role="presentation">
 													<a
-														href="#tab-advanced"
-														className="nav-link"
-														title="Settings"
-														data-bs-toggle="tab"
-														aria-selected="false"
-														tabIndex={-1}
-														role="tab"
+														{...tabLink("advanced")}
+														title={intl.formatMessage({ id: "location.advanced" })}
 													>
 														<IconSettings size={20} />
 													</a>
-												</li>
+												</div>
 											)}
-										</ul>
+										</div>
 									</div>
 									<div className="card-body">
-										<div className="tab-content">
-											<div className="tab-pane active show" id="tab-details" role="tabpanel">
+										{/* Read-only while a save is in flight: a save with warnings keeps the modal open and resets
+										    the form to the submitted values, so an edit made meanwhile would be lost */}
+										<fieldset
+											className={cn("tab-content", { "pe-none": isSubmitting })}
+											disabled={isSubmitting}
+											aria-busy={isSubmitting}
+										>
+											<div className={tabPane("details")} id="tab-details" role="tabpanel" aria-labelledby="tab-link-details">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
+												<LabelPrefillHint
+													prefill={
+														labelPick && labelPick.host === form.values.forwardHost
+															? labelPick.prefill
+															: null
+													}
+													onOpen={(existing) => openExisting(form, existing)}
+												/>
 												<div className="row">
 													<div className="col-sm-3 col-md-3">
 														<Field name="forwardScheme">
@@ -219,7 +459,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														</Field>
 													</div>
 													<div className="col-sm-5 col-md-5">
-														<Field name="forwardHost" validate={validateString(1, 255)}>
+														<Field name="forwardHost" validate={validateForwardHost}>
 															{({ field, form }: any) => (
 																<div className="mb-3">
 																	<label
@@ -227,14 +467,28 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																		htmlFor="forwardHost"
 																	>
 																		<T id="proxy-host.forward-host" />
+																		<DockerLabelsHelp />
 																	</label>
-																	<input
+																	<UpstreamField
 																		id="forwardHost"
-																		type="text"
-																		className={`form-control ${form.errors.forwardHost && form.touched.forwardHost ? "is-invalid" : ""}`}
-																		required
+																		value={field.value || ""}
 																		placeholder="example.com"
-																		{...field}
+																		isInvalid={
+																			!!(
+																				form.errors.forwardHost &&
+																				form.touched.forwardHost
+																			)
+																		}
+																		onChange={(v) =>
+																			form.setFieldValue("forwardHost", v)
+																		}
+																		onBlur={() =>
+																			form.setFieldTouched("forwardHost", true)
+																		}
+																		onSelectCandidate={(picked, candidate) =>
+																			onPickCandidate(form, picked, candidate)
+																		}
+																		labels={{ hostId: data?.id || savedId }}
 																	/>
 																	{form.errors.forwardHost ? (
 																		<div className="invalid-feedback">
@@ -244,6 +498,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																				: null}
 																		</div>
 																	) : null}
+																	<ForwardHostCheckHint />
 																</div>
 															)}
 														</Field>
@@ -298,6 +553,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
+																					onChange={(e) => {
+																						touchedToggles.current.add(
+																							field.name,
+																						);
+																						field.onChange(e);
+																					}}
 																					id="cachingEnabled"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
@@ -321,6 +582,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
+																					onChange={(e) => {
+																						touchedToggles.current.add(
+																							field.name,
+																						);
+																						field.onChange(e);
+																					}}
 																					id="blockExploits"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
@@ -344,6 +611,12 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																			<label className="form-check form-check-single form-switch">
 																				<input
 																					{...field}
+																					onChange={(e) => {
+																						touchedToggles.current.add(
+																							field.name,
+																						);
+																						field.onChange(e);
+																					}}
 																					id="allowWebsocketUpgrade"
 																					className={cn("form-check-input", {
 																						"bg-lime": field.checked,
@@ -359,26 +632,45 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													</div>
 												</div>
 											</div>
-											<div className="tab-pane" id="tab-locations" role="tabpanel">
+											<div className={tabPane("locations")} id="tab-locations" role="tabpanel" aria-labelledby="tab-link-locations">
 												<LocationsFields
 													initialValues={data?.locations || []}
+													statuses={
+														configTest.result?.nginxLocations ??
+														(savedMeta ?? data?.meta)?.nginxLocations
+													}
+													highlightIndex={highlightIndex}
 													allowAdvanced={!!isAdmin}
+													readOnly={isSubmitting}
 												/>
 											</div>
-											<div className="tab-pane" id="tab-ssl" role="tabpanel">
+											<div className={tabPane("ssl")} id="tab-ssl" role="tabpanel" aria-labelledby="tab-link-ssl">
 												<SSLCertificateField
 													name="certificateId"
 													label="ssl-certificate"
 													allowNew
+													http2OnCertificate={
+														// as for the container pick: never over a choice the user made
+														http2Wish && !touchedToggles.current.has("http2Support")
+													}
 												/>
-												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
+												<SSLOptionsFields
+													color="bg-lime"
+													forProxyHost={true}
+													onToggle={(name) => touchedToggles.current.add(name)}
+												/>
 											</div>
 											{isAdmin && (
-												<div className="tab-pane" id="tab-advanced" role="tabpanel">
+												<div
+													className={tabPane("advanced")}
+													id="tab-advanced"
+													role="tabpanel"
+													aria-labelledby="tab-link-advanced"
+												>
 													<NginxConfigField />
 												</div>
 											)}
-										</div>
+										</fieldset>
 									</div>
 								</div>
 							</Modal.Body>
@@ -387,10 +679,15 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 									<T id="cancel" />
 								</Button>
 								<HasPermission section={PROXY_HOSTS} permission={MANAGE} hideError>
+									<TestConfigButton
+										onClick={() => onTest(form)}
+										isTesting={configTest.isTesting}
+										disabled={isSubmitting}
+									/>
 									<Button
 										type="submit"
 										actionType="primary"
-										className="ms-auto bg-lime"
+										className="bg-lime"
 										data-bs-dismiss="modal"
 										isLoading={isSubmitting}
 										disabled={isSubmitting}
