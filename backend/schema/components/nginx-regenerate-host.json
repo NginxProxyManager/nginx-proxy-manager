@@ -1,0 +1,52 @@
+{
+	"type": "object",
+	"description": "A host listed in the result of regenerating all nginx configs",
+	"additionalProperties": false,
+	"required": ["host_type", "id", "name"],
+	"properties": {
+		"host_type": {
+			"type": "string",
+			"enum": ["proxy_host", "redirection_host", "dead_host", "stream"],
+			"example": "proxy_host"
+		},
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"name": {
+			"type": "string",
+			"description": "First domain name, or the incoming port of a stream",
+			"example": "app.example.com"
+		},
+		"error": {
+			"type": "string",
+			"description": "Why nginx rejected the host (offline) or why it could not be regenerated (failed)",
+			"example": "unknown directive \"proxy_passs\""
+		},
+		"message": {
+			"type": "string",
+			"description": "Warnings: the custom locations that are disabled or don't resolve right now, one per line. Skipped: why the host was left alone",
+			"example": "/api: Disabled because nginx rejected it: unknown directive \"proxy_passs\""
+		},
+		"details": {
+			"type": ["object", "null"],
+			"description": "Offline: the host's meta.nginx_details. Failed: the structured details of the error, if any. For clients that word the error themselves",
+			"additionalProperties": true
+		},
+		"locations": {
+			"type": "array",
+			"description": "Warnings: the custom locations of `message`, with the code and params the UI words them from (see meta.nginx_locations)",
+			"items": {
+				"type": "object",
+				"additionalProperties": true,
+				"properties": {
+					"index": { "type": "integer" },
+					"path": { "type": "string" },
+					"status": { "type": "string", "enum": ["quarantined", "unresolved"] },
+					"code": { "type": ["string", "null"] },
+					"params": { "type": ["object", "null"] },
+					"message": { "type": ["string", "null"] }
+				}
+			}
+		}
+	}
+}

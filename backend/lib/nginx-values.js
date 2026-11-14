@@ -63,12 +63,20 @@ export const isValidStreamHost = (value) =>
  * Thrown when a stored value can't be written into nginx config safely
  *
  * @param {String} message
+ * @param {Object} [what]        which value, for clients that word the message in their own language
+ * @param {String} [what.field]  e.g. forward_host
+ * @param {String} [what.value]  the value, quoted and shortened as in the message
  */
-export const unsafeValueError = (message) => {
+export const unsafeValueError = (message, what = null) => {
 	const err = new errs.ConfigurationError(message);
 	err.unsafeNginxValue = true;
+	err.unsafeField = what?.field || null;
+	err.unsafeValue = what?.value ?? null;
 	return err;
 };
+
+// The field code of a value the message calls eg. "location forward host": location_forward_host
+export const unsafeValueField = (what) => what.replace(/ /g, "_");
 
 const describe = (value) => JSON.stringify(String(value)).slice(0, 80);
 
@@ -81,7 +89,11 @@ export const assertAccessListRenderable = (label, accessList) => {
 	for (const client of accessList?.clients || []) {
 		// "address" is rendered unquoted ("allow <address>;")
 		if (typeof client.address !== "string" || unsafeToken.test(client.address)) {
-			throw unsafeValueError(`${label}: access list client address ${describe(client.address)} is not allowed`);
+			const value = describe(client.address);
+			throw unsafeValueError(`${label}: access list client address ${value} is not allowed`, {
+				field: "access_list_client_address",
+				value,
+			});
 		}
 	}
 };
@@ -100,7 +112,11 @@ export const assertHostRenderable = (hostType, host) => {
 	const label = `${hostType.replace(/_/g, " ")} #${host.id}`;
 	const check = (ok, what, value) => {
 		if (!ok) {
-			throw unsafeValueError(`${label}: ${what} ${describe(value)} is not allowed in nginx config`);
+			const shown = describe(value);
+			throw unsafeValueError(`${label}: ${what} ${shown} is not allowed in nginx config`, {
+				field: unsafeValueField(what),
+				value: shown,
+			});
 		}
 	};
 
