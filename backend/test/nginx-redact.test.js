@@ -166,4 +166,46 @@ describe("redactConfigError", () => {
 		assert.match(err.details.nginx_output, /other\.example\.com/);
 		assert.match(err.details.nginx_output, /proxy_host\/1\.conf/);
 	});
+
+	it("redacts global errors for a user with visibility all who can't list every host type", async () => {
+		// eg. a streams-only manager: visibility "all", proxy hosts hidden
+		const streamsOnly = userAccess({ userId: ME, visibility: "all", hidden: ["proxy_hosts"] });
+		assert.equal(internalNginx.canSeeAllHosts(streamsOnly), false);
+		const named = await internalNginx.redactConfigError(streamsOnly, withWarnings("global", 5));
+		assert.ok(isRedacted(named));
+		assert.equal(named.details.host_id, null);
+		assert.equal(named.details.nginx_output, null);
+		const hostless_ = await internalNginx.redactConfigError(streamsOnly, hostless("/data/nginx/custom/http.conf"));
+		assert.ok(isRedacted(hostless_));
+		assert.equal(hostless_.details.nginx_output, null);
+		// and only gets its own lines of a host-scope error about a stream
+		const own = await internalNginx.redactConfigError(streamsOnly, withWarnings("host", 3));
+		assert.doesNotMatch(own.details.nginx_output, /other\.example\.com|proxy_host\/1\.conf/);
+	});
+});
+
+describe("buildOfflineMeta", () => {
+	it("keeps only the nginx output lines about the host's own error", () => {
+		const err = new errs.NginxConfigError('unknown directive "bogus"', {
+			kind: "nginx_config",
+			scope: "host",
+			host_type: "proxy_host",
+			host_id: 3,
+			file: "/data/nginx/proxy_host/3.conf",
+			line: 3,
+			nginx_output: [
+				'nginx: [warn] conflicting server name "other.example.com" on 0.0.0.0:80, ignored',
+				"nginx: [warn] protocol options redefined for 0.0.0.0:443 in /data/nginx/proxy_host/1.conf:20",
+				'nginx: [emerg] unknown directive "bogus" in /data/nginx/proxy_host/3.conf:3',
+			].join("\n"),
+		});
+		for (const prefix of ["", "Disabled automatically: "]) {
+			const meta = internalNginx.buildOfflineMeta({ letsencrypt_agree: false }, err, prefix);
+			assert.equal(meta.nginx_online, false);
+			assert.equal(meta.nginx_details.nginx_output, 'nginx: [emerg] unknown directive "bogus" in /data/nginx/proxy_host/3.conf:3');
+			assert.equal(meta.nginx_details.file, "/data/nginx/proxy_host/3.conf");
+		}
+		// the error itself is left alone
+		assert.match(err.details.nginx_output, /other\.example\.com/);
+	});
 });

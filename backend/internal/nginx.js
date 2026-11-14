@@ -1586,11 +1586,19 @@ const internalNginx = {
 	 * @returns {Object}
 	 */
 	buildOfflineMeta: (oldMeta, error, prefix = "") => {
+		// The host's owner reads its meta and may not see other hosts: keep only the nginx output lines about
+		// this error (warnings printed before it can name other hosts' files and domains)
+		const details =
+			error.details?.nginx_output
+				? Object.assign({}, error.details, {
+						nginx_output: ownNginxOutput(error.details.nginx_output, error.details.file) || null,
+					})
+				: error.details;
 		const meta = _.assign({}, oldMeta, {
 			nginx_online: false,
 			nginx_err: `${prefix}${error.message}`,
 			// the UI words the prefix itself
-			nginx_details: prefix ? Object.assign({}, error.details, { auto_disabled: true }) : error.details,
+			nginx_details: prefix ? Object.assign({}, details, { auto_disabled: true }) : details,
 			nginx_checked_at: new Date().toISOString(),
 		});
 		return meta;
@@ -1721,12 +1729,22 @@ const internalNginx = {
 
 	/**
 	 * @param   {Object}  access  the request's Access object
-	 * @returns {boolean} true for admins and users whose visibility is "all": they may see every host's nginx
-	 *                    errors. Doesn't depend on a host row, never throws.
+	 * @returns {boolean} true for admins, and for users whose visibility is "all" and who may list every host
+	 *                    type (eg. not a streams-only manager whose proxy hosts are hidden): they may see every
+	 *                    host's nginx errors. Doesn't depend on a host row, never throws.
 	 */
 	canSeeAllHosts: (access) => {
 		try {
-			return !!(access?.isAdmin?.() || access?.getPermissions?.()?.visibility === "all");
+			if (access?.isAdmin?.()) {
+				return true;
+			}
+			const permissions = access?.getPermissions?.();
+			return (
+				permissions?.visibility === "all" &&
+				["proxy_hosts", "redirection_hosts", "dead_hosts", "streams"].every((type) =>
+					["view", "manage"].includes(permissions[type]),
+				)
+			);
 		} catch {
 			return false;
 		}

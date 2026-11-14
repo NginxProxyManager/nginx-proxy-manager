@@ -48,13 +48,25 @@ const access = {
  * @param   {Object}  [opts.meta]        permissions.meta, eg. { proxy_host_ids: [1] }
  * @returns {Object}
  */
-const userAccess = ({ userId = 1, visibility = "all", meta = null } = {}) => ({
-	can: async () => ({ permission_visibility: visibility }),
-	hasRole: () => false,
-	isAdmin: () => false,
-	getPermissions: () => ({ visibility, meta }),
-	token: { getUserId: () => userId, hasScope: () => false },
-});
+// hidden: permission groups (eg. "proxy_hosts") the user may not see, the others are "manage"
+const userAccess = ({ userId = 1, visibility = "all", meta = null, hidden = [] } = {}) => {
+	const permissions = { visibility, meta };
+	for (const group of ["proxy_hosts", "redirection_hosts", "dead_hosts", "streams", "access_lists", "certificates"]) {
+		permissions[group] = hidden.includes(group) ? "hidden" : "manage";
+	}
+	return {
+		can: async (permission) => {
+			if (hidden.includes(`${permission}`.split(":")[0])) {
+				throw new Error("Permission Denied");
+			}
+			return { permission_visibility: visibility };
+		},
+		hasRole: () => false,
+		isAdmin: () => false,
+		getPermissions: () => permissions,
+		token: { getUserId: () => userId, hasScope: () => false },
+	};
+};
 
 const tick = (ms = 5) => new Promise((resolve) => setTimeout(resolve, ms));
 
