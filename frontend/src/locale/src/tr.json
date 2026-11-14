@@ -704,6 +704,9 @@
 	"stream": {
 		"defaultMessage": "Akış"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "İletme Host'u"
 	},

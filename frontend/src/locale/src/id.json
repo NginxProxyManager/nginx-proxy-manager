@@ -605,6 +605,9 @@
 	"stream": {
 		"defaultMessage": "Stream"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Resolusi DNS Dinamis"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "Host Terusan"
 	},

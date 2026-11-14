@@ -294,8 +294,11 @@ const internalNginx = {
 			// square brackets before nginx appends ":<port>". Without the brackets nginx
 			// reads the trailing ":<port>" as part of the address and rejects the upstream
 			// ("invalid port in upstream"), so the stream saves but never activates (#5740).
-			if (nice_host_type === "stream" && net.isIPv6(host.forwarding_host)) {
-				host.forwarding_host = `[${host.forwarding_host}]`;
+			if (nice_host_type === "stream") {
+				host.dynamic_resolve = internalNginx.streamDynamicResolveEnabled(host);
+				if (net.isIPv6(host.forwarding_host)) {
+					host.forwarding_host = `[${host.forwarding_host}]`;
+				}
 			}
 
 			if (host.locations) {
@@ -570,6 +573,41 @@ const internalNginx = {
 		}
 
 		return true;
+	},
+
+	/**
+	 * @param   {Object}  [host]
+	 * @returns {boolean}
+	 */
+	streamDynamicResolveEnabled: (host) => {
+		const isFalse = (val) => {
+			if (typeof val === "boolean") return !val;
+			if (typeof val === "string") {
+				const v = val.toLowerCase();
+				return v === "off" || v === "false" || v === "0" || v === "no";
+			}
+			return false;
+		};
+		const isTrue = (val) => {
+			if (typeof val === "boolean") return val;
+			if (typeof val === "string") {
+				const v = val.toLowerCase();
+				return v === "on" || v === "true" || v === "1" || v === "yes";
+			}
+			return false;
+		};
+
+		if (typeof host?.meta?.dynamic_resolve !== "undefined") {
+			return !isFalse(host.meta.dynamic_resolve);
+		}
+		if (isTrue(process.env.DISABLE_RESOLVER)) {
+			return false;
+		}
+		const envVal = process.env.NPM_STREAM_DYNAMIC_RESOLVE ?? process.env.BYPASS_STREAM_UPSTREAM_CHECK;
+		if (typeof envVal !== "undefined") {
+			return isTrue(envVal);
+		}
+		return false;
 	},
 };
 
