@@ -15,6 +15,9 @@ import utils from "../../backend/lib/utils.js";
 const binary = process.env.NGINX_BINARY;
 const backend = fileURLToPath(new URL("../../backend/", import.meta.url));
 const template = fs.readFileSync(path.join(backend, "templates/proxy_host.conf"), "utf8");
+const forwardHostMap = fs
+	.readFileSync(path.join(backend, "../docker/rootfs/etc/nginx/nginx.conf"), "utf8")
+	.match(/map "\$host\|\$http_host" \$forward_host \{[\s\S]*?\n\t\}/)[0];
 
 async function listen(server) {
 	server.listen(0, "127.0.0.1");
@@ -47,7 +50,7 @@ test("real Nginx: balancing, cached assets, legacy variables and DNS recovery", 
 				holdEntered(name);
 				return;
 			}
-			if (req.url === "/headers") return res.end(JSON.stringify(req.headers));
+			if (req.url === "/headers" || req.url === "/headers.css") return res.end(JSON.stringify(req.headers));
 			res.end(`${name}:${req.url}`);
 		});
 		server.on("upgrade", (_req, socket) => {
@@ -129,6 +132,7 @@ http {
   scgi_temp_path ${prefix}/scgi_temp;
   resolver 127.0.0.1:${dns.address().port} valid=1s ipv6=off;
   resolver_timeout 1s;
+  ${forwardHostMap}
   map $scheme $x_forwarded_scheme { default $scheme; }
   map $scheme $x_forwarded_proto { default $scheme; }
   log_format proxy '$status';
@@ -203,6 +207,11 @@ http {
 	assert.equal(forwarded.host, "example.test");
 	assert.equal(forwarded["x-forwarded-proto"], "http");
 	assert.equal(forwarded["x-real-ip"], "127.0.0.1");
+	for (const hostname of ["example.test:8443", "example.test:8444"]) {
+		for (const uri of ["/headers", "/headers.css"]) {
+			assert.equal(JSON.parse((await request(uri, hostname)).body).host, hostname);
+		}
+	}
 	await new Promise((resolve, reject) => {
 		const req = http.request({
 			hostname: "127.0.0.1",
@@ -280,6 +289,9 @@ http {
 	await start();
 	assert.equal((await request("/direct?q=1")).body, "legacy:/direct?q=1");
 	assert.equal((await request("/direct.css?mode=direct")).body, "legacy:/direct.css?mode=direct");
+	for (const uri of ["/headers", "/headers.css"]) {
+		assert.equal(JSON.parse((await request(uri, "example.test:9443")).body).host, "example.test:9443");
+	}
 	await stop();
 
 	// Missing DNS must allow startup and leave unrelated virtual hosts working.
