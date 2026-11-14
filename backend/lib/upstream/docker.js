@@ -40,23 +40,36 @@ class DockerApiError extends Error {
 }
 
 /**
- * DOCKER_HOST as it may be shown or logged: without the user info of a URL (`tcp://user:pass@host` gives
- * `tcp://***@host`), its query and fragment, which can hold credentials. Discovery users who aren't admins see
- * the errors that name it.
+ * DOCKER_HOST (or a socket path from it) as it may be shown or logged: without user info (`tcp://user:pass@host`
+ * and `user:pass@host` give `tcp://***@host` and `***@host`), its query and fragment, which can hold credentials.
+ * Everything up to the last `@` counts as user info, so a password with `/`, `?`, `#` or `@` in it is cut as
+ * well; the query and fragment are cut after that. Discovery users who aren't admins see the errors that name it.
  *
  * @param   {string} value
  * @returns {string}
  */
-const safeDockerHost = (value) =>
-	`${value ?? ""}`.replace(/^([a-z][a-z0-9+.-]*:\/\/)[^/?#]*@/i, "$1***@").replace(/[?#].*$/s, "");
+const safeDockerHost = (value) => {
+	const text = `${value ?? ""}`;
+	const scheme = /^[a-z][a-z0-9+.-]*:\/\//i.exec(text)?.[0] || "";
+	let rest = text.slice(scheme.length);
+	const at = rest.lastIndexOf("@");
+	if (at >= 0) {
+		rest = `***${rest.slice(at)}`;
+	}
+	return scheme + rest.replace(/[?#].*$/s, "");
+};
 
 /**
- * The same for any text, eg. an error message, that can contain DOCKER_HOST or another URL with credentials
+ * The same for any text, eg. an error message, that can contain DOCKER_HOST or another URL with credentials:
+ * user info up to the last `@` of the URL (as far as the next white space or quote), its query and fragment
  *
  * @param   {string} text
  * @returns {string}
  */
-const withoutUrlCredentials = (text) => `${text ?? ""}`.replace(/(\b[a-z][a-z0-9+.-]*:\/\/)[^\s/?#@"']*@/gi, "$1***@");
+const withoutUrlCredentials = (text) =>
+	`${text ?? ""}`
+		.replace(/(\b[a-z][a-z0-9+.-]*:\/\/)[^\s"']*@/gi, "$1***@")
+		.replace(/(\b[a-z][a-z0-9+.-]*:\/\/[^\s"'?#]*)[?#][^\s"']*/gi, "$1");
 
 /**
  * Parses DOCKER_HOST into node:http request options. Errors never contain credentials, see safeDockerHost().
@@ -552,11 +565,12 @@ const discoverDocker = async (opts = {}) => {
 		try {
 			fs.statSync(client.target.socketPath);
 		} catch (_) {
+			const shown = safeDockerHost(client.target.socketPath);
 			throw new DockerApiError(
-				`Docker socket ${client.target.socketPath} does not exist. Mount it, or point DOCKER_HOST at a docker-socket-proxy.`,
+				`Docker socket ${shown} does not exist. Mount it, or point DOCKER_HOST at a docker-socket-proxy.`,
 				"ENOENT",
 				null,
-				{ path: client.target.socketPath },
+				{ path: shown },
 			);
 		}
 	}
@@ -679,7 +693,7 @@ const dockerErrorInfo = (err) => {
 		return { code: "failed", params: {} };
 	}
 	if (err.code === "ENOENT" && p.path) {
-		return { code: "socket_missing", params: { path: p.path } };
+		return { code: "socket_missing", params: { path: safeDockerHost(p.path) } };
 	}
 	if (err.code === "EACCES") {
 		return { code: "permission_denied", params: {} };

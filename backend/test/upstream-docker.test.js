@@ -92,6 +92,12 @@ describe("docker: DOCKER_HOST parsing and allowlist", () => {
 			["tcp://docker.example:2375/?token=s3cret", "tcp://docker.example:2375/"],
 			["tcp://docker.example:2375#s3cret", "tcp://docker.example:2375"],
 			["tcp://user:s3cret@docker.example:99999", "tcp://***@docker.example:99999"],
+			// a password with `/`, `?`, `#` or `@`, user info without a scheme
+			["tcp://admin:s3/cret@docker.example:2375", "tcp://***@docker.example:2375"],
+			["tcp://admin:s3?cret@docker.example:2375", "tcp://***@docker.example:2375"],
+			["tcp://admin:s3#cret@docker.example:2375", "tcp://***@docker.example:2375"],
+			["tcp://admin:s3@cret@docker.example:2375", "tcp://***@docker.example:2375"],
+			["admin:s3cret@10.0.0.5:2375", "***@10.0.0.5:2375"],
 		];
 		for (const [value, shown] of values) {
 			let caught = null;
@@ -105,13 +111,18 @@ describe("docker: DOCKER_HOST parsing and allowlist", () => {
 			assert.equal(info.code, "invalid_docker_host");
 			assert.equal(info.params.value, shown);
 			for (const text of [caught.message, describeDockerError(caught), JSON.stringify(info)]) {
-				assert.doesNotMatch(text, /s3cret/, text);
+				assert.doesNotMatch(text, /s3cret|s3.cret|admin/, text);
 			}
 		}
 		// any other error text that names a URL with credentials
 		const other = Object.assign(new Error("request to http://user:s3cret@proxy:3128/ failed"), { code: "EPROTO" });
 		assert.doesNotMatch(describeDockerError(other), /s3cret/);
 		assert.equal(dockerErrorInfo(other).params.detail, "request to http://***@proxy:3128/ failed");
+		const odd = Object.assign(new Error("request to http://u:s3/c?r#e@proxy:3128/x?token=s3cret failed"), {
+			code: "EPROTO",
+		});
+		assert.equal(dockerErrorInfo(odd).params.detail, "request to http://***@proxy:3128/x failed");
+		assert.doesNotMatch(describeDockerError(odd), /s3|token/);
 	});
 
 
@@ -537,6 +548,19 @@ describe("docker: client against a fake API on a unix socket", () => {
 			assert.deepEqual(dockerErrorInfo(err), { code: "socket_missing", params: { path: `${dir}/missing.sock` } });
 			return true;
 		});
+	});
+
+	it("keeps a query on a missing socket's path out of the error", async () => {
+		for (const dockerHost of [`unix://${dir}/nope.sock?token=T0K`, `${dir}/nope.sock#T0K`]) {
+			await assert.rejects(discoverDocker({ dockerHost }), (err) => {
+				assert.equal(err.code, "ENOENT");
+				assert.deepEqual(dockerErrorInfo(err), { code: "socket_missing", params: { path: `${dir}/nope.sock` } });
+				for (const text of [err.message, describeDockerError(err), JSON.stringify(err.params)]) {
+					assert.doesNotMatch(text, /T0K/, text);
+				}
+				return true;
+			});
+		}
 	});
 });
 
