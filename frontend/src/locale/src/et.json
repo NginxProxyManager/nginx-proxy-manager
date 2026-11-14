@@ -431,6 +431,9 @@
 	"error.required": {
 		"defaultMessage": "See on kohustuslik"
 	},
+	"error.unknown": {
+		"defaultMessage": "Tundmatu viga"
+	},
 	"expires.on": {
 		"defaultMessage": "Aegub: {date}"
 	},
@@ -439,6 +442,24 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "Sul on salvestamata muudatusi. Kas oled kindel, et soovid need tühistada?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Viimati seadistatud {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx ei suutnud selle hosti seadistust laadida, seega on see maas."
+	},
+	"host-status.details": {
+		"defaultMessage": "Näita oleku üksikasju"
+	},
+	"host-status.error": {
+		"defaultMessage": "Viga"
+	},
+	"host-status.previous-config-running": {
+		"defaultMessage": "Nginx ei rakendanud selle hosti uusimat seadistust ja kasutab endiselt eelmist."
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Näita vealogi"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
@@ -553,6 +574,138 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Sisesta siia oma Nginx seadistus omal vastutusel!"
+	},
+	"nginx-error.advanced": {
+		"defaultMessage": "Viga kohandatud Nginxi seadistuses"
+	},
+	"nginx-error.advanced-line": {
+		"defaultMessage": "Viga kohandatud Nginxi seadistuses, rida {line}"
+	},
+	"nginx-error.auto-disabled": {
+		"defaultMessage": "Automaatselt keelatud: {reason}"
+	},
+	"nginx-error.conflict": {
+		"defaultMessage": "See muudatus on vastuolus teise hosti seadistusega"
+	},
+	"nginx-error.default-site": {
+		"defaultMessage": "Vaikimisi saidi seadistust ei õnnestunud uuendada. {reason}"
+	},
+	"nginx-error.field.access-list-client-address": {
+		"defaultMessage": "Juurdepääsuloendi kliendi aadress"
+	},
+	"nginx-error.field.location-forward-host": {
+		"defaultMessage": "Kohandatud asukoha edastushost"
+	},
+	"nginx-error.field.location-forward-path": {
+		"defaultMessage": "Kohandatud asukoha edastustee"
+	},
+	"nginx-error.field.location-path": {
+		"defaultMessage": "Kohandatud asukoha tee"
+	},
+	"nginx-error.file": {
+		"defaultMessage": "Viga nginxi seadistusfailis {file}"
+	},
+	"nginx-error.file-line": {
+		"defaultMessage": "Viga nginxi seadistusfailis {file}, rida {line}"
+	},
+	"nginx-error.global": {
+		"defaultMessage": "Nginx lükkas seadistuse tagasi"
+	},
+	"nginx-error.hint.address_in_use": {
+		"defaultMessage": "Teine host või teenus juba kuulab seda porti."
+	},
+	"nginx-error.hint.certificate_load": {
+		"defaultMessage": "Sertifikaat võib olla kustutatud või veel välja andmata. Vali teine sertifikaat või uuenda seda."
+	},
+	"nginx-error.hint.conflict": {
+		"defaultMessage": "Teine host kasutab seda seadistust juba (näiteks sama listen-porti koos default_server'iga) või kohandatud seadistus lisab teise hosti seadistusfaili."
+	},
+	"nginx-error.hint.directive_not_allowed": {
+		"defaultMessage": "Seda direktiivi ei saa selles kontekstis kasutada."
+	},
+	"nginx-error.hint.duplicate_directive": {
+		"defaultMessage": "Eemalda korduv rida. NPM võib selle direktiivi juba ise määrata."
+	},
+	"nginx-error.hint.duplicate_location": {
+		"defaultMessage": "Iga asukoha teed võib hosti kohta kasutada ainult üks kord, ka kohandatud seadistuses olevaid asukohti arvestades."
+	},
+	"nginx-error.hint.host_not_found": {
+		"defaultMessage": "Kontrolli, et hostinimi on õigesti kirjutatud, et konteiner või server töötab ja et NPM jõuab selleni ühise võrgu kaudu."
+	},
+	"nginx-error.hint.invalid_arguments": {
+		"defaultMessage": "Kontrolli, kas mõni väärtus puudub või on üleliigne või kas eelmise rea lõpust puudub semikoolon."
+	},
+	"nginx-error.hint.invalid_port": {
+		"defaultMessage": "Port peab olema arv vahemikus 1 kuni 65535. Edastustee peab algama märgiga \"/\"."
+	},
+	"nginx-error.hint.invalid_regex": {
+		"defaultMessage": "Kontrolli asukoha tee või rewrite'i regulaaravaldise süntaksit."
+	},
+	"nginx-error.hint.invalid_url": {
+		"defaultMessage": "Kontrolli sihtserveri skeemi ja hosti."
+	},
+	"nginx-error.hint.location_nesting": {
+		"defaultMessage": "Täpsed (=) ja nimega (@) asukohad ei saa sisaldada teisi asukohti."
+	},
+	"nginx-error.hint.location_not_allowed": {
+		"defaultMessage": "Asukohti saab paigutada ainult server-plokki või teise asukoha sisse."
+	},
+	"nginx-error.hint.no_certificate": {
+		"defaultMessage": "Vali sellele hostile sertifikaat."
+	},
+	"nginx-error.hint.no_resolver": {
+		"defaultMessage": "Nginxi nimelahendaja on keelatud (DISABLE_RESOLVER). Kasuta IP-aadressi või luba nimelahendaja."
+	},
+	"nginx-error.hint.regex_uri_part": {
+		"defaultMessage": "Eemalda edastustee või kasuta prefiksiga asukohta."
+	},
+	"nginx-error.hint.rejected_at_startup": {
+		"defaultMessage": "Salvesta host uuesti, et see tagasi tuua, või jäta NPM_RECONCILE_ON_START sisse, et see toimuks automaatselt."
+	},
+	"nginx-error.hint.unexpected_close_brace": {
+		"defaultMessage": "Kontrolli, et igal '{' on vastav '}'."
+	},
+	"nginx-error.hint.unexpected_eof": {
+		"defaultMessage": "Kontrolli, kas puudub semikoolon või sulgev '}'."
+	},
+	"nginx-error.hint.unexpected_open_brace": {
+		"defaultMessage": "Kontrolli, et igal '{' on vastav '}' ja et eelmine rida lõpeb semikooloniga."
+	},
+	"nginx-error.hint.unexpected_semicolon": {
+		"defaultMessage": "Kontrolli, kas kuskil on üleliigne semikoolon."
+	},
+	"nginx-error.hint.unknown_directive": {
+		"defaultMessage": "Kontrolli direktiivi kirjapilti. Kui see pärineb nginxi moodulist, ei pruugi see moodul saadaval olla."
+	},
+	"nginx-error.hint.unknown_variable": {
+		"defaultMessage": "Kontrolli muutuja kirjapilti või defineeri see käsuga set või map."
+	},
+	"nginx-error.host": {
+		"defaultMessage": "Nginx lükkas selle hosti seadistuse tagasi"
+	},
+	"nginx-error.other-host": {
+		"defaultMessage": "Nginx lükkas tagasi hosti {host} seadistuse"
+	},
+	"nginx-error.previous-config-running": {
+		"defaultMessage": "Nginx kasutab selle hosti eelmist seadistust edasi, kuni uuesti laadimine õnnestub."
+	},
+	"nginx-error.redacted": {
+		"defaultMessage": "Nginx lükkas tagasi teise hosti seadistuse. Palu administraatoril seda kontrollida."
+	},
+	"nginx-error.regenerated-conflict": {
+		"defaultMessage": "Uuesti loodud seadistus on vastuolus teise hosti seadistusega"
+	},
+	"nginx-error.rejected-at-startup": {
+		"defaultMessage": "Nginx lükkas selle hosti seadistuse konteineri käivitumisel tagasi"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Näita nginxi väljundit"
+	},
+	"nginx-error.too-many-broken-hosts": {
+		"defaultMessage": "Liiga palju vigaseid hostide seadistusi, et neid korraga parandada (rohkem kui {max}). Loo kõigi hostide seadistused uuesti (taaskäivita NPM või käivita backend/scripts/regenerate-config) ja proovi siis uuesti."
+	},
+	"nginx-error.unsafe-value": {
+		"defaultMessage": "Selle hosti salvestatud väärtust ei saa nginxi seadistusse turvaliselt kirjutada, seetõttu eemaldati selle seadistus"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Selle vaatamiseks sul õigust pole."
@@ -727,6 +880,15 @@
 	},
 	"save": {
 		"defaultMessage": "Salvesta"
+	},
+	"save-warning.offline": {
+		"defaultMessage": "Salvestatud, kuid nginx ei suutnud seda hosti laadida, seega on see maas:"
+	},
+	"save-warning.previous-config-running": {
+		"defaultMessage": "Salvestatud, kuid nginx ei rakendanud muudatust ja kasutab selle hosti eelmist seadistust edasi:"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Salvestatud hoiatustega"
 	},
 	"setting": {
 		"defaultMessage": "Seade"
