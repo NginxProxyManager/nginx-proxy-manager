@@ -27,7 +27,7 @@ if [ -d /data/nginx/stream ]; then
 	fi
 
 	if [ -n "$STREAM_DYNAMIC" ]; then
-		for FILE in $(find /data/nginx/stream -type f -name "*.conf"); do
+		find /data/nginx/stream -type f -name "*.conf" | while read -r FILE; do
 			if is_mounted "${FILE}"; then
 				continue
 			fi
