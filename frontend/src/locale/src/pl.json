@@ -590,6 +590,9 @@
 	"stream": {
 		"defaultMessage": "strumień"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "Host docelowy"
 	},

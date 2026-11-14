@@ -605,6 +605,9 @@
 	"stream": {
 		"defaultMessage": "Sruth"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "Óstach Ar Aghaidh"
 	},

@@ -761,6 +761,9 @@
 	"stream": {
 		"defaultMessage": "스트림"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "전달할 호스트"
 	},
