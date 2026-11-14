@@ -213,3 +213,36 @@ describe("findForbiddenFileDirective with long include patterns", () => {
 		assert.equal(findForbiddenFileDirective(`include /data/nginx/${"*?".repeat(17)}/*.conf;`), null);
 	});
 });
+
+describe("findForbiddenFileDirective with many expanded access_log paths", () => {
+	// Each access_log expanded to up to 64 paths of the set values' length, so repeating it cost
+	// (statements x 64 x value length): 99 KB took 45 s
+	const timed = (text) => {
+		const start = performance.now();
+		const result = findForbiddenFileDirective(text);
+		return { result, ms: performance.now() - start };
+	};
+
+	it("stays fast with long set values and many access_log statements", () => {
+		for (const vlen of [20000, 2000, 200]) {
+			const value = `/data/logs/${"a".repeat(vlen)}`;
+			const head = `set $a ${value}; set $a ${value};`;
+			const line = "access_log $a$a$a$a$a$a;";
+			const text = head + line.repeat(Math.floor((99000 - head.length) / line.length));
+			const { result, ms } = timed(text);
+			assert.ok(ms < 200, `${vlen}: ${ms} ms`);
+			assert.ok(result, "a text whose paths can't all be checked is refused");
+		}
+	});
+
+	it("stays fast with many values for one variable", () => {
+		const { ms } = timed("set $a /data/logs/x.log;".repeat(4000) + "access_log $a;".repeat(3000));
+		assert.ok(ms < 200, `${ms} ms`);
+	});
+
+	it("still allows ordinary configs that set log paths", () => {
+		const statements = "access_log $f; access_log $d/$host.log;".repeat(200);
+		const text = `set $d /data/logs/app; set $f "$d/access.log";${statements}`;
+		assert.equal(findForbiddenFileDirective(text), null);
+	});
+});

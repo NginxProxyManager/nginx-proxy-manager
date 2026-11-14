@@ -332,14 +332,24 @@ const isForbiddenLogTarget = (target, directive) => {
 
 // at most this many paths are checked for one access_log after replacing variables set in the text
 const MAX_EXPANSIONS = 64;
+// and at most this many characters of expanded paths for all access_log statements of one text together:
+// repeated statements with long `set` values would otherwise cost (statements x paths x path length), a text
+// that needs more is treated as forbidden
+const MAX_EXPANDED_CHARS = 2_000_000;
 
 /**
  * @param   {String} target  access_log path
  * @param   {Map<String, String[]>} sets  values of the variables `set` in the same text
+ * @param   {{left: number}} budget  characters of expanded paths left for the whole text, reduced here
  * @returns {String[]|null} the path with every variable set in the text replaced by each of its values
  *                          (variables set to themselves, eg. `set $p $p.x`, stay), null when there are too many
+ *                          or the budget is used up
  */
-const expandSetVariables = (target, sets) => {
+const expandSetVariables = (target, sets, budget) => {
+	budget.left -= target.length;
+	if (budget.left < 0) {
+		return null;
+	}
 	let paths = [target];
 	for (let round = 0; round < 8; round++) {
 		let changed = false;
@@ -355,12 +365,15 @@ const expandSetVariables = (target, sets) => {
 				continue;
 			}
 			changed = true;
+			const before = path.slice(0, match.index);
+			const after = path.slice(match.index + match[0].length);
 			for (const value of sets.get(match[1] ?? match[2])) {
-				next.push(path.slice(0, match.index) + value + path.slice(match.index + match[0].length));
+				budget.left -= before.length + value.length + after.length;
+				if (budget.left < 0 || next.length >= MAX_EXPANSIONS) {
+					return null;
+				}
+				next.push(before + value + after);
 			}
-		}
-		if (next.length > MAX_EXPANSIONS) {
-			return null;
 		}
 		paths = next;
 		if (!changed) {
@@ -386,14 +399,18 @@ const findForbiddenFileDirective = (text) => {
 			if ([...value.matchAll(/\$(?:\{(\w*)\}|(\w*))/g)].some((m) => (m[1] ?? m[2]) === key)) {
 				selfSet.add(key);
 			}
-			sets.set(key, [...(sets.get(key) || []), value]);
+			if (!sets.has(key)) {
+				sets.set(key, []);
+			}
+			sets.get(key).push(value);
 		}
 	}
 	for (const key of selfSet) {
 		sets.delete(key);
 	}
+	const budget = { left: MAX_EXPANDED_CHARS };
 	for (const [directive, target] of statements) {
-		const targets = directive === "access_log" && target ? expandSetVariables(target, sets) : [target];
+		const targets = directive === "access_log" && target ? expandSetVariables(target, sets, budget) : [target];
 		if (
 			(directive === "access_log" || directive === "error_log") &&
 			(targets === null || targets.some((t) => isForbiddenLogTarget(t, directive)))
