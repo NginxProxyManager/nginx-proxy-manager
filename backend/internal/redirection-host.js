@@ -19,8 +19,10 @@ const internalRedirectionHost = {
 	 * @returns {Promise}
 	 */
 	create: (access, data) => {
-		let thisData = data || {};
+		let thisData = internalHost.sanitiseInput(data || {});
 		const createCertificate = thisData.certificate_id === "new";
+		let createdId = null;
+		let issuedCertificateId = null;
 
 		if (createCertificate) {
 			delete thisData.certificate_id;
@@ -62,10 +64,16 @@ const internalRedirectionHost = {
 				return redirectionHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
+				createdId = row.id;
 				if (createCertificate) {
-					return internalCertificate
-						.createQuickCertificate(access, thisData)
+					// Check that nginx accepts the host before a certificate is requested: when the host is
+					// rejected the create is rolled back, and a certificate issued for it would be left behind
+					// (and renewed forever). The SSL part is checked again when the certificate is added.
+					return internalNginx
+						.configure(redirectionHostModel, "redirection_host", row, { dryRun: true })
+						.then(() => internalCertificate.createQuickCertificate(access, thisData))
 						.then((cert) => {
+							issuedCertificateId = cert.id;
 							// update host with cert id
 							return internalRedirectionHost.update(access, {
 								id: row.id,
@@ -87,7 +95,8 @@ const internalRedirectionHost = {
 			})
 			.then((row) => {
 				// Configure nginx
-				return internalNginx.configure(redirectionHostModel, "redirection_host", row).then(() => {
+				return internalNginx.configure(redirectionHostModel, "redirection_host", row).then((newMeta) => {
+					row.meta = newMeta;
 					return row;
 				});
 			})
@@ -105,6 +114,19 @@ const internalRedirectionHost = {
 					.then(() => {
 						return row;
 					});
+			})
+			.catch(async (err) => {
+				// nginx rejected the new host: don't keep a host that was never active
+				if (createdId && internalNginx.isHostLevelError(err)) {
+					await internalHost.discardRejectedCreate(redirectionHostModel, "redirection_host", createdId);
+				}
+				// the certificate requested for it is left unused when the host is gone or was rejected with it
+				if (issuedCertificateId) {
+					await internalHost.discardUnusedCertificate(issuedCertificateId, () =>
+						internalCertificate.delete(access, { id: issuedCertificateId }),
+					);
+				}
+				throw err;
 			});
 	},
 
@@ -115,8 +137,9 @@ const internalRedirectionHost = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
-		let thisData = data || {};
+		let thisData = internalHost.sanitiseInput(data || {});
 		const createCertificate = thisData.certificate_id === "new";
+		let newCertificateId = null;
 
 		if (createCertificate) {
 			delete thisData.certificate_id;
@@ -157,18 +180,34 @@ const internalRedirectionHost = {
 					);
 				}
 
-				// Before the certificate is created, so a refused request doesn't leave one behind
+				// Before anything is configured or a certificate is requested
 				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
 
 				if (createCertificate) {
-					return internalCertificate
-						.createQuickCertificate(access, {
-							domain_names: thisData.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, thisData.meta),
-						})
+					// Check that nginx accepts the rest of the update before the certificate is requested
+					return internalRedirectionHost
+						.get(access, { id: row.id, expand: ["owner", "certificate"] })
+						.then((fullRow) =>
+							internalHost.checkProposedHost({
+								model: redirectionHostModel,
+								hostType: "redirection_host",
+								row: fullRow,
+								patch: internalHost.cleanSslHstsData(
+									_.assign({}, { domain_names: row.domain_names }, thisData),
+									row,
+								),
+							}),
+						)
+						.then(() =>
+							internalCertificate.createQuickCertificate(access, {
+								domain_names: thisData.domain_names || row.domain_names,
+								meta: _.assign({}, row.meta, thisData.meta),
+							}),
+						)
 						.then((cert) => {
 							// update host with cert id
 							thisData.certificate_id = cert.id;
+							newCertificateId = cert.id;
 						})
 						.then(() => {
 							return row;
@@ -177,50 +216,47 @@ const internalRedirectionHost = {
 				return row;
 			})
 			.then((row) => {
+				const requested = thisData;
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
-				thisData = _.assign(
-					{},
-					{
-						domain_names: row.domain_names,
+				thisData = internalHost.cleanSslHstsData(_.assign({}, { domain_names: row.domain_names }, requested), row);
+
+				return internalHost.updateAndConfigure({
+					model: redirectionHostModel,
+					hostType: "redirection_host",
+					id: thisData.id,
+					// merged with the row as it is under the lock, not the one read above (before the certificate
+					// request): a disable or another change in between must not be undone
+					patch: (current) => {
+						thisData = internalHost.cleanSslHstsData(
+							_.assign({}, { domain_names: current.domain_names }, requested),
+							current,
+						);
+						return thisData;
 					},
-					thisData,
-				);
-
-				thisData = internalHost.cleanSslHstsData(thisData, row);
-
-				return redirectionHostModel
-					.query()
-					.where({ id: thisData.id })
-					.patch(thisData)
-					.then((saved_row) => {
-						// Add to audit log
-						return internalAuditLog
-							.add(access, {
-								action: "updated",
-								object_type: "redirection-host",
-								object_id: row.id,
-								meta: thisData,
-							})
-							.then(() => {
-								return _.omit(saved_row, omissions());
-							});
-					});
+					fetch: () =>
+						internalRedirectionHost.get(access, {
+							id: thisData.id,
+							expand: ["owner", "certificate"],
+						}),
+					audit: () =>
+						internalAuditLog.add(access, {
+							action: "updated",
+							object_type: "redirection-host",
+							object_id: thisData.id,
+							meta: thisData,
+						}),
+				});
 			})
-			.then(() => {
-				return internalRedirectionHost
-					.get(access, {
-						id: thisData.id,
-						expand: ["owner", "certificate"],
-					})
-					.then((row) => {
-						// Configure nginx
-						return internalNginx
-							.configure(redirectionHostModel, "redirection_host", row)
-							.then((new_meta) => {
-								row.meta = new_meta;
-								return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
-							});
-					});
+			.catch(async (err) => {
+				if (newCertificateId) {
+					await internalHost.discardUnusedCertificate(newCertificateId, () =>
+						internalCertificate.delete(access, { id: newCertificateId }),
+					);
+				}
+				throw err;
+			})
+			.then((row) => {
+				return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
 			});
 	},
 
@@ -292,12 +328,14 @@ const internalRedirectionHost = {
 					.patch({
 						is_deleted: 1,
 					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("redirection_host", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
+					.then(() =>
+						// Delete Nginx Config. When nginx can't apply the removal it still serves the host
+						// (removeConfigAndReload() put its config back): the delete is undone
+						internalNginx.removeConfigAndReload("redirection_host", row).catch(async (err) => {
+							await redirectionHostModel.query().where("id", row.id).patch({ is_deleted: 0 });
+							throw err;
+						}),
+					)
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
@@ -320,48 +358,26 @@ const internalRedirectionHost = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	enable: (access, data) => {
-		return access
-			.can("redirection_hosts:update", data.id)
-			.then(() => {
-				return internalRedirectionHost.get(access, {
-					id: data.id,
-					expand: ["certificate", "owner"],
-				});
-			})
-			.then((row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(data.id);
-				}
-				if (row.enabled) {
-					throw new errs.ValidationError("Host is already enabled");
-				}
+	enable: async (access, data) => {
+		await access.can("redirection_hosts:update", data.id);
+		// 404 and permission check before the lock is taken
+		await internalRedirectionHost.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: redirectionHostModel,
+			hostType: "redirection_host",
+			enable: true,
+			fetch: () => internalRedirectionHost.get(access, { id: data.id, expand: ["certificate", "owner"] }),
+			alreadyMessage: "Host is already enabled",
+		});
 
-				row.enabled = 1;
-
-				return redirectionHostModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 1,
-					})
-					.then(() => {
-						// Configure nginx
-						return internalNginx.configure(redirectionHostModel, "redirection_host", row);
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "enabled",
-							object_type: "redirection-host",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
-				return true;
-			});
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "enabled",
+			object_type: "redirection-host",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+		return true;
 	},
 
 	/**
@@ -371,47 +387,25 @@ const internalRedirectionHost = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	disable: (access, data) => {
-		return access
-			.can("redirection_hosts:update", data.id)
-			.then(() => {
-				return internalRedirectionHost.get(access, { id: data.id });
-			})
-			.then((row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(data.id);
-				}
-				if (!row.enabled) {
-					throw new errs.ValidationError("Host is already disabled");
-				}
+	disable: async (access, data) => {
+		await access.can("redirection_hosts:update", data.id);
+		await internalRedirectionHost.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: redirectionHostModel,
+			hostType: "redirection_host",
+			enable: false,
+			fetch: () => internalRedirectionHost.get(access, { id: data.id }),
+			alreadyMessage: "Host is already disabled",
+		});
 
-				row.enabled = 0;
-
-				return redirectionHostModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 0,
-					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("redirection_host", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "disabled",
-							object_type: "redirection-host",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
-				return true;
-			});
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "disabled",
+			object_type: "redirection-host",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+		return true;
 	},
 
 	/**

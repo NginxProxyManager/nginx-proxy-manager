@@ -127,13 +127,86 @@ export interface Certificate {
 }
 
 export interface ProxyLocation {
+	id?: number | null;
 	path: string;
 	advancedConfig: string;
 	forwardScheme: string;
 	forwardHost: string;
 	forwardPort: number;
+	forwardPath?: string;
 	accessListId?: number;
 	accessList?: AccessList;
+	// Missing means enabled
+	enabled?: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Server-owned host meta (written by the backend after every nginx configure,
+// stripped by the backend from anything the client sends back).
+// ---------------------------------------------------------------------------
+
+export type NginxConfigErrorScope = "location" | "host" | "other_host" | "global";
+
+export interface NginxConfigErrorDetails {
+	// unsafe_value: a stored value that can't be written into nginx config safely (host meta only)
+	kind: "nginx_config" | "unsafe_value";
+	scope: NginxConfigErrorScope;
+	hostType?: string | null;
+	hostId?: number | null;
+	file?: string | null;
+	line?: number | null;
+	locationIndex?: number | null;
+	locationPath?: string | null;
+	nginxOutput?: string | null;
+	hint?: string | null;
+	// What the UI words the error from (the message is English). Missing in details stored by older versions.
+	// the part of the host's config the error is in (host_advanced, location, location_advanced), and the line
+	// within it
+	area?: string | null;
+	relativeLine?: number | null;
+	// special cases: conflict, regenerated_conflict, too_many_broken_hosts, redacted, rejected_at_startup
+	reason?: string;
+	// too_many_broken_hosts: how many hosts one operation repairs at most
+	max?: number;
+	// the humanised nginx error (unsafe_value: the rejected value, quoted), shown as it is
+	detail?: string | null;
+	// unsafe_value: which value, eg. forward_host
+	field?: string | null;
+	// names the hint: nginx-error.hint.<hintCode>
+	hintCode?: string | null;
+	// host meta: the host was taken offline while another host was saved
+	autoDisabled?: boolean;
+	// default_site: the error came from saving the default site
+	context?: string;
+	// host meta: nginx did not apply the removal of the host's config and still runs its previous config
+	previousConfigRunning?: boolean;
+}
+
+export type LocationStatusValue = "ok" | "disabled" | "quarantined" | "unresolved";
+
+export interface NginxLocationStatus {
+	index: number;
+	path: string;
+	status: LocationStatusValue;
+	mode: "dynamic" | "static" | null;
+	// why the location is not ok, worded by the UI (location-check.<code>); null when it is ok or disabled
+	code?: string | null;
+	// host (unresolved), detail (rejected, omitted: nginx's error text, not translated)
+	params?: { host?: string; detail?: string } | null;
+	// the same in English
+	message: string | null;
+}
+
+export interface HostMeta {
+	// false only when the host's config is not active in nginx
+	nginxOnline?: boolean;
+	nginxErr?: string | null;
+	nginxDetails?: NginxConfigErrorDetails | null;
+	nginxCheckedAt?: string;
+	// proxy hosts only, one entry per location, same order
+	nginxLocations?: NginxLocationStatus[];
+	// Other, client-owned meta (letsencrypt, dns challenge, ...)
+	[key: string]: any;
 }
 
 export interface ProxyHost {
@@ -151,7 +224,7 @@ export interface ProxyHost {
 	cachingEnabled: boolean;
 	blockExploits: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
 	enabled: boolean;
@@ -174,7 +247,7 @@ export interface DeadHost {
 	certificateId: number;
 	sslForced: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	http2Support: boolean;
 	enabled: boolean;
 	hstsEnabled: boolean;
@@ -196,7 +269,7 @@ export interface RedirectionHost {
 	sslForced: boolean;
 	blockExploits: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	http2Support: boolean;
 	forwardScheme: string;
 	forwardHttpCode: number;
@@ -218,7 +291,7 @@ export interface Stream {
 	forwardingPort: number;
 	tcpForwarding: boolean;
 	udpForwarding: boolean;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	enabled: boolean;
 	certificateId: number;
 	// Expansions:

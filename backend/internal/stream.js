@@ -19,7 +19,10 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	create: (access, data) => {
+		internalHost.sanitiseInput(data);
 		const create_certificate = data.certificate_id === "new";
+		let createdId = null;
+		let issuedCertificateId = null;
 
 		if (create_certificate) {
 			delete data.certificate_id;
@@ -42,10 +45,16 @@ const internalStream = {
 				return streamModel.query().insertAndFetch(data_no_domains).then(utils.omitRow(omissions()));
 			})
 			.then((row) => {
+				createdId = row.id;
 				if (create_certificate) {
-					return internalCertificate
-						.createQuickCertificate(access, data)
+					// Check that nginx accepts the host before a certificate is requested: when the host is
+					// rejected the create is rolled back, and a certificate issued for it would be left behind
+					// (and renewed forever). The SSL part is checked again when the certificate is added.
+					return internalNginx
+						.configure(streamModel, "stream", row, { dryRun: true })
+						.then(() => internalCertificate.createQuickCertificate(access, data))
 						.then((cert) => {
+							issuedCertificateId = cert.id;
 							// update host with cert id
 							return internalStream.update(access, {
 								id: row.id,
@@ -67,7 +76,8 @@ const internalStream = {
 			})
 			.then((row) => {
 				// Configure nginx
-				return internalNginx.configure(streamModel, "stream", row).then(() => {
+				return internalNginx.configure(streamModel, "stream", row).then((newMeta) => {
+					row.meta = newMeta;
 					return row;
 				});
 			})
@@ -83,6 +93,19 @@ const internalStream = {
 					.then(() => {
 						return row;
 					});
+			})
+			.catch(async (err) => {
+				// nginx rejected the new stream: don't keep a stream that was never active
+				if (createdId && internalNginx.isHostLevelError(err)) {
+					await internalHost.discardRejectedCreate(streamModel, "stream", createdId);
+				}
+				// the certificate requested for it is left unused when the host is gone or was rejected with it
+				if (issuedCertificateId) {
+					await internalHost.discardUnusedCertificate(issuedCertificateId, () =>
+						internalCertificate.delete(access, { id: issuedCertificateId }),
+					);
+				}
+				throw err;
 			});
 	},
 
@@ -93,8 +116,9 @@ const internalStream = {
 	 * @return {Promise}
 	 */
 	update: (access, data) => {
-		let thisData = data;
+		let thisData = internalHost.sanitiseInput(data);
 		const create_certificate = thisData.certificate_id === "new";
+		let newCertificateId = null;
 
 		if (create_certificate) {
 			delete thisData.certificate_id;
@@ -115,14 +139,27 @@ const internalStream = {
 				}
 
 				if (create_certificate) {
-					return internalCertificate
-						.createQuickCertificate(access, {
-							domain_names: thisData.domain_names || row.domain_names,
-							meta: _.assign({}, row.meta, thisData.meta),
-						})
+					// Check that nginx accepts the rest of the update before the certificate is requested
+					return internalStream
+						.get(access, { id: row.id, expand: ["owner", "certificate"] })
+						.then((fullRow) =>
+							internalHost.checkProposedHost({
+								model: streamModel,
+								hostType: "stream",
+								row: fullRow,
+								patch: _.assign({}, { domain_names: row.domain_names }, thisData),
+							}),
+						)
+						.then(() =>
+							internalCertificate.createQuickCertificate(access, {
+								domain_names: thisData.domain_names || row.domain_names,
+								meta: _.assign({}, row.meta, thisData.meta),
+							}),
+						)
 						.then((cert) => {
 							// update host with cert id
 							thisData.certificate_id = cert.id;
+							newCertificateId = cert.id;
 						})
 						.then(() => {
 							return row;
@@ -140,31 +177,31 @@ const internalStream = {
 					thisData,
 				);
 
-				return streamModel
-					.query()
-					.patchAndFetchById(row.id, thisData)
-					.then(utils.omitRow(omissions()))
-					.then((saved_row) => {
-						// Add to audit log
-						return internalAuditLog
-							.add(access, {
-								action: "updated",
-								object_type: "stream",
-								object_id: row.id,
-								meta: thisData,
-							})
-							.then(() => {
-								return saved_row;
-							});
-					});
-			})
-			.then(() => {
-				return internalStream.get(access, { id: thisData.id, expand: ["owner", "certificate"] }).then((row) => {
-					return internalNginx.configure(streamModel, "stream", row).then((new_meta) => {
-						row.meta = new_meta;
-						return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
-					});
+				return internalHost.updateAndConfigure({
+					model: streamModel,
+					hostType: "stream",
+					id: row.id,
+					patch: thisData,
+					fetch: () => internalStream.get(access, { id: thisData.id, expand: ["owner", "certificate"] }),
+					audit: () =>
+						internalAuditLog.add(access, {
+							action: "updated",
+							object_type: "stream",
+							object_id: row.id,
+							meta: thisData,
+						}),
 				});
+			})
+			.catch(async (err) => {
+				if (newCertificateId) {
+					await internalHost.discardUnusedCertificate(newCertificateId, () =>
+						internalCertificate.delete(access, { id: newCertificateId }),
+					);
+				}
+				throw err;
+			})
+			.then((row) => {
+				return _.omit(internalHost.cleanRowCertificateMeta(row), omissions());
 			});
 	},
 
@@ -236,12 +273,14 @@ const internalStream = {
 					.patch({
 						is_deleted: 1,
 					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("stream", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
+					.then(() =>
+						// Delete Nginx Config. When nginx can't apply the removal it still serves the host
+						// (removeConfigAndReload() put its config back): the delete is undone
+						internalNginx.removeConfigAndReload("stream", row).catch(async (err) => {
+							await streamModel.query().where("id", row.id).patch({ is_deleted: 0 });
+							throw err;
+						}),
+					)
 					.then(() => {
 						// Add to audit log
 						return internalAuditLog.add(access, {
@@ -264,48 +303,26 @@ const internalStream = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	enable: (access, data) => {
-		return access
-			.can("streams:update", data.id)
-			.then(() => {
-				return internalStream.get(access, {
-					id: data.id,
-					expand: ["certificate", "owner"],
-				});
-			})
-			.then((row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(data.id);
-				}
-				if (row.enabled) {
-					throw new errs.ValidationError("Stream is already enabled");
-				}
+	enable: async (access, data) => {
+		await access.can("streams:update", data.id);
+		// 404 and permission check before the lock is taken
+		await internalStream.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: streamModel,
+			hostType: "stream",
+			enable: true,
+			fetch: () => internalStream.get(access, { id: data.id, expand: ["certificate", "owner"] }),
+			alreadyMessage: "Stream is already enabled",
+		});
 
-				row.enabled = 1;
-
-				return streamModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 1,
-					})
-					.then(() => {
-						// Configure nginx
-						return internalNginx.configure(streamModel, "stream", row);
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "enabled",
-							object_type: "stream",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
-				return true;
-			});
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "enabled",
+			object_type: "stream",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+		return true;
 	},
 
 	/**
@@ -315,47 +332,25 @@ const internalStream = {
 	 * @param {String}  [data.reason]
 	 * @returns {Promise}
 	 */
-	disable: (access, data) => {
-		return access
-			.can("streams:update", data.id)
-			.then(() => {
-				return internalStream.get(access, { id: data.id });
-			})
-			.then((row) => {
-				if (!row?.id) {
-					throw new errs.ItemNotFoundError(data.id);
-				}
-				if (!row.enabled) {
-					throw new errs.ValidationError("Stream is already disabled");
-				}
+	disable: async (access, data) => {
+		await access.can("streams:update", data.id);
+		await internalStream.get(access, { id: data.id });
+		const row = await internalHost.setEnabledAndConfigure({
+			model: streamModel,
+			hostType: "stream",
+			enable: false,
+			fetch: () => internalStream.get(access, { id: data.id }),
+			alreadyMessage: "Stream is already disabled",
+		});
 
-				row.enabled = 0;
-
-				return streamModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 0,
-					})
-					.then(() => {
-						// Delete Nginx Config
-						return internalNginx.deleteConfig("stream", row).then(() => {
-							return internalNginx.reload();
-						});
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "disabled",
-							object_type: "stream",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
-				return true;
-			});
+		// Add to audit log
+		await internalAuditLog.add(access, {
+			action: "disabled",
+			object_type: "stream",
+			object_id: row.id,
+			meta: _.omit(row, omissions()),
+		});
+		return true;
 	},
 
 	/**
