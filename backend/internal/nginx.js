@@ -362,6 +362,27 @@ const mentionedInAdvanced = (advancedConfig, message) => {
 	return names.some((name) => mentionsPath(advancedConfig, name));
 };
 
+/**
+ * The lines of nginx output a user who can't see all hosts gets: warnings (and notices) only when they name the
+ * error's own file, errors when they name that file or none. Warnings printed before an error can name other
+ * hosts' config files and server names.
+ *
+ * @param   {String}       output  nginx_output of an error
+ * @param   {String|null}  file    the file the error is about
+ * @returns {String}
+ */
+const ownNginxOutput = (output, file) =>
+	`${output}`
+		.split("\n")
+		.filter((line) => {
+			const named = / in (\/\S+?):\d+\s*$/.exec(line)?.[1] || null;
+			if (named) {
+				return !!file && named === file;
+			}
+			return !/\[(warn|notice|info|debug)\]/.test(line);
+		})
+		.join("\n");
+
 const internalNginx = {
 	SERVER_META_KEYS,
 
@@ -1628,42 +1649,52 @@ const internalNginx = {
 
 	/**
 	 * An NginxConfigError of scope "global" can name another host and include its nginx output. A user who
-	 * can't see that host only gets a generic message. Never throws, redacts when in doubt.
+	 * can't see that host only gets a generic message. The same for a global error that names no host (a file
+	 * NPM doesn't manage, eg. /data/nginx/custom/http.conf, or none): only users who can see all hosts get its
+	 * details. For everyone else, nginx_output only keeps the lines about the error itself: warnings printed
+	 * before it can name other hosts' files and domains. Never throws, redacts when in doubt.
 	 *
 	 * @param   {Object}  access  the request's Access object
 	 * @param   {Error}   err
 	 * @returns {Promise<Error>} err, modified in place
 	 */
 	redactConfigError: async (access, err) => {
-		if (!(err instanceof errs.NginxConfigError) || err.details?.scope !== "global" || !err.details.host_id) {
+		if (!(err instanceof errs.NginxConfigError) || !err.details) {
+			return err;
+		}
+		const seesAll = internalNginx.canSeeAllHosts(access);
+		if (seesAll) {
 			return err;
 		}
 		const { host_type: hostType, host_id: hostId } = err.details;
-		let visible = false;
-		try {
-			const permission = hostType === "stream" ? "streams" : `${hostType}s`;
-			const accessData = await access.can(`${permission}:list`);
-			if (
-				accessData === true ||
-				accessData?.permission_visibility === "all" ||
-				accessData?.roles?.includes("admin")
-			) {
-				visible = true;
-			} else if (HOST_MODELS[hostType]) {
-				const row = await HOST_MODELS[hostType].query().where("id", hostId).first();
-				// Proxy hosts can also be shared with a user explicitly, see permissions.meta.proxy_host_ids
-				const permissions = access.getPermissions ? access.getPermissions() : {};
-				const allowedIds =
-					hostType === "proxy_host"
-						? permissions?.meta?.proxy_host_ids || permissions?.meta?.proxyHostIds || []
-						: [];
-				visible =
-					!!row &&
-					(row.owner_user_id === access.token.getUserId(1) ||
-						(!row.is_deleted && allowedIds.map(Number).includes(Number(row.id))));
+		// too_many_broken_hosts is a fixed message without nginx output
+		let visible = err.details.scope !== "global" || err.details.reason === "too_many_broken_hosts";
+		if (!visible && hostId) {
+			try {
+				const permission = hostType === "stream" ? "streams" : `${hostType}s`;
+				const accessData = await access.can(`${permission}:list`);
+				if (
+					accessData === true ||
+					accessData?.permission_visibility === "all" ||
+					accessData?.roles?.includes("admin")
+				) {
+					visible = true;
+				} else if (HOST_MODELS[hostType]) {
+					const row = await HOST_MODELS[hostType].query().where("id", hostId).first();
+					// Proxy hosts can also be shared with a user explicitly, see permissions.meta.proxy_host_ids
+					const permissions = access.getPermissions ? access.getPermissions() : {};
+					const allowedIds =
+						hostType === "proxy_host"
+							? permissions?.meta?.proxy_host_ids || permissions?.meta?.proxyHostIds || []
+							: [];
+					visible =
+						!!row &&
+						(row.owner_user_id === access.token.getUserId(1) ||
+							(!row.is_deleted && allowedIds.map(Number).includes(Number(row.id))));
+				}
+			} catch {
+				visible = false;
 			}
-		} catch {
-			visible = false;
 		}
 		if (!visible) {
 			err.message = "Nginx rejected the configuration of another host. Please ask an administrator to check it.";
@@ -1680,8 +1711,25 @@ const internalNginx = {
 				detail: null,
 				hint_code: null,
 			});
+		} else if (err.details.nginx_output) {
+			err.details = Object.assign({}, err.details, {
+				nginx_output: ownNginxOutput(err.details.nginx_output, err.details.file) || null,
+			});
 		}
 		return err;
+	},
+
+	/**
+	 * @param   {Object}  access  the request's Access object
+	 * @returns {boolean} true for admins and users whose visibility is "all": they may see every host's nginx
+	 *                    errors. Doesn't depend on a host row, never throws.
+	 */
+	canSeeAllHosts: (access) => {
+		try {
+			return !!(access?.isAdmin?.() || access?.getPermissions?.()?.visibility === "all");
+		} catch {
+			return false;
+		}
 	},
 
 	/**
