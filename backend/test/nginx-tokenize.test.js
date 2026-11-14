@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { scanNginxConfig } from "../lib/nginx-tokenize.js";
+import { scanNginxConfig, skipLuaBlock } from "../lib/nginx-tokenize.js";
 
 // `<directive> { <body> }` followed by a statement, read as nginx with lua-nginx-module reads it
 const luaBlock = (body, directive = "access_by_lua_block") => scanNginxConfig(`${directive} {${body}}\nadd_header X-After 1;`);
@@ -126,3 +126,33 @@ describe("scanNginxConfig, *_by_lua_block", () => {
 		);
 	});
 });
+
+describe("skipLuaBlock with unclosed strings", () => {
+	it("treats a quote without its closing quote on the line as an ordinary character", () => {
+		// the `}` after an unclosed quote still closes the block
+		assert.equal(skipLuaBlock(' "a \\" }', 0), 8);
+		// an unclosed ' doesn't hide a later "..." string
+		assert.equal(skipLuaBlock(" 'a \\' \" } \" }", 0), 14);
+		// a string ends at the end of its line, a quote on the next line starts a new one
+		assert.equal(skipLuaBlock(' "x\n" } "', 0), -1);
+		assert.equal(skipLuaBlock(' "x\n" } " }', 0), 11);
+		// '...' inside "..." is part of the string
+		assert.equal(skipLuaBlock(" \"\\\" '\\' } ' } \" }", 0), 18);
+	});
+
+	it("reads long lines of escaped quotes in linear time", () => {
+		// every quote of `"\"\"\"...` started a scan to the end of the line: 90 KB took 2.8 s
+		for (const text of [
+			`content_by_lua_block { "${'\\"'.repeat(45000)} }`,
+			`content_by_lua_block { '${"\\'".repeat(45000)} }`,
+			`content_by_lua_block { "'${"\\'\\\"".repeat(22000)} }`,
+		]) {
+			const start = performance.now();
+			const scan = scanNginxConfig(text);
+			assert.ok(performance.now() - start < 100, text.slice(0, 30));
+			assert.equal(scan.statements.length, 1);
+			assert.ok(scan.balanced);
+		}
+	});
+});
+

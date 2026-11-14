@@ -79,6 +79,11 @@ const longBracketLevel = (src, i) => {
  */
 const skipLuaBlock = (src, from) => {
 	let level = 1;
+	// For each quote character, the end of the line (or text) where the last string that started with it stayed
+	// unclosed. A later quote of the same kind before that point is unclosed as well: the earlier scan stepped over
+	// it as an escaped character and went on from the next one, exactly as a scan from it would. Without this, a line
+	// of `\"` was rescanned to its end from every quote, quadratic in the line's length.
+	const unclosedUntil = { '"': -1, "'": -1 };
 	for (let i = from; i < src.length; i++) {
 		const ch = src[i];
 		if (ch === "{") {
@@ -113,13 +118,15 @@ const skipLuaBlock = (src, from) => {
 			i = eol;
 			continue;
 		}
-		if (ch === '"' || ch === "'") {
+		if ((ch === '"' || ch === "'") && i >= unclosedUntil[ch]) {
 			let j = i + 1;
 			while (j < src.length && src[j] !== ch && src[j] !== "\n") {
 				j += src[j] === "\\" && src[j + 1] !== "\n" ? 2 : 1;
 			}
 			if (src[j] === ch) {
 				i = j;
+			} else {
+				unclosedUntil[ch] = j;
 			}
 		}
 	}
