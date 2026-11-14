@@ -1,7 +1,9 @@
 import { Field, Form, Formik } from "formik";
 import { useEffect, useRef, useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import { useEffectOnceWhen } from "rooks";
 import { Button, LocalePicker, Page, ThemeSwitcher } from "src/components";
+import { SingleSignOnOptions } from "src/components/Form/SingleSignOnOptions";
 import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
 import { intl, T } from "src/locale";
@@ -80,6 +82,8 @@ function TwoFactorForm() {
 function LoginForm() {
 	const emailRef = useRef<HTMLInputElement>(null);
 	const [formErr, setFormErr] = useState("");
+	const [isOAuthInit, setOAuthInit] = useState<number>(0);
+	const [isSingleSignOnEnabled, setSingleSignOnEnabled] = useState<boolean | undefined>();
 	const { login } = useAuthState();
 
 	const onSubmit = async (values: any, { setSubmitting }: any) => {
@@ -94,9 +98,11 @@ function LoginForm() {
 		setSubmitting(false);
 	};
 
-	useEffect(() => {
-		emailRef.current?.focus();
-	}, []);
+	useEffectOnceWhen(() => {
+		if (!isSingleSignOnEnabled) {
+			emailRef.current?.focus();
+		}
+	}, isSingleSignOnEnabled !== undefined);
 
 	return (
 		<>
@@ -155,9 +161,24 @@ function LoginForm() {
 							</Field>
 						</div>
 						<div className="form-footer">
-							<Button type="submit" fullWidth color="azure" isLoading={isSubmitting}>
+							<Button
+								type="submit"
+								fullWidth
+								color="azure"
+								isLoading={isSubmitting}
+								disabled={isOAuthInit === 0 ? undefined : isOAuthInit > 0}
+							>
 								<T id="sign-in" />
 							</Button>
+							<SingleSignOnOptions
+								{...{
+									isSubmitting,
+									setFormErr,
+									isOAuthInit,
+									setOAuthInit,
+									setSingleSignOnEnabled,
+								}}
+							/>
 						</div>
 					</Form>
 				)}

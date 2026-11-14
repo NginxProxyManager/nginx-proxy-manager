@@ -12,6 +12,8 @@ import {
 } from "src/components";
 import { useAuthState } from "src/context";
 import { useHealth } from "src/hooks";
+import OAuthSuccess from "./pages/SSO/OAuth/Success";
+import SingleSignOnClients from "./pages/SSO/Clients";
 
 const Setup = lazy(() => import("src/pages/Setup"));
 const Login = lazy(() => import("src/pages/Login"));
@@ -43,6 +45,10 @@ function Router() {
 		return <Setup />;
 	}
 
+	if (!authenticated && document.location.pathname === "/sso/oauth2/success") {
+		return <OAuthSuccess />;
+	}
+
 	if (!authenticated) {
 		return (
 			<Suspense fallback={<LoadingPage />}>
@@ -63,11 +69,14 @@ function Router() {
 						<Routes>
 							<Route path="*" element={<ErrorNotFound />} />
 							<Route path="/login" element={<Navigate to="/" replace />} />
+							<Route path="/sso/oauth2" element={<Navigate to="/" replace />} />
+							<Route path="/sso/oauth2/success" element={<Navigate to="/" replace />} />
 							<Route path="/certificates" element={<Certificates />} />
 							<Route path="/access" element={<Access />} />
 							<Route path="/audit-log" element={<AuditLog />} />
 							<Route path="/logs" element={<Logs />} />
 							<Route path="/settings" element={<Settings />} />
+							<Route path="/sso/clients" element={<SingleSignOnClients />} />
 							<Route path="/users" element={<Users />} />
 							<Route path="/nginx/proxy" element={<ProxyHosts />} />
 							<Route path="/nginx/redirection" element={<RedirectionHosts />} />

@@ -1,6 +1,6 @@
 {
 	"name": "nginx-proxy-manager",
-	"version": "2.0.0",
+	"version": "2.17.0",
 	"description": "A beautiful interface for creating Nginx endpoints",
 	"author": "Jamie Curnow <jc@jc21.com>",
 	"license": "MIT",
@@ -8,13 +8,14 @@
 	"type": "module",
 	"scripts": {
 		"lint": "biome lint",
-		"test": "node --test test/",
+		"test": "node --test test/*.test.js && vitest run test/vitest/",
 		"prettier": "biome format --write .",
 		"validate-schema": "node validate-schema.js",
 		"regenerate-config": "node scripts/regenerate-config"
 	},
 	"dependencies": {
 		"@apidevtools/json-schema-ref-parser": "^16.0.6",
+		"@auth0/auth0-auth-js": "^1.18.0",
 		"ajv": "^8.20.0",
 		"archiver": "^8.0.0",
 		"batchflow": "^0.4.0",
@@ -34,6 +35,7 @@
 		"mysql2": "^3.24.6",
 		"node-rsa": "^2.0.0",
 		"objection": "4.4.3",
+		"openid-client": "^6.8.8",
 		"otplib": "^13.6.0",
 		"path": "^0.12.7",
 		"pg": "^8.23.1",
@@ -45,7 +47,8 @@
 	"devDependencies": {
 		"@apidevtools/swagger-parser": "^13.1.0",
 		"@biomejs/biome": "^2.6.6",
-		"nodemon": "^3.1.14"
+		"nodemon": "^3.1.14",
+		"vitest": "^4.1.8"
 	},
 	"signale": {
 		"displayDate": true,

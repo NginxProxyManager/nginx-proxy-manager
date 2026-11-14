@@ -13,6 +13,7 @@ export * from "./ProxyHostModal";
 export * from "./RedirectionHostModal";
 export * from "./RenewCertificateModal";
 export * from "./SetPasswordModal";
+export * from "./SingleSignOnClientModal";
 export * from "./StreamModal";
 export * from "./TwoFactorModal";
 export * from "./UserModal";

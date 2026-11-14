@@ -67,6 +67,14 @@
 		{
 			"name": "users",
 			"description": "Endpoints for managing users"
+		},
+		{
+			"name": "sso-clients",
+			"description": "Endpoints for managing Single Sign On client configurations"
+		},
+		{
+			"name": "sso",
+			"description": "Endpoints for executing Single Sign On authorization flows"
 		}
 	],
 	"paths": {
@@ -289,6 +297,47 @@
 		"/settings": {
 			"get": {
 				"$ref": "./paths/settings/get.json"
+			}
+		},
+		"/sso/clients/{clientID}": {
+			"get": {
+				"$ref": "./paths/sso/clients/clientID/get.json"
+			},
+			"put": {
+				"$ref": "./paths/sso/clients/clientID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/sso/clients/clientID/delete.json"
+			}
+		},
+		"/sso/clients/{clientID}/enable" : {
+		  "post": {
+				"$ref": "./paths/sso/clients/clientID/enable/post.json"
+			}
+		},
+		"/sso/clients/{clientID}/disable" : {
+		  "post": {
+				"$ref": "./paths/sso/clients/clientID/disable/post.json"
+			}
+		},
+		"/sso/clients": {
+			"post": {
+				"$ref": "./paths/sso/clients/post.json"
+			}
+		},
+		"/sso/oauth2/{clientType}/{clientID}": {
+			"get": {
+				"$ref": "./paths/sso/oauth2/clientType/clientID/get.json"
+			}
+		},
+		"/sso/oauth2/{clientType}/{clientID}/callback": {
+			"get": {
+				"$ref": "./paths/sso/oauth2/clientType/clientID/callback/get.json"
+			}
+		},
+		"/sso/is-enabled": {
+			"get": {
+				"$ref": "./paths/sso/is-enabled/get.json"
 			}
 		},
 		"/settings/{settingID}": {
