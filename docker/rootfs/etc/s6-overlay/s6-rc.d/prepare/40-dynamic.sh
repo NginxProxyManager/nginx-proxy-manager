@@ -31,8 +31,16 @@ if [ -d /data/nginx/stream ]; then
 			if is_mounted "${FILE}"; then
 				continue
 			fi
+			FILE_DYNAMIC="$STREAM_DYNAMIC"
+			if [ "$(is_true "${DISABLE_RESOLVER:-}")" != '1' ]; then
+				if grep -Eq '^# .*DynamicResolve: true' "$FILE"; then
+					FILE_DYNAMIC=1
+				elif grep -Eq '^# .*DynamicResolve: false' "$FILE"; then
+					FILE_DYNAMIC=0
+				fi
+			fi
 			TMPFILE="${FILE}.tmp"
-			if [ "$STREAM_DYNAMIC" = '1' ]; then
+			if [ "$FILE_DYNAMIC" = '1' ]; then
 				if grep -Eq '^[[:space:]]*proxy_pass[[:space:]]+[^$][^;]+;' "$FILE"; then
 					if sed -E 's|^([[:space:]]*)proxy_pass[[:space:]]+([^$;]+);|\1set $forward_host "\2";\n\1proxy_pass $forward_host;|g' "$FILE" > "$TMPFILE" && [ -s "$TMPFILE" ]; then
 						mv "$TMPFILE" "$FILE"

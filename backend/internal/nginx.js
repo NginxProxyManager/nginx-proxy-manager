@@ -31,14 +31,35 @@ const internalNginx = {
 	configure: (model, host_type, host) => {
 		let combined_meta = {};
 
+		let backup_config = null;
+		const config_file = internalNginx.getConfigName(
+			internalNginx.getFileFriendlyHostType(host_type),
+			typeof host === "undefined" ? 0 : host.id,
+		);
+		if (fs.existsSync(config_file)) {
+			try {
+				backup_config = fs.readFileSync(config_file, { encoding: "utf8" });
+			} catch {
+				backup_config = null;
+			}
+		}
+
+		// Delete the existing config for this host before running the pre-check test so
+		// updating/recovering a broken or unresolved host config is not blocked by its own
+		// existing file. If another host's config is broken, restore this host's config and abort.
 		return internalNginx
-			.test()
+			.deleteConfig(host_type, host, true)
 			.then(() => {
-				// Nginx is OK
-				// We're deleting this config regardless.
-				// Don't throw errors, as the file may not exist at all
-				// Delete the .err file too
-				return internalNginx.deleteConfig(host_type, host, true);
+				return internalNginx.test().catch((err) => {
+					if (backup_config !== null) {
+						try {
+							fs.writeFileSync(config_file, backup_config, { encoding: "utf8" });
+						} catch {
+							// ignore restore error
+						}
+					}
+					throw err;
+				});
 			})
 			.then(() => {
 				return internalNginx.generateConfig(host_type, host).then(
@@ -597,14 +618,14 @@ const internalNginx = {
 			return false;
 		};
 
-		if (typeof host?.meta?.dynamic_resolve !== "undefined") {
-			return !isFalse(host.meta.dynamic_resolve);
-		}
 		if (isTrue(process.env.DISABLE_RESOLVER)) {
 			return false;
 		}
-		const envVal = process.env.NPM_STREAM_DYNAMIC_RESOLVE ?? process.env.BYPASS_STREAM_UPSTREAM_CHECK;
-		if (typeof envVal !== "undefined") {
+		if (typeof host?.meta?.dynamic_resolve !== "undefined") {
+			return !isFalse(host.meta.dynamic_resolve);
+		}
+		const envVal = process.env.NPM_STREAM_DYNAMIC_RESOLVE || process.env.BYPASS_STREAM_UPSTREAM_CHECK;
+		if (typeof envVal !== "undefined" && envVal !== "") {
 			return isTrue(envVal);
 		}
 		return false;
