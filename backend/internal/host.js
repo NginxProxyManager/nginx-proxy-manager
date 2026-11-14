@@ -15,16 +15,30 @@ const internalHost = {
 	 * On create (no `row`), any non-empty advanced_config is refused, including on locations.
 	 * On update, the host's advanced_config must be unchanged (or omitted), and locations must
 	 * only carry advanced configs the host already has (see assertLocationAdvancedConfigUnchanged).
+	 * Then, for everyone, the advanced configs are checked for forbidden file directives (ValidationError).
+	 * Call it only after access.can(): it is the first place the advanced config is read.
 	 *
 	 * @param   {Access}  access
 	 * @param   {Object}  data    incoming host data; data.locations may be filled in on update
 	 * @param   {Object}  [row]   the existing host, when updating
-	 * @throws  {PermissionError}
+	 * @throws  {PermissionError|ValidationError}
 	 */
 	assertAdvancedConfigAllowed: (access, data, row) => {
-		if (access.isAdmin?.()) {
-			return;
+		if (!access.isAdmin?.()) {
+			internalHost.assertAdvancedConfigUnchanged(data, row);
 		}
+		// Only now, for a caller who may send this config: the check reads every directive of it
+		internalHost.assertNoForbiddenFileDirective(data);
+	},
+
+	/**
+	 * The part of assertAdvancedConfigAllowed() for users who aren't admins.
+	 *
+	 * @param   {Object}  data
+	 * @param   {Object}  [row]
+	 * @throws  {PermissionError}
+	 */
+	assertAdvancedConfigUnchanged: (data, row) => {
 		const deny = () => {
 			throw new errs.PermissionError("You do not have permission to modify advanced configuration");
 		};
@@ -189,7 +203,18 @@ const internalHost = {
 			}
 		}
 
-		// access_log/error_log into generated configs, include of other hosts' configs: see lib/nginx-advanced.js
+		return data;
+	},
+
+	/**
+	 * access_log/error_log into generated configs, include of other hosts' configs: see lib/nginx-advanced.js.
+	 * Not part of sanitiseInput(), which runs before the permission checks: only users who may send the
+	 * advanced config get it read (see assertAdvancedConfigAllowed()).
+	 *
+	 * @param   {Object} data  incoming host data
+	 * @throws  {ValidationError}
+	 */
+	assertNoForbiddenFileDirective: (data) => {
 		if (typeof data.advanced_config === "string") {
 			const forbidden = findForbiddenFileDirective(data.advanced_config);
 			if (forbidden) {
@@ -209,8 +234,6 @@ const internalHost = {
 				}
 			}
 		}
-
-		return data;
 	},
 
 	/**

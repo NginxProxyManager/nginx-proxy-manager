@@ -38,6 +38,12 @@ describe("findForbiddenFileDirective", () => {
 		"include /data/nginx/*/1.conf;",
 		"include /data/nginx/[a-z]*_host/*.conf;",
 		"include /data/nginx/?roxy_host/1.conf;",
+		"include /data/nginx/**********t/*.conf;",
+		"include /data/nginx/*?*?*?*?_host/*.conf;",
+		"include /data/nginx/[!a]roxy_host/*.conf;",
+		"include /data/nginx/pro\\xy_host/*.conf;",
+		// an invalid range: assumed to match anything
+		"include /data/nginx/[z-a]*/*.conf;",
 		// nginx turns \\ into \, glob(3) reads \t as t
 		"include /data/nginx/proxy_hos\\\\t/*.conf;",
 		"include ../../data/nginx/proxy_host/1.conf;",
@@ -165,6 +171,9 @@ describe("findForbiddenFileDirective", () => {
 		"access_log /data/logs/$http_x.log;",
 		"access_log /data/logs/access_$remote_addr-$status;",
 		"include /data/nginx/custom/*.conf;",
+		"include /data/nginx/****z/*.conf;",
+		"include /data/nginx/[^p]roxy_host/*.conf;",
+		"include /data/nginx/?????????????????????????/*.conf;",
 		"include /snippets/*.conf;",
 		"include conf.d/include/*.conf;",
 		"include conf.d/include/assets.conf;",
@@ -176,4 +185,31 @@ describe("findForbiddenFileDirective", () => {
 			assert.equal(findForbiddenFileDirective(text), null);
 		});
 	}
+});
+
+describe("findForbiddenFileDirective with long include patterns", () => {
+	// The glob match ran as a RegExp, which backtracked exponentially on runs of `*` (2.4 s at 16 stars)
+	const patterns = [
+		"*".repeat(1000),
+		`${"*".repeat(1000)}z`,
+		`${"*?".repeat(500)}z`,
+		`${"?*".repeat(500)}!`,
+		`${"[a-z]*".repeat(500)}!`,
+		`${"*".repeat(5000)}_hos`,
+	];
+	for (const pattern of patterns) {
+		it(`checks ${pattern.slice(0, 12)}... (${pattern.length} characters) in linear time`, () => {
+			for (const text of [`include /data/nginx/${pattern}/*.conf;`, `include /${pattern}/${pattern}/${pattern}/x;`]) {
+				const start = performance.now();
+				findForbiddenFileDirective(text);
+				assert.ok(performance.now() - start < 50, text.slice(0, 40));
+			}
+		});
+	}
+
+	it("still matches generated config dirs with many stars", () => {
+		assert.ok(findForbiddenFileDirective(`include /data/nginx/${"*".repeat(1000)}/*.conf;`));
+		assert.ok(findForbiddenFileDirective(`include /data/nginx/${"*?".repeat(4)}${"*".repeat(1000)}host/*.conf;`));
+		assert.equal(findForbiddenFileDirective(`include /data/nginx/${"*?".repeat(17)}/*.conf;`), null);
+	});
 });
