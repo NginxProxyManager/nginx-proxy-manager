@@ -312,7 +312,7 @@ export interface SAMLClientConfiguration {
 }
 
 export type SingleSignOnClientConfigurationType =
-  | Auth0ClientConfiguration
-  | GitHubConfiguration
-  | OpenIDClientConfiguration
-  | SAMLClientConfiguration;
+	| Auth0ClientConfiguration
+	| GitHubConfiguration
+	| OpenIDClientConfiguration
+	| SAMLClientConfiguration;

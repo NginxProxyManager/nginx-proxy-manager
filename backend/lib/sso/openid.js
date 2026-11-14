@@ -72,12 +72,7 @@ const validateOpenIDCallback = async (req, config) => {
 	const { state, code_verifier } = parseStateFromCookie(req);
 	const checks = { expectedState: state, pkceCodeVerifier: code_verifier, idTokenExpected: true };
 
-	const tokens = await oidc.authorizationCodeGrant(
-		client,
-		// when PKCE is used, state must equal to the string 'undefined'
-		new URL(currentUrl.replace("&state=", "&state=undefined")),
-		checks,
-	);
+	const tokens = await oidc.authorizationCodeGrant(client, new URL(currentUrl), checks);
 
 	const claims = tokens.claims();
 	if (!claims.email) {

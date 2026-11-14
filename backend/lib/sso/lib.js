@@ -5,9 +5,25 @@ import now_helper from "../../models/now_helper.js";
 import userModel from "../../models/user.js";
 import errs from "../error.js";
 
-export const LOCALSTORAGE_RETURN_URI_KEY = "returnTo";
-export const LOCALSTORAGE_AUTH_TYPE_KEY = "authType";
-
+/**
+ * Returns an existing provisioned user, or provisions a new user if the
+ * evaluation of the SSO Client configuration and authorized claims allow.
+ *
+ * @param {SingleSignOnClient} config
+ * @param {Object} claims
+ * @param {string} claims.sub
+ * @param {string} claims.iss
+ * @param {string} claims.email
+ * @param {string[]} claims.groups
+ * @param {string} claims.name
+ * @param {string} claims.nickname
+ * @param {string} claims.preferred_username
+ * @param {string} claims.picture
+ * @param {string} claims.profile_picture
+ * @param {boolean} claims.email_verified
+ * @param {User[]} users
+ * @returns {Promise<User>} The provisioned user
+ */
 const getProvisionedUser = async (config, claims, users) => {
 	const groups = claims.groups;
 	const [existingPasswordUser, existingEmailUser, provisionedUser, disabledUser] = users;
@@ -302,6 +318,16 @@ const parseStateFromCookie = (req) => {
  *
  * @param {Object} config
  * @param {Object} claims
+ * @param {string} claims.sub
+ * @param {string} claims.iss
+ * @param {string} claims.email
+ * @param {string[]} claims.groups
+ * @param {string} claims.name
+ * @param {string} claims.nickname
+ * @param {string} claims.preferred_username
+ * @param {string} claims.picture
+ * @param {string} claims.profile_picture
+ * @param {boolean} claims.email_verified
  * @returns Promise<any>
  */
 const concludeAuthorized = async (config, claims) => {
