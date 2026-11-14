@@ -9,7 +9,7 @@ import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showHostLogsModal, showProxyHostModal } from "src/modals";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
-import Table from "./Table";
+import Table, { getDestination } from "./Table";
 
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
@@ -112,9 +112,9 @@ export default function TableWrapper() {
 									{host?.domainNames?.length ? (
 										<div className="mt-2 fw-bold text-break">{host.domainNames.join(", ")}</div>
 									) : null}
-									{host?.forwardHost ? (
+									{host ? (
 										<div className="mt-1 text-muted small">
-											({host.forwardScheme}://{host.forwardHost}:{host.forwardPort})
+											({getDestination(host)})
 										</div>
 									) : null}
 								</>

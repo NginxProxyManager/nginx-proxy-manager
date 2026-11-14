@@ -410,6 +410,12 @@
 	"error.invalid-email": {
 		"defaultMessage": "Địa chỉ email không hợp lệ"
 	},
+	"error.invalid-fail-timeout": {
+		"defaultMessage": "Nhập số giây nguyên hoặc khoảng thời gian dương với đơn vị s, m, h hoặc d."
+	},
+	"error.invalid-upstream-name": {
+		"defaultMessage": "Bắt đầu bằng chữ cái hoặc dấu gạch dưới; chỉ dùng chữ cái, chữ số, dấu gạch dưới hoặc dấu gạch nối."
+	},
 	"error.max-character-length": {
 		"defaultMessage": "Độ dài tối đa là {max} ký tự"
 	},
@@ -430,6 +436,18 @@
 	},
 	"error.required": {
 		"defaultMessage": "Trường này là bắt buộc"
+	},
+	"error.upstream-invalid": {
+		"defaultMessage": "Kiểm tra các thiết lập nhóm máy chủ nguồn không hợp lệ trong thẻ Cân bằng tải."
+	},
+	"error.upstream-name-reserved": {
+		"defaultMessage": "Tên bắt đầu bằng npm- được dành riêng cho các nhóm máy chủ nguồn được tạo tự động."
+	},
+	"error.upstream-primary-required": {
+		"defaultMessage": "Phải có ít nhất một máy chủ nguồn không phải là máy chủ dự phòng."
+	},
+	"error.upstream-required": {
+		"defaultMessage": "Thêm ít nhất một máy chủ trong thẻ Cân bằng tải."
 	},
 	"expires.on": {
 		"defaultMessage": "Hết hạn: {date}"
@@ -460,6 +478,15 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Giao thức"
+	},
+	"host.forward-to": {
+		"defaultMessage": "Chuyển tiếp đến"
+	},
+	"host.hostname-ip": {
+		"defaultMessage": "Tên máy chủ / IP"
+	},
+	"host.upstream": {
+		"defaultMessage": "Nhóm máy chủ nguồn"
 	},
 	"hosts": {
 		"defaultMessage": "Máy chủ"
@@ -799,6 +826,81 @@
 	},
 	"update-available": {
 		"defaultMessage": "Đã có bản cập nhật: {latestVersion}"
+	},
+	"upstream.add-server": {
+		"defaultMessage": "Thêm Upstream Server"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Dự phòng"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Đánh dấu máy chủ là backup. Nó chỉ nhận yêu cầu khi tất cả các máy chủ chính không khả dụng. Không thể sử dụng với ip_hash."
+	},
+	"upstream.configure": {
+		"defaultMessage": "Cấu hình"
+	},
+	"upstream.description": {
+		"defaultMessage": "Cấu hình các máy chủ cho đích Nhóm máy chủ nguồn trong thẻ Chi tiết."
+	},
+	"upstream.destination": {
+		"defaultMessage": "{count, plural, other {# máy chủ nguồn}} ({method})"
+	},
+	"upstream.down": {
+		"defaultMessage": "Ngừng hoạt động"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Đánh dấu vĩnh viễn máy chủ là không khả dụng. Hữu ích để loại bỏ máy chủ một cách an toàn mà không cần thay đổi cấu hình."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Thời gian chờ sau lỗi"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Khoảng thời gian mà max_fails phải xảy ra để đánh dấu máy chủ là không khả dụng, đồng thời là thời gian nginx chờ trước khi thử lại máy chủ (ví dụ: 30s, 10s)."
+	},
+	"upstream.generated-on-save": {
+		"defaultMessage": "Được tạo khi lưu"
+	},
+	"upstream.host": {
+		"defaultMessage": "Máy chủ"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Cân Bằng Tải"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Số lần lỗi tối đa"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Số lần thử thất bại trong khoảng thời gian fail_timeout khiến máy chủ bị đánh dấu là không khả dụng. Đặt thành 0 để tắt kiểm tra sức khỏe."
+	},
+	"upstream.method": {
+		"defaultMessage": "Phương Thức Cân Bằng"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: các yêu cầu được phân phối tuần tự (mặc định). Least Connections: gửi đến máy chủ có ít kết nối đang hoạt động nhất. IP Hash: cùng một địa chỉ IP của máy khách luôn được định tuyến đến cùng một máy chủ (sticky sessions)."
+	},
+	"upstream.method.ip_hash": {
+		"defaultMessage": "Băm IP (duy trì phiên)"
+	},
+	"upstream.method.least_conn": {
+		"defaultMessage": "Ít kết nối nhất"
+	},
+	"upstream.method.round_robin": {
+		"defaultMessage": "Luân phiên"
+	},
+	"upstream.name": {
+		"defaultMessage": "Tên nhóm máy chủ nguồn"
+	},
+	"upstream.name.help": {
+		"defaultMessage": "Để trống để tự động tạo tên nhóm máy chủ nguồn. Tên phải là duy nhất trong các máy chủ proxy và được lưu bằng chữ thường."
+	},
+	"upstream.port": {
+		"defaultMessage": "Cổng"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Trọng số"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Trọng số tương đối cho phân phối round-robin. Một máy chủ có weight=2 nhận gấp đôi số yêu cầu so với máy chủ có weight=1."
 	},
 	"user": {
 		"defaultMessage": "Người dùng"
