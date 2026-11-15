@@ -357,7 +357,6 @@ const concludeAuthorized = async (config, claims) => {
 			user = await getInternalUser(config, claims, users);
 			authType = "sso-npm";
     } catch (err) {
-      console.debug("Intern ERR --> ", err)
 			errors.push(err.message);
 		}
 	}
