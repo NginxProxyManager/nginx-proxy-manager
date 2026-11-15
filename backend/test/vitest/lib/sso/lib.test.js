@@ -155,7 +155,7 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 			await concludeAuthorized(config, claims);
 		} catch (err) {
 			expect(err).toBeDefined();
-			expect(err.message).toBe("sso.error.signup.not-permitted; sso.error.login.verified-email");
+			expect(err.message).toBe("sso.error.signup.verified-email; sso.error.login.verified-email");
 		}
 
 		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();

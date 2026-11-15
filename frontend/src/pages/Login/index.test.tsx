@@ -165,7 +165,7 @@ describe("Login page", () => {
 	it("renders an error message from cookie then cookie is removed", async () => {
 		window.cookieStore.set({
 			name: "npm_sso_error",
-			value: "foo-error",
+			value: "sso.error.default",
 			expires: Date.now() + 86400,
 			path: "/",
 		});
@@ -177,7 +177,7 @@ describe("Login page", () => {
 
 		const formErr = await screen.findByRole<HTMLDivElement>("alert");
 		expect(formErr).toBeVisible();
-		expect(formErr).toHaveTextContent("foo-error");
+		expect(formErr).toHaveTextContent("Unexpected error, please try again later.");
 		expect(document.cookie).not.toContain("npm_sso_error");
 	});
 });
