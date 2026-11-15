@@ -349,7 +349,6 @@ const concludeAuthorized = async (config, claims) => {
 	try {
 		user = await getProvisionedUser(config, claims, users);
   } catch (err) {
-    console.debug("Provi ERR --> ", err)
 		errors.push(err.message);
 	}
 
