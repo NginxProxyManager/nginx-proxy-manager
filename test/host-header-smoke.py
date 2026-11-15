@@ -68,6 +68,9 @@ process.exit(0);
 '''
 
 
+PREPARE = ". /usr/bin/common.sh && . /etc/s6-overlay/s6-rc.d/prepare/40-dynamic.sh"
+
+
 def docker(*args, **kwargs):
     return subprocess.check_output(["docker", *args], text=True, **kwargs).strip()
 
@@ -164,10 +167,6 @@ def check_image(image):
                                    stdout=subprocess.DEVNULL)
         subprocess.run(["docker", "exec", "-i", "-w", "/app", name,
                         "node", "--input-type=module"], input=RENDER, text=True, check=True)
-        # map_hash_bucket_size can only be set before the first map block, so this fails if a
-        # map is ever defined ahead of the custom http_top.conf include again
-        docker("exec", name, "sh", "-c", "mkdir -p /data/nginx/custom && "
-               "echo 'map_hash_bucket_size 128;' > /data/nginx/custom/http_top.conf")
         docker("exec", name, "nginx", "-t")
         docker("exec", name, "nginx", "-s", "reload")
         wait_for_generated_host(name)
@@ -230,10 +229,54 @@ def check_image(image):
                     cache_cases += 1
             assert len({serial for serial, _ in cached.values()}) == 2, cached
         checked += cache_cases
+        # A map in the custom http_top.conf redefines the shipped proxy variables, so they
+        # must be defined before that include. Remove the file afterwards so nothing else
+        # runs with it.
+        docker("exec", name, "sh", "-c", "mkdir -p /data/nginx/custom && printf '%s\\n' "
+               "'map $host $forward_host { default override.example.test; }' "
+               "> /data/nginx/custom/http_top.conf")
+        try:
+            docker("exec", name, "nginx", "-t")
+            docker("exec", name, "nginx", "-s", "reload")
+            deadline = time.monotonic() + 30
+            while True:
+                status, _, body = request(name, path="/override", headers={"Host": "host-port.example.test"})
+                if status == 200 and json.loads(body)["host"] == "override.example.test":
+                    break
+                if time.monotonic() >= deadline:
+                    raise AssertionError(("http_top.conf map did not take effect", status, body))
+                time.sleep(0.5)
+            checked += 1
+        finally:
+            docker("exec", name, "rm", "-f", "/data/nginx/custom/http_top.conf")
+        docker("exec", name, "nginx", "-s", "reload")
+        wait_for_generated_host(name)
+
+        # An nginx.conf kept from an older release has no proxy-variables.conf include and no
+        # $forward_host map (#6043). The startup step must load the variables from conf.d so
+        # nginx still starts and forwards the client's port. Restore the shipped file after.
+        docker("exec", name, "sh", "-c", "cp /etc/nginx/nginx.conf /tmp/nginx.conf.shipped && "
+               "sed -e '/proxy-variables\\.conf/d' -e '/^\\s*map /,/^\\s*}/d' "
+               "/tmp/nginx.conf.shipped > /etc/nginx/nginx.conf")
+        try:
+            docker("exec", name, "sh", "-c", "! sed 's/#.*//' /etc/nginx/nginx.conf | grep -q forward_host")
+            docker("exec", name, "bash", "-c", PREPARE)
+            docker("exec", name, "nginx", "-t")
+            docker("exec", name, "nginx", "-s", "reload")
+            wait_for_generated_host(name)
+            checked += 1
+        finally:
+            docker("exec", name, "cp", "/tmp/nginx.conf.shipped", "/etc/nginx/nginx.conf")
+            docker("exec", name, "bash", "-c", PREPARE)
+        docker("exec", name, "nginx", "-t")
+        docker("exec", name, "nginx", "-s", "reload")
+        wait_for_generated_host(name)
+
         print(json.dumps({"image": image, "cases": checked, "nginx": "passed",
                           "default_and_custom_locations": "passed", "http_and_https": "passed",
                           "origin_and_referer_validation": "passed", "missing_host_fallback": "passed", "cached_asset_cases": cache_cases,
-                          "cache_port_isolation_and_hits": "passed", "generated_host_readiness": "passed"}),
+                          "cache_port_isolation_and_hits": "passed", "generated_host_readiness": "passed",
+                          "http_top_override": "passed", "older_nginx_conf": "passed"}),
               flush=True)
     except Exception:
         subprocess.run(["docker", "logs", "--tail", "30", name], check=False)
