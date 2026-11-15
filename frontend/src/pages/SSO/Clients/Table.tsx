@@ -37,6 +37,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 			columnHelper.accessor((row: any) => row, {
 				id: "protocol",
 				header: intl.formatMessage({ id: "column.type" }),
+				sortFn: (a: any, b: any) => (a.original.clientType > b.original.clientType ? 1 : -1),
 				cell: (info: any) => {
 					const value = info.getValue();
 
@@ -49,6 +50,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 			columnHelper.accessor((row: any) => row, {
 				id: "name",
 				header: intl.formatMessage({ id: "column.name" }),
+				sortFn: (a: any, b: any) => (a.original.name > b.original.name ? 1 : -1),
 				cell: (info: any) => {
 					const value = info.getValue();
 

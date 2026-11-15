@@ -188,7 +188,7 @@ const internalUser = {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
 
-				if (authType) {
+				if (authType && row?.id === access.token.getUserId(0)) {
 					row.auth_type = authType;
 				}
 
@@ -559,16 +559,16 @@ const internalUser = {
 	 * @returns {Promise<Array>} [null, existingUser] or [newUser, null]
 	 */
 	provision: async (userData, authData, ownerUserId, existingUser = null) => {
-		authData.last_login_at = authData.auth_time;
-		delete authData.auth_time;
-
 		if (existingUser) {
 			await internalUser.ssoAccess(existingUser.id, "sso-idp", authData);
 			return Promise.resolve([null, existingUser]);
 		}
 
+		authData.last_login_at = authData.auth_time;
 		authData.first_login_at = authData.last_login_at;
 		userData.roles = userData.roles || [];
+		delete authData.auth_time;
+
 		if (!userData.avatar) {
 			userData.avatar = gravatar.url(userData.email, { default: "mm" });
 		}

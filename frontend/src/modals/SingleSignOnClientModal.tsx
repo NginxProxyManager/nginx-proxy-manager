@@ -248,11 +248,9 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 																let error = sv(value);
 																if (error) return error;
 																if (
-																	[
-																		"configurationUrl",
-																		"domain",
-																		"redirectUrl",
-																	].includes(field_name)
+																	["configurationUrl", "redirectUrl"].includes(
+																		field_name,
+																	)
 																) {
 																	const allowLocalhost = field_name === "redirectUrl";
 																	const uv =

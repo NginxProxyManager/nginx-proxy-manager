@@ -94,13 +94,16 @@
         <p>To use Keycloak Groups, first make sure that you have groups and users assigned to said groups
         in the desired realm (<em>Groups</em> and <em>Users</em> in the left navigation menu, respectively).
         Keycloak doesn't use these groups by default in the claims, so first go to <em>Client scopes</em> in the same realm,
-        and select <em>Create client scope</em>. Name it <em>Groups</em>, set Type to <em>Default</em> and Protocol
-        to <em>OpenID Connect</em>, and save. Go the to Mappers tab, select <em>Configure a new mapper</em>, and select
+        and select <em>Create client scope</em>. Name it <em>Groups</em>, set Type to <em>Default</em>, Protocol
+        to <em>OpenID Connect</em>, and save. Go to the Mappers tab, select <em>Configure a new mapper</em>, and select
         the <em>Group Membership</em> mapping from the list. Name it something, and ensure the <em>Token Claim Name</em> is <em>groups</em>.
         If you don't need to use nested groups, turn <em>Full group path</em> off, so you can use the exact group names in Nginx Proxy Manager.
         When <em>Full group path</em> is on, groups will be represented with slashes, (e.g. <code>/My Group/My Inner Group</code>).
         In this case, a single, not nested group is also represented with leading slash, so <code>My Group</code> becomes <code>/My Group</code>.
-        Make sure <em>Add to ID token</em> is turned on then save.</p>
+        Make sure <em>Add to ID token</em> is turned on then save. Next, go to <em>Clients</em>, select the client created in the fist step,
+        select the Client Scopes tab, and click <em>Add client scope</em>. The <em>Groups</em> scope you created in the previous step
+        should be listed in the Add client scopes dialogue. Select it then click <em>Add</em>.
+        Make sure its <em>Assigned type</em> is set to <em>Default</em>.</p>
         <p>To configure Keycloak to send the Realm Roles as the groups claim, first make sure you have created Realm roles, and assigned users.
         Then, go to <em>Client scopes</em> and select the predefined <em>roles</em> scope. Swtich to the Mappers tab, and select
         the predefined <em>realm roles</em> mapper. Set the <em>Token Claim Name</em> to <em>groups</em>. 
@@ -162,8 +165,7 @@
     <p>
         When <code>Require verified email</code> is turned on then the <code>email_verified=true</code> flag
         is required in the claims to proceed with provisioning or login to internal account. 
-        For provisioned users, this is not checked for subsequent logins once
-        successfully provisioned, while it's checked before every login for internal user account access.
+        This will be checked every time before login to an internal account, login to provisioned account or before provisioning is allowed.
     </p>
 </details>
 

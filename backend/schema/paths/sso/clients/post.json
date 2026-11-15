@@ -18,7 +18,8 @@
 					"required": [
 						"name",
 						"client_type",
-						"enabled"
+						"enabled",
+						"configuration"
 					],
           "properties": {
             "name": {
@@ -132,7 +133,13 @@
             "role_map": []
           },
           "require_verified_email": false,
-          "button_text": ""
+          "button_text": "",
+          "configuration": {
+            "client_id": "abc123",
+            "client_secret": "client-secret",
+            "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
+            "redirect_url": "https://my-nginx-pm.com/api/sso/oauth2/openid/123/callback"
+          }
         }
       }
     }

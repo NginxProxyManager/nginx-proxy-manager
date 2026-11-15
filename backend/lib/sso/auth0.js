@@ -61,7 +61,9 @@ const getAuth0InitParams = async (_req, row) => {
  * */
 const validateAuth0Callback = async (req, config) => {
 	const currentUrl = `${config.configuration_auth0.redirect_url}?${req.originalUrl?.split("?")?.[1]}`;
-	const client = await getAuth0Client(config, { authorizationParams: { redirect_uri: config.redirect_url } });
+	const client = await getAuth0Client(config, {
+		authorizationParams: { redirect_uri: config.configuration_auth0.redirect_url },
+	});
 	const { code_verifier } = parseStateFromCookie(req);
 	const checks = { codeVerifier: code_verifier };
 

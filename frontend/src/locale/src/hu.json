@@ -317,6 +317,9 @@
 	"column.type": {
 		"defaultMessage": "Típus"
 	},
+	"created-on": {
+		"defaultMessage": "Létrehozva: {date}"
+	},
 	"dashboard": {
 		"defaultMessage": "Vezérlőpult"
 	},
@@ -786,7 +789,7 @@
 		"defaultMessage": "Csoport neve"
 	},
 	"sso.config.protocol-disabled": {
-		"defaultMessage": "A {protocol} protocol is not implemented. This client configuration will not be used."
+		"defaultMessage": "A {protocol} implementáció hiányzik. Ez a konfiguráció inaktív lesz."
 	},
 	"sso.config.protocol.label": {
 		"defaultMessage": "Protokol"
@@ -867,6 +870,9 @@
 		"defaultMessage": "Nem engedélyezett (2)"
 	},
 	"sso.error.secure-host": {
+		"defaultMessage": "HTTPS URL-t kell megadni (https://...)."
+	},
+	"sso.error.secure-or-local-host": {
 		"defaultMessage": "HTTPS vagy localhost URL-t kell megadni (https://... or http://localhost...)."
 	},
 	"sso.error.signup.group-required": {

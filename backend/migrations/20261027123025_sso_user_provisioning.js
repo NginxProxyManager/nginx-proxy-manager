@@ -27,7 +27,7 @@ const up = (knex) => {
 			sso_client.string("require_provision_group_name", 128).notNull().defaultTo("");
 			sso_client.tinyint("require_verified_email").notNull().defaultTo(0);
 			sso_client.string("button_text", 64).notNull().defaultTo("");
-			sso_client.json("provision_role_map").defaultTo([]);
+			sso_client.json("provision_role_map").notNull();
 		})
 		.then(() => {
 			logger.info(`[${migrateName}] sso_client Table columns added`);
@@ -119,6 +119,7 @@ const up = (knex) => {
 
 			// Update exising OpenID configurations
 			await knex.schema.raw("UPDATE sso_client SET client_type = 'OpenID' WHERE client_type = 'OAuth2/OpenID'");
+			await knex.schema.raw("UPDATE sso_client SET provision_role_map = '[]' WHERE true");
 			await knex.schema.raw("UPDATE sso_client SET meta = '{\"role_map\": []}' WHERE true");
 			return knex.schema
 				.raw(

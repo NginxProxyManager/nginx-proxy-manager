@@ -99,11 +99,9 @@ const internalSsoClientConfig = {
 										.transacting(trx)
 										.then(() => row);
 								default:
-									throw errs.InternalValidationError("Unknown SSO Client client_type");
+									throw new errs.InternalValidationError("Unknown SSO Client client_type");
 							}
-						})
-						.then(trx.commit)
-						.then(() => row);
+						});
 				});
 			})
 			.then(async (row) => {
@@ -155,7 +153,7 @@ const internalSsoClientConfig = {
 			})
 			.then((row) => {
 				if (thisData.client_type !== undefined && thisData.client_type !== row.client_type) {
-					throw errs.InternalValidationError("SSO Client type cannot be changed");
+					throw new errs.InternalValidationError("SSO Client type cannot be changed");
 				}
 				const config = thisData.configuration;
 				delete thisData.configuration;
@@ -204,7 +202,7 @@ const internalSsoClientConfig = {
 										.transacting(trx)
 										.then(() => row);
 								default:
-									throw errs.InternalValidationError("Unknown SSO Client client_type");
+									throw new errs.InternalValidationError("Unknown SSO Client client_type");
 							}
 						})
 						.then(trx.commit)
@@ -364,7 +362,7 @@ const internalSsoClientConfig = {
 											.transacting(trx)
 											.then(() => row);
 									default:
-										throw errs.InternalValidationError("Unknown SSO Client client_type");
+										throw new errs.InternalValidationError("Unknown SSO Client client_type");
 								}
 							})
 							.then(trx.commit)

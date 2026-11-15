@@ -7,7 +7,7 @@ import { useSingleSignOnClients, useUser } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showSingleSignOnClientModal } from "src/modals";
 import { showFancyHelpModal } from "src/modals/FancyHelpModal";
-import { showObjectSuccess } from "src/notifications";
+import { showError, showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -29,10 +29,14 @@ export default function TableWrapper() {
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
-		await toggleSingleSignOnClient(id, enabled);
-		queryClient.invalidateQueries({ queryKey: ["sso-clients"] });
-		queryClient.invalidateQueries({ queryKey: ["sso-client", id] });
-		showObjectSuccess("sso-client", enabled ? "enabled" : "disabled");
+		try {
+			await toggleSingleSignOnClient(id, enabled);
+			queryClient.invalidateQueries({ queryKey: ["sso-clients"] });
+			queryClient.invalidateQueries({ queryKey: ["sso-client", id] });
+			showObjectSuccess("sso-client", enabled ? "enabled" : "disabled");
+		} catch (_error) {
+			showError("sso.error.default");
+		}
 	};
 
 	return (

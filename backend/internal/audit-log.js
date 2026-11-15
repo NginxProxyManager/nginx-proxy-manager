@@ -72,9 +72,10 @@ const internalAuditLog = {
 	 * @param   {Number}   [data.object_id]
 	 * @param   {Number}   [data.object_type]
 	 * @param   {Object}   [data.meta]
+	 * @param   {Knex.Transaction} [transaction]
 	 * @returns {Promise}
 	 */
-	add: async (access, data) => {
+	add: async (access, data, transaction = null) => {
 		if (typeof data.user_id === "undefined" || !data.user_id) {
 			data.user_id = access.token.getUserId(1);
 		}
@@ -83,8 +84,14 @@ const internalAuditLog = {
 			throw new errs.InternalValidationError("Audit log entry must contain an Action");
 		}
 
+		const query = auditLogModel.query();
+
+		if (transaction) {
+			query.transacting(transaction);
+		}
+
 		// Make sure at least 1 of the IDs are set and action
-		return await auditLogModel.query().insert({
+		return await query.insert({
 			user_id: data.user_id,
 			action: data.action,
 			object_type: data.object_type || "",

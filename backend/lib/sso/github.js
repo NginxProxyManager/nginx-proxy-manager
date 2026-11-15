@@ -32,7 +32,7 @@ const getGitHubInitParams = async (_req, row) => {
 		redirect_uri,
 	};
 	const query = Object.entries(authParams).map(([key, value]) => {
-		return `${key}=${value}`;
+		return `${key}=${key === "redirect_uri" ? encodeURIComponent(value) : value}`;
 	});
 	const url = `https://github.com/login/oauth/authorize?${query.join("&")}`;
 
@@ -101,6 +101,10 @@ const validateGitHubCallback = async (req, config) => {
 		user = await userResponse.json();
 	} catch (_err) {}
 
+	if (!user) {
+		throw new errs.AuthError("sso.error.default");
+	}
+
 	// request user email
 	try {
 		const emailResponse = await fetch("https://api.github.com/user/emails", { headers });
@@ -123,7 +127,7 @@ const validateGitHubCallback = async (req, config) => {
 	const claims = {
 		iss: user.node_id,
 		iat: Math.floor(Date.now() / 1000),
-		sub: user.url,
+		sub: user.id,
 		aud: conf.github_client_id,
 		email: email.email,
 		email_verified: email.verified,

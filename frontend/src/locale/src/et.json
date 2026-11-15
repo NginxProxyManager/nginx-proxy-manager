@@ -879,7 +879,7 @@
 		"defaultMessage": "Protokoll"
 	},
 	"sso.config.redirect_url.hint": {
-		"defaultMessage": "Jäta loodud URL-is osa „{id}” alles. Asendame selle pärast vormi salvestamist ja seejärel saad lõpliku URL-i kopeerida oma IdP lubatud tagasikutse-URL-ide hulka."
+		"defaultMessage": "Jäta loodud URL-is osa '{id}' alles. Asendame selle pärast vormi salvestamist ja seejärel saad lõpliku URL-i kopeerida oma IdP lubatud tagasikutse-URL-ide hulka."
 	},
 	"sso.config.redirect_url.label": {
 		"defaultMessage": "Ümbersuunamise URL"
@@ -993,10 +993,10 @@
 		"defaultMessage": "{users} loodud {users, plural, one {kasutaja} other {kasutajat}}"
 	},
 	"sso.login.heading": {
-		"defaultMessage": "Or continue with OAuth"
+		"defaultMessage": "või jätka OAuthiga"
 	},
 	"sso.menu.label": {
-		"defaultMessage": "või jätka OAuthiga"
+		"defaultMessage": "Ühekordne sisselogimine"
 	},
 	"sso.stats.accessed": {
 		"defaultMessage": "Kasutatud {date}"
