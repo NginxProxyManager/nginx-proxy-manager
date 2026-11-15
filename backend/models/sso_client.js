@@ -65,7 +65,7 @@ class SingleSignOnClient extends Model {
 	}
 
 	static get jsonAttributes() {
-		return ["meta"];
+		return ["meta", "provision_role_map"];
 	}
 
 	static get defaultExpand() {

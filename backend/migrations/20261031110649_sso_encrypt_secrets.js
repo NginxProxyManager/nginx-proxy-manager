@@ -71,7 +71,7 @@ const down = (knex) => {
 		.from("sso_client_openid")
 		.then((configs) => {
 			const updates = configs.map((config) => {
-				return { id: config.id, decrypted_secret: decryptRSA(config.client_secret) };
+				return { id: config.id, decrypted_secret: decryptRSA(Buffer.from(config.client_secret, "base64")) };
 			});
 
 			return Promise.all(
@@ -89,7 +89,7 @@ const down = (knex) => {
 				.from("sso_client_auth0")
 				.then((configs) => {
 					const updates = configs.map((config) => {
-						return { id: config.id, decrypted_secret: decryptRSA(config.client_secret) };
+						return { id: config.id, decrypted_secret: decryptRSA(Buffer.from(config.client_secret, "base64")) };
 					});
 
 					return Promise.all(

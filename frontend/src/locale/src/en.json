@@ -894,13 +894,13 @@
 		"defaultMessage": "Button preview"
 	},
 	"sso.config.settings.button-text.hint": {
-		"defaultMessage": "You can override the login button label or the SSO Client name will be used in a translated context."
+		"defaultMessage": "You can override the login button label, or the SSO Client name will be used in a translated context."
 	},
 	"sso.config.settings.button-text.label": {
 		"defaultMessage": "Button text"
 	},
 	"sso.config.settings.require-verified-email.hint": {
-		"defaultMessage": "Require that the IdP sends the 'email_verified' claim with a value of true. This will only be checked before a user successfully logs in using this IdP."
+		"defaultMessage": "Require that the IdP sends the 'email_verified' claim with a value of true. This will be checked every time before login to an internal account, login to provisioned account or before provisioning is allowed."
 	},
 	"sso.config.settings.require-verified-email.label": {
 		"defaultMessage": "Require verified email"

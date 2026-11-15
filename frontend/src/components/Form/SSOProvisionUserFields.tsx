@@ -1,7 +1,6 @@
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import cn from "classnames";
-import { Field } from "formik";
-import { useState } from "react";
+import { Field, FieldArray } from "formik";
 import type { ProvisionRoleMap } from "src/api/backend";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
@@ -18,13 +17,12 @@ export function ProvisionUserFields({
 	requireProvisionGroup,
 	requireProvisionGroupName,
 }: Props) {
-	const [roleMap, setRoleMap] = useState(provisionRoleMap);
-	const requireProvisionGroupNameIsRequired = (): boolean => {
+	const provisionGroupNameIsRequired = (): boolean => {
 		const test =
 			(requireProvisionGroupName || "").length === 0 &&
 			!!provisionUsers &&
 			!!requireProvisionGroup &&
-			(!roleMap || roleMap.length === 0 || roleMap[0].group === "");
+			(!provisionRoleMap || provisionRoleMap.length === 0 || provisionRoleMap[0].group === "");
 
 		return test;
 	};
@@ -91,7 +89,7 @@ export function ProvisionUserFields({
 				<Field
 					name="requireProvisionGroupName"
 					validate={validateString(
-						requireProvisionGroupNameIsRequired() ? 1 : 0,
+						provisionGroupNameIsRequired() ? 1 : 0,
 						255,
 						"sso.error.group-or-role-map",
 					)}
@@ -106,7 +104,7 @@ export function ProvisionUserFields({
 									"is-invalid":
 										form.errors.requireProvisionGroupName &&
 										form.touched.requireProvisionGroupName &&
-										requireProvisionGroupNameIsRequired(),
+										provisionGroupNameIsRequired(),
 									"opacity-50": !form.values.provisionUsers || !form.values.requireProvisionGroup,
 								})}
 								disabled={!form.values.provisionUsers || !form.values.requireProvisionGroup}
@@ -114,7 +112,7 @@ export function ProvisionUserFields({
 								defaultValue={form.values.requireProvisionGroupName}
 								onChange={(e) => form.setFieldValue("requireProvisionGroupName", e.target.value)}
 							/>
-							{form.errors.requireProvisionGroupName && requireProvisionGroupNameIsRequired() && (
+							{form.errors.requireProvisionGroupName && provisionGroupNameIsRequired() && (
 								<div className="invalid-feedback">
 									{form.errors.requireProvisionGroupName && form.touched.requireProvisionGroupName
 										? form.errors.requireProvisionGroupName
@@ -139,14 +137,14 @@ export function ProvisionUserFields({
 					</span>
 				</label>
 			</div>
-			{roleMap?.map((_, index) => {
+			{provisionRoleMap?.map((_, index) => {
 				return (
 					<div key={index} className="row">
 						<div className="col-md-5">
 							<Field
 								name={`provisionRoleMap[${index}].group`}
 								validate={validateString(
-									index > 0 && index < roleMap.length - 1 && provisionUsers ? 1 : 0,
+									index > 0 && index < provisionRoleMap.length - 1 && provisionUsers ? 1 : 0,
 									255,
 								)}
 							>
@@ -157,10 +155,9 @@ export function ProvisionUserFields({
 											type="text"
 											className={cn("form-control py-2", {
 												"is-invalid":
-													form.errors.provisionRoleMap &&
-													form.touched.provisionRoleMap &&
-													form.values.requireGroup &&
-													!!form.values.allowInternal,
+													!!form.errors.provisionRoleMap?.[index]?.group &&
+													!!form.touched.provisionRoleMap?.[index]?.group &&
+													form.values.allowInternal,
 												"opacity-50":
 													!form.values.provisionUsers || !form.values.requireProvisionGroup,
 											})}
@@ -168,105 +165,117 @@ export function ProvisionUserFields({
 											placeholder={intl.formatMessage({
 												id: "sso.config.placeholder.group-name",
 											})}
-											defaultValue={roleMap[index].group}
+											defaultValue={provisionRoleMap[index].group}
 											onChange={(e) => {
 												e.preventDefault();
 												form.setFieldValue(`provisionRoleMap[${index}].group`, e.target.value);
-												roleMap[index].group = e.target.value;
+												provisionRoleMap[index].group = e.target.value;
 											}}
 										/>
-										{form.errors.provisionRoleMap && form.values.provisionUsers ? (
+										{form.errors.provisionRoleMap?.[index]?.group && form.values.provisionUsers && (
 											<div className="invalid-feedback">
-												{form.errors.provisionRoleMap && form.touched.provisionRoleMap
-													? form.errors.provisionRoleMap
+												{form.errors.provisionRoleMap?.[index]?.group &&
+												form.touched.provisionRoleMap?.[index]?.group
+													? form.errors.provisionRoleMap[index].group
 													: null}
 											</div>
-										) : null}
+										)}
 									</div>
 								)}
 							</Field>
 						</div>
-
-						<div className="col-md-3">
-							<Field name={`provisionRoleMap[${index}].role`}>
-								{({ form }: any) => (
-									<div>
-										<select
-											id={`provisionRoleMap[${index}].role`}
-											className={cn("form-control mb-1 mt-1", {
-												"is-invalid":
-													form.errors.provisionRoleMap?.[index]?.role &&
-													form.touched.provisionRoleMap?.[index]?.role,
-												"opacity-50":
-													!form.values.provisionUsers || !form.values.requireProvisionGroup,
-											})}
-											required
-											defaultValue={roleMap[index].role}
-											disabled={!form.values.provisionUsers || !form.values.requireProvisionGroup}
-											onChange={(e) => {
-												e.preventDefault();
-												if (e.target.value) {
-													form.setFieldValue(
-														`provisionRoleMap[${index}].role`,
-														e.target.value,
-													);
-													roleMap[index].role = e.target.value as ProvisionRoleMap["role"];
+						<FieldArray
+							name="provisionRoleMap"
+							render={(arrayHelpers) => (
+								<>
+									<div className="col-md-3">
+										<Field name={`provisionRoleMap[${index}].role`}>
+											{({ form }: any) => (
+												<div>
+													<select
+														id={`provisionRoleMap[${index}].role`}
+														className={cn("form-control mb-1 mt-1", {
+															"is-invalid":
+																form.errors.provisionRoleMap?.[index]?.role &&
+																form.touched.provisionRoleMap?.[index]?.role,
+															"opacity-50":
+																!form.values.provisionUsers ||
+																!form.values.requireProvisionGroup,
+														})}
+														required
+														defaultValue={provisionRoleMap[index].role}
+														disabled={
+															!form.values.provisionUsers ||
+															!form.values.requireProvisionGroup
+														}
+														onChange={(e) => {
+															e.preventDefault();
+															if (e.target.value) {
+																form.setFieldValue(
+																	`provisionRoleMap[${index}].role`,
+																	e.target.value,
+																);
+																provisionRoleMap[index].role = e.target
+																	.value as ProvisionRoleMap["role"];
+															}
+														}}
+													>
+														<option value="admin">admin</option>
+														<option value="user">user</option>
+													</select>
+												</div>
+											)}
+										</Field>
+									</div>
+									<div className="col-md-4">
+										<button
+											type="button"
+											className="btn mt-1"
+											onClick={(e) => {
+												e.isDefaultPrevented();
+												if (provisionRoleMap.length === 1) {
+													const entry = { group: "", role: provisionRoleMap[0].role };
+													arrayHelpers.remove(0);
+													setTimeout(() => arrayHelpers.push(entry));
+												} else {
+													arrayHelpers.remove(index);
 												}
 											}}
+											disabled={
+												!provisionRoleMap?.[index]?.group ||
+												!provisionUsers ||
+												!requireProvisionGroup
+											}
 										>
-											<option value="admin">admin</option>
-											<option value="user">user</option>
-										</select>
-									</div>
-								)}
-							</Field>
-						</div>
-						<div className="col-md-4">
-							<button
-								type="button"
-								className="btn mt-1"
-								onClick={(e) => {
-									e.isDefaultPrevented();
-									if (roleMap.length === 1) {
-										if (roleMap?.[0]) {
-											roleMap[0].group = "";
-										}
-									} else {
-										if (roleMap) {
-											roleMap.splice(index, 1);
-										}
-									}
-									setRoleMap([]);
-									setTimeout(() => setRoleMap(roleMap));
-								}}
-								disabled={!roleMap?.[index]?.group || !provisionUsers || !requireProvisionGroup}
-							>
-								<IconMinus size={16} className="me-1" />
-							</button>
+											<IconMinus size={16} className="me-1" />
+										</button>
 
-							{index + 1 === roleMap.length && (
-								<button
-									type="button"
-									className="btn ml-1 mt-1"
-									data-index={index}
-									onClick={(e) => {
-										e.preventDefault();
-										const newMap = [...roleMap];
-										const entry = { role: "user" as ProvisionRoleMap["role"], group: "" };
-										if (provisionRoleMap) {
-											provisionRoleMap[index + 1] = entry;
-										}
-										newMap.push(entry);
-										setRoleMap(newMap);
-									}}
-									disabled={
-										!provisionRoleMap?.[index]?.group || !provisionUsers || !requireProvisionGroup
-									}
-								>
-									<IconPlus size={16} className="me-1" />
-								</button>
+										{index + 1 === provisionRoleMap.length && (
+											<button
+												type="button"
+												className="btn ml-1 mt-1"
+												data-index={index}
+												onClick={(e) => {
+													e.preventDefault();
+													const entry = {
+														role: "user" as ProvisionRoleMap["role"],
+														group: "",
+													};
+													arrayHelpers.push(entry);
+												}}
+												disabled={
+													!provisionRoleMap?.[index]?.group ||
+													!provisionUsers ||
+													!requireProvisionGroup
+												}
+											>
+												<IconPlus size={16} className="me-1" />
+											</button>
+										)}
+									</div>
+								</>
 							)}
-						</div>
+						/>
 					</div>
 				);
 			})}

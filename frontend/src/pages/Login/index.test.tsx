@@ -11,6 +11,7 @@ const mockNextResponse = (payload: unknown, status = 200) => {
 };
 beforeEach(() => {
 	localStorage.clear();
+	fetchMock.mockReset();
 	vi.stubGlobal("fetch", fetchMock);
 });
 afterEach(() => {

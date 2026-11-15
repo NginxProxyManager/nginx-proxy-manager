@@ -23,6 +23,7 @@ export function SingleSignOnOptions({
 		{} as SingleSignOnIntegration,
 	);
 	let checking = false;
+	let failed = false;
 
 	useEffect(() => {
 		const checkSingleSignOnIntegration = async () => {
@@ -34,10 +35,11 @@ export function SingleSignOnOptions({
 				setSingleSignOnConfig(data);
 				setSingleSignOnEnabled(!!(data.configs && data.configs.length > 0));
 			} catch {
+				failed = true;
 				setSingleSignOnEnabled(false);
 			}
 		};
-		if (!("enabled" in SingleSignOnConfig)) {
+		if (!failed && !("enabled" in SingleSignOnConfig)) {
 			checkSingleSignOnIntegration();
 		}
 	});

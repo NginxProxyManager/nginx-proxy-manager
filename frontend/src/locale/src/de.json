@@ -888,7 +888,7 @@
 		"defaultMessage": "Schaltflächentext"
 	},
 	"sso.config.settings.require-verified-email.hint": {
-		"defaultMessage": "Verlangen, dass der IdP den Claim „email_verified“ mit dem Wert true sendet. Dies wird nur geprüft, bevor sich ein Benutzer erfolgreich über diesen IdP anmeldet."
+		"defaultMessage": "Verlangen, dass der IdP den Claim „email_verified“ mit dem Wert true sendet. Dies wird jedes Mal überprüft – vor der Anmeldung bei einem internen Konto, vor der Anmeldung bei einem bereitgestellten Konto oder bevor eine Bereitstellung zugelassen wird."
 	},
 	"sso.config.settings.require-verified-email.label": {
 		"defaultMessage": "Bestätigte E-Mail-Adresse verlangen"

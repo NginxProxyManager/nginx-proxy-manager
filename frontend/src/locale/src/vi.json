@@ -900,7 +900,7 @@
 		"defaultMessage": "Nội dung nút"
 	},
 	"sso.config.settings.require-verified-email.hint": {
-		"defaultMessage": "Yêu cầu IdP gửi claim 'email_verified' có giá trị true. Yêu cầu này chỉ được kiểm tra trước khi người dùng đăng nhập thành công bằng IdP này."
+		"defaultMessage": "Yêu cầu IdP gửi claim 'email_verified' có giá trị true. Điều này sẽ được kiểm tra mỗi lần trước khi đăng nhập vào tài khoản nội bộ, đăng nhập vào tài khoản đã được cấp quyền, hoặc trước khi việc cấp quyền được cho phép."
 	},
 	"sso.config.settings.require-verified-email.label": {
 		"defaultMessage": "Yêu cầu email đã xác minh"

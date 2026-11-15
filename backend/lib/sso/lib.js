@@ -51,7 +51,12 @@ const getProvisionedUser = async (config, claims, users) => {
 		// Deny access for existing disabled provisioned user
 		if (provisionedUser.is_disabled) {
 			throw new Error("sso.error.not-permitted");
-		}
+    }
+		// Deny access with unverified email when required by setting
+    if (config.require_verified_email && claims.email_verified !== true) {
+			throw new Error("sso.error.signup.verified-email");
+    }
+
 		// Direct match by sub & iss to existing provisioned user, log in to this account
 		if (provisionedUser.sso_client_id === config.id) {
 			logger.info(`[${config.id}] Logging in to existing provisioned account user_id=${provisionedUser.id}`);
@@ -243,6 +248,8 @@ const getExistingUsers = async (claims) => {
 		.first();
 	const existingEmailUser = userModel
 		.query()
+		.select(["*", "a.id AS auth_id", "user.id AS id", "a.issuer", "a.subject"])
+		.join("sso_auth AS a", "a.user_id", "=", "user.id")
 		.where("email", claims.email)
 		.andWhere("user.is_deleted", 0)
 		.andWhere("user.is_disabled", 0)
@@ -269,15 +276,15 @@ const getExistingUsers = async (claims) => {
 const redirectToAuthorizationURL = (res, params) => {
 	const cleanURL = params.url ? String(params.url).replace(/(state|nonce)=([^&\n]+)/gi, "$1=***") : "";
 	logger.info(`[${res.req.params.client_id}] Redirect: Authorization URL: ${cleanURL}`);
-	res.cookie("npm_sso_s", params.state);
-	res.cookie("npm_sso_n", params.code_verifier);
+	res.cookie("npm_sso_s", params.state, { path: "/", secure: true });
+	res.cookie("npm_sso_n", params.code_verifier, { path: "/", secure: true });
 	res.redirect(String(params.url));
 };
 
 const redirectWithJwtToken = (res, token) => {
 	logger.info(`[${res.req.params.client_id}] Redirect success: /sso/oauth2/success`);
-	res.cookie("npm_sso_t", token.token);
-	res.cookie("npm_sso_e", token.expires);
+	res.cookie("npm_sso_t", token.token, { path: "/", secure: true });
+	res.cookie("npm_sso_e", token.expires, { path: "/", secure: true });
 	res.redirect("/sso/oauth2/success");
 };
 
@@ -337,7 +344,8 @@ const concludeAuthorized = async (config, claims) => {
 	const users = await getExistingUsers(claims);
 	try {
 		user = await getProvisionedUser(config, claims, users);
-	} catch (err) {
+  } catch (err) {
+    console.debug("Provi ERR --> ", err)
 		errors.push(err.message);
 	}
 
@@ -345,7 +353,8 @@ const concludeAuthorized = async (config, claims) => {
 		try {
 			user = await getInternalUser(config, claims, users);
 			authType = "sso-npm";
-		} catch (err) {
+    } catch (err) {
+      console.debug("Intern ERR --> ", err)
 			errors.push(err.message);
 		}
 	}

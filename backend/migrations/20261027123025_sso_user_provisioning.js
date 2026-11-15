@@ -144,7 +144,7 @@ const down = (knex) => {
 		.table("sso_client", (sso_client) => {
 			sso_client.dropColumn("provision_role_map");
 			sso_client.dropColumn("button_text");
-			sso_client.dropColumn("rerquire_verified_email");
+			sso_client.dropColumn("require_verified_email");
 			sso_client.dropColumn("require_provision_group_name");
 			sso_client.dropColumn("require_provision_group");
 			sso_client.dropColumn("provision_users");
@@ -152,10 +152,15 @@ const down = (knex) => {
 			sso_client.dropColumn("require_group");
 			sso_client.dropColumn("allow_internal_if_admin");
 			sso_client.dropColumn("allow_internal");
+    })
+    .then(() => {
+      logger.info(`[${migrateName}] Dropped columns from sso_client`);
+
+      return knex.schema.dropTable("sso_auth").then(() => {
+        logger.info(`[${migrateName}] Dropped table from sso_auth`);
+      });
 		})
 		.then(() => {
-			logger.info(`[${migrateName}] Dropped columns from sso_client`);
-
 			return knex.schema.dropTable("sso_client_auth0").then(() => {
 				logger.info(`[${migrateName}] Dropped table sso_client_auth0`);
 			});

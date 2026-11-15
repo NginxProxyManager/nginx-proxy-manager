@@ -888,7 +888,7 @@
 		"defaultMessage": "Texte du bouton"
 	},
 	"sso.config.settings.require-verified-email.hint": {
-		"defaultMessage": "Exiger que l’IdP envoie le claim « email_verified » avec la valeur true. Cette vérification n’a lieu qu’avant la connexion réussie d’un utilisateur via cet IdP."
+		"defaultMessage": "Exiger que l’IdP envoie le claim « email_verified » avec la valeur true. Cette vérification sera effectuée systématiquement avant toute connexion à un compte interne, toute connexion à un compte provisionné, ou avant que le provisionnement ne soit autorisé."
 	},
 	"sso.config.settings.require-verified-email.label": {
 		"defaultMessage": "Exiger une adresse e-mail vérifiée"

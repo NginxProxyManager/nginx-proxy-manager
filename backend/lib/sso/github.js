@@ -105,7 +105,7 @@ const validateGitHubCallback = async (req, config) => {
 	try {
 		const emailResponse = await fetch("https://api.github.com/user/emails", { headers });
 		const emails = await emailResponse.json();
-		email = emails?.find?.((email) => email.primary === true)?.email;
+		email = emails?.find?.((email) => email.primary === true);
 	} catch (_err) {}
 
 	// request user organizations
@@ -115,7 +115,7 @@ const validateGitHubCallback = async (req, config) => {
 		groups = orgs?.map?.((org) => org.login) || [];
 	} catch (_err) {}
 
-	if (!user || !email) {
+	if (!user || !email?.email) {
 		logger.error(`[${req.params.client_id}] The Identity Provider didn't send the 'email' claim`);
 		throw new errs.AuthError("sso.error.email-claim-required");
 	}
@@ -125,7 +125,8 @@ const validateGitHubCallback = async (req, config) => {
 		iat: Math.floor(Date.now() / 1000),
 		sub: user.url,
 		aud: conf.github_client_id,
-		email,
+ 		email: email.email,
+		email_verified: email.verified,
 		groups,
 		avatar: user.avatar_url,
 		name: user.name,
