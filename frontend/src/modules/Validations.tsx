@@ -100,17 +100,16 @@ const validateDomains = (allowWildcards = false, maxDomains?: number) => {
 	};
 };
 
-const validateSecureOrLocalHost = (translationId?: string) => {
+const validateSecureOrLocalHost = (allowLocalhost = true, translationId?: string) => {
 	return (value?: string): string | undefined => {
 		const isSecure = value?.trimStart().toLocaleLowerCase().startsWith("https://");
-		const isLocalhost = value
-			?.trimStart()
-			.toLowerCase()
-			.replace(/^https?/, "")
-			.startsWith("://localhost");
+		const url = value && URL.canParse(value) ? new URL(value) : null;
+		const isLocalhost = url && url.hostname === "localhost";
 
-		if (!isLocalhost && !isSecure) {
-			return intl.formatMessage({ id: translationId ?? "sso.error.secure-host" });
+		if ((!allowLocalhost && !isSecure) || (allowLocalhost && !isLocalhost && !isSecure)) {
+			return intl.formatMessage({
+				id: (translationId ?? allowLocalhost) ? "sso.error.secure-or-local-host" : "sso.error.secure-host",
+			});
 		}
 	};
 };

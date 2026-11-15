@@ -238,11 +238,17 @@
 				}
 			}
 		},
-		"secure_host": {
+		"secure_or_local_host": {
 		  "description": "A URL that starts with https://... unless it's localhost",
 			"type": "string",
-			"pattern": "^(https://|http://localhost)",
+			"pattern": "^(https://|http://localhost(:[0-9]+)?(/.*)?)",
 			"examples": ["https://example.org", "http://localhost:3081"]
+		},
+		"secure_host": {
+		  "description": "A URL that starts with https://",
+			"type": "string",
+			"pattern": "^https://",
+			"examples": ["https://example.org"]
 		}
 	}
 }

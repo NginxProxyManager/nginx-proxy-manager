@@ -16,7 +16,7 @@
   	  "$ref": "../common.json#/properties/secure_host"
   	},
   	"redirect_url": {
-      "$ref": "../common.json#/properties/secure_host"
+      "$ref": "../common.json#/properties/secure_or_local_host"
     },
     "meta": {
   		"type": "object",

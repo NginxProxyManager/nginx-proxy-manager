@@ -843,7 +843,7 @@
 		"defaultMessage": "Client Secret"
 	},
 	"sso.config.configuration_url.hint": {
-		"defaultMessage": "E.g. https://your-authentik.com/application/o/nginx-pm vagy https://your-keycloak.com/realms/your-realm"
+		"defaultMessage": "E.g. https://your-authentik.com/application/o/nginx-pm or https://your-keycloak.com/realms/your-realm"
 	},
 	"sso.config.configuration_url.label": {
 		"defaultMessage": "OpenID Configuration Issuer URL"
@@ -954,6 +954,9 @@
 		"defaultMessage": "Not permitted by policy (2)"
 	},
 	"sso.error.secure-host": {
+		"defaultMessage": "This URL must be HTTPS (https://...)."
+	},
+	"sso.error.secure-or-local-host": {
 		"defaultMessage": "This URL must be either HTTPS or localhost (https://... or http://localhost...)."
 	},
 	"sso.error.signup.group-required": {

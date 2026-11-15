@@ -954,6 +954,9 @@
 		"defaultMessage": "Poliitika ei luba seda (2)"
 	},
 	"sso.error.secure-host": {
+		"defaultMessage": "See URL peab olema HTTPS (https://...)."
+	},
+	"sso.error.secure-or-local-host": {
 		"defaultMessage": "See URL peab olema kas HTTPS või localhost (https://... või http://localhost...)."
 	},
 	"sso.error.signup.group-required": {

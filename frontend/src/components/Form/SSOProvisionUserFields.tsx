@@ -143,7 +143,7 @@ export function ProvisionUserFields({
 					<>
 						{provisionRoleMap?.map((map, index) => {
 							return (
-								<div key={`${index}-${map.group}-${map.role}`} className="row">
+								<div key={`${index}-${map.role}`} className="row">
 									<div className="col-md-5">
 										<Field
 											name={`provisionRoleMap[${index}].group`}

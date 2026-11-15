@@ -942,6 +942,9 @@
 		"defaultMessage": "Non autorisé par la politique (2)"
 	},
 	"sso.error.secure-host": {
+		"defaultMessage": "Cette URL doit être en HTTPS (https://...)."
+	},
+	"sso.error.secure-or-local-host": {
 		"defaultMessage": "Cette URL doit être soit en HTTPS, soit correspondre à localhost (https://... ou http://localhost...)."
 	},
 	"sso.error.signup.group-required": {

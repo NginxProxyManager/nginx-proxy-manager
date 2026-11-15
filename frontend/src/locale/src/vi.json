@@ -954,6 +954,9 @@
 		"defaultMessage": "Không được chính sách cho phép (2)"
 	},
 	"sso.error.secure-host": {
+		"defaultMessage": "URL này phải là HTTPS (https://...)."
+	},
+	"sso.error.secure-or-local-host": {
 		"defaultMessage": "URL này phải là HTTPS hoặc localhost (https://... hoặc http://localhost...)."
 	},
 	"sso.error.signup.group-required": {
