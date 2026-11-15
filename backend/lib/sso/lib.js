@@ -81,7 +81,11 @@ const getProvisionedUser = async (config, claims, users) => {
 	}
 
 	// Reject provision with existing email (enforce unique)
-	if (existingEmailUser && (existingEmailUser.subject !== claims.sub || existingEmailUser.issuer !== claims.iss)) {
+  if (
+    existingEmailUser &&
+    existingEmailUser.email === claims.email &&
+    (existingEmailUser.subject !== claims.sub || existingEmailUser.issuer !== claims.iss))
+  {
 		throw new Error("sso.error.signup.unique-email");
 	}
 

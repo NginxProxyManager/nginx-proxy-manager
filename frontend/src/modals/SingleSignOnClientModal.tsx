@@ -46,7 +46,6 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 		setErrorMsg(null);
 
 		values.meta = { roleMap: [...(values.provisionRoleMap || [])] };
-		delete values.provisionRoleMap;
 
 		const { ...payload } = {
 			id: id.toString().includes("new") ? undefined : id,
