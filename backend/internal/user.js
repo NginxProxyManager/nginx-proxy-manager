@@ -571,46 +571,54 @@ const internalUser = {
 		userData.roles = userData.roles || [];
 		if (!userData.avatar) {
 			userData.avatar = gravatar.url(userData.email, { default: "mm" });
-    }
+		}
 
-    return userModel.transaction(async (trx) => {
-      return userModel.query()
-        .insertAndFetch(userData)
-        .transacting(trx)
-        .then(utils.omitRow(omissions()))
-        .then(async (user) => {
-          return ssoAuthModel.query()
-            .insert({ user_id: user.id, auth_type: "sso-idp", ...authData })
-            .transacting(trx)
-            .then(async () => {
-              // Create permissions row as well
-              const isAdmin = userData.roles.indexOf("admin") !== -1;
-              return userPermissionModel.query().insertAndFetch({
-                  user_id: user.id,
-                  visibility: isAdmin ? "all" : "user",
-                  proxy_hosts: "manage",
-                  redirection_hosts: "manage",
-                  dead_hosts: "manage",
-                  streams: "manage",
-                  access_lists: "manage",
-                  certificates: "manage",
-                })
-                .transacting(trx)
-                .then(async (permissions) => {
-                 	return internalAuditLog.add(null, {
-               			user_id: ownerUserId, // owner of SSO Client
-               			action: "created",
-               			object_type: "user",
-               			object_id: user.id,
-               			meta: _.omit({ ...userData, permissions }, omissions()),
-                  });
-                })
-                .then(() => trx.commit([user, null]))
-                .catch(trx.rollback);
-            });
-        });
-    });
-  },
+		return userModel.transaction(async (trx) => {
+			return userModel
+				.query()
+				.insertAndFetch(userData)
+				.transacting(trx)
+				.then(utils.omitRow(omissions()))
+				.then(async (user) => {
+					return ssoAuthModel
+						.query()
+						.insert({ user_id: user.id, auth_type: "sso-idp", ...authData })
+						.transacting(trx)
+						.then(async () => {
+							// Create permissions row as well
+							const isAdmin = userData.roles.indexOf("admin") !== -1;
+							return userPermissionModel
+								.query()
+								.insertAndFetch({
+									user_id: user.id,
+									visibility: isAdmin ? "all" : "user",
+									proxy_hosts: "manage",
+									redirection_hosts: "manage",
+									dead_hosts: "manage",
+									streams: "manage",
+									access_lists: "manage",
+									certificates: "manage",
+								})
+								.transacting(trx)
+								.then(async (permissions) => {
+									return internalAuditLog.add(
+										null,
+										{
+											user_id: ownerUserId, // owner of SSO Client
+											action: "created",
+											object_type: "user",
+											object_id: user.id,
+											meta: _.omit({ ...userData, permissions }, omissions()),
+										},
+										trx,
+									);
+								})
+								.then(() => trx.commit([user, null]))
+								.catch(trx.rollback);
+						});
+				});
+		});
+	},
 
 	/**
 	 * Either registers one of two types of authentication methods,

@@ -3,6 +3,7 @@ import type { SingleSignOnClient, SingleSignOnClientConfigurationType, SingleSig
 
 export interface NewSingleSignOnClientConfiguration {
 	name: string;
+	enabled: boolean;
 	clientType: SingleSignOnClientType;
 	configuration?: SingleSignOnClientConfigurationType;
 }

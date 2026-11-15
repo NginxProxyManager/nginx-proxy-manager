@@ -115,7 +115,7 @@ export function AllowInternalUserFields({ allowInternal, requireGroup }: Props) 
 								})}
 								disabled={!form.values.allowInternal || !form.values.requireGroup}
 								placeholder={intl.formatMessage({ id: "sso.config.placeholder.group-name" })}
-								onBlur={(e) => form.setFieldValue("requireGroupName", e.target.value)}
+								onChange={(e) => form.setFieldValue("requireGroupName", e.target.value)}
 								defaultValue={form.values.requireGroupName}
 							/>
 							{form.errors.requireGroupName && form.values.requireGroup ? (

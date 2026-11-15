@@ -941,6 +941,9 @@
 	"sso.error.not-permitted": {
 		"defaultMessage": "Aufgrund der Richtlinie nicht erlaubt (2)"
 	},
+	"sso.error.secure-host": {
+		"defaultMessage": "Diese URL muss entweder HTTPS oder localhost sein (https://... oder http://localhost...)."
+	},
 	"sso.error.signup.group-required": {
 		"defaultMessage": "Registrierung aufgrund der Gruppenmitgliedschaft nicht erlaubt (6)"
 	},

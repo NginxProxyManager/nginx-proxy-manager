@@ -51,11 +51,11 @@ const getProvisionedUser = async (config, claims, users) => {
 		// Deny access for existing disabled provisioned user
 		if (provisionedUser.is_disabled) {
 			throw new Error("sso.error.not-permitted");
-    }
+		}
 		// Deny access with unverified email when required by setting
-    if (config.require_verified_email && claims.email_verified !== true) {
+		if (config.require_verified_email && claims.email_verified !== true) {
 			throw new Error("sso.error.signup.verified-email");
-    }
+		}
 
 		// Direct match by sub & iss to existing provisioned user, log in to this account
 		if (provisionedUser.sso_client_id === config.id) {
@@ -81,11 +81,11 @@ const getProvisionedUser = async (config, claims, users) => {
 	}
 
 	// Reject provision with existing email (enforce unique)
-  if (
-    existingEmailUser &&
-    existingEmailUser.email === claims.email &&
-    (existingEmailUser.subject !== claims.sub || existingEmailUser.issuer !== claims.iss))
-  {
+	if (
+		existingEmailUser &&
+		existingEmailUser.email === claims.email &&
+		(existingEmailUser.subject !== claims.sub || existingEmailUser.issuer !== claims.iss)
+	) {
 		throw new Error("sso.error.signup.unique-email");
 	}
 
@@ -348,7 +348,7 @@ const concludeAuthorized = async (config, claims) => {
 	const users = await getExistingUsers(claims);
 	try {
 		user = await getProvisionedUser(config, claims, users);
-  } catch (err) {
+	} catch (err) {
 		errors.push(err.message);
 	}
 
@@ -356,7 +356,7 @@ const concludeAuthorized = async (config, claims) => {
 		try {
 			user = await getInternalUser(config, claims, users);
 			authType = "sso-npm";
-    } catch (err) {
+		} catch (err) {
 			errors.push(err.message);
 		}
 	}

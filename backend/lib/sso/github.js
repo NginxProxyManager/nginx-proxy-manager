@@ -125,7 +125,7 @@ const validateGitHubCallback = async (req, config) => {
 		iat: Math.floor(Date.now() / 1000),
 		sub: user.url,
 		aud: conf.github_client_id,
- 		email: email.email,
+		email: email.email,
 		email_verified: email.verified,
 		groups,
 		avatar: user.avatar_url,

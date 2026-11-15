@@ -264,7 +264,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		users[0] = null; // no existing password user
 		users[3] = null; // no existing disabled user
 		users[1].email = "test@fake.net"; // existin email user
-		claims.email = "test@fake.net"
+		claims.email = "test@fake.net";
 
 		try {
 			await concludeAuthorized(config, claims);

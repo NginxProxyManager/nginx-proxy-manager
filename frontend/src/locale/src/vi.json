@@ -953,6 +953,9 @@
 	"sso.error.not-permitted": {
 		"defaultMessage": "Không được chính sách cho phép (2)"
 	},
+	"sso.error.secure-host": {
+		"defaultMessage": "URL này phải là HTTPS hoặc localhost (https://... hoặc http://localhost...)."
+	},
 	"sso.error.signup.group-required": {
 		"defaultMessage": "Không được phép đăng ký vì không đáp ứng yêu cầu thành viên nhóm (6)"
 	},

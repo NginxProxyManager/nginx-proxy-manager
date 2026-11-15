@@ -17,7 +17,7 @@ import { AllowInternalUserFields } from "src/components/Form/SSOInternalUsersFie
 import { ProvisionUserFields } from "src/components/Form/SSOProvisionUserFields";
 import { useSetSingleSignOnClient, useSingleSignOnClient } from "src/hooks";
 import { T } from "src/locale";
-import { validateString } from "src/modules/Validations";
+import { validateSecureOrLocalHost, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
 type ModalId = number | "new_openid" | "new_github" | "new_saml" | "new_auth0";
@@ -234,11 +234,37 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 															.includes("secret");
 														const type = isSecret ? "password" : "text";
 														const minLength = isSecret && !isNew ? 0 : 1;
+														const validator = (
+															minLength = 0,
+															maxLength = 0,
+															translationId?: string,
+														): ((value: string) => string | undefined) => {
+															return (value: string): string | undefined => {
+																const sv = validateString(
+																	minLength,
+																	maxLength,
+																	translationId,
+																);
+																let error = sv(value);
+																if (error) return error;
+																if (
+																	[
+																		"configurationUrl",
+																		"domain",
+																		"redirectUrl",
+																	].includes(field_name)
+																) {
+																	const uv = validateSecureOrLocalHost();
+																	error = uv(value);
+																	if (error) return error;
+																}
+															};
+														};
 														return (
 															<div key={`configuration[${field_name}]`} className="mb-3">
 																<Field
 																	name={`configuration[${field_name}]`}
-																	validate={validateString(minLength, 255)}
+																	validate={validator(minLength, 255)}
 																>
 																	{({ field, form }: any) => (
 																		<div className="form-floating mb-3">

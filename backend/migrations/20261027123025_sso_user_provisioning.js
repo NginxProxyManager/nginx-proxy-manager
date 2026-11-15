@@ -152,13 +152,13 @@ const down = (knex) => {
 			sso_client.dropColumn("require_group");
 			sso_client.dropColumn("allow_internal_if_admin");
 			sso_client.dropColumn("allow_internal");
-    })
-    .then(() => {
-      logger.info(`[${migrateName}] Dropped columns from sso_client`);
+		})
+		.then(() => {
+			logger.info(`[${migrateName}] Dropped columns from sso_client`);
 
-      return knex.schema.dropTable("sso_auth").then(() => {
-        logger.info(`[${migrateName}] Dropped table from sso_auth`);
-      });
+			return knex.schema.dropTable("sso_auth").then(() => {
+				logger.info(`[${migrateName}] Dropped table from sso_auth`);
+			});
 		})
 		.then(() => {
 			return knex.schema.dropTable("sso_client_auth0").then(() => {

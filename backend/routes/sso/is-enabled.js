@@ -47,7 +47,7 @@ router
 
 			res.status(200).send(response);
 		} catch (err) {
-			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			logger.debug(`${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);
 		}
 	});

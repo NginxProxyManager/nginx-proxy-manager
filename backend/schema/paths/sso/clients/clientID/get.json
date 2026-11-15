@@ -12,12 +12,12 @@
       "in": "path",
       "name": "clientID",
       "schema": {
-        "type": "string",
-        "minLength": 1
+        "type": "integer",
+        "minimum": 1,
+        "example": 123
       },
       "required": true,
-      "description": "SSO Client type",
-      "example": "OpenID"
+      "description": "SSO Client ID"
     }
   ],
   "responses": {
@@ -45,9 +45,9 @@
                 "provision_role_map": [],
                 "meta": {},
                 "configuration": {
-                  "client_id": "123",
-                  "client_secret":"",
-                  "configuration_url": "",
+                  "client_id": "abcd1234",
+                  "client_secret":"client-secret",
+                  "configuration_url": "https://keycloak.org/realms/some-realm",
                   "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
                 }
               }

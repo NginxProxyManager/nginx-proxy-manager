@@ -26,8 +26,9 @@ const FancyHelpModal = EasyModal.create(({ section, color, size, visible, remove
 		try {
 			const docFile = getHelpFile(lang, section) as any;
 			fetch(docFile)
-				.then((response) => response.text())
-				.then(setMarkdownText);
+				.then((response) => (response.ok ? response.text() : `**ERROR:** ${response.status}`))
+				.then(setMarkdownText)
+				.catch((ex) => setMarkdownText(`**ERROR:** ${ex.message}`));
 		} catch (ex: any) {
 			setMarkdownText(`**ERROR:** ${ex.message}`);
 		}

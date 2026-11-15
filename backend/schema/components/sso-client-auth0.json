@@ -13,10 +13,10 @@
   	  "type": "string"
   	},
   	"domain": {
-  	  "type": "string"
+  	  "$ref": "../common.json#/properties/secure_host"
   	},
   	"redirect_url": {
-      "type": "string"
+      "$ref": "../common.json#/properties/secure_host"
     },
     "meta": {
   		"type": "object",

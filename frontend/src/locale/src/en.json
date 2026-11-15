@@ -953,6 +953,9 @@
 	"sso.error.not-permitted": {
 		"defaultMessage": "Not permitted by policy (2)"
 	},
+	"sso.error.secure-host": {
+		"defaultMessage": "This URL must be either HTTPS or localhost (https://... or http://localhost...)."
+	},
 	"sso.error.signup.group-required": {
 		"defaultMessage": "Signup not permitted by group membership (6)"
 	},

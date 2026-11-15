@@ -100,4 +100,19 @@ const validateDomains = (allowWildcards = false, maxDomains?: number) => {
 	};
 };
 
-export { validateEmail, validateNumber, validateString, validateDomains, validateDomain };
+const validateSecureOrLocalHost = (translationId?: string) => {
+	return (value?: string): string | undefined => {
+		const isSecure = value?.trimStart().toLocaleLowerCase().startsWith("https://");
+		const isLocalhost = value
+			?.trimStart()
+			.toLowerCase()
+			.replace(/^https?/, "")
+			.startsWith("://localhost");
+
+		if (!isLocalhost && !isSecure) {
+			return intl.formatMessage({ id: translationId ?? "sso.error.secure-host" });
+		}
+	};
+};
+
+export { validateEmail, validateNumber, validateString, validateDomains, validateDomain, validateSecureOrLocalHost };

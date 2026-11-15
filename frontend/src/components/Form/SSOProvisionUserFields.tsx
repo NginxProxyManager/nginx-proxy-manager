@@ -137,57 +137,66 @@ export function ProvisionUserFields({
 					</span>
 				</label>
 			</div>
-			{provisionRoleMap?.map((_, index) => {
-				return (
-					<div key={index} className="row">
-						<div className="col-md-5">
-							<Field
-								name={`provisionRoleMap[${index}].group`}
-								validate={validateString(
-									index > 0 && index < provisionRoleMap.length - 1 && provisionUsers ? 1 : 0,
-									255,
-								)}
-							>
-								{({ form }: any) => (
-									<div className="mb-1 mt-1">
-										<input
-											id={`provisionRoleMap[${index}].group`}
-											type="text"
-											className={cn("form-control py-2", {
-												"is-invalid":
-													!!form.errors.provisionRoleMap?.[index]?.group &&
-													!!form.touched.provisionRoleMap?.[index]?.group &&
-													form.values.allowInternal,
-												"opacity-50":
-													!form.values.provisionUsers || !form.values.requireProvisionGroup,
-											})}
-											disabled={!form.values.provisionUsers || !form.values.requireProvisionGroup}
-											placeholder={intl.formatMessage({
-												id: "sso.config.placeholder.group-name",
-											})}
-											defaultValue={provisionRoleMap[index].group}
-											onChange={(e) => {
-												e.preventDefault();
-												form.setFieldValue(`provisionRoleMap[${index}].group`, e.target.value);
-												provisionRoleMap[index].group = e.target.value;
-											}}
-										/>
-										{form.errors.provisionRoleMap?.[index]?.group && form.values.provisionUsers && (
-											<div className="invalid-feedback">
-												{form.errors.provisionRoleMap?.[index]?.group &&
-												form.touched.provisionRoleMap?.[index]?.group
-													? form.errors.provisionRoleMap[index].group
-													: null}
-											</div>
-										)}
+			<FieldArray
+				name="provisionRoleMap"
+				render={(arrayHelpers) => (
+					<>
+						{provisionRoleMap?.map((map, index) => {
+							return (
+								<div key={`${index}-${map.group}-${map.role}`} className="row">
+									<div className="col-md-5">
+										<Field
+											name={`provisionRoleMap[${index}].group`}
+											validate={validateString(
+												index > 0 && index < provisionRoleMap.length - 1 && provisionUsers
+													? 1
+													: 0,
+												255,
+											)}
+										>
+											{({ form }: any) => (
+												<div className="mb-1 mt-1">
+													<input
+														id={`provisionRoleMap[${index}].group`}
+														type="text"
+														className={cn("form-control py-2", {
+															"is-invalid":
+																!!form.errors.provisionRoleMap?.[index]?.group &&
+																!!form.touched.provisionRoleMap?.[index]?.group &&
+																form.values.provisionUsers,
+															"opacity-50":
+																!form.values.provisionUsers ||
+																!form.values.requireProvisionGroup,
+														})}
+														disabled={
+															!form.values.provisionUsers ||
+															!form.values.requireProvisionGroup
+														}
+														placeholder={intl.formatMessage({
+															id: "sso.config.placeholder.group-name",
+														})}
+														defaultValue={form.values.provisionRoleMap[index].group}
+														onChange={(e) => {
+															e.preventDefault();
+															form.setFieldValue(
+																`provisionRoleMap[${index}].group`,
+																e.target.value,
+															);
+														}}
+													/>
+													{form.errors.provisionRoleMap?.[index]?.group &&
+														form.values.provisionUsers && (
+															<div className="invalid-feedback">
+																{form.errors.provisionRoleMap?.[index]?.group &&
+																form.touched.provisionRoleMap?.[index]?.group
+																	? form.errors.provisionRoleMap[index].group
+																	: null}
+															</div>
+														)}
+												</div>
+											)}
+										</Field>
 									</div>
-								)}
-							</Field>
-						</div>
-						<FieldArray
-							name="provisionRoleMap"
-							render={(arrayHelpers) => (
-								<>
 									<div className="col-md-3">
 										<Field name={`provisionRoleMap[${index}].role`}>
 											{({ form }: any) => (
@@ -203,7 +212,7 @@ export function ProvisionUserFields({
 																!form.values.requireProvisionGroup,
 														})}
 														required
-														defaultValue={provisionRoleMap[index].role}
+														defaultValue={form.values.provisionRoleMap[index].role}
 														disabled={
 															!form.values.provisionUsers ||
 															!form.values.requireProvisionGroup
@@ -215,8 +224,6 @@ export function ProvisionUserFields({
 																	`provisionRoleMap[${index}].role`,
 																	e.target.value,
 																);
-																provisionRoleMap[index].role = e.target
-																	.value as ProvisionRoleMap["role"];
 															}
 														}}
 													>
@@ -233,8 +240,11 @@ export function ProvisionUserFields({
 											className="btn mt-1"
 											onClick={(e) => {
 												e.isDefaultPrevented();
-												if (provisionRoleMap.length === 1) {
-													const entry = { group: "", role: provisionRoleMap[0].role };
+												if (arrayHelpers.form.values.provisionRoleMap.length === 1) {
+													const entry = {
+														group: "",
+														role: arrayHelpers.form.values.provisionRoleMap[0].role,
+													};
 													arrayHelpers.remove(0);
 													setTimeout(() => arrayHelpers.push(entry));
 												} else {
@@ -273,12 +283,12 @@ export function ProvisionUserFields({
 											</button>
 										)}
 									</div>
-								</>
-							)}
-						/>
-					</div>
-				);
-			})}
+								</div>
+							);
+						})}
+					</>
+				)}
+			/>
 			<small className="text-muted">
 				<T id={"sso.config.access.role-map.hint"} />
 			</small>

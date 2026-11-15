@@ -128,7 +128,7 @@
 			"example": {
         "client_id": "123",
         "client_secret":"",
-        "configuration_url": "http://test.com/",
+        "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
         "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
 			}
 		},

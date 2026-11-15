@@ -14,7 +14,8 @@
 			"description": "The ID of the Client",
 			"schema": {
 				"type": "integer",
-				"minimum": 1
+				"minimum": 1,
+				"example": 123
 			},
 			"required": true,
 			"example": 2
@@ -97,7 +98,7 @@
               "example": {
                 "client_id": "123",
                 "client_secret":"",
-                "configuration_url": "http://test",
+                "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
                 "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
               }
         		},
@@ -141,9 +142,9 @@
           "require_provision_group": false,
           "provision_role_map": [],
           "configuration": {
-            "client_id": "123",
-            "client_secret":"",
-            "configuration_url": "http://test",
+            "client_id": "abc123",
+            "client_secret":"slicent-secret",
+            "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
             "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
           },
           "meta": {
@@ -178,9 +179,9 @@
                 "provision_role_map": [],
                 "meta": {},
                 "configuration": {
-                  "client_id": "123",
-                  "client_secret":"",
-                  "configuration_url": "",
+                  "client_id": "abc123",
+                  "client_secret":"client-secret",
+                  "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
                   "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
                 }
               }

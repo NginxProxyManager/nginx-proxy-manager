@@ -866,6 +866,9 @@
 	"sso.error.not-permitted": {
 		"defaultMessage": "Nem engedélyezett (2)"
 	},
+	"sso.error.secure-host": {
+		"defaultMessage": "HTTPS vagy localhost URL-t kell megadni (https://... or http://localhost...)."
+	},
 	"sso.error.signup.group-required": {
 		"defaultMessage": "Regisztráció nem engedélyezett, hiányzó csoporttagság (6)"
 	},

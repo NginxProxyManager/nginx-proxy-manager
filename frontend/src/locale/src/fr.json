@@ -941,6 +941,9 @@
 	"sso.error.not-permitted": {
 		"defaultMessage": "Non autorisé par la politique (2)"
 	},
+	"sso.error.secure-host": {
+		"defaultMessage": "Cette URL doit être soit en HTTPS, soit correspondre à localhost (https://... ou http://localhost...)."
+	},
 	"sso.error.signup.group-required": {
 		"defaultMessage": "Inscription refusée en raison de l’appartenance au groupe (6)"
 	},

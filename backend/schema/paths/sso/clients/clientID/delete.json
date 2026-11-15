@@ -13,7 +13,8 @@
 			"name": "clientID",
 			"schema": {
 				"type": "integer",
-				"minimum": 1
+				"minimum": 1,
+				"example": 123
 			},
 			"required": true,
 			"description": "Client ID",

@@ -78,8 +78,8 @@
               "example": {
                 "client_id": "foo",
                 "client_secret": "bar",
-                "configuration_url": "http://test",
-                "redirect_url": "http://test",
+                "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
+                "redirect_url": "https://my-nginx-pm.com/api/sso/oauth2/openid/123/callback",
                 "meta": {}
               }
         		},
@@ -138,8 +138,8 @@
     }
   },
   "responses": {
-    "200": {
-      "description": "200 response",
+    "201": {
+      "description": "201 response",
       "content": {
         "application/json": {
           "examples": {},

@@ -953,6 +953,9 @@
 	"sso.error.not-permitted": {
 		"defaultMessage": "Poliitika ei luba seda (2)"
 	},
+	"sso.error.secure-host": {
+		"defaultMessage": "See URL peab olema kas HTTPS või localhost (https://... või http://localhost...)."
+	},
 	"sso.error.signup.group-required": {
 		"defaultMessage": "Grupi liikmesuse tõttu pole registreerimine lubatud (6)"
 	},
