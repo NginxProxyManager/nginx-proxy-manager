@@ -816,7 +816,10 @@
 		"defaultMessage": "Gomb felirat"
 	},
 	"sso.config.settings.require-verified-email.hint": {
-		"defaultMessage": "A felhasználó csak visszaigazolt email címmel léphet be (a Hitelesítéskezelő elküldi az 'email_verified=true' tulajdonságot.) Ezt csak az első sikeres belépést megelőzően ellenőrizzük."
+		"defaultMessage": "A Hitelesítéskezelőnek muszáj küldenie az 'email_verified=true' tulajdonságot ahhoz, hogy a felhasználó a belépéhessen egy korábban provízionált fiókba, vagy új fiók létrehozásához. Ajánlott bekapcsolva hagyni."
+	},
+	"sso.config.settings.require-verified-email.hint-2": {
+		"defaultMessage": "A Hitelesítéskezelőnek muszáj küldenie az 'email_verified=true' tulajdonságot ahhoz, hogy a felhasználó a belépéhessen meglévő (nem provízionált) fiókba. A fiókbiztonság védelme érdekében ezt a beállítást nem lehet kikapcsolni."
 	},
 	"sso.config.settings.require-verified-email.label": {
 		"defaultMessage": "Visszaigazolt email cím követelése"

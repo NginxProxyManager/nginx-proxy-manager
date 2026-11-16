@@ -888,7 +888,10 @@
 		"defaultMessage": "Texte du bouton"
 	},
 	"sso.config.settings.require-verified-email.hint": {
-		"defaultMessage": "Exiger que l’IdP envoie le claim « email_verified » avec la valeur true. Cette vérification sera effectuée systématiquement avant toute connexion à un compte interne, toute connexion à un compte provisionné, ou avant que le provisionnement ne soit autorisé."
+		"defaultMessage": "Exigez que le fournisseur d’identité (IdP) envoie la revendication « email_verified » avec la valeur « true ». Cette condition sera vérifiée à chaque tentative de connexion à un compte provisionné, ou avant toute opération de provisionnement. Il est recommandé de maintenir cette option activée."
+	},
+	"sso.config.settings.require-verified-email.hint-2": {
+		"defaultMessage": "Exigez que le fournisseur d’identité (IdP) envoie la revendication « email_verified » avec la valeur « true ». Cette condition sera vérifiée systématiquement avant d’autoriser la connexion à un compte interne. Cette contrainte ne peut pas être désactivée, afin de garantir la sécurité des comptes."
 	},
 	"sso.config.settings.require-verified-email.label": {
 		"defaultMessage": "Exiger une adresse e-mail vérifiée"

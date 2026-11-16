@@ -204,7 +204,7 @@ const getInternalUser = async (config, claims, users) => {
 		throw new Error("sso.error.login.not-found");
 	}
 
-	if (config.require_verified_email && claims.email_verified !== true) {
+	if (claims.email_verified !== true) {
 		throw new Error("sso.error.login.verified-email");
 	}
 
@@ -240,6 +240,7 @@ const getInternalUser = async (config, claims, users) => {
 const getExistingUsers = async (claims) => {
 	const existingPasswordUser = userModel
 		.query()
+		.select(["user.*"])
 		.join("auth", "auth.user_id", "=", "user.id")
 		.where("email", claims.email)
 		.andWhere("user.is_deleted", 0)
@@ -273,24 +274,24 @@ const getExistingUsers = async (claims) => {
 	return Promise.all([existingPasswordUser, existingEmailUser, provisionedUser, disabledUser]);
 };
 
-const redirectToAuthorizationURL = (res, params) => {
+const redirectToAuthorizationURL = (res, params, clientId) => {
 	const cleanURL = params.url ? String(params.url).replace(/(state|nonce)=([^&\n]+)/gi, "$1=***") : "";
-	logger.info(`[${res.req.params.client_id}] Redirect: Authorization URL: ${cleanURL}`);
-	res.cookie("npm_sso_s", params.state, { path: "/", secure: true });
-	res.cookie("npm_sso_n", params.code_verifier, { path: "/", secure: true });
+	logger.info(`[${clientId}] Redirect: Authorization URL: ${cleanURL}`);
+	res.cookie("npm_sso_s", params.state, { path: "/", secure: res.req.secure });
+	res.cookie("npm_sso_n", params.code_verifier, { path: "/", secure: res.req.secure });
 	res.redirect(String(params.url));
 };
 
-const redirectWithJwtToken = (res, token) => {
-	logger.info(`[${res.req.params.client_id}] Redirect success: /sso/oauth2/success`);
-	res.cookie("npm_sso_t", token.token, { path: "/", secure: true });
-	res.cookie("npm_sso_e", token.expires, { path: "/", secure: true });
+const redirectWithJwtToken = (res, token, clientId) => {
+	logger.info(`[${clientId}] Redirect success: /sso/oauth2/success`);
+	res.cookie("npm_sso_t", token.token, { path: "/", secure: res.req.secure });
+	res.cookie("npm_sso_e", token.expires, { path: "/", secure: res.req.secure });
 	res.redirect("/sso/oauth2/success");
 };
 
-const redirectWithError = (res, error) => {
+const redirectWithError = (res, error, clientId) => {
 	const message = error?.cause?.error_description || error?.message || "Unexpected error";
-	logger.error(`[${res.req.params.client_id}] Redirect error: ${message}`);
+	logger.error(`[${clientId}] Redirect error: ${message}`);
 	res.cookie("npm_sso_error", message);
 	res.redirect("/login");
 };

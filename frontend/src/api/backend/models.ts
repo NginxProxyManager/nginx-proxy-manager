@@ -268,7 +268,7 @@ export interface SingleSignOnClient {
 	requireProvisionGroupName?: string;
 	provisionRoleMap?: ProvisionRoleMap[];
 	// Virtual property for frontend, holds the type specific expanded configuration
-	configuration?: OpenIDClientConfiguration | Auth0ClientConfiguration | GitHubConfiguration;
+	configuration: OpenIDClientConfiguration | Auth0ClientConfiguration | GitHubConfiguration;
 	// Expansions
 	configurationAuth0?: Auth0ClientConfiguration;
 	configurationGithub?: GitHubConfiguration;

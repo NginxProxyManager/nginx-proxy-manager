@@ -73,10 +73,18 @@ const validateOpenIDCallback = async (req, config) => {
 	const checks = { expectedState: state, pkceCodeVerifier: code_verifier, idTokenExpected: true };
 
 	const tokens = await oidc.authorizationCodeGrant(client, new URL(currentUrl), checks);
-
 	const claims = tokens.claims();
+
+	if (!claims.email || !("email_verified" in claims)) {
+		const userInfo = await oidc.fetchUserInfo(client, tokens.access_token, claims.sub);
+		if (userInfo?.email) {
+			claims.email = userInfo.email;
+			claims.email_verified = userInfo.email_verified;
+		}
+	}
+
 	if (!claims.email) {
-		logger.error(`[${req.params.client_id}] The Identity Provider didn't send the 'email' claim`);
+		logger.error(`[${config.id}] The Identity Provider didn't send the 'email' claim`);
 		throw new errs.AuthError("sso.error.email-claim-required");
 	}
 

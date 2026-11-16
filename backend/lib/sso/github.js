@@ -120,7 +120,7 @@ const validateGitHubCallback = async (req, config) => {
 	} catch (_err) {}
 
 	if (!user || !email?.email) {
-		logger.error(`[${req.params.client_id}] The Identity Provider didn't send the 'email' claim`);
+		logger.error(`[${config.id}] The Identity Provider didn't send the 'email' claim`);
 		throw new errs.AuthError("sso.error.email-claim-required");
 	}
 

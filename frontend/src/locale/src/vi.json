@@ -900,7 +900,10 @@
 		"defaultMessage": "Nội dung nút"
 	},
 	"sso.config.settings.require-verified-email.hint": {
-		"defaultMessage": "Yêu cầu IdP gửi claim 'email_verified' có giá trị true. Điều này sẽ được kiểm tra mỗi lần trước khi đăng nhập vào tài khoản nội bộ, đăng nhập vào tài khoản đã được cấp quyền, hoặc trước khi việc cấp quyền được cho phép."
+		"defaultMessage": "Yêu cầu IdP gửi xác nhận quyền sở hữu (claim) 'email_verified' với giá trị là 'true'. Thông tin này sẽ được kiểm tra mỗi lần trước khi cho phép đăng nhập vào tài khoản đã được cấp quyền hoặc trước khi thực hiện cấp quyền tài khoản. Bạn nên giữ tùy chọn này ở trạng thái được bật."
+	},
+	"sso.config.settings.require-verified-email.hint-2": {
+		"defaultMessage": "Yêu cầu IdP gửi xác nhận quyền sở hữu (claim) 'email_verified' với giá trị là 'true'. Thông tin này sẽ được kiểm tra mỗi lần trước khi cho phép đăng nhập vào tài khoản nội bộ. Ràng buộc này không thể tắt được nhằm đảm bảo an toàn cho tài khoản."
 	},
 	"sso.config.settings.require-verified-email.label": {
 		"defaultMessage": "Yêu cầu email đã xác minh"

@@ -141,9 +141,9 @@ export function ProvisionUserFields({
 				name="provisionRoleMap"
 				render={(arrayHelpers) => (
 					<>
-						{provisionRoleMap?.map((map, index) => {
+						{provisionRoleMap?.map((_, index) => {
 							return (
-								<div key={`${index}-${map.role}`} className="row">
+								<div key={index} className="row">
 									<div className="col-md-5">
 										<Field
 											name={`provisionRoleMap[${index}].group`}
@@ -175,7 +175,7 @@ export function ProvisionUserFields({
 														placeholder={intl.formatMessage({
 															id: "sso.config.placeholder.group-name",
 														})}
-														defaultValue={form.values.provisionRoleMap[index].group}
+														value={form.values.provisionRoleMap[index].group}
 														onChange={(e) => {
 															e.preventDefault();
 															form.setFieldValue(
@@ -212,7 +212,7 @@ export function ProvisionUserFields({
 																!form.values.requireProvisionGroup,
 														})}
 														required
-														defaultValue={form.values.provisionRoleMap[index].role}
+														value={form.values.provisionRoleMap[index].role}
 														disabled={
 															!form.values.provisionUsers ||
 															!form.values.requireProvisionGroup
@@ -241,12 +241,8 @@ export function ProvisionUserFields({
 											onClick={(e) => {
 												e.isDefaultPrevented();
 												if (arrayHelpers.form.values.provisionRoleMap.length === 1) {
-													const entry = {
-														group: "",
-														role: arrayHelpers.form.values.provisionRoleMap[0].role,
-													};
-													arrayHelpers.remove(0);
-													setTimeout(() => arrayHelpers.push(entry));
+													const entry = { group: "", role: "user" };
+													arrayHelpers.replace(0, entry);
 												} else {
 													arrayHelpers.remove(index);
 												}
@@ -292,6 +288,42 @@ export function ProvisionUserFields({
 			<small className="text-muted">
 				<T id={"sso.config.access.role-map.hint"} />
 			</small>
+			<div>
+				<div>
+					<label className="row mt-3" htmlFor="requireVerifiedEmail">
+						<h4
+							className={cn("col", {
+								"text-gray-500": !provisionUsers,
+							})}
+						>
+							<T id="sso.config.settings.require-verified-email.label" />
+						</h4>
+						<span className="col-auto">
+							<Field name="requireVerifiedEmail" type="checkbox">
+								{({ field, form }: any) => (
+									<label className="form-check form-check-single form-switch">
+										<input
+											id="requireVerifiedEmail"
+											checked={field.value === true}
+											className={cn("form-check-input", {
+												"bg-indigo": field.checked,
+											})}
+											onChange={(e) =>
+												form.setFieldValue("requireVerifiedEmail", e.target.checked)
+											}
+											disabled={!form.values.provisionUsers}
+											type="checkbox"
+										/>
+									</label>
+								)}
+							</Field>
+						</span>
+					</label>
+					<small className="text-muted">
+						<T id={"sso.config.settings.require-verified-email.hint"} />
+					</small>
+				</div>
+			</div>
 		</>
 	);
 }

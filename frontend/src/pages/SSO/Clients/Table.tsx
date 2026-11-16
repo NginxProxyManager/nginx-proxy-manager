@@ -41,7 +41,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 				cell: (info: any) => {
 					const value = info.getValue();
 
-					return <SingleSignOnProtocolFormatter protocol={value.clientType} disabled={value.enabled} />;
+					return <SingleSignOnProtocolFormatter protocol={value.clientType} disabled={value.is_disabled} />;
 				},
 				meta: {
 					className: "w-1",

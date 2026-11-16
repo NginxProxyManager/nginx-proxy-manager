@@ -15,7 +15,7 @@ export const SingleSignOnClientBaseConfig = {
 	configuration: {},
 	buttonText: "",
 	isDisabled: false,
-	requireVerifiedEmail: false,
+	requireVerifiedEmail: true,
 	allowInternal: true,
 	allowInternalIfAdmin: false,
 	requireGroup: false,
@@ -94,12 +94,12 @@ const useSetSingleSignOnClient = () => {
 			if (!values.id) {
 				return;
 			}
-			const previousObject = queryClient.getQueryData(["sso_client", values.id]);
-			queryClient.setQueryData(["sso_client", values.id], (old: SingleSignOnClient) => ({
+			const previousObject = queryClient.getQueryData(["sso-client", values.id]);
+			queryClient.setQueryData(["sso-client", values.id], (old: SingleSignOnClient) => ({
 				...old,
 				...values,
 			}));
-			return () => queryClient.setQueryData(["sso_client", values.id], previousObject);
+			return () => queryClient.setQueryData(["sso-client", values.id], previousObject);
 		},
 		onError: (_, __, rollback: any) => rollback?.(),
 		onSuccess: async ({ id }: SingleSignOnClient) => {

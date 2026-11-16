@@ -900,7 +900,10 @@
 		"defaultMessage": "Button text"
 	},
 	"sso.config.settings.require-verified-email.hint": {
-		"defaultMessage": "Require that the IdP sends the 'email_verified' claim with a value of true. This will be checked every time before login to an internal account, login to provisioned account or before provisioning is allowed."
+		"defaultMessage": "Require that the IdP sends the 'email_verified' claim with a value of true. This will be checked every time before login to provisioned account or provisioning is allowed. It's recommended to keep this enabled."
+	},
+	"sso.config.settings.require-verified-email.hint-2": {
+		"defaultMessage": "Require that the IdP sends the 'email_verified' claim with a value of true. This will be checked every time before login to an internal account is allowed. This constraint cannot be disabled to protect account security."
 	},
 	"sso.config.settings.require-verified-email.label": {
 		"defaultMessage": "Require verified email"

@@ -4,7 +4,7 @@ import Alert from "react-bootstrap/Alert";
 import { deleteSingleSignOnClient, SingleSignOnClientType, toggleSingleSignOnClient } from "src/api/backend";
 import { Button, LoadingPage } from "src/components";
 import { useSingleSignOnClients, useUser } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { showDeleteConfirmModal, showSingleSignOnClientModal } from "src/modals";
 import { showFancyHelpModal } from "src/modals/FancyHelpModal";
 import { showError, showObjectSuccess } from "src/notifications";
@@ -35,7 +35,7 @@ export default function TableWrapper() {
 			queryClient.invalidateQueries({ queryKey: ["sso-client", id] });
 			showObjectSuccess("sso-client", enabled ? "enabled" : "disabled");
 		} catch (_error) {
-			showError("sso.error.default");
+			showError(intl.formatMessage({ id: "sso.error.default" }));
 		}
 	};
 

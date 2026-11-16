@@ -70,7 +70,7 @@ const validateAuth0Callback = async (req, config) => {
 	const tokens = await client.getTokenByCode(new URL(currentUrl), checks);
 	const claims = tokens.claims;
 	if (!claims.email) {
-		logger.error(`[${req.params.client_id}] The Identity Provider didn't send the 'email' claim`);
+		logger.error(`[${config.id}] The Identity Provider didn't send the 'email' claim`);
 		throw new errs.AuthError("sso.error.email-claim-required");
 	}
 

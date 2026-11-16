@@ -99,7 +99,7 @@ export function AllowInternalUserFields({ allowInternal, requireGroup }: Props) 
 				</label>
 			</div>
 			<div className="col-md-6">
-				<Field name="requireGroupName" validate={validateString(requireGroup ? 1 : 0, 255)}>
+				<Field name="requireGroupName" validate={validateString(requireGroup && allowInternal ? 1 : 0, 255)}>
 					{({ form }: any) => (
 						<div className="mb-1 mt-2">
 							<input
@@ -110,7 +110,7 @@ export function AllowInternalUserFields({ allowInternal, requireGroup }: Props) 
 										form.errors.requireGroupName &&
 										form.touched.requireGroupName &&
 										form.values.requireGroup &&
-										!!form.values.allowInternal,
+										form.values.allowInternal,
 									"opacity-50": !form.values.allowInternal || !form.values.requireGroup,
 								})}
 								disabled={!form.values.allowInternal || !form.values.requireGroup}
@@ -132,6 +132,31 @@ export function AllowInternalUserFields({ allowInternal, requireGroup }: Props) 
 			<small className="text-muted">
 				<T id={"sso.config.access.require-group.hint"} />
 			</small>
+			<div>
+				<div className="row mt-3">
+					<h4
+						className={cn("col", {
+							"text-gray-500": !allowInternal,
+						})}
+					>
+						<T id="sso.config.settings.require-verified-email.label" />
+					</h4>
+					<span className="col-auto">
+						<div className="form-floating form-check form-check-single form-switch">
+							<input
+								id="unused"
+								checked={true}
+								className={cn("form-check-input", "bg-indigo")}
+								disabled={true}
+								type="checkbox"
+							/>
+						</div>
+					</span>
+				</div>
+				<small className="text-muted">
+					<T id={"sso.config.settings.require-verified-email.hint-2"} />
+				</small>
+			</div>
 		</>
 	);
 }

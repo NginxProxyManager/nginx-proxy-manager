@@ -72,8 +72,26 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 		data.provisionRoleMap = [{ role: "user", group: "" }];
 	}
 
+	if (data && data.requireGroupName === undefined) {
+		data.requireGroupName = "";
+	}
+
+	if (data && data.requireProvisionGroupName === undefined) {
+		data.requireProvisionGroupName = "";
+	}
+
+	if (data && data.buttonText === undefined) {
+		data.buttonText = "";
+	}
+
+	const handleRemove = () => {
+		if (!isSubmitting) {
+			remove();
+		}
+	};
+
 	return (
-		<Modal show={visible} onHide={remove}>
+		<Modal show={visible} onEscapeKeyDown={remove} onHide={handleRemove} backdrop={"static"}>
 			{!isLoading && error && (
 				<Alert variant="danger" className="m-3">
 					{error?.message || "Unknown error"}
@@ -200,7 +218,7 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 																		readOnly
 																		{...field}
 																	/>
-																	<label htmlFor="client-type">
+																	<label htmlFor="clientType">
 																		<T id="sso.config.protocol.label" />
 																	</label>
 																</div>
@@ -217,9 +235,7 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 															(letter) => `_${letter.toLowerCase()}`,
 														);
 														const isNew = !data?.id;
-														const isSecret = field_name
-															.toLocaleLowerCase()
-															.includes("secret");
+														const isSecret = field_name.toLowerCase().includes("secret");
 														const type = isSecret ? "password" : "text";
 														const minLength = isSecret && !isNew ? 0 : 1;
 														const validator = (
@@ -263,7 +279,9 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 																				className={`form-control ${form.errors.configuration?.[field_name] && form.touched.configuration?.[field_name] ? "is-invalid" : ""}`}
 																				placeholder={""}
 																			/>
-																			<label htmlFor={field_name}>
+																			<label
+																				htmlFor={`configuration[${field_name}]`}
+																			>
 																				<T id={`sso.config.${trfield}.label`} />
 																			</label>
 																			{form.errors.configuration?.[field_name] ? (
@@ -352,41 +370,7 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 											/>
 										</div>
 										<div className="tab-pane pt-2" id="tab-settings" role="tabpanel">
-											<div>
-												<div>
-													<label className="row mt-1" htmlFor="requireVerifiedEmail">
-														<h4 className="col mb-1">
-															<T id="sso.config.settings.require-verified-email.label" />
-														</h4>
-														<span className="col-auto">
-															<Field name="requireVerifiedEmail" type="checkbox">
-																{({ field, form }: any) => (
-																	<label className="form-check form-check-single form-switch">
-																		<input
-																			id="requireVerifiedEmail"
-																			checked={field.value === true}
-																			className={cn("form-check-input", {
-																				"bg-indigo": field.checked,
-																			})}
-																			onChange={(e) =>
-																				form.setFieldValue(
-																					"requireVerifiedEmail",
-																					e.target.checked,
-																				)
-																			}
-																			type="checkbox"
-																		/>
-																	</label>
-																)}
-															</Field>
-														</span>
-													</label>
-													<small className="text-muted">
-														<T id={"sso.config.settings.require-verified-email.hint"} />
-													</small>
-												</div>
-											</div>
-											<div className="col-lg-6 mt-4">
+											<div className="col-lg-6 mt-1">
 												<label htmlFor="buttonText">
 													<h4>
 														<T id="sso.config.settings.button-text.label" />
@@ -425,22 +409,22 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 												<T id={"sso.config.settings.button-text.hint"} />
 											</small>
 											<div className="row mt-3">
-												<label className="row" htmlFor="buttonText">
+												<div className="row cursor-default">
 													<h4>
 														<T id="sso.config.settings.button-preview.label" />
 													</h4>
-												</label>
-												<div className="border-0 py-3 w-75">
-													<SingleSignOnButton
-														{...{
-															config: {
-																id: 0,
-																name: form.values.name,
-																type: form.values.clientType,
-																label: form.values.buttonText,
-															},
-														}}
-													/>
+													<div className="border-0 py-2 w-75 cursor-default px-4">
+														<SingleSignOnButton
+															{...{
+																config: {
+																	id: 0,
+																	name: form.values.name,
+																	type: form.values.clientType,
+																	label: form.values.buttonText,
+																},
+															}}
+														/>
+													</div>
 												</div>
 											</div>
 										</div>

@@ -8,7 +8,7 @@
 <details style="margin: 0.5rem 0;">
     <summary><h4 style="display: inline-block;">Auth0</h4></summary>
     You can configure NginX Proxy Manager to log in with Auth0. 
-    Create a First-party Regular Webb Application (or use the Default App), 
+    Create a First-party Regular Web Application (or use the Default App), 
     and copy the <code>Client ID</code>, <code>Client Secret</code> and <code>Domain</code> 
     into their respective fields in a new Auth0 type SSO Client form, save the form
     then copy the final Redirect URL back to the <code>Allowed Callback URLs</code> 
@@ -22,7 +22,7 @@
     and copy the <code>Client ID</code> and <code>Client Secret</code> to the new SSO Client form. 
     Save, and copy back the final redirect URL to the GitHub App settings under the <code>Redirect URIs</code> section.
     </p><p>
-    Since in this case <big><strong>GitHub is the IdP with all its users, it's imperative to restrict access<strong></big>.
+    Since in this case <big><strong>GitHub is the IdP with all its users, it's imperative to restrict access</strong></big>.
     </p><p>
     GitHub doesn't use groups, so the user's GitHub organizations are considered group memberships.
     </p><p>
@@ -66,13 +66,13 @@
         <summary>Configuring Authentik</summary>
         <p style="margin: 0.5rem 0 1rem 0;">Create a new <em>OAuth2/OpenID Provider</em> in Authentik with <em>Client Type</em> set to <em>Confidential</em>.
         Make sure the <em>Authorization Code</em> is selected from <em>Grant Types</em>. The other grant types
-        are not required for this Single Sign On functionality, the best is to turn them off. Creat a new Application too,
+        are not required for this Single Sign On functionality, the best is to turn them off. Create a new Application too,
         and make sure the new provider is assigned to it.</p>
         <p>In Nginx Proxy Manager, create a new OpenID type SSO Client, and set the <code>Client ID</code>, <code>Client Secret</code> 
-        and <code>Configuration Issuer URL</code> field to their respective values form the Authentik provider you just created. 
+        and <code>Configuration Issuer URL</code> field to their respective values from the Authentik provider you just created. 
         The <code>Redirect URL</code> field will be auto-generated, and once the SSO Client is saved, you should copy
         the final URL back to the <em>Redirect URIs/Origins</em> section of the Authentik provider.</p>
-        <p>To use group membership based access filtering, make sure each Authenik user is member of the desired groups.
+        <p>To use group membership based access filtering, make sure each Authentik user is member of the desired groups.
         Authentik will automatically send the groups claim with the logged in user's group memberships.</p>
     </details>
     <details style="margin: 1rem;">
@@ -100,12 +100,12 @@
         If you don't need to use nested groups, turn <em>Full group path</em> off, so you can use the exact group names in Nginx Proxy Manager.
         When <em>Full group path</em> is on, groups will be represented with slashes, (e.g. <code>/My Group/My Inner Group</code>).
         In this case, a single, not nested group is also represented with leading slash, so <code>My Group</code> becomes <code>/My Group</code>.
-        Make sure <em>Add to ID token</em> is turned on then save. Next, go to <em>Clients</em>, select the client created in the fist step,
+        Make sure <em>Add to ID token</em> is turned on then save. Next, go to <em>Clients</em>, select the client created in the first step,
         select the Client Scopes tab, and click <em>Add client scope</em>. The <em>Groups</em> scope you created in the previous step
         should be listed in the Add client scopes dialogue. Select it then click <em>Add</em>.
         Make sure its <em>Assigned type</em> is set to <em>Default</em>.</p>
         <p>To configure Keycloak to send the Realm Roles as the groups claim, first make sure you have created Realm roles, and assigned users.
-        Then, go to <em>Client scopes</em> and select the predefined <em>roles</em> scope. Swtich to the Mappers tab, and select
+        Then, go to <em>Client scopes</em> and select the predefined <em>roles</em> scope. Switch to the Mappers tab, and select
         the predefined <em>realm roles</em> mapper. Set the <em>Token Claim Name</em> to <em>groups</em>. 
         Ensure <em>Add to ID token</em> is turned on then save. Now, you can use the name of Realm roles for access filtering in the SSO Client settings.
         If you have previously used Keycloak Groups, ensure <em>Add to ID token</em> is turned off in the groups mapper before configuring the roles mapper.
@@ -180,11 +180,11 @@
     is a user account that was NOT created by automatic user provisioning. Provisioned accounts
     are distinguished in the following significant ways.
     </p>
+    <p>
     An automatically provisioned user account initially doesn't have a password login, so they cannot login
     using the password login mechanism nor can they update their password, but it is possible
-    for an Administrator to set a password for provisioined users. 
+    for an Administrator to set a password for provisioned users. 
     Following this, the given user has two separate login paths.
-    <p>
     </p>
     <p>
     Once a user account has been provisioned, they can continue to access their account via the respective IdP
@@ -224,7 +224,7 @@
   provisioined with.
   </p><p>
   This means that a user's email address can be changed on either side (NPM or the IdP)
-  for a provisioined account, and the accass will be retained via the respective IdP regardless.
+  for a provisioined account, and the access will be retained via the respective IdP regardless.
   </p><p>
   For this reason, the email address uniqueness check may be removed or subjected to 
   <code>Require unique email</code> flag in a new version.    
@@ -254,7 +254,7 @@
     <p>
     Sensitive information stored in the database such as the Client Secret 
     are only sent over the network once when the client is created (or when the secret is updated with a new value),
-    and encrypted with an industry standard encryption algorithm (RSA-SHA256) using the application
+    and secured with industry standard encryption (RSA-OAEP with SHA-256 padding) using the application
     secret key.
     </p>
     <p>

@@ -5,7 +5,7 @@ export interface NewSingleSignOnClientConfiguration {
 	name: string;
 	isDisabled: boolean;
 	clientType: SingleSignOnClientType;
-	configuration?: SingleSignOnClientConfigurationType;
+	configuration: SingleSignOnClientConfigurationType;
 }
 
 export async function createSingleSignOnClient(item: NewSingleSignOnClientConfiguration): Promise<SingleSignOnClient> {

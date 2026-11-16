@@ -900,7 +900,10 @@
 		"defaultMessage": "Nupu tekst"
 	},
 	"sso.config.settings.require-verified-email.hint": {
-		"defaultMessage": "Nõua, et IdP saadaks claim'i „email_verified” väärtusega true. Seda kontrollitakse iga kord enne sisemisele kontole sisselogimist, ettevalmistatud kontole sisselogimist või enne seda, kui konto ettevalmistamine lubatakse."
+		"defaultMessage": "Nõudke, et identiteedipakkuja (IdP) saadaks väite „email_verified“ väärtusega „true“. Seda kontrollitakse iga kord enne kontole sisselogimist või konto loomise lubamist. Soovitatav on see seadistus lubatuna hoida."
+	},
+	"sso.config.settings.require-verified-email.hint-2": {
+		"defaultMessage": "Nõudke, et identiteedipakkuja (IdP) saadaks väite 'email_verified' väärtusega *true*. Seda kontrollitakse iga kord, enne kui lubatakse sisselogimine sisemisele kontole. Konto turvalisuse tagamiseks ei saa seda piirangut välja lülitada."
 	},
 	"sso.config.settings.require-verified-email.label": {
 		"defaultMessage": "Nõua kinnitatud e-posti aadressi"
