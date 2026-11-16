@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@apidevtools/json-schema-ref-parser@^16.0.3", "@apidevtools/json-schema-ref-parser@^16.0.6":
-  version "16.0.6"
-  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-16.0.6.tgz#30b21ddbaa6ddd1161d1534829002dab0d720980"
-  integrity sha512-cJXhmvqCn4Ud7X7d4L/BtAiJRIrLNiuIZ48ZTuDfN0mYejVXxdzMGR07teW6eKzLwcN0FwMi7gykE2Kr09LS1g==
+"@apidevtools/json-schema-ref-parser@^16.0.3", "@apidevtools/json-schema-ref-parser@^16.0.8":
+  version "16.0.8"
+  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-16.0.8.tgz#3b4f0f869362fbbe30bc1b1be4f497c133014379"
+  integrity sha512-I/VwYjPV/OTQegEhO+ITP2cFUChohqMJ6pNSXx2Q2dLCbGGa5WWT1ATCFhjseapSCcfcFxk04Bg07dgwSs+Pxw==
   dependencies:
     js-yaml "^5.4.2"
 
