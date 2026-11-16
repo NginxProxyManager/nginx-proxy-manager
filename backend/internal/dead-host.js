@@ -76,15 +76,23 @@ const internalDeadHost = {
 			const cert = await internalCertificate.createQuickCertificate(access, data);
 
 			// Update host with cert id and re-apply the originally submitted
-			// SSL toggles, now that a real certificate exists for them to
-			// validate against.
-			await internalDeadHost.update(access, {
-				id: row.id,
+			// SSL toggles, cleaned now that a real certificate exists for them
+			// to validate against. update() saves the values it is given, so
+			// they have to be cleaned here (e.g. HSTS off when Force SSL is off).
+			const sslData = internalHost.cleanSslHstsData({
 				certificate_id: cert.id,
 				ssl_forced: thisData.ssl_forced,
 				http2_support: thisData.http2_support,
 				hsts_enabled: thisData.hsts_enabled,
 				hsts_subdomains: thisData.hsts_subdomains,
+			});
+			await internalDeadHost.update(access, {
+				id: row.id,
+				certificate_id: cert.id,
+				ssl_forced: sslData.ssl_forced,
+				http2_support: sslData.http2_support,
+				hsts_enabled: sslData.hsts_enabled,
+				hsts_subdomains: sslData.hsts_subdomains,
 			});
 		}
 
