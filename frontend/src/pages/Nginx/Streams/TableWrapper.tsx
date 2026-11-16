@@ -8,7 +8,8 @@ import { useStreams } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showStreamModal } from "src/modals";
 import { MANAGE, STREAMS } from "src/modules/Permissions";
-import { showObjectSuccess } from "src/notifications";
+import { formatApiError } from "src/modules/HostStatus";
+import { showError, showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -31,10 +32,16 @@ export default function TableWrapper() {
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
-		await toggleStream(id, enabled);
-		queryClient.invalidateQueries({ queryKey: ["streams"] });
-		queryClient.invalidateQueries({ queryKey: ["stream", id] });
-		showObjectSuccess("stream", enabled ? "enabled" : "disabled");
+		try {
+			await toggleStream(id, enabled);
+			showObjectSuccess("stream", enabled ? "enabled" : "disabled");
+		} catch (err) {
+			showError(formatApiError(err));
+		} finally {
+			// Also after a failure: the host's status (meta) may have changed
+			queryClient.invalidateQueries({ queryKey: ["streams"] });
+			queryClient.invalidateQueries({ queryKey: ["stream", id] });
+		}
 	};
 
 	let filtered = null;

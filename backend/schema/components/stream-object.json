@@ -75,6 +75,25 @@
 		},
 		"meta": {
 			"type": "object",
+			"description": "Extra metadata. Keys starting with nginx_ are owned by the server and ignored on input",
+			"properties": {
+				"nginx_online": {
+					"type": "boolean",
+					"description": "Server-owned. False only when this host's config is not active in nginx"
+				},
+				"nginx_err": {
+					"type": ["string", "null"],
+					"description": "Server-owned. Human readable reason when nginx_online is false"
+				},
+				"nginx_details": {
+					"type": ["object", "null"],
+					"description": "Server-owned. Structured details of the failure (same shape as error.details)"
+				},
+				"nginx_checked_at": {
+					"type": "string",
+					"description": "Server-owned. ISO timestamp of the last nginx configuration"
+				}
+			},
 			"example": {}
 		},
 		"certificate": {
