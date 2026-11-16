@@ -34,6 +34,7 @@ interface Props {
 	onFormChange?: (value: number) => void;
 	// When set, the 0 option inherits the host's access list instead of being public
 	inheritHost?: boolean;
+	disabled?: boolean;
 }
 export function AccessField({
 	name = "accessListId",
@@ -41,6 +42,7 @@ export function AccessField({
 	id = "accessListId",
 	onFormChange,
 	inheritHost = false,
+	disabled = false,
 }: Props) {
 	const { locale } = useLocaleState();
 	const { isLoading, isError, error, data } = useAccessLists(["owner", "items", "clients"]);
@@ -98,7 +100,9 @@ export function AccessField({
 						<Select
 							className="react-select-container"
 							classNamePrefix="react-select"
-							defaultValue={options.find((o) => o.value === field.value) || options[0]}
+							// controlled: follows the form value when it is reset
+							value={options.find((o) => o.value === (field.value ?? 0)) || options[0]}
+							isDisabled={disabled}
 							options={options}
 							components={{ Option }}
 							styles={{

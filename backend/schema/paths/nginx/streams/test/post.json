@@ -1,0 +1,177 @@
+{
+	"operationId": "testStreamConfig",
+	"summary": "Test the configuration of a Stream without saving it",
+	"description": "Validates the payload like a save would (schema, duplicate custom location paths, forbidden file directives, domain names in use: 400) and lets nginx check the generated configuration without activating it: nothing is written to the database, nginx is not reloaded and other hosts are not changed. A configuration nginx rejects is returned as ok:false with the error a save would fail with. Also checks that the upstream targets are reachable. Needs the create permission, or the update permission when id is given. Rate limited to 30 tests per minute per user.",
+	"tags": [
+		"streams"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"streams.manage"
+			]
+		}
+	],
+	"requestBody": {
+		"description": "Stream payload, the same as for creating one, plus id when testing an edit",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"incoming_port",
+						"forwarding_host",
+						"forwarding_port"
+					],
+					"properties": {
+						"id": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "Set when testing changes to an existing stream: the payload is merged over the stored one, like an update",
+							"example": 12
+						},
+						"incoming_port": {
+							"$ref": "../../../../components/stream-object.json#/properties/incoming_port"
+						},
+						"forwarding_host": {
+							"$ref": "../../../../components/stream-object.json#/properties/forwarding_host"
+						},
+						"forwarding_port": {
+							"$ref": "../../../../components/stream-object.json#/properties/forwarding_port"
+						},
+						"tcp_forwarding": {
+							"$ref": "../../../../components/stream-object.json#/properties/tcp_forwarding"
+						},
+						"udp_forwarding": {
+							"$ref": "../../../../components/stream-object.json#/properties/udp_forwarding"
+						},
+						"certificate_id": {
+							"$ref": "../../../../components/stream-object.json#/properties/certificate_id"
+						},
+						"meta": {
+							"$ref": "../../../../components/stream-object.json#/properties/meta"
+						},
+						"domain_names": {
+							"$ref": "../../../../components/dead-host-object.json#/properties/domain_names"
+						}
+					}
+				},
+				"example": {
+					"incoming_port": 8888,
+					"forwarding_host": "127.0.0.1",
+					"forwarding_port": 8080,
+					"tcp_forwarding": true,
+					"udp_forwarding": false,
+					"certificate_id": 0,
+					"meta": {}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"ok": true,
+								"nginx_online": true,
+								"nginx_err": null,
+								"nginx_details": null,
+								"nginx_locations": [],
+								"upstreams": [
+									{
+										"host": "db",
+										"port": 5432,
+										"scheme": null,
+										"ok": true,
+										"code": "ok",
+										"message": "db:5432 is reachable (1.2 ms).",
+										"addresses": [
+											"172.18.0.5"
+										],
+										"resolver_ok": true,
+										"system_ok": true,
+										"ms": 1.2,
+										"location_index": null,
+										"path": null
+									}
+								],
+								"warnings": []
+							}
+						},
+						"rejected": {
+							"value": {
+								"ok": false,
+								"nginx_online": false,
+								"nginx_err": "Invalid port in upstream \"db:0\".",
+								"nginx_details": {
+									"kind": "nginx_config",
+									"scope": "host",
+									"host_type": "stream",
+									"host_id": 12,
+									"file": "/data/nginx/stream/12.conf",
+									"line": 31,
+									"location_index": null,
+									"location_path": null,
+									"nginx_output": "nginx: [emerg] unknown directive \"proxy_passs\" in /data/nginx/stream/12.conf:31",
+									"hint": "Check the spelling of the directive. If it comes from an nginx module, that module may not be available."
+								},
+								"nginx_locations": [],
+								"upstreams": [],
+								"warnings": []
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/host-test-result.json"
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "400 response, the payload is invalid (eg. a domain name is already in use)",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 400,
+									"message": "test.example.com is already in use"
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/error.json"
+					}
+				}
+			}
+		},
+		"429": {
+			"description": "Too many tests",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 429,
+									"message": "Too many configuration tests. Try again in 20 seconds."
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../../components/error.json"
+					}
+				}
+			}
+		}
+	}
+}

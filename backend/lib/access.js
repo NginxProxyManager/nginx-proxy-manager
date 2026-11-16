@@ -11,7 +11,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import Ajv from "ajv/dist/2020.js";
 import _ from "lodash";
-import { access as logger } from "../logger.js";
+import { debug, access as logger } from "../logger.js";
 import authModel from "../models/auth.js";
 import proxyHostModel, { scopeToOwnerOrAllowed } from "../models/proxy_host.js";
 import TokenModel from "../models/token.js";
@@ -238,9 +238,11 @@ export default function (tokenString) {
 		 *
 		 * @param {String}  permission
 		 * @param {*}       [data]
+		 * @param {Object}  [opts]
+		 * @param {Boolean} [opts.quiet]  a denial is expected (the caller only asks), log it at debug level only
 		 * @returns {Promise}
 		 */
-		can: async (permission, data) => {
+		can: async (permission, data, opts = {}) => {
 			if (allowInternalAccess === true) {
 				return true;
 			}
@@ -291,7 +293,11 @@ export default function (tokenString) {
 			} catch (err) {
 				err.permission = permission;
 				err.permission_data = data;
-				logger.error(permission, data, err.message);
+				if (opts?.quiet) {
+					debug(logger, permission, data, err.message);
+				} else {
+					logger.error(permission, data, err.message);
+				}
 				// A revoked token is not a permission problem, and the client can tell: the frontend
 				// clears the session on a 401 and on nothing else.
 				if (err instanceof errs.TokenRevokedError) {

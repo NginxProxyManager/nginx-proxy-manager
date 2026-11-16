@@ -75,6 +75,13 @@
 	}
 }
 
+/* The upstream picker only marks an option focused once the user moves through
+   the list with the keyboard (so Enter/Tab never pick one by surprise). Mouse
+   hover still needs a highlight. */
+.react-select-container.upstream-field .react-select__menu .react-select__option:hover:not(.react-select__option--is-focused) {
+	background: rgba(var(--tblr-primary-rgb), .1);
+}
+
 .textareaMono {
 	font-family: 'Courier New', Courier, monospace !important;
 	resize: vertical;

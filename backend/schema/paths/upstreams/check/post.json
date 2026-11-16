@@ -1,0 +1,138 @@
+{
+	"operationId": "checkUpstreams",
+	"summary": "Check DNS resolution and TCP reachability of upstream targets",
+	"description": "Resolves each host through the system resolver (as a literal proxy_pass would at config load) and through nginx's resolver (as a variable proxy_pass would at request time), then opens a TCP connection and closes it immediately. No data is sent or read. Rate limited to 60 targets per minute per user. Requires admin, or `manage` permission for proxy hosts or streams.",
+	"tags": ["upstreams"],
+	"security": [
+		{
+			"bearerAuth": ["proxy_hosts.manage", "streams.manage"]
+		}
+	],
+	"requestBody": {
+		"description": "Targets to check",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["targets"],
+					"properties": {
+						"targets": {
+							"type": "array",
+							"example": [
+								{
+									"host": "app",
+									"port": 8080,
+									"scheme": "http"
+								}
+							],
+							"minItems": 1,
+							"maxItems": 20,
+							"items": {
+								"type": "object",
+								"additionalProperties": false,
+								"required": ["host", "port"],
+								"properties": {
+									"host": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 255,
+										"description": "Host name or IP, optionally followed by a /path (the path is ignored)",
+										"example": "app"
+									},
+									"port": {
+										"type": "integer",
+										"minimum": 1,
+										"maximum": 65535,
+										"example": 8080
+									},
+									"scheme": {
+										"type": ["string", "null"],
+										"enum": ["http", "https", null],
+										"example": "http"
+									}
+								}
+							}
+						}
+					}
+				},
+				"example": {
+					"targets": [
+						{
+							"host": "app",
+							"port": 8080,
+							"scheme": "http"
+						}
+					]
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"results": [
+									{
+										"host": "app",
+										"port": 8080,
+										"scheme": "http",
+										"ok": true,
+										"code": "ok",
+										"message": "app:8080 is reachable (1.2 ms).",
+										"addresses": ["172.18.0.5"],
+										"resolver_ok": true,
+										"system_ok": true,
+										"ms": 1.2
+									}
+								]
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"additionalProperties": false,
+						"required": ["results"],
+						"properties": {
+							"results": {
+								"type": "array",
+								"example": [
+									{
+										"host": "app",
+										"port": 8080,
+										"scheme": "http",
+										"ok": true,
+										"code": "ok",
+										"message": "app:8080 is reachable (1.2 ms).",
+										"addresses": ["172.18.0.5"],
+										"resolver_ok": true,
+										"system_ok": true,
+										"ms": 1.2
+									}
+								],
+								"items": {
+									"$ref": "../../../components/upstream-check-result.json"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"429": {
+			"description": "Too many checks",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/error.json"
+					}
+				}
+			}
+		}
+	}
+}

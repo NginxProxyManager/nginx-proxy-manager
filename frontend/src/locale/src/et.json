@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Sulge"
 	},
+	"action.copied": {
+		"defaultMessage": "Kopeeritud"
+	},
+	"action.copy": {
+		"defaultMessage": "Kopeeri"
+	},
 	"action.delete": {
 		"defaultMessage": "Kustuta"
 	},
@@ -347,6 +353,24 @@
 	"disabled": {
 		"defaultMessage": "Väljas"
 	},
+	"docker-labels.badge": {
+		"defaultMessage": "domeen kasutusel"
+	},
+	"docker-labels.exists": {
+		"defaultMessage": "{type, select, redirection_host {Mõni ümbersuunamise host kasutab juba ühte neist domeenidest} dead_host {Mõni 404 host kasutab juba ühte neist domeenidest} other {Mõni proxy-host kasutab juba ühte neist domeenidest}}."
+	},
+	"docker-labels.ignored": {
+		"defaultMessage": "npm.domain siltist kasutamata: {domains}"
+	},
+	"docker-labels.ignored-hint": {
+		"defaultMessage": "Domeeninimede väli lükkaks need nimed tagasi (metamärk on lubatud ainult alguses, nt *.example.com)"
+	},
+	"docker-labels.not-filled": {
+		"defaultMessage": "Konteineri npm.domain sildi domeeninimesid ({domains}) ei täidetud."
+	},
+	"docker-labels.used-by": {
+		"defaultMessage": "{type, select, redirection_host {Kasutusel ümbersuunamise hostis: muuda või eemalda see enne} dead_host {Kasutusel 404 hostis: muuda või eemalda see enne} other {Kasutusel proxy-hostis}}."
+	},
 	"domain-names": {
 		"defaultMessage": "Domeeninimed"
 	},
@@ -431,6 +455,9 @@
 	"error.required": {
 		"defaultMessage": "See on kohustuslik"
 	},
+	"error.unknown": {
+		"defaultMessage": "Tundmatu viga"
+	},
 	"expires.on": {
 		"defaultMessage": "Aegub: {date}"
 	},
@@ -439,6 +466,75 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "Sul on salvestamata muudatusi. Kas oled kindel, et soovid need tühistada?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Viimati seadistatud {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx ei suutnud selle hosti seadistust laadida, seega on see maas."
+	},
+	"host-status.details": {
+		"defaultMessage": "Näita oleku üksikasju"
+	},
+	"host-status.error": {
+		"defaultMessage": "Viga"
+	},
+	"host-status.previous-config-running": {
+		"defaultMessage": "Nginx ei rakendanud selle hosti uusimat seadistust ja kasutab endiselt eelmist."
+	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx ei suuda {target} lahendada"
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: {target} pole kättesaadav"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Näita vealogi"
+	},
+	"host-status.warning": {
+		"defaultMessage": "Hoiatus"
+	},
+	"host-test.failed": {
+		"defaultMessage": "Testi ei õnnestunud käivitada"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "See oli test, midagi ei salvestatud."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Seadistus korras"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Konfiguratsioon on korras, hoiatustega"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, one {Nginx keelaks # kohandatud asukoha} other {Nginx keelaks # kohandatud asukohta}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Kontrollimata: viimasel minutil liiga palju kontrolle"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Kättesaadavus"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx lükkaks selle seadistuse tagasi"
+	},
+	"host-test.stale": {
+		"defaultMessage": "Vormi muudeti pärast seda testi. Muudatuste kontrollimiseks testi uuesti."
+	},
+	"host-test.too-many": {
+		"defaultMessage": "Viimasel minutil liiga palju teste. Proovi uuesti {seconds, plural, one {# sekundi} other {# sekundi}} pärast."
+	},
+	"host-test.warning.certificate-pending": {
+		"defaultMessage": "Salvestamisel taotletakse uus sertifikaat. Test kontrollis hosti ilma SSL-ita; SSL-osa kontrollitakse, kui sertifikaat on lisatud."
+	},
+	"host-test.warning.other-host": {
+		"defaultMessage": "Nginx lükkab tagasi hosti {host} praeguse konfiguratsiooni. Salvestamine parandaks või keelaks selle."
+	},
+	"host-test.warning.other-host-hidden": {
+		"defaultMessage": "Nginx lükkab tagasi ühe teise hosti praeguse konfiguratsiooni. Salvestamine parandaks või keelaks selle hosti. Palu administraatoril seda kontrollida."
+	},
+	"host-test.warning.rate-limited": {
+		"defaultMessage": "Kättesaadavust ei kontrollitud: viimasel minutil liiga palju kontrolle. Proovi uuesti {seconds, plural, one {# sekundi} other {# sekundi}} pärast."
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
@@ -479,11 +575,89 @@
 	"loading": {
 		"defaultMessage": "Laadimine…"
 	},
+	"location-check.empty_host": {
+		"defaultMessage": "Sihthost on tühi."
+	},
+	"location-check.empty_path": {
+		"defaultMessage": "Asukoha tee on tühi."
+	},
+	"location-check.invalid_host": {
+		"defaultMessage": "Sihthostis on lubamatud märgid (tühikud, jutumärgid, ;, sulud, $, # või \\). Üks nginxi muutuja, näiteks $backend, on lubatud."
+	},
+	"location-check.named_forward_path": {
+		"defaultMessage": "Ilma nginxi muutujata edastusteed ei saa kasutada nimega asukohaga; kasuta muutujat, näiteks $request_uri, või eemalda edastustee."
+	},
+	"location-check.omitted": {
+		"defaultMessage": "Nginx lükkas selle asukoha tagasi isegi kohatäitjana, seega eemaldati see. Ülejäänud host töötab edasi."
+	},
+	"location-check.regex_forward_path": {
+		"defaultMessage": "Ilma nginxi muutujata edastusteed ei saa kasutada regulaaravaldisega asukohaga; kasuta püüdegruppi, näiteks /v1/$1, eemalda edastustee või kasuta prefiksiga asukohta."
+	},
+	"location-check.unbalanced_braces": {
+		"defaultMessage": "Selle asukoha täpsemas seadistuses on looksulud tasakaalust väljas."
+	},
+	"location-check.unresolved": {
+		"defaultMessage": "Hosti \"{host}\" ei saa praegu lahendada. Päringud sellele asukohale ebaõnnestuvad veaga 502, kuni see õnnestub."
+	},
+	"location-status.disabled": {
+		"defaultMessage": "Väljas"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Aktiivne"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Pole aktiivne"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx lükkas selle asukoha tagasi, seega lülitati see välja. Ülejäänud host töötab edasi."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Lahendamata"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "Sihthosti nime ei saa praegu lahendada. Päringud sellele asukohale ebaõnnestuvad, kuni see õnnestub."
+	},
+	"location.advanced": {
+		"defaultMessage": "Täpsemalt"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Kohandatud Nginx seadistus olemas"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Teine asukoht kasutab juba teed {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Selles asukohas on vigu"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "Host sisaldab lubamatuid märke (jutumärgid, ;, sulud, $, # või \\)."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "Host ei tohi sisaldada tühikuid"
+	},
+	"location.error.location-path-invalid": {
+		"defaultMessage": "Tee sisaldab lubamatuid märke (tühikud, jutumärgid, ;, sulud, # või \\). Pane tühikutega tee jutumärkidesse, näiteks \"/minu tee/\"."
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Edastusteel on lubamatud märgid (tühikud, jutumärgid, ;, sulud, # või \\). nginxi muutujad, näiteks $uri, on lubatud."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Mõnes kohandatud asukohas on vigu"
+	},
 	"location.filter": {
 		"defaultMessage": "Filtreeri tee või sihtkoha järgi"
+	},
+	"location.path-label": {
+		"defaultMessage": "Asukoht"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Lülita see asukoht sisse või välja"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, one {# asukoht} other {# asukohta}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, one {# probleem} other {# probleemi}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Kinnituskood"
@@ -553,6 +727,144 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Sisesta siia oma Nginx seadistus omal vastutusel!"
+	},
+	"nginx-error.advanced": {
+		"defaultMessage": "Viga kohandatud Nginxi seadistuses"
+	},
+	"nginx-error.advanced-line": {
+		"defaultMessage": "Viga kohandatud Nginxi seadistuses, rida {line}"
+	},
+	"nginx-error.auto-disabled": {
+		"defaultMessage": "Automaatselt keelatud: {reason}"
+	},
+	"nginx-error.conflict": {
+		"defaultMessage": "See muudatus on vastuolus teise hosti seadistusega"
+	},
+	"nginx-error.default-site": {
+		"defaultMessage": "Vaikimisi saidi seadistust ei õnnestunud uuendada. {reason}"
+	},
+	"nginx-error.field.access-list-client-address": {
+		"defaultMessage": "Juurdepääsuloendi kliendi aadress"
+	},
+	"nginx-error.field.location-forward-host": {
+		"defaultMessage": "Kohandatud asukoha edastushost"
+	},
+	"nginx-error.field.location-forward-path": {
+		"defaultMessage": "Kohandatud asukoha edastustee"
+	},
+	"nginx-error.field.location-path": {
+		"defaultMessage": "Kohandatud asukoha tee"
+	},
+	"nginx-error.file": {
+		"defaultMessage": "Viga nginxi seadistusfailis {file}"
+	},
+	"nginx-error.file-line": {
+		"defaultMessage": "Viga nginxi seadistusfailis {file}, rida {line}"
+	},
+	"nginx-error.global": {
+		"defaultMessage": "Nginx lükkas seadistuse tagasi"
+	},
+	"nginx-error.hint.address_in_use": {
+		"defaultMessage": "Teine host või teenus juba kuulab seda porti."
+	},
+	"nginx-error.hint.certificate_load": {
+		"defaultMessage": "Sertifikaat võib olla kustutatud või veel välja andmata. Vali teine sertifikaat või uuenda seda."
+	},
+	"nginx-error.hint.conflict": {
+		"defaultMessage": "Teine host kasutab seda seadistust juba (näiteks sama listen-porti koos default_server'iga) või kohandatud seadistus lisab teise hosti seadistusfaili."
+	},
+	"nginx-error.hint.directive_not_allowed": {
+		"defaultMessage": "Seda direktiivi ei saa selles kontekstis kasutada."
+	},
+	"nginx-error.hint.duplicate_directive": {
+		"defaultMessage": "Eemalda korduv rida. NPM võib selle direktiivi juba ise määrata."
+	},
+	"nginx-error.hint.duplicate_location": {
+		"defaultMessage": "Iga asukoha teed võib hosti kohta kasutada ainult üks kord, ka kohandatud seadistuses olevaid asukohti arvestades."
+	},
+	"nginx-error.hint.host_not_found": {
+		"defaultMessage": "Kontrolli, et hostinimi on õigesti kirjutatud, et konteiner või server töötab ja et NPM jõuab selleni ühise võrgu kaudu."
+	},
+	"nginx-error.hint.invalid_arguments": {
+		"defaultMessage": "Kontrolli, kas mõni väärtus puudub või on üleliigne või kas eelmise rea lõpust puudub semikoolon."
+	},
+	"nginx-error.hint.invalid_port": {
+		"defaultMessage": "Port peab olema arv vahemikus 1 kuni 65535. Edastustee peab algama märgiga \"/\"."
+	},
+	"nginx-error.hint.invalid_regex": {
+		"defaultMessage": "Kontrolli asukoha tee või rewrite'i regulaaravaldise süntaksit."
+	},
+	"nginx-error.hint.invalid_url": {
+		"defaultMessage": "Kontrolli sihtserveri skeemi ja hosti."
+	},
+	"nginx-error.hint.location_nesting": {
+		"defaultMessage": "Täpsed (=) ja nimega (@) asukohad ei saa sisaldada teisi asukohti."
+	},
+	"nginx-error.hint.location_not_allowed": {
+		"defaultMessage": "Asukohti saab paigutada ainult server-plokki või teise asukoha sisse."
+	},
+	"nginx-error.hint.no_certificate": {
+		"defaultMessage": "Vali sellele hostile sertifikaat."
+	},
+	"nginx-error.hint.no_resolver": {
+		"defaultMessage": "Nginxi nimelahendaja on keelatud (DISABLE_RESOLVER). Kasuta IP-aadressi või luba nimelahendaja."
+	},
+	"nginx-error.hint.regex_uri_part": {
+		"defaultMessage": "Kasuta edastusteel püüdegruppi või muutujat (/v1/$1), eemalda edastustee või kasuta prefiksiga asukohta."
+	},
+	"nginx-error.hint.rejected_at_startup": {
+		"defaultMessage": "Salvesta host uuesti, et see tagasi tuua, või jäta NPM_RECONCILE_ON_START sisse, et see toimuks automaatselt."
+	},
+	"nginx-error.hint.unexpected_close_brace": {
+		"defaultMessage": "Kontrolli, et igal '{' on vastav '}'."
+	},
+	"nginx-error.hint.unexpected_eof": {
+		"defaultMessage": "Kontrolli, kas puudub semikoolon või sulgev '}'."
+	},
+	"nginx-error.hint.unexpected_open_brace": {
+		"defaultMessage": "Kontrolli, et igal '{' on vastav '}' ja et eelmine rida lõpeb semikooloniga."
+	},
+	"nginx-error.hint.unexpected_semicolon": {
+		"defaultMessage": "Kontrolli, kas kuskil on üleliigne semikoolon."
+	},
+	"nginx-error.hint.unknown_directive": {
+		"defaultMessage": "Kontrolli direktiivi kirjapilti. Kui see pärineb nginxi moodulist, ei pruugi see moodul saadaval olla."
+	},
+	"nginx-error.hint.unknown_variable": {
+		"defaultMessage": "Kontrolli muutuja kirjapilti või defineeri see käsuga set või map."
+	},
+	"nginx-error.host": {
+		"defaultMessage": "Nginx lükkas selle hosti seadistuse tagasi"
+	},
+	"nginx-error.location": {
+		"defaultMessage": "Viga kohandatud asukohas {path}"
+	},
+	"nginx-error.location-advanced-line": {
+		"defaultMessage": "Viga kohandatud asukoha {path} kohandatud Nginxi seadistuses, rida {line}"
+	},
+	"nginx-error.other-host": {
+		"defaultMessage": "Nginx lükkas tagasi hosti {host} seadistuse"
+	},
+	"nginx-error.previous-config-running": {
+		"defaultMessage": "Nginx kasutab selle hosti eelmist seadistust edasi, kuni uuesti laadimine õnnestub."
+	},
+	"nginx-error.redacted": {
+		"defaultMessage": "Nginx lükkas tagasi teise hosti seadistuse. Palu administraatoril seda kontrollida."
+	},
+	"nginx-error.regenerated-conflict": {
+		"defaultMessage": "Uuesti loodud seadistus on vastuolus teise hosti seadistusega"
+	},
+	"nginx-error.rejected-at-startup": {
+		"defaultMessage": "Nginx lükkas selle hosti seadistuse konteineri käivitumisel tagasi"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Näita nginxi väljundit"
+	},
+	"nginx-error.too-many-broken-hosts": {
+		"defaultMessage": "Liiga palju vigaseid hostide seadistusi, et neid korraga parandada (rohkem kui {max}). Loo kõigi hostide seadistused uuesti (taaskäivita NPM või käivita backend/scripts/regenerate-config) ja proovi siis uuesti."
+	},
+	"nginx-error.unsafe-value": {
+		"defaultMessage": "Selle hosti salvestatud väärtust ei saa nginxi seadistusse turvaliselt kirjutada, seetõttu eemaldati selle seadistus"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Selle vaatamiseks sul õigust pole."
@@ -728,6 +1040,21 @@
 	"save": {
 		"defaultMessage": "Salvesta"
 	},
+	"save-warning.offline": {
+		"defaultMessage": "Salvestatud, kuid nginx ei suutnud seda hosti laadida, seega on see maas:"
+	},
+	"save-warning.previous-config-running": {
+		"defaultMessage": "Salvestatud, kuid nginx ei rakendanud muudatust ja kasutab selle hosti eelmist seadistust edasi:"
+	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, one {# kohandatud asukoht lülitati välja, sest nginx lükkas selle tagasi.} other {# kohandatud asukohta lülitati välja, sest nginx lükkas need tagasi.}}"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Salvestatud hoiatustega"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, one {# kohandatud asukoht viitab hostile, mida ei saa praegu lahendada.} other {# kohandatud asukohta viitavad hostidele, mida ei saa praegu lahendada.}}"
+	},
 	"setting": {
 		"defaultMessage": "Seade"
 	},
@@ -799,6 +1126,159 @@
 	},
 	"update-available": {
 		"defaultMessage": "Uuendus saadaval: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Kontrollin…"
+	},
+	"upstream.check.detail.dns_not_found": {
+		"defaultMessage": "Kontrolli õigekirja ning et konteiner töötab ja on Nginx Proxy Manageriga samas Dockeri võrgus."
+	},
+	"upstream.check.detail.dns_timeout": {
+		"defaultMessage": "DNS-server ei vastanud õigel ajal."
+	},
+	"upstream.check.detail.invalid_host": {
+		"defaultMessage": "„{host}“ ei ole kehtiv hostinimi ega IP-aadress."
+	},
+	"upstream.check.detail.invalid_host_empty": {
+		"defaultMessage": "Sisesta hostinimi või IP-aadress."
+	},
+	"upstream.check.detail.no_resolver": {
+		"defaultMessage": "Nginxi nimelahendaja on keelatud (DISABLE_RESOLVER) ja nginx lahendab selle upstreami iga päringu ajal: päringud ebaõnnestuvad. Kasuta IP-aadressi või luba nimelahendaja."
+	},
+	"upstream.check.detail.resolver_mismatch": {
+		"defaultMessage": "„{host}“ leitakse ainult /etc/hosts või resolv.conf otsingudomeeni kaudu, mitte nginxi DNS-lahendajaga. See töötab ainult staatilise (laadimisel lahendatava) upstreamiga."
+	},
+	"upstream.check.detail.resolver_required": {
+		"defaultMessage": "„{host}“ leitakse ainult /etc/hosts või resolv.conf otsingudomeeni kaudu. nginx lahendab selle upstreami iga päringu ajal oma DNS-lahendajaga, mis seda ei leia: päringud ebaõnnestuvad. Kasuta nime, mille lahendaja leiab (nt konteineri nimi ühises Dockeri võrgus), või IP-aadressi."
+	},
+	"upstream.check.detail.tcp_refused": {
+		"defaultMessage": "Host on olemas, kuid pordil {port} ei kuula miski."
+	},
+	"upstream.check.detail.tcp_timeout": {
+		"defaultMessage": "Tulemüür võib liiklust blokeerida või host on maas."
+	},
+	"upstream.check.detail.tcp_unreachable": {
+		"defaultMessage": "Nginx Proxy Managerist pole sellesse hosti marsruuti."
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Kontroll on välja lülitatud"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Hosti ei leitud"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "DNS-päring aegus"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Vigane hostinimi"
+	},
+	"upstream.check.no_resolver": {
+		"defaultMessage": "Nginxi nimelahendaja puudub"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Kättesaadav"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Kättesaadav ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Lahendub ainult /etc/hosts või otsingudomeenide kaudu"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Ühendusest keelduti"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Ühendus aegus"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Host pole kättesaadav"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "nginxi muutuja"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Määratakse täpsemas seadistuses ja nginx lahendab selle iga päringu ajal, seega siin seda ei kontrollita."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "nginx lahendab selle iga päringu ajal, seega siin seda ei kontrollita. Sellel peab olema väärtus enne selle hosti täpsema seadistuse käivitumist, näiteks map-ist failis /data/nginx/custom/http.conf; set täpsemas seadistuses on liiga hilja."
+	},
+	"upstream.compose-service": {
+		"defaultMessage": "Konteineri {container} Compose-teenus"
+	},
+	"upstream.container-state": {
+		"defaultMessage": "{state, select, created {Loodud} restarting {Taaskäivitub} paused {Peatatud} exited {Lõpetatud} removing {Eemaldamisel} dead {Surnud} other {{state}}}"
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Dockeri tuvastus on väljas."
+	},
+	"upstream.docker-error.api_denied": {
+		"defaultMessage": "Dockeri API keeldus päringust. Kui kasutad docker-socket-proxyt, luba selles CONTAINERS=1 ja NETWORKS=1."
+	},
+	"upstream.docker-error.bad_response": {
+		"defaultMessage": "Dockeri API vastus on liiga suur või pole kehtiv JSON."
+	},
+	"upstream.docker-error.bad_status": {
+		"defaultMessage": "Dockeri API vastas päringule {path} koodiga {status}."
+	},
+	"upstream.docker-error.connection_refused": {
+		"defaultMessage": "Ühendus Dockeri API-ga lükati tagasi. Kontrolli DOCKER_HOST väärtust ja et sokli proxy töötab."
+	},
+	"upstream.docker-error.failed": {
+		"defaultMessage": "Ootamatu viga."
+	},
+	"upstream.docker-error.host_not_found": {
+		"defaultMessage": "DOCKER_HOST hostinime ei õnnestunud lahendada."
+	},
+	"upstream.docker-error.invalid_docker_host": {
+		"defaultMessage": "{problem, select, unix_path {DOCKER_HOST „{value}“ peab olema absoluutne Unixi sokli tee.} port {DOCKER_HOST „{value}“ port on vigane.} other {DOCKER_HOST „{value}“ ei ole toetatud. Kasuta unix:///var/run/docker.sock või tcp://host:2375 (TLS ei ole toetatud).}}"
+	},
+	"upstream.docker-error.permission_denied": {
+		"defaultMessage": "Juurdepääs Dockeri soklile keelati. Taustaprogramm töötab PUID/PGID all ilma lisagruppideta; kasuta selle asemel docker-socket-proxyt (DOCKER_HOST=tcp://...)."
+	},
+	"upstream.docker-error.self_not_found": {
+		"defaultMessage": "Nginx Proxy Manageri enda konteinerit ei leitud Dockeri API kaudu, seega pole selle võrgud teada."
+	},
+	"upstream.docker-error.socket_missing": {
+		"defaultMessage": "Dockeri soklit {path} pole olemas. Ühenda see või suuna DOCKER_HOST docker-socket-proxy peale."
+	},
+	"upstream.docker-error.timeout": {
+		"defaultMessage": "Dockeri API ei vastanud {seconds, plural, one {# sekundi} other {# sekundi}} jooksul."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Seadista"
+	},
+	"upstream.docker-labels": {
+		"defaultMessage": "Dockeri sildid"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Dockeri tuvastus ei tööta."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "Võid sisestada ka mis tahes hostinime või IP-aadressi."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Võrgust leitud"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Dockeri konteinerid"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Varem kasutatud"
+	},
+	"upstream.network": {
+		"defaultMessage": "Võrk: {network}"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "Soovitusi pole, sisesta hostinimi või IP-aadress"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Pordid: {ports}"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "Kasuta „{value}“"
+	},
+	"upstream.used-by": {
+		"defaultMessage": "kasutab {count, plural, one {# host} other {# hosti}}"
 	},
 	"user": {
 		"defaultMessage": "Kasutaja"
