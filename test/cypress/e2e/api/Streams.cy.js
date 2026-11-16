@@ -235,6 +235,34 @@ describe('Streams', () => {
 		});
 	});
 
+	it('Should search Stream names literally', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/streams',
+			data:  {
+				incoming_port: 1507,
+				name: 'NAS\\Media 100%_x',
+				forwarding_host: '127.0.0.1',
+				forwarding_port: 80,
+				tcp_forwarding: true,
+				udp_forwarding: false
+			}
+		}).then((data) => {
+			cy.task('backendApiGet', {
+				token: token,
+				path:  `/api/nginx/streams?query=${encodeURIComponent('NAS\\Media 100%_x')}`,
+			}).then((list) => {
+				expect(list.map((s) => s.id)).to.deep.equal([data.id]);
+			});
+			cy.task('backendApiGet', {
+				token: token,
+				path:  '/api/nginx/streams?query=%25',
+			}).then((list) => {
+				expect(list.map((s) => s.id)).to.deep.equal([data.id]);
+			});
+		});
+	});
+
 	it('Should default the Stream name to empty', () => {
 		cy.task('backendApiPost', {
 			token: token,

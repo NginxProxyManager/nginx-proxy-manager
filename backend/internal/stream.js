@@ -24,6 +24,9 @@ const normaliseName = (data) => {
 	}
 };
 
+// For LIKE ... ESCAPE '!' ("!" behaves the same on SQLite, MySQL and PostgreSQL, "\" doesn't)
+const escapeLike = (text) => text.replace(/[!%_]/g, "!$&");
+
 const internalStream = {
 	/**
 	 * @param   {Access}  access
@@ -398,11 +401,10 @@ const internalStream = {
 				// Query is used for searching
 				if (typeof search_query === "string" && search_query.length > 0) {
 					query.where(function () {
-						this.where(castJsonIfNeed("incoming_port"), "like", `%${search_query}%`).orWhere(
-							"name",
-							"like",
-							`%${search_query}%`,
-						);
+						this.whereRaw("?? LIKE ? ESCAPE '!'", ["name", `%${escapeLike(search_query)}%`]);
+						if (/^\d+$/.test(search_query)) {
+							this.orWhere(castJsonIfNeed("incoming_port"), "like", `%${search_query}%`);
+						}
 					});
 				}
 
