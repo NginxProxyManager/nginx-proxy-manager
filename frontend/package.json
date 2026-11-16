@@ -42,7 +42,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.6.6",
-		"@formatjs/cli": "^6.18.1",
+		"@formatjs/cli": "^6.19.0",
 		"@tanstack/react-query-devtools": "^5.107.1",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
@@ -53,7 +53,7 @@
 		"@types/react": "^19.3.0",
 		"@types/react-dom": "^19.3.0",
 		"@types/react-table": "^7.7.20",
-		"@vitejs/plugin-react": "^6.2.1",
+		"@vitejs/plugin-react": "^6.3.0",
 		"happy-dom": "^21.0.4",
 		"postcss": "^8.5.32",
 		"postcss-simple-vars": "^7.0.1",
