@@ -782,6 +782,12 @@
 	"stream.incoming-port": {
 		"defaultMessage": "Cổng vào"
 	},
+	"stream.name": {
+		"defaultMessage": "Tên (tùy chọn)"
+	},
+	"stream.name.placeholder": {
+		"defaultMessage": "vd: Máy chủ SSH"
+	},
 	"streams": {
 		"defaultMessage": "Luồng TCP/UDP"
 	},

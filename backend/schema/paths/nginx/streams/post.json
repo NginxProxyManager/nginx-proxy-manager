@@ -26,6 +26,9 @@
 						"incoming_port": {
 							"$ref": "../../../components/stream-object.json#/properties/incoming_port"
 						},
+						"name": {
+							"$ref": "../../../components/stream-object.json#/properties/name"
+						},
 						"forwarding_host": {
 							"$ref": "../../../components/stream-object.json#/properties/forwarding_host"
 						},

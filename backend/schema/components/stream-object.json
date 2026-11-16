@@ -34,6 +34,13 @@
 			"maximum": 65535,
 			"example": 9090
 		},
+		"name": {
+			"description": "Optional display-only label. Never written into nginx config.",
+			"type": "string",
+			"maxLength": 100,
+			"pattern": "^[^\\p{Cc}<>]*$",
+			"example": "SSH server"
+		},
 		"forwarding_host": {
 			"anyOf": [
 				{
