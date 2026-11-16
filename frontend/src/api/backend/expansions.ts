@@ -4,8 +4,4 @@ export type CertificateExpansion = "owner" | "proxy_hosts" | "redirection_hosts"
 export type HostExpansion = "owner" | "certificate";
 export type ProxyHostExpansion = "owner" | "access_list" | "certificate";
 export type UserExpansion = "permissions";
-export type SingleSignOnConfigExpansion =
-	| "configuration_auth0"
-	| "configuration_github"
-	| "configuration_openid"
-	| "configuration_saml";
+export type SingleSignOnConfigExpansion = "configuration_auth0" | "configuration_github" | "configuration_openid";

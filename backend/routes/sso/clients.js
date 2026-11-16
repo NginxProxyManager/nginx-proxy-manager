@@ -116,10 +116,6 @@ router
 				expand: req.query.expand?.split?.(","),
 			});
 
-			if (row.meta.role_map) {
-				row.provision_role_map = row.meta.role_map;
-			}
-
 			res.status(200).send(row);
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);

@@ -5,14 +5,13 @@ import now from "./now_helper.js";
 import Auth0ClientConfiguration from "./sso_client_auth0.js";
 import GitHubConfiguration from "./sso_client_github.js";
 import OpenIDClientConfiguration from "./sso_client_openid.js";
-import SAMLClientConfiguration from "./sso_client_saml.js";
 import User from "./user.js";
 
 Model.knex(db());
 
 const boolFields = [
 	"is_deleted",
-	"enabled",
+	"is_disabled",
 	"allow_internal",
 	"allow_internal_if_admin",
 	"require_group",
@@ -25,7 +24,6 @@ export const SingleSignOnClientType = {
 	Auth0: "Auth0",
 	GitHub: "GitHub",
 	OpenID: "OpenID",
-	SAML: "SAML",
 };
 
 class SingleSignOnClient extends Model {
@@ -114,14 +112,6 @@ class SingleSignOnClient extends Model {
 				modelClass: OpenIDClientConfiguration,
 				join: {
 					from: "sso_client_openid.sso_client_id",
-					to: "sso_client.id",
-				},
-			},
-			configuration_saml: {
-				relation: Model.HasOneRelation,
-				modelClass: SAMLClientConfiguration,
-				join: {
-					from: "sso_client_saml.sso_client_id",
 					to: "sso_client.id",
 				},
 			},

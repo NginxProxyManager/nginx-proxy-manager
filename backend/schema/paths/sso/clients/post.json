@@ -18,7 +18,7 @@
 					"required": [
 						"name",
 						"client_type",
-						"enabled",
+						"is_disabled",
 						"configuration"
 					],
           "properties": {
@@ -28,8 +28,8 @@
             "client_type": {
               "$ref": "../../../components/sso-client-object.json#/properties/client_type"
             },
-            "enabled": {
-              "$ref": "../../../components/sso-client-object.json#/properties/enabled"
+            "is_disabled": {
+              "$ref": "../../../components/sso-client-object.json#/properties/is_disabled"
             },
             "allow_internal": {
           		"$ref": "../../../components/sso-client-object.json#/properties/allow_internal"
@@ -71,9 +71,6 @@
          				},
                 {
          					"$ref": "../../../components/sso-client-openid.json"
-         				},
-         				{
-         					"$ref": "../../../components/sso-client-saml.json"
          				}
         			],
               "example": {
@@ -86,41 +83,15 @@
         		},
             "meta": {
               "type": "object",
-              "properties": {
-                "role_map": {
-                  "type": "array",
-                  "minItems": 0,
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
-                      "role": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "group": {
-                        "type": "string",
-                        "minLength": 1
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "role_map": [
-                  {
-                    "role": "user",
-                    "group": "NginxProxyManager-access"
-                  }
-                ]
-              }
+              "properties": {},
+              "example": {}
             }
           }
         },
         "example": {
           "name": "Authentik",
           "client_type": "OpenID",
-          "enabled": true,
+          "is_disabled": false,
           "allow_internal": true,
           "allow_internal_if_admin": false,
           "require_group": false,

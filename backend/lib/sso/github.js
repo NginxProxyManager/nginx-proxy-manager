@@ -127,7 +127,7 @@ const validateGitHubCallback = async (req, config) => {
 	const claims = {
 		iss: user.node_id,
 		iat: Math.floor(Date.now() / 1000),
-		sub: user.id,
+		sub: String(user.id),
 		aud: conf.github_client_id,
 		email: email.email,
 		email_verified: email.verified,

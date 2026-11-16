@@ -11,7 +11,6 @@ import {
 import auth0ClientConfigModel from "../models/sso_client_auth0.js";
 import githubConfigModel from "../models/sso_client_github.js";
 import openIDClientConfigModel from "../models/sso_client_openid.js";
-import samlClientConfigModel from "../models/sso_client_saml.js";
 import internalAuditLog from "./audit-log.js";
 
 const omissions = () => {
@@ -27,9 +26,6 @@ const omissions = () => {
 		"configuration_github.id",
 		"configuration_github.sso_client_id",
 		"configuration_github.meta",
-		"configuration_saml.id",
-		"configuration_saml.sso_client_id",
-		"configuration_saml.meta",
 	];
 };
 
@@ -88,12 +84,6 @@ const internalSsoClientConfig = {
 									config.redirect_url = (config.redirect_url || "").replace("/{id}/", `/${row.id}/`);
 									config.client_secret = encryptRSA(config.client_secret);
 									return openIDClientConfigModel
-										.query()
-										.insertAndFetch(config)
-										.transacting(trx)
-										.then(() => row);
-								case SingleSignOnClientType.SAML:
-									return samlClientConfigModel
 										.query()
 										.insertAndFetch(config)
 										.transacting(trx)
@@ -194,13 +184,6 @@ const internalSsoClientConfig = {
 										.patch(config)
 										.transacting(trx)
 										.then(() => row);
-								case SingleSignOnClientType.SAML:
-									return samlClientConfigModel
-										.query()
-										.where({ sso_client_id: row.id })
-										.patch(config)
-										.transacting(trx)
-										.then(() => row);
 								default:
 									throw new errs.InternalValidationError("Unknown SSO Client client_type");
 							}
@@ -289,15 +272,11 @@ const internalSsoClientConfig = {
 					case SingleSignOnClientType.OpenID:
 						thisRow.configuration = thisRow.configuration_openid;
 						break;
-					case SingleSignOnClientType.SAML:
-						thisRow.configuration = thisRow.configuration_saml;
-						break;
 				}
 
 				delete thisRow.configuration_auth0;
 				delete thisRow.configuration_github;
 				delete thisRow.configuration_openid;
-				delete thisRow.configuration_saml;
 
 				return thisRow;
 			});
@@ -354,13 +333,6 @@ const internalSsoClientConfig = {
 											.patch({ client_id: "", client_secret: "", configuration_url: "" })
 											.transacting(trx)
 											.then(() => row);
-									case SingleSignOnClientType.SAML:
-										return samlClientConfigModel
-											.query()
-											.where({ sso_client_id: row.id })
-											.patch({ saml_endpoint: "" })
-											.transacting(trx)
-											.then(() => row);
 									default:
 										throw new errs.InternalValidationError("Unknown SSO Client client_type");
 								}
@@ -403,17 +375,17 @@ const internalSsoClientConfig = {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
-				if (row.enabled) {
+				if (!row.is_disabled) {
 					throw new errs.ValidationError("SSO Client is already enabled");
 				}
 
-				row.enabled = 1;
+				row.is_disabled = 0;
 
 				return ssoClientModel
 					.query()
 					.where("id", row.id)
 					.patch({
-						enabled: 1,
+						is_disabled: 0,
 					})
 					.then(() => {
 						// Add to audit log
@@ -447,17 +419,17 @@ const internalSsoClientConfig = {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
-				if (!row.enabled) {
+				if (row.is_disabled) {
 					throw new errs.ValidationError("SSO Client is already disabled");
 				}
 
-				row.enabled = 0;
+				row.is_disabled = 1;
 
 				return ssoClientModel
 					.query()
 					.where("id", row.id)
 					.patch({
-						enabled: 0,
+						is_disabled: 1,
 					})
 					.then(() => {
 						// Add to audit log

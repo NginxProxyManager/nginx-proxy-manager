@@ -34,7 +34,7 @@
                 "owner_user_id": 1,
                 "client_type": "OpenID",
                 "name":"Authentik",
-                "enabled": true,
+                "is_disabled": false,
                 "allow_internal": true,
                 "allow_internal_if_admin": false,
                 "require_group": false,

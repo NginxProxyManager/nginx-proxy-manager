@@ -1,16 +1,10 @@
-import { IconAlertTriangle } from "@tabler/icons-react";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { Field, Form, Formik } from "formik";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import type {
-	SAMLClientConfiguration,
-	SingleSignOnClient,
-	SingleSignOnClientConfigurationType,
-	SingleSignOnClientType,
-} from "src/api/backend";
+import type { SingleSignOnClient, SingleSignOnClientType } from "src/api/backend";
 import { Button, Loading } from "src/components";
 import { SingleSignOnButton } from "src/components/Form/SingleSignOnButton";
 import { AllowInternalUserFields } from "src/components/Form/SSOInternalUsersFields";
@@ -20,7 +14,7 @@ import { T } from "src/locale";
 import { validateSecureOrLocalHost, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
-type ModalId = number | "new_openid" | "new_github" | "new_saml" | "new_auth0";
+type ModalId = number | "new_openid" | "new_github" | "new_auth0";
 
 let clientType: SingleSignOnClientType | undefined;
 
@@ -45,8 +39,6 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
-		values.meta = { roleMap: [...(values.provisionRoleMap || [])] };
-
 		const { ...payload } = {
 			id: id.toString().includes("new") ? undefined : id,
 			...values,
@@ -63,10 +55,6 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 				setSubmitting(false);
 			},
 		});
-	};
-
-	const isSAMLConfig = (c: SingleSignOnClientConfigurationType | undefined): c is SAMLClientConfiguration => {
-		return "samlEndpoint" in (c || {});
 	};
 
 	// Generate the redirect URL for new OpenID form
@@ -313,35 +301,26 @@ const SingleSignOnClientModal = EasyModal.create((prop: Props) => {
 													})) ||
 													null}
 											</div>
-											{isSAMLConfig(data.configuration) && (
-												<div className="alert alert-warning">
-													<IconAlertTriangle size="20" />
-													<T
-														id="sso.config.protocol-disabled"
-														data={{ protocol: data.clientType }}
-													/>
-												</div>
-											)}
 											<div className="mb-3 m-2">
 												<div>
-													<label className="row" htmlFor="enabled">
+													<label className="row" htmlFor="isDisabled">
 														<span className="col">
 															<T id="enabled" />
 														</span>
 														<span className="col-auto">
-															<Field name="enabled" type="checkbox">
+															<Field name="isDisabled" type="checkbox">
 																{({ field, form }: any) => (
 																	<label className="form-check form-check-single form-switch">
 																		<input
-																			id="enabled"
-																			checked={field.value === true}
+																			id="isDisabled"
+																			checked={field.value === false}
 																			className={cn("form-check-input", {
-																				"bg-indigo": field.checked,
+																				"bg-indigo": !field.checked,
 																			})}
 																			onChange={(e) =>
 																				form.setFieldValue(
-																					"enabled",
-																					e.target.checked,
+																					"isDisabled",
+																					!e.target.checked,
 																				)
 																			}
 																			type="checkbox"

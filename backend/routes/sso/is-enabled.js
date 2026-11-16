@@ -33,7 +33,7 @@ router
 			const data = await ssoClientModel
 				.query()
 				.whereIn("client_type", SingleSignOnClient.enabledProtocols)
-				.andWhere({ is_deleted: 0, enabled: 1 });
+				.andWhere({ is_deleted: 0, is_disabled: 0 });
 
 			const response = {
 				enabled: data.length > 0,

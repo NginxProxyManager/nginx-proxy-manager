@@ -10,11 +10,11 @@ import {
 } from "src/api/backend";
 
 export const SingleSignOnClientBaseConfig = {
-	enabled: true,
 	name: "",
 	clientType: "",
 	configuration: {},
 	buttonText: "",
+	isDisabled: false,
 	requireVerifiedEmail: false,
 	allowInternal: true,
 	allowInternalIfAdmin: false,
@@ -46,10 +46,6 @@ export const OpenIDConfig = {
 	redirectUrl: "",
 };
 
-export const SAMLConfig = {
-	samlEndpoint: "",
-};
-
 const fetchSingleSignOnClient = async (id: number | string, clientType?: SingleSignOnClientType) => {
 	if (!clientType) {
 		throw new Error("Client type required");
@@ -62,9 +58,6 @@ const fetchSingleSignOnClient = async (id: number | string, clientType?: SingleS
 		} else if (clientType === SingleSignOnClientType.GitHub) {
 			props.clientType = SingleSignOnClientType.GitHub;
 			props.configuration = GitHubConfig;
-		} else if (clientType === SingleSignOnClientType.SAML) {
-			props.clientType = SingleSignOnClientType.SAML;
-			props.configuration = SAMLConfig;
 		} else if (clientType === SingleSignOnClientType.Auth0) {
 			props.clientType = SingleSignOnClientType.Auth0;
 			props.configuration = Auth0Config;

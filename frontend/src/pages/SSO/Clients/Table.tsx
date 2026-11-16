@@ -41,7 +41,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 				cell: (info: any) => {
 					const value = info.getValue();
 
-					return <SingleSignOnProtocolFormatter protocol={value.clientType} disabled={!value.enabled} />;
+					return <SingleSignOnProtocolFormatter protocol={value.clientType} disabled={value.enabled} />;
 				},
 				meta: {
 					className: "w-1",
@@ -58,7 +58,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 						<ValueAndDateFormatter
 							value={value.name}
 							date={value.accessed}
-							disabled={!value.enabled}
+							disabled={value.isDisabled}
 							langKey={"sso.stats.accessed"}
 							langKeyNoDate={"sso.stats.never-accessed"}
 						/>
@@ -75,17 +75,17 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 						<BooleanAsIconWithCountFormatter
 							value={value.allowInternal}
 							count={value.internalUsers}
-							disabled={!value.enabled}
+							disabled={value.isDisabled}
 							translationKey="sso.info.internal-users-count"
 							translationData={{ users: value.internalUsers }}
 							enabledIcon={
 								<IconUserCheck
 									height={20}
-									className={value.enabled ? "text-lime opacity-85" : "opacity-30"}
+									className={!value.isDisabled ? "text-lime opacity-85" : "opacity-30"}
 								/>
 							}
 							disabledIcon={
-								<IconForbid2 height={20} className={value.enabled ? "opacity-65" : "opacity-30"} />
+								<IconForbid2 height={20} className={!value.isDisabled ? "opacity-65" : "opacity-30"} />
 							}
 						/>
 					);
@@ -101,24 +101,24 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 						<BooleanAsIconWithCountFormatter
 							value={value.provisionUsers}
 							count={value.provisionedUsers}
-							disabled={!value.enabled}
+							disabled={value.isDisabled}
 							translationKey="sso.info.provisioned-users-count"
 							translationData={{ users: value.provisionedUsers }}
 							enabledIcon={
 								<IconUserPlus
 									height={20}
-									className={value.enabled ? "text-lime opacity-85" : "opacity-30"}
+									className={!value.isDisabled ? "text-lime opacity-85" : "opacity-30"}
 								/>
 							}
 							disabledIcon={
-								<IconForbid2 height={20} className={value.enabled ? "opacity-65" : "opacity-30"} />
+								<IconForbid2 height={20} className={!value.isDisabled ? "opacity-65" : "opacity-30"} />
 							}
 						/>
 					);
 				},
 			}),
-			columnHelper.accessor((row: any) => row.enabled, {
-				id: "enabled",
+			columnHelper.accessor((row: any) => row.isDisabled, {
+				id: "isDisabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
 					if (!info.row.original.allowInternal && !info.row.original.provisionUsers && info.getValue()) {
@@ -129,11 +129,11 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 									className="me-1 text-yellow cursor-pointer"
 									title={intl.formatMessage({ id: "sso.warning.partial-access" })}
 								/>
-								<TrueFalseFormatter value={info.getValue()} trueColor="yellow" />
+								<TrueFalseFormatter value={!info.getValue()} trueColor="yellow" />
 							</>
 						);
 					}
-					return <TrueFalseFormatter value={info.getValue()} />;
+					return <TrueFalseFormatter value={!info.getValue()} />;
 				},
 			}),
 			columnHelper.display({
@@ -174,11 +174,11 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 									href="#"
 									onClick={(e) => {
 										e.preventDefault();
-										onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
+										onDisableToggle?.(info.row.original.id, info.row.original.isDisabled);
 									}}
 								>
 									<IconPower size={16} />
-									<T id={info.row.original.enabled ? "action.disable" : "action.enable"} />
+									<T id={!info.row.original.isDisabled ? "action.disable" : "action.enable"} />
 								</a>
 								<div className="dropdown-divider" />
 								<a

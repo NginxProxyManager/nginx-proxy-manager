@@ -35,7 +35,7 @@ router
 		logger.info(`[${req.params.client_id}] Initializing OAuth flow`);
 		ssoClientModel
 			.query()
-			.where({ is_deleted: 0, enabled: 1, id: req.params.client_id })
+			.where({ is_deleted: 0, is_disabled: 0, id: req.params.client_id })
 			.withGraphFetched("[configuration_openid]")
 			.first()
 			.then((row) => getOpenIDInitParams(req, row))
@@ -59,7 +59,7 @@ router
 		logger.info(`[${req.params.client_id}] Processing callback`);
 		ssoClientModel
 			.query()
-			.where({ is_deleted: 0, enabled: 1, id: req.params.client_id })
+			.where({ is_deleted: 0, is_disabled: 0, id: req.params.client_id })
 			.withGraphFetched("[configuration_openid]")
 			.first()
 			.then((config) => validateOpenIDCallback(req, config))
@@ -89,7 +89,7 @@ router
 		logger.info(`[${req.params.client_id}] Initializing OAuth flow`);
 		ssoClientModel
 			.query()
-			.where({ is_deleted: 0, enabled: 1, id: req.params.client_id })
+			.where({ is_deleted: 0, is_disabled: 0, id: req.params.client_id })
 			.withGraphFetched("[configuration_auth0]")
 			.first()
 			.then((row) => getAuth0InitParams(req, row))
@@ -113,7 +113,7 @@ router
 		logger.info(`[${req.params.client_id}] Processing callback`);
 		ssoClientModel
 			.query()
-			.where({ is_deleted: 0, enabled: 1, id: req.params.client_id })
+			.where({ is_deleted: 0, is_disabled: 0, id: req.params.client_id })
 			.withGraphFetched("[configuration_auth0]")
 			.first()
 			.then((config) => validateAuth0Callback(req, config))
@@ -143,7 +143,7 @@ router
 		logger.info(`[${req.params.client_id}] Initializing OAuth flow`);
 		ssoClientModel
 			.query()
-			.where({ is_deleted: 0, enabled: 1, id: req.params.client_id })
+			.where({ is_deleted: 0, is_disabled: 0, id: req.params.client_id })
 			.withGraphFetched("[configuration_github]")
 			.first()
 			.then((row) => getGitHubInitParams(req, row))
@@ -167,7 +167,7 @@ router
 		logger.info(`[${req.params.client_id}] Processing callback`);
 		ssoClientModel
 			.query()
-			.where({ is_deleted: 0, enabled: 1, id: req.params.client_id })
+			.where({ is_deleted: 0, is_disabled: 0, id: req.params.client_id })
 			.withGraphFetched("[configuration_github]")
 			.first()
 			.then((config) => validateGitHubCallback(req, config))

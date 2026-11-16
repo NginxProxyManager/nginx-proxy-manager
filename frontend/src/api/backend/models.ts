@@ -245,7 +245,6 @@ export enum SingleSignOnClientType {
 	Auth0 = "Auth0",
 	GitHub = "GitHub",
 	OpenID = "OpenID",
-	SAML = "SAML",
 }
 
 export interface SingleSignOnClient {
@@ -254,7 +253,7 @@ export interface SingleSignOnClient {
 	createdOn: string;
 	modifiedOn: string;
 	clientType: SingleSignOnClientType;
-	enabled: boolean;
+	isDisabled: boolean;
 	name: string;
 	buttonText?: string;
 	requireVerifiedEmail: boolean;
@@ -269,16 +268,11 @@ export interface SingleSignOnClient {
 	requireProvisionGroupName?: string;
 	provisionRoleMap?: ProvisionRoleMap[];
 	// Virtual property for frontend, holds the type specific expanded configuration
-	configuration?:
-		| OpenIDClientConfiguration
-		| SAMLClientConfiguration
-		| Auth0ClientConfiguration
-		| GitHubConfiguration;
+	configuration?: OpenIDClientConfiguration | Auth0ClientConfiguration | GitHubConfiguration;
 	// Expansions
 	configurationAuth0?: Auth0ClientConfiguration;
 	configurationGithub?: GitHubConfiguration;
 	configurationOpenid?: OpenIDClientConfiguration;
-	configurationSaml?: SAMLClientConfiguration;
 	user?: User;
 }
 
@@ -307,12 +301,7 @@ export interface OpenIDClientConfiguration {
 	redirectUrl: string;
 }
 
-export interface SAMLClientConfiguration {
-	samlEndpoint: string;
-}
-
 export type SingleSignOnClientConfigurationType =
 	| Auth0ClientConfiguration
 	| GitHubConfiguration
-	| OpenIDClientConfiguration
-	| SAMLClientConfiguration;
+	| OpenIDClientConfiguration;

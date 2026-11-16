@@ -37,8 +37,8 @@
             "client_type": {
               "$ref": "../../../../components/sso-client-object.json#/properties/client_type"
             },
-            "enabled": {
-              "$ref": "../../../../components/sso-client-object.json#/properties/enabled"
+            "is_disabled": {
+              "$ref": "../../../../components/sso-client-object.json#/properties/is_disabled"
             },
             "allow_internal": {
           		"$ref": "../../../../components/sso-client-object.json#/properties/allow_internal"
@@ -90,9 +90,6 @@
         				},
         				{
          					"$ref": "../../../../components/sso-client-openid.json"
-        				},
-        				{
-        					"$ref": "../../../../components/sso-client-saml.json"
         				}
         			],
               "example": {
@@ -134,7 +131,7 @@
         "example": {
           "name": "Authentik",
           "client_type": "OpenID",
-          "enabled": true,
+          "is_disabled": false,
           "allow_internal": true,
           "allow_internal_if_admin": false,
           "require_group": false,
@@ -147,9 +144,7 @@
             "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
             "redirect_url":"http://localhost:3081/api/sso/oauth2/1/callback"
           },
-          "meta": {
-            "role_map": []
-          }
+          "meta": {}
         }
       }
     }
@@ -168,7 +163,7 @@
                 "owner_user_id": 1,
                 "client_type": "OpenID",
                 "name": "Authentik",
-                "enabled": true,
+                "is_disabled": false,
                 "allow_internal": true,
                 "allow_internal_if_admin": false,
                 "require_group": false,

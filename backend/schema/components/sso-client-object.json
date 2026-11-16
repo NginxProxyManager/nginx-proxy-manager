@@ -8,7 +8,7 @@
 		"owner_user_id",
 		"name",
 		"configuration",
-		"enabled",
+		"is_disabled",
 		"meta"
 	],
 	"additionalProperties": false,
@@ -35,7 +35,7 @@
       "minLength": 1,
       "example": "OpenID"
 		},
-		"enabled": {
+		"is_disabled": {
 			"$ref": "../common.json#/properties/enabled"
 		},
 		"button_text": {
@@ -95,7 +95,8 @@
 							"minLength": 1
 						},
 						"role": {
-							"type": "string"
+							"type": "string",
+							"minLength": 1
 						}
 					}
 			},
@@ -120,10 +121,7 @@
 				},
   			{
           "$ref": "./sso-client-openid.json"
-        },
-				{
-					"$ref": "./sso-client-saml.json"
-				}
+        }
 			],
 			"example": {
         "client_id": "123",

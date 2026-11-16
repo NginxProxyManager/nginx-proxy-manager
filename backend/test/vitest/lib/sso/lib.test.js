@@ -262,6 +262,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 	it("REJECTs when email user exists", async () => {
 		config.provision_users = true;
 		users[0] = null; // no existing password user
+		users[2] = null; // no existing provisioned user
 		users[3] = null; // no existing disabled user
 		users[1].email = "test@fake.net"; // existin email user
 		claims.email = "test@fake.net";
@@ -309,7 +310,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 	it("REJECTs for incorrect groups configuration", async () => {
 		config.provision_users = true;
 		// these 3 together are incorrect config
-		config.meta.role_map = [];
+		config.provision_role_map = [];
 		config.require_provision_group = true;
 		delete config.require_provision_group_name;
 
@@ -384,7 +385,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_users = true;
 		config.require_provision_group = true;
 		config.require_provision_group_name = "";
-		config.meta.role_map = [{ group: "foo", role: "user" }];
+		config.provision_role_map = [{ group: "foo", role: "user" }];
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
 		users[3] = null; // no existing disabled user
@@ -404,7 +405,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_users = true;
 		config.require_provision_group = true;
 		config.require_provision_group_name = "";
-		config.meta.role_map = [
+		config.provision_role_map = [
 			{ group: "foo", role: "user" },
 			{ group: "bar", role: "admin" },
 		];
@@ -423,7 +424,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_users = true;
 		config.require_provision_group = true;
 		config.require_provision_group_name = "";
-		config.meta.role_map = [
+		config.provision_role_map = [
 			{ group: "foo", role: "user" },
 			{ group: "bar", role: "admin" },
 		];
@@ -442,7 +443,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_users = true;
 		config.require_provision_group = true;
 		config.require_provision_group_name = "bar-baz-foo";
-		config.meta.role_map = [{ group: "foo", role: "user" }];
+		config.provision_role_map = [{ group: "foo", role: "user" }];
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
 		users[3] = null; // no existing disabled user
@@ -462,7 +463,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_users = true;
 		config.require_provision_group = true;
 		config.require_provision_group_name = "bar-baz-foo";
-		config.meta.role_map = [{ group: "foo", role: "user" }];
+		config.provision_role_map = [{ group: "foo", role: "user" }];
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
 		users[3] = null; // no existing disabled user
@@ -482,7 +483,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_users = true;
 		config.require_provision_group = true;
 		config.require_provision_group_name = "bar-baz-foo";
-		config.meta.role_map = [
+		config.provision_role_map = [
 			{ group: "foo", role: "user" },
 			{ group: "bar", role: "admin" },
 		];

@@ -5,7 +5,6 @@ const images = {
 	[SingleSignOnClientType.Auth0]: "/images/sso-logo-auth0.svg",
 	[SingleSignOnClientType.GitHub]: "/images/sso-logo-github.svg",
 	[SingleSignOnClientType.OpenID]: "/images/sso-logo-openid.svg",
-	[SingleSignOnClientType.SAML]: "/images/sso-logo-saml.svg",
 };
 
 interface Props {

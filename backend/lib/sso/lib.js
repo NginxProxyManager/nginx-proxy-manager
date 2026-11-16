@@ -27,7 +27,7 @@ import errs from "../error.js";
 const getProvisionedUser = async (config, claims, users) => {
 	const groups = claims.groups;
 	const [existingPasswordUser, existingEmailUser, provisionedUser, disabledUser] = users;
-	const emptyRoleMap = !config.meta.role_map || config.meta.role_map.length === 0;
+	const emptyRoleMap = !config.provision_role_map || config.provision_role_map.length === 0;
 	const ownerUserId = config.owner_user_id;
 
 	const newUserData = {
@@ -81,11 +81,7 @@ const getProvisionedUser = async (config, claims, users) => {
 	}
 
 	// Reject provision with existing email (enforce unique)
-	if (
-		existingEmailUser &&
-		existingEmailUser.email === claims.email &&
-		(existingEmailUser.subject !== claims.sub || existingEmailUser.issuer !== claims.iss)
-	) {
+	if (existingEmailUser && !provisionedUser) {
 		throw new Error("sso.error.signup.unique-email");
 	}
 
@@ -137,7 +133,7 @@ const getProvisionedUser = async (config, claims, users) => {
 	// Provision accoring to mapped role if group membership satisfies.
 	if (config.require_provision_group && !config.require_provision_group_name && !emptyRoleMap) {
 		let role;
-		config.meta.role_map.forEach((map) => {
+		config.provision_role_map.forEach((map) => {
 			if (groups.includes(map.group)) {
 				role = role === "admin" ? role : map.role;
 			}
@@ -165,7 +161,7 @@ const getProvisionedUser = async (config, claims, users) => {
 		}
 
 		let role;
-		config.meta.role_map.forEach((map) => {
+		config.provision_role_map.forEach((map) => {
 			if (groups.includes(map.group)) {
 				role = role === "admin" ? role : map.role;
 			}
