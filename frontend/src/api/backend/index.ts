@@ -1,3 +1,4 @@
+export { ApiError, type ApiErrorDetails, buildApiError, isApiError } from "./base";
 export * from "./checkVersion";
 export * from "./createAccessList";
 export * from "./createCertificate";

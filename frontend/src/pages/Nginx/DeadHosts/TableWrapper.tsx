@@ -8,7 +8,8 @@ import { useDeadHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeadHostModal, showDeleteConfirmModal, showHelpModal } from "src/modals";
 import { DEAD_HOSTS, MANAGE } from "src/modules/Permissions";
-import { showObjectSuccess } from "src/notifications";
+import { formatApiError } from "src/modules/HostStatus";
+import { showError, showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -30,10 +31,16 @@ export default function TableWrapper() {
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
-		await toggleDeadHost(id, enabled);
-		queryClient.invalidateQueries({ queryKey: ["dead-hosts"] });
-		queryClient.invalidateQueries({ queryKey: ["dead-host", id] });
-		showObjectSuccess("dead-host", enabled ? "enabled" : "disabled");
+		try {
+			await toggleDeadHost(id, enabled);
+			showObjectSuccess("dead-host", enabled ? "enabled" : "disabled");
+		} catch (err) {
+			showError(formatApiError(err));
+		} finally {
+			// Also after a failure: the host's status (meta) may have changed
+			queryClient.invalidateQueries({ queryKey: ["dead-hosts"] });
+			queryClient.invalidateQueries({ queryKey: ["dead-host", id] });
+		}
 	};
 
 	let filtered = null;
