@@ -186,6 +186,6 @@ After the app is running for the first time, the following will happen:
 
 1. JWT keys will be generated and saved in the data folder
 2. The database will initialize with table structures
-3. A default admin user will be created
+3. You will be asked to create the first admin user in the web UI, unless `INITIAL_ADMIN_EMAIL` and `INITIAL_ADMIN_PASSWORD` are set (see [Auto Initial User Creation](/advanced-config/#auto-initial-user-creation))
 
 This process can take a couple of minutes depending on your machine.
