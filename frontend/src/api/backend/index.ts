@@ -1,3 +1,4 @@
+export { ApiError, type ApiErrorDetails, buildApiError, isApiError } from "./base";
 export * from "./checkVersion";
 export * from "./createAccessList";
 export * from "./createCertificate";
@@ -44,6 +45,7 @@ export * from "./helpers";
 export * from "./loginAsUser";
 export * from "./models";
 export * from "./refreshToken";
+export * from "./regenerateNginxConfigs";
 export * from "./renewCertificate";
 export * from "./responseTypes";
 export * from "./setPermissions";

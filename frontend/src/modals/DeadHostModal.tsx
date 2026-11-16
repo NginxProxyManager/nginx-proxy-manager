@@ -4,17 +4,21 @@ import { Form } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
+import type { HostMeta } from "src/api/backend";
 import {
 	Button,
 	DomainNamesField,
 	Loading,
 	NginxConfigField,
+	NginxErrorMessage,
+	SaveWarning,
 	SSLCertificateField,
 	SSLOptionsFields,
 } from "src/components";
 import { FormModal } from "src/components/Form";
 import { useDeadHost, useSetDeadHost, useUser } from "src/hooks";
 import { T } from "src/locale";
+import { formatApiError, getNginxErrorDetails, hasSaveWarnings, stripServerMeta } from "src/modules/HostStatus";
 import { showObjectSuccess } from "src/notifications";
 
 const showDeadHostModal = (id: number | "new") => {
@@ -30,17 +34,24 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { mutate: setDeadHost } = useSetDeadHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	// Set when a save went through but nginx couldn't load the host
+	const [savedMeta, setSavedMeta] = useState<HostMeta | null>(null);
+	// Id of a host created by this modal, so that saving again updates it
+	const [savedId, setSavedId] = useState<number | null>(null);
 
 	const isAdmin = currentUser?.roles?.includes("admin");
 
-	const onSubmit = async (values: any, { setSubmitting }: any) => {
+	const onSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		setErrorMsg(null);
+		setSavedMeta(null);
 
 		const { ...payload } = {
-			id: id === "new" ? undefined : id,
+			id: savedId ?? (id === "new" ? undefined : id),
 			...values,
+			// server-owned status keys are never sent back
+			meta: stripServerMeta(values.meta),
 		};
 
 		if (!isAdmin) {
@@ -49,8 +60,26 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		}
 
 		setDeadHost(payload, {
-			onError: (err: any) => setErrorMsg(<T id={err.message} />),
-			onSuccess: () => {
+			onError: (err: unknown) => {
+				const details = getNginxErrorDetails(err);
+				setErrorMsg(
+					details ? (
+						<NginxErrorMessage message={formatApiError(err)} details={details} />
+					) : (
+						formatApiError(err)
+					),
+				);
+			},
+			onSuccess: (result: any) => {
+				if (result && hasSaveWarnings(result.meta)) {
+					// Keep the modal open so the problem can be seen
+					setSavedId(result.id || null);
+					// A requested certificate ("new") now exists: saving again must not request another one.
+					// The saved values become the new baseline, so closing now doesn't ask about unsaved changes.
+					resetForm({ values: { ...values, certificateId: result.certificateId || 0 } });
+					setSavedMeta(result.meta);
+					return;
+				}
 				showObjectSuccess("dead-host", "saved");
 				remove();
 			},
@@ -96,10 +125,14 @@ const DeadHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
-									<T id={data?.id ? "object.edit" : "object.add"} tData={{ object: "dead-host" }} />
+									<T
+										id={data?.id || savedId ? "object.edit" : "object.add"}
+										tData={{ object: "dead-host" }}
+									/>
 								</Modal.Title>
 							</Modal.Header>
 							<Modal.Body className="p-0">
+								{savedMeta ? <SaveWarning meta={savedMeta} onClose={onHide} /> : null}
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
 								</Alert>

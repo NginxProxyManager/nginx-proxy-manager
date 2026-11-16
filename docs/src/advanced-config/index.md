@@ -192,6 +192,56 @@ You can add your custom configuration snippet files at `/data/nginx/custom` as f
 Every file is optional.
 
 
+## Regenerating all host configs
+
+NPM writes one nginx config file per host into `/data/nginx/`. After an upgrade, after restoring a backup, or when
+files there were edited or lost, you can rewrite all of them from the database: **Settings > Nginx Configuration >
+Regenerate all host configs** (admin only).
+
+Every enabled proxy host, redirection host, 404 host and stream is regenerated and tested with nginx, then nginx is
+reloaded once. Working hosts stay online, there is no downtime. A host that nginx rejects is taken offline instead of
+blocking the others, just as when you save the host. Afterwards the page lists the hosts that went offline, the hosts
+that could not be regenerated (they keep their previous config, eg. because a certificate file is missing) and the
+hosts that are online but reported a warning. Click a host to open it. Hosts whose Let's Encrypt certificate is being
+requested right now are skipped and listed as such: the request takes them out of nginx for the HTTP challenge and puts
+them back itself once it is done.
+
+NPM only rewrites a host's config file when the host is saved. Fixes to the config templates in a newer NPM version,
+for example the per-host HSTS sub-domains setting, therefore reach hosts that were saved with an older version only
+when their file is rewritten. Run a regeneration once after upgrading to apply such template fixes to all existing
+hosts.
+
+The same goes for values that NPM no longer accepts because they could add nginx directives (for example a `;` in a
+forward host or domain name, saved with an older version). A host that still holds such a value is not written: its
+config file is removed and the host is listed as offline with the field that is not allowed, until you correct it and
+save the host.
+
+The same is available from the API (`POST /api/nginx/regenerate`, optional body `{"host_types": ["proxy_host"]}`) and
+from the command line inside the container:
+
+```bash
+docker exec -it <container> /app/scripts/regenerate-config --yes
+```
+
+The script exits with code 1 when the regeneration failed or a host could not be regenerated (it kept its previous
+config), and with 0 otherwise, also when hosts were taken offline.
+
+Only one regeneration runs at a time, a second request gets `409 Conflict`. Each run is recorded in the audit log,
+also a run that failed half way (eg. nginx could not be reloaded), with the error. Such a run may have rewritten hosts
+or taken them offline already: the page shows these hosts below the error, and the API sends them as
+`error.regenerate_summary` (same fields as a successful response). The list of offline hosts also
+contains hosts that the final nginx test took offline, even of host types that were not selected.
+
+Each listed host has an English `error` (offline, failed) or `message` (warnings, skipped). For clients that word
+them in their own language, an offline host also has its `details` (the host's `meta.nginx_details`), a failed one
+the structured details of its error (or `null`), and a host with broken custom locations its `locations` (path,
+status, `code` and `params` as in `meta.nginx_locations`).
+
+The command line script runs outside the backend and does not share its lock, so prefer the UI or the API while NPM
+is running and don't save hosts while the script runs. Config files that an interrupted config test left behind as
+`*.conf.npm-aside` are only put back by the UI/API, or by the script with `--restore-aside` while the backend is
+stopped.
+
 ## X-FRAME-OPTIONS Header
 
 You can configure the [`X-FRAME-OPTIONS`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options) header
