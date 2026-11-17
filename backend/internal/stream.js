@@ -401,7 +401,7 @@ const internalStream = {
 				// Query is used for searching
 				if (typeof search_query === "string" && search_query.length > 0) {
 					query.where(function () {
-						this.whereRaw("?? LIKE ? ESCAPE '!'", ["name", `%${escapeLike(search_query)}%`]);
+						this.whereRaw("LOWER(??) LIKE LOWER(?) ESCAPE '!'", ["name", `%${escapeLike(search_query)}%`]);
 						if (/^\d+$/.test(search_query)) {
 							this.orWhere(castJsonIfNeed("incoming_port"), "like", `%${search_query}%`);
 						}

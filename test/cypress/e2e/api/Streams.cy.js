@@ -260,6 +260,12 @@ describe('Streams', () => {
 			}).then((list) => {
 				expect(list.map((s) => s.id)).to.deep.equal([data.id]);
 			});
+			cy.task('backendApiGet', {
+				token: token,
+				path:  `/api/nginx/streams?query=${encodeURIComponent('nas\\media 100%_X')}`,
+			}).then((list) => {
+				expect(list.map((s) => s.id)).to.deep.equal([data.id]);
+			});
 		});
 	});
 
