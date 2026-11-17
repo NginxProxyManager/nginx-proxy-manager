@@ -42,6 +42,7 @@
 									"nginx_err": null
 								},
 								"enabled": true,
+								"enable_proxy_protocol": false,
 								"certificate_id": 0
 							}
 						}
