@@ -1,9 +1,12 @@
 import { T } from "src/locale";
 import DefaultSite from "./DefaultSite";
+import { useNavigate } from "react-router-dom";
 
 export default function Layout() {
 	// Taken from https://preview.tabler.io/settings.html
 	// Refer to that when updating this content
+
+	const navigate = useNavigate();
 
 	return (
 		<div className="card mt-4">
@@ -26,6 +29,18 @@ export default function Layout() {
 									onClick={(e) => e.preventDefault()}
 								>
 									<T id="settings.default-site" />
+								</a>
+							</div>
+							<div className="list-group list-group-transparent">
+								<a
+									href="/sso/clients"
+									className="list-group-item list-group-item-action d-flex align-items-center active"
+									onClick={(e) => {
+										navigate("/sso/clients");
+										e.preventDefault();
+									}}
+								>
+									<T id="sso.menu.label" />
 								</a>
 							</div>
 						</div>

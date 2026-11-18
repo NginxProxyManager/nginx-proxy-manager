@@ -1,0 +1,131 @@
+{
+  "operationId": "createSingleSignOnClient",
+  "summary": "Create a Single Sign On Client",
+  "tags": ["sso-clients"],
+  "security": [
+    {
+      "bearerAuth": ["admin"]
+    }
+  ],
+  "requestBody": {
+    "description": "Single Sign On Client Payload",
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name",
+						"client_type",
+						"is_disabled",
+						"configuration"
+					],
+          "properties": {
+            "name": {
+              "$ref": "../../../components/sso-client-object.json#/properties/name"
+            },
+            "client_type": {
+              "$ref": "../../../components/sso-client-object.json#/properties/client_type"
+            },
+            "is_disabled": {
+              "$ref": "../../../components/sso-client-object.json#/properties/is_disabled"
+            },
+            "allow_internal": {
+          		"$ref": "../../../components/sso-client-object.json#/properties/allow_internal"
+        		},
+        		"button_text": {
+          		"$ref": "../../../components/sso-client-object.json#/properties/button_text"
+        		},
+        		"require_verified_email": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_verified_email"
+        		},
+        		"allow_internal_if_admin": {
+          		"$ref": "../../../components/sso-client-object.json#/properties/allow_internal_if_admin"
+        		},
+        		"require_group": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_group"
+        		},
+        		"require_group_name": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_group_name"
+        		},
+        		"provision_users": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/provision_users"
+        		},
+        		"require_provision_group": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_provision_group"
+        		},
+        		"require_provision_group_name": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/require_provision_group_name"
+        		},
+        		"provision_role_map": {
+        		  "$ref": "../../../components/sso-client-object.json#/properties/provision_role_map"
+            },
+            "configuration": {
+        			"oneOf": [
+         				{
+         					"$ref": "../../../components/sso-client-auth0.json"
+         				},
+                {
+         					"$ref": "../../../components/sso-client-github.json"
+         				},
+                {
+         					"$ref": "../../../components/sso-client-openid.json"
+         				}
+        			],
+              "example": {
+                "client_id": "foo",
+                "client_secret": "bar",
+                "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
+                "redirect_url": "https://my-nginx-pm.com/api/sso/oauth2/openid/123/callback",
+                "meta": {}
+              }
+        		},
+            "meta": {
+              "type": "object",
+              "properties": {},
+              "example": {}
+            }
+          }
+        },
+        "example": {
+          "name": "Authentik",
+          "client_type": "OpenID",
+          "is_disabled": false,
+          "allow_internal": true,
+          "allow_internal_if_admin": false,
+          "require_group": false,
+          "require_group_name": "",
+          "provision_users": false,
+          "require_provision_group": false,
+          "require_provision_group_name": "",
+          "provision_role_map": [],
+          "meta": {
+            "role_map": []
+          },
+          "require_verified_email": false,
+          "button_text": "",
+          "configuration": {
+            "client_id": "abc123",
+            "client_secret": "client-secret",
+            "configuration_url": "https://my-authentik.com/applications/o/nginx-proxy-manager",
+            "redirect_url": "https://my-nginx-pm.com/api/sso/oauth2/openid/123/callback"
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "201": {
+      "description": "201 response",
+      "content": {
+        "application/json": {
+          "examples": {},
+          "schema": {
+            "$ref": "../../../components/sso-client-object.json"
+          }
+        }
+      }
+    }
+  }
+}

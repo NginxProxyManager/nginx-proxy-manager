@@ -4,6 +4,7 @@ import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
 import authModel from "../models/auth.js";
 import proxyHostModel from "../models/proxy_host.js";
+import ssoAuthModel from "../models/sso_auth.js";
 import userModel from "../models/user.js";
 import userPermissionModel from "../models/user_permission.js";
 import internalAuditLog from "./audit-log.js";
@@ -125,7 +126,10 @@ const internalUser = {
 					);
 				}
 
-				data.avatar = gravatar.url(data.email || user.email, { default: "mm" });
+				if (!user.avatar || (data.email && user.email !== data.email)) {
+					data.avatar = gravatar.url(data.email || user.email, { default: "mm" });
+				}
+
 				return userModel.query().patchAndFetchById(user.id, data).then(utils.omitRow(omissions()));
 			})
 			.then(() => {
@@ -161,6 +165,8 @@ const internalUser = {
 			thisData.id = access.token.getUserId(0);
 		}
 
+		const authType = access.token.getAuthType();
+
 		return access
 			.can("users:get", thisData.id)
 			.then(() => {
@@ -181,6 +187,11 @@ const internalUser = {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(thisData.id);
 				}
+
+				if (authType && row?.id === access.token.getUserId(0)) {
+					row.auth_type = authType;
+				}
+
 				// Custom omissions
 				if (typeof thisData.omit !== "undefined" && thisData.omit !== null) {
 					return _.omit(row, thisData.omit);
@@ -534,6 +545,117 @@ const internalUser = {
 			})
 			.then((user) => {
 				return internalToken.getTokenFromUser(user);
+			});
+	},
+
+	/**
+	 * Provision new account for Single Sign On user.
+	 * Create user, user_permission, audit_log and sso_auth in an existing transaction.
+	 *
+	 * @param   {Object}  userData The user table fields
+	 * @param   {Object}  authData The sso_auth fields
+	 * @param   {number}  ownerUserId
+	 * @param   {Knex.Transaction}  trx
+	 * @returns {Promise<User>}
+	 */
+	provision: async (userData, authData, ownerUserId, trx) => {
+		authData.last_login_at = authData.auth_time;
+		authData.first_login_at = authData.last_login_at;
+		userData.roles = userData.roles || [];
+		delete authData.auth_time;
+
+		if (!userData.avatar) {
+			userData.avatar = gravatar.url(userData.email, { default: "mm" });
+		}
+
+		const newUser = await userModel
+			.query()
+			.transacting(trx)
+			.insertAndFetch(userData)
+			.then(utils.omitRow(omissions()))
+			.then(async (user) => {
+				return ssoAuthModel
+					.query()
+					.transacting(trx)
+					.insert({ user_id: user.id, auth_type: "sso-idp", ...authData })
+					.then(async () => {
+						const isAdmin = userData.roles.indexOf("admin") !== -1;
+						return userPermissionModel
+							.query()
+							.transacting(trx)
+							.insertAndFetch({
+								user_id: user.id,
+								visibility: isAdmin ? "all" : "user",
+								proxy_hosts: "manage",
+								redirection_hosts: "manage",
+								dead_hosts: "manage",
+								streams: "manage",
+								access_lists: "manage",
+								certificates: "manage",
+							})
+							.then(async (permissions) => {
+								return internalAuditLog.add(
+									null,
+									{
+										user_id: ownerUserId, // owner of SSO Client
+										action: "created",
+										object_type: "user",
+										object_id: user.id,
+										meta: _.omit({ ...userData, permissions }, omissions()),
+									},
+									trx,
+								);
+							})
+							.then(() => user)
+							.catch(trx.rollback);
+					});
+			});
+
+		await trx.commit();
+
+		return newUser;
+	},
+
+	/**
+	 * Either registers one of two types of authentication methods,
+	 * or records the time of access if the method exists for the user.
+	 *
+	 * @param   {Object}  config
+	 * @param   {Object}  authType "sso-idp" or "sso-npm"
+	 * @param   {Object}  auth sso_auth table fields
+	 * @returns {Promise}
+	 */
+	ssoAccess: async (userId, authType, auth, trx) => {
+		const authData = { auth_type: authType, user_id: userId, ...auth };
+
+		return ssoAuthModel
+			.query()
+			.transacting(trx)
+			.where("user_id", userId)
+			.andWhere("auth_type", authType)
+			.andWhere("issuer", auth.issuer)
+			.andWhere("subject", auth.subject)
+			.andWhere("sso_client_id", auth.sso_client_id)
+			.first()
+			.then(async (row) => {
+				if (row) {
+					// update existing auth type for user
+					return ssoAuthModel
+						.query()
+						.transacting(trx)
+						.where({ id: row.id })
+						.patch({ last_login_at: auth.auth_time })
+						.then((updated_row) => updated_row);
+				}
+				// else insert new auth type for user
+				authData.last_login_at = authData.auth_time;
+				authData.first_login_at = authData.auth_time;
+				delete authData.auth_time;
+				return ssoAuthModel
+					.query()
+					.transacting(trx)
+					.insert({ ...authData })
+					.then((inserted_row) => inserted_row);
 			});
 	},
 };

@@ -1,0 +1,26 @@
+{
+	"type": "object",
+	"description": "OpenID Client or Application Configuration",
+	"additionalProperties": false,
+	"properties": {
+  	"id": {
+  		"$ref": "../common.json#/properties/id"
+  	},
+    "client_id": {
+      "type": "string"
+    },
+    "client_secret": {
+  	  "type": "string"
+  	},
+  	"configuration_url": {
+  	  "$ref": "../common.json#/properties/secure_host"
+  	},
+  	"redirect_url": {
+      "$ref": "../common.json#/properties/secure_or_local_host"
+    },
+    "meta": {
+  		"type": "object",
+  		"example": {}
+  	}
+  }
+}

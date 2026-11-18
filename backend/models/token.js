@@ -134,6 +134,19 @@ export default () => {
 
 			return defaultValue || 0;
 		},
+
+		/**
+		 * @param   [defaultValue]
+		 * @returns {Integer}
+		 */
+		getAuthType: (defaultValue) => {
+			const attrs = self.get("attrs");
+			if (attrs?.authType) {
+				return attrs.authType;
+			}
+
+			return defaultValue || "password";
+		},
 	};
 
 	return self;

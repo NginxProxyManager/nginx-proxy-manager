@@ -1,6 +1,6 @@
 import { intl } from "src/locale";
 
-const validateString = (minLength = 0, maxLength = 0) => {
+const validateString = (minLength = 0, maxLength = 0, translationId?: string) => {
 	if (minLength <= 0 && maxLength <= 0) {
 		// this doesn't require translation
 		console.error("validateString() must be called with a min or max or both values in order to work!");
@@ -8,13 +8,13 @@ const validateString = (minLength = 0, maxLength = 0) => {
 
 	return (value: string): string | undefined => {
 		if (minLength && (typeof value === "undefined" || !value.length)) {
-			return intl.formatMessage({ id: "error.required" });
+			return intl.formatMessage({ id: translationId ?? "error.required" });
 		}
 		if (minLength && value.length < minLength) {
-			return intl.formatMessage({ id: "error.min-character-length" }, { min: minLength });
+			return intl.formatMessage({ id: translationId ?? "error.min-character-length" }, { min: minLength });
 		}
 		if (maxLength && (typeof value === "undefined" || value.length > maxLength)) {
-			return intl.formatMessage({ id: "error.max-character-length" }, { max: maxLength });
+			return intl.formatMessage({ id: translationId ?? "error.max-character-length" }, { max: maxLength });
 		}
 	};
 };
@@ -100,4 +100,18 @@ const validateDomains = (allowWildcards = false, maxDomains?: number) => {
 	};
 };
 
-export { validateEmail, validateNumber, validateString, validateDomains, validateDomain };
+const validateSecureOrLocalHost = (allowLocalhost = true, translationId?: string) => {
+	return (value?: string): string | undefined => {
+		const isSecure = value?.trimStart().toLocaleLowerCase().startsWith("https://");
+		const url = value && URL.canParse(value) ? new URL(value) : null;
+		const isLocalhost = url && url.hostname === "localhost";
+
+		if ((!allowLocalhost && !isSecure) || (allowLocalhost && !isLocalhost && !isSecure)) {
+			return intl.formatMessage({
+				id: translationId ?? (allowLocalhost ? "sso.error.secure-or-local-host" : "sso.error.secure-host"),
+			});
+		}
+	};
+};
+
+export { validateEmail, validateNumber, validateString, validateDomains, validateDomain, validateSecureOrLocalHost };
