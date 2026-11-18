@@ -13,7 +13,7 @@ import Ajv from "ajv/dist/2020.js";
 import _ from "lodash";
 import { access as logger } from "../logger.js";
 import authModel from "../models/auth.js";
-import proxyHostModel from "../models/proxy_host.js";
+import proxyHostModel, { scopeToOwnerOrAllowed } from "../models/proxy_host.js";
 import TokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import permsSchema from "./access/permissions.json" with { type: "json" };
@@ -139,13 +139,7 @@ export default function (tokenString) {
 						const query = proxyHostModel.query().select("id").andWhere("is_deleted", 0);
 
 						if (permissions.visibility === "user") {
-							const allowedIds = permissions.meta?.proxy_host_ids || permissions.meta?.proxyHostIds || [];
-							query.andWhere((builder) => {
-								builder.where("owner_user_id", tokenUserId);
-								if (allowedIds.length > 0) {
-									builder.orWhereIn("id", allowedIds);
-								}
-							});
+							scopeToOwnerOrAllowed(query, tokenUserId, permissions.meta);
 						}
 
 						const rows = await query;
@@ -222,6 +216,7 @@ export default function (tokenString) {
 		getPermissions: () => permissions,
 		getRoles: () => userRoles,
 		hasRole: (role) => userRoles.includes(role),
+		isAdmin: () => userRoles.includes("admin") || Token.hasScope("admin"),
 
 		/**
 		 *

@@ -35,6 +35,13 @@ const apiValidator = async (schema, payload /*, description*/) => {
 		return payload;
 	}
 
+	// Keep ajv's wording, which clients may match on, but not the regex it quotes: some are long
+	// and mean nothing to a user
+	for (const e of validate.errors || []) {
+		if (e.keyword === "pattern") {
+			e.message = "must match pattern";
+		}
+	}
 	const message = ajv.errorsText(validate.errors);
 	const err = new errs.ValidationError(message);
 	err.debug = { validationErrors: validate.errors, payload };

@@ -178,7 +178,10 @@ def check_image(image):
             for authority in authorities:
                 for prefix in ("/", "/custom/"):
                     for method in ("GET", "POST"):
-                        origin = f"{scheme}://{authority}"
+                        # nginx forwards its normalised (lowercased) $host, as browsers send
+                        # in Host and Origin anyway
+                        forwarded = authority.lower()
+                        origin = f"{scheme}://{forwarded}"
                         referer = origin + "/settings"
                         path = prefix + "apply?one=1&two=2"
                         payload = "rule=example" if method == "POST" else None
@@ -190,7 +193,7 @@ def check_image(image):
                             raise AssertionError((authority, path, method, str(error))) from error
                         assert status == 200 and headers.get("Content-Type") == "application/json", (
                             authority, path, method, status, body)
-                        assert json.loads(body) == {"host": authority, "origin": origin,
+                        assert json.loads(body) == {"host": forwarded, "origin": origin,
                             "referer": referer, "method": method, "path": path,
                             "body": payload or ""}, body
                         checked += 1

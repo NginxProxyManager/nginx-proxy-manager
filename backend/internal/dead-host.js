@@ -46,7 +46,13 @@ const internalDeadHost = {
 
 		// At this point the domains should have been checked
 		data.owner_user_id = access.token.getUserId(1);
-		const thisData = internalHost.cleanSslHstsData(data);
+
+		// Don't clean the ssl_forced/http2_support/hsts_* fields yet if a
+		// certificate is about to be requested. certificate_id has already
+		// been stripped above, so cleanSslHstsData would see "no cert" and
+		// zero out the SSL toggles the user just submitted, even though a
+		// certificate is created moments later in this same request.
+		const thisData = createCertificate ? data : internalHost.cleanSslHstsData(data);
 
 		// Fix for db field not having a default value
 		// for this optional field.
@@ -54,10 +60,7 @@ const internalDeadHost = {
 			thisData.advanced_config = "";
 		}
 
-		const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
-		if (!isAdmin && thisData.advanced_config && thisData.advanced_config.trim() !== "") {
-			throw new errs.PermissionError("You do not have permission to modify advanced configuration");
-		}
+		internalHost.assertAdvancedConfigAllowed(access, thisData);
 
 		const row = await deadHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 
@@ -72,10 +75,24 @@ const internalDeadHost = {
 		if (createCertificate) {
 			const cert = await internalCertificate.createQuickCertificate(access, data);
 
-			// update host with cert id
+			// Update host with cert id and re-apply the originally submitted
+			// SSL toggles, cleaned now that a real certificate exists for them
+			// to validate against. update() saves the values it is given, so
+			// they have to be cleaned here (e.g. HSTS off when Force SSL is off).
+			const sslData = internalHost.cleanSslHstsData({
+				certificate_id: cert.id,
+				ssl_forced: thisData.ssl_forced,
+				http2_support: thisData.http2_support,
+				hsts_enabled: thisData.hsts_enabled,
+				hsts_subdomains: thisData.hsts_subdomains,
+			});
 			await internalDeadHost.update(access, {
 				id: row.id,
 				certificate_id: cert.id,
+				ssl_forced: sslData.ssl_forced,
+				http2_support: sslData.http2_support,
+				hsts_enabled: sslData.hsts_enabled,
+				hsts_subdomains: sslData.hsts_subdomains,
 			});
 		}
 
@@ -135,6 +152,9 @@ const internalDeadHost = {
 			);
 		}
 
+		// Before the certificate is created, so a refused request doesn't leave one behind
+		internalHost.assertAdvancedConfigAllowed(access, data, row);
+
 		if (createCertificate) {
 			const cert = await internalCertificate.createQuickCertificate(access, {
 				domain_names: data.domain_names || row.domain_names,
@@ -155,15 +175,6 @@ const internalDeadHost = {
 		);
 
 		thisData = internalHost.cleanSslHstsData(thisData, row);
-
-		const isAdmin = access.hasRole?.("admin") || access.token.hasScope("admin");
-		if (
-			!isAdmin &&
-			typeof data.advanced_config !== "undefined" &&
-			data.advanced_config !== row.advanced_config
-		) {
-			throw new errs.PermissionError("You do not have permission to modify advanced configuration");
-		}
 
 		// do the row update
 		await deadHostModel.query().where({ id: data.id }).patch(data);
