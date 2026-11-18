@@ -15,10 +15,6 @@ function ThemeSwitcher({ className }: Props) {
 			<Button
 				size="sm"
 				className={cn("btn-ghost-dark", "hide-theme-dark", styles.lightBtn)}
-				data-bs-toggle="tooltip"
-				data-bs-placement="bottom"
-				aria-label="Enable dark mode"
-				data-bs-original-title="Enable dark mode"
 				onClick={() => setTheme("dark")}
 			>
 				<IconMoon width={24} />
@@ -26,10 +22,6 @@ function ThemeSwitcher({ className }: Props) {
 			<Button
 				size="sm"
 				className={cn("btn-ghost-light", "hide-theme-light", styles.darkBtn)}
-				data-bs-toggle="tooltip"
-				data-bs-placement="bottom"
-				aria-label="Enable dark mode"
-				data-bs-original-title="Enable dark mode"
 				onClick={() => setTheme("light")}
 			>
 				<IconSun width={24} />
