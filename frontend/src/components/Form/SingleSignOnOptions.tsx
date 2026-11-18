@@ -22,24 +22,34 @@ export function SingleSignOnOptions({
 	const [SingleSignOnConfig, setSingleSignOnConfig] = useState<SingleSignOnIntegration>(
 		{} as SingleSignOnIntegration,
 	);
-	let checking = false;
-	let failed = false;
 
+	let checking = false;
+	let failed = 0;
 	useEffect(() => {
+		// Try is-enabled API, retry twice w/ exponential backup if fails then give up
 		const checkSingleSignOnIntegration = async () => {
 			if (checking) return;
 			checking = true;
 			try {
 				const response = await fetch("/api/sso/is-enabled");
+				if (!response?.ok) throw new Error();
 				const data: SingleSignOnIntegration = await response.json();
 				setSingleSignOnConfig(data);
 				setSingleSignOnEnabled(!!(data.configs && data.configs.length > 0));
-			} catch {
-				failed = true;
+			} catch (_error) {
+				failed++;
+				if (failed < 3) {
+					await new Promise((resolve) => setTimeout(resolve, 2 ** failed * 100));
+					checking = false;
+					return checkSingleSignOnIntegration();
+				}
+				setSingleSignOnConfig({ enabled: false, configs: [] });
 				setSingleSignOnEnabled(false);
 			}
+			checking = false;
 		};
-		if (!failed && !("enabled" in SingleSignOnConfig)) {
+
+		if (!("enabled" in SingleSignOnConfig)) {
 			checkSingleSignOnIntegration();
 		}
 	});
@@ -54,7 +64,8 @@ export function SingleSignOnOptions({
 				.split(";")
 				.map((trKey) => intl.formatMessage({ id: trKey.trim() }));
 
-			setFormErr(decodeURIComponent(errors.reverse().join("; ")));
+			// Delay setFormErr(), so it's called after <Lofing/> finished rendering
+			setTimeout(() => setFormErr(decodeURIComponent(errors.reverse().join("; "))));
 		}
 		cookieNames.forEach((cookie) => {
 			cookies.remove(cookie, { path: "/" });

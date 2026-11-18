@@ -549,21 +549,16 @@ const internalUser = {
 	},
 
 	/**
-	 * Provision new account for Single Sign On user
-	 * or register SSO access for `existingUser` if provided
+	 * Provision new account for Single Sign On user.
+	 * Create user, user_permission, audit_log and sso_auth in an existing transaction.
 	 *
-	 * @param   {Object}  userData
-	 * @param   {Object}  authData
+	 * @param   {Object}  userData The user table fields
+	 * @param   {Object}  authData The sso_auth fields
 	 * @param   {number}  ownerUserId
-	 * @param   {Object}  existingUser
-	 * @returns {Promise<Array>} [null, existingUser] or [newUser, null]
+	 * @param   {Knex.Transaction}  trx
+	 * @returns {Promise<User>}
 	 */
-	provision: async (userData, authData, ownerUserId, existingUser = null) => {
-		if (existingUser) {
-			await internalUser.ssoAccess(existingUser.id, "sso-idp", authData);
-			return Promise.resolve([null, existingUser]);
-		}
-
+	provision: async (userData, authData, ownerUserId, trx) => {
 		authData.last_login_at = authData.auth_time;
 		authData.first_login_at = authData.last_login_at;
 		userData.roles = userData.roles || [];
@@ -573,51 +568,52 @@ const internalUser = {
 			userData.avatar = gravatar.url(userData.email, { default: "mm" });
 		}
 
-		return userModel.transaction(async (trx) => {
-			return userModel
-				.query()
-				.insertAndFetch(userData)
-				.transacting(trx)
-				.then(utils.omitRow(omissions()))
-				.then(async (user) => {
-					return ssoAuthModel
-						.query()
-						.insert({ user_id: user.id, auth_type: "sso-idp", ...authData })
-						.transacting(trx)
-						.then(async () => {
-							// Create permissions row as well
-							const isAdmin = userData.roles.indexOf("admin") !== -1;
-							return userPermissionModel
-								.query()
-								.insertAndFetch({
-									user_id: user.id,
-									visibility: isAdmin ? "all" : "user",
-									proxy_hosts: "manage",
-									redirection_hosts: "manage",
-									dead_hosts: "manage",
-									streams: "manage",
-									access_lists: "manage",
-									certificates: "manage",
-								})
-								.transacting(trx)
-								.then(async (permissions) => {
-									return internalAuditLog.add(
-										null,
-										{
-											user_id: ownerUserId, // owner of SSO Client
-											action: "created",
-											object_type: "user",
-											object_id: user.id,
-											meta: _.omit({ ...userData, permissions }, omissions()),
-										},
-										trx,
-									);
-								})
-								.then(() => trx.commit([user, null]))
-								.catch(trx.rollback);
-						});
-				});
-		});
+		const newUser = await userModel
+			.query()
+			.transacting(trx)
+			.insertAndFetch(userData)
+			.then(utils.omitRow(omissions()))
+			.then(async (user) => {
+				return ssoAuthModel
+					.query()
+					.transacting(trx)
+					.insert({ user_id: user.id, auth_type: "sso-idp", ...authData })
+					.then(async () => {
+						const isAdmin = userData.roles.indexOf("admin") !== -1;
+						return userPermissionModel
+							.query()
+							.transacting(trx)
+							.insertAndFetch({
+								user_id: user.id,
+								visibility: isAdmin ? "all" : "user",
+								proxy_hosts: "manage",
+								redirection_hosts: "manage",
+								dead_hosts: "manage",
+								streams: "manage",
+								access_lists: "manage",
+								certificates: "manage",
+							})
+							.then(async (permissions) => {
+								return internalAuditLog.add(
+									null,
+									{
+										user_id: ownerUserId, // owner of SSO Client
+										action: "created",
+										object_type: "user",
+										object_id: user.id,
+										meta: _.omit({ ...userData, permissions }, omissions()),
+									},
+									trx,
+								);
+							})
+							.then(() => user)
+							.catch(trx.rollback);
+					});
+			});
+
+		await trx.commit();
+
+		return newUser;
 	},
 
 	/**
@@ -626,16 +622,18 @@ const internalUser = {
 	 *
 	 * @param   {Object}  config
 	 * @param   {Object}  authType "sso-idp" or "sso-npm"
-	 * @param   {Object}  auth
+	 * @param   {Object}  auth sso_auth table fields
 	 * @returns {Promise}
 	 */
-	ssoAccess: async (userId, authType, auth) => {
+	ssoAccess: async (userId, authType, auth, trx) => {
 		const authData = { auth_type: authType, user_id: userId, ...auth };
 
 		return ssoAuthModel
 			.query()
+			.transacting(trx)
 			.where("user_id", userId)
 			.andWhere("auth_type", authType)
+			.andWhere("issuer", auth.issuer)
 			.andWhere("subject", auth.subject)
 			.andWhere("sso_client_id", auth.sso_client_id)
 			.first()
@@ -644,16 +642,18 @@ const internalUser = {
 					// update existing auth type for user
 					return ssoAuthModel
 						.query()
+						.transacting(trx)
 						.where({ id: row.id })
 						.patch({ last_login_at: auth.auth_time })
 						.then((updated_row) => updated_row);
 				}
-				// else insert new  auth type for user
+				// else insert new auth type for user
 				authData.last_login_at = authData.auth_time;
 				authData.first_login_at = authData.auth_time;
 				delete authData.auth_time;
 				return ssoAuthModel
 					.query()
+					.transacting(trx)
 					.insert({ ...authData })
 					.then((inserted_row) => inserted_row);
 			});

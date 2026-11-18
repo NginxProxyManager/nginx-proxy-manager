@@ -2,6 +2,7 @@ import internalToken from "../../internal/token.js";
 import internalUser from "../../internal/user.js";
 import { sso as logger } from "../../logger.js";
 import now_helper from "../../models/now_helper.js";
+import SingleSignOnClient from "../../models/sso_client.js";
 import userModel from "../../models/user.js";
 import errs from "../error.js";
 
@@ -16,15 +17,17 @@ import errs from "../error.js";
  * @param {string} claims.email
  * @param {string[]} claims.groups
  * @param {string} claims.name
+ * @param {string} claims.given_name
  * @param {string} claims.nickname
  * @param {string} claims.preferred_username
  * @param {string} claims.picture
  * @param {string} claims.profile_picture
  * @param {boolean} claims.email_verified
  * @param {User[]} users
+ * @param {Knex.Transaction} transaction
  * @returns {Promise<User>} The provisioned user
  */
-const getProvisionedUser = async (config, claims, users) => {
+const getProvisionedUser = async (config, claims, users, transaction) => {
 	const groups = claims.groups;
 	const [existingPasswordUser, existingEmailUser, provisionedUser, disabledUser] = users;
 	const emptyRoleMap = !config.provision_role_map || config.provision_role_map.length === 0;
@@ -33,8 +36,8 @@ const getProvisionedUser = async (config, claims, users) => {
 	const newUserData = {
 		roles: [],
 		email: claims.email,
-		name: claims.name || claims.given_name || claims.nickname,
-		nickname: claims.nickname || claims.preferred_username,
+		name: claims.name || claims.given_name || claims.nickname || claims.email,
+		nickname: claims.nickname || claims.preferred_username || claims.email,
 		avatar: claims.picture || claims.profile_picture || claims.avatar,
 	};
 
@@ -47,27 +50,46 @@ const getProvisionedUser = async (config, claims, users) => {
 		auth_time: now_helper(),
 	};
 
+	let linkedUser;
 	if (provisionedUser) {
 		// Deny access for existing disabled provisioned user
 		if (provisionedUser.is_disabled) {
 			throw new Error("sso.error.not-permitted");
 		}
+
+		// Direct match to linked account of provisioned user, allow login to this account
+		logger.info(`[${config.id}] Logging in to existing provisioned account user_id=${provisionedUser.id}`);
+		await internalUser.ssoAccess(provisionedUser.id, "sso-idp", authData, transaction);
+		await transaction.commit();
+
+		linkedUser = provisionedUser;
+	}
+
+	if (existingEmailUser && existingEmailUser.subject === claims.sub && existingEmailUser.issuer === claims.iss) {
+		// Allow login to an already linked account with different sso_client_id.
+		logger.info(`[${config.id}] Logging in to existing provisioned account user_id=${existingEmailUser.id}`);
+		await internalUser.ssoAccess(existingEmailUser.id, "sso-idp", authData, transaction);
+		await transaction.commit();
+
+		linkedUser = existingEmailUser;
+	}
+
+	if (linkedUser) {
 		// Deny access with unverified email when required by setting
 		if (config.require_verified_email && claims.email_verified !== true) {
-			throw new Error("sso.error.signup.verified-email");
+			throw new Error("sso.error.login.verified-email");
 		}
 
-		// Direct match by sub & iss to existing provisioned user, log in to this account
-		if (provisionedUser.sso_client_id === config.id) {
-			logger.info(`[${config.id}] Logging in to existing provisioned account user_id=${provisionedUser.id}`);
-			await internalUser.ssoAccess(provisionedUser.id, "sso-idp", authData);
-
-			return provisionedUser;
-		}
+		return linkedUser;
 	}
 
 	if (!config.provision_users) {
 		throw new Error("sso.error.signup.not-permitted");
+	}
+
+	// Reject provision with existing email (enforce unique)
+	if (existingEmailUser) {
+		throw new Error("sso.error.signup.unique-email");
 	}
 
 	// Reject provision with an email address for existing disabled user
@@ -80,28 +102,22 @@ const getProvisionedUser = async (config, claims, users) => {
 		throw new Error("sso.error.signup.not-permitted-2");
 	}
 
-	// Reject provision with existing email (enforce unique)
-	if (existingEmailUser && !provisionedUser) {
-		throw new Error("sso.error.signup.unique-email");
-	}
-
 	// Reject provision unverified email when required by setting
 	if (config.require_verified_email && claims.email_verified !== true) {
 		throw new Error("sso.error.signup.verified-email");
 	}
 
-	const provisionArgs = [newUserData, authData, ownerUserId, provisionedUser];
+	const provisionArgs = [newUserData, authData, ownerUserId, transaction];
 
 	// Provision to user role when no group membership is required
 	if (!config.require_provision_group) {
-		const [newUser, existingUser] = await internalUser.provision(...provisionArgs);
-		const userId = (newUser || existingUser).id;
+		const newUser = await internalUser.provision(...provisionArgs);
 		const action = `NO_GROUP_${newUser ? "PUSER" : "PAUTH"}`;
 		logger.info(
-			`[${config.id}] Provisioned new account user_id=${userId} require_provision_group=${config.require_provision_group} ${action} user`,
+			`[${config.id}] Provisioned new account user_id=${newUser.id} require_provision_group=${config.require_provision_group} ${action} user`,
 		);
 
-		return newUser || existingUser;
+		return newUser;
 	}
 
 	// Sanity check
@@ -109,7 +125,7 @@ const getProvisionedUser = async (config, claims, users) => {
 		throw new Error("sso.error.config.group-required");
 	}
 
-	// All check from here on require the groups claim.
+	// All checks from here on require the groups claim.
 	if (!groups || !Array.isArray(groups) || !groups.length) {
 		throw new Error("sso.error.no-groups-claim-2");
 	}
@@ -120,14 +136,13 @@ const getProvisionedUser = async (config, claims, users) => {
 			throw new Error("sso.error.signup.group-required");
 		}
 
-		const [newUser, existingUser] = await internalUser.provision(...provisionArgs);
-		const userId = (newUser || existingUser).id;
+		const newUser = await internalUser.provision(...provisionArgs);
 		const action = `GROUP_MATCH_${newUser ? "PUSER" : "PAUTH"}`;
 		logger.info(
-			`[${config.id}] Provisioned new account user_id=${userId} require_provision_group=${config.require_provision_group} require_provision_group_name=${config.require_provision_group_name} ${action} user`,
+			`[${config.id}] Provisioned new account user_id=${newUser.id} require_provision_group=${config.require_provision_group} require_provision_group_name=${config.require_provision_group_name} ${action} user`,
 		);
 
-		return newUser || existingUser;
+		return newUser;
 	}
 
 	// Provision accoring to mapped role if group membership satisfies.
@@ -144,14 +159,13 @@ const getProvisionedUser = async (config, claims, users) => {
 		}
 
 		newUserData.roles = role === "admin" ? [role] : [];
-		const [newUser, existingUser] = await internalUser.provision(...provisionArgs);
-		const userId = (newUser || existingUser).id;
+		const newUser = await internalUser.provision(...provisionArgs);
 		const action = `MAPPED_TO_ROLE_${newUser ? "PUSER" : "PAUTH"}`;
 		logger.info(
-			`[${config.id}] Provisioned account user_id=${userId} require_provision_group=${config.require_provision_group} ${action} ${role}`,
+			`[${config.id}] Provisioned account user_id=${newUser.id} require_provision_group=${config.require_provision_group} ${action} ${role}`,
 		);
 
-		return newUser || existingUser;
+		return newUser;
 	}
 
 	// Provision to mapped role if both group memberships satisfy.
@@ -172,18 +186,17 @@ const getProvisionedUser = async (config, claims, users) => {
 		}
 
 		newUserData.roles = role === "admin" ? [role] : [];
-		const [newUser, existingUser] = await internalUser.provision(...provisionArgs);
-		const userId = (newUser || existingUser).id;
+		const newUser = await internalUser.provision(...provisionArgs);
 		const action = `GROUP_MATCH_MAPPED_TO_ROLE_${newUser ? "PUSER" : "PAUTH"}`;
 		logger.info(
-			`[${config.id}] Provisioned account user_id=${userId} require_provision_group=${config.require_provision_group} require_provision_group_name=${config.require_provision_group_name} ${action} ${role}`,
+			`[${config.id}] Provisioned account user_id=${newUser.id} require_provision_group=${config.require_provision_group} require_provision_group_name=${config.require_provision_group_name} ${action} ${role}`,
 		);
 
-		return newUser || existingUser;
+		return newUser;
 	}
 };
 
-const getInternalUser = async (config, claims, users) => {
+const getInternalUser = async (config, claims, users, transaction) => {
 	const [existingPasswordUser] = users;
 	const groups = claims.groups;
 
@@ -216,7 +229,8 @@ const getInternalUser = async (config, claims, users) => {
 		logger.info(
 			`[${config.id}] Logging in to existing internal account user_id=${existingPasswordUser.id} NO_GROUP`,
 		);
-		await internalUser.ssoAccess(existingPasswordUser.id, "sso-npm", auth);
+		await internalUser.ssoAccess(existingPasswordUser.id, "sso-npm", auth, transaction);
+		await transaction.commit();
 
 		return existingPasswordUser;
 	}
@@ -232,14 +246,16 @@ const getInternalUser = async (config, claims, users) => {
 	logger.info(
 		`[${config.id}] Logging in to existing internal account user_id=${existingPasswordUser.id} require_group=${config.require_group} require_group_name=${config.require_group_name} GROUP_MATCH.`,
 	);
-	await internalUser.ssoAccess(existingPasswordUser.id, "sso-npm", auth);
+	await internalUser.ssoAccess(existingPasswordUser.id, "sso-npm", auth, transaction);
+	await transaction.commit();
 
 	return existingPasswordUser;
 };
 
-const getExistingUsers = async (claims) => {
+const getExistingUsers = async (clientId, claims, transaction) => {
 	const existingPasswordUser = userModel
 		.query()
+		.transacting(transaction)
 		.select(["user.*"])
 		.join("auth", "auth.user_id", "=", "user.id")
 		.where("email", claims.email)
@@ -249,23 +265,27 @@ const getExistingUsers = async (claims) => {
 		.first();
 	const existingEmailUser = userModel
 		.query()
-		.select(["*", "a.id AS auth_id", "user.id AS id", "a.issuer", "a.subject"])
-		.join("sso_auth AS a", "a.user_id", "=", "user.id")
+		.transacting(transaction)
+		.select(["user.*", "a.*", "a.id AS auth_id", "user.id AS id"])
+		.leftJoin("sso_auth AS a", "a.user_id", "=", "user.id")
 		.where("email", claims.email)
 		.andWhere("user.is_deleted", 0)
 		.andWhere("user.is_disabled", 0)
 		.first();
 	const provisionedUser = userModel
 		.query()
+		.transacting(transaction)
 		.select(["*", "a.id AS auth_id", "user.id AS id", "a.sso_client_id"])
 		.join("sso_auth AS a", "a.user_id", "=", "user.id")
-		.where("a.subject", claims.sub)
+		.where("a.sso_client_id", clientId)
+		.andWhere("a.subject", claims.sub)
 		.andWhere("a.issuer", claims.iss)
 		.andWhere("user.is_deleted", 0)
 		.andWhere("a.auth_type", "sso-idp")
 		.first();
 	const disabledUser = userModel
 		.query()
+		.transacting(transaction)
 		.where("email", claims.email)
 		.andWhere("is_deleted", 0)
 		.andWhere("is_disabled", 1)
@@ -324,7 +344,7 @@ const parseStateFromCookie = (req) => {
  * Validates the SSO Client configuration and the authorized claims,
  * and determines if the user is allowed to proceed with login or sign up.
  *
- * @param {Object} config
+ * @param {SingleSignOnClient} config
  * @param {Object} claims
  * @param {string} claims.sub
  * @param {string} claims.iss
@@ -342,16 +362,18 @@ const concludeAuthorized = async (config, claims) => {
 	let user;
 	let authType = "sso-idp";
 	const errors = [];
-	const users = await getExistingUsers(claims);
+	const transaction = await userModel.transaction();
+	const users = await getExistingUsers(config.id, claims, transaction);
+
 	try {
-		user = await getProvisionedUser(config, claims, users);
+		user = await getProvisionedUser(config, claims, users, transaction);
 	} catch (err) {
 		errors.push(err.message);
 	}
 
 	if (!user) {
 		try {
-			user = await getInternalUser(config, claims, users);
+			user = await getInternalUser(config, claims, users, transaction);
 			authType = "sso-npm";
 		} catch (err) {
 			errors.push(err.message);
@@ -359,8 +381,10 @@ const concludeAuthorized = async (config, claims) => {
 	}
 
 	if (!user) {
+		await transaction.rollback();
 		throw new errs.AuthError(errors.join("; "));
 	}
+
 	logger.info(`[${config.id}] Successful authentication for email ${claims.email}`);
 
 	return internalToken.getTokenForSingleSignOnUser(user, authType, claims.iss);

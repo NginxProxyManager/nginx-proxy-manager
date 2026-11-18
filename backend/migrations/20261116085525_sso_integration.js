@@ -61,6 +61,7 @@ const up = (knex) => {
 				table.string("claimed_email", 255).notNull();
 				table.dateTime("first_login_at").notNull();
 				table.dateTime("last_login_at").notNull();
+				table.unique(["user_id", "sso_client_id"]);
 			});
 		})
 		.then(() => {

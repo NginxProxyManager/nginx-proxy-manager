@@ -22,7 +22,7 @@ vi.mock("../../../../internal/token.js", () => ({
 
 vi.mock("../../../../internal/user.js", () => ({
 	default: {
-		provision: vi.fn().mockImplementation(() => [newUser, users[2]]),
+		provision: vi.fn().mockImplementation(() => newUser),
 		ssoAccess: vi.fn().mockReturnValue(),
 	},
 }));
@@ -36,11 +36,17 @@ vi.mock("../../../../models/user.js", () => ({
 		query: vi.fn().mockReturnThis(),
 		where: vi.fn().mockReturnThis(),
 		join: vi.fn().mockReturnThis(),
+		leftJoin: vi.fn().mockReturnThis(),
 		andWhere: vi.fn().mockReturnThis(),
 		orWhere: vi.fn().mockReturnThis(),
 		first: vi.fn().mockImplementation(() => Promise.resolve(users[userIndex.shift()])),
 		table: vi.fn().mockReturnThis(),
 		select: vi.fn().mockReturnThis(),
+		transaction: vi.fn().mockReturnValue({
+			commit: vi.fn().mockImplementation(() => newUser),
+			rollback: vi.fn().mockReturnThis(),
+		}),
+		transacting: vi.fn().mockReturnThis(),
 	},
 }));
 
@@ -50,10 +56,12 @@ vi.mock("../../../../db.js", () => ({
 			query: vi.fn().mockReturnThis(),
 			where: vi.fn().mockReturnThis(),
 			join: vi.fn().mockReturnThis(),
+			leftJoin: vi.fn().mockReturnThis(),
 			andWhere: vi.fn().mockReturnThis(),
 			orWhere: vi.fn().mockReturnThis(),
 			table: vi.fn().mockReturnThis(),
 			select: vi.fn().mockReturnThis(),
+			transacting: vi.fn().mockReturnThis(),
 		})),
 	}),
 }));
@@ -65,7 +73,7 @@ let config;
 const newUser = { id: 1000, email: "newProvisionedUser" };
 
 beforeEach(() => {
-	getTokenForSingleSignOnUserMock = vi.fn().mockResolvedValue({ token: "foo-token", expiry: 1791590400000 });
+	getTokenForSingleSignOnUserMock = vi.fn().mockResolvedValue(null);
 	users = [
 		{
 			id: 88,
@@ -111,6 +119,8 @@ beforeEach(() => {
 
 describe("concludeAuthorized() evaluation", () => {
 	it("REJECTs when allow_internal=false and provision_users=false", async () => {
+		users[1] = null; // no existing email user
+		users[2] = null; // no provisioned user exists
 		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
 			"sso.error.signup.not-permitted; sso.error.login.not-permitted",
 		);
@@ -122,6 +132,8 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	it("REJECTs when internal user not found", async () => {
 		config.allow_internal = true;
 		users[0] = null; // simulate no internal user found
+		users[1] = null; // no existing email user
+		users[2] = null; // no provisioned user exists
 
 		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
 			"sso.error.signup.not-permitted; sso.error.login.not-found",
@@ -130,6 +142,8 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 
 	it("ACCEPTs when internal user exists", async () => {
+		users[1] = null; // no existing email user
+		users[2] = null; // no provisioned user exists
 		config.allow_internal = true;
 
 		const result = await concludeAuthorized(config, claims);
@@ -139,6 +153,8 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 
 	it("REJECTs for unverified email", async () => {
+		users[1] = null; // no existing email user
+		users[2] = null; // no provisioned user exists
 		config.allow_internal = true;
 		claims.email_verified = false;
 
@@ -149,6 +165,8 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 
 	it("REJECTs for missing email_verified claim", async () => {
+		users[1] = null; // no existing email user
+		users[2] = null; // no provisioned user exists
 		config.allow_internal = true;
 		delete claims.email_verified;
 
@@ -159,6 +177,8 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 
 	it("REJECTs for unexpected email_verified claim", async () => {
+		users[1] = null; // no existing email user
+		users[2] = null; // no provisioned user exists
 		config.allow_internal = true;
 		claims.email_verified = "foo";
 
@@ -169,6 +189,8 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 
 	it("REJECTs non administrator", async () => {
+		users[1] = null; // no existing email user
+		users[2] = null; // no provisioned user exists
 		config.allow_internal = true;
 		config.allow_internal_if_admin = true;
 
@@ -179,9 +201,10 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 
 	it("ACCEPTs administrator", async () => {
+		users[2] = null; // no provisioned user exists
+		users[0].roles = ["admin"];
 		config.allow_internal = true;
 		config.allow_internal_if_admin = true;
-		users[0].roles = ["admin"];
 
 		const result = await concludeAuthorized(config, claims);
 
@@ -190,6 +213,8 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 
 	it("REJECTs for empty groups claim when require_group=true", async () => {
+		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		config.allow_internal = true;
 		config.require_group = true;
 		config.require_group_name = "test-1";
@@ -201,6 +226,8 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 
 	it("REJECTs for non matching group when require_group=true", async () => {
+		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		config.allow_internal = true;
 		config.require_group = true;
 		config.require_group_name = "test-1";
@@ -213,6 +240,7 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 
 	it("ACCEPTs when group matches", async () => {
+		users[2] = null;
 		config.allow_internal = true;
 		config.require_group = true;
 		config.require_group_name = "test-foo-bar";
@@ -225,10 +253,79 @@ describe("concludeAuthorized() internal user access evaluation", () => {
 	});
 });
 
-describe("concludeAuthorized() provision user account evaluation", () => {
+describe("concludeAuthorized() exissting provisioned user access evaluation", () => {
+	it("REJECTs when existing provisioned user is disabled", async () => {
+		users[2].is_disabled = true;
+
+		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
+			"sso.error.not-permitted; sso.error.login.not-permitted",
+		);
+		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
+	});
+
+	it("REJECTs existing provisioned user with unverified email", async () => {
+		users[1] = null; // no existing linked email user
+		config.require_verified_email = true;
+		claims.email_verified = false;
+
+		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
+			"sso.error.login.verified-email; sso.error.login.not-permitted",
+		);
+		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
+	});
+
+	it("REJECTs existing provisioned user with missing email_verified claim", async () => {
+		users[1] = null; // no existing linked email user
+		config.require_verified_email = true;
+		delete claims.email_verified;
+
+		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
+			"sso.error.login.verified-email; sso.error.login.not-permitted",
+		);
+		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
+	});
+
+	it("REJECTs existing provisioned user with unexpected email_verified claim", async () => {
+		users[1] = null; // no existing linked email user
+		config.require_verified_email = true;
+		claims.email_verified = "yes";
+
+		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
+			"sso.error.login.verified-email; sso.error.login.not-permitted",
+		);
+		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
+	});
+
+	it("ACCEPTs when linked provisioned user exists for the given sso client", async () => {
+		users[1] = null; // no existing email user
+		users[2].sso_client_id = 1;
+
+		const result = await concludeAuthorized(config, claims);
+
+		expect(result).toBeDefined();
+		expect(getTokenForSingleSignOnUserMock).toHaveBeenCalledExactlyOnceWith(users[2], "sso-idp", "foo-iss");
+	});
+
+	it("ACCEPTs when linked provisioned user exists for different sso client", async () => {
+		config.provision_users = true;
+		users[0] = null; // no existing password user
+		users[3] = null; // no existing disabled user
+		users[1].subject = "foo-sub";
+		users[1].issuer = "foo-iss";
+
+		const result = await concludeAuthorized(config, claims);
+
+		expect(result).toBeDefined();
+		expect(getTokenForSingleSignOnUserMock).toHaveBeenCalledExactlyOnceWith(users[1], "sso-idp", "foo-iss");
+	});
+});
+
+describe("concludeAuthorized() provision new user account evaluation", () => {
 	it("REJECTs when disabled user exists", async () => {
 		config.provision_users = true;
-		users[0] = null;
+		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisioned user
+		users[0] = null; // no existing password user
 
 		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
 			"sso.error.not-permitted; sso.error.login.not-permitted",
@@ -238,6 +335,8 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 
 	it("REJECTs when password user exists", async () => {
 		config.provision_users = true;
+		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisioned user
 		users[3] = null; // no existing disabled user
 
 		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
@@ -251,8 +350,6 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		users[0] = null; // no existing password user
 		users[2] = null; // no existing provisioned user
 		users[3] = null; // no existing disabled user
-		users[1].email = "test@fake.net"; // existin email user
-		claims.email = "test@fake.net";
 
 		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
 			"sso.error.signup.unique-email; sso.error.login.not-permitted",
@@ -269,7 +366,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		claims.email_verified = false;
 
 		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
-			"sso.error.signup.verified-email; sso.error.login.not-permitted",
+			"sso.error.login.verified-email; sso.error.login.not-permitted",
 		);
 		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
 	});
@@ -277,6 +374,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 	it("ACCEPTs without group", async () => {
 		config.provision_users = true;
 		users[0] = null; // no existing password user
+		users[2] = null; // no existing provisoined user
 		users[1] = null; // no existing email user
 		users[3] = null; // no existing disabled user
 
@@ -292,9 +390,9 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_role_map = [];
 		config.require_provision_group = true;
 		delete config.require_provision_group_name;
-
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 
 		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
@@ -309,6 +407,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.require_provision_group_name = "foo-bar-baz";
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 		delete claims.groups;
 
@@ -324,6 +423,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.require_provision_group_name = "foo-bar-baz";
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 		claims.groups = ["foo-bar"];
 
@@ -339,6 +439,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.require_provision_group_name = "foo-bar-baz";
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 		claims.groups = ["abc-123", "test", "foo-bar-baz"];
 
@@ -355,6 +456,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_role_map = [{ group: "foo", role: "user" }];
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 		claims.groups = ["foo-bar"];
 
@@ -374,6 +476,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		];
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 		claims.groups = ["abc-123", "test", "foo-bar-baz", "foo"];
 
@@ -393,6 +496,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		];
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 		claims.groups = ["abc-123", "test", "foo-bar-baz", "bar"];
 
@@ -409,6 +513,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_role_map = [{ group: "foo", role: "user" }];
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 		claims.groups = ["foo-bar"];
 
@@ -425,6 +530,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		config.provision_role_map = [{ group: "foo", role: "user" }];
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 		claims.groups = ["bar-baz-foo"];
 
@@ -444,6 +550,7 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 		];
 		users[0] = null; // no existing password user
 		users[1] = null; // no existing email user
+		users[2] = null; // no existing provisoined user
 		users[3] = null; // no existing disabled user
 		claims.groups = ["abc-123", "test", "foo-bar-baz", "bar", "bar-baz-foo"];
 
@@ -451,64 +558,5 @@ describe("concludeAuthorized() provision user account evaluation", () => {
 
 		expect(result).toBeDefined();
 		expect(getTokenForSingleSignOnUserMock).toHaveBeenCalledExactlyOnceWith(newUser, "sso-idp", "foo-iss");
-	});
-});
-
-describe("concludeAuthorized() access provisioned account evaluation", () => {
-	it("REJECTs when existing provisioned user is disabled", async () => {
-		users[2].is_disabled = true;
-
-		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
-			"sso.error.not-permitted; sso.error.login.not-permitted",
-		);
-		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
-	});
-
-	it("REJECTs existing provisioned user for different sso client", async () => {
-		users[2].sso_client_id = 123;
-
-		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
-			"sso.error.signup.not-permitted; sso.error.login.not-permitted",
-		);
-		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
-	});
-
-	it("REJECTs existing provisioned user with unverified email", async () => {
-		config.require_verified_email = true;
-		claims.email_verified = false;
-
-		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
-			"sso.error.signup.verified-email; sso.error.login.not-permitted",
-		);
-		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
-	});
-
-	it("REJECTs existing provisioned user with missing email_verified claim", async () => {
-		config.require_verified_email = true;
-		delete claims.email_verified;
-
-		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
-			"sso.error.signup.verified-email; sso.error.login.not-permitted",
-		);
-		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
-	});
-
-	it("REJECTs existing provisioned user with unexpected email_verified claim", async () => {
-		config.require_verified_email = true;
-		claims.email_verified = "yes";
-
-		await expect(concludeAuthorized(config, claims)).rejects.toThrow(
-			"sso.error.signup.verified-email; sso.error.login.not-permitted",
-		);
-		expect(getTokenForSingleSignOnUserMock).not.toHaveBeenCalled();
-	});
-
-	it("ACCEPTs when active provisioned user exists for the given sso client", async () => {
-		users[2].sso_client_id = 1;
-
-		const result = await concludeAuthorized(config, claims);
-
-		expect(result).toBeDefined();
-		expect(getTokenForSingleSignOnUserMock).toHaveBeenCalledExactlyOnceWith(users[2], "sso-idp", "foo-iss");
 	});
 });

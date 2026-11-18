@@ -41,7 +41,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 				cell: (info: any) => {
 					const value = info.getValue();
 
-					return <SingleSignOnProtocolFormatter protocol={value.clientType} disabled={value.is_disabled} />;
+					return <SingleSignOnProtocolFormatter protocol={value.clientType} disabled={value.isDisabled} />;
 				},
 				meta: {
 					className: "w-1",
@@ -121,7 +121,7 @@ export default function Table({ data, onEdit, isFiltered, isFetching, onDisableT
 				id: "isDisabled",
 				header: intl.formatMessage({ id: "column.status" }),
 				cell: (info: any) => {
-					if (!info.row.original.allowInternal && !info.row.original.provisionUsers && info.getValue()) {
+					if (!info.row.original.allowInternal && !info.row.original.provisionUsers && !info.getValue()) {
 						return (
 							<>
 								<IconAlertTriangle

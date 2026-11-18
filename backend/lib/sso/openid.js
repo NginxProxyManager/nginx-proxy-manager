@@ -75,11 +75,14 @@ const validateOpenIDCallback = async (req, config) => {
 	const tokens = await oidc.authorizationCodeGrant(client, new URL(currentUrl), checks);
 	const claims = tokens.claims();
 
-	if (!claims.email || !("email_verified" in claims)) {
+	if (!claims.email || !claims.groups || !("email_verified" in claims)) {
 		const userInfo = await oidc.fetchUserInfo(client, tokens.access_token, claims.sub);
-		if (userInfo?.email) {
+		if (userInfo?.email && !claims.email) {
 			claims.email = userInfo.email;
 			claims.email_verified = userInfo.email_verified;
+		}
+		if (userInfo?.groups && !claims.groups) {
+			claims.groups = userInfo.groups;
 		}
 	}
 

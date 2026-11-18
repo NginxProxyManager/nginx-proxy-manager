@@ -108,7 +108,7 @@ const validateSecureOrLocalHost = (allowLocalhost = true, translationId?: string
 
 		if ((!allowLocalhost && !isSecure) || (allowLocalhost && !isLocalhost && !isSecure)) {
 			return intl.formatMessage({
-				id: (translationId ?? allowLocalhost) ? "sso.error.secure-or-local-host" : "sso.error.secure-host",
+				id: translationId ?? (allowLocalhost ? "sso.error.secure-or-local-host" : "sso.error.secure-host"),
 			});
 		}
 	};
