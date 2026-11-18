@@ -316,7 +316,7 @@ describe("concludeAuthorized() exissting provisioned user access evaluation", ()
 		const result = await concludeAuthorized(config, claims);
 
 		expect(result).toBeDefined();
-		expect(getTokenForSingleSignOnUserMock).toHaveBeenCalledExactlyOnceWith(users[1], "sso-idp", "foo-iss");
+		expect(getTokenForSingleSignOnUserMock).toHaveBeenCalledExactlyOnceWith(users[2], "sso-idp", "foo-iss");
 	});
 });
 

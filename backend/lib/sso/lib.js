@@ -65,7 +65,13 @@ const getProvisionedUser = async (config, claims, users, transaction) => {
 		linkedUser = provisionedUser;
 	}
 
-	if (existingEmailUser && existingEmailUser.subject === claims.sub && existingEmailUser.issuer === claims.iss) {
+	if (
+		!linkedUser &&
+		existingEmailUser &&
+		existingEmailUser.subject === claims.sub &&
+		existingEmailUser.issuer === claims.iss &&
+		existingEmailUser.auth_type === "sso-idp"
+	) {
 		// Allow login to an already linked account with different sso_client_id.
 		logger.info(`[${config.id}] Logging in to existing provisioned account user_id=${existingEmailUser.id}`);
 		await internalUser.ssoAccess(existingEmailUser.id, "sso-idp", authData, transaction);
