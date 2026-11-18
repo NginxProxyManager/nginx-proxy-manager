@@ -107,7 +107,7 @@ const internalAccessList = {
 		await internalAccessList.build(freshRow);
 
 		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
-			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
+			await internalNginx.bulkGenerateProxyHostConfigs(freshRow.proxy_hosts);
 		}
 
 		// Add to audit log
@@ -218,7 +218,7 @@ const internalAccessList = {
 
 		await internalAccessList.build(freshRow);
 		if (Number.parseInt(freshRow.proxy_host_count, 10)) {
-			await internalNginx.bulkGenerateConfigs("proxy_host", freshRow.proxy_hosts);
+			await internalNginx.bulkGenerateProxyHostConfigs(freshRow.proxy_hosts);
 		}
 
 		// Also regenerate configs for proxy hosts that reference this access list in their locations
@@ -237,7 +237,7 @@ const internalAccessList = {
 					.whereIn("id", locationHostIds)
 					.allowGraph(proxyHostModel.defaultAllowGraph)
 					.withGraphFetched("[owner, certificate, access_list.[clients,items]]");
-				await internalNginx.bulkGenerateConfigs("proxy_host", locationHosts);
+				await internalNginx.bulkGenerateProxyHostConfigs(locationHosts);
 			}
 		}
 
@@ -351,7 +351,7 @@ const internalAccessList = {
 				.whereIn("id", [...affectedHostIds])
 				.allowGraph(proxyHostModel.defaultAllowGraph)
 				.withGraphFetched("[owner, certificate, access_list.[clients,items]]");
-			await internalNginx.bulkGenerateConfigs("proxy_host", affectedHosts);
+			await internalNginx.bulkGenerateProxyHostConfigs(affectedHosts);
 		}
 
 		await internalNginx.reload();

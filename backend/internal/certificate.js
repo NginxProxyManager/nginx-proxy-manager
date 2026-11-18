@@ -1456,7 +1456,7 @@ const internalCertificate = {
 	enableInUseHosts: async (inUseResult) => {
 		if (inUseResult.total_count) {
 			if (inUseResult.proxy_hosts.length) {
-				await internalNginx.bulkGenerateConfigs("proxy_host", inUseResult.proxy_hosts);
+				await internalNginx.bulkGenerateProxyHostConfigs(inUseResult.proxy_hosts);
 			}
 
 			if (inUseResult.redirection_hosts.length) {
