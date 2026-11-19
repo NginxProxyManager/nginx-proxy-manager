@@ -290,6 +290,41 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 														</div>
 													</div>
 												</div>
+												<div className="my-3">
+													<h3 className="py-2">
+														<T id="options" />
+													</h3>
+													<div className="divide-y">
+														<div>
+															<label className="row" htmlFor="dynamicResolve">
+																<span className="col">
+																	<T id="stream.dynamic-resolve" />
+																</span>
+																<span className="col-auto">
+																	<Field name="meta.dynamicResolve" type="checkbox">
+																		{({ field }: any) => (
+																			<label className="form-check form-check-single form-switch">
+																				<input
+																					id="dynamicResolve"
+																					className="form-check-input"
+																					type="checkbox"
+																					name={field.name}
+																					checked={!!field.value}
+																					onChange={(e: any) => {
+																						setFieldValue(
+																							field.name,
+																							e.target.checked,
+																						);
+																					}}
+																				/>
+																			</label>
+																		)}
+																	</Field>
+																</span>
+															</label>
+														</div>
+													</div>
+												</div>
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField

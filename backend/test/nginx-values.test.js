@@ -444,7 +444,15 @@ describe("rendered templates", () => {
 		],
 		forwardPath: [["_location.conf", locationCtx("forward_path"), "/x"]],
 		redirectDomain: [["redirection_host.conf", redirectCtx, "example.org"]],
-		streamHost: [["stream.conf", streamCtx, "backend"]],
+		streamHost: [
+			["stream.conf", streamCtx, "backend"],
+			[
+				"stream.conf",
+				(v) => ({ ...streamCtx(v), dynamic_resolve: true }),
+				"backend",
+				['a"; listen 9999; set $x "', 'a" ; } server { "'],
+			],
+		],
 		domainName: [["proxy_host.conf", (v) => proxyCtx("domain_names")([v]), "example.com"]],
 		clientAddress: [["_access.conf", accessCtx, "10.0.0.1"]],
 	};
