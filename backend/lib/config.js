@@ -267,16 +267,29 @@ const useLetsencryptServer = () => {
 	return null;
 };
 
+/**
+ * @returns {number|undefined}
+ */
+const getProxyHostLinkHttpsPort = () => {
+	const value = process.env.PROXY_HOST_LINK_HTTPS_PORT?.trim();
+	if (!value || !/^\d{1,5}$/.test(value)) {
+		return undefined;
+	}
+	const port = Number(value);
+	return port >= 1 && port <= 65535 ? port : undefined;
+};
+
 export {
-	isCI,
-	configHas,
 	configGet,
-	isSqlite,
+	configHas,
+	getPrivateKey,
+	getProxyHostLinkHttpsPort,
+	getPublicKey,
+	isCI,
+	isDebugMode,
 	isMysql,
 	isPostgres,
-	isDebugMode,
-	getPrivateKey,
-	getPublicKey,
-	useLetsencryptStaging,
+	isSqlite,
 	useLetsencryptServer,
+	useLetsencryptStaging,
 };

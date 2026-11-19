@@ -1,5 +1,5 @@
 import express from "express";
-import { isCI } from "../lib/config.js";
+import { getProxyHostLinkHttpsPort, isCI } from "../lib/config.js";
 import errs from "../lib/error.js";
 import logRequest from "../lib/express/log-request.js";
 import pjson from "../package.json" with { type: "json" };
@@ -39,6 +39,7 @@ router.get("/", async (_, res /*, next*/) => {
 	res.status(200).send({
 		status: "OK",
 		setup,
+		proxy_host_link_https_port: getProxyHostLinkHttpsPort(),
 		version: {
 			major: Number.parseInt(version.shift(), 10),
 			minor: Number.parseInt(version.shift(), 10),

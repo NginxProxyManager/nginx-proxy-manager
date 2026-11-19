@@ -13,6 +13,7 @@ import {
 } from "src/components";
 import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
+import { useHealth } from "src/hooks";
 import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
@@ -36,6 +37,8 @@ export default function Table({
 	onNew,
 	isFiltered,
 }: Props) {
+	const { data: health } = useHealth();
+	const httpsPort = health?.proxyHostLinkHttpsPort;
 	const columnHelper = createColumnHelper<Features, ProxyHost>();
 	const columns = useMemo(
 		() => [
@@ -58,9 +61,15 @@ export default function Table({
 					const bVal = b.original.domainNames?.[0] ?? "";
 					return aVal.localeCompare(bVal);
 				},
-				cell: (info: any) => {
-					const value = info.getValue();
-					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
+				cell: (info) => {
+					const host = info.row.original;
+					return (
+						<DomainsFormatter
+							domains={host.domainNames}
+							createdOn={host.createdOn}
+							httpsPort={host.certificateId > 0 ? httpsPort : undefined}
+						/>
+					);
 				},
 			}),
 			columnHelper.accessor((row: any) => row, {
@@ -176,7 +185,7 @@ export default function Table({
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete, onLogs],
+		[columnHelper, onEdit, onDisableToggle, onDelete, onLogs, httpsPort],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);

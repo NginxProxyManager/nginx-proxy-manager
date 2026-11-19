@@ -25,6 +25,30 @@ This may have the side effect of a failed container start due to permission deni
 to open port 80 on some systems. The only course to fix that is to remove the variables
 and run as the default root user.
 
+## External HTTPS port for Proxy Host links
+
+If your Proxy Hosts are reachable on a non-standard HTTPS port, set
+`PROXY_HOST_LINK_HTTPS_PORT` to the port that users can reach. For example,
+when publishing container port 443 on host port 4443:
+
+```yml
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:{{VERSION}}'
+    environment:
+      PROXY_HOST_LINK_HTTPS_PORT: '4443'
+    ports:
+      - '80:80'
+      - '81:81'
+      - '4443:443'
+```
+
+The Proxy Hosts list opens domains with a configured SSL certificate at
+`https://example.com:4443`. HTTP-only hosts keep their existing links.
+This setting only affects generated links. Configure the port mapping or
+forwarding separately. When unset or outside the valid range (1–65535), the
+existing link behavior is used.
+
 ## Best Practice: Use a Docker network
 
 For those who have a few of their upstream services running in Docker on the same Docker
