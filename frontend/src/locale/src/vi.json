@@ -140,6 +140,12 @@
 	"action.renew": {
 		"defaultMessage": "Gia hạn"
 	},
+	"action.update": {
+		"defaultMessage": "Cập nhật"
+	},
+	"action.validate": {
+		"defaultMessage": "Kiểm tra"
+	},
 	"action.view-details": {
 		"defaultMessage": "Xem chi tiết"
 	},
@@ -181,6 +187,27 @@
 	},
 	"certificate.renew": {
 		"defaultMessage": "Gia hạn chứng chỉ"
+	},
+	"certificate.update": {
+		"defaultMessage": "Cập nhật chứng chỉ"
+	},
+	"certificate.update.cn-mismatch": {
+		"defaultMessage": "Tên chung của chứng chỉ mới ({cn}) không khớp với các tên miền hiện tại ({domains}). Hãy đảm bảo chứng chỉ mới vẫn bao phủ mọi máy chủ đang sử dụng nó."
+	},
+	"certificate.update.current-expires": {
+		"defaultMessage": "Hạn hiện tại"
+	},
+	"certificate.update.info": {
+		"defaultMessage": "Tải lên tệp mới cho {name}. Các máy chủ đang dùng chứng chỉ này sẽ giữ nguyên cấu hình và bắt đầu dùng chứng chỉ mới."
+	},
+	"certificate.update.new-cn": {
+		"defaultMessage": "Tên chung mới"
+	},
+	"certificate.update.new-expires": {
+		"defaultMessage": "Hạn mới"
+	},
+	"certificate.update.validated": {
+		"defaultMessage": "Chứng chỉ mới hợp lệ. Hãy xem lại thông tin bên dưới và nhấn Cập nhật để áp dụng."
 	},
 	"certificates": {
 		"defaultMessage": "Chứng chỉ"
