@@ -1,12 +1,13 @@
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Form, Formik, Field } from "formik";
+import { Field, Form } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { createCertificate, testHttpCertificate } from "src/api/backend";
 import { Button, DomainNamesField } from "src/components";
+import { FormModal } from "src/components/Form";
 import { T } from "src/locale";
 import { showObjectSuccess } from "src/notifications";
 
@@ -109,109 +110,106 @@ const HTTPCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPr
 	};
 
 	return (
-		<Modal show={visible} onHide={remove}>
-			<Formik
-				initialValues={
-					{
-						domainNames: [],
-						provider: "letsencrypt",
-						meta: {
-							keyType: "ecdsa",
-						},
-					} as any
-				}
-				onSubmit={onSubmit}
-			>
-				{() => (
-					<Form>
-						<Modal.Header closeButton>
-							<Modal.Title>
-								<T id="object.add" tData={{ object: "lets-encrypt-via-http" }} />
-							</Modal.Title>
-						</Modal.Header>
-						<Modal.Body className="p-0">
-							<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
-								{errorMsg}
-							</Alert>
-							<div className="card m-0 border-0">
-								<div className="card-body">
-									<p className="text-warning">
-										<IconAlertTriangle size={16} className="me-1" />
-										<T id="certificates.http.warning" />
-									</p>
-									<DomainNamesField
-										onChange={(doms) => {
-											setDomains(doms);
-											setTestResults(null);
-										}}
-									/>
-									<Field name="meta.keyType">
-										{({ field }: any) => (
-											<div className="mb-3">
-												<label htmlFor="keyType" className="form-label">
-													<T id="certificates.key-type" />
-												</label>
-												<select
-													id="keyType"
-													className="form-select"
-													{...field}
-												>
-													<option value="rsa">
-														<T id="certificates.key-type-rsa" />
-													</option>
-													<option value="ecdsa">
-														<T id="certificates.key-type-ecdsa" />
-													</option>
-												</select>
-												<small className="form-text text-muted">
-													<T id="certificates.key-type-description" />
-												</small>
-											</div>
-										)}
-									</Field>
+		<FormModal
+			show={visible}
+			onHide={remove}
+			preventHide={isSubmitting || isTesting}
+			initialValues={
+				{
+					domainNames: [],
+					provider: "letsencrypt",
+					meta: {
+						keyType: "ecdsa",
+					},
+				} as any
+			}
+			onSubmit={onSubmit}
+		>
+			{({ onHide }) => (
+				<Form>
+					<Modal.Header closeButton>
+						<Modal.Title>
+							<T id="object.add" tData={{ object: "lets-encrypt-via-http" }} />
+						</Modal.Title>
+					</Modal.Header>
+					<Modal.Body className="p-0">
+						<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
+							{errorMsg}
+						</Alert>
+						<div className="card m-0 border-0">
+							<div className="card-body">
+								<p className="text-warning">
+									<IconAlertTriangle size={16} className="me-1" />
+									<T id="certificates.http.warning" />
+								</p>
+								<DomainNamesField
+									onChange={(doms) => {
+										setDomains(doms);
+										setTestResults(null);
+									}}
+								/>
+								<Field name="meta.keyType">
+									{({ field }: any) => (
+										<div className="mb-3">
+											<label htmlFor="keyType" className="form-label">
+												<T id="certificates.key-type" />
+											</label>
+											<select id="keyType" className="form-select" {...field}>
+												<option value="rsa">
+													<T id="certificates.key-type-rsa" />
+												</option>
+												<option value="ecdsa">
+													<T id="certificates.key-type-ecdsa" />
+												</option>
+											</select>
+											<small className="form-text text-muted">
+												<T id="certificates.key-type-description" />
+											</small>
+										</div>
+									)}
+								</Field>
+							</div>
+							{testResults ? (
+								<div className="card-footer">
+									<h5>
+										<T id="certificates.http.test-results" />
+									</h5>
+									{parseTestResults()}
 								</div>
-								{testResults ? (
-									<div className="card-footer">
-										<h5>
-											<T id="certificates.http.test-results" />
-										</h5>
-										{parseTestResults()}
-									</div>
-								) : null}
-							</div>
-						</Modal.Body>
-						<Modal.Footer>
-							<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting || isTesting}>
-								<T id="cancel" />
+							) : null}
+						</div>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting || isTesting}>
+							<T id="cancel" />
+						</Button>
+						<div className="ms-auto">
+							<Button
+								type="button"
+								actionType="secondary"
+								className="me-3"
+								data-bs-dismiss="modal"
+								isLoading={isTesting}
+								disabled={isSubmitting || domains.length === 0}
+								onClick={handleTest}
+							>
+								<T id="test" />
 							</Button>
-							<div className="ms-auto">
-								<Button
-									type="button"
-									actionType="secondary"
-									className="me-3"
-									data-bs-dismiss="modal"
-									isLoading={isTesting}
-									disabled={isSubmitting || domains.length === 0}
-									onClick={handleTest}
-								>
-									<T id="test" />
-								</Button>
-								<Button
-									type="submit"
-									actionType="primary"
-									className="bg-pink"
-									data-bs-dismiss="modal"
-									isLoading={isSubmitting}
-									disabled={isSubmitting || isTesting}
-								>
-									<T id="save" />
-								</Button>
-							</div>
-						</Modal.Footer>
-					</Form>
-				)}
-			</Formik>
-		</Modal>
+							<Button
+								type="submit"
+								actionType="primary"
+								className="bg-pink"
+								data-bs-dismiss="modal"
+								isLoading={isSubmitting}
+								disabled={isSubmitting || isTesting}
+							>
+								<T id="save" />
+							</Button>
+						</div>
+					</Modal.Footer>
+				</Form>
+			)}
+		</FormModal>
 	);
 });
 

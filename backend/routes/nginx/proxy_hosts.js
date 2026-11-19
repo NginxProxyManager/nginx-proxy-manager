@@ -1,4 +1,5 @@
 import express from "express";
+import fs from "node:fs";
 import internalProxyHost from "../../internal/proxy-host.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
@@ -200,6 +201,72 @@ router
 				id: Number.parseInt(req.params.host_id, 10),
 			});
 			res.status(200).send(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
+ * Proxy-host logs
+ *
+ * /api/nginx/proxy-hosts/123/logs
+ */
+router
+	.route("/:host_id/logs")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * GET /api/nginx/proxy-hosts/123/logs
+	 *
+	 * Retrieve logs for a specific proxy-host
+	 */
+	.get(async (req, res, next) => {
+		try {
+			const data = await validator(
+				{
+					required: ["host_id"],
+					additionalProperties: false,
+					properties: {
+						host_id: {
+							$ref: "common#/properties/id",
+						},
+						type: {
+							type: "string",
+							enum: ["access", "error"],
+						},
+					},
+				},
+				{
+					host_id: req.params.host_id,
+					type: req.query.type || "access",
+				},
+			);
+
+			const hostId = Number.parseInt(data.host_id, 10);
+			const logType = data.type === "error" ? "error" : "access";
+			const logFile = `/data/logs/proxy-host-${hostId}_${logType}.log`;
+
+			// Check access permission
+			await res.locals.access.can("proxy_hosts:get", hostId);
+
+			let logs = "";
+			if (fs.existsSync(logFile)) {
+				const content = fs.readFileSync(logFile, { encoding: "utf8" });
+				const lines = content.split("\n");
+				// Return last 1000 lines to avoid huge payloads
+				const maxLines = 1000;
+				if (lines.length > maxLines) {
+					logs = lines.slice(-maxLines).join("\n");
+				} else {
+					logs = content;
+				}
+			}
+
+			res.status(200).send({ logs });
 		} catch (err) {
 			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
 			next(err);

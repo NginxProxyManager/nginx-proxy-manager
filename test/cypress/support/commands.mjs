@@ -33,7 +33,7 @@ Cypress.Commands.add("validateSwaggerFile", (url, savePath) => {
 			return cy
 				.request(url)
 				.then((response) => cy.writeFile(savePath, response.body, { log: false }))
-				.then(() => cy.exec(`yarn swagger-lint '${savePath}'`, { failOnNonZeroExit: false }))
+				.then(() => cy.task('exec', { command: `yarn swagger-lint '${savePath}'`, failOnNonZeroExit: false }))
 				.then((result) => cy.task('log', `Swagger Vacuum Results:\n${result.stdout || ''}`)
 					.then(() => expect(result.exitCode).to.eq(0)));
 		});
@@ -167,10 +167,10 @@ Cypress.Commands.add('createCustomCerts', ({domain, certFile, keyFile}) => {
 		const fullKeyFile = `${fixturesFolder}/${keyFile}`;
 		const cmd = `mkcert -cert-file="${fullCertFile}" -key-file="${fullKeyFile}" "${domain}"`;
 		cy.log(`Creating custom certs with command: ${cmd}`);
-		return cy.exec(cmd).then((result) => {
+		return cy.task('exec', { command: cmd }).then((result) => {
 			cy.log(`mkcert output:\n${JSON.stringify(result)}`);
 			expect(result.exitCode).to.eq(0);
-			return cy.exec('mkcert -install').then((result2) => {
+			return cy.task('exec', { command: 'mkcert -install' }).then((result2) => {
 				cy.log(`mkcert install output:\n${JSON.stringify(result2)}`);
 				expect(result2.exitCode).to.eq(0);
 			}).then(() => {

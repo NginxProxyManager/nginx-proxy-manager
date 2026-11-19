@@ -23,12 +23,16 @@ const allLocales = [
   ["cs", "cs-CZ"],
   ["vi", "vi-VN"],
   ["zh", "zh-CN"],
+  ["zh-tw", "zh-TW"],
   ["ko", "ko-KR"],
   ["bg", "bg-BG"],
   ["id", "id-ID"],
   ["tr", "tr-TR"],
   ["hu", "hu-HU"],
   ["no", "no-NO"],
+  ["uk", "uk-UA"],
+  ["az", "az-AZ"],
+  ["fa", "fa-IR"],
 ];
 
 const ignoreUnused = [/^.*$/];

@@ -1,12 +1,13 @@
-import type { Table as ReactTable } from "@tanstack/react-table";
+import type { Table as ReactTable, RowData } from "@tanstack/react-table";
 import cn from "classnames";
 import type { ReactNode } from "react";
 import { Button, HasPermission } from "src/components";
+import type { Features } from "src/components/Table/features";
 import { T } from "src/locale";
 import { type ADMIN, MANAGE, type Permission, type Section } from "src/modules/Permissions";
 
-interface Props {
-	tableInstance: ReactTable<any>;
+interface Props<TData extends RowData> {
+	tableInstance: ReactTable<Features, TData>;
 	onNew?: () => void;
 	isFiltered?: boolean;
 	object: string;
@@ -16,7 +17,7 @@ interface Props {
 	permissionSection?: Section | typeof ADMIN;
 	permission?: Permission;
 }
-function EmptyData({
+function EmptyData<TData extends RowData>({
 	tableInstance,
 	onNew,
 	isFiltered,
@@ -26,7 +27,7 @@ function EmptyData({
 	customAddBtn,
 	permissionSection,
 	permission,
-}: Props) {
+}: Props<TData>) {
 	return (
 		<tr>
 			<td colSpan={tableInstance.getVisibleFlatColumns().length}>

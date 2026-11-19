@@ -37,6 +37,17 @@ services:
           - website1.example.com
           - website2.example.com
           - website3.example.com
+          - website4.example.com
+
+  examplesite:
+    image: "${IMAGE}-examplesite:ci-${BUILD_NUMBER}"
+    build:
+      context: ../test/docker
+      dockerfile: Dockerfile.website
+    expose:
+      - "80/tcp"
+    networks:
+      - fulltest
 
   stepca:
     image: nginxproxymanager/testca

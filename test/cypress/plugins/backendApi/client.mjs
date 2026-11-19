@@ -1,3 +1,4 @@
+import http from "node:http";
 import axios from "axios";
 import logger from "./logger.mjs";
 
@@ -8,6 +9,10 @@ const BackendApi = function (config, token) {
 	this.axios = axios.create({
 		baseURL: config.baseUrl,
 		timeout: 90000,
+		// Don't reuse sockets: a pooled keep-alive connection that squid or the
+		// backend has since closed fails with a 502 (ERR_READ_ERROR 104), which
+		// made tests flaky.
+		httpAgent: new http.Agent({ keepAlive: false }),
 	});
 };
 
