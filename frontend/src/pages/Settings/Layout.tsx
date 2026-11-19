@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { T } from "src/locale";
 import DefaultSite from "./DefaultSite";
 
@@ -27,6 +28,12 @@ export default function Layout() {
 								>
 									<T id="settings.default-site" />
 								</a>
+								<Link
+									to="/settings/api-tokens"
+									className="list-group-item list-group-item-action d-flex align-items-center"
+								>
+									<T id="api-tokens.title" />
+								</Link>
 							</div>
 						</div>
 					</div>

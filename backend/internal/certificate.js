@@ -707,7 +707,8 @@ const internalCertificate = {
 	 * @returns {Promise}
 	 */
 	writeCustomCert: async (certificate) => {
-		logger.info("Writing Custom Certificate:", certificate);
+		// Certificate metadata includes the private key; log only its database identity.
+		logger.info("Writing Custom Certificate:", certificate.id);
 
 		const dir = `/data/custom_ssl/npm-${certificate.id}`;
 

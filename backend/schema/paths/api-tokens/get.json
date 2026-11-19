@@ -1,0 +1,48 @@
+{
+	"operationId": "getApiTokens",
+	"summary": "List personal API token metadata",
+	"tags": [
+		"api-tokens"
+	],
+	"security": [
+		{
+			"bearerAuth": []
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "Successful operation",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "array",
+						"items": {
+							"$ref": "../../components/api-token-object.json"
+						}
+					},
+					"example": [
+						{
+							"id": 1,
+							"name": "Home directory",
+							"scopes": [
+								"proxy_hosts:read"
+							],
+							"visibility": "user",
+							"created_on": "2026-01-01T00:00:00Z",
+							"expires_on": "2026-01-31T00:00:00Z",
+							"revoked_on": null,
+							"last_used_on": null,
+							"status": "active"
+						}
+					]
+				}
+			}
+		},
+		"401": {
+			"description": "Authentication required"
+		},
+		"403": {
+			"description": "Session, owner permissions or step-up verification required"
+		}
+	}
+}

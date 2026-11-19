@@ -143,6 +143,129 @@
 	"action.view-details": {
 		"defaultMessage": "View Details"
 	},
+	"api-tokens.actions": {
+		"defaultMessage": "Actions"
+	},
+	"api-tokens.active": {
+		"defaultMessage": "Active"
+	},
+	"api-tokens.close": {
+		"defaultMessage": "Close"
+	},
+	"api-tokens.copied": {
+		"defaultMessage": "Copied"
+	},
+	"api-tokens.copy": {
+		"defaultMessage": "Copy token"
+	},
+	"api-tokens.copy-failed": {
+		"defaultMessage": "Could not copy automatically. Select the token and copy it manually."
+	},
+	"api-tokens.create": {
+		"defaultMessage": "Create API Token"
+	},
+	"api-tokens.create-failed": {
+		"defaultMessage": "Could not create the API token."
+	},
+	"api-tokens.created": {
+		"defaultMessage": "API Token Created"
+	},
+	"api-tokens.description": {
+		"defaultMessage": "Personal API tokens let external tools call the existing Nginx Proxy Manager API with selected permissions. Manage and revoke tokens for your own account here."
+	},
+	"api-tokens.empty": {
+		"defaultMessage": "You have no API tokens yet."
+	},
+	"api-tokens.expired": {
+		"defaultMessage": "Expired"
+	},
+	"api-tokens.expires": {
+		"defaultMessage": "Expires"
+	},
+	"api-tokens.expiry-days": {
+		"defaultMessage": "Expires in (days)"
+	},
+	"api-tokens.expiry-help": {
+		"defaultMessage": "Choose 1 to {max} days. Tokens cannot be extended after creation."
+	},
+	"api-tokens.last-used": {
+		"defaultMessage": "Last used"
+	},
+	"api-tokens.name": {
+		"defaultMessage": "Token name"
+	},
+	"api-tokens.never-used": {
+		"defaultMessage": "Never"
+	},
+	"api-tokens.no-permissions": {
+		"defaultMessage": "Your account has no resource permissions available for API tokens. Ask an administrator to review your permissions."
+	},
+	"api-tokens.password": {
+		"defaultMessage": "Confirm your current password"
+	},
+	"api-tokens.retry": {
+		"defaultMessage": "Retry"
+	},
+	"api-tokens.revoke": {
+		"defaultMessage": "Revoke"
+	},
+	"api-tokens.revoke-confirm": {
+		"defaultMessage": "Revoke “{name}”? Tools using this token will immediately lose access. This cannot be undone."
+	},
+	"api-tokens.revoke-failed": {
+		"defaultMessage": "Could not revoke the API token."
+	},
+	"api-tokens.revoked": {
+		"defaultMessage": "Revoked"
+	},
+	"api-tokens.saved-secret": {
+		"defaultMessage": "I have saved the token"
+	},
+	"api-tokens.scope-none": {
+		"defaultMessage": "No access"
+	},
+	"api-tokens.scope-read": {
+		"defaultMessage": "Read only"
+	},
+	"api-tokens.scope-write": {
+		"defaultMessage": "Read, create, update and delete"
+	},
+	"api-tokens.scopes": {
+		"defaultMessage": "Permissions"
+	},
+	"api-tokens.scopes-help": {
+		"defaultMessage": "Choose at least one permission. No access is selected by default. Write access includes read, create, update and delete operations for that resource."
+	},
+	"api-tokens.secret": {
+		"defaultMessage": "Your API token"
+	},
+	"api-tokens.secret-warning": {
+		"defaultMessage": "Copy this token now and keep it in a secure place. It is shown only once and cannot be retrieved after you close this dialog."
+	},
+	"api-tokens.security-warning": {
+		"defaultMessage": "Tokens can expose sensitive configuration. Grant only the permissions your tool needs. Write access can change or delete live configuration. Never share tokens publicly."
+	},
+	"api-tokens.status": {
+		"defaultMessage": "Status"
+	},
+	"api-tokens.title": {
+		"defaultMessage": "API Tokens"
+	},
+	"api-tokens.two-factor": {
+		"defaultMessage": "Two-factor authentication or backup code"
+	},
+	"api-tokens.uncertain-create": {
+		"defaultMessage": "If the response was lost, a token may still have been created. Close this dialog and check the list before trying again; revoke any token whose secret you did not receive."
+	},
+	"api-tokens.usage": {
+		"defaultMessage": "Send the token as Authorization: Bearer YOUR_TOKEN when calling supported /api endpoints."
+	},
+	"api-tokens.visibility-all": {
+		"defaultMessage": "Access is limited to your permissions and currently includes all users’ resources."
+	},
+	"api-tokens.visibility-user": {
+		"defaultMessage": "Access is limited to your permissions and your own resources."
+	},
 	"auditlogs": {
 		"defaultMessage": "Audit Logs"
 	},

@@ -3,7 +3,7 @@
 	"info": {
 		"title": "Nginx Proxy Manager API",
 		"version": "2.x.x",
-		"description": "This is the official API documentation for Nginx Proxy Manager.\n\nMost endpoints require authentication via Bearer Token (JWT). You can generate a token by logging in via the `POST /tokens` endpoint.\n\nFor more information, visit the [Nginx Proxy Manager Documentation](https://nginxproxymanager.com)."
+		"description": "This is the official API documentation for Nginx Proxy Manager.\n\nMost endpoints require Bearer authentication. Log in via `POST /tokens` for a user JWT. Scoped personal API tokens can call supported existing resource endpoints; token management requires a normal login JWT.\n\nFor more information, visit the [Nginx Proxy Manager Documentation](https://nginxproxymanager.com)."
 	},
 	"servers": [
 		{
@@ -67,6 +67,10 @@
 		{
 			"name": "users",
 			"description": "Endpoints for managing users"
+		},
+		{
+			"name": "api-tokens",
+			"description": "Endpoints for managing scoped personal API tokens using a login session"
 		}
 	],
 	"paths": {
@@ -370,6 +374,26 @@
 		"/users/{userID}/login": {
 			"post": {
 				"$ref": "./paths/users/userID/login/post.json"
+			}
+		},
+		"/api-tokens": {
+			"get": {
+				"$ref": "./paths/api-tokens/get.json"
+			},
+			"post": {
+				"$ref": "./paths/api-tokens/post.json"
+			}
+		},
+		"/api-tokens/options": {
+			"get": {
+				"$ref": "./paths/api-tokens/options/get.json"
+			},
+			"description": "Token creation options (allowed scopes and step-up requirements). Here options is a settings noun, not the HTTP OPTIONS method; retain this existing API path for compatibility.",
+			"x-lint-ignore": "no-http-verbs-in-path"
+		},
+		"/api-tokens/{tokenID}": {
+			"delete": {
+				"$ref": "./paths/api-tokens/tokenID/delete.json"
 			}
 		}
 	}

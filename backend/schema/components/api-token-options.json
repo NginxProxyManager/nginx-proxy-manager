@@ -1,0 +1,56 @@
+{
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"scopes",
+		"visibility",
+		"requires_2fa",
+		"max_expiry_days",
+		"default_expiry_days"
+	],
+	"properties": {
+		"scopes": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": [
+					"proxy_hosts:read",
+					"proxy_hosts:write",
+					"redirection_hosts:read",
+					"redirection_hosts:write",
+					"dead_hosts:read",
+					"dead_hosts:write",
+					"streams:read",
+					"streams:write",
+					"access_lists:read",
+					"access_lists:write",
+					"certificates:read",
+					"certificates:write"
+				]
+			},
+			"example": [
+				"proxy_hosts:read"
+			]
+		},
+		"visibility": {
+			"type": "string",
+			"enum": [
+				"user",
+				"all"
+			],
+			"example": "user"
+		},
+		"requires_2fa": {
+			"type": "boolean",
+			"example": false
+		},
+		"max_expiry_days": {
+			"type": "integer",
+			"example": 365
+		},
+		"default_expiry_days": {
+			"type": "integer",
+			"example": 30
+		}
+	}
+}

@@ -1,4 +1,4 @@
-import { IconLock, IconLogout, IconShieldLock, IconUser } from "@tabler/icons-react";
+import { IconKey, IconLock, IconLogout, IconShieldLock, IconUser } from "@tabler/icons-react";
 import { LocalePicker, NavLink, ThemeSwitcher } from "src/components";
 import { useAuthState } from "src/context";
 import { useUser } from "src/hooks";
@@ -122,6 +122,10 @@ export function SiteHeader() {
 									<IconShieldLock width={18} />
 									<T id="user.two-factor" />
 								</a>
+								<NavLink to="/settings/api-tokens" isDropdownItem>
+									<IconKey width={18} />
+									<T id="api-tokens.title" />
+								</NavLink>
 								<div className="dropdown-divider" />
 								<a
 									href="?"

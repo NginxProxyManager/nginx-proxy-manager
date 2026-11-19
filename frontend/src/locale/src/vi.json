@@ -143,6 +143,129 @@
 	"action.view-details": {
 		"defaultMessage": "Xem chi tiết"
 	},
+	"api-tokens.actions": {
+		"defaultMessage": "Thao tác"
+	},
+	"api-tokens.active": {
+		"defaultMessage": "Đang hoạt động"
+	},
+	"api-tokens.close": {
+		"defaultMessage": "Đóng"
+	},
+	"api-tokens.copied": {
+		"defaultMessage": "Đã sao chép"
+	},
+	"api-tokens.copy": {
+		"defaultMessage": "Sao chép token"
+	},
+	"api-tokens.copy-failed": {
+		"defaultMessage": "Không thể tự động sao chép. Hãy chọn token và sao chép thủ công."
+	},
+	"api-tokens.create": {
+		"defaultMessage": "Tạo token API"
+	},
+	"api-tokens.create-failed": {
+		"defaultMessage": "Không thể tạo token API."
+	},
+	"api-tokens.created": {
+		"defaultMessage": "Đã tạo token API"
+	},
+	"api-tokens.description": {
+		"defaultMessage": "Token API cá nhân cho phép các công cụ bên ngoài gọi API hiện có của Nginx Proxy Manager với các quyền đã chọn. Quản lý và thu hồi token cho tài khoản của bạn tại đây."
+	},
+	"api-tokens.empty": {
+		"defaultMessage": "Bạn chưa có token API nào."
+	},
+	"api-tokens.expired": {
+		"defaultMessage": "Đã hết hạn"
+	},
+	"api-tokens.expires": {
+		"defaultMessage": "Hết hạn"
+	},
+	"api-tokens.expiry-days": {
+		"defaultMessage": "Hết hạn sau (ngày)"
+	},
+	"api-tokens.expiry-help": {
+		"defaultMessage": "Chọn từ 1 đến {max} ngày. Không thể gia hạn token sau khi tạo."
+	},
+	"api-tokens.last-used": {
+		"defaultMessage": "Lần sử dụng cuối"
+	},
+	"api-tokens.name": {
+		"defaultMessage": "Tên token"
+	},
+	"api-tokens.never-used": {
+		"defaultMessage": "Chưa bao giờ"
+	},
+	"api-tokens.no-permissions": {
+		"defaultMessage": "Tài khoản của bạn không có quyền truy cập tài nguyên nào để sử dụng với token API. Hãy yêu cầu quản trị viên kiểm tra quyền của bạn."
+	},
+	"api-tokens.password": {
+		"defaultMessage": "Xác nhận mật khẩu hiện tại"
+	},
+	"api-tokens.retry": {
+		"defaultMessage": "Thử lại"
+	},
+	"api-tokens.revoke": {
+		"defaultMessage": "Thu hồi"
+	},
+	"api-tokens.revoke-confirm": {
+		"defaultMessage": "Thu hồi “{name}”? Các công cụ sử dụng token này sẽ mất quyền truy cập ngay lập tức. Không thể hoàn tác thao tác này."
+	},
+	"api-tokens.revoke-failed": {
+		"defaultMessage": "Không thể thu hồi token API."
+	},
+	"api-tokens.revoked": {
+		"defaultMessage": "Đã thu hồi"
+	},
+	"api-tokens.saved-secret": {
+		"defaultMessage": "Tôi đã lưu token"
+	},
+	"api-tokens.scope-none": {
+		"defaultMessage": "Không có quyền truy cập"
+	},
+	"api-tokens.scope-read": {
+		"defaultMessage": "Chỉ đọc"
+	},
+	"api-tokens.scope-write": {
+		"defaultMessage": "Đọc, tạo, cập nhật và xóa"
+	},
+	"api-tokens.scopes": {
+		"defaultMessage": "Quyền"
+	},
+	"api-tokens.scopes-help": {
+		"defaultMessage": "Chọn ít nhất một quyền. Mặc định không có quyền truy cập nào được chọn. Quyền ghi bao gồm các thao tác đọc, tạo, cập nhật và xóa đối với tài nguyên đó."
+	},
+	"api-tokens.secret": {
+		"defaultMessage": "Token API của bạn"
+	},
+	"api-tokens.secret-warning": {
+		"defaultMessage": "Hãy sao chép token này ngay và lưu ở nơi an toàn. Token chỉ được hiển thị một lần và không thể lấy lại sau khi bạn đóng hộp thoại này."
+	},
+	"api-tokens.security-warning": {
+		"defaultMessage": "Token có thể làm lộ cấu hình nhạy cảm. Chỉ cấp các quyền mà công cụ của bạn cần. Quyền ghi có thể thay đổi hoặc xóa cấu hình đang hoạt động. Không bao giờ chia sẻ token công khai."
+	},
+	"api-tokens.status": {
+		"defaultMessage": "Trạng thái"
+	},
+	"api-tokens.title": {
+		"defaultMessage": "Token API"
+	},
+	"api-tokens.two-factor": {
+		"defaultMessage": "Mã xác thực hai yếu tố hoặc mã dự phòng"
+	},
+	"api-tokens.uncertain-create": {
+		"defaultMessage": "Nếu phản hồi bị mất, token có thể vẫn đã được tạo. Hãy đóng hộp thoại này và kiểm tra danh sách trước khi thử lại; thu hồi mọi token mà bạn chưa nhận được giá trị bí mật."
+	},
+	"api-tokens.usage": {
+		"defaultMessage": "Gửi token dưới dạng Authorization: Bearer YOUR_TOKEN khi gọi các điểm cuối /api được hỗ trợ."
+	},
+	"api-tokens.visibility-all": {
+		"defaultMessage": "Quyền truy cập bị giới hạn theo quyền của bạn và hiện bao gồm tài nguyên của tất cả người dùng."
+	},
+	"api-tokens.visibility-user": {
+		"defaultMessage": "Quyền truy cập bị giới hạn theo quyền của bạn và các tài nguyên do bạn sở hữu."
+	},
 	"auditlogs": {
 		"defaultMessage": "Nhật ký hoạt động"
 	},
