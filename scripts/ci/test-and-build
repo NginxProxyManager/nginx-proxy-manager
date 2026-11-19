@@ -17,7 +17,7 @@ echo -e "${BLUE}❯ ${GREEN}Testing Complete${RESET}"
 
 # Build
 echo -e "${BLUE}❯ ${CYAN}Building ...${RESET}"
-docker build --pull --no-cache --compress \
+docker build --pull --no-cache --compress --network=host \
 	-t "${IMAGE:-nginx-proxy-manager}:${BRANCH_LOWER:-unknown}-ci-${BUILD_NUMBER:-0000}" \
 	-f docker/Dockerfile \
 	--progress=plain \
