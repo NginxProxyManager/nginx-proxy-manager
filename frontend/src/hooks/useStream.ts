@@ -8,6 +8,7 @@ const fetchStream = (id: number | "new") => {
 			createdOn: "",
 			modifiedOn: "",
 			ownerUserId: 0,
+			name: "",
 			tcpForwarding: true,
 			udpForwarding: false,
 			meta: {},

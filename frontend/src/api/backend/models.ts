@@ -214,6 +214,7 @@ export interface Stream {
 	modifiedOn: string;
 	ownerUserId: number;
 	incomingPort: number;
+	name?: string;
 	forwardingHost: string;
 	forwardingPort: number;
 	tcpForwarding: boolean;

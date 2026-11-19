@@ -12,6 +12,21 @@ const omissions = () => {
 	return ["is_deleted", "owner.is_deleted", "certificate.is_deleted"];
 };
 
+/**
+ * The name is a display-only label (never written into nginx config).
+ * The schema already limits length and characters; this just normalises whitespace.
+ *
+ * @param {Object} data
+ */
+const normaliseName = (data) => {
+	if (typeof data.name === "string") {
+		data.name = data.name.trim();
+	}
+};
+
+// For LIKE ... ESCAPE '!' ("!" behaves the same on SQLite, MySQL and PostgreSQL, "\" doesn't)
+const escapeLike = (text) => text.replace(/[!%_]/g, "!$&");
+
 const internalStream = {
 	/**
 	 * @param   {Access}  access
@@ -19,6 +34,7 @@ const internalStream = {
 	 * @returns {Promise}
 	 */
 	create: (access, data) => {
+		normaliseName(data);
 		const create_certificate = data.certificate_id === "new";
 
 		if (create_certificate) {
@@ -94,6 +110,7 @@ const internalStream = {
 	 */
 	update: (access, data) => {
 		let thisData = data;
+		normaliseName(thisData);
 		const create_certificate = thisData.certificate_id === "new";
 
 		if (create_certificate) {
@@ -384,7 +401,10 @@ const internalStream = {
 				// Query is used for searching
 				if (typeof search_query === "string" && search_query.length > 0) {
 					query.where(function () {
-						this.where(castJsonIfNeed("incoming_port"), "like", `%${search_query}%`);
+						this.whereRaw("LOWER(??) LIKE LOWER(?) ESCAPE '!'", ["name", `%${escapeLike(search_query)}%`]);
+						if (/^\d+$/.test(search_query)) {
+							this.orWhere(castJsonIfNeed("incoming_port"), "like", `%${search_query}%`);
+						}
 					});
 				}
 

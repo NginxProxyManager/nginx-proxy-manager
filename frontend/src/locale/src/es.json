@@ -626,6 +626,12 @@
 	"stream.incoming-port": {
 		"defaultMessage": "Puerto de Entrada"
 	},
+	"stream.name": {
+		"defaultMessage": "Nombre (opcional)"
+	},
+	"stream.name.placeholder": {
+		"defaultMessage": "ej: Servidor SSH"
+	},
 	"streams": {
 		"defaultMessage": "Streams"
 	},

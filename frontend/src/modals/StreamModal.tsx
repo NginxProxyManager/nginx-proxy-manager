@@ -66,6 +66,7 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					initialValues={
 						{
 							incomingPort: data?.incomingPort,
+							name: data?.name ?? "",
 							forwardingHost: data?.forwardingHost,
 							forwardingPort: data?.forwardingPort,
 							tcpForwarding: data?.tcpForwarding,
@@ -141,6 +142,30 @@ const StreamModal = EasyModal.create(({ id, visible, remove }: Props) => {
 																	form.touched.incomingPort
 																		? form.errors.incomingPort
 																		: null}
+																</div>
+															) : null}
+														</div>
+													)}
+												</Field>
+												<Field name="name" validate={validateString(0, 100)}>
+													{({ field, form }: any) => (
+														<div className="mb-3">
+															<label className="form-label" htmlFor="name">
+																<T id="stream.name" />
+															</label>
+															<input
+																id="name"
+																type="text"
+																maxLength={100}
+																className={`form-control ${form.errors.name && form.touched.name ? "is-invalid" : ""}`}
+																placeholder={intl.formatMessage({
+																	id: "stream.name.placeholder",
+																})}
+																{...field}
+															/>
+															{form.errors.name && form.touched.name ? (
+																<div className="invalid-feedback">
+																	{form.errors.name}
 																</div>
 															) : null}
 														</div>
