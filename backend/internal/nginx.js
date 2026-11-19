@@ -187,6 +187,8 @@ const internalNginx = {
 						{ http2_support: host.http2_support },
 						{ hsts_enabled: host.hsts_enabled },
 						{ hsts_subdomains: host.hsts_subdomains },
+						{ dynamic_upstream_resolve: host.dynamic_upstream_resolve },
+						{ upstream_resolver: host.upstream_resolver },
 						{ access_list: host.access_list },
 						{ certificate: host.certificate },
 						host.locations[i],
@@ -297,6 +299,9 @@ const internalNginx = {
 			if (nice_host_type === "stream" && net.isIPv6(host.forwarding_host)) {
 				host.forwarding_host = `[${host.forwarding_host}]`;
 			}
+
+			// Set the upstream resolver (used when dynamic_upstream_resolve is enabled)
+			host.upstream_resolver = internalNginx.getUpstreamResolver();
 
 			if (host.locations) {
 				//logger.info ('host.locations = ' + JSON.stringify(host.locations, null, 2));
@@ -570,6 +575,30 @@ const internalNginx = {
 		}
 
 		return true;
+	},	
+	
+	/**
+	 * Returns the DNS resolver address to use in nginx `resolver` directives.
+	 * Priority: NGINX_RESOLVER env var → first nameserver in /etc/resolv.conf → 127.0.0.11
+	 *
+	 * @returns {String}
+	 */
+	getUpstreamResolver: () => {
+		if (process.env.NGINX_RESOLVER) {
+			return process.env.NGINX_RESOLVER;
+		}
+
+		try {
+			const resolvConf = fs.readFileSync("/etc/resolv.conf", { encoding: "utf8" });
+			const match = resolvConf.match(/^\s*nameserver\s+(\S+)/m);
+			if (match) {
+				return match[1];
+			}
+		} catch (_err) {
+			// ignore — fall through to default
+		}
+
+		return "127.0.0.11";
 	},
 };
 
