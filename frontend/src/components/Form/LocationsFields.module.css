@@ -41,11 +41,17 @@
 
 .path {
 	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
+	min-width: 0;
+	flex: 0 1 auto;
 }
 
 .summary {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	min-width: 0;
+	flex: 1 1 auto;
 }
