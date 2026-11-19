@@ -10,6 +10,7 @@ const allLocales = [
   ["en", "en-US"],
   ["de", "de-DE"],
   ["pt", "pt-PT"],
+  ["pt-br", "pt-BR"],
   ["es", "es-ES"],
   ["et", "et-EE"],
   ["fr", "fr-FR"],

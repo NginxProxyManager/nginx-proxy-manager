@@ -2,6 +2,7 @@ import { createIntl, createIntlCache } from "react-intl";
 import langBg from "./lang/bg.json";
 import langDe from "./lang/de.json";
 import langPt from "./lang/pt.json";
+import langPtBr from "./lang/pt-br.json";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
 import langEt from "./lang/et.json";
@@ -36,6 +37,7 @@ const localeOptions = [
 	["es", "es-ES", langEs],
 	["et", "et-EE", langEt],
 	["pt", "pt-PT", langPt],
+	["pt-BR", "pt-BR", langPtBr],
 	["fr", "fr-FR", langFr],
 	["ga", "ga-IE", langGa],
 	["ja", "ja-JP", langJa],
@@ -78,6 +80,9 @@ const getFlagCodeForLocale = (locale?: string) => {
 	const requestedLocale = (locale || "en").toLowerCase();
 	if (requestedLocale === "zh-tw") {
 		return "TW";
+	}
+	if (requestedLocale === "pt-br") {
+		return "BR";
 	}
 	const thisLocale = requestedLocale.slice(0, 2);
 

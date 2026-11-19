@@ -1,6 +1,7 @@
 import * as bg from "./bg/index";
 import * as de from "./de/index";
 import * as pt from "./pt/index";
+import * as ptBr from "./pt-br/index";
 import * as en from "./en/index";
 import * as es from "./es/index";
 import * as et from "./et/index";
@@ -28,6 +29,7 @@ const items: any = {
 	en,
 	de,
 	pt,
+	"pt-BR": ptBr,
 	es,
 	et,
 	ja,

@@ -1,6 +1,9 @@
 import { changeLocale, formatDateTime, getFlagCodeForLocale, getLocale, loadMessages } from "src/locale";
+import en from "src/locale/src/en.json";
 import { getHelpFile } from "src/locale/src/HelpDoc";
+import * as ptBrHelp from "src/locale/src/HelpDoc/pt-br";
 import * as zhTwHelp from "src/locale/src/HelpDoc/zh-tw";
+import ptBr from "src/locale/src/pt-br.json";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 describe("DateFormatter", () => {
@@ -88,6 +91,10 @@ describe("getFlagCodeForLocale", () => {
 		expect(getFlagCodeForLocale("zh")).toBe("CN");
 		expect(getFlagCodeForLocale("zh-TW")).toBe("TW");
 		expect(getFlagCodeForLocale("ZH-tw")).toBe("TW");
+		expect(getFlagCodeForLocale("pt")).toBe("PT");
+		expect(getFlagCodeForLocale("pt-PT")).toBe("PT");
+		expect(getFlagCodeForLocale("pt-BR")).toBe("BR");
+		expect(getFlagCodeForLocale("PT-br")).toBe("BR");
 		expect(getFlagCodeForLocale("vi-VN")).toBe("VN");
 		expect(getFlagCodeForLocale("ko-KR")).toBe("KR");
 		expect(getFlagCodeForLocale("cs-CZ")).toBe("CZ");
@@ -163,5 +170,26 @@ describe("Chinese locale variants", () => {
 		expect(getHelpFile("ZH-tw", "AccessLists")).toBe(getHelpFile("zh-TW", "AccessLists"));
 		expect(getHelpFile("zh-TW", "AccessLists")).toBe(zhTwHelp.AccessLists.default);
 		expect(getHelpFile("zh-CN", "AccessLists")).toBe(getHelpFile("zh", "AccessLists"));
+	});
+});
+
+describe("Portuguese locale variants", () => {
+	it("loads Brazilian Portuguese by full locale before falling back to European Portuguese", () => {
+		expect(loadMessages("PT-br")).toEqual(loadMessages("pt-BR"));
+		expect(loadMessages("pt-BR").save).toBe("Salvar");
+		expect(loadMessages("pt").save).toBe("Guardar");
+		expect(loadMessages("pt-PT")).toEqual(loadMessages("pt"));
+		expect(loadMessages("pt-AO")).toEqual(loadMessages("pt"));
+	});
+
+	it("covers every English UI key without adding unknown ones", () => {
+		expect(Object.keys(ptBr).sort()).toEqual(Object.keys(en).sort());
+	});
+
+	it("selects HelpDocs by full locale before falling back to the language code", () => {
+		expect(getHelpFile("PT-br", "AccessLists")).toBe(getHelpFile("pt-BR", "AccessLists"));
+		expect(getHelpFile("pt-BR", "AccessLists")).toBe(ptBrHelp.AccessLists.default);
+		expect(getHelpFile("pt-PT", "AccessLists")).toBe(getHelpFile("pt", "AccessLists"));
+		expect(getHelpFile("pt-BR", "AccessLists")).not.toBe(getHelpFile("pt", "AccessLists"));
 	});
 });
