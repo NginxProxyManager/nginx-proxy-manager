@@ -14,12 +14,12 @@
 		"regenerate-config": "node scripts/regenerate-config"
 	},
 	"dependencies": {
-		"@apidevtools/json-schema-ref-parser": "^16.0.6",
+		"@apidevtools/json-schema-ref-parser": "^16.0.8",
 		"ajv": "^8.20.0",
 		"archiver": "^8.0.0",
 		"batchflow": "^0.4.0",
 		"bcrypt": "^6.0.0",
-		"better-sqlite3": "^13.0.3",
+		"better-sqlite3": "^13.1.1",
 		"body-parser": "^2.4.0",
 		"chalk": "6.0.1",
 		"compression": "^1.8.2",
