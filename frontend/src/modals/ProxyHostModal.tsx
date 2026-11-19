@@ -9,6 +9,7 @@ import {
 	AccessField,
 	Button,
 	DomainNamesField,
+	FolderField,
 	HasPermission,
 	Loading,
 	LocationsFields,
@@ -282,6 +283,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													</div>
 												</div>
 												<AccessField />
+												<FolderField queryKey="proxy-hosts" />
 												<div className="my-3">
 													<h4 className="py-2">
 														<T id="options" />

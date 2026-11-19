@@ -434,6 +434,15 @@
 	"expires.on": {
 		"defaultMessage": "Hết hạn: {date}"
 	},
+	"folder": {
+		"defaultMessage": "Thư mục"
+	},
+	"folder.create": {
+		"defaultMessage": "Tạo thư mục \"{name}\""
+	},
+	"folder.placeholder": {
+		"defaultMessage": "Không có thư mục"
+	},
 	"footer.github-fork": {
 		"defaultMessage": "Fork dự án này trên Github"
 	},

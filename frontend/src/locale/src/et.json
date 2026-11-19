@@ -434,6 +434,15 @@
 	"expires.on": {
 		"defaultMessage": "Aegub: {date}"
 	},
+	"folder": {
+		"defaultMessage": "Kaust"
+	},
+	"folder.create": {
+		"defaultMessage": "Loo kaust „{name}“"
+	},
+	"folder.placeholder": {
+		"defaultMessage": "Kaust puudub"
+	},
 	"footer.github-fork": {
 		"defaultMessage": "Tee GitHubis fork"
 	},

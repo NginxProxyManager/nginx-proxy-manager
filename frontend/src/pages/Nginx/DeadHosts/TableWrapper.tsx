@@ -39,7 +39,10 @@ export default function TableWrapper() {
 	let filtered = null;
 	if (search && data) {
 		filtered = data?.filter((item) => {
-			return item.domainNames.some((domain: string) => domain.toLowerCase().includes(search));
+			return (
+				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
+				(item.meta?.folder ?? "").toLowerCase().includes(search)
+			);
 		});
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching

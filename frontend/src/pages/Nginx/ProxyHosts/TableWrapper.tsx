@@ -42,7 +42,8 @@ export default function TableWrapper() {
 			(item) =>
 				item.domainNames.some((domain: string) => domain.toLowerCase().includes(search)) ||
 				item.forwardHost.toLowerCase().includes(search) ||
-				`${item.forwardPort}`.includes(search),
+				`${item.forwardPort}`.includes(search) ||
+				(item.meta?.folder ?? "").toLowerCase().includes(search),
 		);
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching

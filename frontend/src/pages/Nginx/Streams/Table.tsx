@@ -184,6 +184,11 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 	return (
 		<TableLayout
 			tableInstance={tableInstance}
+			folders={{
+				getFolder: (host) => host.meta?.folder,
+				isEnabled: (host) => host.enabled,
+				expandAll: isFiltered,
+			}}
 			emptyState={
 				<EmptyData
 					object="stream"
