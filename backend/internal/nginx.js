@@ -4,7 +4,13 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
 import errs from "../lib/error.js";
-import { assertAccessListRenderable, assertHostRenderable, isTokenSafe, unsafeValueError } from "../lib/nginx-values.js";
+import {
+	assertAccessListRenderable,
+	assertHostRenderable,
+	isTokenSafe,
+	trimLocationPaths,
+	unsafeValueError,
+} from "../lib/nginx-values.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
 import accessListModel from "../models/access_list.js";
@@ -254,6 +260,7 @@ const internalNginx = {
 		await internalNginx.loadRenderRelations(nice_host_type, host);
 
 		// Values are written into the config as-is; refuse any that could add directives
+		trimLocationPaths(host);
 		assertHostRenderable(nice_host_type, host);
 
 		debug(logger, `Generating ${nice_host_type} Config:`, JSON.stringify(host, null, 2));

@@ -16,6 +16,7 @@ import {
 	isValidClientAddress,
 	isValidStreamHost,
 	patterns,
+	trimLocationPaths,
 } from "../lib/nginx-values.js";
 import utils from "../lib/utils.js";
 import apiValidator from "../lib/validator/api.js";
@@ -518,6 +519,29 @@ describe("render-time check (rows saved before validation)", () => {
 			(err) => err.unsafeNginxValue === true && err.message.includes(what),
 		);
 	};
+
+	it("trims whitespace around stored location paths instead of refusing the host", () => {
+		const row = host({
+			locations: [
+				{ path: "/api ", forward_host: "b" },
+				{ path: " / ", forward_host: "b" },
+				{ path: "~* \\.php$\n", forward_host: "b" },
+			],
+		});
+		refuse("proxy_host", structuredClone(row), "location path");
+		trimLocationPaths(row);
+		assert.deepEqual(
+			row.locations.map((l) => l.path),
+			["/api", "/", "~* \\.php$"],
+		);
+		assertHostRenderable("proxy_host", row);
+		// Trimming only drops the ends; whatever is unsafe inside is still refused
+		for (const v of cases.locationPath.injections) {
+			const injected = host({ locations: [{ path: ` ${v} `, forward_host: "b" }] });
+			trimLocationPaths(injected);
+			refuse("proxy_host", injected, "location path");
+		}
+	});
 
 	it("refuses every injected field", () => {
 		for (const v of cases.locationPath.injections) {
