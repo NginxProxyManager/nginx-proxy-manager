@@ -86,6 +86,21 @@ export const assertAccessListRenderable = (label, accessList) => {
 	}
 };
 
+/**
+ * Location paths saved before validation can have whitespace around them (e.g. "/api "). The API
+ * rejects that now, but nginx ignores it, so trim stored paths before checking and rendering
+ * rather than taking the host offline. It also lets a "/ " location replace the default one.
+ *
+ * @param  {Object}  host  modified in place
+ */
+export const trimLocationPaths = (host) => {
+	for (const loc of host.locations || []) {
+		if (typeof loc.path === "string") {
+			loc.path = loc.path.trim();
+		}
+	}
+};
+
 // Can be written into config without ending or changing a token
 export const isTokenSafe = (value) => typeof value === "string" && value.length > 0 && !unsafeToken.test(value);
 
