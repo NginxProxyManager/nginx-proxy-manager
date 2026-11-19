@@ -446,6 +446,12 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Puhverda failid"
 	},
+	"host.flags.dynamic-upstream-resolve": {
+		"defaultMessage": "Dünaamiline upstreami nimeotsing"
+	},
+	"host.flags.dynamic-upstream-resolve-description": {
+		"defaultMessage": "Tuvastab upstreami hostinimed iga päringu ajal uuesti. DNS-i resolver leitakse automaatselt failist /etc/resolv.conf või määratakse ümber keskkonnamuutujaga NGINX_RESOLVER. Kui resolverit ei leita, kasutatakse vaikeväärtust 127.0.0.11 (Dockeri bridge'i DNS)."
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Säilita tee"
 	},

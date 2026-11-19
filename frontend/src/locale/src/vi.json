@@ -446,6 +446,12 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Bộ nhớ đệm tài nguyên"
 	},
+	"host.flags.dynamic-upstream-resolve": {
+		"defaultMessage": "Phân giải upstream động"
+	},
+	"host.flags.dynamic-upstream-resolve-description": {
+		"defaultMessage": "Phân giải tên máy chủ upstream động tại thời điểm có yêu cầu. Resolver DNS được tự động phát hiện từ /etc/resolv.conf, hoặc có thể ghi đè bằng biến môi trường NGINX_RESOLVER. Mặc định là 127.0.0.11 (DNS của Docker bridge) nếu không tìm thấy resolver."
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Giữ nguyên đường dẫn"
 	},
