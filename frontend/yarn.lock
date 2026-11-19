@@ -757,10 +757,10 @@
   resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.24.tgz#b1a41a35fcfb1413564981be1bab04b46168961b"
   integrity sha512-6tcXo4kA8HgGO7AVmawB57RYi/piBPYVHVcO6dXjX+SZw8GoHmi262sp4v2Ha2kNP9Cx84qei27yT+fjS1lxgg==
 
-"@tabler/core@^1.7.4":
-  version "1.7.4"
-  resolved "https://registry.yarnpkg.com/@tabler/core/-/core-1.7.4.tgz#2e1c25053d79d491319966e5b2864d68f39bcb2c"
-  integrity sha512-fHAPnsKl9JnJJkLxE5UbPkLUBlgn/G1b0urLh5LMGt2DnebpK2tZNEKD/8YiwGz67EoNahGretSsHovDOvJGWA==
+"@tabler/core@^1.7.5":
+  version "1.7.5"
+  resolved "https://registry.yarnpkg.com/@tabler/core/-/core-1.7.5.tgz#1f9aea2f37d8048ac6df9217be6ce6c80b2f3081"
+  integrity sha512-lqR2kfrxvH6q0fESm4ABJk3lhUJGQ/tBtiNi4oSCvDgMNljStTLpY38F+e5EtaUqufpbZq8MIxN94QK8cTApAA==
   dependencies:
     "@popperjs/core" "^2.11.8"
 
