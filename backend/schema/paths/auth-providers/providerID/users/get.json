@@ -1,0 +1,58 @@
+{
+	"operationId": "getAuthProviderUsers",
+	"summary": "Count the accounts a provider owns",
+	"description": "Reports how many accounts came from this provider, and how many of those would actually be removed if its users were deleted along with it. Anyone who can still sign in another way is counted as surviving either way.",
+	"tags": ["auth-providers"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Authentication Provider ID",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"users": 4,
+								"removable": 3
+							}
+						}
+					},
+					"schema": {
+						"type": "object",
+						"required": ["users", "removable"],
+						"additionalProperties": false,
+						"properties": {
+							"users": {
+								"type": "integer",
+								"description": "Accounts currently linked to this provider",
+								"example": 4
+							},
+							"removable": {
+								"type": "integer",
+								"description": "Of those, how many have no other way to sign in",
+								"example": 3
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
