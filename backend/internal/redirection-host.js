@@ -49,13 +49,23 @@ const internalRedirectionHost = {
 			.then(() => {
 				// At this point the domains should have been checked
 				thisData.owner_user_id = access.token.getUserId(1);
-				thisData = internalHost.cleanSslHstsData(thisData);
+
+				// Don't clean the ssl_forced/http2_support/hsts_* fields yet if a
+				// certificate is about to be requested. certificate_id has already
+				// been stripped above, so cleanSslHstsData would see "no cert" and
+				// zero out the SSL toggles the user just submitted, even though a
+				// certificate is created moments later in this same request.
+				if (!createCertificate) {
+					thisData = internalHost.cleanSslHstsData(thisData);
+				}
 
 				// Fix for db field not having a default value
 				// for this optional field.
-				if (typeof data.advanced_config === "undefined") {
-					data.advanced_config = "";
+				if (typeof thisData.advanced_config === "undefined") {
+					thisData.advanced_config = "";
 				}
+
+				internalHost.assertAdvancedConfigAllowed(access, thisData);
 
 				return redirectionHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
@@ -64,10 +74,16 @@ const internalRedirectionHost = {
 					return internalCertificate
 						.createQuickCertificate(access, thisData)
 						.then((cert) => {
-							// update host with cert id
+							// Update host with cert id and re-apply the originally submitted
+							// SSL toggles, now that a real certificate exists for them to
+							// validate against.
 							return internalRedirectionHost.update(access, {
 								id: row.id,
 								certificate_id: cert.id,
+								ssl_forced: thisData.ssl_forced,
+								http2_support: thisData.http2_support,
+								hsts_enabled: thisData.hsts_enabled,
+								hsts_subdomains: thisData.hsts_subdomains,
 							});
 						})
 						.then(() => {
@@ -154,6 +170,9 @@ const internalRedirectionHost = {
 						`Redirection Host could not be updated, IDs do not match: ${row.id} !== ${thisData.id}`,
 					);
 				}
+
+				// Before the certificate is created, so a refused request doesn't leave one behind
+				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
 
 				if (createCertificate) {
 					return internalCertificate

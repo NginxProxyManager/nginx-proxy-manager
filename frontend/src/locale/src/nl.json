@@ -71,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Houd er rekening mee dat de regels worden toegepast in de volgorde waarin ze zijn gedefinieerd."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Overnemen van Proxy Host"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Gebruikt de toegangslijst van de Proxy Host"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Authenticatie naar upstream doorgeven"
 	},
@@ -101,6 +107,9 @@
 	"action.allow": {
 		"defaultMessage": "Toestaan"
 	},
+	"action.clear": {
+		"defaultMessage": "Wissen"
+	},
 	"action.close": {
 		"defaultMessage": "Sluiten"
 	},
@@ -121,6 +130,9 @@
 	},
 	"action.enable": {
 		"defaultMessage": "Inschakelen"
+	},
+	"action.logs": {
+		"defaultMessage": "Logboeken"
 	},
 	"action.permissions": {
 		"defaultMessage": "Machtigingen"
@@ -265,6 +277,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "E-mail"
+	},
+	"column.error": {
+		"defaultMessage": "Fout"
 	},
 	"column.event": {
 		"defaultMessage": "Gebeurtenis"
@@ -422,6 +437,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Maak een Fork op Github"
 	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Je hebt niet-opgeslagen wijzigingen. Weet je zeker dat je ze wilt weggooien?"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Veelvoorkomende kwetsbaarheden blokkeren"
 	},
@@ -461,6 +479,12 @@
 	"loading": {
 		"defaultMessage": "Laden…"
 	},
+	"location.advanced-config": {
+		"defaultMessage": "Heeft aangepaste Nginx-configuratie"
+	},
+	"location.filter": {
+		"defaultMessage": "Filteren op pad of bestemming"
+	},
 	"login.2fa-code": {
 		"defaultMessage": "Verificatiecode"
 	},
@@ -478,6 +502,51 @@
 	},
 	"login.title": {
 		"defaultMessage": "Log in op je account"
+	},
+	"logs": {
+		"defaultMessage": "Logboeken"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Toegang"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Fout"
+	},
+	"logs.download": {
+		"defaultMessage": "Downloaden"
+	},
+	"logs.empty": {
+		"defaultMessage": "Nog geen logboekregistraties."
+	},
+	"logs.level": {
+		"defaultMessage": "Niveau"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Alle niveaus"
+	},
+	"logs.lines": {
+		"defaultMessage": "Regels"
+	},
+	"logs.live": {
+		"defaultMessage": "Live"
+	},
+	"logs.paused": {
+		"defaultMessage": "Gepauzeerd"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Verversen"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Logboek doorzoeken…"
+	},
+	"logs.source": {
+		"defaultMessage": "Bron"
+	},
+	"logs.source.system": {
+		"defaultMessage": "Systeem"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Alleen het meest recente deel van dit bestand wordt getoond."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Aangepaste Nginx-configuratie"
@@ -575,11 +644,20 @@
 	"password.show": {
 		"defaultMessage": "Wachtwoord weergeven"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Toegestane Proxy Hosts"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Verleent extra toegang tot geselecteerde Proxy Hosts die door andere gebruikers zijn aangemaakt (naast de hosts die door de gebruiker zelf zijn aangemaakt)."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Verborgen"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Beheren"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Geen Proxy Hosts gevonden"
 	},
 	"permissions.view": {
 		"defaultMessage": "Alleen weergeven"
@@ -594,13 +672,13 @@
 		"defaultMessage": "Alleen aangemaakte items"
 	},
 	"proxy-host": {
-		"defaultMessage": "Proxyhost"
+		"defaultMessage": "Proxy Host"
 	},
 	"proxy-host.forward-host": {
 		"defaultMessage": "Hostname / IP Doorsturen"
 	},
 	"proxy-hosts": {
-		"defaultMessage": "Proxyhosts"
+		"defaultMessage": "Proxy Hosts"
 	},
 	"proxy-hosts.count": {
 		"defaultMessage": "{count} {count, plural, one {Proxy Host} other {Proxy Hosts}}"
@@ -609,7 +687,7 @@
 		"defaultMessage": "Openbaar"
 	},
 	"redirection-host": {
-		"defaultMessage": "Omleidingshost"
+		"defaultMessage": "Omgeleide Host"
 	},
 	"redirection-host.forward-domain": {
 		"defaultMessage": "Doorgestuurd Domein"
@@ -624,7 +702,7 @@
 		"defaultMessage": "{count} {count, plural, one {Omgeleide Host} other {Omgeleide Hosts}}"
 	},
 	"redirection-hosts.http-code.300": {
-		"defaultMessage": "300 Meerkeuze"
+		"defaultMessage": "300 Meerdere keuzes"
 	},
 	"redirection-hosts.http-code.301": {
 		"defaultMessage": "301 Definitief verplaatst"
@@ -636,10 +714,10 @@
 		"defaultMessage": "303 Zie andere"
 	},
 	"redirection-hosts.http-code.307": {
-		"defaultMessage": "307 Tijdelijke omleiding"
+		"defaultMessage": "307 Tijdelijk omgeleid"
 	},
 	"redirection-hosts.http-code.308": {
-		"defaultMessage": "308 Definitieve omleiding"
+		"defaultMessage": "308 Definitief omgeleid"
 	},
 	"role.admin": {
 		"defaultMessage": "Beheerder"
@@ -774,3 +852,4 @@
 		"defaultMessage": "Gebruikers"
 	}
 }
+

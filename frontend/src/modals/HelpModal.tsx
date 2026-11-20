@@ -18,7 +18,7 @@ const showHelpModal = (section: string, color?: string) => {
 
 const HelpModal = EasyModal.create(({ section, color, visible, remove }: Props) => {
 	const [markdownText, setMarkdownText] = useState("");
-	const lang = getLocale(true);
+	const lang = getLocale();
 
 	useEffect(() => {
 		try {

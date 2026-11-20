@@ -1,27 +1,111 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "Số mã dự phòng còn lại: {count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "Hãy lưu các mã dự phòng này ở nơi an toàn. Mỗi mã chỉ dùng được một lần."
+	},
+	"2fa.disable": {
+		"defaultMessage": "Tắt xác thực hai lớp"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "Tắt 2FA"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "Tắt xác thực hai lớp sẽ khiến tài khoản của bạn kém an toàn hơn."
+	},
+	"2fa.disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"2fa.done": {
+		"defaultMessage": "Tôi đã lưu các mã dự phòng"
+	},
+	"2fa.enable": {
+		"defaultMessage": "Bật xác thực hai lớp"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "Đã bật"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "Nhập mã xác minh"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "Nhập mã xác minh để tắt"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "Tạo lại"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "Tạo lại mã dự phòng"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "Nhập mã xác minh để tạo mã dự phòng mới. Các mã cũ sẽ không còn hiệu lực."
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "Khóa bí mật"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "Quét mã QR này bằng ứng dụng xác thực, hoặc nhập khóa bí mật thủ công."
+	},
+	"2fa.status": {
+		"defaultMessage": "Trạng thái"
+	},
+	"2fa.title": {
+		"defaultMessage": "Xác thực hai lớp"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "Xác minh và bật"
+	},
 	"access-list": {
 		"defaultMessage": "Danh sách truy cập"
 	},
 	"access-list.access-count": {
 		"defaultMessage": "{count} quy tắc"
 	},
+	"access-list.allowed-groups": {
+		"defaultMessage": "Giới hạn theo nhóm"
+	},
+	"access-list.allowed-groups-help": {
+		"defaultMessage": "Mỗi dòng một nhóm. Người dùng thư mục phải thuộc ít nhất một trong các nhóm này. Để trống để chấp nhận bất kỳ ai được nhà cung cấp xác thực. Tên người dùng được liệt kê ở thẻ Ủy quyền không bị ảnh hưởng."
+	},
+	"access-list.allowed-groups-placeholder": {
+		"defaultMessage": "cn=nguoi-dung-vpn,ou=groups,dc=example,dc=com"
+	},
 	"access-list.auth-count": {
 		"defaultMessage": "{count} người dùng"
 	},
 	"access-list.help-rules-last": {
-		"defaultMessage": "Quy tắc từ chối tất cả này sẽ được thêm vào cuối khi tồn tại ít nhất 1 quy tắc"
+		"defaultMessage": "Khi có ít nhất 1 quy tắc, quy tắc từ chối tất cả này sẽ được thêm vào cuối"
 	},
 	"access-list.help.rules-order": {
-		"defaultMessage": "Các quy tắc cho phép và từ chối sẽ được thực thi theo thứ tự được xác định."
+		"defaultMessage": "Lưu ý: các quy tắc cho phép và từ chối được áp dụng theo đúng thứ tự khai báo."
+	},
+	"access-list.inherit": {
+		"defaultMessage": "Kế thừa từ máy chủ proxy"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Sử dụng danh sách truy cập của máy chủ proxy"
 	},
 	"access-list.pass-auth": {
-		"defaultMessage": "Chuyển xác thực lên thượng nguồn"
+		"defaultMessage": "Chuyển tiếp thông tin xác thực tới máy chủ đích"
+	},
+	"access-list.providers": {
+		"defaultMessage": "Nhà cung cấp"
+	},
+	"access-list.providers-intro": {
+		"defaultMessage": "Chấp nhận đăng nhập từ một thư mục, ngoài các tên người dùng được liệt kê ở đây. Khách truy cập vẫn được yêu cầu nhập tên người dùng và mật khẩu; thông tin đăng nhập đó được kiểm tra với thư mục thay vì với danh sách."
+	},
+	"access-list.providers-none": {
+		"defaultMessage": "Chưa có nhà cung cấp LDAP nào. Hãy thêm một nhà cung cấp trong Người dùng, Nhà cung cấp xác thực, và nó sẽ xuất hiện ở đây. Không thể dùng SAML và OAuth: chúng đăng nhập bằng cách chuyển hướng trình duyệt, điều không thể thực hiện với một yêu cầu được proxy."
 	},
 	"access-list.public": {
 		"defaultMessage": "Có thể truy cập công khai"
 	},
 	"access-list.public.subtitle": {
 		"defaultMessage": "Không cần xác thực cơ bản"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100 hoặc 192.168.1.0/24 hoặc 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "Thỏa mãn điều kiện bất kỳ"
@@ -36,13 +120,22 @@
 		"defaultMessage": "Thêm"
 	},
 	"action.add-location": {
-		"defaultMessage": "Thêm Vị trí"
+		"defaultMessage": "Thêm đường dẫn"
+	},
+	"action.allow": {
+		"defaultMessage": "Cho phép"
+	},
+	"action.clear": {
+		"defaultMessage": "Xóa bộ lọc"
 	},
 	"action.close": {
 		"defaultMessage": "Đóng"
 	},
 	"action.delete": {
 		"defaultMessage": "Xóa"
+	},
+	"action.deny": {
+		"defaultMessage": "Từ chối"
 	},
 	"action.disable": {
 		"defaultMessage": "Tắt"
@@ -56,6 +149,9 @@
 	"action.enable": {
 		"defaultMessage": "Bật"
 	},
+	"action.logs": {
+		"defaultMessage": "Nhật ký"
+	},
 	"action.permissions": {
 		"defaultMessage": "Quyền"
 	},
@@ -63,10 +159,340 @@
 		"defaultMessage": "Gia hạn"
 	},
 	"action.view-details": {
-		"defaultMessage": "Xem Chi tiết"
+		"defaultMessage": "Xem chi tiết"
 	},
 	"auditlogs": {
-		"defaultMessage": "Nhật ký kiểm tra"
+		"defaultMessage": "Nhật ký hoạt động"
+	},
+	"auth-provider": {
+		"defaultMessage": "Nhà cung cấp xác thực"
+	},
+	"auth-provider.admin-group": {
+		"defaultMessage": "Nhóm quản trị viên"
+	},
+	"auth-provider.admin-group-help": {
+		"defaultMessage": "Bất kỳ ai trong nhóm này đều được cấp vai trò quản trị viên mỗi lần đăng nhập, và mất vai trò đó khi rời khỏi nhóm. Để trống để quản lý vai trò tại đây."
+	},
+	"auth-provider.auto-create-user": {
+		"defaultMessage": "Tạo người dùng ở lần đăng nhập đầu tiên"
+	},
+	"auth-provider.auto-create-user-help": {
+		"defaultMessage": "Khi tắt, chỉ những người đã được liên kết với nhà cung cấp này mới có thể đăng nhập. Tài khoản mới sẽ không bao giờ được tạo."
+	},
+	"auth-provider.delete-confirm": {
+		"defaultMessage": "Xóa {name}? Sau đó sẽ không ai có thể đăng nhập qua nhà cung cấp này."
+	},
+	"auth-provider.delete-convert": {
+		"defaultMessage": "Giữ lại dưới dạng tài khoản cục bộ"
+	},
+	"auth-provider.delete-convert-help": {
+		"defaultMessage": "Họ giữ nguyên các máy chủ, quyền và quyền sở hữu, nhưng chưa có mật khẩu. Hãy đặt mật khẩu cho họ từ màn hình Người dùng để họ có thể đăng nhập lại."
+	},
+	"auth-provider.delete-no-users": {
+		"defaultMessage": "Không có tài khoản nào đến từ nhà cung cấp này, nên không có gì khác bị ảnh hưởng."
+	},
+	"auth-provider.delete-users": {
+		"defaultMessage": "Xóa các tài khoản"
+	},
+	"auth-provider.delete-users-help": {
+		"defaultMessage": "{removable, plural, =0 {Thực tế không có tài khoản nào bị xóa: tất cả vẫn có thể đăng nhập theo cách khác.} one {Một tài khoản sẽ bị xóa.} other {# tài khoản sẽ bị xóa.}} Bất kỳ ai vẫn có thể đăng nhập theo cách khác đều được giữ lại, và quản trị viên cuối cùng cũng vậy."
+	},
+	"auth-provider.delete-users-intro": {
+		"defaultMessage": "{count, plural, one {Một tài khoản đến từ nhà cung cấp này} other {# tài khoản đến từ nhà cung cấp này}}. Chúng nên được xử lý thế nào?"
+	},
+	"auth-provider.delete-users-warning": {
+		"defaultMessage": "Xóa một tài khoản cũng xóa những gì tài khoản đó sở hữu. Không thể hoàn tác."
+	},
+	"auth-provider.disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"auth-provider.empty-summary": {
+		"defaultMessage": "Thêm một thư mục LDAP, một nhà cung cấp danh tính SAML hoặc một ứng dụng OAuth/OpenID Connect để bắt đầu."
+	},
+	"auth-provider.enabled": {
+		"defaultMessage": "Đã bật"
+	},
+	"auth-provider.env-managed": {
+		"defaultMessage": "Từ biến môi trường"
+	},
+	"auth-provider.env-managed-help": {
+		"defaultMessage": "Nhà cung cấp này được cấu hình bằng biến môi trường và chỉ có thể thay đổi bằng cách sửa các biến đó."
+	},
+	"auth-provider.intro": {
+		"defaultMessage": "Cho phép mọi người đăng nhập bằng thư mục hoặc nhà cung cấp danh tính hiện có của bạn."
+	},
+	"auth-provider.ldap.base-dn": {
+		"defaultMessage": "DN gốc"
+	},
+	"auth-provider.ldap.bind-dn": {
+		"defaultMessage": "DN liên kết"
+	},
+	"auth-provider.ldap.bind-dn-help": {
+		"defaultMessage": "Tài khoản dịch vụ chỉ đọc dùng để tra cứu người dùng. Để trống để tìm kiếm ẩn danh."
+	},
+	"auth-provider.ldap.bind-password": {
+		"defaultMessage": "Mật khẩu liên kết"
+	},
+	"auth-provider.ldap.email-attribute": {
+		"defaultMessage": "Thuộc tính email"
+	},
+	"auth-provider.ldap.group-attribute": {
+		"defaultMessage": "Thuộc tính nhóm"
+	},
+	"auth-provider.ldap.group-attribute-help": {
+		"defaultMessage": "Đọc từ mục người dùng, nếu thư mục của bạn cung cấp."
+	},
+	"auth-provider.ldap.group-filter": {
+		"defaultMessage": "Bộ lọc nhóm"
+	},
+	"auth-provider.ldap.group-filter-help": {
+		"defaultMessage": "Được dùng khi mục người dùng không có thuộc tính nhóm. '{{dn}}' và '{{username}}' được thay thế trước khi tìm kiếm."
+	},
+	"auth-provider.ldap.login-attributes": {
+		"defaultMessage": "Thuộc tính đăng nhập"
+	},
+	"auth-provider.ldap.login-attributes-help": {
+		"defaultMessage": "Các thuộc tính được chấp nhận ở màn hình đăng nhập, phân tách bằng dấu phẩy, ví dụ uid, mail, sAMAccountName. Bị bỏ qua khi đã đặt bộ lọc người dùng."
+	},
+	"auth-provider.ldap.name-attribute": {
+		"defaultMessage": "Thuộc tính tên"
+	},
+	"auth-provider.ldap.nickname-attribute": {
+		"defaultMessage": "Thuộc tính biệt danh"
+	},
+	"auth-provider.ldap.page-size": {
+		"defaultMessage": "Kích thước trang"
+	},
+	"auth-provider.ldap.page-size-help": {
+		"defaultMessage": "Thư mục giới hạn số mục mà một lần tìm kiếm trả về, mặc định là 1000 trong Active Directory. Phân trang giúp vượt qua giới hạn đó."
+	},
+	"auth-provider.ldap.start-tls": {
+		"defaultMessage": "Nâng cấp kết nối bằng StartTLS"
+	},
+	"auth-provider.ldap.url": {
+		"defaultMessage": "URL máy chủ"
+	},
+	"auth-provider.ldap.user-filter": {
+		"defaultMessage": "Bộ lọc người dùng"
+	},
+	"auth-provider.ldap.user-filter-help": {
+		"defaultMessage": "'{{username}}' được thay bằng nội dung đã nhập vào biểu mẫu đăng nhập."
+	},
+	"auth-provider.ldap.verify-tls": {
+		"defaultMessage": "Xác minh chứng chỉ TLS"
+	},
+	"auth-provider.ldap.verify-tls-help": {
+		"defaultMessage": "Chỉ tắt tùy chọn này cho thư mục dùng chứng chỉ tự ký mà bạn tin tưởng."
+	},
+	"auth-provider.link-by-email": {
+		"defaultMessage": "Gắn với tài khoản hiện có theo địa chỉ email"
+	},
+	"auth-provider.link-by-email-help": {
+		"defaultMessage": "Lần đầu tiên ai đó đăng nhập, gắn họ với tài khoản ở đây đã có cùng địa chỉ email. Chỉ bật tùy chọn này nếu bạn tin rằng nhà cung cấp này đã xác minh địa chỉ đó thuộc về họ."
+	},
+	"auth-provider.link-by-email-help-oauth": {
+		"defaultMessage": "Lần đầu tiên ai đó đăng nhập, gắn họ với tài khoản ở đây đã có cùng địa chỉ email. Nhà cung cấp cũng phải báo cáo địa chỉ đó là đã xác minh, nếu không bất kỳ ai tự đặt được địa chỉ của mình đều có thể chiếm tài khoản của người khác."
+	},
+	"auth-provider.local-enabled": {
+		"defaultMessage": "Cho phép đăng nhập bằng email và mật khẩu"
+	},
+	"auth-provider.local-enabled-help": {
+		"defaultMessage": "Tắt tùy chọn này để bắt buộc dùng nhà cung cấp xác thực. Hãy chắc chắn rằng bạn đã đăng nhập được bằng một nhà cung cấp trước."
+	},
+	"auth-provider.local-required-help": {
+		"defaultMessage": "Hãy thêm và bật một nhà cung cấp trước khi có thể tắt tùy chọn này."
+	},
+	"auth-provider.name": {
+		"defaultMessage": "Tên hiển thị"
+	},
+	"auth-provider.name-help": {
+		"defaultMessage": "Hiển thị trên màn hình đăng nhập."
+	},
+	"auth-provider.oauth.authorization-url": {
+		"defaultMessage": "URL ủy quyền"
+	},
+	"auth-provider.oauth.client-id": {
+		"defaultMessage": "ID ứng dụng khách"
+	},
+	"auth-provider.oauth.client-secret": {
+		"defaultMessage": "Khóa bí mật ứng dụng khách"
+	},
+	"auth-provider.oauth.email-claim": {
+		"defaultMessage": "Claim email"
+	},
+	"auth-provider.oauth.group-claim": {
+		"defaultMessage": "Claim nhóm"
+	},
+	"auth-provider.oauth.issuer-url": {
+		"defaultMessage": "URL nhà phát hành"
+	},
+	"auth-provider.oauth.issuer-url-help": {
+		"defaultMessage": "Các endpoint được phát hiện từ đây. Để trống để tự cấu hình chúng bên dưới."
+	},
+	"auth-provider.oauth.jwks-url": {
+		"defaultMessage": "URL của JWKS"
+	},
+	"auth-provider.oauth.manual-endpoints": {
+		"defaultMessage": "Cấu hình endpoint thủ công"
+	},
+	"auth-provider.oauth.name-claim": {
+		"defaultMessage": "Claim tên"
+	},
+	"auth-provider.oauth.redirect-uri": {
+		"defaultMessage": "URI chuyển hướng"
+	},
+	"auth-provider.oauth.redirect-uri-help": {
+		"defaultMessage": "Thêm URI này vào danh sách URI chuyển hướng được phép của ứng dụng OAuth."
+	},
+	"auth-provider.oauth.scopes": {
+		"defaultMessage": "Phạm vi"
+	},
+	"auth-provider.oauth.token-url": {
+		"defaultMessage": "URL token"
+	},
+	"auth-provider.oauth.use-basic-auth": {
+		"defaultMessage": "Gửi thông tin xác thực trong header Authorization"
+	},
+	"auth-provider.oauth.use-basic-auth-help": {
+		"defaultMessage": "Một số nhà cung cấp yêu cầu client_secret_basic thay vì gửi khóa bí mật trong thân yêu cầu."
+	},
+	"auth-provider.oauth.userinfo-url": {
+		"defaultMessage": "URL thông tin người dùng"
+	},
+	"auth-provider.saml.email-attribute": {
+		"defaultMessage": "Thuộc tính email"
+	},
+	"auth-provider.saml.entry-point": {
+		"defaultMessage": "URL đăng nhập"
+	},
+	"auth-provider.saml.group-attribute": {
+		"defaultMessage": "Thuộc tính nhóm"
+	},
+	"auth-provider.saml.identifier-attribute": {
+		"defaultMessage": "Thuộc tính định danh"
+	},
+	"auth-provider.saml.identifier-attribute-help": {
+		"defaultMessage": "Thuộc tính chứa mã định danh lâu dài cho mỗi người, chẳng hạn mã số nhân viên. Để trống để dùng NameID, hoặc địa chỉ email khi IdP của bạn cấp NameID tạm thời."
+	},
+	"auth-provider.saml.idp-cert": {
+		"defaultMessage": "Chứng chỉ của nhà cung cấp danh tính"
+	},
+	"auth-provider.saml.issuer": {
+		"defaultMessage": "ID thực thể"
+	},
+	"auth-provider.saml.issuer-help": {
+		"defaultMessage": "Cách phiên bản này tự định danh với nhà cung cấp danh tính."
+	},
+	"auth-provider.saml.metadata": {
+		"defaultMessage": "Metadata của nhà cung cấp dịch vụ"
+	},
+	"auth-provider.saml.metadata-help": {
+		"defaultMessage": "Cung cấp URL này cho nhà cung cấp danh tính của bạn để cấu hình kết nối."
+	},
+	"auth-provider.saml.name-attribute": {
+		"defaultMessage": "Thuộc tính tên"
+	},
+	"auth-provider.saml.sp-private-key": {
+		"defaultMessage": "Khóa ký"
+	},
+	"auth-provider.saml.want-assertions-signed": {
+		"defaultMessage": "Yêu cầu assertion có chữ ký"
+	},
+	"auth-provider.saml.want-response-signed": {
+		"defaultMessage": "Yêu cầu phản hồi có chữ ký"
+	},
+	"auth-provider.secret-stored": {
+		"defaultMessage": "Đã lưu một giá trị. Để trống để giữ nguyên."
+	},
+	"auth-provider.sync": {
+		"defaultMessage": "Đồng bộ thư mục"
+	},
+	"auth-provider.sync-disable-missing": {
+		"defaultMessage": "Vô hiệu hóa tài khoản đã rời khỏi thư mục"
+	},
+	"auth-provider.sync-disable-missing-help": {
+		"defaultMessage": "Quản trị viên cuối cùng không bao giờ bị vô hiệu hóa theo cách này, và không có gì bị vô hiệu hóa nếu một lần chạy không trả về mục nào."
+	},
+	"auth-provider.sync-enabled": {
+		"defaultMessage": "Đồng bộ thư mục này theo lịch"
+	},
+	"auth-provider.sync-enabled-help": {
+		"defaultMessage": "Đồng bộ tạo một tài khoản cục bộ cho mọi người mà nó tìm thấy, dù họ đã từng đăng nhập hay chưa."
+	},
+	"auth-provider.sync-every": {
+		"defaultMessage": "Đồng bộ mỗi {minutes} phút"
+	},
+	"auth-provider.sync-filter": {
+		"defaultMessage": "Bộ lọc đồng bộ"
+	},
+	"auth-provider.sync-filter-help": {
+		"defaultMessage": "Giới hạn những mục thư mục nào được xem xét."
+	},
+	"auth-provider.sync-group": {
+		"defaultMessage": "Giới hạn theo nhóm"
+	},
+	"auth-provider.sync-group-help": {
+		"defaultMessage": "Chỉ đồng bộ thành viên của nhóm này. Để trống để đồng bộ mọi người khớp với bộ lọc."
+	},
+	"auth-provider.sync-interval": {
+		"defaultMessage": "Chạy mỗi (phút)"
+	},
+	"auth-provider.sync-interval-help": {
+		"defaultMessage": "Khoảng thời gian ngắn nhất được phép là năm phút."
+	},
+	"auth-provider.sync-intro": {
+		"defaultMessage": "Duyệt thư mục theo lịch để tài khoản tồn tại trước khi ai đó đăng nhập, và để thay đổi nhóm được cập nhật mà không cần chờ đăng nhập."
+	},
+	"auth-provider.sync-max-disable": {
+		"defaultMessage": "Số tài khoản tối đa bị vô hiệu hóa mỗi lần chạy"
+	},
+	"auth-provider.sync-max-disable-help": {
+		"defaultMessage": "Một lần chạy sẽ vô hiệu hóa nhiều hơn số này thì không vô hiệu hóa ai cả, vì nhiều khả năng nó gặp một lần tìm kiếm bị cắt ngang hơn là người dùng thật sự rời đi. 0 sẽ bỏ giới hạn."
+	},
+	"auth-provider.sync-now": {
+		"defaultMessage": "Đồng bộ"
+	},
+	"auth-provider.sync-result": {
+		"defaultMessage": "Đồng bộ xong: {created} đã tạo, {updated} đã cập nhật, {disabled} đã vô hiệu hóa"
+	},
+	"auth-provider.test": {
+		"defaultMessage": "Kiểm tra"
+	},
+	"auth-provider.test-connection": {
+		"defaultMessage": "Kiểm tra kết nối"
+	},
+	"auth-provider.test-connection-help": {
+		"defaultMessage": "Kiểm tra các thiết lập ở trên mà không lưu, để bạn có thể xác nhận chúng trước khi điền phần còn lại."
+	},
+	"auth-provider.test-connection-ok": {
+		"defaultMessage": "Kết nối thành công ({detail})"
+	},
+	"auth-provider.type.ldap": {
+		"defaultMessage": "Thư mục LDAP"
+	},
+	"auth-provider.type.oauth": {
+		"defaultMessage": "OAuth / OpenID Connect (OIDC)"
+	},
+	"auth-provider.type.saml": {
+		"defaultMessage": "SAML 2.0"
+	},
+	"auth-provider.view": {
+		"defaultMessage": "Xem"
+	},
+	"auth-providers": {
+		"defaultMessage": "Nhà cung cấp xác thực"
+	},
+	"auth-source.external-title": {
+		"defaultMessage": "Đăng nhập qua {name}"
+	},
+	"auth-source.local": {
+		"defaultMessage": "Cục bộ"
+	},
+	"auth-source.local-title": {
+		"defaultMessage": "Đăng nhập bằng địa chỉ email và mật khẩu"
+	},
+	"auto": {
+		"defaultMessage": "Tự động"
 	},
 	"cancel": {
 		"defaultMessage": "Hủy"
@@ -75,19 +501,19 @@
 		"defaultMessage": "Chứng chỉ"
 	},
 	"certificate.custom-certificate": {
-		"defaultMessage": "Certificate (crt)"
+		"defaultMessage": "Chứng chỉ"
 	},
 	"certificate.custom-certificate-key": {
-		"defaultMessage": "Certificate Key"
+		"defaultMessage": "Khóa riêng của chứng chỉ"
 	},
 	"certificate.custom-intermediate": {
-		"defaultMessage": "Intermediate Certificate"
+		"defaultMessage": "Chứng chỉ trung gian"
 	},
 	"certificate.in-use": {
 		"defaultMessage": "Đang sử dụng"
 	},
 	"certificate.none.subtitle": {
-		"defaultMessage": "Không có chứng chỉ nào được chỉ định"
+		"defaultMessage": "Chưa gán chứng chỉ nào"
 	},
 	"certificate.none.subtitle.for-http": {
 		"defaultMessage": "Máy chủ này sẽ không sử dụng HTTPS"
@@ -96,19 +522,19 @@
 		"defaultMessage": "Không có"
 	},
 	"certificate.not-in-use": {
-		"defaultMessage": "Không được dùng"
+		"defaultMessage": "Chưa sử dụng"
 	},
 	"certificate.renew": {
-		"defaultMessage": "Gia hạn Chứng chỉ"
+		"defaultMessage": "Gia hạn chứng chỉ"
 	},
 	"certificates": {
-		"defaultMessage": "Danh sách chứng chỉ"
+		"defaultMessage": "Chứng chỉ"
 	},
 	"certificates.custom": {
 		"defaultMessage": "Chứng chỉ tùy chỉnh"
 	},
 	"certificates.custom.warning": {
-		"defaultMessage": "Các tệp chính được bảo vệ bằng cụm mật khẩu không được hỗ trợ."
+		"defaultMessage": "Không hỗ trợ tệp khóa có đặt cụm mật khẩu bảo vệ."
 	},
 	"certificates.dns.credentials": {
 		"defaultMessage": "Nội dung tệp thông tin xác thực"
@@ -120,40 +546,43 @@
 		"defaultMessage": "Dữ liệu này sẽ được lưu trữ dưới dạng bản rõ trong cơ sở dữ liệu và trong một tệp!"
 	},
 	"certificates.dns.propagation-seconds": {
-		"defaultMessage": "Thời gian lan truyền (Giây)"
+		"defaultMessage": "Thời gian lan truyền (giây)"
 	},
 	"certificates.dns.propagation-seconds-note": {
-		"defaultMessage": "Để trống để sử dụng giá trị mặc định của plugin. Số giây chờ truyền DNS."
+		"defaultMessage": "Để trống để dùng giá trị mặc định của plugin. Số giây chờ bản ghi DNS lan truyền."
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "Nhà cung cấp DNS"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "Chọn nhà cung cấp…"
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "Phần này yêu cầu một số kiến thức về Certbot và các plugin DNS của nó. Vui lòng tham khảo tài liệu plugin tương ứng."
 	},
 	"certificates.http.reachability-404": {
-		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng có vẻ như nó không phải là NPM. Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+		"defaultMessage": "Tìm thấy một máy chủ tại tên miền này nhưng có vẻ không phải Nginx Proxy Manager. Vui lòng đảm bảo tên miền trỏ đến IP của máy đang chạy NPM."
 	},
 	"certificates.http.reachability-failed-to-check": {
 		"defaultMessage": "Không thể kiểm tra khả năng truy cập do lỗi giao tiếp với site24x7.com."
 	},
 	"certificates.http.reachability-not-resolved": {
-		"defaultMessage": "Không có máy chủ có sẵn tại tên miền này. Vui lòng đảm bảo rằng miền của bạn tồn tại và trỏ đến IP nơi phiên bản NPM của bạn đang chạy và nếu cần, cổng 80 sẽ được chuyển tiếp trong bộ định tuyến của bạn."
+		"defaultMessage": "Không có máy chủ nào tại tên miền này. Vui lòng đảm bảo tên miền tồn tại, trỏ đến IP của máy đang chạy NPM và nếu cần, cổng 80 đã được chuyển tiếp (port forwarding) trên router."
 	},
 	"certificates.http.reachability-ok": {
-		"defaultMessage": "Máy chủ của bạn có thể truy cập được và có thể tạo chứng chỉ."
+		"defaultMessage": "Máy chủ của bạn truy cập được, có thể tiến hành tạo chứng chỉ."
 	},
 	"certificates.http.reachability-other": {
-		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về mã trạng thái không mong muốn {code}. Đây có phải là máy chủ NPM không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+		"defaultMessage": "Tìm thấy một máy chủ tại tên miền này nhưng nó trả về mã trạng thái không mong đợi {code}. Đây có phải máy chủ NPM không? Vui lòng đảm bảo tên miền trỏ đến IP của máy đang chạy NPM."
 	},
 	"certificates.http.reachability-wrong-data": {
-		"defaultMessage": "Có một máy chủ được tìm thấy ở miền này nhưng nó trả về một dữ liệu không mong muốn. Đây có phải là máy chủ NPM không? Vui lòng đảm bảo tên miền của bạn trỏ đến IP nơi phiên bản NPM của bạn đang chạy."
+		"defaultMessage": "Tìm thấy một máy chủ tại tên miền này nhưng nó trả về dữ liệu không mong đợi. Đây có phải máy chủ NPM không? Vui lòng đảm bảo tên miền trỏ đến IP của máy đang chạy NPM."
 	},
 	"certificates.http.test-results": {
 		"defaultMessage": "Kết quả kiểm tra"
 	},
 	"certificates.http.warning": {
-		"defaultMessage": "Các miền này phải được cấu hình sẵn để trỏ đến cài đặt này."
+		"defaultMessage": "Các tên miền này phải được cấu hình sẵn để trỏ đến máy chủ NPM này."
 	},
 	"certificates.key-type": {
 		"defaultMessage": "Loại khóa"
@@ -173,26 +602,35 @@
 	"certificates.request.title": {
 		"defaultMessage": "Yêu cầu chứng chỉ mới"
 	},
+	"close": {
+		"defaultMessage": "Đóng"
+	},
 	"column.access": {
 		"defaultMessage": "Truy cập"
 	},
+	"column.auth-source": {
+		"defaultMessage": "Xác thực"
+	},
 	"column.authorization": {
-		"defaultMessage": "Ủy quyền"
+		"defaultMessage": "Xác thực"
 	},
 	"column.authorizations": {
-		"defaultMessage": "Danh sách ủy quyền"
+		"defaultMessage": "Xác thực"
 	},
 	"column.custom-locations": {
-		"defaultMessage": "Quy tắc đường dẫn tùy chỉnh (Vị trí)"
+		"defaultMessage": "Đường dẫn tùy chỉnh"
 	},
 	"column.destination": {
-		"defaultMessage": "Mục tiêu"
+		"defaultMessage": "Đích"
 	},
 	"column.details": {
 		"defaultMessage": "Chi tiết"
 	},
 	"column.email": {
 		"defaultMessage": "Email"
+	},
+	"column.error": {
+		"defaultMessage": "Lỗi"
 	},
 	"column.event": {
 		"defaultMessage": "Sự kiện"
@@ -201,10 +639,10 @@
 		"defaultMessage": "Hết hạn"
 	},
 	"column.http-code": {
-		"defaultMessage": "HTTP Code"
+		"defaultMessage": "Mã HTTP"
 	},
 	"column.incoming-port": {
-		"defaultMessage": "Cổng đến"
+		"defaultMessage": "Cổng vào"
 	},
 	"column.name": {
 		"defaultMessage": "Tên"
@@ -214,6 +652,9 @@
 	},
 	"column.provider": {
 		"defaultMessage": "Nhà cung cấp"
+	},
+	"column.provisioning": {
+		"defaultMessage": "Cấp phát"
 	},
 	"column.roles": {
 		"defaultMessage": "Vai trò"
@@ -228,10 +669,10 @@
 		"defaultMessage": "Tất cả"
 	},
 	"column.satisfy-any": {
-		"defaultMessage": "Bất kì"
+		"defaultMessage": "Bất kỳ"
 	},
 	"column.scheme": {
-		"defaultMessage": "Scheme"
+		"defaultMessage": "Giao thức"
 	},
 	"column.source": {
 		"defaultMessage": "Nguồn"
@@ -242,8 +683,11 @@
 	"column.status": {
 		"defaultMessage": "Trạng thái"
 	},
+	"column.type": {
+		"defaultMessage": "Loại"
+	},
 	"created-on": {
-		"defaultMessage": "Đã tạo: {date}"
+		"defaultMessage": "Tạo lúc: {date}"
 	},
 	"dashboard": {
 		"defaultMessage": "Bảng điều khiển"
@@ -255,25 +699,31 @@
 		"defaultMessage": "Máy chủ 404"
 	},
 	"dead-hosts.count": {
-		"defaultMessage": "Số trang lỗi {count}"
+		"defaultMessage": "{count} máy chủ 404"
+	},
+	"delete": {
+		"defaultMessage": "Xóa"
 	},
 	"disabled": {
 		"defaultMessage": "Đã tắt"
 	},
 	"domain-names": {
-		"defaultMessage": "Danh sách tên miền"
+		"defaultMessage": "Tên miền"
 	},
 	"domain-names.max": {
 		"defaultMessage": "Tối đa {count} tên miền"
 	},
 	"domain-names.placeholder": {
-		"defaultMessage": "Nhập tên miền vào đây..."
+		"defaultMessage": "Nhập để thêm tên miền…"
 	},
 	"domain-names.wildcards-not-permitted": {
 		"defaultMessage": "Ký tự đại diện không được phép cho loại này"
 	},
 	"domain-names.wildcards-not-supported": {
 		"defaultMessage": "Ký tự đại diện không được hỗ trợ cho CA này"
+	},
+	"domains.advanced": {
+		"defaultMessage": "Nâng cao"
 	},
 	"domains.force-ssl": {
 		"defaultMessage": "Bắt buộc SSL"
@@ -282,13 +732,19 @@
 		"defaultMessage": "Bật HSTS"
 	},
 	"domains.hsts-subdomains": {
-		"defaultMessage": "Tên miền phụ HSTS"
+		"defaultMessage": "HSTS cho tên miền con"
 	},
 	"domains.http2-support": {
 		"defaultMessage": "Hỗ trợ HTTP/2"
 	},
+	"domains.trust-forwarded-proto": {
+		"defaultMessage": "Tin cậy header X-Forwarded-Proto từ proxy phía trước"
+	},
 	"domains.use-dns": {
-		"defaultMessage": "Dùng thử thách DNS"
+		"defaultMessage": "Xác thực qua DNS"
+	},
+	"edit": {
+		"defaultMessage": "Chỉnh sửa"
 	},
 	"email-address": {
 		"defaultMessage": "Địa chỉ email"
@@ -297,19 +753,22 @@
 		"defaultMessage": "Không có kết quả nào"
 	},
 	"empty-subtitle": {
-		"defaultMessage": "Tại sao bạn không tạo một cái luôn?"
+		"defaultMessage": "Hãy bắt đầu bằng cách tạo mới."
 	},
 	"enabled": {
 		"defaultMessage": "Đã bật"
 	},
 	"error.access.at-least-one": {
-		"defaultMessage": "Yêu cầu ít nhất một quy tắc ủy quyền hoặc truy cập"
+		"defaultMessage": "Cần ít nhất một tài khoản xác thực hoặc một quy tắc truy cập"
 	},
 	"error.access.duplicate-usernames": {
-		"defaultMessage": "Tên người dùng được ủy quyền phải là duy nhất"
+		"defaultMessage": "Tên người dùng xác thực không được trùng nhau"
+	},
+	"error.external-email-already-taken": {
+		"defaultMessage": "Đã có tài khoản với địa chỉ email này. Hãy nhờ quản trị viên liên kết nó với nhà cung cấp này."
 	},
 	"error.invalid-auth": {
-		"defaultMessage": "Email hoặc Mật khẩu không hợp lệ"
+		"defaultMessage": "Email hoặc mật khẩu không hợp lệ"
 	},
 	"error.invalid-domain": {
 		"defaultMessage": "Tên miền không hợp lệ: {domain}"
@@ -332,11 +791,14 @@
 	"error.minimum": {
 		"defaultMessage": "Tối thiểu là {min}"
 	},
+	"error.no-account-for-external-user": {
+		"defaultMessage": "Không có tài khoản nào ở đây cho người dùng này. Hãy nhờ quản trị viên tạo một tài khoản."
+	},
 	"error.passwords-must-match": {
 		"defaultMessage": "Mật khẩu phải khớp"
 	},
 	"error.required": {
-		"defaultMessage": "Điều này là bắt buộc"
+		"defaultMessage": "Trường này là bắt buộc"
 	},
 	"expires.on": {
 		"defaultMessage": "Hết hạn: {date}"
@@ -344,14 +806,17 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork dự án này trên Github"
 	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Bạn có các thay đổi chưa được lưu. Bạn có chắc chắn muốn hủy bỏ chúng không?"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
 	},
 	"host.flags.cache-assets": {
-		"defaultMessage": "Cache tài nguyên"
+		"defaultMessage": "Bộ nhớ đệm tài nguyên"
 	},
 	"host.flags.preserve-path": {
-		"defaultMessage": "Bảo toàn đường dẫn"
+		"defaultMessage": "Giữ nguyên đường dẫn"
 	},
 	"host.flags.protocols": {
 		"defaultMessage": "Giao thức"
@@ -360,16 +825,16 @@
 		"defaultMessage": "Hỗ trợ Websockets"
 	},
 	"host.forward-port": {
-		"defaultMessage": "Chuyển tiếp cổng"
+		"defaultMessage": "Cổng đích"
 	},
 	"host.forward-scheme": {
-		"defaultMessage": "Scheme"
+		"defaultMessage": "Giao thức"
 	},
 	"hosts": {
 		"defaultMessage": "Máy chủ"
 	},
 	"http-only": {
-		"defaultMessage": "HTTP Only"
+		"defaultMessage": "Chỉ HTTP"
 	},
 	"lets-encrypt": {
 		"defaultMessage": "Let's Encrypt"
@@ -381,28 +846,106 @@
 		"defaultMessage": "Let's Encrypt qua HTTP"
 	},
 	"loading": {
-		"defaultMessage": "Đang tải..."
+		"defaultMessage": "Đang tải…"
+	},
+	"location.advanced-config": {
+		"defaultMessage": "Có cấu hình Nginx tùy chỉnh"
+	},
+	"location.filter": {
+		"defaultMessage": "Lọc theo đường dẫn hoặc đích"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "Mã xác minh"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "Nhập mã"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "Nhập mã từ ứng dụng xác thực của bạn"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "Xác thực hai lớp"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "Xác minh"
+	},
+	"login.continue-with": {
+		"defaultMessage": "Tiếp tục với {name}"
+	},
+	"login.no-methods": {
+		"defaultMessage": "Chưa cấu hình phương thức đăng nhập nào. Hãy thiết lập một phương thức bằng biến môi trường để đăng nhập lại."
+	},
+	"login.or": {
+		"defaultMessage": "hoặc"
 	},
 	"login.title": {
 		"defaultMessage": "Đăng nhập vào tài khoản của bạn"
+	},
+	"login.username-or-email": {
+		"defaultMessage": "Tên người dùng hoặc địa chỉ email"
+	},
+	"logs": {
+		"defaultMessage": "Nhật ký"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Truy cập"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Lỗi"
+	},
+	"logs.download": {
+		"defaultMessage": "Tải xuống"
+	},
+	"logs.empty": {
+		"defaultMessage": "Chưa có mục nhật ký nào."
+	},
+	"logs.level": {
+		"defaultMessage": "Mức độ"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Tất cả mức độ"
+	},
+	"logs.lines": {
+		"defaultMessage": "Số dòng"
+	},
+	"logs.live": {
+		"defaultMessage": "Trực tiếp"
+	},
+	"logs.paused": {
+		"defaultMessage": "Đã tạm dừng"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Làm mới"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Tìm trong nhật ký…"
+	},
+	"logs.source": {
+		"defaultMessage": "Nguồn"
+	},
+	"logs.source.system": {
+		"defaultMessage": "Hệ thống"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Chỉ hiển thị phần mới nhất của tệp này."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Cấu hình Nginx tùy chỉnh"
 	},
 	"nginx-config.placeholder": {
-		"defaultMessage": "# Nhập cấu hình Nginx tùy chỉnh của bạn vào đây và bạn phải tự chịu rủi ro!"
+		"defaultMessage": "# Nhập cấu hình Nginx tùy chỉnh tại đây, bạn tự chịu rủi ro!"
 	},
 	"no-permission-error": {
-		"defaultMessage": "Bạn không có quyền truy cập trang này."
+		"defaultMessage": "Bạn không có quyền xem nội dung này."
 	},
 	"notfound.action": {
 		"defaultMessage": "Về trang chủ"
 	},
 	"notfound.content": {
-		"defaultMessage": "Chúng tôi xin lỗi nhưng trang bạn đang tìm kiếm không được tìm thấy"
+		"defaultMessage": "Rất tiếc, không tìm thấy trang bạn yêu cầu"
 	},
 	"notfound.title": {
-		"defaultMessage": "Rất tiếc… Bạn vừa tìm thấy một trang lỗi"
+		"defaultMessage": "Ối… Bạn vừa lạc vào một trang lỗi"
 	},
 	"notification.error": {
 		"defaultMessage": "Lỗi"
@@ -417,10 +960,13 @@
 		"defaultMessage": "{object} đã được bật"
 	},
 	"notification.object-renewed": {
-		"defaultMessage": "{object} đã được làm mới"
+		"defaultMessage": "{object} đã được gia hạn"
 	},
 	"notification.object-saved": {
 		"defaultMessage": "{object} đã được lưu"
+	},
+	"notification.object-tested": {
+		"defaultMessage": "Thiết lập {object} có vẻ ổn"
 	},
 	"notification.success": {
 		"defaultMessage": "Thành công"
@@ -435,13 +981,13 @@
 		"defaultMessage": "Xóa {object}"
 	},
 	"object.delete.content": {
-		"defaultMessage": "Bạn có chắc muốn xóa {object} không?"
+		"defaultMessage": "Bạn có chắc muốn xóa {object} này không?"
 	},
 	"object.edit": {
 		"defaultMessage": "Chỉnh sửa {object}"
 	},
 	"object.empty": {
-		"defaultMessage": "Không có {objects}"
+		"defaultMessage": "Chưa có {objects} nào"
 	},
 	"object.event.created": {
 		"defaultMessage": "Đã tạo {object}"
@@ -461,6 +1007,9 @@
 	"object.event.updated": {
 		"defaultMessage": "Đã cập nhật {object}"
 	},
+	"object.view": {
+		"defaultMessage": "Xem {object}"
+	},
 	"offline": {
 		"defaultMessage": "Ngoại tuyến"
 	},
@@ -477,16 +1026,25 @@
 		"defaultMessage": "Tạo mật khẩu ngẫu nhiên"
 	},
 	"password.hide": {
-		"defaultMessage": "Ẩn Mật khẩu"
+		"defaultMessage": "Ẩn mật khẩu"
 	},
 	"password.show": {
-		"defaultMessage": "Hiện Mật khẩu"
+		"defaultMessage": "Hiện mật khẩu"
+	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "Máy chủ proxy được phép"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "Cấp thêm quyền truy cập vào các máy chủ proxy đã chọn do người dùng khác tạo (ngoài các mục do chính người dùng tạo)."
 	},
 	"permissions.hidden": {
 		"defaultMessage": "Ẩn"
 	},
 	"permissions.manage": {
 		"defaultMessage": "Quản lý"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Không tìm thấy máy chủ proxy nào"
 	},
 	"permissions.view": {
 		"defaultMessage": "Chỉ xem"
@@ -495,16 +1053,16 @@
 		"defaultMessage": "Tất cả các mục"
 	},
 	"permissions.visibility.title": {
-		"defaultMessage": "Khả năng hiển thị mục"
+		"defaultMessage": "Phạm vi hiển thị"
 	},
 	"permissions.visibility.user": {
-		"defaultMessage": "Chỉ các mục đã tạo"
+		"defaultMessage": "Chỉ các mục do mình tạo"
 	},
 	"proxy-host": {
 		"defaultMessage": "Máy chủ proxy"
 	},
 	"proxy-host.forward-host": {
-		"defaultMessage": "Chuyển tiếp Hostname / IP"
+		"defaultMessage": "Hostname / IP đích"
 	},
 	"proxy-hosts": {
 		"defaultMessage": "Máy chủ proxy"
@@ -516,25 +1074,43 @@
 		"defaultMessage": "Công khai"
 	},
 	"redirection-host": {
-		"defaultMessage": "Redirection Host"
+		"defaultMessage": "Máy chủ chuyển hướng"
 	},
 	"redirection-host.forward-domain": {
-		"defaultMessage": "Chuyển tiếp Tên miền"
+		"defaultMessage": "Tên miền đích"
 	},
 	"redirection-host.forward-http-code": {
-		"defaultMessage": "HTTP Code"
+		"defaultMessage": "Mã HTTP"
 	},
 	"redirection-hosts": {
-		"defaultMessage": "Redirection Hosts"
+		"defaultMessage": "Máy chủ chuyển hướng"
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} máy chủ chuyển hướng"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 Nhiều lựa chọn"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 Chuyển hướng vĩnh viễn"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 Chuyển hướng tạm thời"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 Xem trang khác"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 Chuyển hướng tạm thời (giữ phương thức)"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 Chuyển hướng vĩnh viễn (giữ phương thức)"
 	},
 	"role.admin": {
 		"defaultMessage": "Quản trị viên"
 	},
 	"role.standard-user": {
-		"defaultMessage": "Người dùng bình thường"
+		"defaultMessage": "Người dùng thường"
 	},
 	"save": {
 		"defaultMessage": "Lưu"
@@ -555,10 +1131,10 @@
 		"defaultMessage": "Không có phản hồi (444)"
 	},
 	"settings.default-site.congratulations": {
-		"defaultMessage": "Trang chào mừng"
+		"defaultMessage": "Trang chúc mừng"
 	},
 	"settings.default-site.description": {
-		"defaultMessage": "Hiển thị gì khi Nginx gặp phải Máy chủ không xác định"
+		"defaultMessage": "Nội dung hiển thị khi Nginx nhận yêu cầu tới tên miền không xác định"
 	},
 	"settings.default-site.html": {
 		"defaultMessage": "HTML tùy chỉnh"
@@ -582,19 +1158,22 @@
 		"defaultMessage": "Chứng chỉ SSL"
 	},
 	"stream": {
-		"defaultMessage": "Stream"
+		"defaultMessage": "Luồng TCP/UDP"
 	},
 	"stream.forward-host": {
-		"defaultMessage": "Chuyển tiếp Host"
+		"defaultMessage": "Máy chủ đích"
+	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com hoặc 10.0.0.1 hoặc 2001:db8:3333:4444:5555:6666:7777:8888"
 	},
 	"stream.incoming-port": {
 		"defaultMessage": "Cổng vào"
 	},
 	"streams": {
-		"defaultMessage": "Danh sách các Stream"
+		"defaultMessage": "Luồng TCP/UDP"
 	},
 	"streams.count": {
-		"defaultMessage": "Số Stream {count}"
+		"defaultMessage": "{count} luồng TCP/UDP"
 	},
 	"streams.tcp": {
 		"defaultMessage": "TCP"
@@ -606,16 +1185,16 @@
 		"defaultMessage": "Kiểm tra"
 	},
 	"update-available": {
-		"defaultMessage": "Cập nhật khả dụng: {latestVersion}"
+		"defaultMessage": "Đã có bản cập nhật: {latestVersion}"
 	},
 	"user": {
 		"defaultMessage": "Người dùng"
 	},
 	"user.change-password": {
-		"defaultMessage": "Đổi Mật khẩu"
+		"defaultMessage": "Đổi mật khẩu"
 	},
 	"user.confirm-password": {
-		"defaultMessage": "Xác nhận Mật khẩu"
+		"defaultMessage": "Xác nhận mật khẩu"
 	},
 	"user.current-password": {
 		"defaultMessage": "Mật khẩu hiện tại"
@@ -624,10 +1203,10 @@
 		"defaultMessage": "Chỉnh sửa hồ sơ"
 	},
 	"user.full-name": {
-		"defaultMessage": "Tên"
+		"defaultMessage": "Họ và tên"
 	},
 	"user.login-as": {
-		"defaultMessage": "Đăng nhập bằng {name}"
+		"defaultMessage": "Đăng nhập với tư cách {name}"
 	},
 	"user.logout": {
 		"defaultMessage": "Đăng xuất"
@@ -639,7 +1218,7 @@
 		"defaultMessage": "Tên hiển thị"
 	},
 	"user.set-password": {
-		"defaultMessage": "Đặt Mật khẩu"
+		"defaultMessage": "Đặt mật khẩu"
 	},
 	"user.set-permissions": {
 		"defaultMessage": "Đặt quyền cho {name}"
@@ -650,10 +1229,13 @@
 	"user.switch-light": {
 		"defaultMessage": "Chuyển sang chế độ sáng"
 	},
+	"user.two-factor": {
+		"defaultMessage": "Xác thực hai lớp"
+	},
 	"username": {
 		"defaultMessage": "Tên người dùng"
 	},
 	"users": {
-		"defaultMessage": "Danh sách người dùng"
+		"defaultMessage": "Người dùng"
 	}
 }

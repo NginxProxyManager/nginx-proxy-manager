@@ -25,7 +25,7 @@ describe('Access Lists across Proxy Host disable/enable', () => {
 	 */
 	const request = (auth) => {
 		const authArg = auth ? `-u '${auth.username}:${auth.password}'` : '';
-		return cy.exec(`curl --noproxy '*' -s -o /dev/null -w '%{http_code}' ${authArg} http://${domain}/`)
+		return cy.task('exec', { command: `curl --noproxy '*' -s -o /dev/null -w '%{http_code}' ${authArg} http://${domain}/` }, { log: false })
 			.then((result) => {
 				expect(result.exitCode).to.eq(0);
 				return result.stdout.trim();

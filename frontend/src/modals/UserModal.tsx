@@ -1,9 +1,10 @@
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form, Formik } from "formik";
+import { Field, Form } from "formik";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { Button, Loading } from "src/components";
+import { FormModal } from "src/components/Form";
 import { useSetUser, useUser } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateEmail, validateString } from "src/modules/Validations";
@@ -18,7 +19,7 @@ interface Props extends InnerModalProps {
 }
 const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data, isLoading, error } = useUser(id);
-	const { data: currentUser, isLoading: currentIsLoading } = useUser("me");
+	const { data: currentUser, isLoading: currentIsLoading, error: currentError } = useUser("me");
 	const { mutate: setUser } = useSetUser();
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,15 +60,22 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	};
 
 	return (
-		<Modal show={visible} onHide={remove}>
-			{!isLoading && error && (
-				<Alert variant="danger" className="m-3">
-					{error?.message || "Unknown error"}
-				</Alert>
+		<>
+			{(isLoading || currentIsLoading || ((error || currentError) && (!data || !currentUser))) && (
+				<Modal show={visible} onHide={remove}>
+					{!isLoading && (error || currentError) && (
+						<Alert variant="danger" className="m-3">
+							{error?.message || currentError?.message || "Unknown error"}
+						</Alert>
+					)}
+					{(isLoading || currentIsLoading) && <Loading noLogo />}
+				</Modal>
 			)}
-			{(isLoading || currentIsLoading) && <Loading noLogo />}
 			{!isLoading && !currentIsLoading && data && currentUser && (
-				<Formik
+				<FormModal
+					show={visible}
+					onHide={remove}
+					preventHide={isSubmitting}
 					initialValues={
 						{
 							name: data?.name,
@@ -79,7 +87,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{() => (
+					{({ onHide }) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -222,7 +230,7 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								) : null}
 							</Modal.Body>
 							<Modal.Footer>
-								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
+								<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
 								<Button
@@ -237,9 +245,9 @@ const UserModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							</Modal.Footer>
 						</Form>
 					)}
-				</Formik>
+				</FormModal>
 			)}
-		</Modal>
+		</>
 	);
 });
 

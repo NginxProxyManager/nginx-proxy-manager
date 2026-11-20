@@ -260,7 +260,7 @@ router
 	.put(async (req, res, next) => {
 		try {
 			const payload = await apiValidator(getValidationSchema("/users/{userID}/permissions", "put"), req.body);
-			payload.id = req.params.user_id;
+			payload.id = Number.parseInt(req.params.user_id, 10);
 			const result = await internalUser.setPermissions(res.locals.access, payload);
 			res.status(200).send(result);
 		} catch (err) {

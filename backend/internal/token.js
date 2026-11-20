@@ -53,18 +53,20 @@ const internalToken = {
 			.andWhere("is_disabled", 0)
 			.first();
 
-		if (!user) {
-			return null;
-		}
+		// An unknown, disabled or passwordless account goes through the same queries and the same password check
+		// as a real one: answering any sooner would tell anyone trying addresses which ones have an account.
+		// There is no user 0, so its lookup finds nothing. An empty secret, which creating a user through the API
+		// can store, is no hash: bcrypt would reject it at once.
+		const auth = await authModel
+			.query()
+			.where("user_id", "=", user?.id ?? 0)
+			.where("type", "=", "password")
+			.first();
 
-		const auth = await authModel.query().where("user_id", "=", user.id).where("type", "=", "password").first();
-
-		if (!auth?.secret) {
-			return null;
-		}
-
-		const valid = await auth.verifyPassword(password);
-		return valid ? user : null;
+		const valid = auth?.secret
+			? await auth.verifyPassword(password)
+			: await authModel.verifyDummyPassword(password);
+		return user && valid ? user : null;
 	},
 
 	/**
