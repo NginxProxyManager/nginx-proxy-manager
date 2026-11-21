@@ -1,0 +1,62 @@
+name: Check upstream updates
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch Nginx Proxy Manager stable branch
+        run: |
+          git remote add upstream-npm https://github.com/NginxProxyManager/nginx-proxy-manager.git
+          git fetch --no-tags upstream-npm master
+
+      - name: Prepare upstream update
+        id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash ./scripts/update-upstreams
+
+      - name: Create or update review PR
+        if: steps.update.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/upstream-updates
+          delete-branch: true
+          title: "chore: update NPM and CrowdSec upstreams"
+          body: |
+            ## Why
+
+            This automated PR contains released/stable upstream updates for review.
+
+            ${{ steps.update.outputs.summary }}
+
+            ## Type of Change
+
+            - [ ] Bug fix (non-breaking change that fixes an issue)
+            - [ ] New feature (non-breaking change that adds functionality)
+            - [ ] Breaking change (fix or feature that would cause existing functionality to change)
+            - [ ] Documentation update
+            - [ ] Code refactoring
+            - [ ] API changes
+            - [ ] Performance improvement
+            - [ ] Test addition or update
+
+            ## AI Usage
+
+            - [x] AI was used to write this
+            - [ ] AI was used to review this
+          commit-message: "chore: update NPM and CrowdSec upstreams"

@@ -5,6 +5,26 @@
 
 ARG BASE_IMAGE=nginxproxymanager/nginx-full:certbot-node
 FROM nginxproxymanager/testca AS testca
+
+# Download the current upstream stable branches in an intermediate stage. Nothing
+# from this stage except the Lua files and templates reaches the final image.
+FROM $BASE_IMAGE AS crowdsec-source
+
+ARG CROWDSEC_OPENRESTY_BOUNCER_REF=main
+ARG CROWDSEC_LUA_BOUNCER_REF=main
+ARG CROWDSEC_CACHEBUST=0
+
+COPY docker/crowdsec-build-revision /tmp/crowdsec-build-revision
+ADD https://codeload.github.com/crowdsecurity/cs-openresty-bouncer/tar.gz/${CROWDSEC_OPENRESTY_BOUNCER_REF}?cachebust=${CROWDSEC_CACHEBUST} /tmp/cs-openresty-bouncer.tar.gz
+ADD https://codeload.github.com/crowdsecurity/lua-cs-bouncer/tar.gz/${CROWDSEC_LUA_BOUNCER_REF}?cachebust=${CROWDSEC_CACHEBUST} /tmp/lua-cs-bouncer.tar.gz
+
+RUN mkdir -p /tmp/crowdsec-source /out/lualib/plugins/crowdsec /out/templates \
+	&& tar -xzf /tmp/cs-openresty-bouncer.tar.gz -C /tmp/crowdsec-source \
+	&& tar -xzf /tmp/lua-cs-bouncer.tar.gz -C /tmp/crowdsec-source \
+	&& cp -R /tmp/crowdsec-source/lua-cs-bouncer-${CROWDSEC_LUA_BOUNCER_REF}/lib/. /out/lualib/ \
+	&& cp -R /tmp/crowdsec-source/cs-openresty-bouncer-${CROWDSEC_OPENRESTY_BOUNCER_REF}/vendor/lua-resty-http/lib/. /out/lualib/plugins/crowdsec/ \
+	&& cp -R /tmp/crowdsec-source/lua-cs-bouncer-${CROWDSEC_LUA_BOUNCER_REF}/templates/. /out/templates/
+
 FROM $BASE_IMAGE
 
 ARG TARGETPLATFORM
@@ -40,6 +60,8 @@ EXPOSE 80 81 443
 COPY backend       /app
 COPY frontend/dist /app/frontend
 COPY docker/rootfs /
+COPY --from=crowdsec-source /out/lualib/ /etc/nginx/lualib/
+COPY --from=crowdsec-source /out/templates/ /var/lib/crowdsec/lua/templates/
 
 # Copy test CA cert for use in container and add to trusted certs from a self-signed CA
 COPY --from=testca /home/step/certs/root_ca.crt /etc/ssl/certs/NginxProxyManager.crt

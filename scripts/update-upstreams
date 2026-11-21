@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# Prepare a reviewable update PR from stable upstream branches only.
+set -euo pipefail
+
+output=${GITHUB_OUTPUT:?This script is intended to run in GitHub Actions.}
+changed=false
+summary=()
+
+if ! git merge-base --is-ancestor upstream-npm/master HEAD; then
+	git merge --no-edit upstream-npm/master
+	summary+=("Merged Nginx Proxy Manager upstream master at $(git rev-parse --short upstream-npm/master).")
+	changed=true
+fi
+
+bouncer_commit=$(git ls-remote https://github.com/crowdsecurity/cs-openresty-bouncer.git refs/heads/main | awk 'NR == 1 { print $1 }')
+lua_commit=$(git ls-remote https://github.com/crowdsecurity/lua-cs-bouncer.git refs/heads/main | awk 'NR == 1 { print $1 }')
+[ -n "$bouncer_commit" ] && [ -n "$lua_commit" ] || { echo 'Unable to resolve CrowdSec stable branches.' >&2; exit 1; }
+
+revision_file=docker/crowdsec-build-revision
+current_bouncer=$(sed -n 's/^cs-openresty-bouncer=//p' "$revision_file")
+current_lua=$(sed -n 's/^lua-cs-bouncer=//p' "$revision_file")
+
+if [ "$bouncer_commit" != "$current_bouncer" ] || [ "$lua_commit" != "$current_lua" ]; then
+	cat > "$revision_file" <<EOF
+# Cache-busting record for the upstream stable branches. It does not select a
+# CrowdSec version; docker/Dockerfile always downloads their current main refs.
+cs-openresty-bouncer=${bouncer_commit}
+lua-cs-bouncer=${lua_commit}
+EOF
+	summary+=("Refreshed the CrowdSec stable-branch build cache record (${bouncer_commit}, ${lua_commit}).")
+	changed=true
+fi
+
+if [ "$changed" = true ]; then
+	printf 'changed=true\n' >> "$output"
+	{
+		echo 'summary<<EOF'
+		printf '%s\n' "${summary[@]}"
+		echo EOF
+	} >> "$output"
+else
+	printf 'changed=false\n' >> "$output"
+fi

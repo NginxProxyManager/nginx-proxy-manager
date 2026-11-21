@@ -1,0 +1,4 @@
+# Cache-busting record for the upstream stable branches. It does not select a
+# CrowdSec version; docker/Dockerfile always downloads their current main refs.
+cs-openresty-bouncer=8a35c8d95f146db0b0abcd71aeeaf87d69503ef2
+lua-cs-bouncer=4aad1dfa653d9d96fb5c0114ae930eb2353214c8
