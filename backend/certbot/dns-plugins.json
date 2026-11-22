@@ -506,7 +506,7 @@
 	"neostrada": {
 		"credentials": "dns_neostrada_api_key = your-api-key",
 		"dependencies": "",
-		"plugin_full_name": "dns-neostrada",
+		"full_plugin_name": "dns-neostrada",
 		"name": "Neostrada",
 		"package_name": "certbot-dns-neostrada",
 		"version": "~=0.1.0"
