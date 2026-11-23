@@ -47,6 +47,7 @@
 			"type": "string",
 			"minLength": 1,
 			"maxLength": 255,
+			"pattern": "^[^\\s\\p{Cc};{}\"'#\\\\$/]+(?:/[^\\s\\p{Cc};{}\"'#\\\\]*)?$",
 			"example": "127.0.0.1"
 		},
 		"forward_port": {
@@ -120,7 +121,8 @@
 					},
 					"path": {
 						"type": "string",
-						"minLength": 1
+						"minLength": 1,
+						"pattern": "^(?!(?:=|~\\*?|\\^~)$)(?:(?:=|~\\*?|\\^~) +)?(?:\"(?:[^\"\\\\\\p{Cc}]|\\\\[^\\p{Cc}])+\"|(?:[^\\s\\p{Cc};{}\"'#\\\\]|\\\\[^\\s\\p{Cc}])+)$"
 					},
 					"forward_scheme": {
 						"$ref": "#/properties/forward_scheme"
@@ -132,10 +134,14 @@
 						"$ref": "#/properties/forward_port"
 					},
 					"forward_path": {
-						"type": "string"
+						"type": "string",
+						"pattern": "^[^\\s\\p{Cc};{}\"'#\\\\]*$"
 					},
 					"advanced_config": {
 						"type": "string"
+					},
+					"access_list_id": {
+						"$ref": "../common.json#/properties/access_list_id"
 					}
 				}
 			},
@@ -144,7 +150,8 @@
 					"path": "/app",
 					"forward_scheme": "http",
 					"forward_host": "example.com",
-					"forward_port": 80
+					"forward_port": 80,
+					"access_list_id": 0
 				}
 			]
 		},

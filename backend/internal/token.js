@@ -34,26 +34,21 @@ export default {
 			.andWhere("is_disabled", 0)
 			.first();
 
-		if (!user) {
-			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
-		}
-
+		// An unknown, disabled or passwordless account goes through the same queries and the same password check
+		// as a real one, and fails with the same error: answering any sooner or any differently would tell anyone
+		// trying addresses which ones have an account. There is no user 0, so its lookup finds nothing. An empty
+		// secret, which creating a user through the API can store, is no hash: bcrypt would reject it at once.
 		const auth = await authModel
 			.query()
-			.where("user_id", "=", user.id)
+			.where("user_id", "=", user?.id ?? 0)
 			.where("type", "=", "password")
 			.first();
 
-		if (!auth) {
-			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH);
-		}
-
-		const valid = await auth.verifyPassword(data.secret);
-		if (!valid) {
-			throw new errs.AuthError(
-				ERROR_MESSAGE_INVALID_AUTH,
-				ERROR_MESSAGE_INVALID_AUTH_I18N,
-			);
+		const valid = auth?.secret
+			? await auth.verifyPassword(data.secret)
+			: await authModel.verifyDummyPassword(data.secret);
+		if (!user || !valid) {
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_AUTH, ERROR_MESSAGE_INVALID_AUTH_I18N);
 		}
 
 		if (data.scope !== "user" && _.indexOf(user.roles, data.scope) === -1) {
@@ -171,7 +166,7 @@ export default {
 		}
 
 		// Check scope
-		if (!tokenData.scope || tokenData.scope[0] !== "2fa-challenge") {
+		if (tokenData.scope?.[0] !== "2fa-challenge") {
 			throw new errs.AuthError("Invalid challenge token");
 		}
 
@@ -183,10 +178,7 @@ export default {
 		// Verify 2FA code
 		const valid = await twoFactor.verifyForLogin(userId, code);
 		if (!valid) {
-			throw new errs.AuthError(
-				ERROR_MESSAGE_INVALID_2FA,
-				ERROR_MESSAGE_INVALID_2FA_I18N,
-			);
+			throw new errs.AuthError(ERROR_MESSAGE_INVALID_2FA, ERROR_MESSAGE_INVALID_2FA_I18N);
 		}
 
 		// Create full token

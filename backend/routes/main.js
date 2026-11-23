@@ -1,8 +1,12 @@
 import express from "express";
+import { isCI } from "../lib/config.js";
 import errs from "../lib/error.js";
+import logRequest from "../lib/express/log-request.js";
 import pjson from "../package.json" with { type: "json" };
 import { isSetup } from "../setup.js";
 import auditLogRoutes from "./audit-log.js";
+import ciRoutes from "./ci.js";
+import logsRoutes from "./logs.js";
 import accessListsRoutes from "./nginx/access_lists.js";
 import certificatesHostsRoutes from "./nginx/certificates.js";
 import deadHostsRoutes from "./nginx/dead_hosts.js";
@@ -21,6 +25,8 @@ const router = express.Router({
 	strict: true,
 	mergeParams: true,
 });
+
+router.use(logRequest);
 
 /**
  * Health Check
@@ -45,6 +51,7 @@ router.use("/schema", schemaRoutes);
 router.use("/tokens", tokensRoutes);
 router.use("/users", usersRoutes);
 router.use("/audit-log", auditLogRoutes);
+router.use("/logs", logsRoutes);
 router.use("/reports", reportsRoutes);
 router.use("/settings", settingsRoutes);
 router.use("/version", versionRoutes);
@@ -54,6 +61,11 @@ router.use("/nginx/dead-hosts", deadHostsRoutes);
 router.use("/nginx/streams", streamsRoutes);
 router.use("/nginx/access-lists", accessListsRoutes);
 router.use("/nginx/certificates", certificatesHostsRoutes);
+
+// Only include CI routes if we're in a CI environment
+if (isCI()) {
+	router.use("/ci", ciRoutes);
+}
 
 /**
  * API 404 for all other routes

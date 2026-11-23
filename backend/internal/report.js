@@ -15,7 +15,11 @@ const internalReport = {
 				const userId = access.token.getUserId(1);
 
 				const promises = [
-					internalProxyHost.getCount(userId, access_data.permission_visibility),
+					internalProxyHost.getCount(
+						userId,
+						access_data.permission_visibility,
+						access.getPermissions?.()?.meta,
+					),
 					internalRedirectionHost.getCount(userId, access_data.permission_visibility),
 					internalStream.getCount(userId, access_data.permission_visibility),
 					internalDeadHost.getCount(userId, access_data.permission_visibility),

@@ -7,23 +7,23 @@ import db from "../db.js";
 Model.knex(db());
 
 class Setting extends Model {
-	$beforeInsert () {
+	$beforeInsert() {
 		// Default for meta
-		if (typeof this.meta === 'undefined') {
+		if (typeof this.meta === "undefined") {
 			this.meta = {};
 		}
 	}
 
-	static get name () {
-		return 'Setting';
+	static get name() {
+		return "Setting";
 	}
 
-	static get tableName () {
-		return 'setting';
+	static get tableName() {
+		return "setting";
 	}
 
-	static get jsonAttributes () {
-		return ['meta'];
+	static get jsonAttributes() {
+		return ["meta"];
 	}
 }
 

@@ -2,7 +2,7 @@ import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import utils from "../lib/utils.js";
-import proxyHostModel from "../models/proxy_host.js";
+import proxyHostModel, { scopeToOwnerOrAllowed } from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
 import internalCertificate from "./certificate.js";
 import internalHost from "./host.js";
@@ -49,13 +49,23 @@ const internalProxyHost = {
 			.then(() => {
 				// At this point the domains should have been checked
 				thisData.owner_user_id = access.token.getUserId(1);
-				thisData = internalHost.cleanSslHstsData(thisData);
+
+				// Don't clean the ssl_forced/http2_support/hsts_* fields yet if a
+				// certificate is about to be requested. certificate_id has already
+				// been stripped above, so cleanSslHstsData would see "no cert" and
+				// zero out the SSL toggles the user just submitted, even though a
+				// certificate is created moments later in this same request.
+				if (!createCertificate) {
+					thisData = internalHost.cleanSslHstsData(thisData);
+				}
 
 				// Fix for db field not having a default value
 				// for this optional field.
 				if (typeof thisData.advanced_config === "undefined") {
 					thisData.advanced_config = "";
 				}
+
+				internalHost.assertAdvancedConfigAllowed(access, thisData);
 
 				return proxyHostModel.query().insertAndFetch(thisData).then(utils.omitRow(omissions()));
 			})
@@ -64,10 +74,16 @@ const internalProxyHost = {
 					return internalCertificate
 						.createQuickCertificate(access, thisData)
 						.then((cert) => {
-							// update host with cert id
+							// Update host with cert id and re-apply the originally submitted
+							// SSL toggles, now that a real certificate exists for them to
+							// validate against.
 							return internalProxyHost.update(access, {
 								id: row.id,
 								certificate_id: cert.id,
+								ssl_forced: thisData.ssl_forced,
+								http2_support: thisData.http2_support,
+								hsts_enabled: thisData.hsts_enabled,
+								hsts_subdomains: thisData.hsts_subdomains,
 							});
 						})
 						.then(() => {
@@ -83,7 +99,7 @@ const internalProxyHost = {
 					expand: ["certificate", "owner", "access_list.[clients,items]"],
 				});
 			})
-			.then((row) => {
+			.then(async (row) => {
 				// Configure nginx
 				return internalNginx.configure(proxyHostModel, "proxy_host", row).then(() => {
 					return row;
@@ -155,6 +171,9 @@ const internalProxyHost = {
 					);
 				}
 
+				// Before the certificate is created, so a refused request doesn't leave one behind
+				internalHost.assertAdvancedConfigAllowed(access, thisData, row);
+
 				if (createCertificate) {
 					return internalCertificate
 						.createQuickCertificate(access, {
@@ -208,7 +227,7 @@ const internalProxyHost = {
 						id: thisData.id,
 						expand: ["owner", "certificate", "access_list.[clients,items]"],
 					})
-					.then((row) => {
+					.then(async (row) => {
 						if (!row.enabled) {
 							// No need to add nginx config if host is disabled
 							return row;
@@ -243,7 +262,7 @@ const internalProxyHost = {
 					.first();
 
 				if (access_data.permission_visibility !== "all") {
-					query.andWhere("owner_user_id", access.token.getUserId(1));
+					scopeToOwnerOrAllowed(query, access.token.getUserId(1), access.getPermissions?.()?.meta);
 				}
 
 				if (typeof thisData.expand !== "undefined" && thisData.expand !== null) {
@@ -323,10 +342,10 @@ const internalProxyHost = {
 			.then(() => {
 				return internalProxyHost.get(access, {
 					id: data.id,
-					expand: ["certificate", "owner", "access_list"],
+					expand: ["certificate", "owner", "access_list.[clients,items]"],
 				});
 			})
-			.then((row) => {
+			.then(async (row) => {
 				if (!row?.id) {
 					throw new errs.ItemNotFoundError(data.id);
 				}
@@ -336,27 +355,21 @@ const internalProxyHost = {
 
 				row.enabled = 1;
 
-				return proxyHostModel
-					.query()
-					.where("id", row.id)
-					.patch({
-						enabled: 1,
-					})
-					.then(() => {
-						// Configure nginx
-						return internalNginx.configure(proxyHostModel, "proxy_host", row);
-					})
-					.then(() => {
-						// Add to audit log
-						return internalAuditLog.add(access, {
-							action: "enabled",
-							object_type: "proxy-host",
-							object_id: row.id,
-							meta: _.omit(row, omissions()),
-						});
-					});
-			})
-			.then(() => {
+				await proxyHostModel.query().where("id", row.id).patch({
+					enabled: 1,
+				});
+
+				// Configure nginx
+				await internalNginx.configure(proxyHostModel, "proxy_host", row);
+
+				// Add to audit log
+				await internalAuditLog.add(access, {
+					action: "enabled",
+					object_type: "proxy-host",
+					object_id: row.id,
+					meta: _.omit(row, omissions()),
+				});
+
 				return true;
 			});
 	},
@@ -430,7 +443,7 @@ const internalProxyHost = {
 			.orderBy(castJsonIfNeed("domain_names"), "ASC");
 
 		if (accessData.permission_visibility !== "all") {
-			query.andWhere("owner_user_id", access.token.getUserId(1));
+			scopeToOwnerOrAllowed(query, access.token.getUserId(1), access.getPermissions?.()?.meta);
 		}
 
 		// Query is used for searching
@@ -456,18 +469,18 @@ const internalProxyHost = {
 	 *
 	 * @param   {Number}  user_id
 	 * @param   {String}  visibility
+	 * @param   {Object}  [permissionsMeta]  the user's permissions meta, as already loaded by access
 	 * @returns {Promise}
 	 */
-	getCount: (user_id, visibility) => {
+	getCount: async (user_id, visibility, permissionsMeta) => {
 		const query = proxyHostModel.query().count("id as count").where("is_deleted", 0);
 
 		if (visibility !== "all") {
-			query.andWhere("owner_user_id", user_id);
+			scopeToOwnerOrAllowed(query, user_id, permissionsMeta);
 		}
 
-		return query.first().then((row) => {
-			return Number.parseInt(row.count, 10);
-		});
+		const row = await query.first();
+		return Number.parseInt(row.count, 10);
 	},
 };
 

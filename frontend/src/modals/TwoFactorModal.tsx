@@ -3,16 +3,13 @@ import { Field, Form, Formik } from "formik";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import {
-	disable2FA,
-	enable2FA,
-	get2FAStatus,
-	regenerateBackupCodes,
-	start2FASetup,
-} from "src/api/backend";
+import QRCode from "react-qr-code";
+import { disable2FA, enable2FA, get2FAStatus, regenerateBackupCodes, start2FASetup } from "src/api/backend";
 import { Button } from "src/components";
+import { confirmDiscardChanges, FormDirtyState } from "src/components/Form";
 import { T } from "src/locale";
 import { validateString } from "src/modules/Validations";
+import styles from "./TwoFactorModal.module.css";
 
 type Step = "loading" | "status" | "setup" | "verify" | "backup" | "disable";
 
@@ -32,6 +29,13 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [setupData, setSetupData] = useState<{ secret: string; otpauthUrl: string } | null>(null);
 	const [backupCodes, setBackupCodes] = useState<string[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [formDirty, setFormDirty] = useState(false);
+
+	const handleHide = () => {
+		if (!isSubmitting && confirmDiscardChanges(formDirty)) {
+			remove();
+		}
+	};
 
 	const loadStatus = useCallback(async () => {
 		try {
@@ -137,12 +141,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						)}
 					</div>
 					{!isEnabled ? (
-						<Button
-							fullWidth
-							color="azure"
-							onClick={handleStartSetup}
-							isLoading={isSubmitting}
-						>
+						<Button fullWidth color="azure" onClick={handleStartSetup} isLoading={isSubmitting}>
 							<T id="2fa.enable" />
 						</Button>
 					) : (
@@ -166,12 +165,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<T id="2fa.setup-instructions" />
 					</p>
 					<div className="text-center mb-3">
-						<img
-							src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupData.otpauthUrl)}`}
-							alt="QR Code"
-							className="img-fluid"
-							style={{ maxWidth: "200px" }}
-						/>
+						<QRCode value={setupData.otpauthUrl} size={200} className={styles.qrcode} />
 					</div>
 					<label className="mb-3 d-block">
 						<span className="form-label small text-muted">
@@ -186,8 +180,9 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						/>
 					</label>
 					<Formik initialValues={{ code: "" }} onSubmit={handleVerify}>
-						{() => (
+						{({ dirty }) => (
 							<Form>
+								<FormDirtyState dirty={dirty} onChange={setFormDirty} />
 								<Field name="code" validate={validateString(6, 6)}>
 									{({ field, form }: any) => (
 										<label className="mb-3 d-block">
@@ -256,8 +251,9 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<T id="2fa.disable-warning" />
 					</Alert>
 					<Formik initialValues={{ code: "" }} onSubmit={handleDisable}>
-						{() => (
+						{({ dirty }) => (
 							<Form>
+								<FormDirtyState dirty={dirty} onChange={setFormDirty} />
 								<Field name="code" validate={validateString(6, 6)}>
 									{({ field, form }: any) => (
 										<label className="mb-3 d-block">
@@ -304,8 +300,9 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						<T id="2fa.regenerate-instructions" />
 					</p>
 					<Formik initialValues={{ code: "" }} onSubmit={handleRegenerateBackup}>
-						{() => (
+						{({ dirty }) => (
 							<Form>
+								<FormDirtyState dirty={dirty} onChange={setFormDirty} />
 								<Field name="code" validate={validateString(6, 6)}>
 									{({ field, form }: any) => (
 										<label className="mb-3 d-block">
@@ -349,7 +346,7 @@ const TwoFactorModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	};
 
 	return (
-		<Modal show={visible} onHide={remove}>
+		<Modal show={visible} onHide={handleHide}>
 			<Modal.Header closeButton>
 				<Modal.Title>
 					<T id="2fa.title" />

@@ -3,7 +3,16 @@
 describe('Streams', () => {
 	let token;
 
+	const certFile = 'website1.pem';
+	const keyFile = 'website1.key.pem';
+
 	before(() => {
+		cy.createCustomCerts({
+			domain: 'website1.example.com',
+			certFile,
+			keyFile,
+		})
+
 		cy.resetUsers();
 		cy.getToken().then((tok) => {
 			token = tok;
@@ -22,18 +31,7 @@ describe('Streams', () => {
 			});
 		});
 
-		// Create a custom cert pair
-		cy.task('getFixturesFolder').then((fixturesFolder) => {
-			cy.exec(`mkcert -cert-file=${fixturesFolder}/website1.pem -key-file=${fixturesFolder}/website1.key.pem website1.example.com`).then((result) => {
-				expect(result.exitCode).to.eq(0);
-				// Install CA
-				cy.exec('mkcert -install').then((result) => {
-					expect(result.exitCode).to.eq(0);
-				});
-			});
-		});
-
-		cy.exec('rm -f /test/results/testssl.json');
+		cy.task('exec', { command: 'rm -f /test/results/testssl.json' });
 	});
 
 	it('Should be able to create TCP Stream', () => {
@@ -57,7 +55,7 @@ describe('Streams', () => {
 			expect(data).to.have.property('tcp_forwarding', true);
 			expect(data).to.have.property('udp_forwarding', false);
 
-			cy.exec('curl --noproxy -- http://website1.example.com:1500').then((result) => {
+			cy.task('exec', { command: 'curl --noproxy -- http://website1.example.com:1500' }).then((result) => {
 				expect(result.exitCode).to.eq(0);
 				expect(result.stdout).to.contain('yay it works');
 			});
@@ -108,7 +106,7 @@ describe('Streams', () => {
 			expect(data).to.have.property('tcp_forwarding', true);
 			expect(data).to.have.property('udp_forwarding', true);
 
-			cy.exec('curl --noproxy -- http://website1.example.com:1502').then((result) => {
+			cy.task('exec', { command: 'curl --noproxy -- http://website1.example.com:1502' }).then((result) => {
 				expect(result.exitCode).to.eq(0);
 				expect(result.stdout).to.contain('yay it works');
 			});
@@ -136,8 +134,8 @@ describe('Streams', () => {
 				token: token,
 				path:  `/api/nginx/certificates/${certID}/upload`,
 				files:  {
-					certificate: 'website1.pem',
-					certificate_key: 'website1.key.pem',
+					certificate: certFile,
+					certificate_key: keyFile,
 				},
 			}).then((data) => {
 				cy.validateSwaggerSchema('post', 200, '/nginx/certificates/{certID}/upload', data);
@@ -168,7 +166,9 @@ describe('Streams', () => {
 
 					// Check the ssl termination
 					cy.task('log', '[testssl.sh] Running ...');
-					cy.exec('/testssl/testssl.sh --quiet --add-ca="$(/bin/mkcert -CAROOT)/rootCA.pem" --jsonfile=/test/results/testssl.json website1.example.com:1503', {
+					cy.task('exec', {
+						command: '/testssl/testssl.sh --quiet --add-ca="$(/bin/mkcert -CAROOT)/rootCA.pem" --jsonfile=/test/results/testssl.json website1.example.com:1503',
+					}, {
 						timeout: 120000, // 2 minutes
 					}).then((result) => {
 						cy.task('log', `[testssl.sh] ${result.stdout}`);

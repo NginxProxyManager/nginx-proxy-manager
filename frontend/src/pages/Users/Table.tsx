@@ -7,7 +7,7 @@ import {
 	IconShield,
 	IconTrash,
 } from "@tabler/icons-react";
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { User } from "src/api/backend";
 import {
@@ -18,6 +18,7 @@ import {
 	TrueFalseFormatter,
 	ValueWithDateFormatter,
 } from "src/components";
+import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
 
@@ -47,7 +48,7 @@ export default function Table({
 	onNewUser,
 	onLoginAs,
 }: Props) {
-	const columnHelper = createColumnHelper<User>();
+	const columnHelper = createColumnHelper<Features, User>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor((row: any) => row, {
@@ -87,6 +88,49 @@ export default function Table({
 				header: intl.formatMessage({ id: "column.roles" }),
 				cell: (info: any) => {
 					return <RolesFormatter roles={info.getValue()} />;
+				},
+			}),
+			columnHelper.accessor((row: any) => row.permissions, {
+				id: "permissions",
+				header: intl.formatMessage({ id: "action.permissions" }),
+				cell: (info: any) => {
+					const permissions = info.getValue();
+					const isAdminUser = info.row.original.roles?.includes("admin");
+					if (isAdminUser) {
+						return (
+							<span className="badge bg-green-lt">
+								<T id="column.satisfy-all" />
+							</span>
+						);
+					}
+					if (!permissions) {
+						return <span className="text-muted">-</span>;
+					}
+					const items = [
+						{ key: "proxyHosts", label: "proxy-hosts", val: permissions.proxyHosts },
+						{ key: "redirectionHosts", label: "redirection-hosts", val: permissions.redirectionHosts },
+						{ key: "deadHosts", label: "dead-hosts", val: permissions.deadHosts },
+						{ key: "streams", label: "streams", val: permissions.streams },
+						{ key: "accessLists", label: "access-lists", val: permissions.accessLists },
+						{ key: "certificates", label: "certificates", val: permissions.certificates },
+					];
+					return (
+						<div className="d-flex flex-wrap gap-1">
+							{items.map((it) => {
+								if (it.val === "hidden") return null;
+								const isManage = it.val === "manage";
+								return (
+									<span
+										key={it.key}
+										className={`badge ${isManage ? "bg-blue-lt" : "bg-secondary-lt"}`}
+										title={`${intl.formatMessage({ id: it.label })}: ${it.val}`}
+									>
+										<T id={it.label} />: {it.val}
+									</span>
+								);
+							})}
+						</div>
+					);
 				},
 			}),
 			columnHelper.accessor((row: any) => row.isDisabled, {
@@ -216,11 +260,10 @@ export default function Table({
 		],
 	);
 
-	const tableInstance = useReactTable<User>({
+	const tableInstance = useTable({
+		features,
 		columns,
 		data,
-		getCoreRowModel: getCoreRowModel(),
-		rowCount: data.length,
 		meta: {
 			isFetching,
 		},
