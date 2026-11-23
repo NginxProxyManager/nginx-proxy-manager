@@ -85,9 +85,9 @@ const configure = () => {
 
 		if (envPostgresPasswordFile !== null) {
 			try{
-				envPostgresPassword = fs.readFileSync(envPostgresPasswordFile, "utf8").trim();
+				envPostgresPassword = fs.readFileSync(envPostgresPasswordFile, "utf8").trimEnd();
 			} catch (err) {
-				if(envPostgresPassword === null) {
+				if(envPostgresPassword == null) {
 					logger.error(`Could not find Postgres password from the file: ${envPostgresPasswordFile}. ${err}`);
 				}
 			}
