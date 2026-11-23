@@ -35,7 +35,7 @@
 		"react-intl": "^12.1.7",
 		"react-markdown": "^10.1.0",
 		"react-qr-code": "^2.2.0",
-		"react-router-dom": "^7.18.5",
+		"react-router-dom": "^7.18.6",
 		"react-select": "^5.10.2",
 		"react-toastify": "^11.2.0",
 		"rooks": "^9.9.0"
