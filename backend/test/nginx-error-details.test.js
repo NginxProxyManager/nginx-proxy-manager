@@ -41,6 +41,45 @@ describe("nginx error details for the UI", () => {
 		assert.equal(err.details.reason, undefined);
 	});
 
+	it("an error in a custom location or its advanced configuration: the location's index and path", () => {
+		const text = [
+			"server {",
+			"# npm-location-begin 1",
+			"  location /api {",
+			"    proxy_pass http://app;",
+			"# npm-location-advanced-begin 1",
+			"    proxy_passs http://x;",
+			"# npm-location-advanced-end 1",
+			"  }",
+			"# npm-location-end 1",
+			"}",
+		].join("\n");
+		const withLocations = { id: 7, locations: [{ path: "/" }, { path: " /api " }] };
+		const advanced = internalNginx.buildConfigError(
+			"host",
+			"proxy_host",
+			withLocations,
+			{ message: 'unknown directive "proxy_passs"', file, line: 6, output: "" },
+			text,
+		);
+		assert.match(advanced.message, /^Custom location "\/api" advanced configuration: /);
+		assert.equal(advanced.details.area, "location_advanced");
+		assert.equal(advanced.details.relative_line, 1);
+		assert.equal(advanced.details.location_index, 1);
+		assert.equal(advanced.details.location_path, "/api");
+		assert.equal(advanced.details.detail, 'Unknown directive "proxy_passs".');
+		const location = internalNginx.buildConfigError(
+			"host",
+			"proxy_host",
+			withLocations,
+			{ message: 'host not found in upstream "app"', file, line: 4, output: "" },
+			text,
+		);
+		assert.equal(location.details.area, "location");
+		assert.equal(location.details.relative_line, null);
+		assert.equal(location.details.location_path, "/api");
+	});
+
 	it("an error without a line that names something the advanced configuration uses", () => {
 		const err = internalNginx.buildConfigError(
 			"host",
@@ -130,7 +169,7 @@ describe("nginx error details for the UI", () => {
 			{ message: 'unknown directive "x"', file, line: 2 },
 			ADVANCED,
 		);
-		const meta = internalNginx.buildOfflineMeta({}, err, "Disabled automatically: ");
+		const meta = internalNginx.buildOfflineMeta({}, err, null, "Disabled automatically: ");
 		assert.match(meta.nginx_err, /^Disabled automatically: /);
 		assert.equal(meta.nginx_details.auto_disabled, true);
 		assert.equal(err.details.auto_disabled, undefined);

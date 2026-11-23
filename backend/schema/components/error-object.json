@@ -28,7 +28,7 @@
 				},
 				"scope": {
 					"type": "string",
-					"enum": ["host", "other_host", "global"],
+					"enum": ["location", "host", "other_host", "global"],
 					"example": "host"
 				},
 				"host_type": {
@@ -47,6 +47,14 @@
 					"type": ["integer", "null"],
 					"example": 31
 				},
+				"location_index": {
+					"type": ["integer", "null"],
+					"example": null
+				},
+				"location_path": {
+					"type": ["string", "null"],
+					"example": null
+				},
 				"nginx_output": {
 					"type": ["string", "null"],
 					"example": "nginx: [emerg] unknown directive \"proxy_passs\" in /data/nginx/proxy_host/12.conf:31"
@@ -62,7 +70,7 @@
 				},
 				"area": {
 					"type": ["string", "null"],
-					"description": "Part of the host's config the error is in, eg. host_advanced",
+					"description": "Part of the host's config the error is in: host_advanced, location (location_index/location_path) or location_advanced",
 					"example": "host_advanced"
 				},
 				"relative_line": {
