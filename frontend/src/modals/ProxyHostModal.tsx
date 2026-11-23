@@ -28,7 +28,7 @@ const IP_OR_CIDR_RE =
 
 // Only invoked when enableProxyProtocol is true (Field is conditionally rendered).
 const validateLoadBalancerIp = (value: string): string | undefined => {
-	if (!value || !value.length) return intl.formatMessage({ id: "error.required" });
+	if (!value?.length) return intl.formatMessage({ id: "error.required" });
 	if (!IP_OR_CIDR_RE.test(value)) return intl.formatMessage({ id: "error.invalid-ip-or-cidr" });
 };
 
