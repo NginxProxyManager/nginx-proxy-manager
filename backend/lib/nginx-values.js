@@ -43,6 +43,9 @@ export const patterns = {
 	// access list client address: IPv6 with an optional prefix. No zone id ("%eth0"): nginx's
 	// allow/deny rejects them, and the old "%.+" let anything through, including "; allow all"
 	clientIpv6: String.raw`^(?:(?:[0-9A-Fa-f]{1,4}:){7}(?:[0-9A-Fa-f]{1,4}|:)|(?:[0-9A-Fa-f]{1,4}:){6}(?::[0-9A-Fa-f]{1,4}|(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:){5}(?:(?::[0-9A-Fa-f]{1,4}){1,2}|:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:){4}(?:(?::[0-9A-Fa-f]{1,4}){1,3}|(?::[0-9A-Fa-f]{1,4})?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:){3}(?:(?::[0-9A-Fa-f]{1,4}){1,4}|(?::[0-9A-Fa-f]{1,4}){0,2}:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:){2}(?:(?::[0-9A-Fa-f]{1,4}){1,5}|(?::[0-9A-Fa-f]{1,4}){0,3}:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:)(?:(?::[0-9A-Fa-f]{1,4}){1,6}|(?::[0-9A-Fa-f]{1,4}){0,4}:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|(?::[0-9A-Fa-f]{1,4}){0,5}:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:))(?:/(?:[0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$`,
+	// proxy_host load_balancer_ip for set_real_ip_from: empty, or an IPv4/IPv6 address with an
+	// optional prefix length
+	loadBalancerIp: String.raw`^(?:[0-9A-Fa-f:.]+(?:/[0-9]{1,3})?)?$`,
 	// htpasswd user name: a ":" or a line break would corrupt the file
 	accessUsername: String.raw`^[^:\p{Cc}]+$`,
 };
@@ -112,6 +115,9 @@ export const assertHostRenderable = (hostType, host) => {
 
 	if (hostType === "proxy_host") {
 		check(isTokenSafe(host.forward_host), "forward host", host.forward_host);
+		if (host.load_balancer_ip) {
+			check(isValid("loadBalancerIp", host.load_balancer_ip), "load balancer ip", host.load_balancer_ip);
+		}
 		assertAccessListRenderable(label, host.access_list);
 		for (const loc of host.locations || []) {
 			// The path is several tokens (modifier, then a quoted or unquoted URI): its rule is the

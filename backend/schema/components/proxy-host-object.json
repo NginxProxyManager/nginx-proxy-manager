@@ -93,9 +93,11 @@
 			"type": "boolean"
 		},
 		"load_balancer_ip": {
+			"description": "Address or CIDR of the load balancer sending PROXY Protocol, trusted for the real client IP",
 			"type": "string",
 			"minLength": 0,
-			"maxLength": 255
+			"maxLength": 255,
+			"pattern": "^(?:[0-9A-Fa-f:.]+(?:/[0-9]{1,3})?)?$"
 		},
 		"http2_support": {
 			"$ref": "../common.json#/properties/http2_support"
