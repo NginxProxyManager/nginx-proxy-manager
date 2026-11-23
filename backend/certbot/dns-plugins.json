@@ -503,6 +503,14 @@
 		"package_name": "certbot-dns-namecom",
 		"version": "~=1.0.0"
 	},
+	"neostrada": {
+		"credentials": "dns_neostrada_api_key = your-api-key",
+		"dependencies": "",
+		"full_plugin_name": "dns-neostrada",
+		"name": "Neostrada",
+		"package_name": "certbot-dns-neostrada",
+		"version": "~=0.1.0"
+	},
 	"netcup": {
 		"credentials": "dns_netcup_customer_id  = 123456\ndns_netcup_api_key      = 0123456789abcdef0123456789abcdef01234567\ndns_netcup_api_password = abcdef0123456789abcdef01234567abcdef0123",
 		"dependencies": "",
