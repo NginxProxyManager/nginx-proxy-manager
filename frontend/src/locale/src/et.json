@@ -461,6 +461,9 @@
 	"host-status.view-error-log": {
 		"defaultMessage": "Näita vealogi"
 	},
+	"host-status.warning": {
+		"defaultMessage": "Hoiatus"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
 	},
@@ -500,11 +503,89 @@
 	"loading": {
 		"defaultMessage": "Laadimine…"
 	},
+	"location-check.empty_host": {
+		"defaultMessage": "Sihthost on tühi."
+	},
+	"location-check.empty_path": {
+		"defaultMessage": "Asukoha tee on tühi."
+	},
+	"location-check.invalid_host": {
+		"defaultMessage": "Sihthostis on lubamatud märgid (tühikud, jutumärgid, ;, sulud, $, # või \\). Üks nginxi muutuja, näiteks $backend, on lubatud."
+	},
+	"location-check.named_forward_path": {
+		"defaultMessage": "Ilma nginxi muutujata edastusteed ei saa kasutada nimega asukohaga; kasuta muutujat, näiteks $request_uri, või eemalda edastustee."
+	},
+	"location-check.omitted": {
+		"defaultMessage": "Nginx lükkas selle asukoha tagasi isegi kohatäitjana, seega eemaldati see. Ülejäänud host töötab edasi."
+	},
+	"location-check.regex_forward_path": {
+		"defaultMessage": "Ilma nginxi muutujata edastusteed ei saa kasutada regulaaravaldisega asukohaga; kasuta püüdegruppi, näiteks /v1/$1, eemalda edastustee või kasuta prefiksiga asukohta."
+	},
+	"location-check.unbalanced_braces": {
+		"defaultMessage": "Selle asukoha täpsemas seadistuses on looksulud tasakaalust väljas."
+	},
+	"location-check.unresolved": {
+		"defaultMessage": "Hosti \"{host}\" ei saa praegu lahendada. Päringud sellele asukohale ebaõnnestuvad veaga 502, kuni see õnnestub."
+	},
+	"location-status.disabled": {
+		"defaultMessage": "Väljas"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Aktiivne"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Pole aktiivne"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx lükkas selle asukoha tagasi, seega lülitati see välja. Ülejäänud host töötab edasi."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Lahendamata"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "Sihthosti nime ei saa praegu lahendada. Päringud sellele asukohale ebaõnnestuvad, kuni see õnnestub."
+	},
+	"location.advanced": {
+		"defaultMessage": "Täpsemalt"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Kohandatud Nginx seadistus olemas"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Teine asukoht kasutab juba teed {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Selles asukohas on vigu"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "Host sisaldab lubamatuid märke (jutumärgid, ;, sulud, $, # või \\)."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "Host ei tohi sisaldada tühikuid"
+	},
+	"location.error.location-path-invalid": {
+		"defaultMessage": "Tee sisaldab lubamatuid märke (tühikud, jutumärgid, ;, sulud, # või \\). Pane tühikutega tee jutumärkidesse, näiteks \"/minu tee/\"."
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Edastusteel on lubamatud märgid (tühikud, jutumärgid, ;, sulud, # või \\). nginxi muutujad, näiteks $uri, on lubatud."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Mõnes kohandatud asukohas on vigu"
+	},
 	"location.filter": {
 		"defaultMessage": "Filtreeri tee või sihtkoha järgi"
+	},
+	"location.path-label": {
+		"defaultMessage": "Asukoht"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Lülita see asukoht sisse või välja"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, one {# asukoht} other {# asukohta}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, one {# probleem} other {# probleemi}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Kinnituskood"
@@ -657,7 +738,7 @@
 		"defaultMessage": "Nginxi nimelahendaja on keelatud (DISABLE_RESOLVER). Kasuta IP-aadressi või luba nimelahendaja."
 	},
 	"nginx-error.hint.regex_uri_part": {
-		"defaultMessage": "Eemalda edastustee või kasuta prefiksiga asukohta."
+		"defaultMessage": "Kasuta edastusteel püüdegruppi või muutujat (/v1/$1), eemalda edastustee või kasuta prefiksiga asukohta."
 	},
 	"nginx-error.hint.rejected_at_startup": {
 		"defaultMessage": "Salvesta host uuesti, et see tagasi tuua, või jäta NPM_RECONCILE_ON_START sisse, et see toimuks automaatselt."
@@ -682,6 +763,12 @@
 	},
 	"nginx-error.host": {
 		"defaultMessage": "Nginx lükkas selle hosti seadistuse tagasi"
+	},
+	"nginx-error.location": {
+		"defaultMessage": "Viga kohandatud asukohas {path}"
+	},
+	"nginx-error.location-advanced-line": {
+		"defaultMessage": "Viga kohandatud asukoha {path} kohandatud Nginxi seadistuses, rida {line}"
 	},
 	"nginx-error.other-host": {
 		"defaultMessage": "Nginx lükkas tagasi hosti {host} seadistuse"
@@ -887,8 +974,14 @@
 	"save-warning.previous-config-running": {
 		"defaultMessage": "Salvestatud, kuid nginx ei rakendanud muudatust ja kasutab selle hosti eelmist seadistust edasi:"
 	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, one {# kohandatud asukoht lülitati välja, sest nginx lükkas selle tagasi.} other {# kohandatud asukohta lülitati välja, sest nginx lükkas need tagasi.}}"
+	},
 	"save-warning.title": {
 		"defaultMessage": "Salvestatud hoiatustega"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, one {# kohandatud asukoht viitab hostile, mida ei saa praegu lahendada.} other {# kohandatud asukohta viitavad hostidele, mida ei saa praegu lahendada.}}"
 	},
 	"setting": {
 		"defaultMessage": "Seade"

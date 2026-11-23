@@ -461,6 +461,9 @@
 	"host-status.view-error-log": {
 		"defaultMessage": "View error log"
 	},
+	"host-status.warning": {
+		"defaultMessage": "Warning"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Block Common Exploits"
 	},
@@ -500,11 +503,89 @@
 	"loading": {
 		"defaultMessage": "Loading…"
 	},
+	"location-check.empty_host": {
+		"defaultMessage": "The forward host is empty."
+	},
+	"location-check.empty_path": {
+		"defaultMessage": "The location path is empty."
+	},
+	"location-check.invalid_host": {
+		"defaultMessage": "The forward host contains characters that are not allowed (spaces, quotes, ;, braces, $, # or \\). A single nginx variable such as $backend is allowed."
+	},
+	"location-check.named_forward_path": {
+		"defaultMessage": "A forward path without an nginx variable can't be used with a named location; use a variable such as $request_uri or remove the forward path."
+	},
+	"location-check.omitted": {
+		"defaultMessage": "Nginx rejected this location even as a placeholder, so it was removed. The rest of the host keeps working."
+	},
+	"location-check.regex_forward_path": {
+		"defaultMessage": "A forward path without an nginx variable can't be used with a regular-expression location; use a capture such as /v1/$1, remove the forward path or use a prefix location."
+	},
+	"location-check.unbalanced_braces": {
+		"defaultMessage": "The advanced configuration of this location has unbalanced braces."
+	},
+	"location-check.unresolved": {
+		"defaultMessage": "Host \"{host}\" can't be resolved right now. Requests to this location fail with 502 until it resolves."
+	},
+	"location-status.disabled": {
+		"defaultMessage": "Disabled"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Active"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Not active"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx rejected this location, so it was disabled. The rest of the host keeps working."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Unresolved"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "The forward host can't be resolved right now. Requests to this location fail until it can."
+	},
+	"location.advanced": {
+		"defaultMessage": "Advanced"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Has custom Nginx configuration"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Another location already uses {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "This location has errors"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "The host contains characters that are not allowed (quotes, ;, braces, $, # or \\)."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "The host must not contain spaces"
+	},
+	"location.error.location-path-invalid": {
+		"defaultMessage": "The path contains characters that are not allowed (spaces, quotes, ;, braces, # or \\). Put a path with spaces in double quotes, for example \"/my path/\"."
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Invalid characters in forward path (spaces, quotes, ;, braces, # or \\). nginx variables such as $uri are allowed."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Some custom locations have errors"
+	},
 	"location.filter": {
 		"defaultMessage": "Filter by path or destination"
+	},
+	"location.path-label": {
+		"defaultMessage": "Location"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Enable or disable this location"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, =1 {# location} other {# locations}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, =1 {# problem} other {# problems}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Verification Code"
@@ -657,7 +738,7 @@
 		"defaultMessage": "The nginx resolver is disabled (DISABLE_RESOLVER). Use an IP address or enable the resolver."
 	},
 	"nginx-error.hint.regex_uri_part": {
-		"defaultMessage": "Remove the forward path or use a prefix location."
+		"defaultMessage": "Use a capture or variable in the forward path (/v1/$1), remove the forward path or use a prefix location."
 	},
 	"nginx-error.hint.rejected_at_startup": {
 		"defaultMessage": "Save the host again to bring it back, or leave NPM_RECONCILE_ON_START on so this is done automatically."
@@ -682,6 +763,12 @@
 	},
 	"nginx-error.host": {
 		"defaultMessage": "Nginx rejected the configuration of this host"
+	},
+	"nginx-error.location": {
+		"defaultMessage": "Error in the custom location {path}"
+	},
+	"nginx-error.location-advanced-line": {
+		"defaultMessage": "Error in the custom Nginx configuration of the custom location {path}, line {line}"
 	},
 	"nginx-error.other-host": {
 		"defaultMessage": "Nginx rejected the configuration of {host}"
@@ -887,8 +974,14 @@
 	"save-warning.previous-config-running": {
 		"defaultMessage": "Saved, but nginx did not apply the change and still runs this host's previous configuration:"
 	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, =1 {# custom location was disabled because nginx rejected it.} other {# custom locations were disabled because nginx rejected them.}}"
+	},
 	"save-warning.title": {
 		"defaultMessage": "Saved with warnings"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, =1 {# custom location points to a host that can't be resolved right now.} other {# custom locations point to hosts that can't be resolved right now.}}"
 	},
 	"setting": {
 		"defaultMessage": "Setting"

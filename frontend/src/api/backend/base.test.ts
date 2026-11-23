@@ -40,13 +40,15 @@ describe("ApiError parsing", () => {
 					{
 						error: {
 							code: 400,
-							message: 'Advanced configuration: unknown directive "proxy_passs" (line 3).',
+							message: 'Custom location "/api": host "foo" could not be resolved.',
 							details: {
 								kind: "nginx_config",
-								scope: "host",
+								scope: "location",
 								host_type: "proxy_host",
 								host_id: 12,
-								nginx_output: 'nginx: [emerg] unknown directive "proxy_passs"',
+								location_index: 0,
+								location_path: "/api",
+								nginx_output: "nginx: [emerg] host not found",
 							},
 						},
 					},
@@ -56,10 +58,12 @@ describe("ApiError parsing", () => {
 		)) as ApiError;
 		expect(err.details).toEqual({
 			kind: "nginx_config",
-			scope: "host",
+			scope: "location",
 			hostType: "proxy_host",
 			hostId: 12,
-			nginxOutput: 'nginx: [emerg] unknown directive "proxy_passs"',
+			locationIndex: 0,
+			locationPath: "/api",
+			nginxOutput: "nginx: [emerg] host not found",
 		});
 	});
 

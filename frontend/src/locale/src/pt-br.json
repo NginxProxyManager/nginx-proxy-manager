@@ -461,6 +461,9 @@
 	"host-status.view-error-log": {
 		"defaultMessage": "Ver log de erros"
 	},
+	"host-status.warning": {
+		"defaultMessage": "Aviso"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Bloquear Exploits Comuns"
 	},
@@ -500,11 +503,89 @@
 	"loading": {
 		"defaultMessage": "Carregando…"
 	},
+	"location-check.empty_host": {
+		"defaultMessage": "O host de encaminhamento está vazio."
+	},
+	"location-check.empty_path": {
+		"defaultMessage": "O caminho do location está vazio."
+	},
+	"location-check.invalid_host": {
+		"defaultMessage": "O host de encaminhamento contém caracteres não permitidos (espaços, aspas, ;, chaves, $, # ou \\). Uma única variável do nginx, como $backend, é permitida."
+	},
+	"location-check.named_forward_path": {
+		"defaultMessage": "Um caminho de encaminhamento sem variável do nginx não pode ser usado com um location nomeado; use uma variável como $request_uri ou remova o caminho de encaminhamento."
+	},
+	"location-check.omitted": {
+		"defaultMessage": "O Nginx rejeitou este location mesmo como espaço reservado, por isso ele foi removido. O restante do host continua funcionando."
+	},
+	"location-check.regex_forward_path": {
+		"defaultMessage": "Um caminho de encaminhamento sem variável do nginx não pode ser usado com um location de expressão regular; use uma captura como /v1/$1, remova o caminho de encaminhamento ou use um location de prefixo."
+	},
+	"location-check.unbalanced_braces": {
+		"defaultMessage": "A configuração avançada deste location tem chaves desbalanceadas."
+	},
+	"location-check.unresolved": {
+		"defaultMessage": "O host \"{host}\" não pode ser resolvido no momento. As requisições para este location falham com 502 até que ele seja resolvido."
+	},
+	"location-status.disabled": {
+		"defaultMessage": "Desativado"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Ativo"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Inativo"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "O Nginx rejeitou este location, por isso ele foi desativado. O restante do host continua funcionando."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Não resolvido"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "O host de encaminhamento não pode ser resolvido no momento. As requisições para este location falham até que ele possa ser resolvido."
+	},
+	"location.advanced": {
+		"defaultMessage": "Avançado"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Possui configuração personalizada do Nginx"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Outro location já usa {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Este location tem erros"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "O host contém caracteres não permitidos (aspas, ;, chaves, $, # ou \\)."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "O host não pode conter espaços"
+	},
+	"location.error.location-path-invalid": {
+		"defaultMessage": "O caminho contém caracteres não permitidos (espaços, aspas, ;, chaves, # ou \\). Coloque um caminho com espaços entre aspas duplas, por exemplo \"/meu caminho/\"."
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Caracteres inválidos no caminho de encaminhamento (espaços, aspas, ;, chaves, # ou \\). Variáveis do nginx como $uri são permitidas."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Alguns locations personalizados têm erros"
+	},
 	"location.filter": {
 		"defaultMessage": "Filtrar por caminho ou destino"
+	},
+	"location.path-label": {
+		"defaultMessage": "Location"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Ativar ou desativar este location"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, =1 {# location} other {# locations}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, =1 {# problema} other {# problemas}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Código de Verificação"
@@ -682,6 +763,12 @@
 	},
 	"nginx-error.host": {
 		"defaultMessage": "O Nginx rejeitou a configuração deste host"
+	},
+	"nginx-error.location": {
+		"defaultMessage": "Erro no location personalizado {path}"
+	},
+	"nginx-error.location-advanced-line": {
+		"defaultMessage": "Erro na configuração personalizada do Nginx do location personalizado {path}, linha {line}"
 	},
 	"nginx-error.other-host": {
 		"defaultMessage": "O Nginx rejeitou a configuração de {host}"
@@ -887,8 +974,14 @@
 	"save-warning.previous-config-running": {
 		"defaultMessage": "Salvo, mas o nginx não aplicou a alteração e ainda executa a configuração anterior deste host:"
 	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, =1 {# location personalizado foi desativado porque o nginx o rejeitou.} other {# locations personalizados foram desativados porque o nginx os rejeitou.}}"
+	},
 	"save-warning.title": {
 		"defaultMessage": "Salvo com avisos"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, =1 {# location personalizado aponta para um host que não pode ser resolvido no momento.} other {# locations personalizados apontam para hosts que não podem ser resolvidos no momento.}}"
 	},
 	"setting": {
 		"defaultMessage": "Configuração"
