@@ -80,13 +80,26 @@ const configure = () => {
 	if (envPostgresHost && envPostgresUser && envPostgresName) {
 		// we have enough postgres creds to go with postgres
 		logger.info("Using Postgres configuration");
+		let envPostgresPassword = process.env.DB_POSTGRES_PASSWORD;
+		const envPostgresPasswordFile = process.env.DB_POSTGRES_PASSWORD_FILE || null;
+
+		if (envPostgresPasswordFile !== null) {
+			try{
+				envPostgresPassword = fs.readFileSync(envPostgresPasswordFile, "utf8").trim();
+			} catch (err) {
+				if(envPostgresPassword === null) {
+					logger.error(`Could not find Postgres password from the file: ${envPostgresPasswordFile}. ${err}`);
+				}
+			}
+		}
+
 		instance = {
 			database: {
 				engine: postgresEngine,
 				host: envPostgresHost,
 				port: process.env.DB_POSTGRES_PORT || 5432,
 				user: envPostgresUser,
-				password: process.env.DB_POSTGRES_PASSWORD,
+				password: envPostgresPassword,
 				name: envPostgresName,
 			},
 			keys: getKeys(),
