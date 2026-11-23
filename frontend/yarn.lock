@@ -308,59 +308,59 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.12.tgz#afefe785949f16ac4cdd1e695935a321572dd56a"
   integrity sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==
 
-"@formatjs/cli-native-darwin-arm64@1.1.33":
-  version "1.1.33"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-darwin-arm64/-/cli-native-darwin-arm64-1.1.33.tgz#50d6a4fd4ff5b842e16aed2c258940e3b5301692"
-  integrity sha512-bsY7KHNytQQMwCjQ7bJeUBPlRloYACKzd+GCrYPaWrqNiOyhDa664p3NcoyY/HZo3Bg5l/5oPo8+Wjp7Kkud+Q==
+"@formatjs/cli-native-darwin-arm64@1.1.37":
+  version "1.1.37"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-darwin-arm64/-/cli-native-darwin-arm64-1.1.37.tgz#8c6314f509975545f6a58c331d021e63c3d164ee"
+  integrity sha512-1oA2iVZbteyABmG16iZ0Yv2AVnI7pOYIYYduS1TXwW5UZ7L0yOiLI5qH8Bxaw29j/t2+t4gZb9dSq0B1AIEbDQ==
 
-"@formatjs/cli-native-darwin-x64@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-darwin-x64/-/cli-native-darwin-x64-1.1.1.tgz#53157d342a6e92f3f6eccf40f8f295528d37c35f"
-  integrity sha512-RA4/HfHBGjLXLW18HCeVeS5f0OCfM0Anr/6qQYnXDJP78Fl6QeXb/0HkkhleS7Vc5Zpa5dhGMFWqDeQDPWt9gw==
+"@formatjs/cli-native-darwin-x64@1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-darwin-x64/-/cli-native-darwin-x64-1.1.5.tgz#9daab4b8c989676358825d1e5d8ebacd7de0cd52"
+  integrity sha512-DcKBJRKd4rCFagZ3FC8cexl2Sws5AUWu7lzFCTsrxZHWPsdzJKXPAYNNAQnix0QO5goOYYYt8JoF+DApCzva3A==
 
-"@formatjs/cli-native-linux-arm64-musl@1.0.31":
-  version "1.0.31"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-arm64-musl/-/cli-native-linux-arm64-musl-1.0.31.tgz#6c520ab5f304f62df80c151e990f112d6f8cdbd5"
-  integrity sha512-dckGwmRYv9rdwu4NDYDlW9ZcyWlMqMYRVSwdAKlU+QAE9iZSnQgWseZ7HXNFbMjvloWlID5OsoP+Vd3S+58tJg==
+"@formatjs/cli-native-linux-arm64-musl@1.0.35":
+  version "1.0.35"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-arm64-musl/-/cli-native-linux-arm64-musl-1.0.35.tgz#dc6130d37df1d598f2d8e65add883d0a28ab4c93"
+  integrity sha512-JQF5UhLryDvdXu27JHH2RSJDDGlT+uy61eyoCZ3y4hu/MoJn4wAE6RMdWAti6NVCCjybpIJRWGxAtFOgqjBUBA==
 
-"@formatjs/cli-native-linux-arm64@1.2.33":
-  version "1.2.33"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-arm64/-/cli-native-linux-arm64-1.2.33.tgz#e9403a2e274e3a18a9dd15f74080a52483eb8d93"
-  integrity sha512-LWt4HAuipwTMPsMaMEC6qJ6hybTCsImWLr7QUfywoRU0fHsOlqoAtHyP5uLlHsv3ormEBGOLpKn/Ug2JRhrvYw==
+"@formatjs/cli-native-linux-arm64@1.2.37":
+  version "1.2.37"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-arm64/-/cli-native-linux-arm64-1.2.37.tgz#82ccd1459f7a6fc169f4dda73661c2059e6658f5"
+  integrity sha512-97x5AWiOn1JpDHlXUPZo6ieEe2z6JD5yzxGr01NzSf2M9GFqYvLtKUTzqYhsvDpw2LiWdAii8JJhZlgZubTDog==
 
-"@formatjs/cli-native-linux-x64-musl@1.0.31":
-  version "1.0.31"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-x64-musl/-/cli-native-linux-x64-musl-1.0.31.tgz#5816ef13fbcedc5e0ae15de5fa6f5ab0073f2c5b"
-  integrity sha512-Tf8/G37cU3nDPLjavm8c6zX0nfUBLSzX2N8Xs5dD7qfYu1/z/mB5E1z5niO4E5PDPqna7f0OumksxuCJzk7EFA==
+"@formatjs/cli-native-linux-x64-musl@1.0.35":
+  version "1.0.35"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-x64-musl/-/cli-native-linux-x64-musl-1.0.35.tgz#e8c98d579cfb4c783287739ffef0061d8fa86194"
+  integrity sha512-IXA/CTuAyZ3LJ7CJ6pDviqcA9IIyhefO0XAkjYWJvxoxc7Q5SBqfeLhwyCNATIkGzQHQFP6pIqblJbKyA10wHQ==
 
-"@formatjs/cli-native-linux-x64@1.1.33":
-  version "1.1.33"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-x64/-/cli-native-linux-x64-1.1.33.tgz#82154949db14141217115b28f67ddcc118c8a0e4"
-  integrity sha512-SrtBFI+V5UejF05ZKUi19uWxBQOTPGI3erKMnbJB41aawfl9OryjD8BE/4C3F/g8oigp72sB7/4AAvl5E4uGwA==
+"@formatjs/cli-native-linux-x64@1.1.37":
+  version "1.1.37"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-linux-x64/-/cli-native-linux-x64-1.1.37.tgz#e7defcab37470977821d902db3e461b84ce9a663"
+  integrity sha512-y7MjujUu4nU+H865VaACvHuFOumJyrOfERZaxEOBXoCdhBls9GyGamcCMpbt647SyeBiHmQ8Isd02+vyDjCPfQ==
 
-"@formatjs/cli-native-win32-arm64@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-win32-arm64/-/cli-native-win32-arm64-1.1.1.tgz#de41478bed44ffcc74b62914fb400277807164ca"
-  integrity sha512-e+E6qBML8sMedsSH+tPKR9nZH9Rac865NFfpsJlRsZfPSPamBMOAt3djqa2/cgojNjIsfxt73TSURLOsS3bTGA==
+"@formatjs/cli-native-win32-arm64@1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-win32-arm64/-/cli-native-win32-arm64-1.1.5.tgz#b49e817a098f021bf0ba22882117e2ce57f5f3b6"
+  integrity sha512-ePXuTSANOp11SVP1o+Wy7kn0xJw04pg2zSKSgjVYdp9dRk8kSo3sQZP5EFPKGw8p5qwbuynZB8QaNcuaXlBzpA==
 
-"@formatjs/cli-native-win32-x64@1.1.34":
-  version "1.1.34"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-win32-x64/-/cli-native-win32-x64-1.1.34.tgz#55f72c5954c047b4a92c93f0c0742ba634fdbae4"
-  integrity sha512-DQ0o7chfXTcmucPBJpEHBlVpXcrP11Vz1xOdJeL75x9ErZNeJSA0dX2n1aVvCSzqAuEvh0aJeROpMrkm2tnJQg==
+"@formatjs/cli-native-win32-x64@1.1.38":
+  version "1.1.38"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli-native-win32-x64/-/cli-native-win32-x64-1.1.38.tgz#205b7013234bad05e6bb38dd7daeaaf44cad437a"
+  integrity sha512-KZ4V5WlacghTagd3oCfWXvqc6/wk9pyXS0ZmljmWKigQw40EtKwBRL49Wq7+DYIPFHhR2z4g1YLZElV9Bz5KPA==
 
-"@formatjs/cli@^6.18.1":
-  version "6.18.1"
-  resolved "https://registry.yarnpkg.com/@formatjs/cli/-/cli-6.18.1.tgz#e5077c99ee6212370f9a655ed838af462312e0ac"
-  integrity sha512-HIN3BKc3lCUFTjf+e732bqsUYM7ECBnACGnomKPaquAL6nFiVXD0/MJ/xh0a8odigQNxWrzKRsnP8gcxmIx4uA==
+"@formatjs/cli@^6.20.0":
+  version "6.20.0"
+  resolved "https://registry.yarnpkg.com/@formatjs/cli/-/cli-6.20.0.tgz#e968891af62eefacba148a93e0d29a405a6b3072"
+  integrity sha512-5E4u2u/ygmKJAQ6nzQhrplX7dXSqjh8hiy74Gf6mfYZsleELhHQOEF5saslEjbtBGadB2YkROYzy+6dX038rZA==
   optionalDependencies:
-    "@formatjs/cli-native-darwin-arm64" "1.1.33"
-    "@formatjs/cli-native-darwin-x64" "1.1.1"
-    "@formatjs/cli-native-linux-arm64" "1.2.33"
-    "@formatjs/cli-native-linux-arm64-musl" "1.0.31"
-    "@formatjs/cli-native-linux-x64" "1.1.33"
-    "@formatjs/cli-native-linux-x64-musl" "1.0.31"
-    "@formatjs/cli-native-win32-arm64" "1.1.1"
-    "@formatjs/cli-native-win32-x64" "1.1.34"
+    "@formatjs/cli-native-darwin-arm64" "1.1.37"
+    "@formatjs/cli-native-darwin-x64" "1.1.5"
+    "@formatjs/cli-native-linux-arm64" "1.2.37"
+    "@formatjs/cli-native-linux-arm64-musl" "1.0.35"
+    "@formatjs/cli-native-linux-x64" "1.1.37"
+    "@formatjs/cli-native-linux-x64-musl" "1.0.35"
+    "@formatjs/cli-native-win32-arm64" "1.1.5"
+    "@formatjs/cli-native-win32-x64" "1.1.38"
 
 "@formatjs/fast-memoize@3.1.7":
   version "3.1.7"
@@ -826,17 +826,22 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.107.1.tgz#cd1f9952b4d623e66349931df631b287d9c4a3fe"
   integrity sha512-PSyAik11oQBEVOiVy5hjZWHmoUqOXqK1WYy4v55mcxozEfKaQgpUMsgnXhWjuESzSht8JfzqMS1m6M/9CpNgvg==
 
-"@tanstack/query-devtools@5.107.1":
-  version "5.107.1"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-devtools/-/query-devtools-5.107.1.tgz#d89f6a73dd7194a07805d5c8e6d9e0f84098c825"
-  integrity sha512-cZvgIPNvsh57mM3yTTwuL2GUMmMp5XR+3k5r2UJDyStmPYCqSwZf8z7OulgA4X8vISziAG5PoykbQ1q+2zemdA==
+"@tanstack/query-core@5.108.1":
+  version "5.108.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.108.1.tgz#d9a90082fb6436435b74b3a18896be96a34fc3b2"
+  integrity sha512-GBX6Xsc9E+9eVLLxuM7orQNbssQjpruOCbocBYwT78MjxOWT5I+CWdvEo0N+UM6+oCZEKxuSud1oFLvE3OEmIg==
+
+"@tanstack/query-devtools@5.108.1":
+  version "5.108.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-devtools/-/query-devtools-5.108.1.tgz#ee92668e79330577245d29ad05d8c0889db3ac5a"
+  integrity sha512-GRRmQUF/5VylGoy/N0RD9MZT2YpC216vByPc/pZZXo2UlOdYGcDJ/pnLwpBrTgfvaKjJ6y4vXOZGxtc3JwfIaA==
   dependencies:
     "@kobalte/core" "^0.13.14"
     "@solid-primitives/keyed" "^1.5.3"
     "@solid-primitives/resize-observer" "^2.2.0"
     "@solid-primitives/storage" "^1.3.11"
     "@tanstack/match-sorter-utils" "^9.1.2"
-    "@tanstack/query-core" "5.107.1"
+    "@tanstack/query-core" "5.108.1"
     "@tanstack/solid-virtual" "^3.13.52"
     clsx "^2.1.1"
     goober "^2.1.19"
@@ -844,12 +849,12 @@
     solid-transition-group "^0.2.3"
     superjson "^2.2.6"
 
-"@tanstack/react-query-devtools@^5.107.1":
-  version "5.107.1"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query-devtools/-/react-query-devtools-5.107.1.tgz#3c57174c77929fb0ec975ef1307b11530690cec4"
-  integrity sha512-A3q9X3iOxtlz1jU/ou7t9CFvNHT84rTMofS1YEkFcBalvwotZ/RJKPDsX1NsQVl10J8XwN0OYMSfdjgIElt0sg==
+"@tanstack/react-query-devtools@^5.108.1":
+  version "5.108.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query-devtools/-/react-query-devtools-5.108.1.tgz#54779ae05c8923c9c1875461b73d576bf2a73b7d"
+  integrity sha512-++yq8lX58YjuI+3kOPfxYOEHJJ39hs8C8f8elIOiMQ3EDzocPh5NFF7T8CZYW8fxQKvQEh0T1OdCvCR+YIvGng==
   dependencies:
-    "@tanstack/query-devtools" "5.107.1"
+    "@tanstack/query-devtools" "5.108.1"
 
 "@tanstack/react-query@^5.107.1":
   version "5.107.1"
@@ -1207,10 +1212,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.4.0.tgz#5e2e1374c0a30b5a42e8b083523a225c6945f88a"
   integrity sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==
 
-"@vitejs/plugin-react@^6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@vitejs/plugin-react/-/plugin-react-6.2.1.tgz#b0e5c19cff9cce00dc1d63b963bae273661814ec"
-  integrity sha512-9KyWCij3r0+qLG3Q62vBmv0VyevmYibAtxaCIVK9o0k6CXgaajZRIe8tpfchQcdZArJ5b/7OrIz4W3b2uxVRDA==
+"@vitejs/plugin-react@^6.3.0":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-react/-/plugin-react-6.3.0.tgz#28b3ec6e786601a362fbfdf8b12725931b619669"
+  integrity sha512-H9E955aVvD2F4zNHCw4eIZbIfF6xKldlh7MNu+hSU7xwQzh65lI/N+CJWqmfhi0PEjDXIt/H7T7J/4wU63KJiw==
   dependencies:
     "@rolldown/pluginutils" "^1.0.1"
 
