@@ -45,6 +45,7 @@ export * from "./helpers";
 export * from "./loginAsUser";
 export * from "./models";
 export * from "./refreshToken";
+export * from "./regenerateNginxConfigs";
 export * from "./renewCertificate";
 export * from "./responseTypes";
 export * from "./setPermissions";

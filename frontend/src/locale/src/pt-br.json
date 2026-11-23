@@ -569,6 +569,9 @@
 	"logs.truncated-warning": {
 		"defaultMessage": "Apenas a parte mais recente deste arquivo é exibida."
 	},
+	"nginx-config": {
+		"defaultMessage": "Configuração do Nginx"
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Configuração Personalizada do Nginx"
 	},
@@ -770,6 +773,9 @@
 	"object.event.enabled": {
 		"defaultMessage": "Ativação de {object}"
 	},
+	"object.event.regenerated": {
+		"defaultMessage": "{object} regenerado"
+	},
 	"object.event.renewed": {
 		"defaultMessage": "Renovação de {object}"
 	},
@@ -919,6 +925,63 @@
 	},
 	"settings.default-site.redirect": {
 		"defaultMessage": "Redirecionar"
+	},
+	"settings.nginx": {
+		"defaultMessage": "Configuração do Nginx"
+	},
+	"settings.nginx.regenerate.audit": {
+		"defaultMessage": "{checked, plural, =1 {# host} other {# hosts}}, {offline} offline"
+	},
+	"settings.nginx.regenerate.audit-failed": {
+		"defaultMessage": "Falhou"
+	},
+	"settings.nginx.regenerate.audit-partial": {
+		"defaultMessage": "Falhou após {checked, plural, =1 {# host} other {# hosts}}, {offline} offline"
+	},
+	"settings.nginx.regenerate.busy": {
+		"defaultMessage": "Todas as configurações de host já estão sendo regeneradas, aguarde a conclusão."
+	},
+	"settings.nginx.regenerate.button": {
+		"defaultMessage": "Regenerar todas as configurações de host"
+	},
+	"settings.nginx.regenerate.confirm-body": {
+		"defaultMessage": "Todos os arquivos de configuração de host são reescritos a partir do banco de dados e o nginx é recarregado uma vez. Os hosts que funcionam continuam online, sem tempo de inatividade."
+	},
+	"settings.nginx.regenerate.confirm-button": {
+		"defaultMessage": "Regenerar"
+	},
+	"settings.nginx.regenerate.confirm-offline": {
+		"defaultMessage": "Um host que o nginx rejeita fica offline e é listado depois, assim como ao salvar o host. Os outros hosts não são afetados."
+	},
+	"settings.nginx.regenerate.confirm-title": {
+		"defaultMessage": "Regenerar todas as configurações de host?"
+	},
+	"settings.nginx.regenerate.description": {
+		"defaultMessage": "Reescreve a partir do banco de dados o arquivo de configuração do nginx de cada proxy host, host de redirecionamento, host 404 e stream ativado, e depois recarrega o nginx uma vez. Use após uma atualização, após restaurar um backup ou quando arquivos de configuração no disco foram alterados ou perdidos."
+	},
+	"settings.nginx.regenerate.failed": {
+		"defaultMessage": "{count, plural, =1 {# host não pôde ser regenerado e mantém a configuração anterior:} other {# hosts não puderam ser regenerados e mantêm a configuração anterior:}}"
+	},
+	"settings.nginx.regenerate.offline": {
+		"defaultMessage": "{count, plural, =1 {# host está offline agora, o nginx o rejeitou:} other {# hosts estão offline agora, o nginx os rejeitou:}}"
+	},
+	"settings.nginx.regenerate.partial": {
+		"defaultMessage": "A execução falhou, mas já tinha alterado hosts. Isto é o que ela fez até então:"
+	},
+	"settings.nginx.regenerate.result": {
+		"defaultMessage": "{checked, plural, =1 {# host verificado} other {# hosts verificados}} em {seconds} s: {regenerated} online, {offline} offline, {failed} não regenerados."
+	},
+	"settings.nginx.regenerate.running": {
+		"defaultMessage": "Regenerando. Cada host é testado com o nginx, isso pode demorar um pouco."
+	},
+	"settings.nginx.regenerate.skipped": {
+		"defaultMessage": "{count, plural, =1 {# host foi ignorado, uma solicitação de certificado para ele está em andamento e o configura novamente quando terminar:} other {# hosts foram ignorados, uma solicitação de certificado para eles está em andamento e os configura novamente quando terminar:}}"
+	},
+	"settings.nginx.regenerate.title": {
+		"defaultMessage": "Regenerar todas as configurações de host"
+	},
+	"settings.nginx.regenerate.warnings": {
+		"defaultMessage": "{count, plural, =1 {# host está online, mas alguns dos locations personalizados dele não funcionam:} other {# hosts estão online, mas alguns dos locations personalizados deles não funcionam:}}"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Para começar, crie sua conta de administrador."

@@ -57,6 +57,7 @@ interface ApiErrorOptions {
 	code?: number;
 	messageI18n?: string;
 	details?: ApiErrorDetails;
+	regenerateSummary?: Record<string, any>;
 }
 
 /**
@@ -76,14 +77,20 @@ export class ApiError extends Error {
 	readonly messageI18n?: string;
 	/** `error.details` from the payload (camelized), if any */
 	readonly details?: ApiErrorDetails;
+	/**
+	 * `error.regenerate_summary` from the payload (camelized), if any: what a
+	 * regeneration of all host configs did before it failed
+	 */
+	readonly regenerateSummary?: Record<string, any>;
 
-	constructor(message: string, { status, code, messageI18n, details }: ApiErrorOptions) {
+	constructor(message: string, { status, code, messageI18n, details, regenerateSummary }: ApiErrorOptions) {
 		super(message);
 		this.name = "ApiError";
 		this.status = status;
 		this.code = typeof code === "number" ? code : status;
 		this.messageI18n = messageI18n;
 		this.details = details;
+		this.regenerateSummary = regenerateSummary;
 	}
 }
 
@@ -114,11 +121,16 @@ export function buildApiError(response: Pick<Response, "status" | "statusText">,
 		hasError && error.details && typeof error.details === "object"
 			? (camelizeKeys(error.details) as ApiErrorDetails)
 			: undefined;
+	const regenerateSummary =
+		hasError && error.regenerate_summary && typeof error.regenerate_summary === "object"
+			? (camelizeKeys(error.regenerate_summary) as Record<string, any>)
+			: undefined;
 	return new ApiError(message, {
 		status: response.status,
 		code: hasError && typeof error.code === "number" ? error.code : undefined,
 		messageI18n,
 		details,
+		regenerateSummary,
 	});
 }
 

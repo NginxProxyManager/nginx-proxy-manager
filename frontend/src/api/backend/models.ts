@@ -288,3 +288,41 @@ export interface DNSProvider {
 	name: string;
 	credentials: string;
 }
+
+export type NginxHostType = "proxy_host" | "redirection_host" | "dead_host" | "stream";
+
+export interface NginxRegenerateHost {
+	hostType: NginxHostType;
+	id: number;
+	// first domain name, or the incoming port of a stream
+	name: string;
+	// offline and failed hosts, in English
+	error?: string;
+	// offline: the host's meta.nginxDetails; failed: the error's details, if any. The UI words the error from them.
+	details?: NginxConfigErrorDetails | null;
+	// warnings: the broken custom locations, one per line; skipped: why the host was left alone (English)
+	message?: string;
+	// warnings: the broken custom locations, as the UI words them
+	locations?: NginxRegenerateLocation[];
+}
+
+export interface NginxRegenerateLocation {
+	index?: number;
+	path: string;
+	status: "quarantined" | "unresolved";
+	// location-check.<code>, with params (host, detail: nginx's error, not translated)
+	code?: string | null;
+	params?: { host?: string; detail?: string } | null;
+	message?: string | null;
+}
+
+export interface NginxRegenerateResult {
+	checked: number;
+	regenerated: number;
+	offline: NginxRegenerateHost[];
+	failed: NginxRegenerateHost[];
+	warnings: NginxRegenerateHost[];
+	// hosts a running certificate request has taken out of nginx, it puts them back itself
+	skipped?: NginxRegenerateHost[];
+	durationMs: number;
+}
