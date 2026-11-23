@@ -17,6 +17,9 @@
   "locale-pt-PT": {
 	"defaultMessage": "Português (Europeu)"
   },
+  "locale-pt-BR": {
+    "defaultMessage": "Português"
+  },
   "locale-fr-FR": {
     "defaultMessage": "Français"
   },
