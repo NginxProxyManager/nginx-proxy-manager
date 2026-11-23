@@ -1,0 +1,78 @@
+{
+	"type": "object",
+	"description": "Result of regenerating all nginx host configs",
+	"additionalProperties": false,
+	"required": ["checked", "regenerated", "offline", "failed", "warnings", "skipped", "duration_ms"],
+	"properties": {
+		"checked": {
+			"type": "integer",
+			"minimum": 0,
+			"description": "Enabled hosts that were regenerated or tried",
+			"example": 12
+		},
+		"regenerated": {
+			"type": "integer",
+			"minimum": 0,
+			"description": "Hosts that are online with their new config",
+			"example": 11
+		},
+		"offline": {
+			"type": "array",
+			"description": "Hosts nginx rejected, they are offline now. Also lists hosts the final nginx test took offline that were not checked (eg. of a host type that was not selected)",
+			"example": [
+				{
+					"host_type": "proxy_host",
+					"id": 4,
+					"name": "broken.example.com",
+					"error": "unknown directive \"proxy_passs\""
+				}
+			],
+			"items": {
+				"$ref": "./nginx-regenerate-host.json"
+			}
+		},
+		"failed": {
+			"type": "array",
+			"description": "Hosts whose config could not be generated (eg. a missing certificate file), they keep their previous config",
+			"example": [],
+			"items": {
+				"$ref": "./nginx-regenerate-host.json"
+			}
+		},
+		"warnings": {
+			"type": "array",
+			"description": "Online hosts with custom locations that are disabled or don't resolve right now",
+			"example": [
+				{
+					"host_type": "proxy_host",
+					"id": 7,
+					"name": "app.example.com",
+					"message": "/api: Upstream api does not resolve right now"
+				}
+			],
+			"items": {
+				"$ref": "./nginx-regenerate-host.json"
+			}
+		},
+		"skipped": {
+			"type": "array",
+			"description": "Hosts that were left alone because a certificate request for them is running (it removes their config until it is done and configures them again then). Not counted in checked",
+			"example": [
+				{
+					"host_type": "proxy_host",
+					"id": 9,
+					"name": "new-cert.example.com",
+					"message": "A certificate request for this host is running, it is configured again once that is done"
+				}
+			],
+			"items": {
+				"$ref": "./nginx-regenerate-host.json"
+			}
+		},
+		"duration_ms": {
+			"type": "integer",
+			"minimum": 0,
+			"example": 2350
+		}
+	}
+}

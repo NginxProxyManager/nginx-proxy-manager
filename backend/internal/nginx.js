@@ -25,6 +25,7 @@ import {
 	sentence,
 } from "../lib/nginx-errors.js";
 import { createLock } from "../lib/nginx-lock.js";
+import { normaliseHostTypes, summariseFinal } from "../lib/nginx-regenerate.js";
 import { createReloadWaiter } from "../lib/nginx-reload.js";
 import { assertAccessListRenderable, assertHostRenderable, isTokenSafe, unsafeValueError } from "../lib/nginx-values.js";
 import utils from "../lib/utils.js";
@@ -64,7 +65,10 @@ const HOST_LABELS = {
 const MAX_HEAL_ITERATIONS = 10;
 // Subject of the conflict error of a host whose regenerated config conflicts, see buildConflictError()
 const REGENERATED_SUBJECT = "The regenerated configuration";
-const TOO_MANY_BROKEN_HOSTS = `Too many broken host configs to repair in one go (more than ${MAX_HEAL_ITERATIONS}). Regenerate all host configs (restart NPM or run backend/scripts/regenerate-config), then try again.`;
+const TOO_MANY_BROKEN_HOSTS = `Too many broken host configs to repair in one go (more than ${MAX_HEAL_ITERATIONS}). Regenerate all host configs (Settings > Nginx Configuration, or restart NPM), then try again.`;
+// While regenerateAll() runs (it holds the lock): the hosts healOtherHost() repaired or took offline,
+// {host_type, id}. Their state after the final reload is reported, see summariseFinal().
+let healRecorder = null;
 // When the startup reconcile tries hosts again whose upstream names did not resolve yet
 const RECONCILE_RETRY_DELAYS = [30 * 1000, 2 * 60 * 1000, 5 * 60 * 1000];
 
@@ -1594,6 +1598,11 @@ const internalNginx = {
 				);
 			},
 		});
+		if (healRecorder && row) {
+			// file and its text before the repair: regenerateAll() hands a regenerated file to the isolation of a
+			// rejected reload, also when its host type wasn't selected
+			healRecorder.push({ host_type: other.host_type, id: row.id, file: filename, previous: fileText });
+		}
 		return true;
 	},
 
@@ -2525,6 +2534,229 @@ const internalNginx = {
 	},
 
 	/**
+	 * Configures every non-deleted, enabled host of the given types without reloading nginx. A host that nginx
+	 * rejects is taken offline, any other failure is logged and returned, nothing throws for one host. Hosts
+	 * that a running certificate request has removed (see suspendHosts()) are left alone and come back as
+	 * {suspended: true}: recreating their config would send the challenge requests to their upstream.
+	 * Only call this while holding the lock.
+	 *
+	 * @param   {Object}    opts
+	 * @param   {Array}     [opts.hostTypes]     file friendly host types, default all
+	 * @param   {Object}    [opts.only]          {host_type: [ids]}, only these hosts
+	 * @param   {Function}  [opts.needsWork]     (hostType, row) => boolean, false skips the host
+	 * @param   {String}    opts.logPrefix
+	 * @returns {Promise<{results: Array<{hostType, row, meta?, error?, skipped?, suspended?}>, loadErrors: Array}>}
+	 */
+	configureEnabledHosts: async (opts) => {
+		const results = [];
+		const loadErrors = [];
+		for (const hostType of normaliseHostTypes(opts.hostTypes)) {
+			const model = HOST_MODELS[hostType];
+			const only = opts.only ? opts.only[hostType] : null;
+			if (opts.only && !only?.length) {
+				continue;
+			}
+			let rows = [];
+			try {
+				const query = model
+					.query()
+					.where("is_deleted", 0)
+					.andWhere("enabled", 1)
+					.allowGraph(model.defaultAllowGraph)
+					.withGraphFetched(`[${model.defaultExpand.join(", ")}]`)
+					.orderBy("id");
+				if (only) {
+					query.whereIn("id", only);
+				}
+				rows = await query;
+			} catch (err) {
+				logger.error(`${opts.logPrefix}: could not load ${hostType} rows: ${err.message}`);
+				loadErrors.push({ hostType, error: err });
+				continue;
+			}
+
+			for (const row of rows) {
+				if (internalNginx.isSuspended(hostType, row.id)) {
+					results.push({ hostType, row, suspended: true });
+					continue;
+				}
+				if (opts.needsWork && !opts.needsWork(hostType, row)) {
+					results.push({ hostType, row, skipped: true });
+					continue;
+				}
+				try {
+					const meta = await internalNginx.configureHost(model, hostType, row, {
+						reload: false,
+						depth: 0,
+						offlineOnError: true,
+					});
+					results.push({ hostType, row, meta });
+				} catch (err) {
+					logger.error(`${opts.logPrefix}: ${hostLabel(hostType, row)}: ${err.message}`);
+					results.push({ hostType, row, error: err });
+				}
+			}
+		}
+		return { results, loadErrors };
+	},
+
+	/**
+	 * Rewrites the config files of every enabled host of the given types from the database, then reloads
+	 * nginx once. Hosts that nginx rejects are taken offline, as on save. Used by POST /api/nginx/regenerate
+	 * and backend/scripts/regenerate-config.
+	 *
+	 * nginx can reject the reload although `nginx -t` passed (eg. a stream's port is used by another process):
+	 * the hosts whose regenerated configs it rejects (they listen on an address nginx could not bind) are then
+	 * taken offline, see isolateRejectedReload(). The others stay in service. When nginx rejects the reload
+	 * for another reason, the regenerated configs that were not on disk before (nginx doesn't run them) are
+	 * set aside and their hosts are offline with that reason, tried again with the startup reconcile's backoff;
+	 * the configs nginx serves stay on disk.
+	 *
+	 * When the final test/reload fails (also when nginx still rejects the reload for another reason) or
+	 * loading the rows of a host type fails, the error is thrown with the summary of what was done until then
+	 * as `err.regenerateSummary` (hosts may have changed already).
+	 *
+	 * @param   {Object}  [opts]
+	 * @param   {Array}   [opts.hostTypes]     proxy_host, redirection_host, dead_host, stream; default all
+	 * @param   {Boolean} [opts.restoreAside]  put back config files an interrupted test left aside, default
+	 *                                         true; false for the CLI, it doesn't share the backend's lock
+	 * @returns {Promise<Object>} {checked, regenerated, offline, failed, warnings, skipped, duration_ms}, see
+	 *                            lib/nginx-regenerate.js; hosts a running certificate request removed are skipped
+	 */
+	regenerateAll: (opts = {}) =>
+		withLock(async () => {
+			const started = Date.now();
+			const healed = [];
+			healRecorder = healed;
+			try {
+				if (opts.restoreAside !== false) {
+					internalNginx.restoreStaleAside();
+				}
+				// the configs that were not on disk before: nginx doesn't run them in any version
+				const absent = new Set();
+				// the others' text before they were rewritten: the version nginx may run
+				const previous = new Map();
+				const { results, loadErrors } = await internalNginx.configureEnabledHosts({
+					hostTypes: opts.hostTypes,
+					logPrefix: "Regenerate",
+					needsWork: (hostType, row) => {
+						const filename = internalNginx.getConfigName(hostType, row.id);
+						const text = readFileOrNull(filename);
+						if (text === null) {
+							absent.add(filename);
+						} else {
+							previous.set(filename, text);
+						}
+						return true;
+					},
+				});
+				let failure = null;
+				try {
+					// Also when no host was configured: restored aside files have to be loaded
+					const reloaded = await internalNginx.reloadNginx();
+					// nginx -t passed but the master rejected the files (eg. a listen port another process uses, -t
+					// doesn't bind ports): the hosts whose configs it rejects are taken offline, as on save. nginx
+					// serves (older versions of) the hosts whose config was on disk: they are never taken out all at
+					// once. The others (eg. a host that was offline with its config aside) may be: when nginx
+					// rejects the reload without them as well, they are offline with that reason and tried again
+					// later, as in the startup reconcile, instead of showing online for a config nginx never loaded
+					const written = results
+						.filter((r) => !r.error && !r.skipped && !r.suspended && r.meta?.nginx_online !== false)
+						.map((r) => internalNginx.getConfigName(r.hostType, r.row.id));
+					// Hosts that configuring or the final test regenerated on the way (healOtherHost()), eg. a broken
+					// stream during a proxy_host-only run: nginx may reject their new config too, so they are part of
+					// the isolation, with the text they had before (a file moved to .err is not)
+					for (const entry of healed) {
+						if (!entry.file || written.includes(entry.file) || !fs.existsSync(entry.file)) {
+							continue;
+						}
+						written.push(entry.file);
+						if (!previous.has(entry.file) && !absent.has(entry.file)) {
+							previous.set(entry.file, entry.previous);
+						}
+					}
+					const isolated = reloaded?.rejected
+						? await internalNginx.isolateRejectedReload(written, {
+								outcome: reloaded,
+								unserved: written.filter((filename) => absent.has(filename)),
+								previous,
+								offlineOnGlobal: true,
+							})
+						: null;
+					for (const { host_type, host_id } of isolated?.offline || []) {
+						healed.push({ host_type, id: host_id });
+					}
+					if (isolated?.global && isolated.offline.length) {
+						internalNginx.scheduleRetry(retryList(isolated.offline));
+					}
+					// nginx still rejects the reload for a reason it doesn't tie to one of the regenerated configs: the
+					// ones it serves are on disk and nginx still runs the config from before the regeneration
+					const outcome = isolated && !isolated.applied ? isolated.global || reloaded : null;
+					if (outcome) {
+						failure = internalNginx.buildConfigError(
+							"global",
+							"default",
+							{ id: 0 },
+							{
+								message: outcome.emerg || outcome.reason || null,
+								file: null,
+								line: null,
+								output: outcome.reason || null,
+							},
+							"",
+						);
+					}
+				} catch (err) {
+					failure = err;
+				}
+				if (!failure && loadErrors.length) {
+					failure = new errs.InternalError(
+						`Could not load ${loadErrors.map((e) => e.hostType).join(", ")} rows: ${loadErrors[0].error.message}`,
+						loadErrors[0].error,
+					);
+				}
+
+				// The final test (and configuring later hosts) may have repaired or taken hosts offline
+				const summary = summariseFinal(results, await internalNginx.loadHostStates(healed));
+				summary.duration_ms = Date.now() - started;
+				logger.info(
+					`Regenerate: checked ${summary.checked} hosts, regenerated ${summary.regenerated}, offline ${summary.offline.length}, failed ${summary.failed.length}, warnings ${summary.warnings.length}${summary.skipped.length ? `, ${summary.skipped.length} skipped for a certificate request` : ""} (${summary.duration_ms} ms)${failure ? `, failed: ${failure.message}` : ""}`,
+				);
+				if (failure) {
+					failure.regenerateSummary = summary;
+					throw failure;
+				}
+				return summary;
+			} finally {
+				healRecorder = null;
+			}
+		}),
+
+	/**
+	 * @param   {Array<{host_type, id}>} hosts
+	 * @returns {Promise<Array<{hostType, row}>>} the current non-deleted rows (with meta) of these hosts, a
+	 *          host type whose rows can't be loaded is left out
+	 */
+	loadHostStates: async (hosts) => {
+		const out = [];
+		for (const hostType of normaliseHostTypes(hosts.map((h) => h.host_type))) {
+			const ids = [...new Set(hosts.filter((h) => h.host_type === hostType).map((h) => h.id))];
+			if (!ids.length) {
+				continue;
+			}
+			try {
+				const rows = await HOST_MODELS[hostType].query().where("is_deleted", 0).whereIn("id", ids);
+				for (const row of rows) {
+					out.push({ hostType, row });
+				}
+			} catch (err) {
+				logger.warn(`Could not load the state of ${hostType} rows after regenerating: ${err.message}`);
+			}
+		}
+		return out;
+	},
+
+	/**
 	 * Called once after the backend started: regenerates hosts whose config is missing or was moved aside
 	 * (by the prepare/55-nginx-validate.sh startup check or a failed test). Never throws. Hosts that a
 	 * running certificate request has removed (see suspendHosts()) are skipped, the request puts them back.
@@ -2555,69 +2787,54 @@ const internalNginx = {
 			const unserved = [];
 			// the others' text before they were regenerated: the version nginx may run
 			const previous = new Map();
+			const absent = new Set();
 			// config files put back from an interrupted test: nginx may not run them (eg. another process reloaded
 			// it while they were aside), the reload below brings them in
 			const restored = opts.only ? 0 : internalNginx.restoreStaleAside();
 
-			for (const [hostType, model] of Object.entries(HOST_MODELS)) {
-				const only = opts.only ? opts.only[hostType] : null;
-				if (opts.only && !only?.length) {
-					continue;
-				}
-				let rows = [];
-				try {
-					const query = model
-						.query()
-						.where("is_deleted", 0)
-						.andWhere("enabled", 1)
-						.allowGraph(model.defaultAllowGraph)
-						.withGraphFetched(`[${model.defaultExpand.join(", ")}]`);
-					if (only) {
-						query.whereIn("id", only);
-					}
-					rows = await query;
-				} catch (err) {
-					logger.error(`Startup reconcile: could not load ${hostType} rows: ${err.message}`);
-					continue;
-				}
-
-				for (const row of rows) {
-					if (internalNginx.isSuspended(hostType, row.id)) {
-						summary.suspended++;
-						continue;
-					}
-					summary.checked++;
+			const { results } = await internalNginx.configureEnabledHosts({
+				only: opts.only,
+				logPrefix: "Startup reconcile",
+				needsWork: (hostType, row) => {
 					const filename = internalNginx.getConfigName(hostType, row.id);
 					const text = readFileOrNull(filename);
-					const needsWork = !!only || text === null || fs.existsSync(`${filename}.err`);
-					if (!needsWork) {
-						continue;
+					if (text === null) {
+						absent.add(filename);
+					} else {
+						previous.set(filename, text);
 					}
-					try {
-						const meta = await internalNginx.configureHost(model, hostType, row, {
-							reload: false,
-							depth: 0,
-							offlineOnError: true,
-						});
-						if (meta.nginx_online === false) {
-							summary.offline++;
-						} else {
-							summary.regenerated++;
-							written.push(filename);
-							if (text === null) {
-								unserved.push(filename);
-							} else {
-								previous.set(filename, text);
-							}
-						}
-						if (mayResolveLater(meta)) {
-							summary.retry[hostType] = summary.retry[hostType] || [];
-							summary.retry[hostType].push(row.id);
-						}
-					} catch (err) {
-						summary.failed++;
-						logger.error(`Startup reconcile: ${hostLabel(hostType, row)}: ${err.message}`);
+					if (opts.only) {
+						return true;
 					}
+					return text === null || fs.existsSync(`${filename}.err`);
+				},
+			});
+			for (const { hostType, row, meta, error, skipped, suspended } of results) {
+				if (suspended) {
+					summary.suspended++;
+					continue;
+				}
+				summary.checked++;
+				if (skipped) {
+					continue;
+				}
+				if (error) {
+					summary.failed++;
+					continue;
+				}
+				if (meta.nginx_online === false) {
+					summary.offline++;
+				} else {
+					summary.regenerated++;
+					const filename = internalNginx.getConfigName(hostType, row.id);
+					written.push(filename);
+					if (absent.has(filename)) {
+						unserved.push(filename);
+					}
+				}
+				if (mayResolveLater(meta)) {
+					summary.retry[hostType] = summary.retry[hostType] || [];
+					summary.retry[hostType].push(row.id);
 				}
 			}
 

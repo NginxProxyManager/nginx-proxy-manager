@@ -30,7 +30,10 @@
 			"example": "certificate"
 		},
 		"object_id": {
-			"$ref": "../common.json#/properties/id"
+			"description": "ID of the object, 0 when the event is not about one object (eg. regenerating all nginx configs)",
+			"type": "integer",
+			"minimum": 0,
+			"example": 11
 		},
 		"action": {
 			"type": "string",

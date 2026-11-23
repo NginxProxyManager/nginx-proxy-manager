@@ -177,6 +177,21 @@ describe("a host stored with a value that could add nginx directives", () => {
 		assert.equal(reloads, 1);
 	});
 
+	it("goes offline when all host configs are regenerated, the others are regenerated, nginx reloads once", async () => {
+		const bad = await host({ forward_host: INJECTED }, OLD_CONFIG);
+		const good = await host({}, "server {\n  # old\n}\n");
+		const summary = await internalNginx.regenerateAll({ hostTypes: ["proxy_host"] });
+		assert.equal(summary.checked, 2);
+		assert.equal(summary.regenerated, 1);
+		assert.deepEqual(summary.failed, []);
+		assert.equal(summary.offline.length, 1);
+		assert.equal(summary.offline[0].id, bad);
+		assert.match(summary.offline[0].error, /forward host .* is not allowed in nginx config/);
+		await assertOffline(bad, /forward host/);
+		assert.match(onDisk(good), /server_name h\d+\.example\.com;/);
+		assert.equal(reloads, 1);
+	});
+
 	it("goes offline when it is repaired while another host is saved", async () => {
 		const broken = await host({ forward_host: INJECTED }, "server {\n  tampered;\n}\n");
 		const id = await host();
