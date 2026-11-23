@@ -84,7 +84,10 @@ export default defineConfig({
 					{
 						text: "Advanced Configuration",
 						link: "/advanced-config/",
-						items: [{ text: "Custom Locations", link: "/advanced-config/locations" }],
+						items: [
+							{ text: "Custom Locations", link: "/advanced-config/locations" },
+							{ text: "Upstream Discovery", link: "/advanced-config/upstream-discovery" },
+						],
 					},
 					{ text: "Upgrading", link: "/upgrading/" },
 					{ text: "Frequently Asked Questions", link: "/faq/" },
