@@ -8,7 +8,8 @@ import { useRedirectionHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showRedirectionHostModal } from "src/modals";
 import { MANAGE, REDIRECTION_HOSTS } from "src/modules/Permissions";
-import { showObjectSuccess } from "src/notifications";
+import { formatApiError } from "src/modules/HostStatus";
+import { showError, showObjectSuccess } from "src/notifications";
 import Table from "./Table";
 
 export default function TableWrapper() {
@@ -30,10 +31,16 @@ export default function TableWrapper() {
 	};
 
 	const handleDisableToggle = async (id: number, enabled: boolean) => {
-		await toggleRedirectionHost(id, enabled);
-		queryClient.invalidateQueries({ queryKey: ["redirection-hosts"] });
-		queryClient.invalidateQueries({ queryKey: ["redirection-host", id] });
-		showObjectSuccess("redirection-host", enabled ? "enabled" : "disabled");
+		try {
+			await toggleRedirectionHost(id, enabled);
+			showObjectSuccess("redirection-host", enabled ? "enabled" : "disabled");
+		} catch (err) {
+			showError(formatApiError(err));
+		} finally {
+			// Also after a failure: the host's status (meta) may have changed
+			queryClient.invalidateQueries({ queryKey: ["redirection-hosts"] });
+			queryClient.invalidateQueries({ queryKey: ["redirection-host", id] });
+		}
 	};
 
 	let filtered = null;
