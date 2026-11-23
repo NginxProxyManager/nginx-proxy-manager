@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Sulge"
 	},
+	"action.copied": {
+		"defaultMessage": "Kopeeritud"
+	},
+	"action.copy": {
+		"defaultMessage": "Kopeeri"
+	},
 	"action.delete": {
 		"defaultMessage": "Kustuta"
 	},
@@ -347,6 +353,24 @@
 	"disabled": {
 		"defaultMessage": "Väljas"
 	},
+	"docker-labels.badge": {
+		"defaultMessage": "domeen kasutusel"
+	},
+	"docker-labels.exists": {
+		"defaultMessage": "{type, select, redirection_host {Mõni ümbersuunamise host kasutab juba ühte neist domeenidest} dead_host {Mõni 404 host kasutab juba ühte neist domeenidest} other {Mõni proxy-host kasutab juba ühte neist domeenidest}}."
+	},
+	"docker-labels.ignored": {
+		"defaultMessage": "npm.domain siltist kasutamata: {domains}"
+	},
+	"docker-labels.ignored-hint": {
+		"defaultMessage": "Domeeninimede väli lükkaks need nimed tagasi (metamärk on lubatud ainult alguses, nt *.example.com)"
+	},
+	"docker-labels.not-filled": {
+		"defaultMessage": "Konteineri npm.domain sildi domeeninimesid ({domains}) ei täidetud."
+	},
+	"docker-labels.used-by": {
+		"defaultMessage": "{type, select, redirection_host {Kasutusel ümbersuunamise hostis: muuda või eemalda see enne} dead_host {Kasutusel 404 hostis: muuda või eemalda see enne} other {Kasutusel proxy-hostis}}."
+	},
 	"domain-names": {
 		"defaultMessage": "Domeeninimed"
 	},
@@ -458,11 +482,59 @@
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx ei rakendanud selle hosti uusimat seadistust ja kasutab endiselt eelmist."
 	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx ei suuda {target} lahendada"
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: {target} pole kättesaadav"
+	},
 	"host-status.view-error-log": {
 		"defaultMessage": "Näita vealogi"
 	},
 	"host-status.warning": {
 		"defaultMessage": "Hoiatus"
+	},
+	"host-test.failed": {
+		"defaultMessage": "Testi ei õnnestunud käivitada"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "See oli test, midagi ei salvestatud."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Seadistus korras"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Konfiguratsioon on korras, hoiatustega"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, one {Nginx keelaks # kohandatud asukoha} other {Nginx keelaks # kohandatud asukohta}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Kontrollimata: viimasel minutil liiga palju kontrolle"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Kättesaadavus"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx lükkaks selle seadistuse tagasi"
+	},
+	"host-test.stale": {
+		"defaultMessage": "Vormi muudeti pärast seda testi. Muudatuste kontrollimiseks testi uuesti."
+	},
+	"host-test.too-many": {
+		"defaultMessage": "Viimasel minutil liiga palju teste. Proovi uuesti {seconds, plural, one {# sekundi} other {# sekundi}} pärast."
+	},
+	"host-test.warning.certificate-pending": {
+		"defaultMessage": "Salvestamisel taotletakse uus sertifikaat. Test kontrollis hosti ilma SSL-ita; SSL-osa kontrollitakse, kui sertifikaat on lisatud."
+	},
+	"host-test.warning.other-host": {
+		"defaultMessage": "Nginx lükkab tagasi hosti {host} praeguse konfiguratsiooni. Salvestamine parandaks või keelaks selle."
+	},
+	"host-test.warning.other-host-hidden": {
+		"defaultMessage": "Nginx lükkab tagasi ühe teise hosti praeguse konfiguratsiooni. Salvestamine parandaks või keelaks selle hosti. Palu administraatoril seda kontrollida."
+	},
+	"host-test.warning.rate-limited": {
+		"defaultMessage": "Kättesaadavust ei kontrollitud: viimasel minutil liiga palju kontrolle. Proovi uuesti {seconds, plural, one {# sekundi} other {# sekundi}} pärast."
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Blokeeri levinud ründed"
@@ -1054,6 +1126,159 @@
 	},
 	"update-available": {
 		"defaultMessage": "Uuendus saadaval: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Kontrollin…"
+	},
+	"upstream.check.detail.dns_not_found": {
+		"defaultMessage": "Kontrolli õigekirja ning et konteiner töötab ja on Nginx Proxy Manageriga samas Dockeri võrgus."
+	},
+	"upstream.check.detail.dns_timeout": {
+		"defaultMessage": "DNS-server ei vastanud õigel ajal."
+	},
+	"upstream.check.detail.invalid_host": {
+		"defaultMessage": "„{host}“ ei ole kehtiv hostinimi ega IP-aadress."
+	},
+	"upstream.check.detail.invalid_host_empty": {
+		"defaultMessage": "Sisesta hostinimi või IP-aadress."
+	},
+	"upstream.check.detail.no_resolver": {
+		"defaultMessage": "Nginxi nimelahendaja on keelatud (DISABLE_RESOLVER) ja nginx lahendab selle upstreami iga päringu ajal: päringud ebaõnnestuvad. Kasuta IP-aadressi või luba nimelahendaja."
+	},
+	"upstream.check.detail.resolver_mismatch": {
+		"defaultMessage": "„{host}“ leitakse ainult /etc/hosts või resolv.conf otsingudomeeni kaudu, mitte nginxi DNS-lahendajaga. See töötab ainult staatilise (laadimisel lahendatava) upstreamiga."
+	},
+	"upstream.check.detail.resolver_required": {
+		"defaultMessage": "„{host}“ leitakse ainult /etc/hosts või resolv.conf otsingudomeeni kaudu. nginx lahendab selle upstreami iga päringu ajal oma DNS-lahendajaga, mis seda ei leia: päringud ebaõnnestuvad. Kasuta nime, mille lahendaja leiab (nt konteineri nimi ühises Dockeri võrgus), või IP-aadressi."
+	},
+	"upstream.check.detail.tcp_refused": {
+		"defaultMessage": "Host on olemas, kuid pordil {port} ei kuula miski."
+	},
+	"upstream.check.detail.tcp_timeout": {
+		"defaultMessage": "Tulemüür võib liiklust blokeerida või host on maas."
+	},
+	"upstream.check.detail.tcp_unreachable": {
+		"defaultMessage": "Nginx Proxy Managerist pole sellesse hosti marsruuti."
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Kontroll on välja lülitatud"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Hosti ei leitud"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "DNS-päring aegus"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Vigane hostinimi"
+	},
+	"upstream.check.no_resolver": {
+		"defaultMessage": "Nginxi nimelahendaja puudub"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Kättesaadav"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Kättesaadav ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Lahendub ainult /etc/hosts või otsingudomeenide kaudu"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Ühendusest keelduti"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Ühendus aegus"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Host pole kättesaadav"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "nginxi muutuja"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Määratakse täpsemas seadistuses ja nginx lahendab selle iga päringu ajal, seega siin seda ei kontrollita."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "nginx lahendab selle iga päringu ajal, seega siin seda ei kontrollita. Sellel peab olema väärtus enne selle hosti täpsema seadistuse käivitumist, näiteks map-ist failis /data/nginx/custom/http.conf; set täpsemas seadistuses on liiga hilja."
+	},
+	"upstream.compose-service": {
+		"defaultMessage": "Konteineri {container} Compose-teenus"
+	},
+	"upstream.container-state": {
+		"defaultMessage": "{state, select, created {Loodud} restarting {Taaskäivitub} paused {Peatatud} exited {Lõpetatud} removing {Eemaldamisel} dead {Surnud} other {{state}}}"
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Dockeri tuvastus on väljas."
+	},
+	"upstream.docker-error.api_denied": {
+		"defaultMessage": "Dockeri API keeldus päringust. Kui kasutad docker-socket-proxyt, luba selles CONTAINERS=1 ja NETWORKS=1."
+	},
+	"upstream.docker-error.bad_response": {
+		"defaultMessage": "Dockeri API vastus on liiga suur või pole kehtiv JSON."
+	},
+	"upstream.docker-error.bad_status": {
+		"defaultMessage": "Dockeri API vastas päringule {path} koodiga {status}."
+	},
+	"upstream.docker-error.connection_refused": {
+		"defaultMessage": "Ühendus Dockeri API-ga lükati tagasi. Kontrolli DOCKER_HOST väärtust ja et sokli proxy töötab."
+	},
+	"upstream.docker-error.failed": {
+		"defaultMessage": "Ootamatu viga."
+	},
+	"upstream.docker-error.host_not_found": {
+		"defaultMessage": "DOCKER_HOST hostinime ei õnnestunud lahendada."
+	},
+	"upstream.docker-error.invalid_docker_host": {
+		"defaultMessage": "{problem, select, unix_path {DOCKER_HOST „{value}“ peab olema absoluutne Unixi sokli tee.} port {DOCKER_HOST „{value}“ port on vigane.} other {DOCKER_HOST „{value}“ ei ole toetatud. Kasuta unix:///var/run/docker.sock või tcp://host:2375 (TLS ei ole toetatud).}}"
+	},
+	"upstream.docker-error.permission_denied": {
+		"defaultMessage": "Juurdepääs Dockeri soklile keelati. Taustaprogramm töötab PUID/PGID all ilma lisagruppideta; kasuta selle asemel docker-socket-proxyt (DOCKER_HOST=tcp://...)."
+	},
+	"upstream.docker-error.self_not_found": {
+		"defaultMessage": "Nginx Proxy Manageri enda konteinerit ei leitud Dockeri API kaudu, seega pole selle võrgud teada."
+	},
+	"upstream.docker-error.socket_missing": {
+		"defaultMessage": "Dockeri soklit {path} pole olemas. Ühenda see või suuna DOCKER_HOST docker-socket-proxy peale."
+	},
+	"upstream.docker-error.timeout": {
+		"defaultMessage": "Dockeri API ei vastanud {seconds, plural, one {# sekundi} other {# sekundi}} jooksul."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Seadista"
+	},
+	"upstream.docker-labels": {
+		"defaultMessage": "Dockeri sildid"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Dockeri tuvastus ei tööta."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "Võid sisestada ka mis tahes hostinime või IP-aadressi."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Võrgust leitud"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Dockeri konteinerid"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Varem kasutatud"
+	},
+	"upstream.network": {
+		"defaultMessage": "Võrk: {network}"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "Soovitusi pole, sisesta hostinimi või IP-aadress"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Pordid: {ports}"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "Kasuta „{value}“"
+	},
+	"upstream.used-by": {
+		"defaultMessage": "kasutab {count, plural, one {# host} other {# hosti}}"
 	},
 	"user": {
 		"defaultMessage": "Kasutaja"

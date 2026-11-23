@@ -312,3 +312,182 @@ export interface DNSProvider {
 	name: string;
 	credentials: string;
 }
+
+// ---------------------------------------------------------------------------
+// Upstream discovery / reachability check / health (/api/upstreams/*)
+// ---------------------------------------------------------------------------
+
+export type UpstreamSource = "docker" | "dns" | "history";
+
+export interface UpstreamProviderStatus {
+	status: "ok" | "disabled" | "unavailable";
+	// language neutral reason (null: none), the UI words it, eg. upstream.docker-error.<code>
+	code: string | null;
+	// values for the text of `code`; `detail` is a raw error text, not translated
+	params?: Record<string, string | number>;
+	// English text for logs and API users, not shown in the UI
+	message: string | null;
+}
+
+/**
+ * Proxy host fields from a container's npm.* labels (Docker discovery only), filled into the free fields of
+ * the form when the container is picked as forward host.
+ * `domainNames` is empty when the container has no valid npm.domain label.
+ */
+export interface UpstreamSuggestion {
+	domainNames: string[];
+	forwardScheme: "http" | "https";
+	forwardHost: string;
+	forwardPort: number | null;
+	allowWebsocketUpgrade: boolean;
+	blockExploits: boolean;
+	cachingEnabled: boolean;
+	http2Support: boolean;
+	// npm.domain entries the domain names field would refuse (dropped from domainNames)
+	ignoredDomains: string[];
+	// a host (visible to the user) already serving one of the domains: the forward host picker marks the
+	// container and doesn't fill the domains in
+	existingHostId: number | null;
+	existingHostType: "proxy_host" | "redirection_host" | "dead_host" | null;
+}
+
+// What a candidate's host name is: the UI words it in its own language
+export type UpstreamCandidateKind = "container" | "compose_service" | "dns" | "history";
+
+export interface UpstreamCandidate {
+	host: string;
+	kind: UpstreamCandidateKind;
+	// compose_service: the container the service name belongs to
+	owner: string | null;
+	source: UpstreamSource;
+	ports: number[];
+	hintPort: number | null;
+	hintScheme: "http" | "https" | null;
+	network: string | null;
+	state: string | null;
+	ip: string | null;
+	usedBy: number;
+	suggestion?: UpstreamSuggestion;
+}
+
+export interface UpstreamCandidates {
+	providers: Record<UpstreamSource, UpstreamProviderStatus>;
+	items: UpstreamCandidate[];
+	generatedAt: string;
+}
+
+export type UpstreamCheckCode =
+	| "ok"
+	| "invalid_host"
+	| "dns_not_found"
+	| "dns_timeout"
+	| "resolver_mismatch"
+	// nginx resolves the target per request but has no resolver at all (DISABLE_RESOLVER)
+	| "no_resolver"
+	| "tcp_refused"
+	| "tcp_timeout"
+	| "tcp_unreachable"
+	| "disabled"
+	// only from the config test: not probed, the user's check budget is used up
+	| "rate_limited";
+
+export interface UpstreamCheckTarget {
+	host: string;
+	port: number;
+	scheme?: string;
+}
+
+export interface UpstreamCheckResult {
+	host: string;
+	port: number;
+	scheme?: string;
+	ok: boolean;
+	code: UpstreamCheckCode;
+	message: string;
+	addresses?: string[];
+	resolverOk?: boolean | null;
+	systemOk?: boolean | null;
+	ms?: number | null;
+	// reachability through each lookup method on its own (null: IP literal, or not probed)
+	lookups?: {
+		system: UpstreamLookupResult | null;
+		resolver: UpstreamLookupResult | null;
+	} | null;
+}
+
+export interface UpstreamLookupResult {
+	ok: boolean;
+	code: UpstreamCheckCode;
+	addresses: string[];
+	ms: number | null;
+}
+
+export interface UpstreamCheckResponse {
+	results: UpstreamCheckResult[];
+}
+
+export interface UpstreamHealthTarget {
+	// null for the host's main destination
+	locationIndex: number | null;
+	path?: string;
+	host: string;
+	port: number;
+	ok: boolean;
+	code: UpstreamCheckCode;
+	message: string;
+	ms?: number | null;
+}
+
+export interface UpstreamHostHealth {
+	checkedAt: string;
+	ok: boolean;
+	targets: UpstreamHealthTarget[];
+}
+
+export interface UpstreamHealth {
+	enabled: boolean;
+	interval: number;
+	checkedAt: string | null;
+	hosts: {
+		// Keyed by host id (as a string). `proxy_host` arrives camelized.
+		proxyHost?: Record<string, UpstreamHostHealth>;
+		stream?: Record<string, UpstreamHostHealth>;
+	};
+}
+
+// ---------------------------------------------------------------------------
+// "Test config": POST /api/nginx/<host type>/test checks a host's settings
+// without saving them.
+// ---------------------------------------------------------------------------
+
+export type HostTestEndpoint = "proxy-hosts" | "redirection-hosts" | "dead-hosts" | "streams";
+
+export interface HostTestUpstream extends UpstreamCheckResult {
+	// null for the host's main forward target
+	locationIndex: number | null;
+	path: string | null;
+}
+
+export interface HostTestWarning {
+	code: "certificate_pending" | "other_host_broken" | "upstreams_rate_limited" | string;
+	// English text, shown only for a code the UI has no text for
+	message: string;
+	hostType?: string | null;
+	hostId?: number | null;
+	// other_host_broken: why nginx rejects that host (raw nginx text, not translated)
+	detail?: string | null;
+	// upstreams_rate_limited: seconds until the next check is possible
+	retryAfter?: number;
+}
+
+export interface HostTestResult {
+	// nginx accepts the configuration as entered: online, no quarantined location
+	ok: boolean;
+	// false when nginx rejects the host itself; a save would fail with nginxErr
+	nginxOnline: boolean;
+	nginxErr: string | null;
+	nginxDetails: NginxConfigErrorDetails | null;
+	nginxLocations: NginxLocationStatus[];
+	upstreams: HostTestUpstream[];
+	warnings: HostTestWarning[];
+}

@@ -1,7 +1,7 @@
 import { IconDotsVertical, IconEdit, IconFileText, IconPower, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, type SortingState, useTable } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
-import type { ProxyHost } from "src/api/backend";
+import type { ProxyHost, UpstreamHostHealth } from "src/api/backend";
 import {
 	AccessListFormatter,
 	CertificateFormatter,
@@ -14,7 +14,7 @@ import {
 import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
-import { getProblemLocations, sortByHostStatus } from "src/modules/HostStatus";
+import { getProblemLocations, sortByHostStatusWithHealth } from "src/modules/HostStatus";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 
 // "+2 locations · 1 problem" under the main destination
@@ -48,6 +48,8 @@ interface Props {
 	// Opens the error log from the status popover; omitted when not permitted
 	onErrorLogs?: (id: number) => void;
 	onNew?: () => void;
+	// Upstream health by host id
+	health?: Record<string, UpstreamHostHealth>;
 }
 export default function Table({
 	data,
@@ -59,6 +61,7 @@ export default function Table({
 	onErrorLogs,
 	onNew,
 	isFiltered,
+	health,
 }: Props) {
 	const columnHelper = createColumnHelper<Features, ProxyHost>();
 	const columns = useMemo(
@@ -124,13 +127,14 @@ export default function Table({
 			columnHelper.accessor((row: any) => row.enabled, {
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
-				sortFn: sortByHostStatus,
+				sortFn: sortByHostStatusWithHealth(health),
 				cell: (info: any) => {
 					const row: ProxyHost = info.row.original;
 					return (
 						<HostStatusFormatter
 							enabled={info.getValue()}
 							meta={row.meta}
+							health={health?.[`${row.id}`]}
 							onLogs={onErrorLogs ? () => onErrorLogs(row.id) : undefined}
 						/>
 					);
@@ -213,7 +217,7 @@ export default function Table({
 				},
 			}),
 		],
-		[columnHelper, onEdit, onDisableToggle, onDelete, onLogs, onErrorLogs],
+		[columnHelper, onEdit, onDisableToggle, onDelete, onLogs, onErrorLogs, health],
 	);
 
 	const [sorting, setSorting] = useState<SortingState>([]);

@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Form, Formik } from "formik";
-import type { NginxLocationStatus, ProxyLocation } from "src/api/backend";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import type { NginxLocationStatus, ProxyLocation, UpstreamCheckResult } from "src/api/backend";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	cleanLocations,
 	isBlankLocation,
@@ -10,9 +10,23 @@ import {
 	validateLocations,
 } from "./LocationsFields";
 
+const { checkState } = vi.hoisted(() => ({
+	checkState: { result: null as UpstreamCheckResult | null, calls: [] as any[], candidates: undefined as any },
+}));
+
 vi.mock("src/context", () => ({ useLocaleState: () => ({ locale: "en" }) }));
 vi.mock("src/hooks", () => ({
 	useAccessLists: () => ({ isLoading: false, isError: false, data: [] }),
+	useUpstreamCandidates: () => ({
+		data: checkState.candidates,
+		isFetching: false,
+		refresh: vi.fn(),
+		isRefreshing: false,
+	}),
+	useUpstreamCheck: (input: any, enabled: boolean) => {
+		checkState.calls.push({ input, enabled });
+		return { result: enabled ? checkState.result : null, isChecking: false };
+	},
 }));
 
 const loc = (l: Partial<ProxyLocation>): ProxyLocation => ({
@@ -213,6 +227,11 @@ describe("validateLocations", () => {
 });
 
 describe("LocationsFields", () => {
+	beforeEach(() => {
+		checkState.result = null;
+		checkState.calls = [];
+		checkState.candidates = undefined;
+	});
 	afterEach(() => cleanup());
 
 	it("shows server status badges, hiding ok", () => {
@@ -252,6 +271,66 @@ describe("LocationsFields", () => {
 		fireEvent.click(screen.getByLabelText("Enable or disable this location"));
 		expect(card.querySelector("[data-status]")).toBeNull();
 		expect(card).not.toHaveTextContent("Disabled");
+	});
+
+	it("a picked candidate fills in the port only while the user hasn't changed it", () => {
+		checkState.candidates = {
+			providers: {},
+			items: [
+				{ host: "svc", kind: "container", owner: null, source: "docker", ports: [3000], hintPort: 3000, hintScheme: null },
+				{ host: "other", kind: "container", owner: null, source: "docker", ports: [4000], hintPort: 4000, hintScheme: null },
+			],
+			generatedAt: "2026-11-04T10:00:00Z",
+		};
+		const { formValues } = renderFields([loc({ path: "/a", forwardHost: "", forwardPort: 80 })]);
+		fireEvent.click(screen.getByText("/a"));
+		const port = screen.getByPlaceholderText("eg: 8081") as HTMLInputElement;
+		const host = document.querySelector("[id^=location-forwardHost-]") as HTMLInputElement;
+		const pick = (name: string) => {
+			fireEvent.focus(host);
+			fireEvent.keyDown(host, { key: "ArrowDown", code: "ArrowDown" });
+			fireEvent.click(screen.getByText(name));
+		};
+		// untouched port: filled in, and a later pick may replace what it filled in
+		pick("svc");
+		expect(host.value).toBe("svc");
+		expect(port.value).toBe("3000");
+		// the form holds the picked host together with its port, not only the inputs
+		expect(formValues()[0]).toMatchObject({ forwardHost: "svc", forwardPort: 3000 });
+		pick("other");
+		expect(port.value).toBe("4000");
+		expect(formValues()[0]).toMatchObject({ forwardHost: "other", forwardPort: 4000 });
+		// a port the user typed stays
+		fireEvent.change(port, { target: { value: "8443" } });
+		pick("svc");
+		expect(host.value).toBe("svc");
+		expect(port.value).toBe("8443");
+		expect(formValues()[0]).toMatchObject({ forwardHost: "svc", forwardPort: 8443 });
+	});
+
+	it("saves the picked container's host with the port and scheme it fills in", async () => {
+		checkState.candidates = {
+			providers: {},
+			items: [
+				{ host: "svc", kind: "container", owner: null, source: "docker", ports: [3000], hintPort: 3000, hintScheme: "https" },
+			],
+			generatedAt: "2026-11-04T10:00:00Z",
+		};
+		const { onSubmit } = renderFields([loc({ path: "/a", forwardHost: "app", forwardPort: 80 })]);
+		fireEvent.click(screen.getByText("/a"));
+		const host = document.querySelector("[id^=location-forwardHost-]") as HTMLInputElement;
+		fireEvent.focus(host);
+		fireEvent.keyDown(host, { key: "ArrowDown", code: "ArrowDown" });
+		fireEvent.click(screen.getByText("svc"));
+
+		fireEvent.click(screen.getByText("save"));
+
+		await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+		expect(onSubmit.mock.calls[0][0].locations[0]).toMatchObject({
+			forwardHost: "svc",
+			forwardPort: 3000,
+			forwardScheme: "https",
+		});
 	});
 
 	it("blocks submit with invalid rows, expands them and shows the errors", async () => {
@@ -301,6 +380,39 @@ describe("LocationsFields", () => {
 		expect(screen.getAllByPlaceholderText("/path")).toHaveLength(1);
 		expect((screen.getByPlaceholderText("/path") as HTMLInputElement).value).toBe("/b");
 	});
+
+	it("checks reachability once a card was opened and shows the result", () => {
+		checkState.result = {
+			host: "app",
+			port: 80,
+			ok: false,
+			code: "tcp_refused",
+			message: "Connection refused",
+		};
+		renderFields([loc({ path: "/a" })]);
+		expect(checkState.calls.every((c) => !c.enabled)).toBe(true);
+		fireEvent.click(screen.getByText("/a"));
+		expect(checkState.calls.some((c) => c.enabled && c.input.host === "app" && c.input.port === 80)).toBe(true);
+		expect(screen.getByTestId("location-card-0").querySelector("[data-check]")).toHaveAttribute(
+			"data-check",
+			"tcp_refused",
+		);
+		expect(screen.getByTestId("location-card-0")).toHaveTextContent("Connection refused");
+	});
+
+	for (const forwardHost of ["$backend", "$backend/api"]) {
+		it(`doesn't check a forward host that is an nginx variable and says so (${forwardHost})`, () => {
+			checkState.result = { host: "$backend", port: 80, ok: false, code: "invalid_host", message: "bad" };
+			renderFields([loc({ path: "/a", forwardHost })]);
+			fireEvent.click(screen.getByText("/a"));
+			expect(checkState.calls.every((c) => !c.enabled)).toBe(true);
+			const card = screen.getByTestId("location-card-0");
+			expect(card.querySelector("[data-check]")).toHaveAttribute("data-check", "variable");
+			expect(card).toHaveTextContent("nginx variable");
+			expect(card).not.toHaveTextContent("Invalid host name");
+			expect(card.querySelector(".invalid-feedback")).toBeNull();
+		});
+	}
 
 	it("shows the advanced config of a location only to those who may change it", () => {
 		renderFields([loc({ path: "/a", advancedConfig: "expires 1d;" })], { highlightIndex: 0 });

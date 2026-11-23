@@ -1,8 +1,11 @@
 import {
 	type HostMeta,
+	type HostTestResult,
 	isApiError,
 	type NginxConfigErrorDetails,
 	type NginxLocationStatus,
+	type UpstreamHealthTarget,
+	type UpstreamHostHealth,
 } from "src/api/backend";
 import { intl } from "src/locale";
 
@@ -224,37 +227,82 @@ export const locationStatusText = (
 	return { text: hasMessage(fallback) ? intl.formatMessage({ id: fallback }) : "", detail: null };
 };
 
+/**
+ * The custom location a config test points at: the one nginx rejected the
+ * host for, or the first one it would quarantine. null when there is none.
+ */
+export const getTestLocationIndex = (result?: HostTestResult | null): number | null => {
+	if (!result || result.ok) return null;
+	const fromDetails = getErrorLocationIndex(result.nginxDetails);
+	if (fromDetails !== null) return fromDetails;
+	const quarantined = (result.nginxLocations || []).find((l) => l.status === "quarantined");
+	return quarantined ? quarantined.index : null;
+};
+
+export const getUnhealthyTargets = (health?: UpstreamHostHealth | null): UpstreamHealthTarget[] =>
+	(health?.targets || []).filter((t) => !t.ok);
+
 export type HostState = "disabled" | "online" | "warning" | "error";
 
 export interface HostStatusInfo {
 	state: HostState;
 	nginxErr: string | null;
 	problemLocations: NginxLocationStatus[];
+	unhealthyTargets: UpstreamHealthTarget[];
 }
 
-export const getHostStatus = (enabled: boolean, meta?: HostMeta | null): HostStatusInfo => {
+export const getHostStatus = (
+	enabled: boolean,
+	meta?: HostMeta | null,
+	health?: UpstreamHostHealth | null,
+): HostStatusInfo => {
 	if (!enabled) {
-		return { state: "disabled", nginxErr: null, problemLocations: [] };
+		return { state: "disabled", nginxErr: null, problemLocations: [], unhealthyTargets: [] };
 	}
 	const problemLocations = getProblemLocations(meta);
+	// A location nginx couldn't resolve or had to quarantine is already listed;
+	// its failed health probe would only report the same problem a second time.
+	const unhealthyTargets = getUnhealthyTargets(health).filter(
+		(t) =>
+			typeof t.locationIndex !== "number" ||
+			!problemLocations.some(
+				(l) =>
+					l.index === t.locationIndex &&
+					(!t.path || !l.path || normaliseLocationPath(t.path) === normaliseLocationPath(l.path)),
+			),
+	);
 	if (meta?.nginxOnline === false) {
-		return { state: "error", nginxErr: meta.nginxErr || null, problemLocations };
+		return { state: "error", nginxErr: meta.nginxErr || null, problemLocations, unhealthyTargets };
 	}
-	return { state: problemLocations.length ? "warning" : "online", nginxErr: null, problemLocations };
+	return {
+		state: problemLocations.length || unhealthyTargets.length ? "warning" : "online",
+		nginxErr: null,
+		problemLocations,
+		unhealthyTargets,
+	};
 };
 
 // The order of the status column, ascending: the hosts that need attention first
 const HOST_STATE_RANK: Record<HostState, number> = { error: 0, warning: 1, disabled: 2, online: 3 };
 
-export const hostStatusRank = (enabled: boolean, meta?: HostMeta | null): number =>
-	HOST_STATE_RANK[getHostStatus(enabled, meta).state];
+export const hostStatusRank = (enabled: boolean, meta?: HostMeta | null, health?: UpstreamHostHealth | null): number =>
+	HOST_STATE_RANK[getHostStatus(enabled, meta, health).state];
 
 interface HostRow {
-	original: { enabled: boolean; meta?: HostMeta | null };
+	original: { id?: number; enabled: boolean; meta?: HostMeta | null };
 }
 /** sortFn of a table's status column: sorts by the status it shows, not only enabled / disabled */
 export const sortByHostStatus = (a: HostRow, b: HostRow): number =>
 	hostStatusRank(a.original.enabled, a.original.meta) - hostStatusRank(b.original.enabled, b.original.meta);
+
+/** sortByHostStatus() with the upstream health of each host (by id), which the proxy hosts' status shows too */
+export const sortByHostStatusWithHealth =
+	(health?: Record<string, UpstreamHostHealth> | null) =>
+	(a: HostRow, b: HostRow): number => {
+		const rank = (row: HostRow) =>
+			hostStatusRank(row.original.enabled, row.original.meta, health?.[`${row.original.id}`]);
+		return rank(a) - rank(b);
+	};
 
 /** Whether a successful save still needs the user's attention */
 export const hasSaveWarnings = (meta?: HostMeta | null) =>
@@ -294,8 +342,10 @@ export const locationDuplicateKey = (path: string): string | null => {
 // A forward host with an nginx variable, eg. `$backend` set in the advanced
 // config, or `app-$stage`. nginx resolves it at request time, so it can't be
 // checked. The API refuses these since v2.17, only hosts saved before can
-// still have one. The same rule as isVariableHost() in the backend.
-const INVALID_HOST_CHARS = /[\s;{}'"`\\#]/;
+// still have one. The same rule as isVariableHost() in the backend, which gets
+// the host without a path: a host with a `/` (the main forward host is not
+// split, see ForwardHostCheckHint) is not a variable host.
+const INVALID_HOST_CHARS = /[\s;{}'"`\\#/]/;
 export const isVariableHost = (host?: string | null) => {
 	const value = `${host ?? ""}`.trim();
 	return value.includes("$") && !INVALID_HOST_CHARS.test(value);
@@ -307,3 +357,5 @@ export const isVariableHost = (host?: string | null) => {
  * host part, so `$backend/api` is a variable host with a path.
  */
 export const locationHostPart = (host?: string | null) => `${host ?? ""}`.trim().split("/")[0];
+
+export const isTranslatedCheckCode = (code?: string) => !!code && hasMessage(`upstream.check.${code}`);

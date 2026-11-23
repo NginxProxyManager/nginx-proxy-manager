@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Đóng"
 	},
+	"action.copied": {
+		"defaultMessage": "Đã sao chép"
+	},
+	"action.copy": {
+		"defaultMessage": "Sao chép"
+	},
 	"action.delete": {
 		"defaultMessage": "Xóa"
 	},
@@ -347,6 +353,24 @@
 	"disabled": {
 		"defaultMessage": "Đã tắt"
 	},
+	"docker-labels.badge": {
+		"defaultMessage": "tên miền đã dùng"
+	},
+	"docker-labels.exists": {
+		"defaultMessage": "{type, select, redirection_host {Một máy chủ chuyển hướng đã dùng một trong các tên miền này} dead_host {Một máy chủ 404 đã dùng một trong các tên miền này} other {Một máy chủ proxy đã dùng một trong các tên miền này}}."
+	},
+	"docker-labels.ignored": {
+		"defaultMessage": "Không dùng từ npm.domain: {domains}"
+	},
+	"docker-labels.ignored-hint": {
+		"defaultMessage": "Trường tên miền sẽ từ chối các tên này (ký tự đại diện chỉ được phép ở đầu dưới dạng *., ví dụ *.example.com)"
+	},
+	"docker-labels.not-filled": {
+		"defaultMessage": "Các tên miền từ nhãn npm.domain của container ({domains}) chưa được điền."
+	},
+	"docker-labels.used-by": {
+		"defaultMessage": "{type, select, redirection_host {Đang được một máy chủ chuyển hướng dùng: hãy thay đổi hoặc xóa nó trước} dead_host {Đang được một máy chủ 404 dùng: hãy thay đổi hoặc xóa nó trước} other {Đang được một máy chủ proxy dùng}}."
+	},
 	"domain-names": {
 		"defaultMessage": "Tên miền"
 	},
@@ -458,11 +482,59 @@
 	"host-status.previous-config-running": {
 		"defaultMessage": "Nginx chưa áp dụng cấu hình mới nhất của host này và vẫn đang chạy cấu hình trước đó."
 	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx không phân giải được {target}"
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: không thể kết nối tới {target}"
+	},
 	"host-status.view-error-log": {
 		"defaultMessage": "Xem nhật ký lỗi"
 	},
 	"host-status.warning": {
 		"defaultMessage": "Cảnh báo"
+	},
+	"host-test.failed": {
+		"defaultMessage": "Không thể chạy kiểm tra"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "Đây chỉ là kiểm tra, không có gì được lưu."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Cấu hình hợp lệ"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Cấu hình hợp lệ, có cảnh báo"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, other {Nginx sẽ tắt # vị trí tùy chỉnh}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Chưa kiểm tra: quá nhiều lần kiểm tra trong một phút qua"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Khả năng kết nối"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx sẽ từ chối cấu hình này"
+	},
+	"host-test.stale": {
+		"defaultMessage": "Biểu mẫu đã thay đổi sau lần kiểm tra này. Hãy kiểm tra lại để xác nhận các thay đổi."
+	},
+	"host-test.too-many": {
+		"defaultMessage": "Quá nhiều lần kiểm tra trong một phút qua. Hãy thử lại sau {seconds, plural, other {# giây}}."
+	},
+	"host-test.warning.certificate-pending": {
+		"defaultMessage": "Một chứng chỉ mới sẽ được yêu cầu khi bạn lưu. Bài kiểm tra đã kiểm tra máy chủ không có SSL; phần SSL sẽ được kiểm tra khi chứng chỉ được thêm."
+	},
+	"host-test.warning.other-host": {
+		"defaultMessage": "Nginx từ chối cấu hình hiện tại của {host}. Việc lưu sẽ sửa hoặc tắt nó."
+	},
+	"host-test.warning.other-host-hidden": {
+		"defaultMessage": "Nginx từ chối cấu hình hiện tại của một máy chủ khác. Việc lưu sẽ sửa hoặc tắt máy chủ đó. Hãy nhờ quản trị viên kiểm tra."
+	},
+	"host-test.warning.rate-limited": {
+		"defaultMessage": "Chưa kiểm tra khả năng kết nối: quá nhiều lần kiểm tra trong một phút qua. Hãy thử lại sau {seconds, plural, other {# giây}}."
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
@@ -1054,6 +1126,159 @@
 	},
 	"update-available": {
 		"defaultMessage": "Đã có bản cập nhật: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Đang kiểm tra…"
+	},
+	"upstream.check.detail.dns_not_found": {
+		"defaultMessage": "Hãy kiểm tra chính tả, và xem container có đang chạy và nằm cùng mạng Docker với Nginx Proxy Manager không."
+	},
+	"upstream.check.detail.dns_timeout": {
+		"defaultMessage": "Máy chủ DNS không trả lời kịp thời."
+	},
+	"upstream.check.detail.invalid_host": {
+		"defaultMessage": "\"{host}\" không phải là tên máy chủ hoặc địa chỉ IP hợp lệ."
+	},
+	"upstream.check.detail.invalid_host_empty": {
+		"defaultMessage": "Hãy nhập tên máy chủ hoặc địa chỉ IP."
+	},
+	"upstream.check.detail.no_resolver": {
+		"defaultMessage": "Trình phân giải DNS của nginx đang bị tắt (DISABLE_RESOLVER), mà nginx phân giải upstream này cho mỗi yêu cầu: các yêu cầu sẽ thất bại. Hãy dùng địa chỉ IP hoặc bật trình phân giải."
+	},
+	"upstream.check.detail.resolver_mismatch": {
+		"defaultMessage": "Chỉ /etc/hosts hoặc tên miền tìm kiếm trong resolv.conf tìm thấy \"{host}\", trình phân giải DNS của nginx thì không. Chỉ hoạt động với upstream tĩnh (phân giải khi tải cấu hình)."
+	},
+	"upstream.check.detail.resolver_required": {
+		"defaultMessage": "Chỉ /etc/hosts hoặc tên miền tìm kiếm trong resolv.conf tìm thấy \"{host}\". nginx phân giải upstream này cho mỗi yêu cầu qua trình phân giải DNS của nó, vốn không tìm thấy tên này: các yêu cầu sẽ thất bại. Hãy dùng tên mà trình phân giải tìm được (ví dụ tên container trên mạng Docker chung) hoặc địa chỉ IP."
+	},
+	"upstream.check.detail.tcp_refused": {
+		"defaultMessage": "Máy chủ tồn tại, nhưng không có gì lắng nghe trên cổng {port}."
+	},
+	"upstream.check.detail.tcp_timeout": {
+		"defaultMessage": "Có thể tường lửa đang chặn lưu lượng, hoặc máy chủ đang tắt."
+	},
+	"upstream.check.detail.tcp_unreachable": {
+		"defaultMessage": "Không có đường đi từ Nginx Proxy Manager tới máy chủ này."
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Đã tắt kiểm tra"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Không tìm thấy host"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "Tra cứu DNS quá thời gian"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Tên host không hợp lệ"
+	},
+	"upstream.check.no_resolver": {
+		"defaultMessage": "Không có trình phân giải của nginx"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Có thể kết nối"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Có thể kết nối ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Chỉ phân giải được qua /etc/hosts hoặc tên miền tìm kiếm"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Kết nối bị từ chối"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Kết nối quá thời gian"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Không thể truy cập host"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "Biến nginx"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Được đặt trong cấu hình nâng cao và được nginx phân giải cho mỗi yêu cầu, nên không được kiểm tra ở đây."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "Được nginx phân giải cho mỗi yêu cầu, nên không được kiểm tra ở đây. Biến này cần có giá trị trước khi cấu hình nâng cao của host này chạy, ví dụ từ một map trong /data/nginx/custom/http.conf; lệnh set trong cấu hình nâng cao là quá muộn."
+	},
+	"upstream.compose-service": {
+		"defaultMessage": "Dịch vụ Compose của {container}"
+	},
+	"upstream.container-state": {
+		"defaultMessage": "{state, select, created {Đã tạo} restarting {Đang khởi động lại} paused {Tạm dừng} exited {Đã thoát} removing {Đang xóa} dead {Đã chết} other {{state}}}"
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Tính năng phát hiện Docker đang tắt: hãy đặt NPM_DOCKER_DISCOVERY=true (xem tài liệu)."
+	},
+	"upstream.docker-error.api_denied": {
+		"defaultMessage": "Docker API đã từ chối yêu cầu. Nếu bạn dùng docker-socket-proxy, hãy bật CONTAINERS=1 và NETWORKS=1 trên đó."
+	},
+	"upstream.docker-error.bad_response": {
+		"defaultMessage": "Phản hồi của Docker API quá lớn hoặc không phải JSON hợp lệ."
+	},
+	"upstream.docker-error.bad_status": {
+		"defaultMessage": "Docker API trả về {status} cho {path}."
+	},
+	"upstream.docker-error.connection_refused": {
+		"defaultMessage": "Kết nối tới Docker API bị từ chối. Hãy kiểm tra DOCKER_HOST và xem socket proxy có đang chạy không."
+	},
+	"upstream.docker-error.failed": {
+		"defaultMessage": "Lỗi không mong đợi."
+	},
+	"upstream.docker-error.host_not_found": {
+		"defaultMessage": "Không phân giải được tên máy chủ trong DOCKER_HOST."
+	},
+	"upstream.docker-error.invalid_docker_host": {
+		"defaultMessage": "{problem, select, unix_path {DOCKER_HOST \"{value}\" phải là đường dẫn tuyệt đối tới unix socket.} port {DOCKER_HOST \"{value}\" có cổng không hợp lệ.} other {DOCKER_HOST \"{value}\" không được hỗ trợ. Hãy dùng unix:///var/run/docker.sock hoặc tcp://host:2375 (không hỗ trợ TLS).}}"
+	},
+	"upstream.docker-error.permission_denied": {
+		"defaultMessage": "Bị từ chối quyền truy cập socket Docker. Backend chạy với PUID/PGID mà không có nhóm bổ sung; hãy dùng docker-socket-proxy (DOCKER_HOST=tcp://...) thay thế."
+	},
+	"upstream.docker-error.self_not_found": {
+		"defaultMessage": "Không tìm thấy container của chính Nginx Proxy Manager qua Docker API, nên không biết các mạng của nó."
+	},
+	"upstream.docker-error.socket_missing": {
+		"defaultMessage": "Socket Docker {path} không tồn tại. Hãy gắn (mount) nó, hoặc trỏ DOCKER_HOST tới một docker-socket-proxy."
+	},
+	"upstream.docker-error.timeout": {
+		"defaultMessage": "Docker API không trả lời trong vòng {seconds, plural, other {# giây}}."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Thiết lập"
+	},
+	"upstream.docker-labels": {
+		"defaultMessage": "Nhãn Docker"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Tính năng phát hiện Docker không hoạt động."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "Bạn cũng có thể nhập bất kỳ tên host hoặc địa chỉ IP nào."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Phát hiện trên mạng"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Container Docker"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Đã dùng trước đây"
+	},
+	"upstream.network": {
+		"defaultMessage": "Mạng: {network}"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "Không có gợi ý, hãy nhập tên host hoặc địa chỉ IP"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Cổng: {ports}"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "Dùng \"{value}\""
+	},
+	"upstream.used-by": {
+		"defaultMessage": "được dùng bởi {count, plural, other {# host}}"
 	},
 	"user": {
 		"defaultMessage": "Người dùng"

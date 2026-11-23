@@ -4,7 +4,7 @@ import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import { deleteStream, toggleStream } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
-import { useStreams } from "src/hooks";
+import { useStreams, useUpstreamHealth } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showStreamModal } from "src/modals";
 import { MANAGE, STREAMS } from "src/modules/Permissions";
@@ -17,6 +17,7 @@ export default function TableWrapper() {
 	const [search, setSearch] = useState("");
 	const [_deleteId, _setDeleteIdd] = useState(0);
 	const { isFetching, isLoading, isError, error, data } = useStreams(["owner", "certificate"]);
+	const { data: health } = useUpstreamHealth();
 
 	if (isLoading) {
 		return <LoadingPage />;
@@ -102,6 +103,7 @@ export default function TableWrapper() {
 				<Table
 					data={filtered ?? data ?? []}
 					isFetching={isFetching}
+					health={health?.hosts?.stream}
 					isFiltered={!!filtered}
 					onEdit={(id: number) => showStreamModal(id)}
 					onDelete={(id: number) =>

@@ -3,7 +3,7 @@ import EasyModal, { type InnerModalProps } from "ez-modal-react";
 import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import ReactMarkdown from "react-markdown";
-import { Button } from "src/components";
+import { Button, CopyableCode } from "src/components";
 import { getLocale, T } from "src/locale";
 import { getHelpFile } from "src/locale/src/HelpDoc";
 
@@ -34,7 +34,19 @@ const HelpModal = EasyModal.create(({ section, color, visible, remove }: Props) 
 	return (
 		<Modal show={visible} onHide={remove}>
 			<Modal.Body>
-				<ReactMarkdown>{markdownText}</ReactMarkdown>
+				<ReactMarkdown
+					components={{
+						pre: ({ children }) => <CopyableCode>{children}</CopyableCode>,
+						// links lead to the online docs: keep the app open
+						a: ({ href, children }) => (
+							<a href={href} target="_blank" rel="noopener noreferrer">
+								{children}
+							</a>
+						),
+					}}
+				>
+					{markdownText}
+				</ReactMarkdown>
 			</Modal.Body>
 			<Modal.Footer>
 				<Button

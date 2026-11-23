@@ -13,11 +13,13 @@ import cn from "classnames";
 import { useField, useFormikContext } from "formik";
 import { useEffect, useRef, useState } from "react";
 import type { NginxLocationStatus, ProxyLocation } from "src/api/backend";
+import { useUpstreamCheck } from "src/hooks";
 import { intl, T } from "src/locale";
-import { locationDuplicateKey, locationHostPart, normaliseLocationPath } from "src/modules/HostStatus";
-import { LocationStatusBadge, LocationStatusDetail } from "../StatusBadges";
+import { isVariableHost, locationDuplicateKey, locationHostPart, normaliseLocationPath } from "src/modules/HostStatus";
+import { LocationStatusBadge, LocationStatusDetail, UpstreamCheckBadge, VariableHostBadge } from "../StatusBadges";
 import { AccessField } from "./AccessField";
 import styles from "./LocationsFields.module.css";
+import { UpstreamField, usePrefillGuard } from "./UpstreamField";
 
 // Below this many locations the list is short enough to scan by eye, and the
 // filter would only take up space.
@@ -173,6 +175,10 @@ export function LocationsFields({
 	const [advVisible, setAdvVisible] = useState<number[]>([]);
 	const [touched, setTouched] = useState<string[]>([]);
 	const [filter, setFilter] = useState("");
+	// The rows as last changed: one event can make several changes before the next render (picking a container
+	// sets the host, then its port and scheme), and each change has to build on the one before
+	const latestRows = useRef(rows);
+	latestRows.current = rows;
 	const nextId = useRef(rows.length);
 	const scrollToId = useRef<number | null>(null);
 
@@ -252,6 +258,12 @@ export function LocationsFields({
 		setAdvVisible(advVisible.includes(id) ? advVisible.filter((i) => i !== id) : [...advVisible, id]);
 	};
 
+	const updateRows = (newRows: Row[]) => {
+		latestRows.current = newRows;
+		setRows(newRows);
+		setFormField(newRows);
+	};
+
 	const setFormField = (newRows: Row[]) => {
 		// Blank rows are kept here so array indexes match the rows (the access
 		// list field relies on that); the modal drops them when saving.
@@ -263,9 +275,7 @@ export function LocationsFields({
 	const handleAdd = () => {
 		if (readOnly) return;
 		const id = nextId.current++;
-		const newRows = [...rows, { id, value: blankItem }];
-		setRows(newRows);
-		setFormField(newRows);
+		updateRows([...latestRows.current, { id, value: blankItem }]);
 		// A new location starts empty, so open it and make sure an active filter
 		// doesn't hide the row that was just added.
 		setExpanded([...expanded, id]);
@@ -275,18 +285,14 @@ export function LocationsFields({
 
 	const handleRemove = (id: number) => {
 		if (readOnly) return;
-		const newRows = rows.filter((r: Row) => r.id !== id);
-		setRows(newRows);
+		updateRows(latestRows.current.filter((r: Row) => r.id !== id));
 		setExpanded(expanded.filter((i) => i !== id));
 		setAdvVisible(advVisible.filter((i) => i !== id));
-		setFormField(newRows);
 	};
 
 	const handleChanges = (id: number, changes: Partial<ProxyLocation>) => {
 		if (readOnly) return;
-		const newRows = rows.map((r: Row) => (r.id === id ? { ...r, value: { ...r.value, ...changes } } : r));
-		setRows(newRows);
-		setFormField(newRows);
+		updateRows(latestRows.current.map((r: Row) => (r.id === id ? { ...r, value: { ...r.value, ...changes } } : r)));
 	};
 
 	const markTouched = (id: number, field: keyof LocationErrors) => {
@@ -440,9 +446,24 @@ function LocationCard({
 }: CardProps) {
 	const item = row.value;
 	const isEnabled = item.enabled !== false;
+	// Port and scheme as they were when the row was loaded or added; a picked
+	// candidate only replaces them while the user hasn't changed them.
+	const [initial] = useState(() => ({ port: item.forwardPort, scheme: item.forwardScheme }));
+	const guardPrefill = usePrefillGuard();
 	const bodyId = `location-body-${row.id}`;
 
+	// Check reachability once the card has been opened, and keep showing the
+	// result in the header after it's collapsed again.
+	const [wasOpened, setWasOpened] = useState(isOpen);
+	useEffect(() => {
+		if (isOpen) setWasOpened(true);
+	}, [isOpen]);
 	const hostError = errorFor("forwardHost");
+	const check = useUpstreamCheck(
+		{ host: item.forwardHost, port: item.forwardPort, scheme: item.forwardScheme },
+		isEnabled && wasOpened && !hostError && !isVariableHost(locationHostPart(item.forwardHost)),
+	);
+
 	const pathError = errorFor("path");
 	const portError = errorFor("forwardPort");
 
@@ -486,6 +507,15 @@ function LocationCard({
 							id={`location-status-${row.id}`}
 							status={status.status}
 							location={status}
+						/>
+					) : null}
+					{isEnabled && isVariableHost(locationHostPart(item.forwardHost)) ? (
+						<VariableHostBadge id={`location-check-${row.id}`} />
+					) : isEnabled ? (
+						<UpstreamCheckBadge
+							id={`location-check-${row.id}`}
+							result={check.result}
+							isChecking={check.isChecking}
 						/>
 					) : null}
 				</span>
@@ -592,15 +622,27 @@ function LocationCard({
 								<label className="form-label text-nowrap" htmlFor={`location-forwardHost-${row.id}`}>
 									<T id="proxy-host.forward-host" />
 								</label>
-								<input
+								<UpstreamField
 									id={`location-forwardHost-${row.id}`}
-									type="text"
-									className={cn("form-control", { "is-invalid": !!hostError })}
-									placeholder="eg: 10.0.0.1/path/"
-									autoComplete="off"
 									value={item.forwardHost}
-									onChange={(e) => onChanges({ forwardHost: e.target.value })}
+									placeholder="eg: 10.0.0.1/path/"
+									isInvalid={!!hostError}
+									onChange={(forwardHost) => onChanges({ forwardHost })}
 									onBlur={() => onTouched("forwardHost")}
+									onSelectCandidate={(picked) => {
+										const prefill = guardPrefill(
+											picked,
+											{ port: item.forwardPort, scheme: item.forwardScheme },
+											initial,
+										);
+										const changes: Partial<ProxyLocation> = {};
+										if (prefill.port !== undefined) {
+											// null: emptied, as typing would (a validation error until filled in)
+											changes.forwardPort = (prefill.port ?? "") as unknown as number;
+										}
+										if (prefill.scheme) changes.forwardScheme = prefill.scheme;
+										if (Object.keys(changes).length) onChanges(changes);
+									}}
 								/>
 								{hostError ? <div className="invalid-feedback">{hostError}</div> : null}
 							</div>
