@@ -203,15 +203,18 @@ describe("repairs of other hosts while saving a host whose own config is not app
 		assert.match(reloads[0][`${id}.conf`], /# before/);
 	});
 
-	it("applies them with a reload after a dry run", async () => {
+	it("leaves them to the save after a dry run: a dry run never changes another host", async () => {
 		const other = await brokenHost();
+		const before = onDisk(other);
+		const otherMeta = (await row(other)).meta;
 		const id = await host("# fine", "server {\n  # before\n}\n");
 		reloads = [];
 		await internalNginx.configure(proxyHostModel, "proxy_host", await row(id), { dryRun: true });
-		assert.equal((await row(other)).meta.nginx_online, false);
-		assert.equal(reloads.length, 1);
-		assert.equal(reloads[0][`${other}.conf`], undefined);
-		assert.match(reloads[0][`${id}.conf`], /# before/);
+		// the broken file was only moved aside for the test (see dryRun()), nothing to apply
+		assert.equal(onDisk(other), before);
+		assert.deepEqual((await row(other)).meta, otherMeta);
+		assert.match(onDisk(id), /# before/);
+		assert.equal(reloads.length, 0);
 	});
 
 	it("does not reload for a rejected save or a dry run without repairs, or with reload: false", async () => {
@@ -227,8 +230,12 @@ describe("repairs of other hosts while saving a host whose own config is not app
 });
 
 describe("an unexpected error while repairing another host", () => {
-	afterEach(() => {
+	afterEach(async () => {
 		internalNginx.healOtherHost = real.healOtherHost;
+		for (const name of real.readdirSync(dir)) {
+			real.rmSync(join(dir, name));
+		}
+		await db("proxy_host").delete();
 	});
 	for (const dryRun of [false, true]) {
 		it(`puts the saved host's previous config back${dryRun ? " (dry run)" : ""}`, async () => {
@@ -238,10 +245,13 @@ describe("an unexpected error while repairing another host", () => {
 			internalNginx.healOtherHost = async () => {
 				throw new Error("SQLITE_BUSY: database is locked");
 			};
-			await assert.rejects(
-				internalNginx.configure(proxyHostModel, "proxy_host", await row(id), { dryRun }),
-				/SQLITE_BUSY/,
-			);
+			const run = internalNginx.configure(proxyHostModel, "proxy_host", await row(id), { dryRun });
+			if (dryRun) {
+				// a dry run never repairs another host (it only moves the broken file aside for the test)
+				await run;
+			} else {
+				await assert.rejects(run, /SQLITE_BUSY/);
+			}
 			assert.equal(onDisk(id), "server {\n  # before\n}\n");
 			fs.rmSync(conf(other), { force: true });
 		});

@@ -300,25 +300,36 @@ describe("API request validation", async () => {
 		locationPath: [
 			["/nginx/proxy-hosts", "post", (v) => proxyHost({ locations: [location({ path: v })] })],
 			["/nginx/proxy-hosts/{hostID}", "put", (v) => ({ locations: [location({ path: v })] })],
+			["/nginx/proxy-hosts/test", "post", (v) => proxyHost({ locations: [location({ path: v })] })],
 		],
 		forwardHost: [
 			["/nginx/proxy-hosts", "post", (v) => proxyHost({ forward_host: v })],
 			["/nginx/proxy-hosts/{hostID}", "put", (v) => ({ forward_host: v })],
 			["/nginx/proxy-hosts/{hostID}", "put", (v) => ({ locations: [location({ forward_host: v })] })],
+			["/nginx/proxy-hosts/test", "post", (v) => proxyHost({ forward_host: v })],
+			["/nginx/proxy-hosts/test", "post", (v) => proxyHost({ locations: [location({ forward_host: v })] })],
 		],
-		forwardPath: [["/nginx/proxy-hosts/{hostID}", "put", (v) => ({ locations: [location({ forward_path: v })] })]],
+		forwardPath: [
+			["/nginx/proxy-hosts/{hostID}", "put", (v) => ({ locations: [location({ forward_path: v })] })],
+			["/nginx/proxy-hosts/test", "post", (v) => proxyHost({ locations: [location({ forward_path: v })] })],
+		],
 		redirectDomain: [
 			["/nginx/redirection-hosts", "post", (v) => redirection({ forward_domain_name: v })],
 			["/nginx/redirection-hosts/{hostID}", "put", (v) => ({ forward_domain_name: v })],
+			["/nginx/redirection-hosts/test", "post", (v) => redirection({ forward_domain_name: v })],
 		],
 		streamHost: [
 			["/nginx/streams", "post", (v) => stream({ forwarding_host: v })],
 			["/nginx/streams/{streamID}", "put", (v) => ({ forwarding_host: v })],
+			["/nginx/streams/test", "post", (v) => stream({ forwarding_host: v })],
 		],
 		domainName: [
 			["/nginx/proxy-hosts", "post", (v) => proxyHost({ domain_names: [v] })],
 			["/nginx/redirection-hosts", "post", (v) => redirection({ domain_names: [v] })],
 			["/nginx/dead-hosts", "post", (v) => ({ domain_names: [v] })],
+			["/nginx/proxy-hosts/test", "post", (v) => proxyHost({ domain_names: [v] })],
+			["/nginx/redirection-hosts/test", "post", (v) => redirection({ domain_names: [v] })],
+			["/nginx/dead-hosts/test", "post", (v) => ({ domain_names: [v] })],
 			["/nginx/certificates", "post", (v) => ({ provider: "letsencrypt", domain_names: [v] })],
 		],
 		clientAddress: [
