@@ -334,10 +334,10 @@ base64-js@^1.3.1:
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
-basic-ftp@^5.3.1:
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/basic-ftp/-/basic-ftp-5.3.1.tgz#3148ee9af43c0522514a4f973fecb1d3cbb6d71e"
-  integrity sha512-bopVNp6ugyA150DDuZfPFdt1KZ5a94ZDiwX4hMgZDzF+GttD80lEy8kj98kbyhLXnPvhtIo93mdnLIjpCAeeOw==
+basic-ftp@^6.2.4:
+  version "6.2.6"
+  resolved "https://registry.yarnpkg.com/basic-ftp/-/basic-ftp-6.2.6.tgz#84905c94db0e10415c9ba4ce61b30bc38875905a"
+  integrity sha512-0EjZCaodOz6yiokv2JA1VyKGNdGxULZ+GGlPgG9tm4d+T/bHtX1hUch8CumDneBfpIbiSdn7TaCGwpM+gwsOlw==
 
 batchflow@^0.4.0:
   version "0.4.0"
@@ -673,10 +673,10 @@ deep-extend@^0.6.0:
   resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.6.0.tgz#c4fa7c95404a17a9c3e8ca7e1537312b736330ac"
   integrity sha512-LOHxIOaPYdHlJRtCQfDIVZtfw/ufM8+rVj649RIHzcm/vGwQRXFt6OPqIFWsm2XEMrNIEtWR64sY1LEKD2vAOA==
 
-degenerator@7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/degenerator/-/degenerator-7.0.1.tgz#9b057747a2e5d058b0ef8fd753faccc109957467"
-  integrity sha512-ABErK0IefDSyHjlPH7WUEenIAX2rPPnrDcDM+TS3z3+zu9TfyKKi07BQM+8rmxpdE2y1v5fjjdoAS/x4D2U60w==
+degenerator@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/degenerator/-/degenerator-7.0.2.tgz#58c5431e5a497a249988e36ff6a6c41a7270c92b"
+  integrity sha512-j47S7YEAqh4U3UR355ts14Ipq0Zgn+AaMRdJuoyF7Ry2eSazevFvaviLMp0iOXAq7/FiBs3/33UIkE7rWRoLWQ==
   dependencies:
     ast-types "^0.13.4"
     escodegen "^2.1.0"
@@ -1020,12 +1020,12 @@ get-proto@^1.0.1:
     dunder-proto "^1.0.1"
     es-object-atoms "^1.0.0"
 
-get-uri@8.0.1:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/get-uri/-/get-uri-8.0.1.tgz#772b1418bf034c2c43ddd6a41af24a4262e135ee"
-  integrity sha512-/5N/P4Lrh0p/mDwlDRi7Y1+P2o/OyzZI3l6Iz1Ov6XXwwm1y3RlZLuo3gVgML99djrEDtV980bBxSuOeHLk8ww==
+get-uri@8.0.2:
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/get-uri/-/get-uri-8.0.2.tgz#eee9dd30c4e02fbe28c418cbd21abf80fbed6da3"
+  integrity sha512-H1sU7ppM+Hdb+FJgOTaQ7SHiV7ogUgnb+VgZ55Dz3YzLqZ4bMAClcdveHYt56npM9M7eclEg1j92ZnmSOP9uhA==
   dependencies:
-    basic-ftp "^5.3.1"
+    basic-ftp "^6.2.4"
     data-uri-to-buffer "8.0.0"
     debug "^4.3.4"
 
@@ -1662,26 +1662,26 @@ p-try@^2.0.0:
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-2.2.0.tgz#cb2868540e313d61de58fafbe35ce9004d5540e6"
   integrity sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==
 
-pac-proxy-agent@9.1.0:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/pac-proxy-agent/-/pac-proxy-agent-9.1.0.tgz#cafd7bb54905de0b6804283cd273eb22028c6abd"
-  integrity sha512-1aU+1mpj3DrQPfo3gh+3Gap3G5x+axnMx1P/y0ZF2ch7kb2meyOCAH8K2k9d27ROsTE7TnAerzxqF9aon2jqnA==
+pac-proxy-agent@9.1.1:
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/pac-proxy-agent/-/pac-proxy-agent-9.1.1.tgz#5b0fabe8866a2ff49eba64e55cb7b98a2670c3e1"
+  integrity sha512-P30j9cFU4vcu9TKjSVAwdzb+tY8ktfAwsVvxFSXmsoe09I4yZV52JAO8Z/Fptpi9VWxFTluDgqzGfgvYJlTzjg==
   dependencies:
     agent-base "9.0.0"
     debug "^4.3.4"
-    get-uri "8.0.1"
+    get-uri "8.0.2"
     http-proxy-agent "9.1.0"
     https-proxy-agent "9.1.0"
-    pac-resolver "9.0.1"
-    quickjs-wasi "^2.2.0"
+    pac-resolver "9.0.2"
+    quickjs-wasi "^3.0.0"
     socks-proxy-agent "10.1.0"
 
-pac-resolver@9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/pac-resolver/-/pac-resolver-9.0.1.tgz#a90b1518e4e832b3fcb197ada974d6f6ceaa7f8a"
-  integrity sha512-lJbS008tmkj08VhoM8Hzuv/VE5tK9MS0OIQ/7+s0lIF+BYhiQWFYzkSpML7lXs9iBu2jfmzBTLzhe9n6BX+dYw==
+pac-resolver@9.0.2:
+  version "9.0.2"
+  resolved "https://registry.yarnpkg.com/pac-resolver/-/pac-resolver-9.0.2.tgz#1e846d279f56b077a7cb0579bfc0f992d6efee69"
+  integrity sha512-FyLebKd2X1SzQAc6P+AAgWRGnAgEAYEwn1oJucBIdQivJ50dV3Lndjqso4mebnHiLaYeHtVaDfSL33BJYLi7QA==
   dependencies:
-    degenerator "7.0.1"
+    degenerator "7.0.2"
     netmask "^2.0.2"
 
 parse-json@^4.0.0:
@@ -1877,17 +1877,17 @@ proxy-agent-negotiate@1.1.0:
   resolved "https://registry.yarnpkg.com/proxy-agent-negotiate/-/proxy-agent-negotiate-1.1.0.tgz#de7d37aede9d71e74346125d6f484fac8092b615"
   integrity sha512-N8IBcM3UgCVzz2L2Lqv8DVntDnnC8/hiV4nEDUPkqq72TPUgYWjQc+bdZlBPZK9LzPAvOY//gAt0S0DApoOXWQ==
 
-proxy-agent@^8.0.2:
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/proxy-agent/-/proxy-agent-8.0.2.tgz#70737a3b9cdc8bd7a282c9e6ff54a64f5252413c"
-  integrity sha512-idLLRewuemWd7GH/BDJzGiB0dWGfT2SQs3jy6NtZtGWU9uPTTSdeC1/cdbqLwgzhfv027daGFuXX426e2Eg20A==
+proxy-agent@^8.0.3:
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/proxy-agent/-/proxy-agent-8.0.3.tgz#c46bd7efcefd8c5bbab106dae321ba8fc08cc243"
+  integrity sha512-SYjxPOWaz3CrRZxqgj3A/261L3ZSCcWzM0dFsxNP27m43/KiHWtUmtHZFsHvh7fn11E/SmBfcNsWcWqMhZ6fAw==
   dependencies:
     agent-base "9.0.0"
     debug "^4.3.4"
     http-proxy-agent "9.1.0"
     https-proxy-agent "9.1.0"
     lru-cache "^7.14.1"
-    pac-proxy-agent "9.1.0"
+    pac-proxy-agent "9.1.1"
     proxy-from-env "^2.0.0"
     socks-proxy-agent "10.1.0"
 
@@ -1922,10 +1922,10 @@ querystring@0.2.0:
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
   integrity sha512-X/xY82scca2tau62i9mDyU9K+I+djTMUsvwf7xnUX5GLvVzgJybOJf4Y6o9Zx3oJK/LSXg5tTZBjwzqVPaPO2g==
 
-quickjs-wasi@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/quickjs-wasi/-/quickjs-wasi-2.2.0.tgz#85d8984aa1b048546e5634c764165034c6e22d48"
-  integrity sha512-zQxXmQMrEoD3S+jQdYsloq4qAuaxKFHZj6hHqOYGwB2iQZH+q9e/lf5zQPXCKOk0WJuAjzRFbO4KwHIp2D05Iw==
+quickjs-wasi@^3.0.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/quickjs-wasi/-/quickjs-wasi-3.7.0.tgz#9b770923be9dfd4fc47b38565a2d071dab653249"
+  integrity sha512-6nOShBtCglrQL6yH+hptIfEdA1WlSmvY/Mm5Ypn9IvtsaDsrYIg8x+xoIXQt02w66a0f1eLTAj1lhfgAbJ4WVw==
 
 range-parser@^1.2.1:
   version "1.3.0"
