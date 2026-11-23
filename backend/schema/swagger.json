@@ -65,6 +65,10 @@
 			"description": "Endpoints for managing authentication tokens"
 		},
 		{
+			"name": "upstreams",
+			"description": "Endpoints for discovering and checking upstream (forward) hosts"
+		},
+		{
 			"name": "users",
 			"description": "Endpoints for managing users"
 		}
@@ -310,6 +314,21 @@
 		"/tokens/2fa": {
 			"post": {
 				"$ref": "./paths/tokens/2fa/post.json"
+			}
+		},
+		"/upstreams/candidates": {
+			"get": {
+				"$ref": "./paths/upstreams/candidates/get.json"
+			}
+		},
+		"/upstreams/check": {
+			"post": {
+				"$ref": "./paths/upstreams/check/post.json"
+			}
+		},
+		"/upstreams/health": {
+			"get": {
+				"$ref": "./paths/upstreams/health/get.json"
 			}
 		},
 		"/version/check": {
