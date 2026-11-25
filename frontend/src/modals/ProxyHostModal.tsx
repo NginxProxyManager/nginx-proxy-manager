@@ -17,7 +17,7 @@ import {
 	SSLOptionsFields,
 } from "src/components";
 import { FormModal } from "src/components/Form";
-import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
+import { useHealth, useProxyHost, useSetProxyHost, useUser } from "src/hooks";
 import { T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
 import { validateNumber, validateString } from "src/modules/Validations";
@@ -32,6 +32,7 @@ interface Props extends InnerModalProps {
 }
 const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
+	const { data: healthData } = useHealth();
 	const { data, isLoading, error } = useProxyHost(id);
 	const { mutate: setProxyHost } = useSetProxyHost();
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
@@ -44,11 +45,13 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
-		const { ...payload } = {
+		const { http3Support, ...payload } = {
 			id: id === "new" ? undefined : id,
 			...values,
 		};
 		payload.locations = (values.locations || []).filter((location: any) => location.path?.trim() !== "");
+
+		payload.http3_support = http3Support ? 1 : 0;
 
 		if (!isAdmin) {
 			delete payload.advanced_config;
@@ -106,6 +109,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
 							http2Support: data?.http2Support || false,
+							http3Support: data && 'http3Support' in data ? !!data.http3Support : false,
 							hstsEnabled: data?.hstsEnabled || false,
 							hstsSubdomains: data?.hstsSubdomains || false,
 							trustForwardedProto: data?.trustForwardedProto || false,
@@ -371,7 +375,13 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													label="ssl-certificate"
 													allowNew
 												/>
-												<SSLOptionsFields color="bg-lime" forProxyHost={true} />
+												<SSLOptionsFields
+													color="bg-lime"
+													forProxyHost={true}
+													// Resolve the global kill-switch from the health check response.
+													// When HTTP/3 is globally disabled or unsupported by Nginx, this hides the toggle.
+													isHttp3GloballyDisabled={healthData?.http3_disabled === true}
+												/>
 											</div>
 											{isAdmin && (
 												<div className="tab-pane" id="tab-advanced" role="tabpanel">
