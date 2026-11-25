@@ -1,0 +1,41 @@
+{
+	"proxy.conf": [
+		"proxy_set_header X-Sem-In inc;",
+		"proxy_connect_timeout 5s;",
+		"proxy_read_timeout 30s;",
+		"expires 7d;",
+		"add_header X-Sem-Inc yes always;"
+	],
+	"auth.conf": [
+		"location /cinc/_auth/ {",
+		"  internal;",
+		"  auth_request off;",
+		"  proxy_pass http://echo:9000/auth;",
+		"  proxy_pass_request_body off;",
+		"  proxy_set_header Content-Length \"\";",
+		"}",
+		"location /cinc/inner/ { return 200 \"inner $uri\"; }",
+		"auth_request /cinc/_auth/;"
+	],
+	"hdr.conf": [
+		"proxy_set_header X-Sem-In inc;"
+	],
+	"redir.conf": [
+		"proxy_redirect http://echo:9000/ /moved/;"
+	],
+	"rdoff.conf": [
+		"proxy_redirect off;"
+	],
+	"rdnest.conf": [
+		"include /tmp/nginx-sem/snip/rdoff.conf;"
+	],
+	"rdother.conf": [
+		"proxy_redirect http://other:1/ /o/;"
+	],
+	"ref.conf": [
+		"valid_referers none server_names;"
+	],
+	"guard.conf": [
+		"if ($http_x_token != secret) { return 403; }"
+	]
+}

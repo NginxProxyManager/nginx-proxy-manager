@@ -8,11 +8,12 @@ import {
 	EmptyData,
 	GravatarFormatter,
 	HasPermission,
-	TrueFalseFormatter,
+	HostStatusFormatter,
 } from "src/components";
 import { type Features, features } from "src/components/Table/features";
 import { TableLayout } from "src/components/Table/TableLayout";
 import { intl, T } from "src/locale";
+import { sortByHostStatus } from "src/modules/HostStatus";
 import { DEAD_HOSTS, MANAGE } from "src/modules/Permissions";
 
 interface Props {
@@ -63,8 +64,10 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			columnHelper.accessor((row: any) => row.enabled, {
 				id: "enabled",
 				header: intl.formatMessage({ id: "column.status" }),
+				sortFn: sortByHostStatus,
 				cell: (info: any) => {
-					return <TrueFalseFormatter value={info.getValue()} trueLabel="online" falseLabel="offline" />;
+					const row: DeadHost = info.row.original;
+					return <HostStatusFormatter enabled={info.getValue()} meta={row.meta} />;
 				},
 			}),
 			columnHelper.display({

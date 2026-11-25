@@ -431,6 +431,9 @@
 	"error.required": {
 		"defaultMessage": "Campo obrigatório"
 	},
+	"error.unknown": {
+		"defaultMessage": "Erro desconhecido"
+	},
 	"expires.on": {
 		"defaultMessage": "Expira em: {date}"
 	},
@@ -439,6 +442,27 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "Há alterações não salvas. Tem certeza de que deseja descartá-las?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Última configuração {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "O Nginx não conseguiu carregar a configuração deste host, por isso ele está offline."
+	},
+	"host-status.details": {
+		"defaultMessage": "Mostrar detalhes do status"
+	},
+	"host-status.error": {
+		"defaultMessage": "Erro"
+	},
+	"host-status.previous-config-running": {
+		"defaultMessage": "O Nginx não aplicou a configuração mais recente deste host e ainda executa a anterior."
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Ver log de erros"
+	},
+	"host-status.warning": {
+		"defaultMessage": "Aviso"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Bloquear Exploits Comuns"
@@ -479,11 +503,89 @@
 	"loading": {
 		"defaultMessage": "Carregando…"
 	},
+	"location-check.empty_host": {
+		"defaultMessage": "O host de encaminhamento está vazio."
+	},
+	"location-check.empty_path": {
+		"defaultMessage": "O caminho do location está vazio."
+	},
+	"location-check.invalid_host": {
+		"defaultMessage": "O host de encaminhamento contém caracteres não permitidos (espaços, aspas, ;, chaves, $, # ou \\). Uma única variável do nginx, como $backend, é permitida."
+	},
+	"location-check.named_forward_path": {
+		"defaultMessage": "Um caminho de encaminhamento sem variável do nginx não pode ser usado com um location nomeado; use uma variável como $request_uri ou remova o caminho de encaminhamento."
+	},
+	"location-check.omitted": {
+		"defaultMessage": "O Nginx rejeitou este location mesmo como espaço reservado, por isso ele foi removido. O restante do host continua funcionando."
+	},
+	"location-check.regex_forward_path": {
+		"defaultMessage": "Um caminho de encaminhamento sem variável do nginx não pode ser usado com um location de expressão regular; use uma captura como /v1/$1, remova o caminho de encaminhamento ou use um location de prefixo."
+	},
+	"location-check.unbalanced_braces": {
+		"defaultMessage": "A configuração avançada deste location tem chaves desbalanceadas."
+	},
+	"location-check.unresolved": {
+		"defaultMessage": "O host \"{host}\" não pode ser resolvido no momento. As requisições para este location falham com 502 até que ele seja resolvido."
+	},
+	"location-status.disabled": {
+		"defaultMessage": "Desativado"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Ativo"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Inativo"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "O Nginx rejeitou este location, por isso ele foi desativado. O restante do host continua funcionando."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Não resolvido"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "O host de encaminhamento não pode ser resolvido no momento. As requisições para este location falham até que ele possa ser resolvido."
+	},
+	"location.advanced": {
+		"defaultMessage": "Avançado"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Possui configuração personalizada do Nginx"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Outro location já usa {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Este location tem erros"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "O host contém caracteres não permitidos (aspas, ;, chaves, $, # ou \\)."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "O host não pode conter espaços"
+	},
+	"location.error.location-path-invalid": {
+		"defaultMessage": "O caminho contém caracteres não permitidos (espaços, aspas, ;, chaves, # ou \\). Coloque um caminho com espaços entre aspas duplas, por exemplo \"/meu caminho/\"."
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Caracteres inválidos no caminho de encaminhamento (espaços, aspas, ;, chaves, # ou \\). Variáveis do nginx como $uri são permitidas."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Alguns locations personalizados têm erros"
+	},
 	"location.filter": {
 		"defaultMessage": "Filtrar por caminho ou destino"
+	},
+	"location.path-label": {
+		"defaultMessage": "Location"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Ativar ou desativar este location"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, =1 {# location} other {# locations}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, =1 {# problema} other {# problemas}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Código de Verificação"
@@ -553,6 +655,144 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Insira aqui sua configuração personalizada do Nginx, por sua conta e risco!"
+	},
+	"nginx-error.advanced": {
+		"defaultMessage": "Erro na configuração personalizada do Nginx"
+	},
+	"nginx-error.advanced-line": {
+		"defaultMessage": "Erro na configuração personalizada do Nginx, linha {line}"
+	},
+	"nginx-error.auto-disabled": {
+		"defaultMessage": "Desativado automaticamente: {reason}"
+	},
+	"nginx-error.conflict": {
+		"defaultMessage": "Esta alteração entra em conflito com a configuração de outro host"
+	},
+	"nginx-error.default-site": {
+		"defaultMessage": "Não foi possível reconfigurar o site padrão. {reason}"
+	},
+	"nginx-error.field.access-list-client-address": {
+		"defaultMessage": "Endereço de cliente da lista de acesso"
+	},
+	"nginx-error.field.location-forward-host": {
+		"defaultMessage": "Host de encaminhamento do location personalizado"
+	},
+	"nginx-error.field.location-forward-path": {
+		"defaultMessage": "Caminho de encaminhamento do location personalizado"
+	},
+	"nginx-error.field.location-path": {
+		"defaultMessage": "Caminho do location personalizado"
+	},
+	"nginx-error.file": {
+		"defaultMessage": "Erro no arquivo de configuração do nginx {file}"
+	},
+	"nginx-error.file-line": {
+		"defaultMessage": "Erro no arquivo de configuração do nginx {file}, linha {line}"
+	},
+	"nginx-error.global": {
+		"defaultMessage": "O Nginx rejeitou a configuração"
+	},
+	"nginx-error.hint.address_in_use": {
+		"defaultMessage": "Outro host ou serviço já escuta nesta porta."
+	},
+	"nginx-error.hint.certificate_load": {
+		"defaultMessage": "O certificado pode ter sido excluído ou ainda não ter sido emitido. Selecione outro certificado ou renove-o."
+	},
+	"nginx-error.hint.conflict": {
+		"defaultMessage": "Outro host já usa esta configuração (por exemplo, a mesma porta de escuta com default_server), ou a configuração avançada inclui o arquivo de configuração de outro host."
+	},
+	"nginx-error.hint.directive_not_allowed": {
+		"defaultMessage": "Esta diretiva não pode ser usada neste contexto."
+	},
+	"nginx-error.hint.duplicate_directive": {
+		"defaultMessage": "Remova a duplicata. O NPM pode já definir esta diretiva para você."
+	},
+	"nginx-error.hint.duplicate_location": {
+		"defaultMessage": "Cada caminho de location só pode ser usado uma vez por host, incluindo os locations da configuração avançada."
+	},
+	"nginx-error.hint.host_not_found": {
+		"defaultMessage": "Verifique se o nome do host está escrito corretamente, se o contêiner ou servidor está em execução e se o NPM consegue alcançá-lo em uma rede compartilhada."
+	},
+	"nginx-error.hint.invalid_arguments": {
+		"defaultMessage": "Verifique se falta ou sobra algum valor, ou se falta um ponto e vírgula no fim da linha anterior."
+	},
+	"nginx-error.hint.invalid_port": {
+		"defaultMessage": "A porta deve ser um número entre 1 e 65535. Um caminho de encaminhamento deve começar com \"/\"."
+	},
+	"nginx-error.hint.invalid_regex": {
+		"defaultMessage": "Verifique a sintaxe da expressão regular do caminho do location ou do rewrite."
+	},
+	"nginx-error.hint.invalid_url": {
+		"defaultMessage": "Verifique o esquema e o host do upstream."
+	},
+	"nginx-error.hint.location_nesting": {
+		"defaultMessage": "Locations exatos (=) e nomeados (@) não podem conter outros locations."
+	},
+	"nginx-error.hint.location_not_allowed": {
+		"defaultMessage": "Locations só podem ser colocados em um bloco server ou dentro de outro location."
+	},
+	"nginx-error.hint.no_certificate": {
+		"defaultMessage": "Selecione um certificado para este host."
+	},
+	"nginx-error.hint.no_resolver": {
+		"defaultMessage": "O resolver do nginx está desativado (DISABLE_RESOLVER). Use um endereço IP ou ative o resolver."
+	},
+	"nginx-error.hint.regex_uri_part": {
+		"defaultMessage": "Remova o caminho de encaminhamento ou use um location de prefixo."
+	},
+	"nginx-error.hint.rejected_at_startup": {
+		"defaultMessage": "Salve o host novamente para trazê-lo de volta, ou deixe NPM_RECONCILE_ON_START ativado para que isso seja feito automaticamente."
+	},
+	"nginx-error.hint.unexpected_close_brace": {
+		"defaultMessage": "Verifique se cada '{' tem um '}' correspondente."
+	},
+	"nginx-error.hint.unexpected_eof": {
+		"defaultMessage": "Verifique se falta um ponto e vírgula ou um '}' de fechamento."
+	},
+	"nginx-error.hint.unexpected_open_brace": {
+		"defaultMessage": "Verifique se cada '{' tem um '}' correspondente e se a linha anterior termina com ponto e vírgula."
+	},
+	"nginx-error.hint.unexpected_semicolon": {
+		"defaultMessage": "Verifique se há um ponto e vírgula sobrando."
+	},
+	"nginx-error.hint.unknown_directive": {
+		"defaultMessage": "Verifique a grafia da diretiva. Se ela vem de um módulo do nginx, esse módulo pode não estar disponível."
+	},
+	"nginx-error.hint.unknown_variable": {
+		"defaultMessage": "Verifique a grafia da variável ou defina-a com set ou map."
+	},
+	"nginx-error.host": {
+		"defaultMessage": "O Nginx rejeitou a configuração deste host"
+	},
+	"nginx-error.location": {
+		"defaultMessage": "Erro no location personalizado {path}"
+	},
+	"nginx-error.location-advanced-line": {
+		"defaultMessage": "Erro na configuração personalizada do Nginx do location personalizado {path}, linha {line}"
+	},
+	"nginx-error.other-host": {
+		"defaultMessage": "O Nginx rejeitou a configuração de {host}"
+	},
+	"nginx-error.previous-config-running": {
+		"defaultMessage": "O Nginx continua executando a configuração anterior deste host até que um recarregamento seja bem-sucedido."
+	},
+	"nginx-error.redacted": {
+		"defaultMessage": "O Nginx rejeitou a configuração de outro host. Peça a um administrador para verificá-la."
+	},
+	"nginx-error.regenerated-conflict": {
+		"defaultMessage": "A configuração regenerada entra em conflito com a configuração de outro host"
+	},
+	"nginx-error.rejected-at-startup": {
+		"defaultMessage": "O Nginx rejeitou a configuração deste host quando o contêiner foi iniciado"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Mostrar saída do nginx"
+	},
+	"nginx-error.too-many-broken-hosts": {
+		"defaultMessage": "Configurações de host com defeito demais para reparar de uma vez (mais de {max}). Regenere todas as configurações de host (reinicie o NPM ou execute backend/scripts/regenerate-config) e tente novamente."
+	},
+	"nginx-error.unsafe-value": {
+		"defaultMessage": "Um valor salvo deste host não pode ser escrito na configuração do nginx com segurança, por isso a configuração dele foi removida"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Você não tem permissão para visualizar isto."
@@ -727,6 +967,21 @@
 	},
 	"save": {
 		"defaultMessage": "Salvar"
+	},
+	"save-warning.offline": {
+		"defaultMessage": "Salvo, mas o nginx não conseguiu carregar este host, por isso ele está offline:"
+	},
+	"save-warning.previous-config-running": {
+		"defaultMessage": "Salvo, mas o nginx não aplicou a alteração e ainda executa a configuração anterior deste host:"
+	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, =1 {# location personalizado foi desativado porque o nginx o rejeitou.} other {# locations personalizados foram desativados porque o nginx os rejeitou.}}"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Salvo com avisos"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, =1 {# location personalizado aponta para um host que não pode ser resolvido no momento.} other {# locations personalizados apontam para hosts que não podem ser resolvidos no momento.}}"
 	},
 	"setting": {
 		"defaultMessage": "Configuração"
