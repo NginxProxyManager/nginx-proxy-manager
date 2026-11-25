@@ -9,6 +9,8 @@ interface Props {
 	forceDNSForNew?: boolean;
 	requireDomainNames?: boolean; // used for streams
 	color?: string;
+	// Called with the field name when the user flips a switch
+	onToggle?: (fieldName: string) => void;
 }
 export function SSLOptionsFields({
 	forHttp = true,
@@ -16,6 +18,7 @@ export function SSLOptionsFields({
 	forceDNSForNew,
 	requireDomainNames,
 	color = "bg-cyan",
+	onToggle,
 }: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const v: any = values || {};
@@ -31,6 +34,7 @@ export function SSLOptionsFields({
 
 	const handleToggleChange = (e: any, fieldName: string) => {
 		setFieldValue(fieldName, e.target.checked);
+		onToggle?.(fieldName);
 		if (fieldName === "meta.dnsChallenge" && !e.target.checked) {
 			setFieldValue("meta.dnsProvider", undefined);
 			setFieldValue("meta.dnsProviderCredentials", undefined);

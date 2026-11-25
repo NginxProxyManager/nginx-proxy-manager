@@ -113,6 +113,12 @@
 	"action.close": {
 		"defaultMessage": "Đóng"
 	},
+	"action.copied": {
+		"defaultMessage": "Đã sao chép"
+	},
+	"action.copy": {
+		"defaultMessage": "Sao chép"
+	},
 	"action.delete": {
 		"defaultMessage": "Xóa"
 	},
@@ -347,6 +353,24 @@
 	"disabled": {
 		"defaultMessage": "Đã tắt"
 	},
+	"docker-labels.badge": {
+		"defaultMessage": "tên miền đã dùng"
+	},
+	"docker-labels.exists": {
+		"defaultMessage": "{type, select, redirection_host {Một máy chủ chuyển hướng đã dùng một trong các tên miền này} dead_host {Một máy chủ 404 đã dùng một trong các tên miền này} other {Một máy chủ proxy đã dùng một trong các tên miền này}}."
+	},
+	"docker-labels.ignored": {
+		"defaultMessage": "Không dùng từ npm.domain: {domains}"
+	},
+	"docker-labels.ignored-hint": {
+		"defaultMessage": "Trường tên miền sẽ từ chối các tên này (ký tự đại diện chỉ được phép ở đầu dưới dạng *., ví dụ *.example.com)"
+	},
+	"docker-labels.not-filled": {
+		"defaultMessage": "Các tên miền từ nhãn npm.domain của container ({domains}) chưa được điền."
+	},
+	"docker-labels.used-by": {
+		"defaultMessage": "{type, select, redirection_host {Đang được một máy chủ chuyển hướng dùng: hãy thay đổi hoặc xóa nó trước} dead_host {Đang được một máy chủ 404 dùng: hãy thay đổi hoặc xóa nó trước} other {Đang được một máy chủ proxy dùng}}."
+	},
 	"domain-names": {
 		"defaultMessage": "Tên miền"
 	},
@@ -431,6 +455,9 @@
 	"error.required": {
 		"defaultMessage": "Trường này là bắt buộc"
 	},
+	"error.unknown": {
+		"defaultMessage": "Lỗi không xác định"
+	},
 	"expires.on": {
 		"defaultMessage": "Hết hạn: {date}"
 	},
@@ -439,6 +466,75 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "Bạn có các thay đổi chưa được lưu. Bạn có chắc chắn muốn hủy bỏ chúng không?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Cấu hình lần cuối lúc {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "Nginx không thể tải cấu hình của host này nên host đang ngoại tuyến."
+	},
+	"host-status.details": {
+		"defaultMessage": "Hiện chi tiết trạng thái"
+	},
+	"host-status.error": {
+		"defaultMessage": "Lỗi"
+	},
+	"host-status.previous-config-running": {
+		"defaultMessage": "Nginx chưa áp dụng cấu hình mới nhất của host này và vẫn đang chạy cấu hình trước đó."
+	},
+	"host-status.resolver-only": {
+		"defaultMessage": "{where}: nginx không phân giải được {target}"
+	},
+	"host-status.unreachable": {
+		"defaultMessage": "{where}: không thể kết nối tới {target}"
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Xem nhật ký lỗi"
+	},
+	"host-status.warning": {
+		"defaultMessage": "Cảnh báo"
+	},
+	"host-test.failed": {
+		"defaultMessage": "Không thể chạy kiểm tra"
+	},
+	"host-test.not-saved": {
+		"defaultMessage": "Đây chỉ là kiểm tra, không có gì được lưu."
+	},
+	"host-test.ok": {
+		"defaultMessage": "Cấu hình hợp lệ"
+	},
+	"host-test.ok-warnings": {
+		"defaultMessage": "Cấu hình hợp lệ, có cảnh báo"
+	},
+	"host-test.quarantined": {
+		"defaultMessage": "{count, plural, other {Nginx sẽ tắt # vị trí tùy chỉnh}}"
+	},
+	"host-test.rate-limited": {
+		"defaultMessage": "Chưa kiểm tra: quá nhiều lần kiểm tra trong một phút qua"
+	},
+	"host-test.reachability": {
+		"defaultMessage": "Khả năng kết nối"
+	},
+	"host-test.rejected": {
+		"defaultMessage": "Nginx sẽ từ chối cấu hình này"
+	},
+	"host-test.stale": {
+		"defaultMessage": "Biểu mẫu đã thay đổi sau lần kiểm tra này. Hãy kiểm tra lại để xác nhận các thay đổi."
+	},
+	"host-test.too-many": {
+		"defaultMessage": "Quá nhiều lần kiểm tra trong một phút qua. Hãy thử lại sau {seconds, plural, other {# giây}}."
+	},
+	"host-test.warning.certificate-pending": {
+		"defaultMessage": "Một chứng chỉ mới sẽ được yêu cầu khi bạn lưu. Bài kiểm tra đã kiểm tra máy chủ không có SSL; phần SSL sẽ được kiểm tra khi chứng chỉ được thêm."
+	},
+	"host-test.warning.other-host": {
+		"defaultMessage": "Nginx từ chối cấu hình hiện tại của {host}. Việc lưu sẽ sửa hoặc tắt nó."
+	},
+	"host-test.warning.other-host-hidden": {
+		"defaultMessage": "Nginx từ chối cấu hình hiện tại của một máy chủ khác. Việc lưu sẽ sửa hoặc tắt máy chủ đó. Hãy nhờ quản trị viên kiểm tra."
+	},
+	"host-test.warning.rate-limited": {
+		"defaultMessage": "Chưa kiểm tra khả năng kết nối: quá nhiều lần kiểm tra trong một phút qua. Hãy thử lại sau {seconds, plural, other {# giây}}."
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Chặn các hoạt động khai thác phổ biến"
@@ -479,11 +575,89 @@
 	"loading": {
 		"defaultMessage": "Đang tải…"
 	},
+	"location-check.empty_host": {
+		"defaultMessage": "Host đích đang trống."
+	},
+	"location-check.empty_path": {
+		"defaultMessage": "Đường dẫn của vị trí đang trống."
+	},
+	"location-check.invalid_host": {
+		"defaultMessage": "Host đích chứa ký tự không hợp lệ (khoảng trắng, dấu nháy, ;, dấu ngoặc nhọn, $, # hoặc \\). Được phép dùng một biến nginx duy nhất như $backend."
+	},
+	"location-check.named_forward_path": {
+		"defaultMessage": "Không thể dùng đường dẫn đích không có biến nginx với vị trí có tên; hãy dùng một biến như $request_uri hoặc xóa đường dẫn đích."
+	},
+	"location-check.omitted": {
+		"defaultMessage": "Nginx đã từ chối vị trí này ngay cả khi chỉ là chỗ giữ chỗ nên nó đã bị gỡ bỏ. Phần còn lại của host vẫn hoạt động bình thường."
+	},
+	"location-check.regex_forward_path": {
+		"defaultMessage": "Không thể dùng đường dẫn đích không có biến nginx với vị trí dạng biểu thức chính quy; hãy dùng nhóm bắt như /v1/$1, xóa đường dẫn đích hoặc dùng vị trí dạng tiền tố."
+	},
+	"location-check.unbalanced_braces": {
+		"defaultMessage": "Cấu hình nâng cao của vị trí này có dấu ngoặc nhọn không cân bằng."
+	},
+	"location-check.unresolved": {
+		"defaultMessage": "Hiện không thể phân giải host \"{host}\". Các yêu cầu tới vị trí này sẽ lỗi 502 cho đến khi phân giải được."
+	},
+	"location-status.disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"location-status.ok": {
+		"defaultMessage": "Đang hoạt động"
+	},
+	"location-status.quarantined": {
+		"defaultMessage": "Không hoạt động"
+	},
+	"location-status.quarantined.default": {
+		"defaultMessage": "Nginx đã từ chối vị trí này nên nó đã bị tắt. Phần còn lại của host vẫn hoạt động bình thường."
+	},
+	"location-status.unresolved": {
+		"defaultMessage": "Chưa phân giải được"
+	},
+	"location-status.unresolved.default": {
+		"defaultMessage": "Hiện không thể phân giải host đích. Các yêu cầu tới vị trí này sẽ thất bại cho đến khi phân giải được."
+	},
+	"location.advanced": {
+		"defaultMessage": "Nâng cao"
+	},
 	"location.advanced-config": {
 		"defaultMessage": "Có cấu hình Nginx tùy chỉnh"
 	},
+	"location.error.duplicate-path": {
+		"defaultMessage": "Một vị trí khác đã dùng {path}"
+	},
+	"location.error.has-errors": {
+		"defaultMessage": "Vị trí này có lỗi"
+	},
+	"location.error.host-invalid": {
+		"defaultMessage": "Host chứa ký tự không được phép (dấu nháy, ;, dấu ngoặc nhọn, $, # hoặc \\)."
+	},
+	"location.error.host-whitespace": {
+		"defaultMessage": "Host không được chứa khoảng trắng"
+	},
+	"location.error.location-path-invalid": {
+		"defaultMessage": "Đường dẫn chứa ký tự không được phép (khoảng trắng, dấu nháy, ;, dấu ngoặc nhọn, # hoặc \\). Hãy đặt đường dẫn có khoảng trắng trong dấu nháy kép, ví dụ \"/my path/\"."
+	},
+	"location.error.path-invalid": {
+		"defaultMessage": "Đường dẫn đích chứa ký tự không hợp lệ (khoảng trắng, dấu nháy, ;, dấu ngoặc nhọn, # hoặc \\). Được phép dùng biến nginx như $uri."
+	},
+	"location.errors-summary": {
+		"defaultMessage": "Một số vị trí tùy chỉnh có lỗi"
+	},
 	"location.filter": {
 		"defaultMessage": "Lọc theo đường dẫn hoặc đích"
+	},
+	"location.path-label": {
+		"defaultMessage": "Vị trí"
+	},
+	"location.toggle-enabled": {
+		"defaultMessage": "Bật hoặc tắt vị trí này"
+	},
+	"locations.count": {
+		"defaultMessage": "+{count, plural, other {# vị trí}}"
+	},
+	"locations.problems": {
+		"defaultMessage": "{count, plural, other {# vấn đề}}"
 	},
 	"login.2fa-code": {
 		"defaultMessage": "Mã xác minh"
@@ -553,6 +727,144 @@
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Nhập cấu hình Nginx tùy chỉnh tại đây, bạn tự chịu rủi ro!"
+	},
+	"nginx-error.advanced": {
+		"defaultMessage": "Lỗi trong cấu hình Nginx tùy chỉnh"
+	},
+	"nginx-error.advanced-line": {
+		"defaultMessage": "Lỗi trong cấu hình Nginx tùy chỉnh, dòng {line}"
+	},
+	"nginx-error.auto-disabled": {
+		"defaultMessage": "Đã tự động tắt: {reason}"
+	},
+	"nginx-error.conflict": {
+		"defaultMessage": "Thay đổi này xung đột với cấu hình của một host khác"
+	},
+	"nginx-error.default-site": {
+		"defaultMessage": "Không thể cấu hình lại trang mặc định. {reason}"
+	},
+	"nginx-error.field.access-list-client-address": {
+		"defaultMessage": "Địa chỉ máy khách trong danh sách truy cập"
+	},
+	"nginx-error.field.location-forward-host": {
+		"defaultMessage": "Host đích của vị trí tùy chỉnh"
+	},
+	"nginx-error.field.location-forward-path": {
+		"defaultMessage": "Đường dẫn đích của vị trí tùy chỉnh"
+	},
+	"nginx-error.field.location-path": {
+		"defaultMessage": "Đường dẫn của vị trí tùy chỉnh"
+	},
+	"nginx-error.file": {
+		"defaultMessage": "Lỗi trong tệp cấu hình nginx {file}"
+	},
+	"nginx-error.file-line": {
+		"defaultMessage": "Lỗi trong tệp cấu hình nginx {file}, dòng {line}"
+	},
+	"nginx-error.global": {
+		"defaultMessage": "Nginx đã từ chối cấu hình"
+	},
+	"nginx-error.hint.address_in_use": {
+		"defaultMessage": "Một host hoặc dịch vụ khác đã lắng nghe trên cổng này."
+	},
+	"nginx-error.hint.certificate_load": {
+		"defaultMessage": "Chứng chỉ có thể đã bị xóa hoặc chưa được cấp. Hãy chọn chứng chỉ khác hoặc gia hạn nó."
+	},
+	"nginx-error.hint.conflict": {
+		"defaultMessage": "Một host khác đã dùng thiết lập này (ví dụ cùng cổng listen với default_server), hoặc cấu hình tùy chỉnh đã include tệp cấu hình của một host khác."
+	},
+	"nginx-error.hint.directive_not_allowed": {
+		"defaultMessage": "Không thể dùng chỉ thị này trong ngữ cảnh này."
+	},
+	"nginx-error.hint.duplicate_directive": {
+		"defaultMessage": "Hãy xóa phần trùng lặp. NPM có thể đã đặt chỉ thị này cho bạn."
+	},
+	"nginx-error.hint.duplicate_location": {
+		"defaultMessage": "Mỗi đường dẫn vị trí chỉ được dùng một lần cho mỗi host, kể cả các vị trí trong cấu hình tùy chỉnh."
+	},
+	"nginx-error.hint.host_not_found": {
+		"defaultMessage": "Hãy kiểm tra tên host có viết đúng không, container hoặc máy chủ có đang chạy không, và NPM có truy cập được nó qua một mạng chung không."
+	},
+	"nginx-error.hint.invalid_arguments": {
+		"defaultMessage": "Hãy kiểm tra xem có thiếu hoặc thừa giá trị không, hoặc thiếu dấu chấm phẩy ở cuối dòng trước."
+	},
+	"nginx-error.hint.invalid_port": {
+		"defaultMessage": "Cổng phải là một số từ 1 đến 65535. Đường dẫn đích phải bắt đầu bằng \"/\"."
+	},
+	"nginx-error.hint.invalid_regex": {
+		"defaultMessage": "Hãy kiểm tra cú pháp biểu thức chính quy của đường dẫn vị trí hoặc rewrite."
+	},
+	"nginx-error.hint.invalid_url": {
+		"defaultMessage": "Hãy kiểm tra giao thức và host của máy chủ đích."
+	},
+	"nginx-error.hint.location_nesting": {
+		"defaultMessage": "Vị trí khớp chính xác (=) và vị trí có tên (@) không thể chứa vị trí khác."
+	},
+	"nginx-error.hint.location_not_allowed": {
+		"defaultMessage": "Vị trí chỉ có thể đặt trong khối server hoặc bên trong một vị trí khác."
+	},
+	"nginx-error.hint.no_certificate": {
+		"defaultMessage": "Hãy chọn một chứng chỉ cho host này."
+	},
+	"nginx-error.hint.no_resolver": {
+		"defaultMessage": "Trình phân giải DNS của nginx đang bị tắt (DISABLE_RESOLVER). Hãy dùng địa chỉ IP hoặc bật trình phân giải."
+	},
+	"nginx-error.hint.regex_uri_part": {
+		"defaultMessage": "Hãy dùng nhóm bắt hoặc biến trong đường dẫn đích (/v1/$1), xóa đường dẫn đích hoặc dùng vị trí dạng tiền tố."
+	},
+	"nginx-error.hint.rejected_at_startup": {
+		"defaultMessage": "Lưu lại host để khôi phục nó, hoặc để NPM_RECONCILE_ON_START bật để việc này diễn ra tự động."
+	},
+	"nginx-error.hint.unexpected_close_brace": {
+		"defaultMessage": "Hãy kiểm tra mỗi '{' đều có '}' tương ứng."
+	},
+	"nginx-error.hint.unexpected_eof": {
+		"defaultMessage": "Hãy kiểm tra xem có thiếu dấu chấm phẩy hoặc dấu '}' đóng không."
+	},
+	"nginx-error.hint.unexpected_open_brace": {
+		"defaultMessage": "Hãy kiểm tra mỗi '{' đều có '}' tương ứng và dòng trước kết thúc bằng dấu chấm phẩy."
+	},
+	"nginx-error.hint.unexpected_semicolon": {
+		"defaultMessage": "Hãy kiểm tra xem có dấu chấm phẩy thừa không."
+	},
+	"nginx-error.hint.unknown_directive": {
+		"defaultMessage": "Hãy kiểm tra chính tả của chỉ thị. Nếu chỉ thị đến từ một mô-đun nginx, có thể mô-đun đó không có sẵn."
+	},
+	"nginx-error.hint.unknown_variable": {
+		"defaultMessage": "Hãy kiểm tra chính tả của biến, hoặc định nghĩa nó bằng set hoặc map."
+	},
+	"nginx-error.host": {
+		"defaultMessage": "Nginx đã từ chối cấu hình của host này"
+	},
+	"nginx-error.location": {
+		"defaultMessage": "Lỗi trong vị trí tùy chỉnh {path}"
+	},
+	"nginx-error.location-advanced-line": {
+		"defaultMessage": "Lỗi trong cấu hình Nginx tùy chỉnh của vị trí tùy chỉnh {path}, dòng {line}"
+	},
+	"nginx-error.other-host": {
+		"defaultMessage": "Nginx đã từ chối cấu hình của {host}"
+	},
+	"nginx-error.previous-config-running": {
+		"defaultMessage": "Nginx vẫn chạy cấu hình trước đó của host này cho đến khi tải lại thành công."
+	},
+	"nginx-error.redacted": {
+		"defaultMessage": "Nginx đã từ chối cấu hình của một host khác. Vui lòng nhờ quản trị viên kiểm tra."
+	},
+	"nginx-error.regenerated-conflict": {
+		"defaultMessage": "Cấu hình vừa tạo lại xung đột với cấu hình của một host khác"
+	},
+	"nginx-error.rejected-at-startup": {
+		"defaultMessage": "Nginx đã từ chối cấu hình của host này khi container khởi động"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Hiện đầu ra của nginx"
+	},
+	"nginx-error.too-many-broken-hosts": {
+		"defaultMessage": "Có quá nhiều cấu hình host bị lỗi để sửa trong một lần (hơn {max}). Hãy tạo lại cấu hình của tất cả host (khởi động lại NPM hoặc chạy backend/scripts/regenerate-config), rồi thử lại."
+	},
+	"nginx-error.unsafe-value": {
+		"defaultMessage": "Một giá trị đã lưu của host này không thể được ghi an toàn vào cấu hình nginx, nên cấu hình của host đã bị gỡ bỏ"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Bạn không có quyền xem nội dung này."
@@ -728,6 +1040,21 @@
 	"save": {
 		"defaultMessage": "Lưu"
 	},
+	"save-warning.offline": {
+		"defaultMessage": "Đã lưu, nhưng nginx không thể tải host này nên host đang ngoại tuyến:"
+	},
+	"save-warning.previous-config-running": {
+		"defaultMessage": "Đã lưu, nhưng nginx không áp dụng thay đổi và vẫn chạy cấu hình trước đó của host này:"
+	},
+	"save-warning.quarantined": {
+		"defaultMessage": "{count, plural, other {# vị trí tùy chỉnh đã bị tắt vì nginx từ chối.}}"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Đã lưu nhưng có cảnh báo"
+	},
+	"save-warning.unresolved": {
+		"defaultMessage": "{count, plural, other {# vị trí tùy chỉnh trỏ tới host hiện không thể phân giải.}}"
+	},
 	"setting": {
 		"defaultMessage": "Cài đặt"
 	},
@@ -799,6 +1126,159 @@
 	},
 	"update-available": {
 		"defaultMessage": "Đã có bản cập nhật: {latestVersion}"
+	},
+	"upstream.check.checking": {
+		"defaultMessage": "Đang kiểm tra…"
+	},
+	"upstream.check.detail.dns_not_found": {
+		"defaultMessage": "Hãy kiểm tra chính tả, và xem container có đang chạy và nằm cùng mạng Docker với Nginx Proxy Manager không."
+	},
+	"upstream.check.detail.dns_timeout": {
+		"defaultMessage": "Máy chủ DNS không trả lời kịp thời."
+	},
+	"upstream.check.detail.invalid_host": {
+		"defaultMessage": "\"{host}\" không phải là tên máy chủ hoặc địa chỉ IP hợp lệ."
+	},
+	"upstream.check.detail.invalid_host_empty": {
+		"defaultMessage": "Hãy nhập tên máy chủ hoặc địa chỉ IP."
+	},
+	"upstream.check.detail.no_resolver": {
+		"defaultMessage": "Trình phân giải DNS của nginx đang bị tắt (DISABLE_RESOLVER), mà nginx phân giải upstream này cho mỗi yêu cầu: các yêu cầu sẽ thất bại. Hãy dùng địa chỉ IP hoặc bật trình phân giải."
+	},
+	"upstream.check.detail.resolver_mismatch": {
+		"defaultMessage": "Chỉ /etc/hosts hoặc tên miền tìm kiếm trong resolv.conf tìm thấy \"{host}\", trình phân giải DNS của nginx thì không. Chỉ hoạt động với upstream tĩnh (phân giải khi tải cấu hình)."
+	},
+	"upstream.check.detail.resolver_required": {
+		"defaultMessage": "Chỉ /etc/hosts hoặc tên miền tìm kiếm trong resolv.conf tìm thấy \"{host}\". nginx phân giải upstream này cho mỗi yêu cầu qua trình phân giải DNS của nó, vốn không tìm thấy tên này: các yêu cầu sẽ thất bại. Hãy dùng tên mà trình phân giải tìm được (ví dụ tên container trên mạng Docker chung) hoặc địa chỉ IP."
+	},
+	"upstream.check.detail.tcp_refused": {
+		"defaultMessage": "Máy chủ tồn tại, nhưng không có gì lắng nghe trên cổng {port}."
+	},
+	"upstream.check.detail.tcp_timeout": {
+		"defaultMessage": "Có thể tường lửa đang chặn lưu lượng, hoặc máy chủ đang tắt."
+	},
+	"upstream.check.detail.tcp_unreachable": {
+		"defaultMessage": "Không có đường đi từ Nginx Proxy Manager tới máy chủ này."
+	},
+	"upstream.check.disabled": {
+		"defaultMessage": "Đã tắt kiểm tra"
+	},
+	"upstream.check.dns_not_found": {
+		"defaultMessage": "Không tìm thấy host"
+	},
+	"upstream.check.dns_timeout": {
+		"defaultMessage": "Tra cứu DNS quá thời gian"
+	},
+	"upstream.check.invalid_host": {
+		"defaultMessage": "Tên host không hợp lệ"
+	},
+	"upstream.check.no_resolver": {
+		"defaultMessage": "Không có trình phân giải của nginx"
+	},
+	"upstream.check.ok": {
+		"defaultMessage": "Có thể kết nối"
+	},
+	"upstream.check.ok-ms": {
+		"defaultMessage": "Có thể kết nối ({ms} ms)"
+	},
+	"upstream.check.resolver_mismatch": {
+		"defaultMessage": "Chỉ phân giải được qua /etc/hosts hoặc tên miền tìm kiếm"
+	},
+	"upstream.check.tcp_refused": {
+		"defaultMessage": "Kết nối bị từ chối"
+	},
+	"upstream.check.tcp_timeout": {
+		"defaultMessage": "Kết nối quá thời gian"
+	},
+	"upstream.check.tcp_unreachable": {
+		"defaultMessage": "Không thể truy cập host"
+	},
+	"upstream.check.variable": {
+		"defaultMessage": "Biến nginx"
+	},
+	"upstream.check.variable-tip": {
+		"defaultMessage": "Được đặt trong cấu hình nâng cao và được nginx phân giải cho mỗi yêu cầu, nên không được kiểm tra ở đây."
+	},
+	"upstream.check.variable-tip-main": {
+		"defaultMessage": "Được nginx phân giải cho mỗi yêu cầu, nên không được kiểm tra ở đây. Biến này cần có giá trị trước khi cấu hình nâng cao của host này chạy, ví dụ từ một map trong /data/nginx/custom/http.conf; lệnh set trong cấu hình nâng cao là quá muộn."
+	},
+	"upstream.compose-service": {
+		"defaultMessage": "Dịch vụ Compose của {container}"
+	},
+	"upstream.container-state": {
+		"defaultMessage": "{state, select, created {Đã tạo} restarting {Đang khởi động lại} paused {Tạm dừng} exited {Đã thoát} removing {Đang xóa} dead {Đã chết} other {{state}}}"
+	},
+	"upstream.docker-disabled": {
+		"defaultMessage": "Tính năng phát hiện Docker đang tắt: hãy đặt NPM_DOCKER_DISCOVERY=true (xem tài liệu)."
+	},
+	"upstream.docker-error.api_denied": {
+		"defaultMessage": "Docker API đã từ chối yêu cầu. Nếu bạn dùng docker-socket-proxy, hãy bật CONTAINERS=1 và NETWORKS=1 trên đó."
+	},
+	"upstream.docker-error.bad_response": {
+		"defaultMessage": "Phản hồi của Docker API quá lớn hoặc không phải JSON hợp lệ."
+	},
+	"upstream.docker-error.bad_status": {
+		"defaultMessage": "Docker API trả về {status} cho {path}."
+	},
+	"upstream.docker-error.connection_refused": {
+		"defaultMessage": "Kết nối tới Docker API bị từ chối. Hãy kiểm tra DOCKER_HOST và xem socket proxy có đang chạy không."
+	},
+	"upstream.docker-error.failed": {
+		"defaultMessage": "Lỗi không mong đợi."
+	},
+	"upstream.docker-error.host_not_found": {
+		"defaultMessage": "Không phân giải được tên máy chủ trong DOCKER_HOST."
+	},
+	"upstream.docker-error.invalid_docker_host": {
+		"defaultMessage": "{problem, select, unix_path {DOCKER_HOST \"{value}\" phải là đường dẫn tuyệt đối tới unix socket.} port {DOCKER_HOST \"{value}\" có cổng không hợp lệ.} other {DOCKER_HOST \"{value}\" không được hỗ trợ. Hãy dùng unix:///var/run/docker.sock hoặc tcp://host:2375 (không hỗ trợ TLS).}}"
+	},
+	"upstream.docker-error.permission_denied": {
+		"defaultMessage": "Bị từ chối quyền truy cập socket Docker. Backend chạy với PUID/PGID mà không có nhóm bổ sung; hãy dùng docker-socket-proxy (DOCKER_HOST=tcp://...) thay thế."
+	},
+	"upstream.docker-error.self_not_found": {
+		"defaultMessage": "Không tìm thấy container của chính Nginx Proxy Manager qua Docker API, nên không biết các mạng của nó."
+	},
+	"upstream.docker-error.socket_missing": {
+		"defaultMessage": "Socket Docker {path} không tồn tại. Hãy gắn (mount) nó, hoặc trỏ DOCKER_HOST tới một docker-socket-proxy."
+	},
+	"upstream.docker-error.timeout": {
+		"defaultMessage": "Docker API không trả lời trong vòng {seconds, plural, other {# giây}}."
+	},
+	"upstream.docker-help": {
+		"defaultMessage": "Thiết lập"
+	},
+	"upstream.docker-labels": {
+		"defaultMessage": "Nhãn Docker"
+	},
+	"upstream.docker-unavailable": {
+		"defaultMessage": "Tính năng phát hiện Docker không hoạt động."
+	},
+	"upstream.free-text": {
+		"defaultMessage": "Bạn cũng có thể nhập bất kỳ tên host hoặc địa chỉ IP nào."
+	},
+	"upstream.group.dns": {
+		"defaultMessage": "Phát hiện trên mạng"
+	},
+	"upstream.group.docker": {
+		"defaultMessage": "Container Docker"
+	},
+	"upstream.group.history": {
+		"defaultMessage": "Đã dùng trước đây"
+	},
+	"upstream.network": {
+		"defaultMessage": "Mạng: {network}"
+	},
+	"upstream.no-options": {
+		"defaultMessage": "Không có gợi ý, hãy nhập tên host hoặc địa chỉ IP"
+	},
+	"upstream.ports": {
+		"defaultMessage": "Cổng: {ports}"
+	},
+	"upstream.use-value": {
+		"defaultMessage": "Dùng \"{value}\""
+	},
+	"upstream.used-by": {
+		"defaultMessage": "được dùng bởi {count, plural, other {# host}}"
 	},
 	"user": {
 		"defaultMessage": "Người dùng"

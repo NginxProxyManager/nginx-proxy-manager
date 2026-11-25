@@ -1,5 +1,6 @@
 import express from "express";
 import internalStream from "../../internal/stream.js";
+import addHostTestRoute from "../../lib/express/host-test-route.js";
 import jwtdecode from "../../lib/express/jwt-decode.js";
 import apiValidator from "../../lib/validator/api.js";
 import validator from "../../lib/validator/index.js";
@@ -69,6 +70,13 @@ router
 			next(err);
 		}
 	});
+
+/**
+ * /api/nginx/streams/test
+ *
+ * Test the settings of a new or edited host without saving them. Before the /:id routes.
+ */
+addHostTestRoute(router, { schemaPath: "/nginx/streams/test", hostType: "stream" });
 
 /**
  * Specific stream

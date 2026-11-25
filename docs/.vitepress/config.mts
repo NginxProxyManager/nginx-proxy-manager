@@ -81,7 +81,14 @@ export default defineConfig({
 					{ text: "Guide", link: "/guide/" },
 					{ text: "Screenshots", link: "/screenshots/" },
 					{ text: "Setup Instructions", link: "/setup/" },
-					{ text: "Advanced Configuration", link: "/advanced-config/" },
+					{
+						text: "Advanced Configuration",
+						link: "/advanced-config/",
+						items: [
+							{ text: "Custom Locations", link: "/advanced-config/locations" },
+							{ text: "Upstream Discovery", link: "/advanced-config/upstream-discovery" },
+						],
+					},
 					{ text: "Upgrading", link: "/upgrading/" },
 					{ text: "Frequently Asked Questions", link: "/faq/" },
 					{ text: "Certbot", link: "/certbot/" },

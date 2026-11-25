@@ -33,6 +33,8 @@ interface Props {
 	required?: boolean;
 	allowNew?: boolean;
 	forHttp?: boolean; // the sslForced, http2Support, hstsEnabled, hstsSubdomains fields
+	// Turn HTTP/2 on when a certificate is picked for a host that had none (a npm.http2 Docker label)
+	http2OnCertificate?: boolean;
 }
 export function SSLCertificateField({
 	name = "certificateId",
@@ -41,6 +43,7 @@ export function SSLCertificateField({
 	required,
 	allowNew,
 	forHttp = true,
+	http2OnCertificate = false,
 }: Props) {
 	const { locale } = useLocaleState();
 	const { isLoading, isError, error, data } = useCertificates();
@@ -64,6 +67,8 @@ export function SSLCertificateField({
 			http2Support && setFieldValue("http2Support", false);
 			hstsEnabled && setFieldValue("hstsEnabled", false);
 			hstsSubdomains && setFieldValue("hstsSubdomains", false);
+		} else if (forHttp && http2OnCertificate && !v[name] && !http2Support) {
+			setFieldValue("http2Support", true);
 		}
 		if (newValue?.value !== "new") {
 			dnsChallenge && setFieldValue("dnsChallenge", undefined);

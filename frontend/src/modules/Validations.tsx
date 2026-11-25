@@ -100,4 +100,12 @@ const validateDomains = (allowWildcards = false, maxDomains?: number) => {
 	};
 };
 
-export { validateEmail, validateNumber, validateString, validateDomains, validateDomain };
+/**
+ * The main forward host of a proxy host. The server trims it before saving
+ * (an all-blank value would end up empty) and accepts 1 to 255 characters;
+ * no characters are rejected there, so none are here.
+ */
+const validateForwardHost = (value: string): string | undefined =>
+	validateString(1, 255)(typeof value === "string" ? value.trim() : value);
+
+export { validateEmail, validateNumber, validateString, validateDomains, validateDomain, validateForwardHost };

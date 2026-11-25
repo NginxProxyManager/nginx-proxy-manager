@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { Form } from "formik";
 import type { ReactNode } from "react";
@@ -10,17 +11,20 @@ vi.mock("./AccessField", () => ({ AccessField: () => null }));
 
 const renderDraft = (initialValues: Record<string, unknown>, children: ReactNode) => {
 	const onHide = vi.fn();
+	// The location host field asks the API for upstream suggestions
 	render(
-		<FormModal show onHide={onHide} initialValues={initialValues} onSubmit={vi.fn()}>
-			{({ onHide: hide }) => (
-				<Form>
-					{children}
-					<button type="button" onClick={hide}>
-						Cancel
-					</button>
-				</Form>
-			)}
-		</FormModal>,
+		<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+			<FormModal show onHide={onHide} initialValues={initialValues} onSubmit={vi.fn()}>
+				{({ onHide: hide }) => (
+					<Form>
+						{children}
+						<button type="button" onClick={hide}>
+							Cancel
+						</button>
+					</Form>
+				)}
+			</FormModal>
+		</QueryClientProvider>,
 	);
 	return onHide;
 };
@@ -30,6 +34,11 @@ describe("FormModal local drafts", () => {
 		vi.stubGlobal(
 			"confirm",
 			vi.fn(() => false),
+		);
+		// Suggestions never arrive, so the test makes no network requests
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(() => new Promise(() => {})),
 		);
 	});
 
@@ -41,7 +50,7 @@ describe("FormModal local drafts", () => {
 	it("protects a location draft without a path", () => {
 		const onHide = renderDraft({ locations: [] }, <LocationsFields initialValues={[]} />);
 		fireEvent.click(screen.getByRole("button", { name: "Add Location" }));
-		fireEvent.change(screen.getByPlaceholderText("eg: 10.0.0.1/path/"), { target: { value: "example.com" } });
+		fireEvent.change(screen.getByLabelText("Forward Hostname / IP"), { target: { value: "example.com" } });
 
 		fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
 
