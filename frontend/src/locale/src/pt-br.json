@@ -431,6 +431,9 @@
 	"error.required": {
 		"defaultMessage": "Campo obrigatório"
 	},
+	"error.unknown": {
+		"defaultMessage": "Erro desconhecido"
+	},
 	"expires.on": {
 		"defaultMessage": "Expira em: {date}"
 	},
@@ -439,6 +442,24 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "Há alterações não salvas. Tem certeza de que deseja descartá-las?"
+	},
+	"host-status.checked-at": {
+		"defaultMessage": "Última configuração {date}"
+	},
+	"host-status.config-error": {
+		"defaultMessage": "O Nginx não conseguiu carregar a configuração deste host, por isso ele está offline."
+	},
+	"host-status.details": {
+		"defaultMessage": "Mostrar detalhes do status"
+	},
+	"host-status.error": {
+		"defaultMessage": "Erro"
+	},
+	"host-status.previous-config-running": {
+		"defaultMessage": "O Nginx não aplicou a configuração mais recente deste host e ainda executa a anterior."
+	},
+	"host-status.view-error-log": {
+		"defaultMessage": "Ver log de erros"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Bloquear Exploits Comuns"
@@ -548,11 +569,146 @@
 	"logs.truncated-warning": {
 		"defaultMessage": "Apenas a parte mais recente deste arquivo é exibida."
 	},
+	"nginx-config": {
+		"defaultMessage": "Configuração do Nginx"
+	},
 	"nginx-config.label": {
 		"defaultMessage": "Configuração Personalizada do Nginx"
 	},
 	"nginx-config.placeholder": {
 		"defaultMessage": "# Insira aqui sua configuração personalizada do Nginx, por sua conta e risco!"
+	},
+	"nginx-error.advanced": {
+		"defaultMessage": "Erro na configuração personalizada do Nginx"
+	},
+	"nginx-error.advanced-line": {
+		"defaultMessage": "Erro na configuração personalizada do Nginx, linha {line}"
+	},
+	"nginx-error.auto-disabled": {
+		"defaultMessage": "Desativado automaticamente: {reason}"
+	},
+	"nginx-error.conflict": {
+		"defaultMessage": "Esta alteração entra em conflito com a configuração de outro host"
+	},
+	"nginx-error.default-site": {
+		"defaultMessage": "Não foi possível reconfigurar o site padrão. {reason}"
+	},
+	"nginx-error.field.access-list-client-address": {
+		"defaultMessage": "Endereço de cliente da lista de acesso"
+	},
+	"nginx-error.field.location-forward-host": {
+		"defaultMessage": "Host de encaminhamento do location personalizado"
+	},
+	"nginx-error.field.location-forward-path": {
+		"defaultMessage": "Caminho de encaminhamento do location personalizado"
+	},
+	"nginx-error.field.location-path": {
+		"defaultMessage": "Caminho do location personalizado"
+	},
+	"nginx-error.file": {
+		"defaultMessage": "Erro no arquivo de configuração do nginx {file}"
+	},
+	"nginx-error.file-line": {
+		"defaultMessage": "Erro no arquivo de configuração do nginx {file}, linha {line}"
+	},
+	"nginx-error.global": {
+		"defaultMessage": "O Nginx rejeitou a configuração"
+	},
+	"nginx-error.hint.address_in_use": {
+		"defaultMessage": "Outro host ou serviço já escuta nesta porta."
+	},
+	"nginx-error.hint.certificate_load": {
+		"defaultMessage": "O certificado pode ter sido excluído ou ainda não ter sido emitido. Selecione outro certificado ou renove-o."
+	},
+	"nginx-error.hint.conflict": {
+		"defaultMessage": "Outro host já usa esta configuração (por exemplo, a mesma porta de escuta com default_server), ou a configuração avançada inclui o arquivo de configuração de outro host."
+	},
+	"nginx-error.hint.directive_not_allowed": {
+		"defaultMessage": "Esta diretiva não pode ser usada neste contexto."
+	},
+	"nginx-error.hint.duplicate_directive": {
+		"defaultMessage": "Remova a duplicata. O NPM pode já definir esta diretiva para você."
+	},
+	"nginx-error.hint.duplicate_location": {
+		"defaultMessage": "Cada caminho de location só pode ser usado uma vez por host, incluindo os locations da configuração avançada."
+	},
+	"nginx-error.hint.host_not_found": {
+		"defaultMessage": "Verifique se o nome do host está escrito corretamente, se o contêiner ou servidor está em execução e se o NPM consegue alcançá-lo em uma rede compartilhada."
+	},
+	"nginx-error.hint.invalid_arguments": {
+		"defaultMessage": "Verifique se falta ou sobra algum valor, ou se falta um ponto e vírgula no fim da linha anterior."
+	},
+	"nginx-error.hint.invalid_port": {
+		"defaultMessage": "A porta deve ser um número entre 1 e 65535. Um caminho de encaminhamento deve começar com \"/\"."
+	},
+	"nginx-error.hint.invalid_regex": {
+		"defaultMessage": "Verifique a sintaxe da expressão regular do caminho do location ou do rewrite."
+	},
+	"nginx-error.hint.invalid_url": {
+		"defaultMessage": "Verifique o esquema e o host do upstream."
+	},
+	"nginx-error.hint.location_nesting": {
+		"defaultMessage": "Locations exatos (=) e nomeados (@) não podem conter outros locations."
+	},
+	"nginx-error.hint.location_not_allowed": {
+		"defaultMessage": "Locations só podem ser colocados em um bloco server ou dentro de outro location."
+	},
+	"nginx-error.hint.no_certificate": {
+		"defaultMessage": "Selecione um certificado para este host."
+	},
+	"nginx-error.hint.no_resolver": {
+		"defaultMessage": "O resolver do nginx está desativado (DISABLE_RESOLVER). Use um endereço IP ou ative o resolver."
+	},
+	"nginx-error.hint.regex_uri_part": {
+		"defaultMessage": "Remova o caminho de encaminhamento ou use um location de prefixo."
+	},
+	"nginx-error.hint.rejected_at_startup": {
+		"defaultMessage": "Salve o host novamente para trazê-lo de volta, ou deixe NPM_RECONCILE_ON_START ativado para que isso seja feito automaticamente."
+	},
+	"nginx-error.hint.unexpected_close_brace": {
+		"defaultMessage": "Verifique se cada '{' tem um '}' correspondente."
+	},
+	"nginx-error.hint.unexpected_eof": {
+		"defaultMessage": "Verifique se falta um ponto e vírgula ou um '}' de fechamento."
+	},
+	"nginx-error.hint.unexpected_open_brace": {
+		"defaultMessage": "Verifique se cada '{' tem um '}' correspondente e se a linha anterior termina com ponto e vírgula."
+	},
+	"nginx-error.hint.unexpected_semicolon": {
+		"defaultMessage": "Verifique se há um ponto e vírgula sobrando."
+	},
+	"nginx-error.hint.unknown_directive": {
+		"defaultMessage": "Verifique a grafia da diretiva. Se ela vem de um módulo do nginx, esse módulo pode não estar disponível."
+	},
+	"nginx-error.hint.unknown_variable": {
+		"defaultMessage": "Verifique a grafia da variável ou defina-a com set ou map."
+	},
+	"nginx-error.host": {
+		"defaultMessage": "O Nginx rejeitou a configuração deste host"
+	},
+	"nginx-error.other-host": {
+		"defaultMessage": "O Nginx rejeitou a configuração de {host}"
+	},
+	"nginx-error.previous-config-running": {
+		"defaultMessage": "O Nginx continua executando a configuração anterior deste host até que um recarregamento seja bem-sucedido."
+	},
+	"nginx-error.redacted": {
+		"defaultMessage": "O Nginx rejeitou a configuração de outro host. Peça a um administrador para verificá-la."
+	},
+	"nginx-error.regenerated-conflict": {
+		"defaultMessage": "A configuração regenerada entra em conflito com a configuração de outro host"
+	},
+	"nginx-error.rejected-at-startup": {
+		"defaultMessage": "O Nginx rejeitou a configuração deste host quando o contêiner foi iniciado"
+	},
+	"nginx-error.show-output": {
+		"defaultMessage": "Mostrar saída do nginx"
+	},
+	"nginx-error.too-many-broken-hosts": {
+		"defaultMessage": "Configurações de host com defeito demais para reparar de uma vez (mais de {max}). Regenere todas as configurações de host (reinicie o NPM ou execute backend/scripts/regenerate-config) e tente novamente."
+	},
+	"nginx-error.unsafe-value": {
+		"defaultMessage": "Um valor salvo deste host não pode ser escrito na configuração do nginx com segurança, por isso a configuração dele foi removida"
 	},
 	"no-permission-error": {
 		"defaultMessage": "Você não tem permissão para visualizar isto."
@@ -616,6 +772,9 @@
 	},
 	"object.event.enabled": {
 		"defaultMessage": "Ativação de {object}"
+	},
+	"object.event.regenerated": {
+		"defaultMessage": "{object} regenerado"
 	},
 	"object.event.renewed": {
 		"defaultMessage": "Renovação de {object}"
@@ -728,6 +887,15 @@
 	"save": {
 		"defaultMessage": "Salvar"
 	},
+	"save-warning.offline": {
+		"defaultMessage": "Salvo, mas o nginx não conseguiu carregar este host, por isso ele está offline:"
+	},
+	"save-warning.previous-config-running": {
+		"defaultMessage": "Salvo, mas o nginx não aplicou a alteração e ainda executa a configuração anterior deste host:"
+	},
+	"save-warning.title": {
+		"defaultMessage": "Salvo com avisos"
+	},
 	"setting": {
 		"defaultMessage": "Configuração"
 	},
@@ -757,6 +925,63 @@
 	},
 	"settings.default-site.redirect": {
 		"defaultMessage": "Redirecionar"
+	},
+	"settings.nginx": {
+		"defaultMessage": "Configuração do Nginx"
+	},
+	"settings.nginx.regenerate.audit": {
+		"defaultMessage": "{checked, plural, =1 {# host} other {# hosts}}, {offline} offline"
+	},
+	"settings.nginx.regenerate.audit-failed": {
+		"defaultMessage": "Falhou"
+	},
+	"settings.nginx.regenerate.audit-partial": {
+		"defaultMessage": "Falhou após {checked, plural, =1 {# host} other {# hosts}}, {offline} offline"
+	},
+	"settings.nginx.regenerate.busy": {
+		"defaultMessage": "Todas as configurações de host já estão sendo regeneradas, aguarde a conclusão."
+	},
+	"settings.nginx.regenerate.button": {
+		"defaultMessage": "Regenerar todas as configurações de host"
+	},
+	"settings.nginx.regenerate.confirm-body": {
+		"defaultMessage": "Todos os arquivos de configuração de host são reescritos a partir do banco de dados e o nginx é recarregado uma vez. Os hosts que funcionam continuam online, sem tempo de inatividade."
+	},
+	"settings.nginx.regenerate.confirm-button": {
+		"defaultMessage": "Regenerar"
+	},
+	"settings.nginx.regenerate.confirm-offline": {
+		"defaultMessage": "Um host que o nginx rejeita fica offline e é listado depois, assim como ao salvar o host. Os outros hosts não são afetados."
+	},
+	"settings.nginx.regenerate.confirm-title": {
+		"defaultMessage": "Regenerar todas as configurações de host?"
+	},
+	"settings.nginx.regenerate.description": {
+		"defaultMessage": "Reescreve a partir do banco de dados o arquivo de configuração do nginx de cada proxy host, host de redirecionamento, host 404 e stream ativado, e depois recarrega o nginx uma vez. Use após uma atualização, após restaurar um backup ou quando arquivos de configuração no disco foram alterados ou perdidos."
+	},
+	"settings.nginx.regenerate.failed": {
+		"defaultMessage": "{count, plural, =1 {# host não pôde ser regenerado e mantém a configuração anterior:} other {# hosts não puderam ser regenerados e mantêm a configuração anterior:}}"
+	},
+	"settings.nginx.regenerate.offline": {
+		"defaultMessage": "{count, plural, =1 {# host está offline agora, o nginx o rejeitou:} other {# hosts estão offline agora, o nginx os rejeitou:}}"
+	},
+	"settings.nginx.regenerate.partial": {
+		"defaultMessage": "A execução falhou, mas já tinha alterado hosts. Isto é o que ela fez até então:"
+	},
+	"settings.nginx.regenerate.result": {
+		"defaultMessage": "{checked, plural, =1 {# host verificado} other {# hosts verificados}} em {seconds} s: {regenerated} online, {offline} offline, {failed} não regenerados."
+	},
+	"settings.nginx.regenerate.running": {
+		"defaultMessage": "Regenerando. Cada host é testado com o nginx, isso pode demorar um pouco."
+	},
+	"settings.nginx.regenerate.skipped": {
+		"defaultMessage": "{count, plural, =1 {# host foi ignorado, uma solicitação de certificado para ele está em andamento e o configura novamente quando terminar:} other {# hosts foram ignorados, uma solicitação de certificado para eles está em andamento e os configura novamente quando terminar:}}"
+	},
+	"settings.nginx.regenerate.title": {
+		"defaultMessage": "Regenerar todas as configurações de host"
+	},
+	"settings.nginx.regenerate.warnings": {
+		"defaultMessage": "{count, plural, =1 {# host está online, mas alguns dos locations personalizados dele não funcionam:} other {# hosts estão online, mas alguns dos locations personalizados deles não funcionam:}}"
 	},
 	"setup.preamble": {
 		"defaultMessage": "Para começar, crie sua conta de administrador."

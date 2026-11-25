@@ -1,0 +1,143 @@
+{
+	"operationId": "regenerateNginxConfigs",
+	"summary": "Regenerate all host configs",
+	"description": "Rewrites the nginx config files of all enabled hosts from the database and reloads nginx once. Hosts that nginx rejects are taken offline, as on save. Working hosts stay online. Only one regeneration runs at a time. Requires admin.",
+	"tags": ["settings"],
+	"security": [
+		{
+			"bearerAuth": ["admin"]
+		}
+	],
+	"requestBody": {
+		"description": "Host types to regenerate, all of them when omitted",
+		"required": false,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"properties": {
+						"host_types": {
+							"type": "array",
+							"minItems": 1,
+							"uniqueItems": true,
+							"example": ["proxy_host", "stream"],
+							"items": {
+								"type": "string",
+								"enum": ["proxy_host", "redirection_host", "dead_host", "stream"]
+							}
+						}
+					}
+				},
+				"example": {
+					"host_types": ["proxy_host", "redirection_host", "dead_host", "stream"]
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"checked": 3,
+								"regenerated": 2,
+								"offline": [
+									{
+										"host_type": "proxy_host",
+										"id": 4,
+										"name": "broken.example.com",
+										"error": "unknown directive \"proxy_passs\""
+									}
+								],
+								"failed": [],
+								"warnings": [
+									{
+										"host_type": "proxy_host",
+										"id": 7,
+										"name": "app.example.com",
+										"message": "/api: Upstream api does not resolve right now"
+									}
+								],
+								"skipped": [],
+								"duration_ms": 2350
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/nginx-regenerate-result.json"
+					}
+				}
+			}
+		},
+		"400": {
+			"description": "The request body is invalid (eg. an unknown host type), or nginx rejected the final config test or reload. For an nginx error, error.details describes it and error.regenerate_summary lists what the run did until then",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/error.json"
+					}
+				}
+			}
+		},
+		"403": {
+			"description": "Not an admin",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/error.json"
+					}
+				}
+			}
+		},
+		"409": {
+			"description": "A regeneration is running already",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/error.json"
+					}
+				}
+			}
+		},
+		"500": {
+			"description": "The run failed part way, eg. nginx could not be reloaded or the hosts of a type could not be loaded. error.regenerate_summary lists what the run did until then",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": {
+								"error": {
+									"code": 500,
+									"message": "Internal Error",
+									"regenerate_summary": {
+										"checked": 3,
+										"regenerated": 2,
+										"offline": [
+											{
+												"host_type": "proxy_host",
+												"id": 4,
+												"name": "broken.example.com",
+												"error": "unknown directive \"proxy_passs\""
+											}
+										],
+										"failed": [],
+										"warnings": [],
+										"skipped": [],
+										"duration_ms": 2350
+									}
+								}
+							}
+						}
+					},
+					"schema": {
+						"$ref": "../../../components/error.json"
+					}
+				}
+			}
+		}
+	}
+}

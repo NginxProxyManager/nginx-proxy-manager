@@ -136,6 +136,55 @@ export interface ProxyLocation {
 	accessList?: AccessList;
 }
 
+// ---------------------------------------------------------------------------
+// Server-owned host meta (written by the backend after every nginx configure,
+// stripped by the backend from anything the client sends back).
+// ---------------------------------------------------------------------------
+
+export type NginxConfigErrorScope = "host" | "other_host" | "global";
+
+export interface NginxConfigErrorDetails {
+	// unsafe_value: a stored value that can't be written into nginx config safely (host meta only)
+	kind: "nginx_config" | "unsafe_value";
+	scope: NginxConfigErrorScope;
+	hostType?: string | null;
+	hostId?: number | null;
+	file?: string | null;
+	line?: number | null;
+	nginxOutput?: string | null;
+	hint?: string | null;
+	// What the UI words the error from (the message is English). Missing in details stored by older versions.
+	// the part of the host's config the error is in, and the line within it
+	area?: string | null;
+	relativeLine?: number | null;
+	// special cases: conflict, regenerated_conflict, too_many_broken_hosts, redacted, rejected_at_startup
+	reason?: string;
+	// too_many_broken_hosts: how many hosts one operation repairs at most
+	max?: number;
+	// the humanised nginx error (unsafe_value: the rejected value, quoted), shown as it is
+	detail?: string | null;
+	// unsafe_value: which value, eg. forward_host
+	field?: string | null;
+	// names the hint: nginx-error.hint.<hintCode>
+	hintCode?: string | null;
+	// host meta: the host was taken offline while another host was saved
+	autoDisabled?: boolean;
+	// default_site: the error came from saving the default site
+	context?: string;
+	// host meta: nginx did not apply the removal of the host's config and still runs its previous config
+	previousConfigRunning?: boolean;
+}
+
+export interface HostMeta {
+	// false only when the host's config is not active in nginx
+	nginxOnline?: boolean;
+	nginxErr?: string | null;
+	nginxDetails?: NginxConfigErrorDetails | null;
+	nginxCheckedAt?: string;
+	// Other, client-owned meta (letsencrypt, dns challenge, ...)
+	[key: string]: any;
+}
+
 export interface ProxyHost {
 	id: number;
 	createdOn: string;
@@ -151,7 +200,7 @@ export interface ProxyHost {
 	cachingEnabled: boolean;
 	blockExploits: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	allowWebsocketUpgrade: boolean;
 	http2Support: boolean;
 	enabled: boolean;
@@ -174,7 +223,7 @@ export interface DeadHost {
 	certificateId: number;
 	sslForced: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	http2Support: boolean;
 	enabled: boolean;
 	hstsEnabled: boolean;
@@ -196,7 +245,7 @@ export interface RedirectionHost {
 	sslForced: boolean;
 	blockExploits: boolean;
 	advancedConfig: string;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	http2Support: boolean;
 	forwardScheme: string;
 	forwardHttpCode: number;
@@ -218,7 +267,7 @@ export interface Stream {
 	forwardingPort: number;
 	tcpForwarding: boolean;
 	udpForwarding: boolean;
-	meta: Record<string, any>;
+	meta: HostMeta;
 	enabled: boolean;
 	certificateId: number;
 	// Expansions:
@@ -238,4 +287,42 @@ export interface DNSProvider {
 	id: string;
 	name: string;
 	credentials: string;
+}
+
+export type NginxHostType = "proxy_host" | "redirection_host" | "dead_host" | "stream";
+
+export interface NginxRegenerateHost {
+	hostType: NginxHostType;
+	id: number;
+	// first domain name, or the incoming port of a stream
+	name: string;
+	// offline and failed hosts, in English
+	error?: string;
+	// offline: the host's meta.nginxDetails; failed: the error's details, if any. The UI words the error from them.
+	details?: NginxConfigErrorDetails | null;
+	// warnings: the broken custom locations, one per line; skipped: why the host was left alone (English)
+	message?: string;
+	// warnings: the broken custom locations, as the UI words them
+	locations?: NginxRegenerateLocation[];
+}
+
+export interface NginxRegenerateLocation {
+	index?: number;
+	path: string;
+	status: "quarantined" | "unresolved";
+	// location-check.<code>, with params (host, detail: nginx's error, not translated)
+	code?: string | null;
+	params?: { host?: string; detail?: string } | null;
+	message?: string | null;
+}
+
+export interface NginxRegenerateResult {
+	checked: number;
+	regenerated: number;
+	offline: NginxRegenerateHost[];
+	failed: NginxRegenerateHost[];
+	warnings: NginxRegenerateHost[];
+	// hosts a running certificate request has taken out of nginx, it puts them back itself
+	skipped?: NginxRegenerateHost[];
+	durationMs: number;
 }
