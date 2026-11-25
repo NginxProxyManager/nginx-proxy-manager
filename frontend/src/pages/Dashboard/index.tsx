@@ -4,6 +4,7 @@ import { HasPermission } from "src/components";
 import { useHostReport } from "src/hooks";
 import { T } from "src/locale";
 import { DEAD_HOSTS, PROXY_HOSTS, REDIRECTION_HOSTS, STREAMS, VIEW } from "src/modules/Permissions";
+import TrafficCard from "./TrafficCard";
 
 const Dashboard = () => {
 	const { data: hostReport } = useHostReport();
@@ -124,6 +125,7 @@ const Dashboard = () => {
 						</HasPermission>
 					</div>
 				</div>
+				<TrafficCard />
 			</div>
 		</div>
 	);

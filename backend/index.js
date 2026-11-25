@@ -3,6 +3,7 @@
 import app from "./app.js";
 import internalCertificate from "./internal/certificate.js";
 import internalIpRanges from "./internal/ip_ranges.js";
+import internalTrafficStats from "./internal/traffic-stats.js";
 import { global as logger } from "./logger.js";
 import { migrateUp } from "./migrate.js";
 import { getCompiledSchema } from "./schema/index.js";
@@ -26,6 +27,9 @@ async function appStart() {
 		})
 		.then(() => {
 			internalCertificate.initTimer();
+			internalTrafficStats.apply().catch((err) => {
+				logger.error("Traffic stats failed to start, continuing anyway:", err.message);
+			});
 			if (IP_RANGES_FETCH_ENABLED) {
 				internalIpRanges.initTimer();
 			}

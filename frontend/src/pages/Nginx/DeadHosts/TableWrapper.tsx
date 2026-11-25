@@ -6,7 +6,7 @@ import { deleteDeadHost, toggleDeadHost } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
 import { useDeadHosts } from "src/hooks";
 import { T } from "src/locale";
-import { showDeadHostModal, showDeleteConfirmModal, showHelpModal } from "src/modals";
+import { showDeadHostModal, showDeleteConfirmModal, showHelpModal, showHostStatsModal } from "src/modals";
 import { DEAD_HOSTS, MANAGE } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
@@ -93,6 +93,7 @@ export default function TableWrapper() {
 					isFiltered={!!search}
 					isFetching={isFetching}
 					onEdit={(id: number) => showDeadHostModal(id)}
+					onStats={(id: number) => showHostStatsModal("dead", id)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "dead-host" }} />,

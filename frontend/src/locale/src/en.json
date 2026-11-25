@@ -140,6 +140,9 @@
 	"action.renew": {
 		"defaultMessage": "Renew"
 	},
+	"action.stats": {
+		"defaultMessage": "Statistics"
+	},
 	"action.view-details": {
 		"defaultMessage": "View Details"
 	},
@@ -758,6 +761,45 @@
 	"settings.default-site.redirect": {
 		"defaultMessage": "Redirect"
 	},
+	"settings.traffic-stats": {
+		"defaultMessage": "Traffic Statistics"
+	},
+	"settings.traffic-stats.enable": {
+		"defaultMessage": "Collect traffic statistics"
+	},
+	"settings.traffic-stats.enable.hint": {
+		"defaultMessage": "Reads the host access logs and shows request statistics on the dashboard. Existing logs are imported when this is switched on."
+	},
+	"settings.traffic-stats.geoip": {
+		"defaultMessage": "Record client countries"
+	},
+	"settings.traffic-stats.geoip.hint": {
+		"defaultMessage": "Uses a local IP-to-country database. If you put your own .mmdb file in /data/geoip it is used, otherwise the free DB-IP Lite database is downloaded and refreshed monthly. Only applies to traffic read from now on."
+	},
+	"settings.traffic-stats.influx": {
+		"defaultMessage": "InfluxDB (optional)"
+	},
+	"settings.traffic-stats.influx.hint": {
+		"defaultMessage": "Fill in all four fields to store the statistics in an InfluxDB 2.x bucket, for use with Grafana, instead of NPM's own database. Switching storage re-imports the existing logs. Retention is then controlled by the InfluxDB bucket, and top client IPs and paths are not exported."
+	},
+	"settings.traffic-stats.range": {
+		"defaultMessage": "Default dashboard range (hours)"
+	},
+	"settings.traffic-stats.retention": {
+		"defaultMessage": "Keep history for (days)"
+	},
+	"settings.traffic-stats.status-codes": {
+		"defaultMessage": "Record exact status codes"
+	},
+	"settings.traffic-stats.status-codes.hint": {
+		"defaultMessage": "Also counts each exact status code (200, 404, 502 and so on) per hour, for a per-code breakdown on the dashboard. Only applies to traffic read from now on."
+	},
+	"settings.traffic-stats.using-influx": {
+		"defaultMessage": "Statistics will be written to InfluxDB."
+	},
+	"settings.traffic-stats.using-local": {
+		"defaultMessage": "Statistics are kept in NPM's own database."
+	},
 	"setup.preamble": {
 		"defaultMessage": "Get started by creating your admin account."
 	},
@@ -796,6 +838,87 @@
 	},
 	"test": {
 		"defaultMessage": "Test"
+	},
+	"traffic.bandwidth": {
+		"defaultMessage": "Bandwidth"
+	},
+	"traffic.by-status": {
+		"defaultMessage": "By status code"
+	},
+	"traffic.by-status.hint": {
+		"defaultMessage": "The busiest exact status codes, at hourly resolution."
+	},
+	"traffic.class-over-time": {
+		"defaultMessage": "By class over time"
+	},
+	"traffic.class.2xx": {
+		"defaultMessage": "Success"
+	},
+	"traffic.class.3xx": {
+		"defaultMessage": "Redirected"
+	},
+	"traffic.class.4xx": {
+		"defaultMessage": "Client error"
+	},
+	"traffic.class.5xx": {
+		"defaultMessage": "Server error"
+	},
+	"traffic.client-errors": {
+		"defaultMessage": "Client errors (4xx)"
+	},
+	"traffic.disabled": {
+		"defaultMessage": "Traffic statistics are switched off. An administrator can enable them in Settings."
+	},
+	"traffic.geoip-off": {
+		"defaultMessage": "Client countries are not being recorded. An administrator can switch this on under Settings > Traffic Statistics."
+	},
+	"traffic.host": {
+		"defaultMessage": "Host"
+	},
+	"traffic.hosts": {
+		"defaultMessage": "Hosts"
+	},
+	"traffic.local": {
+		"defaultMessage": "Local network"
+	},
+	"traffic.no-data": {
+		"defaultMessage": "No data"
+	},
+	"traffic.requests": {
+		"defaultMessage": "Requests"
+	},
+	"traffic.requests-per": {
+		"defaultMessage": "Requests per {step}"
+	},
+	"traffic.server-errors": {
+		"defaultMessage": "Server errors (5xx)"
+	},
+	"traffic.status-codes": {
+		"defaultMessage": "Status codes"
+	},
+	"traffic.status-codes.hint": {
+		"defaultMessage": "How the responses split up, and how each class trends over time."
+	},
+	"traffic.subtitle": {
+		"defaultMessage": "Requests, status codes and bandwidth from the host access logs."
+	},
+	"traffic.title": {
+		"defaultMessage": "Traffic"
+	},
+	"traffic.top-countries": {
+		"defaultMessage": "Top countries"
+	},
+	"traffic.top-ips": {
+		"defaultMessage": "Top client IPs"
+	},
+	"traffic.top-paths": {
+		"defaultMessage": "Top paths"
+	},
+	"traffic.unknown": {
+		"defaultMessage": "Unknown"
+	},
+	"traffic.vs-previous": {
+		"defaultMessage": "vs previous period"
 	},
 	"update-available": {
 		"defaultMessage": "Update Available: {latestVersion}"

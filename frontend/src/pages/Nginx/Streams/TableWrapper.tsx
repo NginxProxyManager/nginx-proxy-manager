@@ -6,7 +6,7 @@ import { deleteStream, toggleStream } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
 import { useStreams } from "src/hooks";
 import { T } from "src/locale";
-import { showDeleteConfirmModal, showHelpModal, showStreamModal } from "src/modals";
+import { showDeleteConfirmModal, showHelpModal, showStreamModal, showHostStatsModal } from "src/modals";
 import { MANAGE, STREAMS } from "src/modules/Permissions";
 import { showObjectSuccess } from "src/notifications";
 import Table from "./Table";
@@ -97,6 +97,7 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					isFiltered={!!filtered}
 					onEdit={(id: number) => showStreamModal(id)}
+					onStats={(id: number) => showHostStatsModal("stream", id)}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "stream" }} />,
