@@ -198,6 +198,116 @@ describe('Streams', () => {
 		});
 	});
 
+	it('Should be able to create, rename and search a Stream with a name', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/streams',
+			data:  {
+				incoming_port: 1504,
+				name: '  Game server  ',
+				forwarding_host: '127.0.0.1',
+				forwarding_port: 80,
+				tcp_forwarding: true,
+				udp_forwarding: false
+			}
+		}).then((data) => {
+			cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
+			// trimmed on save
+			expect(data).to.have.property('name', 'Game server');
+
+			cy.task('backendApiPut', {
+				token: token,
+				path:  `/api/nginx/streams/${data.id}`,
+				data:  { name: 'Renamed; stream #1' },
+			}).then((updated) => {
+				cy.validateSwaggerSchema('put', 200, '/nginx/streams/{streamID}', updated);
+				expect(updated).to.have.property('name', 'Renamed; stream #1');
+				expect(updated.meta.nginx_online).to.equal(true);
+			});
+
+			cy.task('backendApiGet', {
+				token: token,
+				path:  '/api/nginx/streams?query=Renamed',
+			}).then((list) => {
+				cy.validateSwaggerSchema('get', 200, '/nginx/streams', list);
+				expect(list.map((s) => s.id)).to.include(data.id);
+			});
+		});
+	});
+
+	it('Should search Stream names literally', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/streams',
+			data:  {
+				incoming_port: 1507,
+				name: 'NAS\\Media 100%_x',
+				forwarding_host: '127.0.0.1',
+				forwarding_port: 80,
+				tcp_forwarding: true,
+				udp_forwarding: false
+			}
+		}).then((data) => {
+			cy.task('backendApiGet', {
+				token: token,
+				path:  `/api/nginx/streams?query=${encodeURIComponent('NAS\\Media 100%_x')}`,
+			}).then((list) => {
+				expect(list.map((s) => s.id)).to.deep.equal([data.id]);
+			});
+			cy.task('backendApiGet', {
+				token: token,
+				path:  '/api/nginx/streams?query=%25',
+			}).then((list) => {
+				expect(list.map((s) => s.id)).to.deep.equal([data.id]);
+			});
+			cy.task('backendApiGet', {
+				token: token,
+				path:  `/api/nginx/streams?query=${encodeURIComponent('nas\\media 100%_X')}`,
+			}).then((list) => {
+				expect(list.map((s) => s.id)).to.deep.equal([data.id]);
+			});
+		});
+	});
+
+	it('Should default the Stream name to empty', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/streams',
+			data:  {
+				incoming_port: 1505,
+				forwarding_host: '127.0.0.1',
+				forwarding_port: 80,
+				tcp_forwarding: true,
+				udp_forwarding: false
+			}
+		}).then((data) => {
+			cy.validateSwaggerSchema('post', 201, '/nginx/streams', data);
+			expect(data).to.have.property('name', '');
+		});
+	});
+
+	it('Should reject invalid Stream names', () => {
+		const invalid = ['line\nbreak', '<b>html</b>', 'a'.repeat(101)];
+		invalid.forEach((name) => {
+			cy.task('backendApiPost', {
+				token: token,
+				path:  '/api/nginx/streams',
+				data:  {
+					incoming_port: 1506,
+					name: name,
+					forwarding_host: '127.0.0.1',
+					forwarding_port: 80,
+					tcp_forwarding: true,
+					udp_forwarding: false
+				},
+				returnOnError: true,
+			}).then((res) => {
+				expect(res, JSON.stringify(name)).to.have.property('error');
+				expect(res.error.code, JSON.stringify(name)).to.equal(400);
+			});
+		});
+	});
+
 	it('Should be able to List Streams', () => {
 		cy.task('backendApiGet', {
 			token: token,

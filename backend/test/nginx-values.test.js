@@ -548,3 +548,58 @@ describe("render-time check (rows saved before validation)", () => {
 		}
 	});
 });
+
+describe("stream name (display only)", async () => {
+	await getCompiledSchema();
+
+	const stream = (o) => ({
+		incoming_port: 9000,
+		forwarding_host: "backend",
+		forwarding_port: 80,
+		tcp_forwarding: true,
+		udp_forwarding: false,
+		...o,
+	});
+	const endpoints = [
+		["/nginx/streams", "post", (v) => stream({ name: v })],
+		["/nginx/streams/{streamID}", "put", (v) => ({ name: v })],
+	];
+	const valid = ["", "SSH server", "Game; test #1 {x}", "Ñandú 🎮", "a".repeat(100)];
+	const rejected = ["a\nb", "a\rb", "a\tb", "\u0000", "<b>", "a>", "a".repeat(101)];
+
+	const validate = (path, method, payload) => apiValidator(getValidationSchema(path, method), payload);
+
+	for (const [path, method, build] of endpoints) {
+		it(`${method.toUpperCase()} ${path}: accepts valid names`, async () => {
+			for (const v of valid) {
+				await validate(path, method, build(v));
+			}
+		});
+		it(`${method.toUpperCase()} ${path}: rejects invalid names`, async () => {
+			for (const v of rejected) {
+				await assert.rejects(validate(path, method, build(v)), /must/, `accepted ${JSON.stringify(v)}`);
+			}
+		});
+	}
+
+	it("stream.conf renders the same with or without a name", async () => {
+		const row = {
+			enabled: true,
+			id: 1,
+			incoming_port: 9000,
+			forwarding_host: "backend",
+			forwarding_port: 80,
+			tcp_forwarding: true,
+			udp_forwarding: true,
+			ipv6: true,
+		};
+		const plain = await render("stream.conf", row);
+		for (const name of ["SSH server", "x; }\nserver { listen 1; }\n#", 'a" ; return 200; #']) {
+			assert.equal(
+				await render("stream.conf", { ...row, name }),
+				plain,
+				`${JSON.stringify(name)} reached the config`,
+			);
+		}
+	});
+});

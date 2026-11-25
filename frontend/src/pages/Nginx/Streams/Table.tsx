@@ -45,7 +45,19 @@ export default function Table({ data, isFetching, isFiltered, onEdit, onDelete, 
 				sortFn: (a, b) => (a.original.incomingPort ?? 0) - (b.original.incomingPort ?? 0),
 				cell: (info: any) => {
 					const value = info.getValue();
-					return <ValueWithDateFormatter value={value.incomingPort} createdOn={value.createdOn} />;
+					return (
+						<ValueWithDateFormatter
+							value={
+								<>
+									{value.incomingPort}
+									{value.name ? (
+										<span className="text-secondary fw-normal"> - {value.name}</span>
+									) : null}
+								</>
+							}
+							createdOn={value.createdOn}
+						/>
+					);
 				},
 			}),
 			columnHelper.accessor((row: any) => row, {

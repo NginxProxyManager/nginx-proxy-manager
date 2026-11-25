@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import { useLocaleState } from "src/context";
 import { formatDateTime, T } from "src/locale";
 
 interface Props {
-	value: string;
+	value: ReactNode;
 	createdOn?: string;
 	disabled?: boolean;
 }

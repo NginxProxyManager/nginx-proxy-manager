@@ -42,6 +42,7 @@ export default function TableWrapper() {
 		filtered = data?.filter((item) => {
 			return (
 				`${item.incomingPort}`.includes(search) ||
+				(item.name ?? "").toLowerCase().includes(search) ||
 				`${item.forwardingPort}`.includes(search) ||
 				item.forwardingHost.includes(search)
 			);

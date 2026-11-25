@@ -782,6 +782,12 @@
 	"stream.incoming-port": {
 		"defaultMessage": "Sisendport"
 	},
+	"stream.name": {
+		"defaultMessage": "Nimi (valikuline)"
+	},
+	"stream.name.placeholder": {
+		"defaultMessage": "nt: SSH-server"
+	},
 	"streams": {
 		"defaultMessage": "Vood"
 	},
