@@ -773,6 +773,9 @@
 	"stream": {
 		"defaultMessage": "Axın"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "Yönləndirmə hostu"
 	},

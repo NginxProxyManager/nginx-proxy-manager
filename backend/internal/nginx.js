@@ -13,6 +13,8 @@ import certificateModel from "../models/certificate.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+let configureQueue = Promise.resolve();
+
 const internalNginx = {
 	/**
 	 * This will:
@@ -29,16 +31,65 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	configure: (model, host_type, host) => {
+		const run = () => internalNginx._configure(model, host_type, host);
+		const next = configureQueue.then(run, run);
+		configureQueue = next.catch(() => {});
+		return next;
+	},
+
+	/**
+	 * @param   {Object|String}  model
+	 * @param   {String}         host_type
+	 * @param   {Object}         host
+	 * @returns {Promise}
+	 */
+	_configure: async (model, host_type, host) => {
 		let combined_meta = {};
 
+		if (model && typeof model.query === "function" && host?.id) {
+			const current = await model.query().select("is_deleted", "enabled").where("id", host.id).first();
+			if (!current || current.is_deleted || current.enabled === 0 || current.enabled === false) {
+				await internalNginx._deleteConfig(host_type, host, true);
+				await internalNginx.reload();
+				return host.meta || {};
+			}
+		}
+
+		let backup_config = null;
+		const config_file = internalNginx.getConfigName(
+			internalNginx.getFileFriendlyHostType(host_type),
+			typeof host === "undefined" ? 0 : host.id,
+		);
+		if (fs.existsSync(config_file)) {
+			try {
+				backup_config = fs.readFileSync(config_file, { encoding: "utf8" });
+			} catch {
+				backup_config = null;
+			}
+		}
+
+		// Delete the existing config for this host before running the pre-check test so
+		// updating/recovering a broken or unresolved host config is not blocked by its own
+		// existing file. If another host's config is broken, restore this host's config and abort.
 		return internalNginx
-			.test()
+			._deleteConfig(host_type, host, true)
 			.then(() => {
-				// Nginx is OK
-				// We're deleting this config regardless.
-				// Don't throw errors, as the file may not exist at all
-				// Delete the .err file too
-				return internalNginx.deleteConfig(host_type, host, true);
+				return internalNginx.test().catch((err) => {
+					if (backup_config !== null) {
+						try {
+							fs.writeFileSync(config_file, backup_config, { encoding: "utf8" });
+						} catch {
+							// ignore restore error
+						}
+						return internalNginx
+							.reload()
+							.catch(() => {})
+							.then(() => {
+								throw err;
+							});
+					}
+					throw err;
+				});
 			})
 			.then(() => {
 				return internalNginx.generateConfig(host_type, host).then(
@@ -113,7 +164,7 @@ const internalNginx = {
 							})
 							.then(() => {
 								// The rename removed the live config already, don't touch the .err file
-								return internalNginx.deleteConfig(host_type, host, false);
+								return internalNginx._deleteConfig(host_type, host, false);
 							});
 					});
 			})
@@ -294,8 +345,12 @@ const internalNginx = {
 			// square brackets before nginx appends ":<port>". Without the brackets nginx
 			// reads the trailing ":<port>" as part of the address and rejects the upstream
 			// ("invalid port in upstream"), so the stream saves but never activates (#5740).
-			if (nice_host_type === "stream" && net.isIPv6(host.forwarding_host)) {
-				host.forwarding_host = `[${host.forwarding_host}]`;
+			if (nice_host_type === "stream") {
+				host.dynamic_resolve = internalNginx.streamDynamicResolveEnabled(host);
+				host.dynamic_resolve_override = internalNginx.streamDynamicResolveOverride(host);
+				if (net.isIPv6(host.forwarding_host)) {
+					host.forwarding_host = `[${host.forwarding_host}]`;
+				}
 			}
 
 			if (host.locations) {
@@ -486,6 +541,19 @@ const internalNginx = {
 	 * @returns {Promise}
 	 */
 	deleteConfig: (host_type, host, delete_err_file) => {
+		const run = () => internalNginx._deleteConfig(host_type, host, delete_err_file);
+		const next = configureQueue.then(run, run);
+		configureQueue = next.catch(() => {});
+		return next;
+	},
+
+	/**
+	 * @param   {String}  host_type
+	 * @param   {Object}  [host]
+	 * @param   {Boolean} [delete_err_file]
+	 * @returns {Promise}
+	 */
+	_deleteConfig: (host_type, host, delete_err_file) => {
 		const config_file = internalNginx.getConfigName(
 			internalNginx.getFileFriendlyHostType(host_type),
 			typeof host === "undefined" ? 0 : host.id,
@@ -570,6 +638,61 @@ const internalNginx = {
 		}
 
 		return true;
+	},
+
+	/**
+	 * @param   {Object}  [host]
+	 * @returns {boolean|null}
+	 */
+	streamDynamicResolveOverride: (host) => {
+		const val = host?.meta?.dynamic_resolve;
+		if (typeof val === "undefined" || val === null || val === "") {
+			return null;
+		}
+		if (typeof val === "boolean") {
+			return val;
+		}
+		if (typeof val === "number") {
+			return val !== 0;
+		}
+		if (typeof val === "string") {
+			const v = val.toLowerCase();
+			if (v === "off" || v === "false" || v === "0" || v === "no") {
+				return false;
+			}
+			if (v === "on" || v === "true" || v === "1" || v === "yes") {
+				return true;
+			}
+		}
+		return Boolean(val);
+	},
+
+	/**
+	 * @param   {Object}  [host]
+	 * @returns {boolean}
+	 */
+	streamDynamicResolveEnabled: (host) => {
+		const isTrue = (val) => {
+			if (typeof val === "boolean") return val;
+			if (typeof val === "string") {
+				const v = val.toLowerCase();
+				return v === "on" || v === "true" || v === "1" || v === "yes";
+			}
+			return false;
+		};
+
+		if (isTrue(process.env.DISABLE_RESOLVER)) {
+			return false;
+		}
+		const override = internalNginx.streamDynamicResolveOverride(host);
+		if (override !== null) {
+			return override;
+		}
+		const envVal = process.env.NPM_STREAM_DYNAMIC_RESOLVE || process.env.BYPASS_STREAM_UPSTREAM_CHECK;
+		if (typeof envVal !== "undefined" && envVal !== "") {
+			return isTrue(envVal);
+		}
+		return false;
 	},
 };
 

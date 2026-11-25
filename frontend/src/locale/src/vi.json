@@ -773,6 +773,9 @@
 	"stream": {
 		"defaultMessage": "Luồng TCP/UDP"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Phân giải DNS động"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "Máy chủ đích"
 	},

@@ -617,6 +617,9 @@
 	"stream": {
 		"defaultMessage": "Поток"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "Хост за препращане"
 	},

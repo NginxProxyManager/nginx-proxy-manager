@@ -773,6 +773,9 @@
 	"stream": {
 		"defaultMessage": "Voog"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dünaamiline DNS"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "Edastuse host"
 	},

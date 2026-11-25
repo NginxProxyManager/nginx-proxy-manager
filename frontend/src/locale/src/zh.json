@@ -590,6 +590,9 @@
 	"stream": {
 		"defaultMessage": "端口转发"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "转发主机"
 	},

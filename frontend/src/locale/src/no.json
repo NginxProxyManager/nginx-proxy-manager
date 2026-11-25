@@ -695,6 +695,9 @@
 	"stream": {
 		"defaultMessage": "Strøm"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "Viderekoble vert"
 	},

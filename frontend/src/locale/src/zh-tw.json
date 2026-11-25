@@ -773,6 +773,9 @@
 	"stream": {
 		"defaultMessage": "連接埠轉送"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "轉送主機"
 	},

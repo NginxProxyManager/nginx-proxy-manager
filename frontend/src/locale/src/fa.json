@@ -704,6 +704,9 @@
 	"stream": {
 		"defaultMessage": "استریم"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "نام میزبان مقصد"
 	},

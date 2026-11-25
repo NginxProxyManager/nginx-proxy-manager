@@ -689,6 +689,9 @@
 	"stream": {
 		"defaultMessage": "stream"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "Cílový hostitel"
 	},

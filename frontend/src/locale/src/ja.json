@@ -581,6 +581,9 @@
 	"stream": {
 		"defaultMessage": "ストリーム"
 	},
+	"stream.dynamic-resolve": {
+		"defaultMessage": "Dynamic DNS Resolution"
+	},
 	"stream.forward-host": {
 		"defaultMessage": "転送ホスト"
 	},
