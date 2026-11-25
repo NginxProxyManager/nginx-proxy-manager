@@ -1,0 +1,67 @@
+{
+	"operationId": "exchangeSsoCode",
+	"summary": "Exchange a single use SSO code for an access token",
+	"description": "Completes a SAML or OAuth login. The code is issued by the provider callback, is valid for one minute and can only be used once.",
+	"tags": [
+		"auth"
+	],
+	"requestBody": {
+		"description": "Exchange Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"code"
+					],
+					"properties": {
+						"code": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 255,
+							"example": "V0hBVCBBUkUgWU9VIExPT0tJTkcgQVQ"
+						}
+					}
+				},
+				"example": {
+					"code": "V0hBVCBBUkUgWU9VIExPT0tJTkcgQVQ"
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"oneOf": [
+							{
+								"$ref": "../../../components/token-object.json"
+							},
+							{
+								"$ref": "../../../components/token-challenge.json"
+							}
+						]
+					},
+					"examples": {
+						"token": {
+							"value": {
+								"expires": "2026-08-23T10:06:15.644Z",
+								"token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...xaHKYr3Kk6MvkUjcC4"
+							}
+						},
+						"requires2fa": {
+							"value": {
+								"requires_2fa": true,
+								"challenge_token": "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.ey...challenge"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

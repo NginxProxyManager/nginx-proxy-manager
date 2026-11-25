@@ -62,6 +62,15 @@
 	"access-list.access-count": {
 		"defaultMessage": "{count} quy tắc"
 	},
+	"access-list.allowed-groups": {
+		"defaultMessage": "Giới hạn theo nhóm"
+	},
+	"access-list.allowed-groups-help": {
+		"defaultMessage": "Mỗi dòng một nhóm. Người dùng thư mục phải thuộc ít nhất một trong các nhóm này. Để trống để chấp nhận bất kỳ ai được nhà cung cấp xác thực. Tên người dùng được liệt kê ở thẻ Ủy quyền không bị ảnh hưởng."
+	},
+	"access-list.allowed-groups-placeholder": {
+		"defaultMessage": "cn=nguoi-dung-vpn,ou=groups,dc=example,dc=com"
+	},
 	"access-list.auth-count": {
 		"defaultMessage": "{count} người dùng"
 	},
@@ -79,6 +88,15 @@
 	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Chuyển tiếp thông tin xác thực tới máy chủ đích"
+	},
+	"access-list.providers": {
+		"defaultMessage": "Nhà cung cấp"
+	},
+	"access-list.providers-intro": {
+		"defaultMessage": "Chấp nhận đăng nhập từ một thư mục, ngoài các tên người dùng được liệt kê ở đây. Khách truy cập vẫn được yêu cầu nhập tên người dùng và mật khẩu; thông tin đăng nhập đó được kiểm tra với thư mục thay vì với danh sách."
+	},
+	"access-list.providers-none": {
+		"defaultMessage": "Chưa có nhà cung cấp LDAP nào. Hãy thêm một nhà cung cấp trong Người dùng, Nhà cung cấp xác thực, và nó sẽ xuất hiện ở đây. Không thể dùng SAML và OAuth: chúng đăng nhập bằng cách chuyển hướng trình duyệt, điều không thể thực hiện với một yêu cầu được proxy."
 	},
 	"access-list.public": {
 		"defaultMessage": "Có thể truy cập công khai"
@@ -145,6 +163,333 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "Nhật ký hoạt động"
+	},
+	"auth-provider": {
+		"defaultMessage": "Nhà cung cấp xác thực"
+	},
+	"auth-provider.admin-group": {
+		"defaultMessage": "Nhóm quản trị viên"
+	},
+	"auth-provider.admin-group-help": {
+		"defaultMessage": "Bất kỳ ai trong nhóm này đều được cấp vai trò quản trị viên mỗi lần đăng nhập, và mất vai trò đó khi rời khỏi nhóm. Để trống để quản lý vai trò tại đây."
+	},
+	"auth-provider.auto-create-user": {
+		"defaultMessage": "Tạo người dùng ở lần đăng nhập đầu tiên"
+	},
+	"auth-provider.auto-create-user-help": {
+		"defaultMessage": "Khi tắt, chỉ những người đã được liên kết với nhà cung cấp này mới có thể đăng nhập. Tài khoản mới sẽ không bao giờ được tạo."
+	},
+	"auth-provider.delete-confirm": {
+		"defaultMessage": "Xóa {name}? Sau đó sẽ không ai có thể đăng nhập qua nhà cung cấp này."
+	},
+	"auth-provider.delete-convert": {
+		"defaultMessage": "Giữ lại dưới dạng tài khoản cục bộ"
+	},
+	"auth-provider.delete-convert-help": {
+		"defaultMessage": "Họ giữ nguyên các máy chủ, quyền và quyền sở hữu, nhưng chưa có mật khẩu. Hãy đặt mật khẩu cho họ từ màn hình Người dùng để họ có thể đăng nhập lại."
+	},
+	"auth-provider.delete-no-users": {
+		"defaultMessage": "Không có tài khoản nào đến từ nhà cung cấp này, nên không có gì khác bị ảnh hưởng."
+	},
+	"auth-provider.delete-users": {
+		"defaultMessage": "Xóa các tài khoản"
+	},
+	"auth-provider.delete-users-help": {
+		"defaultMessage": "{removable, plural, =0 {Thực tế không có tài khoản nào bị xóa: tất cả vẫn có thể đăng nhập theo cách khác.} one {Một tài khoản sẽ bị xóa.} other {# tài khoản sẽ bị xóa.}} Bất kỳ ai vẫn có thể đăng nhập theo cách khác đều được giữ lại, và quản trị viên cuối cùng cũng vậy."
+	},
+	"auth-provider.delete-users-intro": {
+		"defaultMessage": "{count, plural, one {Một tài khoản đến từ nhà cung cấp này} other {# tài khoản đến từ nhà cung cấp này}}. Chúng nên được xử lý thế nào?"
+	},
+	"auth-provider.delete-users-warning": {
+		"defaultMessage": "Xóa một tài khoản cũng xóa những gì tài khoản đó sở hữu. Không thể hoàn tác."
+	},
+	"auth-provider.disabled": {
+		"defaultMessage": "Đã tắt"
+	},
+	"auth-provider.empty-summary": {
+		"defaultMessage": "Thêm một thư mục LDAP, một nhà cung cấp danh tính SAML hoặc một ứng dụng OAuth/OpenID Connect để bắt đầu."
+	},
+	"auth-provider.enabled": {
+		"defaultMessage": "Đã bật"
+	},
+	"auth-provider.env-managed": {
+		"defaultMessage": "Từ biến môi trường"
+	},
+	"auth-provider.env-managed-help": {
+		"defaultMessage": "Nhà cung cấp này được cấu hình bằng biến môi trường và chỉ có thể thay đổi bằng cách sửa các biến đó."
+	},
+	"auth-provider.intro": {
+		"defaultMessage": "Cho phép mọi người đăng nhập bằng thư mục hoặc nhà cung cấp danh tính hiện có của bạn."
+	},
+	"auth-provider.ldap.base-dn": {
+		"defaultMessage": "DN gốc"
+	},
+	"auth-provider.ldap.bind-dn": {
+		"defaultMessage": "DN liên kết"
+	},
+	"auth-provider.ldap.bind-dn-help": {
+		"defaultMessage": "Tài khoản dịch vụ chỉ đọc dùng để tra cứu người dùng. Để trống để tìm kiếm ẩn danh."
+	},
+	"auth-provider.ldap.bind-password": {
+		"defaultMessage": "Mật khẩu liên kết"
+	},
+	"auth-provider.ldap.email-attribute": {
+		"defaultMessage": "Thuộc tính email"
+	},
+	"auth-provider.ldap.group-attribute": {
+		"defaultMessage": "Thuộc tính nhóm"
+	},
+	"auth-provider.ldap.group-attribute-help": {
+		"defaultMessage": "Đọc từ mục người dùng, nếu thư mục của bạn cung cấp."
+	},
+	"auth-provider.ldap.group-filter": {
+		"defaultMessage": "Bộ lọc nhóm"
+	},
+	"auth-provider.ldap.group-filter-help": {
+		"defaultMessage": "Được dùng khi mục người dùng không có thuộc tính nhóm. '{{dn}}' và '{{username}}' được thay thế trước khi tìm kiếm."
+	},
+	"auth-provider.ldap.login-attributes": {
+		"defaultMessage": "Thuộc tính đăng nhập"
+	},
+	"auth-provider.ldap.login-attributes-help": {
+		"defaultMessage": "Các thuộc tính được chấp nhận ở màn hình đăng nhập, phân tách bằng dấu phẩy, ví dụ uid, mail, sAMAccountName. Bị bỏ qua khi đã đặt bộ lọc người dùng."
+	},
+	"auth-provider.ldap.name-attribute": {
+		"defaultMessage": "Thuộc tính tên"
+	},
+	"auth-provider.ldap.nickname-attribute": {
+		"defaultMessage": "Thuộc tính biệt danh"
+	},
+	"auth-provider.ldap.page-size": {
+		"defaultMessage": "Kích thước trang"
+	},
+	"auth-provider.ldap.page-size-help": {
+		"defaultMessage": "Thư mục giới hạn số mục mà một lần tìm kiếm trả về, mặc định là 1000 trong Active Directory. Phân trang giúp vượt qua giới hạn đó."
+	},
+	"auth-provider.ldap.start-tls": {
+		"defaultMessage": "Nâng cấp kết nối bằng StartTLS"
+	},
+	"auth-provider.ldap.url": {
+		"defaultMessage": "URL máy chủ"
+	},
+	"auth-provider.ldap.user-filter": {
+		"defaultMessage": "Bộ lọc người dùng"
+	},
+	"auth-provider.ldap.user-filter-help": {
+		"defaultMessage": "'{{username}}' được thay bằng nội dung đã nhập vào biểu mẫu đăng nhập."
+	},
+	"auth-provider.ldap.verify-tls": {
+		"defaultMessage": "Xác minh chứng chỉ TLS"
+	},
+	"auth-provider.ldap.verify-tls-help": {
+		"defaultMessage": "Chỉ tắt tùy chọn này cho thư mục dùng chứng chỉ tự ký mà bạn tin tưởng."
+	},
+	"auth-provider.link-by-email": {
+		"defaultMessage": "Gắn với tài khoản hiện có theo địa chỉ email"
+	},
+	"auth-provider.link-by-email-help": {
+		"defaultMessage": "Lần đầu tiên ai đó đăng nhập, gắn họ với tài khoản ở đây đã có cùng địa chỉ email. Chỉ bật tùy chọn này nếu bạn tin rằng nhà cung cấp này đã xác minh địa chỉ đó thuộc về họ."
+	},
+	"auth-provider.link-by-email-help-oauth": {
+		"defaultMessage": "Lần đầu tiên ai đó đăng nhập, gắn họ với tài khoản ở đây đã có cùng địa chỉ email. Nhà cung cấp cũng phải báo cáo địa chỉ đó là đã xác minh, nếu không bất kỳ ai tự đặt được địa chỉ của mình đều có thể chiếm tài khoản của người khác."
+	},
+	"auth-provider.local-enabled": {
+		"defaultMessage": "Cho phép đăng nhập bằng email và mật khẩu"
+	},
+	"auth-provider.local-enabled-help": {
+		"defaultMessage": "Tắt tùy chọn này để bắt buộc dùng nhà cung cấp xác thực. Hãy chắc chắn rằng bạn đã đăng nhập được bằng một nhà cung cấp trước."
+	},
+	"auth-provider.local-required-help": {
+		"defaultMessage": "Hãy thêm và bật một nhà cung cấp trước khi có thể tắt tùy chọn này."
+	},
+	"auth-provider.name": {
+		"defaultMessage": "Tên hiển thị"
+	},
+	"auth-provider.name-help": {
+		"defaultMessage": "Hiển thị trên màn hình đăng nhập."
+	},
+	"auth-provider.oauth.authorization-url": {
+		"defaultMessage": "URL ủy quyền"
+	},
+	"auth-provider.oauth.client-id": {
+		"defaultMessage": "ID ứng dụng khách"
+	},
+	"auth-provider.oauth.client-secret": {
+		"defaultMessage": "Khóa bí mật ứng dụng khách"
+	},
+	"auth-provider.oauth.email-claim": {
+		"defaultMessage": "Claim email"
+	},
+	"auth-provider.oauth.group-claim": {
+		"defaultMessage": "Claim nhóm"
+	},
+	"auth-provider.oauth.issuer-url": {
+		"defaultMessage": "URL nhà phát hành"
+	},
+	"auth-provider.oauth.issuer-url-help": {
+		"defaultMessage": "Các endpoint được phát hiện từ đây. Để trống để tự cấu hình chúng bên dưới."
+	},
+	"auth-provider.oauth.jwks-url": {
+		"defaultMessage": "URL của JWKS"
+	},
+	"auth-provider.oauth.manual-endpoints": {
+		"defaultMessage": "Cấu hình endpoint thủ công"
+	},
+	"auth-provider.oauth.name-claim": {
+		"defaultMessage": "Claim tên"
+	},
+	"auth-provider.oauth.redirect-uri": {
+		"defaultMessage": "URI chuyển hướng"
+	},
+	"auth-provider.oauth.redirect-uri-help": {
+		"defaultMessage": "Thêm URI này vào danh sách URI chuyển hướng được phép của ứng dụng OAuth."
+	},
+	"auth-provider.oauth.scopes": {
+		"defaultMessage": "Phạm vi"
+	},
+	"auth-provider.oauth.token-url": {
+		"defaultMessage": "URL token"
+	},
+	"auth-provider.oauth.use-basic-auth": {
+		"defaultMessage": "Gửi thông tin xác thực trong header Authorization"
+	},
+	"auth-provider.oauth.use-basic-auth-help": {
+		"defaultMessage": "Một số nhà cung cấp yêu cầu client_secret_basic thay vì gửi khóa bí mật trong thân yêu cầu."
+	},
+	"auth-provider.oauth.userinfo-url": {
+		"defaultMessage": "URL thông tin người dùng"
+	},
+	"auth-provider.saml.email-attribute": {
+		"defaultMessage": "Thuộc tính email"
+	},
+	"auth-provider.saml.entry-point": {
+		"defaultMessage": "URL đăng nhập"
+	},
+	"auth-provider.saml.group-attribute": {
+		"defaultMessage": "Thuộc tính nhóm"
+	},
+	"auth-provider.saml.identifier-attribute": {
+		"defaultMessage": "Thuộc tính định danh"
+	},
+	"auth-provider.saml.identifier-attribute-help": {
+		"defaultMessage": "Thuộc tính chứa mã định danh lâu dài cho mỗi người, chẳng hạn mã số nhân viên. Để trống để dùng NameID, hoặc địa chỉ email khi IdP của bạn cấp NameID tạm thời."
+	},
+	"auth-provider.saml.idp-cert": {
+		"defaultMessage": "Chứng chỉ của nhà cung cấp danh tính"
+	},
+	"auth-provider.saml.issuer": {
+		"defaultMessage": "ID thực thể"
+	},
+	"auth-provider.saml.issuer-help": {
+		"defaultMessage": "Cách phiên bản này tự định danh với nhà cung cấp danh tính."
+	},
+	"auth-provider.saml.metadata": {
+		"defaultMessage": "Metadata của nhà cung cấp dịch vụ"
+	},
+	"auth-provider.saml.metadata-help": {
+		"defaultMessage": "Cung cấp URL này cho nhà cung cấp danh tính của bạn để cấu hình kết nối."
+	},
+	"auth-provider.saml.name-attribute": {
+		"defaultMessage": "Thuộc tính tên"
+	},
+	"auth-provider.saml.sp-private-key": {
+		"defaultMessage": "Khóa ký"
+	},
+	"auth-provider.saml.want-assertions-signed": {
+		"defaultMessage": "Yêu cầu assertion có chữ ký"
+	},
+	"auth-provider.saml.want-response-signed": {
+		"defaultMessage": "Yêu cầu phản hồi có chữ ký"
+	},
+	"auth-provider.secret-stored": {
+		"defaultMessage": "Đã lưu một giá trị. Để trống để giữ nguyên."
+	},
+	"auth-provider.sync": {
+		"defaultMessage": "Đồng bộ thư mục"
+	},
+	"auth-provider.sync-disable-missing": {
+		"defaultMessage": "Vô hiệu hóa tài khoản đã rời khỏi thư mục"
+	},
+	"auth-provider.sync-disable-missing-help": {
+		"defaultMessage": "Quản trị viên cuối cùng không bao giờ bị vô hiệu hóa theo cách này, và không có gì bị vô hiệu hóa nếu một lần chạy không trả về mục nào."
+	},
+	"auth-provider.sync-enabled": {
+		"defaultMessage": "Đồng bộ thư mục này theo lịch"
+	},
+	"auth-provider.sync-enabled-help": {
+		"defaultMessage": "Đồng bộ tạo một tài khoản cục bộ cho mọi người mà nó tìm thấy, dù họ đã từng đăng nhập hay chưa."
+	},
+	"auth-provider.sync-every": {
+		"defaultMessage": "Đồng bộ mỗi {minutes} phút"
+	},
+	"auth-provider.sync-filter": {
+		"defaultMessage": "Bộ lọc đồng bộ"
+	},
+	"auth-provider.sync-filter-help": {
+		"defaultMessage": "Giới hạn những mục thư mục nào được xem xét."
+	},
+	"auth-provider.sync-group": {
+		"defaultMessage": "Giới hạn theo nhóm"
+	},
+	"auth-provider.sync-group-help": {
+		"defaultMessage": "Chỉ đồng bộ thành viên của nhóm này. Để trống để đồng bộ mọi người khớp với bộ lọc."
+	},
+	"auth-provider.sync-interval": {
+		"defaultMessage": "Chạy mỗi (phút)"
+	},
+	"auth-provider.sync-interval-help": {
+		"defaultMessage": "Khoảng thời gian ngắn nhất được phép là năm phút."
+	},
+	"auth-provider.sync-intro": {
+		"defaultMessage": "Duyệt thư mục theo lịch để tài khoản tồn tại trước khi ai đó đăng nhập, và để thay đổi nhóm được cập nhật mà không cần chờ đăng nhập."
+	},
+	"auth-provider.sync-max-disable": {
+		"defaultMessage": "Số tài khoản tối đa bị vô hiệu hóa mỗi lần chạy"
+	},
+	"auth-provider.sync-max-disable-help": {
+		"defaultMessage": "Một lần chạy sẽ vô hiệu hóa nhiều hơn số này thì không vô hiệu hóa ai cả, vì nhiều khả năng nó gặp một lần tìm kiếm bị cắt ngang hơn là người dùng thật sự rời đi. 0 sẽ bỏ giới hạn."
+	},
+	"auth-provider.sync-now": {
+		"defaultMessage": "Đồng bộ"
+	},
+	"auth-provider.sync-result": {
+		"defaultMessage": "Đồng bộ xong: {created} đã tạo, {updated} đã cập nhật, {disabled} đã vô hiệu hóa"
+	},
+	"auth-provider.test": {
+		"defaultMessage": "Kiểm tra"
+	},
+	"auth-provider.test-connection": {
+		"defaultMessage": "Kiểm tra kết nối"
+	},
+	"auth-provider.test-connection-help": {
+		"defaultMessage": "Kiểm tra các thiết lập ở trên mà không lưu, để bạn có thể xác nhận chúng trước khi điền phần còn lại."
+	},
+	"auth-provider.test-connection-ok": {
+		"defaultMessage": "Kết nối thành công ({detail})"
+	},
+	"auth-provider.type.ldap": {
+		"defaultMessage": "Thư mục LDAP"
+	},
+	"auth-provider.type.oauth": {
+		"defaultMessage": "OAuth / OpenID Connect (OIDC)"
+	},
+	"auth-provider.type.saml": {
+		"defaultMessage": "SAML 2.0"
+	},
+	"auth-provider.view": {
+		"defaultMessage": "Xem"
+	},
+	"auth-providers": {
+		"defaultMessage": "Nhà cung cấp xác thực"
+	},
+	"auth-source.external-title": {
+		"defaultMessage": "Đăng nhập qua {name}"
+	},
+	"auth-source.local": {
+		"defaultMessage": "Cục bộ"
+	},
+	"auth-source.local-title": {
+		"defaultMessage": "Đăng nhập bằng địa chỉ email và mật khẩu"
 	},
 	"auto": {
 		"defaultMessage": "Tự động"
@@ -257,8 +602,14 @@
 	"certificates.request.title": {
 		"defaultMessage": "Yêu cầu chứng chỉ mới"
 	},
+	"close": {
+		"defaultMessage": "Đóng"
+	},
 	"column.access": {
 		"defaultMessage": "Truy cập"
+	},
+	"column.auth-source": {
+		"defaultMessage": "Xác thực"
 	},
 	"column.authorization": {
 		"defaultMessage": "Xác thực"
@@ -302,6 +653,9 @@
 	"column.provider": {
 		"defaultMessage": "Nhà cung cấp"
 	},
+	"column.provisioning": {
+		"defaultMessage": "Cấp phát"
+	},
 	"column.roles": {
 		"defaultMessage": "Vai trò"
 	},
@@ -329,6 +683,9 @@
 	"column.status": {
 		"defaultMessage": "Trạng thái"
 	},
+	"column.type": {
+		"defaultMessage": "Loại"
+	},
 	"created-on": {
 		"defaultMessage": "Tạo lúc: {date}"
 	},
@@ -343,6 +700,9 @@
 	},
 	"dead-hosts.count": {
 		"defaultMessage": "{count} máy chủ 404"
+	},
+	"delete": {
+		"defaultMessage": "Xóa"
 	},
 	"disabled": {
 		"defaultMessage": "Đã tắt"
@@ -383,6 +743,9 @@
 	"domains.use-dns": {
 		"defaultMessage": "Xác thực qua DNS"
 	},
+	"edit": {
+		"defaultMessage": "Chỉnh sửa"
+	},
 	"email-address": {
 		"defaultMessage": "Địa chỉ email"
 	},
@@ -400,6 +763,9 @@
 	},
 	"error.access.duplicate-usernames": {
 		"defaultMessage": "Tên người dùng xác thực không được trùng nhau"
+	},
+	"error.external-email-already-taken": {
+		"defaultMessage": "Đã có tài khoản với địa chỉ email này. Hãy nhờ quản trị viên liên kết nó với nhà cung cấp này."
 	},
 	"error.invalid-auth": {
 		"defaultMessage": "Email hoặc mật khẩu không hợp lệ"
@@ -424,6 +790,9 @@
 	},
 	"error.minimum": {
 		"defaultMessage": "Tối thiểu là {min}"
+	},
+	"error.no-account-for-external-user": {
+		"defaultMessage": "Không có tài khoản nào ở đây cho người dùng này. Hãy nhờ quản trị viên tạo một tài khoản."
 	},
 	"error.passwords-must-match": {
 		"defaultMessage": "Mật khẩu phải khớp"
@@ -500,8 +869,20 @@
 	"login.2fa-verify": {
 		"defaultMessage": "Xác minh"
 	},
+	"login.continue-with": {
+		"defaultMessage": "Tiếp tục với {name}"
+	},
+	"login.no-methods": {
+		"defaultMessage": "Chưa cấu hình phương thức đăng nhập nào. Hãy thiết lập một phương thức bằng biến môi trường để đăng nhập lại."
+	},
+	"login.or": {
+		"defaultMessage": "hoặc"
+	},
 	"login.title": {
 		"defaultMessage": "Đăng nhập vào tài khoản của bạn"
+	},
+	"login.username-or-email": {
+		"defaultMessage": "Tên người dùng hoặc địa chỉ email"
 	},
 	"logs": {
 		"defaultMessage": "Nhật ký"
@@ -584,6 +965,9 @@
 	"notification.object-saved": {
 		"defaultMessage": "{object} đã được lưu"
 	},
+	"notification.object-tested": {
+		"defaultMessage": "Thiết lập {object} có vẻ ổn"
+	},
 	"notification.success": {
 		"defaultMessage": "Thành công"
 	},
@@ -622,6 +1006,9 @@
 	},
 	"object.event.updated": {
 		"defaultMessage": "Đã cập nhật {object}"
+	},
+	"object.view": {
+		"defaultMessage": "Xem {object}"
 	},
 	"offline": {
 		"defaultMessage": "Ngoại tuyến"
