@@ -1,8 +1,8 @@
 import { IconSettings } from "@tabler/icons-react";
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form } from "formik";
-import { type ReactNode, useState } from "react";
+import { Field, Form, getIn } from "formik";
+import { type ReactNode, useRef, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import {
@@ -15,11 +15,14 @@ import {
 	NginxConfigField,
 	SSLCertificateField,
 	SSLOptionsFields,
+	UpstreamServersFields,
+	validateUpstreamServers,
 } from "src/components";
 import { FormModal } from "src/components/Form";
 import { useProxyHost, useSetProxyHost, useUser } from "src/hooks";
-import { T } from "src/locale";
+import { intl, T } from "src/locale";
 import { MANAGE, PROXY_HOSTS } from "src/modules/Permissions";
+import { getForwardTarget } from "src/modules/ProxyHostForwarding";
 import { validateNumber, validateString } from "src/modules/Validations";
 import { showObjectSuccess } from "src/notifications";
 
@@ -34,6 +37,7 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const { data: currentUser, isLoading: userIsLoading, error: userError } = useUser("me");
 	const { data, isLoading, error } = useProxyHost(id);
 	const { mutate: setProxyHost } = useSetProxyHost();
+	const loadBalancingTab = useRef<HTMLAnchorElement>(null);
 	const [errorMsg, setErrorMsg] = useState<ReactNode | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,9 +48,11 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		setIsSubmitting(true);
 		setErrorMsg(null);
 
-		const { ...payload } = {
+		const payload = {
 			id: id === "new" ? undefined : id,
 			...values,
+			upstreamName: values.upstreamName || null,
+			...getForwardTarget(values, data),
 		};
 		payload.locations = (values.locations || []).filter((location: any) => location.path?.trim() !== "");
 
@@ -92,6 +98,8 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					initialValues={
 						{
 							// Details tab
+							forwardingMode:
+								data?.forwardingMode ?? (data?.upstreamServers?.length ? "upstream" : "direct"),
 							domainNames: data?.domainNames || [],
 							forwardScheme: data?.forwardScheme || "http",
 							forwardHost: data?.forwardHost || "",
@@ -102,6 +110,10 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							allowWebsocketUpgrade: data?.allowWebsocketUpgrade || false,
 							// Locations tab
 							locations: data?.locations || [],
+							// Load Balancing tab
+							upstreamName: data?.upstreamName ?? "",
+							upstreamServers: data?.upstreamServers || [],
+							lbMethod: data?.lbMethod || "round_robin",
 							// SSL tab
 							certificateId: data?.certificateId || 0,
 							sslForced: data?.sslForced || false,
@@ -115,8 +127,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 						} as any
 					}
 					onSubmit={onSubmit}
+					validate={validateUpstreamServers}
 				>
-					{({ onHide }) => (
+					{({ errors, submitCount, values, onHide }) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -127,6 +140,16 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								<Alert variant="danger" show={!!errorMsg} onClose={() => setErrorMsg(null)} dismissible>
 									{errorMsg}
 								</Alert>
+								{submitCount > 0 &&
+									Boolean(
+										errors.upstreamName ||
+											errors.upstreamServers ||
+											getIn(errors, "upstreamServersGroup"),
+									) && (
+										<Alert variant="danger" className="m-3 mb-0">
+											<T id="error.upstream-invalid" />
+										</Alert>
+									)}
 								<div className="card m-0 border-0">
 									<div className="card-header">
 										<ul className="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
@@ -151,6 +174,19 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													role="tab"
 												>
 													<T id="column.custom-locations" />
+												</a>
+											</li>
+											<li className="nav-item" role="presentation">
+												<a
+													href="#tab-load-balancing"
+													ref={loadBalancingTab}
+													className="nav-link"
+													data-bs-toggle="tab"
+													aria-selected="false"
+													tabIndex={-1}
+													role="tab"
+												>
+													<T id="upstream.load-balancing" />
 												</a>
 											</li>
 											<li className="nav-item" role="presentation">
@@ -186,6 +222,25 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 										<div className="tab-content">
 											<div className="tab-pane active show" id="tab-details" role="tabpanel">
 												<DomainNamesField isWildcardPermitted dnsProviderWildcardSupported />
+												<div className="mb-3">
+													<label className="form-label" htmlFor="forwardingMode">
+														<T id="host.forward-to" />
+													</label>
+													<Field
+														as="select"
+														name="forwardingMode"
+														id="forwardingMode"
+														className="form-select"
+													>
+														<option value="direct">
+															{intl.formatMessage({ id: "host.hostname-ip" })}
+														</option>
+														<option value="upstream">
+															{intl.formatMessage({ id: "host.upstream" })}
+														</option>
+													</Field>
+												</div>
+
 												<div className="row">
 													<div className="col-sm-3 col-md-3">
 														<Field name="forwardScheme">
@@ -218,68 +273,114 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 															)}
 														</Field>
 													</div>
-													<div className="col-sm-5 col-md-5">
-														<Field name="forwardHost" validate={validateString(1, 255)}>
-															{({ field, form }: any) => (
-																<div className="mb-3">
-																	<label
-																		className="form-label text-nowrap"
-																		htmlFor="forwardHost"
-																	>
-																		<T id="proxy-host.forward-host" />
-																	</label>
-																	<input
-																		id="forwardHost"
-																		type="text"
-																		className={`form-control ${form.errors.forwardHost && form.touched.forwardHost ? "is-invalid" : ""}`}
-																		required
-																		placeholder="example.com"
-																		{...field}
-																	/>
-																	{form.errors.forwardHost ? (
-																		<div className="invalid-feedback">
-																			{form.errors.forwardHost &&
-																			form.touched.forwardHost
-																				? form.errors.forwardHost
-																				: null}
+													{values.forwardingMode === "direct" ? (
+														<>
+															<div className="col-sm-5 col-md-5">
+																<Field
+																	name="forwardHost"
+																	validate={validateString(1, 255)}
+																>
+																	{({ field, form }: any) => (
+																		<div className="mb-3">
+																			<label
+																				className="form-label"
+																				htmlFor="forwardHost"
+																			>
+																				<T id="proxy-host.forward-host" />
+																			</label>
+																			<input
+																				id="forwardHost"
+																				type="text"
+																				className={`form-control ${form.errors.forwardHost && form.touched.forwardHost ? "is-invalid" : ""}`}
+																				required
+																				placeholder="example.com"
+																				{...field}
+																			/>
+																			{form.errors.forwardHost ? (
+																				<div className="invalid-feedback">
+																					{form.errors.forwardHost &&
+																					form.touched.forwardHost
+																						? form.errors.forwardHost
+																						: null}
+																				</div>
+																			) : null}
 																		</div>
-																	) : null}
+																	)}
+																</Field>
+															</div>
+															<div className="col-sm-4 col-md-4">
+																<Field
+																	name="forwardPort"
+																	validate={validateNumber(1, 65535)}
+																>
+																	{({ field, form }: any) => (
+																		<div className="mb-3">
+																			<label
+																				className="form-label"
+																				htmlFor="forwardPort"
+																			>
+																				<T id="host.forward-port" />
+																			</label>
+																			<input
+																				id="forwardPort"
+																				type="number"
+																				min={1}
+																				max={65535}
+																				className={`form-control ${form.errors.forwardPort && form.touched.forwardPort ? "is-invalid" : ""}`}
+																				required
+																				placeholder="eg: 8081"
+																				{...field}
+																			/>
+																			{form.errors.forwardPort ? (
+																				<div className="invalid-feedback">
+																					{form.errors.forwardPort &&
+																					form.touched.forwardPort
+																						? form.errors.forwardPort
+																						: null}
+																				</div>
+																			) : null}
+																		</div>
+																	)}
+																</Field>
+															</div>
+														</>
+													) : (
+														<div className="col-md-9 mb-3">
+															<label className="form-label" htmlFor="forwardUpstream">
+																<T id="host.upstream" />
+															</label>
+															<div className="input-group">
+																<input
+																	id="forwardUpstream"
+																	className="form-control"
+																	readOnly
+																	value={
+																		values.upstreamName?.toLowerCase() ||
+																		(data.id
+																			? `npm-${data.id}`
+																			: intl.formatMessage({
+																					id: "upstream.generated-on-save",
+																				}))
+																	}
+																/>
+																<button
+																	type="button"
+																	className="btn"
+																	onClick={() => {
+																		loadBalancingTab.current?.click();
+																		loadBalancingTab.current?.focus();
+																	}}
+																>
+																	<T id="upstream.configure" />
+																</button>
+															</div>
+															{!values.upstreamServers?.length && (
+																<div className="form-text">
+																	<T id="error.upstream-required" />
 																</div>
 															)}
-														</Field>
-													</div>
-													<div className="col-sm-4 col-md-4">
-														<Field name="forwardPort" validate={validateNumber(1, 65535)}>
-															{({ field, form }: any) => (
-																<div className="mb-3">
-																	<label
-																		className="form-label text-nowrap"
-																		htmlFor="forwardPort"
-																	>
-																		<T id="host.forward-port" />
-																	</label>
-																	<input
-																		id="forwardPort"
-																		type="number"
-																		min={1}
-																		max={65535}
-																		className={`form-control ${form.errors.forwardPort && form.touched.forwardPort ? "is-invalid" : ""}`}
-																		required
-																		placeholder="eg: 8081"
-																		{...field}
-																	/>
-																	{form.errors.forwardPort ? (
-																		<div className="invalid-feedback">
-																			{form.errors.forwardPort &&
-																			form.touched.forwardPort
-																				? form.errors.forwardPort
-																				: null}
-																		</div>
-																	) : null}
-																</div>
-															)}
-														</Field>
-													</div>
+														</div>
+													)}
 												</div>
 												<AccessField />
 												<div className="my-3">
@@ -364,6 +465,9 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 													initialValues={data?.locations || []}
 													allowAdvanced={!!isAdmin}
 												/>
+											</div>
+											<div className="tab-pane" id="tab-load-balancing" role="tabpanel">
+												<UpstreamServersFields />
 											</div>
 											<div className="tab-pane" id="tab-ssl" role="tabpanel">
 												<SSLCertificateField
