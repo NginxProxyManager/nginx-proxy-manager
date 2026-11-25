@@ -12,6 +12,7 @@ import {
 	showHelpModal,
 	showHTTPCertificateModal,
 	showRenewCertificateModal,
+	showUpdateCertificateModal,
 } from "src/modals";
 import { CERTIFICATES, MANAGE } from "src/modules/Permissions";
 import { showError, showObjectSuccess } from "src/notifications";
@@ -146,6 +147,7 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					onRenew={showRenewCertificateModal}
 					onDownload={handleDownload}
+					onUpdate={showUpdateCertificateModal}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "certificate" }} />,

@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconDownload, IconRefresh, IconTrash, IconUpload } from "@tabler/icons-react";
 import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
@@ -23,8 +23,9 @@ interface Props {
 	onDelete?: (id: number) => void;
 	onRenew?: (id: number) => void;
 	onDownload?: (id: number) => void;
+	onUpdate?: (id: number) => void;
 }
-export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered }: Props) {
+export default function Table({ data, isFetching, onDelete, onRenew, onDownload, onUpdate, isFiltered }: Props) {
 	const columnHelper = createColumnHelper<Features, Certificate>();
 	const columns = useMemo(
 		() => [
@@ -129,6 +130,19 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 									<T id="action.renew" />
 								</a>
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
+									{info.row.original.provider === "other" ? (
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onUpdate?.(info.row.original.id);
+											}}
+										>
+											<IconUpload size={16} />
+											<T id="action.update" />
+										</a>
+									) : null}
 									<a
 										className="dropdown-item"
 										href="#"
@@ -162,7 +176,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				},
 			}),
 		],
-		[columnHelper, onDelete, onRenew, onDownload],
+		[columnHelper, onDelete, onRenew, onDownload, onUpdate],
 	);
 
 	const tableInstance = useTable({
