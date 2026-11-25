@@ -159,6 +159,8 @@ export interface ProxyHost {
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
 	trustForwardedProto: boolean;
+	enableProxyProtocol: boolean;
+	loadBalancerIp: string;
 	// Expansions:
 	owner?: User;
 	accessList?: AccessList;
