@@ -434,6 +434,15 @@
 	"expires.on": {
 		"defaultMessage": "Expire le {date}"
 	},
+	"folder": {
+		"defaultMessage": "Dossier"
+	},
+	"folder.create": {
+		"defaultMessage": "Créer le dossier « {name} »"
+	},
+	"folder.placeholder": {
+		"defaultMessage": "Aucun dossier"
+	},
 	"footer.github-fork": {
 		"defaultMessage": "Forkez-moi sur GitHub"
 	},

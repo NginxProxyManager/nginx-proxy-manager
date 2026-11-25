@@ -153,6 +153,11 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 	return (
 		<TableLayout
 			tableInstance={tableInstance}
+			folders={{
+				getFolder: (host) => host.meta?.folder,
+				isEnabled: (host) => host.enabled,
+				expandAll: isFiltered,
+			}}
 			emptyState={
 				<EmptyData
 					object="dead-host"

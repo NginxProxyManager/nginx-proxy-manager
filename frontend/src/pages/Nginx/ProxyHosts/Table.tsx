@@ -196,6 +196,11 @@ export default function Table({
 	return (
 		<TableLayout
 			tableInstance={tableInstance}
+			folders={{
+				getFolder: (host) => host.meta?.folder,
+				isEnabled: (host) => host.enabled,
+				expandAll: isFiltered,
+			}}
 			emptyState={
 				<EmptyData
 					object="proxy-host"
