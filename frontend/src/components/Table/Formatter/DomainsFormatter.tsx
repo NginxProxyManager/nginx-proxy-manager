@@ -9,22 +9,30 @@ interface Props {
 	niceName?: string;
 	provider?: string;
 	color?: string;
+	httpsPort?: number;
 }
 
-const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
+const DomainLink = ({ domain, color, httpsPort }: { domain?: string; color?: string; httpsPort?: number }) => {
 	// when domain contains a wildcard, make the link go nowhere.
 	// Apparently the domain can be null or undefined sometimes.
 	// This try is just a safeguard to prevent the whole formatter from breaking.
 	if (!domain) return null;
 	try {
 		let onClick: ((e: React.MouseEvent) => void) | undefined;
-		if (domain.includes("*")) {
+		const isWildcard = domain.includes("*");
+		if (isWildcard) {
 			onClick = (e: React.MouseEvent) => e.preventDefault();
+		}
+		let href = `http://${domain}`;
+		if (httpsPort !== undefined && !isWildcard) {
+			const url = new URL(`https://${domain}`);
+			url.port = String(httpsPort);
+			href = url.href;
 		}
 		return (
 			<a
 				key={domain}
-				href={`http://${domain}`}
+				href={href}
 				target="_blank"
 				rel="noopener"
 				onClick={onClick}
@@ -38,7 +46,7 @@ const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
 	}
 };
 
-export function DomainsFormatter({ domains, createdOn, niceName, provider, color }: Props) {
+export function DomainsFormatter({ domains, createdOn, niceName, provider, color, httpsPort }: Props) {
 	const { locale } = useLocaleState();
 	const elms: ReactNode[] = [];
 
@@ -58,7 +66,9 @@ export function DomainsFormatter({ domains, createdOn, niceName, provider, color
 	}
 
 	if (domains) {
-		domains.map((domain: string) => elms.push(<DomainLink key={domain} domain={domain} color={color} />));
+		domains.map((domain: string) =>
+			elms.push(<DomainLink key={domain} domain={domain} color={color} httpsPort={httpsPort} />),
+		);
 	}
 
 	return (

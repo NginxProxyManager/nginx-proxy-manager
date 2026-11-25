@@ -14,6 +14,13 @@
 			"description": "Whether the initial setup has been completed",
 			"example": true
 		},
+		"proxy_host_link_https_port": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 65535,
+			"description": "Optional external HTTPS port for links to HTTPS-enabled Proxy Hosts",
+			"example": 4443
+		},
 		"version": {
 			"type": "object",
 			"description": "The version object",
