@@ -443,6 +443,12 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Mise en cache des ressources"
 	},
+	"host.flags.dynamic-upstream-resolve": {
+		"defaultMessage": "Résolution dynamique de l'upstream"
+	},
+	"host.flags.dynamic-upstream-resolve-description": {
+		"defaultMessage": "Résout les noms d'hôtes upstream dynamiquement à chaque requête. Le résolveur DNS est détecté automatiquement depuis /etc/resolv.conf, ou peut être remplacé via la variable d'environnement NGINX_RESOLVER. Par défaut : 127.0.0.11 (DNS Docker bridge) si aucun résolveur n'est trouvé."
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Préserver le chemin"
 	},

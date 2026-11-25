@@ -159,6 +159,7 @@ export interface ProxyHost {
 	hstsEnabled: boolean;
 	hstsSubdomains: boolean;
 	trustForwardedProto: boolean;
+	dynamicUpstreamResolve: boolean;
 	// Expansions:
 	owner?: User;
 	accessList?: AccessList;
