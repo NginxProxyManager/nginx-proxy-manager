@@ -48,7 +48,11 @@ const ProxyHostModal = EasyModal.create(({ id, visible, remove }: Props) => {
 			id: id === "new" ? undefined : id,
 			...values,
 		};
-		payload.locations = (values.locations || []).filter((location: any) => location.path?.trim() !== "");
+		// Trim paths: the API rejects surrounding whitespace, and locations saved before it did
+		// can still have some (e.g. "/api "), which would stop the host from saving at all
+		payload.locations = (values.locations || [])
+			.map((location: any) => ({ ...location, path: location.path?.trim() ?? "" }))
+			.filter((location: any) => location.path !== "");
 
 		if (!isAdmin) {
 			delete payload.advanced_config;
