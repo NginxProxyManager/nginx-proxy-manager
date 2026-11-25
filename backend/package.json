@@ -37,7 +37,7 @@
 		"otplib": "^13.6.0",
 		"path": "^0.12.7",
 		"pg": "^8.23.1",
-		"proxy-agent": "^8.0.2",
+		"proxy-agent": "^8.0.3",
 		"signale": "1.4.0",
 		"sqlite3": "^6.0.1",
 		"temp-write": "^6.0.1"
