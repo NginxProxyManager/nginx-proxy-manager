@@ -119,6 +119,7 @@ export default function LogViewer() {
 					<div className="col-auto">
 						<select
 							className="form-select form-select-sm"
+							aria-label={intl.formatMessage({ id: "logs.source" })}
 							value={encodeSelection(selection)}
 							onChange={(e) => {
 								setSelection(decodeSelection(e.target.value));
@@ -162,6 +163,7 @@ export default function LogViewer() {
 						<div className="col-auto">
 							<select
 								className="form-select form-select-sm"
+								aria-label={intl.formatMessage({ id: "logs.level" })}
 								value={level}
 								onChange={(e) => setLevel(e.target.value)}
 							>
@@ -179,6 +181,7 @@ export default function LogViewer() {
 							type="search"
 							className="form-control form-control-sm"
 							placeholder={intl.formatMessage({ id: "logs.search-placeholder" })}
+							aria-label={intl.formatMessage({ id: "logs.search-placeholder" })}
 							value={searchInput}
 							onChange={(e) => setSearchInput(e.target.value)}
 						/>
@@ -186,6 +189,7 @@ export default function LogViewer() {
 					<div className="col-auto">
 						<select
 							className="form-select form-select-sm"
+							aria-label={intl.formatMessage({ id: "logs.lines" })}
 							value={lines}
 							onChange={(e) => setLines(Number(e.target.value))}
 						>
