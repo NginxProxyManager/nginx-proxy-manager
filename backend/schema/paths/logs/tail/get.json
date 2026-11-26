@@ -73,6 +73,15 @@
 				"type": "string",
 				"maxLength": 200
 			}
+		},
+		{
+			"in": "query",
+			"name": "since",
+			"description": "ISO-8601 timestamp; only return lines at or after this time",
+			"schema": {
+				"type": "string",
+				"maxLength": 64
+			}
 		}
 	],
 	"responses": {

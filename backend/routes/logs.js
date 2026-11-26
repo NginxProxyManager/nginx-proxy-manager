@@ -88,6 +88,9 @@ router
 						search: {
 							anyOf: [{ type: "null" }, { type: "string", minLength: 1, maxLength: 200 }],
 						},
+						since: {
+							anyOf: [{ type: "null" }, { type: "string", minLength: 1, maxLength: 64 }],
+						},
 					},
 				},
 				{
@@ -98,6 +101,7 @@ router
 					lines: typeof req.query.lines !== "undefined" ? req.query.lines : null,
 					level: typeof req.query.level === "string" ? req.query.level : null,
 					search: typeof req.query.search === "string" ? req.query.search : null,
+					since: typeof req.query.since === "string" ? req.query.since : null,
 				},
 			);
 
