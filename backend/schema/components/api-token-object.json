@@ -1,0 +1,83 @@
+{
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"name",
+		"scopes",
+		"visibility",
+		"created_on",
+		"expires_on",
+		"revoked_on",
+		"last_used_on",
+		"status"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string"
+		},
+		"scopes": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"enum": [
+					"proxy_hosts:read",
+					"proxy_hosts:write",
+					"redirection_hosts:read",
+					"redirection_hosts:write",
+					"dead_hosts:read",
+					"dead_hosts:write",
+					"streams:read",
+					"streams:write",
+					"access_lists:read",
+					"access_lists:write",
+					"certificates:read",
+					"certificates:write"
+				]
+			}
+		},
+		"visibility": {
+			"type": "string",
+			"enum": [
+				"user",
+				"all"
+			]
+		},
+		"created_on": {
+			"type": "string",
+			"format": "date-time"
+		},
+		"expires_on": {
+			"type": "string",
+			"format": "date-time"
+		},
+		"revoked_on": {
+			"type": [
+				"string",
+				"null"
+			],
+			"format": "date-time"
+		},
+		"last_used_on": {
+			"type": [
+				"string",
+				"null"
+			],
+			"format": "date-time"
+		},
+		"status": {
+			"type": "string",
+			"enum": [
+				"active",
+				"expired",
+				"revoked"
+			],
+			"description": "Effective credential status, including invalidation by account or password changes.",
+			"example": "active"
+		}
+	}
+}

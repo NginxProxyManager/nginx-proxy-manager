@@ -65,6 +65,129 @@
 	"action.view-details": {
 		"defaultMessage": "查看详情"
 	},
+	"api-tokens.actions": {
+		"defaultMessage": "操作"
+	},
+	"api-tokens.active": {
+		"defaultMessage": "有效"
+	},
+	"api-tokens.close": {
+		"defaultMessage": "关闭"
+	},
+	"api-tokens.copied": {
+		"defaultMessage": "已复制"
+	},
+	"api-tokens.copy": {
+		"defaultMessage": "复制令牌"
+	},
+	"api-tokens.copy-failed": {
+		"defaultMessage": "无法自动复制。请选中令牌并手动复制。"
+	},
+	"api-tokens.create": {
+		"defaultMessage": "创建 API 令牌"
+	},
+	"api-tokens.create-failed": {
+		"defaultMessage": "无法创建 API 令牌。"
+	},
+	"api-tokens.created": {
+		"defaultMessage": "API 令牌已创建"
+	},
+	"api-tokens.description": {
+		"defaultMessage": "个人 API 令牌可让外部工具使用选定权限调用现有的 Nginx Proxy Manager API。在此管理和撤销您自己账户的令牌。"
+	},
+	"api-tokens.empty": {
+		"defaultMessage": "您尚未创建 API 令牌。"
+	},
+	"api-tokens.expired": {
+		"defaultMessage": "已过期"
+	},
+	"api-tokens.expires": {
+		"defaultMessage": "过期时间"
+	},
+	"api-tokens.expiry-days": {
+		"defaultMessage": "有效期（天）"
+	},
+	"api-tokens.expiry-help": {
+		"defaultMessage": "请选择 1 至 {max} 天。令牌创建后无法延期。"
+	},
+	"api-tokens.last-used": {
+		"defaultMessage": "上次使用"
+	},
+	"api-tokens.name": {
+		"defaultMessage": "令牌名称"
+	},
+	"api-tokens.never-used": {
+		"defaultMessage": "从未使用"
+	},
+	"api-tokens.no-permissions": {
+		"defaultMessage": "您的账户没有可用于 API 令牌的资源权限。请联系管理员检查您的权限。"
+	},
+	"api-tokens.password": {
+		"defaultMessage": "确认当前密码"
+	},
+	"api-tokens.retry": {
+		"defaultMessage": "重试"
+	},
+	"api-tokens.revoke": {
+		"defaultMessage": "撤销"
+	},
+	"api-tokens.revoke-confirm": {
+		"defaultMessage": "确定撤销“{name}”吗？使用此令牌的工具将立即失去访问权限。此操作无法撤销。"
+	},
+	"api-tokens.revoke-failed": {
+		"defaultMessage": "无法撤销 API 令牌。"
+	},
+	"api-tokens.revoked": {
+		"defaultMessage": "已撤销"
+	},
+	"api-tokens.saved-secret": {
+		"defaultMessage": "我已保存令牌"
+	},
+	"api-tokens.scope-none": {
+		"defaultMessage": "无权限"
+	},
+	"api-tokens.scope-read": {
+		"defaultMessage": "只读"
+	},
+	"api-tokens.scope-write": {
+		"defaultMessage": "读取、创建、修改和删除"
+	},
+	"api-tokens.scopes": {
+		"defaultMessage": "权限"
+	},
+	"api-tokens.scopes-help": {
+		"defaultMessage": "请至少选择一项权限。默认不授予任何权限。写入权限包括对该资源的读取、创建、修改和删除操作。"
+	},
+	"api-tokens.secret": {
+		"defaultMessage": "您的 API 令牌"
+	},
+	"api-tokens.secret-warning": {
+		"defaultMessage": "请立即复制此令牌并妥善保管。令牌仅显示一次，关闭此窗口后将无法再次查看。"
+	},
+	"api-tokens.security-warning": {
+		"defaultMessage": "令牌可能暴露敏感配置。请仅授予工具所需的权限。写入权限可以修改或删除正在使用的配置。请勿公开分享令牌。"
+	},
+	"api-tokens.status": {
+		"defaultMessage": "状态"
+	},
+	"api-tokens.title": {
+		"defaultMessage": "API 令牌"
+	},
+	"api-tokens.two-factor": {
+		"defaultMessage": "双重验证代码或备用代码"
+	},
+	"api-tokens.uncertain-create": {
+		"defaultMessage": "如果响应丢失，令牌可能已创建。重试前请关闭此窗口并检查列表，撤销未收到密钥的令牌。"
+	},
+	"api-tokens.usage": {
+		"defaultMessage": "调用支持的 /api 接口时，请通过 Authorization: Bearer YOUR_TOKEN 请求头发送令牌。"
+	},
+	"api-tokens.visibility-all": {
+		"defaultMessage": "访问受您的权限限制，当前可包含所有用户的资源。"
+	},
+	"api-tokens.visibility-user": {
+		"defaultMessage": "访问受您的权限限制，仅限您自己的资源。"
+	},
 	"auditlogs": {
 		"defaultMessage": "审计日志"
 	},

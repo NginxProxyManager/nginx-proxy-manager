@@ -17,6 +17,7 @@ const Setup = lazy(() => import("src/pages/Setup"));
 const Login = lazy(() => import("src/pages/Login"));
 const Dashboard = lazy(() => import("src/pages/Dashboard"));
 const Settings = lazy(() => import("src/pages/Settings"));
+const ApiTokens = lazy(() => import("src/pages/Settings/ApiTokens"));
 const Certificates = lazy(() => import("src/pages/Certificates"));
 const Access = lazy(() => import("src/pages/Access"));
 const AuditLog = lazy(() => import("src/pages/AuditLog"));
@@ -68,6 +69,7 @@ function Router() {
 							<Route path="/audit-log" element={<AuditLog />} />
 							<Route path="/logs" element={<Logs />} />
 							<Route path="/settings" element={<Settings />} />
+							<Route path="/settings/api-tokens" element={<ApiTokens />} />
 							<Route path="/users" element={<Users />} />
 							<Route path="/nginx/proxy" element={<ProxyHosts />} />
 							<Route path="/nginx/redirection" element={<RedirectionHosts />} />

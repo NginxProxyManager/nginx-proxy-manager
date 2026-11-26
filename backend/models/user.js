@@ -36,6 +36,14 @@ class User extends Model {
 		return super.$formatDatabaseJson(thisJson);
 	}
 
+	$formatJson(json) {
+		const thisJson = super.$formatJson(json);
+		// Internal credential state must stay out of all JSON responses,
+		// including users expanded through resource and audit relationships.
+		delete thisJson.api_token_version;
+		return thisJson;
+	}
+
 	static get name() {
 		return "User";
 	}

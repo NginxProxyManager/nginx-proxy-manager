@@ -1,4 +1,5 @@
 import errs from "../lib/error.js";
+import { apiTokenAuditMeta } from "../lib/api-token-audit.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
 import auditLogModel from "../models/audit-log.js";
 
@@ -89,7 +90,7 @@ const internalAuditLog = {
 			action: data.action,
 			object_type: data.object_type || "",
 			object_id: data.object_id || 0,
-			meta: data.meta || {},
+			meta: access.credentialKind === "api_token" ? apiTokenAuditMeta(data.meta, access.getApiTokenId()) : data.meta || {},
 		});
 	},
 };

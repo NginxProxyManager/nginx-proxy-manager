@@ -105,6 +105,7 @@ export default {
 	 * @returns {Promise}
 	 */
 	getFreshToken: async (access, data) => {
+		if (access.credentialKind === "api_token") throw new errs.PermissionError();
 		const Token = TokenModel();
 		const thisData = data || {};
 

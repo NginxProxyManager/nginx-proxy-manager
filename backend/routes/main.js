@@ -1,9 +1,11 @@
 import express from "express";
 import { isCI } from "../lib/config.js";
 import errs from "../lib/error.js";
+import apiTokenGuard from "../lib/express/api-token-guard.js";
 import logRequest from "../lib/express/log-request.js";
 import pjson from "../package.json" with { type: "json" };
 import { isSetup } from "../setup.js";
+import apiTokenRoutes from "./api-tokens.js";
 import auditLogRoutes from "./audit-log.js";
 import ciRoutes from "./ci.js";
 import logsRoutes from "./logs.js";
@@ -27,6 +29,7 @@ const router = express.Router({
 });
 
 router.use(logRequest);
+router.use(apiTokenGuard);
 
 /**
  * Health Check
@@ -49,6 +52,7 @@ router.get("/", async (_, res /*, next*/) => {
 
 router.use("/schema", schemaRoutes);
 router.use("/tokens", tokensRoutes);
+router.use("/api-tokens", apiTokenRoutes);
 router.use("/users", usersRoutes);
 router.use("/audit-log", auditLogRoutes);
 router.use("/logs", logsRoutes);

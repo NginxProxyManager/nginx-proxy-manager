@@ -143,6 +143,129 @@
 	"action.view-details": {
 		"defaultMessage": "Vaata üksikasju"
 	},
+	"api-tokens.actions": {
+		"defaultMessage": "Toimingud"
+	},
+	"api-tokens.active": {
+		"defaultMessage": "Aktiivne"
+	},
+	"api-tokens.close": {
+		"defaultMessage": "Sulge"
+	},
+	"api-tokens.copied": {
+		"defaultMessage": "Kopeeritud"
+	},
+	"api-tokens.copy": {
+		"defaultMessage": "Kopeeri pääsutõend"
+	},
+	"api-tokens.copy-failed": {
+		"defaultMessage": "Automaatne kopeerimine ebaõnnestus. Vali pääsutõend ja kopeeri see käsitsi."
+	},
+	"api-tokens.create": {
+		"defaultMessage": "Loo API pääsutõend"
+	},
+	"api-tokens.create-failed": {
+		"defaultMessage": "API pääsutõendi loomine ebaõnnestus."
+	},
+	"api-tokens.created": {
+		"defaultMessage": "API pääsutõend on loodud"
+	},
+	"api-tokens.description": {
+		"defaultMessage": "Isiklikud API pääsutõendid võimaldavad välistel tööriistadel kasutada olemasolevat Nginx Proxy Manageri API-t valitud õigustega. Siin saad hallata ja tühistada oma konto pääsutõendeid."
+	},
+	"api-tokens.empty": {
+		"defaultMessage": "Sul pole veel API pääsutõendeid."
+	},
+	"api-tokens.expired": {
+		"defaultMessage": "Aegunud"
+	},
+	"api-tokens.expires": {
+		"defaultMessage": "Aegub"
+	},
+	"api-tokens.expiry-days": {
+		"defaultMessage": "Kehtivusaeg (päevades)"
+	},
+	"api-tokens.expiry-help": {
+		"defaultMessage": "Vali 1 kuni {max} päeva. Pääsutõendi kehtivusaega ei saa pärast loomist pikendada."
+	},
+	"api-tokens.last-used": {
+		"defaultMessage": "Viimati kasutatud"
+	},
+	"api-tokens.name": {
+		"defaultMessage": "Pääsutõendi nimi"
+	},
+	"api-tokens.never-used": {
+		"defaultMessage": "Mitte kunagi"
+	},
+	"api-tokens.no-permissions": {
+		"defaultMessage": "Sinu kontol pole API pääsutõendite jaoks ressursiõigusi. Palu administraatoril oma õigused üle vaadata."
+	},
+	"api-tokens.password": {
+		"defaultMessage": "Kinnita oma praegune parool"
+	},
+	"api-tokens.retry": {
+		"defaultMessage": "Proovi uuesti"
+	},
+	"api-tokens.revoke": {
+		"defaultMessage": "Tühista pääsutõend"
+	},
+	"api-tokens.revoke-confirm": {
+		"defaultMessage": "Kas tühistada pääsutõend „{name}”? Seda kasutavad tööriistad kaotavad kohe juurdepääsu. Seda toimingut ei saa tagasi võtta."
+	},
+	"api-tokens.revoke-failed": {
+		"defaultMessage": "API pääsutõendi tühistamine ebaõnnestus."
+	},
+	"api-tokens.revoked": {
+		"defaultMessage": "Tühistatud"
+	},
+	"api-tokens.saved-secret": {
+		"defaultMessage": "Olen pääsutõendi salvestanud"
+	},
+	"api-tokens.scope-none": {
+		"defaultMessage": "Juurdepääs puudub"
+	},
+	"api-tokens.scope-read": {
+		"defaultMessage": "Ainult lugemine"
+	},
+	"api-tokens.scope-write": {
+		"defaultMessage": "Lugemine, loomine, muutmine ja kustutamine"
+	},
+	"api-tokens.scopes": {
+		"defaultMessage": "Õigused"
+	},
+	"api-tokens.scopes-help": {
+		"defaultMessage": "Vali vähemalt üks õigus. Vaikimisi pole ühtegi õigust valitud. Kirjutamisõigus hõlmab selle ressursi lugemist, loomist, muutmist ja kustutamist."
+	},
+	"api-tokens.secret": {
+		"defaultMessage": "Sinu API pääsutõend"
+	},
+	"api-tokens.secret-warning": {
+		"defaultMessage": "Kopeeri pääsutõend kohe ja hoia seda turvalises kohas. Seda näidatakse ainult üks kord ja pärast dialoogi sulgemist ei saa seda enam vaadata."
+	},
+	"api-tokens.security-warning": {
+		"defaultMessage": "Pääsutõendid võivad paljastada tundlikke seadeid. Anna ainult need õigused, mida tööriist vajab. Kirjutamisõigus võimaldab kasutusel olevaid seadeid muuta või kustutada. Ära jaga pääsutõendeid avalikult."
+	},
+	"api-tokens.status": {
+		"defaultMessage": "Olek"
+	},
+	"api-tokens.title": {
+		"defaultMessage": "API pääsutõendid"
+	},
+	"api-tokens.two-factor": {
+		"defaultMessage": "Kaheastmelise autentimise kood või varukood"
+	},
+	"api-tokens.uncertain-create": {
+		"defaultMessage": "Kui vastus läks kaduma, võidi pääsutõend siiski luua. Enne uuesti proovimist sulge dialoog ja kontrolli loendit. Tühista kõik pääsutõendid, mille salajast väärtust sa ei saanud."
+	},
+	"api-tokens.usage": {
+		"defaultMessage": "Saada pääsutõend toetatud /api otspunktide päringutes päisega Authorization: Bearer YOUR_TOKEN."
+	},
+	"api-tokens.visibility-all": {
+		"defaultMessage": "Juurdepääs on piiratud sinu õigustega ja hõlmab praegu kõigi kasutajate ressursse."
+	},
+	"api-tokens.visibility-user": {
+		"defaultMessage": "Juurdepääs on piiratud sinu õiguste ja sinu enda ressurssidega."
+	},
 	"auditlogs": {
 		"defaultMessage": "Auditilogid"
 	},

@@ -2,6 +2,7 @@ import gravatar from "gravatar";
 import _ from "lodash";
 import errs from "../lib/error.js";
 import utils from "../lib/utils.js";
+import apiTokenModel from "../models/api_token.js";
 import authModel from "../models/auth.js";
 import proxyHostModel from "../models/proxy_host.js";
 import userModel from "../models/user.js";
@@ -10,7 +11,14 @@ import internalAuditLog from "./audit-log.js";
 import internalToken from "./token.js";
 
 const omissions = () => {
-	return ["is_deleted", "permissions.id", "permissions.user_id", "permissions.created_on", "permissions.modified_on"];
+	return [
+		"is_deleted",
+		"api_token_version",
+		"permissions.id",
+		"permissions.user_id",
+		"permissions.created_on",
+		"permissions.modified_on",
+	];
 };
 
 const DEFAULT_AVATAR = gravatar.url("admin@example.com", { default: "mm" });
@@ -126,7 +134,21 @@ const internalUser = {
 				}
 
 				data.avatar = gravatar.url(data.email || user.email, { default: "mm" });
-				return userModel.query().patchAndFetchById(user.id, data).then(utils.omitRow(omissions()));
+				return userModel.transaction(async (trx) => {
+					const disabling = data.is_disabled === true || data.is_disabled === 1;
+					const row = await userModel.query(trx).patchAndFetchById(user.id, {
+						...data,
+						...(disabling ? { api_token_version: trx.raw("?? + 1", ["api_token_version"]) } : {}),
+					});
+					if (disabling) {
+						await apiTokenModel
+							.query(trx)
+							.where("owner_user_id", user.id)
+							.whereNull("revoked_on")
+							.patch({ revoked_on: new Date().toISOString() });
+					}
+					return utils.omitRow(omissions())(row);
+				});
 			})
 			.then(() => {
 				return internalUser.get(access, { id: data.id });
@@ -527,6 +549,7 @@ const internalUser = {
 	 * @param {Integer}  data.id
 	 */
 	loginAs: (access, data) => {
+		if (access.credentialKind === "api_token") return Promise.reject(new errs.PermissionError());
 		return access
 			.can("users:loginas", data.id)
 			.then(() => {

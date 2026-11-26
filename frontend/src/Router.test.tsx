@@ -21,6 +21,7 @@ vi.mock("src/components", () => ({
 	ErrorNotFound: () => <h1>Not found</h1>,
 }));
 vi.mock("src/pages/Dashboard", () => ({ default: () => <h1>Dashboard</h1> }));
+vi.mock("src/pages/Settings/ApiTokens", () => ({ default: () => <h1>API Tokens</h1> }));
 vi.mock("src/pages/Login", () => ({ default: () => <h1>Login</h1> }));
 vi.mock("src/pages/Nginx/ProxyHosts", () => ({ default: () => <h1>Proxy hosts</h1> }));
 
@@ -68,6 +69,7 @@ describe("Router", () => {
 	it.each([
 		["/", "Dashboard"],
 		["/nginx/proxy", "Proxy hosts"],
+		["/settings/api-tokens", "API Tokens"],
 		["/unknown", "Not found"],
 	])("preserves the existing route for %s", async (path, heading) => {
 		window.history.replaceState(null, "", path);

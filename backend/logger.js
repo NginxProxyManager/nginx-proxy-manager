@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import signale from "signale";
 import { isDebugMode } from "./lib/config.js";
+import { requestLogArgs } from "./lib/request-context.js";
 
 const opts = {
 	logLevel: "info",
@@ -96,8 +97,9 @@ const withFileSink = (instance, scope) => {
 	for (const method of PERSISTED_METHODS) {
 		const original = instance[method].bind(instance);
 		instance[method] = (...args) => {
-			writeToFile(method, scope, args);
-			return original(...args);
+			const safeArgs = requestLogArgs(args);
+			writeToFile(method, scope, safeArgs);
+			return original(...safeArgs);
 		};
 	}
 	return instance;
