@@ -38,7 +38,7 @@ const setupDefaultUser = async () => {
 
 		const data = {
 			is_deleted: 0,
-			email: initialAdminEmail,
+			email: initialAdminEmail.toLowerCase().trim(),
 			name: "Administrator",
 			nickname: "Admin",
 			avatar: "",
