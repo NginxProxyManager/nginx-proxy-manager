@@ -45,6 +45,11 @@ export const patterns = {
 	clientIpv6: String.raw`^(?:(?:[0-9A-Fa-f]{1,4}:){7}(?:[0-9A-Fa-f]{1,4}|:)|(?:[0-9A-Fa-f]{1,4}:){6}(?::[0-9A-Fa-f]{1,4}|(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:){5}(?:(?::[0-9A-Fa-f]{1,4}){1,2}|:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:){4}(?:(?::[0-9A-Fa-f]{1,4}){1,3}|(?::[0-9A-Fa-f]{1,4})?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:){3}(?:(?::[0-9A-Fa-f]{1,4}){1,4}|(?::[0-9A-Fa-f]{1,4}){0,2}:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:){2}(?:(?::[0-9A-Fa-f]{1,4}){1,5}|(?::[0-9A-Fa-f]{1,4}){0,3}:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|(?:[0-9A-Fa-f]{1,4}:)(?:(?::[0-9A-Fa-f]{1,4}){1,6}|(?::[0-9A-Fa-f]{1,4}){0,4}:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:)|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|(?::[0-9A-Fa-f]{1,4}){0,5}:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])){3}|:))(?:/(?:[0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$`,
 	// htpasswd user name: a ":" or a line break would corrupt the file
 	accessUsername: String.raw`^[^:\p{Cc}]+$`,
+	// load balancing upstream server host: a host name, an IPv4 address or an IPv6 address
+	// (optionally in brackets). No port or path: the port is a separate field.
+	upstreamHost: String.raw`^(?:[A-Za-z0-9_][A-Za-z0-9_.-]*|[0-9A-Fa-f.]*:[0-9A-Fa-f.]*:[0-9A-Fa-f:.]*|\[[0-9A-Fa-f.]*:[0-9A-Fa-f.]*:[0-9A-Fa-f:.]*\])$`,
+	// load balancing upstream server fail_timeout, an nginx time such as "30s" or "1m"
+	failTimeout: "^[0-9]+(?:ms|s|m|h|d)?$",
 };
 
 const re = Object.fromEntries(Object.entries(patterns).map(([k, v]) => [k, new RegExp(v, "u")]));
@@ -120,6 +125,18 @@ export const assertHostRenderable = (hostType, host) => {
 			check(isTokenSafe(loc.forward_host), "location forward host", loc.forward_host);
 			if (loc.forward_path) {
 				check(isTokenSafe(loc.forward_path), "location forward path", loc.forward_path);
+			}
+		}
+		for (const server of host.upstream_servers || []) {
+			check(isTokenSafe(server.host), "upstream server host", server.host);
+			for (const field of ["port", "weight", "max_fails"]) {
+				const value = server[field];
+				if (typeof value !== "undefined" && value !== null) {
+					check(Number.isInteger(value) && value >= 0, `upstream server ${field.replace("_", " ")}`, value);
+				}
+			}
+			if (typeof server.fail_timeout !== "undefined" && server.fail_timeout !== null) {
+				check(isTokenSafe(server.fail_timeout), "upstream server fail timeout", server.fail_timeout);
 			}
 		}
 	}

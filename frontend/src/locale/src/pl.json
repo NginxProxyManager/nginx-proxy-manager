@@ -611,6 +611,57 @@
 	"test": {
 		"defaultMessage": "Test"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Dodaj serwer upstream"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Oznacza serwer jako backup. Będzie odbierał żądania tylko wtedy, gdy wszystkie serwery podstawowe są niedostępne. Nie można używać z ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Dodaj serwery upstream, aby włączyć równoważenie obciążenia dla tego hosta proxy."
+	},
+	"upstream.down": {
+		"defaultMessage": "Wyłączony"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Trwale oznacza serwer jako niedostępny. Przydatne do płynnego usunięcia bez zmiany konfiguracji."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Fail Timeout"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Okres czasu, w którym musi wystąpić max_fails prób, aby serwer został oznaczony jako niedostępny, a także jak długo nginx czeka przed ponowną próbą połączenia z serwerem (np. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Równoważenie obciążenia"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Max Fails"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Liczba nieudanych prób w okresie fail_timeout, która powoduje oznaczenie serwera jako niedostępnego. Ustaw na 0, aby wyłączyć sprawdzanie stanu."
+	},
+	"upstream.method": {
+		"defaultMessage": "Metoda balansowania"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: żądania dystrybuowane sekwencyjnie (domyślnie). Least Connections: wysyłane do serwera z najmniejszą liczbą aktywnych połączeń. IP Hash: ten sam adres IP klienta zawsze kierowany jest do tego samego serwera (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Względna waga dla dystrybucji round-robin. Serwer z weight=2 otrzymuje dwukrotnie więcej żądań niż serwer z weight=1."
+	},
 	"user": {
 		"defaultMessage": "użytkownik"
 	},

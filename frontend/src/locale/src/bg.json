@@ -644,6 +644,57 @@
 	"update-available": {
 		"defaultMessage": "Налична актуализация: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Добавяне на upstream сървър"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Backup"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Маркира сървъра като backup. Той ще получава заявки само когато всички основни сървъри са недостъпни. Не може да се използва с ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Добавете upstream сървъри, за да активирате балансирането на натоварване за този прокси хост."
+	},
+	"upstream.down": {
+		"defaultMessage": "Изключен"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Постоянно маркира сървъра като недостъпен. Полезно за плавно премахване без промяна на конфигурацията."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Таймаут при отказ"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Периодът от време, през който трябва да настъпят max_fails неуспехи, за да бъде маркиран сървърът като недостъпен, и също колко дълго nginx изчаква преди да опита сървъра отново (напр. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Хост"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Балансиране на натоварване"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Максимален брой отказвания"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Брой неуспешни опити в рамките на fail_timeout периода, при достигането на които сървърът се маркира като недостъпен. Задайте 0, за да деактивирате проверката на работоспособността."
+	},
+	"upstream.method": {
+		"defaultMessage": "Метод за балансиране"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: заявките се разпределят последователно (по подразбиране). Least Connections: изпраща се до сървъра с най-малко активни връзки. IP Hash: един и същи клиентски IP винаги се насочва към един и същи сървър (sticky sessions)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Порт"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Weight"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Относително weight за разпределение по round-robin. Сървър с weight=2 получава двойно повече заявки от сървър с weight=1."
+	},
 	"user": {
 		"defaultMessage": "Потребител"
 	},

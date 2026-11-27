@@ -4,7 +4,13 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import _ from "lodash";
 import errs from "../lib/error.js";
-import { assertAccessListRenderable, assertHostRenderable, isTokenSafe, unsafeValueError } from "../lib/nginx-values.js";
+import {
+	assertAccessListRenderable,
+	assertHostRenderable,
+	isTokenSafe,
+	unsafeValueError,
+} from "../lib/nginx-values.js";
+import { prepareUpstreamServers } from "../lib/upstream.js";
 import utils from "../lib/utils.js";
 import { debug, nginx as logger } from "../logger.js";
 import accessListModel from "../models/access_list.js";
@@ -242,6 +248,16 @@ const internalNginx = {
 	},
 
 	/**
+	 * Whether nginx has a resolver for names it looks up at run time. The file is written at
+	 * startup unless DISABLE_RESOLVER is set.
+	 *
+	 * @returns {Boolean}
+	 */
+	hasResolver: () => {
+		return fs.existsSync("/etc/nginx/conf.d/include/resolvers.conf");
+	},
+
+	/**
 	 * @param   {String}  host_type
 	 * @param   {Object}  host
 	 * @returns {Promise}
@@ -296,6 +312,10 @@ const internalNginx = {
 			// ("invalid port in upstream"), so the stream saves but never activates (#5740).
 			if (nice_host_type === "stream" && net.isIPv6(host.forwarding_host)) {
 				host.forwarding_host = `[${host.forwarding_host}]`;
+			}
+
+			if (nice_host_type === "proxy_host") {
+				host.upstream_servers = prepareUpstreamServers(host.upstream_servers, internalNginx.hasResolver());
 			}
 
 			if (host.locations) {

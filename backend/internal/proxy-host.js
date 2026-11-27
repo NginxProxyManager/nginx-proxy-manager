@@ -1,6 +1,7 @@
 import _ from "lodash";
 import errs from "../lib/error.js";
 import { castJsonIfNeed } from "../lib/helpers.js";
+import { normalizeUpstreamServers } from "../lib/upstream.js";
 import utils from "../lib/utils.js";
 import proxyHostModel, { scopeToOwnerOrAllowed } from "../models/proxy_host.js";
 import internalAuditLog from "./audit-log.js";
@@ -47,8 +48,22 @@ const internalProxyHost = {
 				});
 			})
 			.then(() => {
+				if (
+					thisData.lb_method === "ip_hash" &&
+					Array.isArray(thisData.upstream_servers) &&
+					thisData.upstream_servers.some((s) => s.backup)
+				) {
+					throw new errs.ValidationError(
+						"The backup parameter cannot be used with the ip_hash load balancing method",
+					);
+				}
+			})
+			.then(() => {
 				// At this point the domains should have been checked
 				thisData.owner_user_id = access.token.getUserId(1);
+
+				// The validator doesn't apply the schema defaults for optional server fields
+				thisData.upstream_servers = normalizeUpstreamServers(thisData.upstream_servers);
 
 				// Don't clean the ssl_forced/http2_support/hsts_* fields yet if a
 				// certificate is about to be requested. certificate_id has already
@@ -191,6 +206,19 @@ const internalProxyHost = {
 				return row;
 			})
 			.then((row) => {
+				if (typeof thisData.upstream_servers !== "undefined") {
+					// The validator doesn't apply the schema defaults for optional server fields
+					thisData.upstream_servers = normalizeUpstreamServers(thisData.upstream_servers);
+				}
+
+				const mergedMethod = thisData.lb_method ?? row.lb_method;
+				const mergedServers = thisData.upstream_servers ?? row.upstream_servers ?? [];
+				if (mergedMethod === "ip_hash" && mergedServers.some((s) => s.backup)) {
+					throw new errs.ValidationError(
+						"The backup parameter cannot be used with the ip_hash load balancing method",
+					);
+				}
+
 				// Add domain_names to the data in case it isn't there, so that the audit log renders correctly. The order is important here.
 				thisData = _.assign(
 					{},

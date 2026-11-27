@@ -731,6 +731,57 @@
 	"update-available": {
 		"defaultMessage": "به‌روزرسانی موجود است: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "افزودن سرور بالادستی"
+	},
+	"upstream.backup": {
+		"defaultMessage": "پشتیبان"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "سرور را به‌عنوان پشتیبان علامت می‌زند. این سرور فقط زمانی درخواست دریافت می‌کند که همه سرورهای اصلی در دسترس نباشند. با ip_hash قابل استفاده نیست."
+	},
+	"upstream.description": {
+		"defaultMessage": "برای فعال‌سازی توزیع بار در این پراکسی هاست، سرورهای بالادستی اضافه کنید."
+	},
+	"upstream.down": {
+		"defaultMessage": "غیرفعال"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "سرور را به‌طور دائم غیرقابل‌دسترس علامت می‌زند. برای خارج‌کردن تدریجی سرور بدون تغییر پیکربندی مفید است."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "مهلت خطا"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "بازه‌ای که max_fails باید در آن رخ دهد تا سرور غیرقابل‌دسترس علامت بخورد، و همچنین مدتی که nginx پیش از تلاش دوباره برای سرور صبر می‌کند (مثلاً 30s، 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "میزبان"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "توزیع بار"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "حداکثر خطا"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "تعداد تلاش‌های ناموفق در بازه fail_timeout که باعث می‌شود سرور غیرقابل‌دسترس علامت بخورد. برای غیرفعال‌کردن بررسی سلامت، 0 قرار دهید."
+	},
+	"upstream.method": {
+		"defaultMessage": "روش توزیع بار"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: درخواست‌ها به‌ترتیب توزیع می‌شوند (پیش‌فرض). Least Connections: به سروری با کمترین اتصال فعال فرستاده می‌شوند. IP Hash: یک IP مشتری همیشه به همان سرور می‌رود (نشست‌های چسبنده)."
+	},
+	"upstream.port": {
+		"defaultMessage": "پورت"
+	},
+	"upstream.weight": {
+		"defaultMessage": "وزن"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "وزن نسبی برای توزیع round-robin. سروری با weight=2 دو برابر سروری با weight=1 درخواست دریافت می‌کند."
+	},
 	"user": {
 		"defaultMessage": "کاربر"
 	},

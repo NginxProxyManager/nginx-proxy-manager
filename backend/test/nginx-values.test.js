@@ -210,6 +210,21 @@ const cases = {
 		injections: [],
 		rejected: ["a:b", "a\nroot:$apr1$x$y", "\u0000"],
 	},
+	upstreamHost: {
+		valid: ["127.0.0.1", "backend", "my_service.internal", "::1", "[::1]", "2001:db8::10", "[fe80::1]"],
+		injections: [
+			"a:80; } server { listen 9999",
+			"a down; server evil.example",
+			"a;\nreturn 200",
+			"a resolve; include /etc/passwd",
+		],
+		rejected: ["", "a b", "a/b", "$host", "-a", "a#", "a{", "[a]", "a:80", "host:8080"],
+	},
+	failTimeout: {
+		valid: ["30s", "10", "500ms", "1m", "2h", "1d"],
+		injections: ["30s; return 200", "30s down", "30s\nreturn 200"],
+		rejected: ["", "s", "30 s", "-1s", "30x", "1m30s"],
+	},
 };
 
 const checkers = {
@@ -221,6 +236,8 @@ const checkers = {
 	domainName: (v) => isValid("domainName", v),
 	clientAddress: isValidClientAddress,
 	accessUsername: (v) => isValid("accessUsername", v),
+	upstreamHost: (v) => isValid("upstreamHost", v),
+	failTimeout: (v) => isValid("failTimeout", v),
 };
 
 describe("nginx value rules", () => {
@@ -295,8 +312,26 @@ describe("API request validation", async () => {
 		...o,
 	});
 
+	const upstreamServer = (o) => ({ host: "backend", port: 80, ...o });
+
 	// [field, endpoint, method, payload builder]
 	const endpoints = {
+		upstreamHost: [
+			["/nginx/proxy-hosts", "post", (v) => proxyHost({ upstream_servers: [upstreamServer({ host: v })] })],
+			["/nginx/proxy-hosts/{hostID}", "put", (v) => ({ upstream_servers: [upstreamServer({ host: v })] })],
+		],
+		failTimeout: [
+			[
+				"/nginx/proxy-hosts",
+				"post",
+				(v) => proxyHost({ upstream_servers: [upstreamServer({ fail_timeout: v })] }),
+			],
+			[
+				"/nginx/proxy-hosts/{hostID}",
+				"put",
+				(v) => ({ upstream_servers: [upstreamServer({ fail_timeout: v })] }),
+			],
+		],
 		locationPath: [
 			["/nginx/proxy-hosts", "post", (v) => proxyHost({ locations: [location({ path: v })] })],
 			["/nginx/proxy-hosts/{hostID}", "put", (v) => ({ locations: [location({ path: v })] })],
@@ -373,6 +408,9 @@ describe("API request validation", async () => {
 		assert.equal(body("/nginx/streams", "post").properties.forwarding_host.anyOf[0].pattern, patterns.streamDomain);
 		assert.equal(al.clients.items.properties.address.oneOf[1].pattern, patterns.clientIpv6);
 		assert.equal(al.items.items.properties.username.pattern, patterns.accessUsername);
+		const upstream = ph.upstream_servers.items.properties;
+		assert.equal(upstream.host.pattern, patterns.upstreamHost);
+		assert.equal(upstream.fail_timeout.pattern, patterns.failTimeout);
 	});
 });
 
@@ -423,6 +461,10 @@ describe("rendered templates", () => {
 		udp_forwarding: true,
 		ipv6: true,
 	});
+	const upstreamCtx = (field) => (v) =>
+		proxyCtx("upstream_servers")([
+			{ host: "backend", port: 80, weight: 1, max_fails: 1, fail_timeout: "30s", [field]: v },
+		]);
 	const accessCtx = (v) => ({
 		access_list_id: 1,
 		access_list: { items: [], clients: [{ directive: "allow", address: v }], satisfy_any: false },
@@ -447,6 +489,8 @@ describe("rendered templates", () => {
 		streamHost: [["stream.conf", streamCtx, "backend"]],
 		domainName: [["proxy_host.conf", (v) => proxyCtx("domain_names")([v]), "example.com"]],
 		clientAddress: [["_access.conf", accessCtx, "10.0.0.1"]],
+		upstreamHost: [["proxy_host.conf", upstreamCtx("host"), "backend"]],
+		failTimeout: [["proxy_host.conf", upstreamCtx("fail_timeout"), "30s"]],
 	};
 
 	for (const [name, list] of Object.entries(targets)) {
@@ -455,8 +499,11 @@ describe("rendered templates", () => {
 			it(`${file} ${name}: accepted values keep the statement structure`, async () => {
 				for (const v of cases[name].valid) {
 					if (v === "" && name !== "forwardPath") continue;
-					// generateConfig brackets IPv6 stream hosts before rendering
-					const value = name === "streamHost" && v.includes(":") ? `[${v}]` : v;
+					// generateConfig brackets IPv6 stream and upstream hosts before rendering
+					const value =
+						["streamHost", "upstreamHost"].includes(name) && v.includes(":") && !v.startsWith("[")
+							? `[${v}]`
+							: v;
 					assert.ok(
 						await sameShapeAs(file, ctx, plainFor(v), value),
 						`${JSON.stringify(v)} changed the config`,
@@ -546,5 +593,21 @@ describe("render-time check (rows saved before validation)", () => {
 		for (const v of cases.clientAddress.injections) {
 			refuse("proxy_host", host({ access_list: { clients: [{ directive: "allow", address: v }] } }), "address");
 		}
+		for (const v of cases.upstreamHost.injections) {
+			refuse("proxy_host", host({ upstream_servers: [{ host: v, port: 80 }] }), "upstream server host");
+		}
+		for (const v of cases.failTimeout.injections) {
+			refuse(
+				"proxy_host",
+				host({ upstream_servers: [{ host: "a", port: 80, fail_timeout: v }] }),
+				"upstream server fail timeout",
+			);
+		}
+		refuse(
+			"proxy_host",
+			host({ upstream_servers: [{ host: "a", port: "80; return 200" }] }),
+			"upstream server port",
+		);
+		refuse("proxy_host", host({ upstream_servers: [{ host: "a", port: 80, weight: "1 down" }] }), "weight");
 	});
 });

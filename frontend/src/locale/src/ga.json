@@ -632,6 +632,57 @@
 	"update-available": {
 		"defaultMessage": "Nuashonrú ar Fáil: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Cuir Freastalaí Upstream leis"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Cúltaca"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Marcálann sé an freastalaí mar backup. Ní bhfaighidh sé iarratais ach amháin nuair nach bhfuil na freastalaithe príomhúla ar fáil. Ní féidir é a úsáid le ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Cuir freastalaithe upstream leis chun cothromú ualaigh a chumasú don óstach seachfhreastalaí seo."
+	},
+	"upstream.down": {
+		"defaultMessage": "Síos"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Marcálann sé an freastalaí mar neamhinfhálta go buan. Úsáideach chun an freastalaí a bhaint go cúramach gan an chumraíocht a athrú."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Teorainn Ama Teipe"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "An tréimhse ama inar gá go dtarlóidh max_fails chun an freastalaí a mharcáil mar neamhinfhálta, agus freisin cé chomh fada a fhanann nginx sula ndéanann sé iarracht arís ar an bhfreastalaí (m.sh. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Óstach"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Cothromú Ualaigh"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Uasmhéid Teipeanna"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Líon na n-iarracht teipthe laistigh den tréimhse fail_timeout a fhágann go marcáltar an freastalaí mar neamhinfhálta. Socraigh go 0 chun seiceáil sláinte a dhíchumasú."
+	},
+	"upstream.method": {
+		"defaultMessage": "Modh Cothromaithe"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: iarratais dáilte go seicheamhach (réamhshocrú). Least Connections: seolta chuig an bhfreastalaí leis an líon is lú naisc ghníomhacha. IP Hash: seolann an IP cliaint céanna go dtí an freastalaí céanna i gcónaí (seisiúin ghreamaitheacha)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Meáchan"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Meáchan coibhneasta do dháileadh round-robin. Faigheann freastalaí le weight=2 dhá oiread iarratas agus freastalaí le weight=1."
+	},
 	"user": {
 		"defaultMessage": "Úsáideoir"
 	},
