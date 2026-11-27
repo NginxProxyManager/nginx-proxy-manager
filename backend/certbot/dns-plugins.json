@@ -177,7 +177,7 @@
 	},
 	"dnspod": {
 		"credentials": "dns_dnspod_email = \"email@example.com\"\ndns_dnspod_api_token = \"id,key\"",
-		"dependencies": "",
+		"dependencies": "zope.interface==8.3",
 		"full_plugin_name": "dns-dnspod",
 		"name": "DNSPod",
 		"package_name": "certbot-dns-dnspod",
