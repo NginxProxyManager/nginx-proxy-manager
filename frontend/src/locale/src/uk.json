@@ -731,6 +731,57 @@
 	"update-available": {
 		"defaultMessage": "Доступне оновлення: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Додати upstream-сервер"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Резервний"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Позначає сервер як резервний. Він отримує запити лише тоді, коли всі основні сервери недоступні. Не можна використовувати разом з ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Додайте upstream-сервери, щоб увімкнути балансування навантаження для цього проксі-хоста."
+	},
+	"upstream.down": {
+		"defaultMessage": "Вимкнений"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Назавжди позначає сервер як недоступний. Корисно для плавного виведення сервера без зміни конфігурації."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Тайм-аут збою"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Проміжок часу, протягом якого мають статися max_fails, щоб сервер вважався недоступним, а також скільки nginx чекає перед повторною спробою (наприклад, 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Хост"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Балансування навантаження"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Макс. збоїв"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Кількість невдалих спроб протягом fail_timeout, після якої сервер позначається як недоступний. Встановіть 0, щоб вимкнути перевірку стану."
+	},
+	"upstream.method": {
+		"defaultMessage": "Метод балансування"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: запити розподіляються по черзі (типово). Least Connections: запит іде на сервер з найменшою кількістю активних з’єднань. IP Hash: той самий IP клієнта завжди потрапляє на той самий сервер (липкі сесії)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Порт"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Вага"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Відносна вага для розподілу round-robin. Сервер з weight=2 отримує вдвічі більше запитів, ніж сервер з weight=1."
+	},
 	"user": {
 		"defaultMessage": "Користувач"
 	},

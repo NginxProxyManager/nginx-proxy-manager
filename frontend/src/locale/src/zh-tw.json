@@ -800,6 +800,57 @@
 	"update-available": {
 		"defaultMessage": "有新版本可用：{latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "新增上游伺服器"
+	},
+	"upstream.backup": {
+		"defaultMessage": "備援"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "將伺服器標記為備援。只有在所有主要伺服器都無法使用時才會接收請求。不能與 ip_hash 一起使用。"
+	},
+	"upstream.description": {
+		"defaultMessage": "新增上游伺服器以為此 Proxy 主機啟用負載平衡。"
+	},
+	"upstream.down": {
+		"defaultMessage": "停用"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "將伺服器永久標記為無法使用。適合在不變更設定的情況下逐步移除伺服器。"
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "失敗逾時"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "在此期間內發生 max_fails 次失敗時，伺服器會被標記為無法使用；這也是 nginx 再次嘗試該伺服器前等待的時間（例如 30s、10s）。"
+	},
+	"upstream.host": {
+		"defaultMessage": "主機"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "負載平衡"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "最大失敗次數"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "在 fail_timeout 期間內導致伺服器被標記為無法使用的失敗次數。設為 0 可停用健康檢查。"
+	},
+	"upstream.method": {
+		"defaultMessage": "平衡方式"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin：依序分配請求（預設）。Least Connections：送往目前連線數最少的伺服器。IP Hash：同一個用戶端 IP 一律導向同一台伺服器（黏性工作階段）。"
+	},
+	"upstream.port": {
+		"defaultMessage": "連接埠"
+	},
+	"upstream.weight": {
+		"defaultMessage": "權重"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Round-robin 分配的相對權重。weight=2 的伺服器收到的請求是 weight=1 的伺服器的兩倍。"
+	},
 	"user": {
 		"defaultMessage": "使用者"
 	},

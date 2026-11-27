@@ -800,6 +800,57 @@
 	"update-available": {
 		"defaultMessage": "Atualização Disponível: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Adicionar Servidor Upstream"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Reserva"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Marca o servidor como reserva. Ele só recebe requisições quando todos os servidores primários estão indisponíveis. Não pode ser usado com ip_hash."
+	},
+	"upstream.description": {
+		"defaultMessage": "Adicione servidores upstream para ativar o balanceamento de carga neste proxy host."
+	},
+	"upstream.down": {
+		"defaultMessage": "Inativo"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Marca o servidor como permanentemente indisponível. Útil para removê-lo de forma gradual sem alterar a configuração."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Tempo Limite de Falha"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "O período em que max_fails precisa ocorrer para marcar o servidor como indisponível, e também quanto tempo o nginx espera antes de tentar o servidor novamente (ex.: 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Balanceamento de Carga"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Máximo de Falhas"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "Número de tentativas com falha dentro do período fail_timeout que faz o servidor ser marcado como indisponível. Use 0 para desativar a verificação de saúde."
+	},
+	"upstream.method": {
+		"defaultMessage": "Método de Balanceamento"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: requisições distribuídas em sequência (padrão). Least Connections: enviadas ao servidor com menos conexões ativas. IP Hash: o mesmo IP de cliente sempre vai para o mesmo servidor (sessões persistentes)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Porta"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Peso"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Peso relativo na distribuição round-robin. Um servidor com weight=2 recebe o dobro de requisições de um servidor com weight=1."
+	},
 	"user": {
 		"defaultMessage": "Usuário"
 	},

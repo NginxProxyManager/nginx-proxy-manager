@@ -800,6 +800,57 @@
 	"update-available": {
 		"defaultMessage": "Yeniləmə mövcuddur: {latestVersion}"
 	},
+	"upstream.add-server": {
+		"defaultMessage": "Upstream server əlavə et"
+	},
+	"upstream.backup": {
+		"defaultMessage": "Ehtiyat"
+	},
+	"upstream.backup.help": {
+		"defaultMessage": "Serveri ehtiyat kimi işarələyir. O, yalnız bütün əsas serverlər əlçatmaz olduqda sorğu qəbul edir. ip_hash ilə birlikdə istifadə edilə bilməz."
+	},
+	"upstream.description": {
+		"defaultMessage": "Bu proxy host üçün yük balanslaşdırmasını aktivləşdirmək üçün upstream serverlər əlavə edin."
+	},
+	"upstream.down": {
+		"defaultMessage": "Söndürülüb"
+	},
+	"upstream.down.help": {
+		"defaultMessage": "Serveri daimi olaraq əlçatmaz kimi işarələyir. Konfiqurasiyanı dəyişmədən serveri ehmalca çıxarmaq üçün faydalıdır."
+	},
+	"upstream.fail-timeout": {
+		"defaultMessage": "Uğursuzluq vaxt limiti"
+	},
+	"upstream.fail-timeout.help": {
+		"defaultMessage": "Serverin əlçatmaz sayılması üçün max_fails-in baş verməli olduğu müddət, həmçinin nginx-in serveri yenidən yoxlamazdan əvvəl gözlədiyi vaxt (məs. 30s, 10s)."
+	},
+	"upstream.host": {
+		"defaultMessage": "Host"
+	},
+	"upstream.load-balancing": {
+		"defaultMessage": "Yük balanslaşdırması"
+	},
+	"upstream.max-fails": {
+		"defaultMessage": "Maksimum uğursuzluq"
+	},
+	"upstream.max-fails.help": {
+		"defaultMessage": "fail_timeout müddətində serverin əlçatmaz sayılmasına səbəb olan uğursuz cəhdlərin sayı. Sağlamlıq yoxlamasını söndürmək üçün 0 təyin edin."
+	},
+	"upstream.method": {
+		"defaultMessage": "Balanslaşdırma metodu"
+	},
+	"upstream.method.help": {
+		"defaultMessage": "Round Robin: sorğular növbə ilə paylanır (standart). Least Connections: ən az aktiv bağlantısı olan serverə göndərilir. IP Hash: eyni müştəri IP-si həmişə eyni serverə yönləndirilir (sticky sessiyalar)."
+	},
+	"upstream.port": {
+		"defaultMessage": "Port"
+	},
+	"upstream.weight": {
+		"defaultMessage": "Çəki"
+	},
+	"upstream.weight.help": {
+		"defaultMessage": "Round-robin paylanması üçün nisbi çəki. weight=2 olan server weight=1 olan serverdən iki dəfə çox sorğu alır."
+	},
 	"user": {
 		"defaultMessage": "İstifadəçi"
 	},
