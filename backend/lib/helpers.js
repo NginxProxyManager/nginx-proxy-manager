@@ -55,4 +55,24 @@ const convertBoolFieldsToInt = (obj, fields) => {
  */
 const castJsonIfNeed = (colName) => (isPostgres() ? ref(colName).castText() : colName);
 
-export { parseDatePeriod, convertIntFieldsToBool, convertBoolFieldsToInt, castJsonIfNeed };
+/**
+ * Normalizes a domain_names array before it is persisted: drops null/undefined
+ * entries, trims surrounding whitespace, removes any entry that is left empty,
+ * and sorts. A leading or trailing space in a hostname produces an invalid
+ * nginx server_name/upstream, so it must be stripped before the config is built.
+ *
+ * @param   {Array}  domainNames
+ * @returns {Array}
+ */
+const cleanDomainNames = (domainNames) => {
+	if (typeof domainNames === "undefined") {
+		return [];
+	}
+	return domainNames
+		.filter((name) => name != null)
+		.map((name) => name.trim())
+		.filter((name) => name.length > 0)
+		.sort();
+};
+
+export { parseDatePeriod, convertIntFieldsToBool, convertBoolFieldsToInt, castJsonIfNeed, cleanDomainNames };
