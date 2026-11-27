@@ -446,6 +446,9 @@
 	"host.flags.cache-assets": {
 		"defaultMessage": "Bộ nhớ đệm tài nguyên"
 	},
+	"host.flags.enable-proxy-protocol": {
+		"defaultMessage": "Enable PROXY Protocol"
+	},
 	"host.flags.preserve-path": {
 		"defaultMessage": "Giữ nguyên đường dẫn"
 	},
@@ -460,6 +463,9 @@
 	},
 	"host.forward-scheme": {
 		"defaultMessage": "Giao thức"
+	},
+	"host.load-balancer-ip": {
+		"defaultMessage": "Load balancer or TCP proxy IP / CIDR range"
 	},
 	"hosts": {
 		"defaultMessage": "Máy chủ"

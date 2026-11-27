@@ -12,7 +12,8 @@
 		"tcp_forwarding",
 		"udp_forwarding",
 		"enabled",
-		"meta"
+		"meta",
+		"enable_proxy_protocol"
 	],
 	"additionalProperties": false,
 	"properties": {
@@ -69,6 +70,11 @@
 		},
 		"enabled": {
 			"$ref": "../common.json#/properties/enabled"
+		},
+		"enable_proxy_protocol": {
+			"description": "Enable PROXY Protocol support",
+			"type": "boolean",
+			"example": false
 		},
 		"certificate_id": {
 			"$ref": "../common.json#/properties/certificate_id"
