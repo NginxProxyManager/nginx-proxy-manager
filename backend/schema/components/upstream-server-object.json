@@ -8,7 +8,8 @@
 			"type": "string",
 			"minLength": 1,
 			"maxLength": 255,
-			"example": "192.168.1.1"
+			"example": "192.168.1.1",
+			"pattern": "^(?:[A-Za-z0-9_][A-Za-z0-9_.-]*|[0-9A-Fa-f.]*:[0-9A-Fa-f.]*:[0-9A-Fa-f:.]*|\\[[0-9A-Fa-f.]*:[0-9A-Fa-f.]*:[0-9A-Fa-f:.]*\\])$"
 		},
 		"port": {
 			"type": "integer",
@@ -31,7 +32,8 @@
 		"fail_timeout": {
 			"type": "string",
 			"default": "30s",
-			"example": "30s"
+			"example": "30s",
+			"pattern": "^[0-9]+(?:ms|s|m|h|d)?$"
 		},
 		"backup": {
 			"type": "boolean",
