@@ -16,7 +16,7 @@ const up = (knex) => {
 
 	return knex.schema
 		.alterTable("proxy_host", (table) => {
-			table.json("upstream_servers").defaultTo("[]");
+			table.json("upstream_servers");
 			table.string("lb_method").notNullable().defaultTo("round_robin");
 		})
 		.then(() => {

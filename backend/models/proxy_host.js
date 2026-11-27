@@ -39,6 +39,11 @@ class ProxyHost extends Model {
 			this.meta = {};
 		}
 
+		// Default for upstream_servers, the column has no default
+		if (typeof this.upstream_servers === "undefined") {
+			this.upstream_servers = [];
+		}
+
 		this.domain_names.sort();
 	}
 
@@ -53,6 +58,10 @@ class ProxyHost extends Model {
 
 	$parseDatabaseJson(json) {
 		const thisJson = super.$parseDatabaseJson(json);
+		// Hosts created before load balancing have no upstream servers stored
+		if (Object.hasOwn(thisJson, "upstream_servers") && !Array.isArray(thisJson.upstream_servers)) {
+			thisJson.upstream_servers = [];
+		}
 		return convertIntFieldsToBool(thisJson, boolFields);
 	}
 
