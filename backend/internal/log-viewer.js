@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import moment from "moment";
 import errs from "../lib/error.js";
 import internalDeadHost from "./dead-host.js";
 import internalProxyHost from "./proxy-host.js";
@@ -137,6 +138,50 @@ const toHostOptions = (rows) =>
 		label: Array.isArray(row.domain_names) ? row.domain_names.join(", ") : `Host #${row.id}`,
 	}));
 
+/**
+ * Extracts a timestamp from the start of a log line based on the source type.
+ *
+ * @param   {String} line
+ * @param   {Object} data
+ * @returns {import("moment").Moment|null}
+ */
+const parseLogLineTime = (line, data) => {
+	if (data.type === "system") {
+		const match = line.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2}))/);
+		if (match) {
+			const m = moment(match[1], moment.ISO_8601, true);
+			if (m.isValid()) {
+				return m;
+			}
+		}
+	} else if (data.type === "letsencrypt") {
+		const match = line.match(/^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/);
+		if (match) {
+			const m = moment(match[1], "YYYY-MM-DD HH:mm:ss");
+			if (m.isValid()) {
+				return m;
+			}
+		}
+	} else if (data.type === "host" && data.channel === "access") {
+		const match = line.match(/^\[([^\]]+)\]/);
+		if (match) {
+			const m = moment(match[1], "DD/MMM/YYYY:HH:mm:ss ZZ");
+			if (m.isValid()) {
+				return m;
+			}
+		}
+	} else if (data.type === "host" && data.channel === "error") {
+		const match = line.match(/^(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2})/);
+		if (match) {
+			const m = moment(match[1], "YYYY/MM/DD HH:mm:ss");
+			if (m.isValid()) {
+				return m;
+			}
+		}
+	}
+	return null;
+};
+
 const internalLogViewer = {
 	/**
 	 * Lists the log sources available for the log viewer: the system (backend)
@@ -173,7 +218,8 @@ const internalLogViewer = {
 
 	/**
 	 * Returns the last N lines of the requested log source, optionally
-	 * filtered by level and/or a plain-text search term.
+	 * filtered by level, a plain-text search term, and/or an ISO-8601
+	 * timestamp cutoff (`since`).
 	 *
 	 * @param   {Access} access
 	 * @param   {Object} data
@@ -184,6 +230,7 @@ const internalLogViewer = {
 	 * @param   {Number} [data.lines]
 	 * @param   {String} [data.level]
 	 * @param   {String} [data.search]
+	 * @param   {String} [data.since]
 	 * @returns {Promise}
 	 */
 	tail: async (access, data) => {
@@ -191,6 +238,14 @@ const internalLogViewer = {
 
 		const filePath = resolveFilePath(data);
 		const lines = Math.min(Math.max(data.lines || DEFAULT_LINES, 1), MAX_LINES);
+
+		let sinceTime = null;
+		if (data.since) {
+			sinceTime = moment(data.since, moment.ISO_8601, true);
+			if (!sinceTime.isValid()) {
+				throw new errs.ValidationError("Invalid since timestamp format. Must be ISO 8601.");
+			}
+		}
 
 		let result;
 		try {
@@ -203,6 +258,27 @@ const internalLogViewer = {
 		}
 
 		let outputLines = result.lines;
+
+		if (sinceTime) {
+			let lastMatched = false;
+			let sawAnyTimestamp = false;
+			const filtered = [];
+			for (const line of outputLines) {
+				const lineTime = parseLogLineTime(line, data);
+				if (lineTime) {
+					sawAnyTimestamp = true;
+					lastMatched = !lineTime.isBefore(sinceTime);
+					if (lastMatched) {
+						filtered.push(line);
+					}
+				} else if (lastMatched) {
+					filtered.push(line);
+				}
+			}
+			if (sawAnyTimestamp) {
+				outputLines = filtered;
+			}
+		}
 
 		// Only the system log is written in our own "LEVEL   [scope]" format - level
 		// filtering on nginx/certbot lines would just match nothing and look like an
@@ -226,4 +302,5 @@ const internalLogViewer = {
 	},
 };
 
+export { readLastLines };
 export default internalLogViewer;
