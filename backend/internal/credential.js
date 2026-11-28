@@ -14,6 +14,20 @@ import internalAuditLog from "./audit-log.js";
 
 const omissions = () => ["is_deleted", "storage_path", "encryption_key_id"];
 
+/**
+ * Name for a credential moved off a certificate: its first domain, so it can be told apart in the
+ * credentials list. Kept in step with migrations/20261128120000_credential_migrated_names.js.
+ * @param {Object} cert
+ * @returns {string}
+ */
+const migratedCredentialName = (cert) => {
+	const domains = Array.isArray(cert.domain_names) ? cert.domain_names : [];
+	if (!domains.length) {
+		return `Certificate #${cert.id}`;
+	}
+	return (domains.length > 1 ? `${domains[0]} (+${domains.length - 1})` : domains[0]).slice(0, 255);
+};
+
 const internalCredential = {
 	/**
 	 * @param {Access}  access
@@ -194,7 +208,7 @@ const internalCredential = {
 				const cred = await internalCredential.create(
 					access,
 					{
-						name: `Migrated cert #${cert.id}`,
+						name: migratedCredentialName(cert),
 						dns_provider: meta.dns_provider,
 						credentials: meta.dns_provider_credentials,
 					},
