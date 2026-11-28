@@ -200,6 +200,15 @@
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Dữ liệu này sẽ được lưu trữ dưới dạng bản rõ trong cơ sở dữ liệu và trong một tệp!"
 	},
+	"certificates.dns.change-credentials": {
+		"defaultMessage": "Đổi thông tin xác thực DNS"
+	},
+	"certificates.dns.change-credentials.help": {
+		"defaultMessage": "Thay thế thông tin xác thực DNS mà chứng chỉ này sử dụng. Thay đổi có hiệu lực ở lần gia hạn tiếp theo."
+	},
+	"certificates.dns.credentials-required": {
+		"defaultMessage": "Chọn thông tin xác thực đã lưu hoặc bên ngoài, hoặc nhập thông tin xác thực"
+	},
 	"certificates.dns.propagation-seconds": {
 		"defaultMessage": "Thời gian lan truyền (giây)"
 	},

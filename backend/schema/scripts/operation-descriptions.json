@@ -37,6 +37,7 @@
   "deleteCertificate": "Deletes a certificate record. Does not remove files already deployed to disk until nginx is reloaded.",
   "downloadCertificate": "Downloads certificate and private key material for a certificate id (requires permission).",
   "renewCertificate": "Triggers renewal for an existing managed certificate.",
+  "updateCertificateDnsCredentials": "Replaces the DNS credentials of a DNS challenge certificate with a stored credential, an external store reference, or inline credentials. Other certificate settings are kept. Takes effect at the next renewal.",
   "uploadCertificate": "Uploads custom certificate and key files for use on proxy hosts.",
   "getDNSProviders": "Lists DNS providers supported for ACME DNS challenge certificate issuance.",
   "testHttpReach": "Tests HTTP reachability for domain validation prior to certificate issuance.",

@@ -215,6 +215,15 @@
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Need andmed jäävad andmebaasi ja faili avatekstina!"
 	},
+	"certificates.dns.change-credentials": {
+		"defaultMessage": "Muuda DNS-i mandaate"
+	},
+	"certificates.dns.change-credentials.help": {
+		"defaultMessage": "Asendab selle sertifikaadi kasutatavad DNS-i mandaadid. Muudatus jõustub järgmisel uuendamisel."
+	},
+	"certificates.dns.credentials-required": {
+		"defaultMessage": "Vali salvestatud või väline mandaat või sisesta mandaadid"
+	},
 	"certificates.dns.propagation-seconds": {
 		"defaultMessage": "DNS-i leviku ooteaeg"
 	},

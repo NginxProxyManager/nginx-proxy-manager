@@ -14,16 +14,21 @@ interface DNSProviderOption {
 	readonly credentials: string;
 }
 
+type CredentialSource = "manual" | "internal" | "external";
+
 interface Props {
 	showBoundaryBox?: boolean;
+	// Editing an existing certificate: the provider can't change, and only credentials are shown
+	fixedProvider?: string;
+	initialSource?: CredentialSource;
 }
-export function DNSProviderFields({ showBoundaryBox = false }: Props) {
+export function DNSProviderFields({ showBoundaryBox = false, fixedProvider, initialSource = "manual" }: Props) {
 	const { values, setFieldValue } = useFormikContext();
 	const { data: dnsProviders, isLoading } = useDnsProviders();
 	const { data: storedCredentials } = useCredentials();
 	const { data: externalProviders } = useCredentialProviders();
-	const [dnsProviderId, setDnsProviderId] = useState<string | null>(null);
-	const [credentialSource, setCredentialSource] = useState<"manual" | "internal" | "external">("manual");
+	const [dnsProviderId, setDnsProviderId] = useState<string | null>(fixedProvider ?? null);
+	const [credentialSource, setCredentialSource] = useState<CredentialSource>(initialSource);
 
 	const v: any = values || {};
 
@@ -67,6 +72,8 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 							isSearchable
 							onChange={handleChange}
 							options={options}
+							isDisabled={!!fixedProvider}
+							value={fixedProvider ? options.find((o) => o.value === fixedProvider) : undefined}
 						/>
 					</div>
 				)}
@@ -83,7 +90,7 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 							className="form-select"
 							value={credentialSource}
 							onChange={(e) => {
-								const src = e.target.value as "manual" | "internal" | "external";
+								const src = e.target.value as CredentialSource;
 								setCredentialSource(src);
 								setFieldValue("meta.credentialRef", undefined);
 								setFieldValue("meta.dnsProviderCredentials", undefined);
@@ -184,63 +191,65 @@ export function DNSProviderFields({ showBoundaryBox = false }: Props) {
 					) : null}
 
 					{credentialSource === "manual" ? (
-					<Field name="meta.dnsProviderCredentials">
-						{({ field }: any) => (
-							<div className="mt-3">
-								<label htmlFor="dnsProviderCredentials" className="form-label">
-									<T id="certificates.dns.credentials" />
-								</label>
-								<CodeEditor
-									language="bash"
-									id="dnsProviderCredentials"
-									padding={15}
-									data-color-mode="dark"
-									minHeight={130}
-									indentWidth={2}
-									style={{
-										fontFamily:
-											"ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-										borderRadius: "0.3rem",
-										minHeight: "130px",
-										backgroundColor: "var(--tblr-bg-surface-dark)",
-									}}
-									value={v.meta.dnsProviderCredentials || ""}
-									{...field}
-								/>
-								<div>
-									<small className="text-muted">
-										<T id="certificates.dns.credentials-note" />
-									</small>
+						<Field name="meta.dnsProviderCredentials">
+							{({ field }: any) => (
+								<div className="mt-3">
+									<label htmlFor="dnsProviderCredentials" className="form-label">
+										<T id="certificates.dns.credentials" />
+									</label>
+									<CodeEditor
+										language="bash"
+										id="dnsProviderCredentials"
+										padding={15}
+										data-color-mode="dark"
+										minHeight={130}
+										indentWidth={2}
+										style={{
+											fontFamily:
+												"ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+											borderRadius: "0.3rem",
+											minHeight: "130px",
+											backgroundColor: "var(--tblr-bg-surface-dark)",
+										}}
+										value={v.meta.dnsProviderCredentials || ""}
+										{...field}
+									/>
+									<div>
+										<small className="text-muted">
+											<T id="certificates.dns.credentials-note" />
+										</small>
+									</div>
+									<div>
+										<small className="text-danger">
+											<T id="certificates.dns.credentials-warning" />
+										</small>
+									</div>
 								</div>
-								<div>
-									<small className="text-danger">
-										<T id="certificates.dns.credentials-warning" />
-									</small>
-								</div>
-							</div>
-						)}
-					</Field>
+							)}
+						</Field>
 					) : null}
-					<Field name="meta.propagationSeconds">
-						{({ field }: any) => (
-							<div className="mt-3">
-								<label htmlFor="propagationSeconds" className="form-label">
-									<T id="certificates.dns.propagation-seconds" />
-								</label>
-								<input
-									id="propagationSeconds"
-									type="number"
-									className="form-control"
-									min={0}
-									max={7200}
-									{...field}
-								/>
-								<small className="text-muted">
-									<T id="certificates.dns.propagation-seconds-note" />
-								</small>
-							</div>
-						)}
-					</Field>
+					{fixedProvider ? null : (
+						<Field name="meta.propagationSeconds">
+							{({ field }: any) => (
+								<div className="mt-3">
+									<label htmlFor="propagationSeconds" className="form-label">
+										<T id="certificates.dns.propagation-seconds" />
+									</label>
+									<input
+										id="propagationSeconds"
+										type="number"
+										className="form-control"
+										min={0}
+										max={7200}
+										{...field}
+									/>
+									<small className="text-muted">
+										<T id="certificates.dns.propagation-seconds-note" />
+									</small>
+								</div>
+							)}
+						</Field>
+					)}
 				</>
 			) : null}
 		</div>

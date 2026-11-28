@@ -175,6 +175,11 @@
 				"$ref": "./paths/nginx/certificates/certID/renew/post.json"
 			}
 		},
+		"/nginx/certificates/{certID}/dns-credentials": {
+			"put": {
+				"$ref": "./paths/nginx/certificates/certID/dns-credentials/put.json"
+			}
+		},
 		"/nginx/certificates/{certID}/upload": {
 			"post": {
 				"$ref": "./paths/nginx/certificates/certID/upload/post.json"

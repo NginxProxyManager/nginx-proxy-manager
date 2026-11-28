@@ -206,11 +206,20 @@
 	"certificates.custom.warning": {
 		"defaultMessage": "Arquivos de chave protegidos por senha não são suportados."
 	},
+	"certificates.dns.change-credentials": {
+		"defaultMessage": "Alterar credenciais de DNS"
+	},
+	"certificates.dns.change-credentials.help": {
+		"defaultMessage": "Substitui as credenciais de DNS usadas por este certificado. A alteração entra em vigor na próxima renovação."
+	},
 	"certificates.dns.credentials": {
 		"defaultMessage": "Conteúdo do Arquivo de Credenciais"
 	},
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Este plugin requer um arquivo de configuração contendo um token de API ou outras credenciais do seu provedor"
+	},
+	"certificates.dns.credentials-required": {
+		"defaultMessage": "Escolha uma credencial armazenada ou externa, ou insira as credenciais"
 	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Estes dados serão armazenados em texto puro no banco de dados e em um arquivo!"

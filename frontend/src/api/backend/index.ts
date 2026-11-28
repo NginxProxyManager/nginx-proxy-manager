@@ -61,6 +61,7 @@ export * from "./renewCertificate";
 export * from "./responseTypes";
 export * from "./setPermissions";
 export * from "./testCredentialProvider";
+export * from "./updateCertificateDnsCredentials";
 export * from "./updateCredential";
 export * from "./updateCredentialProvider";
 export * from "./testHttpCertificate";

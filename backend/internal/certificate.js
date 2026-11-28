@@ -16,10 +16,16 @@ import certificateModel from "../models/certificate.js";
 import tokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import internalAuditLog from "./audit-log.js";
+import internalCredential from "./credential.js";
+import internalCredentialProvider from "./credential-provider.js";
 import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
 import internalWebhook from "./webhook.js";
-import { assertDnsCredentialsCompatible, resolveDnsCredentials } from "../lib/secrets/resolve.js";
+import {
+	assertDnsCredentialsCompatible,
+	resolveDnsCredentials,
+	validateDnsCredentialsFormat,
+} from "../lib/secrets/resolve.js";
 import { writeCertbotCredentialsFile } from "../lib/secrets/storage.js";
 
 const letsencryptConfig = "/etc/letsencrypt.ini";
@@ -305,6 +311,35 @@ const internalCertificate = {
 		return prepared;
 	},
 
+	/**
+	 * A certificate may only reference a stored credential or external store the user can read,
+	 * otherwise a user could point a certificate at any credential by guessing its id.
+	 *
+	 * @param {Access} access
+	 * @param {Object} meta  certificate meta, after prepareMetaForStorage
+	 */
+	assertCredentialRefAllowed: async (access, meta) => {
+		const ref = meta?.credential_ref;
+		if (!ref?.type) {
+			return;
+		}
+		if (ref.type === "internal") {
+			const credential = await internalCredential.get(access, { id: ref.id });
+			if (credential.dns_provider !== meta.dns_provider) {
+				throw new error.ValidationError("Credential DNS provider does not match certificate");
+			}
+			return;
+		}
+		if (ref.type === "external") {
+			if (!ref.path || !`${ref.path}`.trim()) {
+				throw new error.ValidationError("An external credential needs a secret path");
+			}
+			await internalCredentialProvider.get(access, { id: ref.provider_id });
+			return;
+		}
+		throw new error.ValidationError(`Unknown credential type: ${ref.type}`);
+	},
+
 	create: async (access, data) => {
 		await access.can("certificates:create", data);
 		data.owner_user_id = access.token.getUserId(1);
@@ -315,6 +350,7 @@ const internalCertificate = {
 
 		if (data.meta) {
 			data.meta = internalCertificate.prepareMetaForStorage(data.meta);
+			await internalCertificate.assertCredentialRefAllowed(access, data.meta);
 		}
 
 		// this command really should clean up and delete the cert if it can't fully succeed
@@ -491,6 +527,64 @@ const internalCertificate = {
 		void internalWebhook.dispatch("certificate.updated", { id: savedRow.id });
 
 		return savedRow;
+	},
+
+	/**
+	 * Replaces the DNS credentials of a DNS challenge certificate: a stored credential, an external
+	 * store reference, or inline credentials. Other certificate settings are kept. Takes effect at
+	 * the next renewal.
+	 *
+	 * @param  {Access}  access
+	 * @param  {Object}  data
+	 * @param  {Number}  data.id
+	 * @param  {Object}  [data.credential_ref]
+	 * @param  {String}  [data.dns_provider_credentials]
+	 * @returns {Promise}
+	 */
+	updateDnsCredentials: async (access, data) => {
+		await access.can("certificates:update", data.id);
+		// Checks the certificate exists and is visible to this user
+		await internalCertificate.get(access, { id: data.id });
+
+		// get() strips credentials from meta; the patch below must start from the stored meta
+		const row = await certificateModel.query().where("id", data.id).andWhere("is_deleted", 0).first();
+		if (row?.provider !== "letsencrypt" || !row.meta?.dns_challenge) {
+			throw new error.ValidationError("Only DNS challenge certificates have DNS credentials");
+		}
+
+		const hasRef = !!data.credential_ref;
+		const hasInline = typeof data.dns_provider_credentials === "string";
+		if (hasRef === hasInline) {
+			throw new error.ValidationError("Provide either credential_ref or dns_provider_credentials");
+		}
+
+		const meta = { ...row.meta };
+		delete meta.credential_ref;
+		delete meta.dns_provider_credentials;
+
+		if (hasRef) {
+			meta.credential_ref = data.credential_ref;
+			await internalCertificate.assertCredentialRefAllowed(access, meta);
+		} else {
+			validateDnsCredentialsFormat(meta.dns_provider, data.dns_provider_credentials);
+			meta.dns_provider_credentials = data.dns_provider_credentials;
+		}
+
+		const saved = await certificateModel.query().patchAndFetchById(row.id, { meta }).then(omitCertificate());
+		saved.meta = internalCertificate.cleanMeta(saved.meta);
+
+		await internalAuditLog.add(access, {
+			action: "updated",
+			object_type: "certificate",
+			object_id: row.id,
+			meta: {
+				dns_provider: meta.dns_provider,
+				credential_source: hasRef ? meta.credential_ref.type : "manual",
+			},
+		});
+		void internalWebhook.dispatch("certificate.updated", { id: row.id });
+
+		return saved;
 	},
 
 	/**

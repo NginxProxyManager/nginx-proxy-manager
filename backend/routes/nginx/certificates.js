@@ -348,6 +348,38 @@ router
 	});
 
 /**
+ * DNS credentials of a DNS challenge certificate
+ *
+ * /api/nginx/certificates/123/dns-credentials
+ */
+router
+	.route("/:certificate_id/dns-credentials")
+	.options((_, res) => {
+		res.sendStatus(204);
+	})
+	.all(jwtdecode())
+
+	/**
+	 * PUT /api/nginx/certificates/123/dns-credentials
+	 *
+	 * Replace the DNS credentials used for renewal
+	 */
+	.put(async (req, res, next) => {
+		try {
+			const payload = await apiValidator(
+				getValidationSchema("/nginx/certificates/{certID}/dns-credentials", "put"),
+				req.body,
+			);
+			payload.id = Number.parseInt(req.params.certificate_id, 10);
+			const result = await internalCertificate.updateDnsCredentials(res.locals.access, payload);
+			res.status(200).json(result);
+		} catch (err) {
+			debug(logger, `${req.method.toUpperCase()} ${req.path}: ${err}`);
+			next(err);
+		}
+	});
+
+/**
  * Download LE Certs
  *
  * /api/nginx/certificates/123/download

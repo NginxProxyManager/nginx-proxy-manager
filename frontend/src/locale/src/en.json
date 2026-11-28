@@ -344,6 +344,15 @@
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "This data will be stored as plaintext in the database and in a file!"
 	},
+	"certificates.dns.change-credentials": {
+		"defaultMessage": "Change DNS Credentials"
+	},
+	"certificates.dns.change-credentials.help": {
+		"defaultMessage": "Replaces the DNS credentials this certificate uses. The change takes effect at the next renewal."
+	},
+	"certificates.dns.credentials-required": {
+		"defaultMessage": "Choose a stored or external credential, or enter credentials"
+	},
 	"certificates.dns.propagation-seconds": {
 		"defaultMessage": "Propagation Seconds"
 	},

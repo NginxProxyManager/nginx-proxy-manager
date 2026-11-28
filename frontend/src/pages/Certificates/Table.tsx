@@ -1,4 +1,4 @@
-import { IconDotsVertical, IconDownload, IconRefresh, IconTrash } from "@tabler/icons-react";
+import { IconDotsVertical, IconDownload, IconKey, IconRefresh, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, useTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { Certificate } from "src/api/backend";
@@ -23,8 +23,17 @@ interface Props {
 	onDelete?: (id: number) => void;
 	onRenew?: (id: number) => void;
 	onDownload?: (id: number) => void;
+	onChangeCredentials?: (id: number) => void;
 }
-export default function Table({ data, isFetching, onDelete, onRenew, onDownload, isFiltered }: Props) {
+export default function Table({
+	data,
+	isFetching,
+	onDelete,
+	onRenew,
+	onDownload,
+	onChangeCredentials,
+	isFiltered,
+}: Props) {
 	const columnHelper = createColumnHelper<Features, Certificate>();
 	const columns = useMemo(
 		() => [
@@ -140,6 +149,20 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 										<IconDownload size={16} />
 										<T id="action.download" />
 									</a>
+									{info.row.original.provider === "letsencrypt" &&
+									info.row.original.meta?.dnsChallenge ? (
+										<a
+											className="dropdown-item"
+											href="#"
+											onClick={(e) => {
+												e.preventDefault();
+												onChangeCredentials?.(info.row.original.id);
+											}}
+										>
+											<IconKey size={16} />
+											<T id="certificates.dns.change-credentials" />
+										</a>
+									) : null}
 									<div className="dropdown-divider" />
 									<a
 										className="dropdown-item"
@@ -162,7 +185,7 @@ export default function Table({ data, isFetching, onDelete, onRenew, onDownload,
 				},
 			}),
 		],
-		[columnHelper, onDelete, onRenew, onDownload],
+		[columnHelper, onDelete, onRenew, onDownload, onChangeCredentials],
 	);
 
 	const tableInstance = useTable({
