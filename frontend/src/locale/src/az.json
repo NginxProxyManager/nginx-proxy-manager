@@ -71,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": "Nəzərə alın ki, icazə ver və qadağan et direktivləri təyin edildikləri sırada tətbiq olunacaq."
 	},
+	"access-list.inherit": {
+		"defaultMessage": "Proksi hostdan götür"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "Proksi hostun giriş siyahısından istifadə olunur"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "Doğrulamanı yuxarı axına ötür"
 	},
@@ -124,6 +130,9 @@
 	},
 	"action.enable": {
 		"defaultMessage": "Aktivləşdir"
+	},
+	"action.logs": {
+		"defaultMessage": "Jurnallar"
 	},
 	"action.permissions": {
 		"defaultMessage": "İcazələr"
@@ -268,6 +277,9 @@
 	},
 	"column.email": {
 		"defaultMessage": "E-poçt"
+	},
+	"column.error": {
+		"defaultMessage": "Xəta"
 	},
 	"column.event": {
 		"defaultMessage": "Hadisə"
@@ -425,6 +437,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Github-da fork et"
 	},
+	"form.unsaved-changes": {
+		"defaultMessage": "Yadda saxlanılmamış dəyişiklikləriniz var. Onları ləğv etmək istədiyinizə əminsiniz?"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Ümumi hücumları blokla"
 	},
@@ -487,6 +502,51 @@
 	},
 	"login.title": {
 		"defaultMessage": "Hesabınıza daxil olun"
+	},
+	"logs": {
+		"defaultMessage": "Jurnallar"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "Giriş"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "Xəta"
+	},
+	"logs.download": {
+		"defaultMessage": "Endir"
+	},
+	"logs.empty": {
+		"defaultMessage": "Hələ jurnal qeydi yoxdur."
+	},
+	"logs.level": {
+		"defaultMessage": "Səviyyə"
+	},
+	"logs.level.all": {
+		"defaultMessage": "Bütün səviyyələr"
+	},
+	"logs.lines": {
+		"defaultMessage": "Sətirlər"
+	},
+	"logs.live": {
+		"defaultMessage": "Canlı"
+	},
+	"logs.paused": {
+		"defaultMessage": "Dayandırılıb"
+	},
+	"logs.refresh": {
+		"defaultMessage": "Yenilə"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "Jurnalda axtar…"
+	},
+	"logs.source": {
+		"defaultMessage": "Mənbə"
+	},
+	"logs.source.system": {
+		"defaultMessage": "Sistem"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "Bu faylın yalnız ən son hissəsi göstərilir."
 	},
 	"nginx-config.label": {
 		"defaultMessage": "Fərdi Nginx konfiqurasiyası"
@@ -584,11 +644,20 @@
 	"password.show": {
 		"defaultMessage": "Parolu göstər"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "İcazə verilən proksi hostlar"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "İstifadəçinin yaratdığı hostlara əlavə olaraq başqa istifadəçilərin yaratdığı seçilmiş proksi hostlara da giriş imkanı verir."
+	},
 	"permissions.hidden": {
 		"defaultMessage": "Gizli"
 	},
 	"permissions.manage": {
 		"defaultMessage": "İdarə et"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "Proksi host tapılmadı"
 	},
 	"permissions.view": {
 		"defaultMessage": "Yalnız baxış"

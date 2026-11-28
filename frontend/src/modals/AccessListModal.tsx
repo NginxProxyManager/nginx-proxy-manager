@@ -1,11 +1,12 @@
 import cn from "classnames";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form, Formik } from "formik";
+import { Field, Form } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import type { AccessList, AccessListClient, AccessListItem } from "src/api/backend";
 import { AccessClientFields, BasicAuthFields, Button, Loading } from "src/components";
+import { FormModal } from "src/components/Form";
 import { useAccessList, useSetAccessList } from "src/hooks";
 import { intl, T } from "src/locale";
 import { validateString } from "src/modules/Validations";
@@ -25,13 +26,16 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const validate = (values: any): string | null => {
+		const items = (values.items || []).filter((i: AccessListItem) => i.username?.trim() !== "");
+		const clients = (values.clients || []).filter((i: AccessListClient) => i.address?.trim() !== "");
+
 		// either Auths or Clients must be defined
-		if (values.items?.length === 0 && values.clients?.length === 0) {
+		if (items.length === 0 && clients.length === 0) {
 			return intl.formatMessage({ id: "error.access.at-least-one" });
 		}
 
 		// ensure the items don't contain the same username twice
-		const usernames = values.items.map((i: any) => i.username);
+		const usernames = items.map((i: AccessListItem) => i.username);
 		const uniqueUsernames = Array.from(new Set(usernames));
 		if (usernames.length !== uniqueUsernames.length) {
 			return intl.formatMessage({ id: "error.access.duplicate-usernames" });
@@ -58,10 +62,12 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 		};
 
 		// Filter out "items" to only use the "username" and "password" fields
-		payload.items = (values.items || []).map((i: AccessListItem) => ({
-			username: i.username,
-			password: i.password,
-		}));
+		payload.items = (values.items || [])
+			.filter((i: AccessListItem) => i.username?.trim() !== "")
+			.map((i: AccessListItem) => ({
+				username: i.username,
+				password: i.password,
+			}));
 
 		// Filter out "clients" to only use the "directive" and "address" fields
 		payload.clients = (values.clients || []).map((i: AccessListClient) => ({
@@ -86,15 +92,22 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 	const toggleEnabled = cn(toggleClasses, "bg-cyan");
 
 	return (
-		<Modal show={visible} onHide={remove}>
-			{!isLoading && error && (
-				<Alert variant="danger" className="m-3">
-					{error?.message || "Unknown error"}
-				</Alert>
+		<>
+			{(isLoading || (error && !data)) && (
+				<Modal show={visible} onHide={remove}>
+					{!isLoading && error && (
+						<Alert variant="danger" className="m-3">
+							{error?.message || "Unknown error"}
+						</Alert>
+					)}
+					{isLoading && <Loading noLogo />}
+				</Modal>
 			)}
-			{isLoading && <Loading noLogo />}
 			{!isLoading && data && (
-				<Formik
+				<FormModal
+					show={visible}
+					onHide={remove}
+					preventHide={isSubmitting}
 					initialValues={
 						{
 							name: data?.name,
@@ -106,7 +119,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 					}
 					onSubmit={onSubmit}
 				>
-					{({ setFieldValue }: any) => (
+					{({ onHide, setFieldValue }: any) => (
 						<Form>
 							<Modal.Header closeButton>
 								<Modal.Title>
@@ -267,7 +280,7 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 								</div>
 							</Modal.Body>
 							<Modal.Footer>
-								<Button data-bs-dismiss="modal" onClick={remove} disabled={isSubmitting}>
+								<Button data-bs-dismiss="modal" onClick={onHide} disabled={isSubmitting}>
 									<T id="cancel" />
 								</Button>
 								<Button
@@ -283,9 +296,9 @@ const AccessListModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							</Modal.Footer>
 						</Form>
 					)}
-				</Formik>
+				</FormModal>
 			)}
-		</Modal>
+		</>
 	);
 });
 

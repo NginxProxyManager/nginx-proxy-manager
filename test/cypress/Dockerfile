@@ -1,4 +1,4 @@
-FROM cypress/included:15.15.0
+FROM cypress/included:16.2.1
 
 # Disable Cypress CLI colors
 ENV FORCE_COLOR=0
@@ -21,3 +21,4 @@ WORKDIR /test
 RUN npm ci && npm cache clean --force
 ENTRYPOINT []
 CMD ["cypress", "run"]
+

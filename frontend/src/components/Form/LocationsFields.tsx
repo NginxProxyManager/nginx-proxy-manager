@@ -30,8 +30,9 @@ interface Row {
 interface Props {
 	initialValues: ProxyLocation[];
 	name?: string;
+	allowAdvanced?: boolean;
 }
-export function LocationsFields({ initialValues, name = "locations" }: Props) {
+export function LocationsFields({ initialValues, name = "locations", allowAdvanced = true }: Props) {
 	const [rows, setRows] = useState<Row[]>(() => (initialValues || []).map((value, id) => ({ id, value })));
 	const { setFieldValue } = useFormikContext();
 	const [expanded, setExpanded] = useState<number[]>([]);
@@ -88,8 +89,10 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 	};
 
 	const setFormField = (newRows: Row[]) => {
-		const filtered = newRows.map((r: Row) => r.value).filter((v: ProxyLocation) => v?.path?.trim() !== "");
-		setFieldValue(name, filtered);
+		setFieldValue(
+			name,
+			newRows.map((r: Row) => r.value),
+		);
 	};
 
 	const forwardSummary = (item: ProxyLocation) => {
@@ -215,7 +218,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 							{isOpen && (
 								<div className="card-body" id={bodyId}>
 									<div className="row">
-										<div className="col-md-10">
+										<div className={allowAdvanced ? "col-md-10" : "col-md-12"}>
 											<div className="input-group mb-3">
 												<span className="input-group-text">Location</span>
 												<input
@@ -228,23 +231,25 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 												/>
 											</div>
 										</div>
-										<div className="col-md-2 text-end">
-											<button
-												type="button"
-												className="btn p-0"
-												title="Advanced"
-												aria-expanded={advVisible.includes(row.id)}
-												onClick={() => toggleAdvVisible(row.id)}
-											>
-												<IconSettings size={20} />
-											</button>
-										</div>
+										{allowAdvanced && (
+											<div className="col-md-2 text-end">
+												<button
+													type="button"
+													className="btn p-0"
+													title="Advanced"
+													aria-expanded={advVisible.includes(row.id)}
+													onClick={() => toggleAdvVisible(row.id)}
+												>
+													<IconSettings size={20} />
+												</button>
+											</div>
+										)}
 									</div>
 									<div className="row">
-										<div className="col-md-3">
+										<div className="col-sm-3 col-md-3">
 											<div className="mb-3">
 												<label
-													className="form-label"
+													className="form-label text-nowrap"
 													htmlFor={`location-forwardScheme-${row.id}`}
 												>
 													<T id="host.forward-scheme" />
@@ -262,10 +267,10 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 												</select>
 											</div>
 										</div>
-										<div className="col-md-6">
+										<div className="col-sm-5 col-md-5">
 											<div className="mb-3">
 												<label
-													className="form-label"
+													className="form-label text-nowrap"
 													htmlFor={`location-forwardHost-${row.id}`}
 												>
 													<T id="proxy-host.forward-host" />
@@ -283,10 +288,10 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 												/>
 											</div>
 										</div>
-										<div className="col-md-3">
+										<div className="col-sm-4 col-md-4">
 											<div className="mb-3">
 												<label
-													className="form-label"
+													className="form-label text-nowrap"
 													htmlFor={`location-forwardPort-${row.id}`}
 												>
 													<T id="host.forward-port" />
@@ -314,7 +319,7 @@ export function LocationsFields({ initialValues, name = "locations" }: Props) {
 										onFormChange={(value) => handleAccessListChange(row.id, value)}
 										inheritHost
 									/>
-									{advVisible.includes(row.id) && (
+									{allowAdvanced && advVisible.includes(row.id) && (
 										<div className="">
 											<CodeEditor
 												language="nginx"

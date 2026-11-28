@@ -19,6 +19,11 @@ export interface UserPermissions {
 	accessLists: string;
 	certificates: string;
 	credentials: string;
+	meta?: {
+		proxyHostIds?: number[];
+		proxy_host_ids?: number[];
+		[key: string]: any;
+	};
 }
 
 export interface User {

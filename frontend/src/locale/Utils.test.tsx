@@ -1,4 +1,9 @@
-import { formatDateTime, getFlagCodeForLocale } from "./Utils";
+import { changeLocale, formatDateTime, getFlagCodeForLocale, getLocale, loadMessages } from "src/locale";
+import en from "src/locale/src/en.json";
+import { getHelpFile } from "src/locale/src/HelpDoc";
+import * as ptBrHelp from "src/locale/src/HelpDoc/pt-br";
+import * as zhTwHelp from "src/locale/src/HelpDoc/zh-tw";
+import ptBr from "src/locale/src/pt-br.json";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 describe("DateFormatter", () => {
@@ -83,6 +88,13 @@ describe("getFlagCodeForLocale", () => {
 	it("returns correct flag code for special-case locales", () => {
 		expect(getFlagCodeForLocale("ja-JP")).toBe("JP");
 		expect(getFlagCodeForLocale("zh-CN")).toBe("CN");
+		expect(getFlagCodeForLocale("zh")).toBe("CN");
+		expect(getFlagCodeForLocale("zh-TW")).toBe("TW");
+		expect(getFlagCodeForLocale("ZH-tw")).toBe("TW");
+		expect(getFlagCodeForLocale("pt")).toBe("PT");
+		expect(getFlagCodeForLocale("pt-PT")).toBe("PT");
+		expect(getFlagCodeForLocale("pt-BR")).toBe("BR");
+		expect(getFlagCodeForLocale("PT-br")).toBe("BR");
 		expect(getFlagCodeForLocale("vi-VN")).toBe("VN");
 		expect(getFlagCodeForLocale("ko-KR")).toBe("KR");
 		expect(getFlagCodeForLocale("cs-CZ")).toBe("CZ");
@@ -110,5 +122,74 @@ describe("formatDateTime Estonian locale", () => {
 			const text = formatDateTime(value, locale);
 			expect(text.toLowerCase()).not.toMatch(/\b(am|pm)\b/);
 		}
+	});
+});
+
+describe("formatDateTime Vietnamese locale", () => {
+	it("uses 24-hour clock for vi and vi-VN", () => {
+		const value = "2024-06-15T15:30:00.000Z";
+		for (const locale of ["vi", "vi-VN"]) {
+			const text = formatDateTime(value, locale);
+			// Vietnamese 12-hour output marks the period with SA (sáng) / CH (chiều)
+			expect(text).not.toMatch(/\b(SA|CH)\b/);
+		}
+	});
+});
+
+describe("Chinese locale variants", () => {
+	it("loads Traditional Chinese by full locale before falling back to Simplified Chinese", () => {
+		expect(loadMessages("ZH-tw")).toEqual(loadMessages("zh-TW"));
+		expect(loadMessages("zh-TW").save).toBe("儲存");
+		expect(loadMessages("zh").save).toBe("保存");
+		expect(loadMessages("zh-CN")).toEqual(loadMessages("zh"));
+		expect(loadMessages("zh-HK")).toEqual(loadMessages("zh"));
+	});
+
+	it("preserves the full locale and resets RTL layout when switching to Traditional Chinese", () => {
+		const originalLocale = getLocale();
+		const savedLocale = window.localStorage.getItem("locale");
+		try {
+			changeLocale("fa-IR");
+			expect(document.documentElement.dir).toBe("rtl");
+			changeLocale("zh-TW");
+			expect(getLocale()).toBe("zh-TW");
+			expect(window.localStorage.getItem("locale")).toBe("zh-TW");
+			expect(document.documentElement.lang).toBe("zh-TW");
+			expect(document.documentElement.dir).toBe("ltr");
+		} finally {
+			changeLocale(originalLocale);
+			if (savedLocale === null) {
+				window.localStorage.removeItem("locale");
+			} else {
+				window.localStorage.setItem("locale", savedLocale);
+			}
+		}
+	});
+
+	it("selects HelpDocs by full locale before falling back to the language code", () => {
+		expect(getHelpFile("ZH-tw", "AccessLists")).toBe(getHelpFile("zh-TW", "AccessLists"));
+		expect(getHelpFile("zh-TW", "AccessLists")).toBe(zhTwHelp.AccessLists.default);
+		expect(getHelpFile("zh-CN", "AccessLists")).toBe(getHelpFile("zh", "AccessLists"));
+	});
+});
+
+describe("Portuguese locale variants", () => {
+	it("loads Brazilian Portuguese by full locale before falling back to European Portuguese", () => {
+		expect(loadMessages("PT-br")).toEqual(loadMessages("pt-BR"));
+		expect(loadMessages("pt-BR").save).toBe("Salvar");
+		expect(loadMessages("pt").save).toBe("Guardar");
+		expect(loadMessages("pt-PT")).toEqual(loadMessages("pt"));
+		expect(loadMessages("pt-AO")).toEqual(loadMessages("pt"));
+	});
+
+	it("covers every English UI key without adding unknown ones", () => {
+		expect(Object.keys(ptBr).sort()).toEqual(Object.keys(en).sort());
+	});
+
+	it("selects HelpDocs by full locale before falling back to the language code", () => {
+		expect(getHelpFile("PT-br", "AccessLists")).toBe(getHelpFile("pt-BR", "AccessLists"));
+		expect(getHelpFile("pt-BR", "AccessLists")).toBe(ptBrHelp.AccessLists.default);
+		expect(getHelpFile("pt-PT", "AccessLists")).toBe(getHelpFile("pt", "AccessLists"));
+		expect(getHelpFile("pt-BR", "AccessLists")).not.toBe(getHelpFile("pt", "AccessLists"));
 	});
 });

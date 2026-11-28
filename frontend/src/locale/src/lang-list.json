@@ -17,6 +17,9 @@
   "locale-pt-PT": {
 	"defaultMessage": "Português (Europeu)"
   },
+  "locale-pt-BR": {
+    "defaultMessage": "Português"
+  },
   "locale-fr-FR": {
     "defaultMessage": "Français"
   },
@@ -36,7 +39,10 @@
     "defaultMessage": "Čeština"
   },
   "locale-zh-CN": {
-    "defaultMessage": "中文"
+    "defaultMessage": "简体中文"
+  },
+  "locale-zh-TW": {
+    "defaultMessage": "繁體中文（台灣）"
   },
   "locale-pl-PL": {
     "defaultMessage": "Polski"

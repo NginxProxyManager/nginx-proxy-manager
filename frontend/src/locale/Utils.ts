@@ -26,6 +26,7 @@ const DATE_LOCALE_BY_LANG: Record<string, string> = {
 
 const HOUR_CYCLE_BY_LANG: Record<string, "h12" | "h23"> = {
 	et: "h23",
+	vi: "h23",
 };
 
 const formatDateTime = (value: string | number, locale = "en-US"): string => {
@@ -50,7 +51,14 @@ const formatDateTime = (value: string | number, locale = "en-US"): string => {
 };
 
 const getFlagCodeForLocale = (locale?: string) => {
-	const thisLocale = (locale || "en").slice(0, 2);
+	const requestedLocale = (locale || "en").toLowerCase();
+	if (requestedLocale === "zh-tw") {
+		return "TW";
+	}
+	if (requestedLocale === "pt-br") {
+		return "BR";
+	}
+	const thisLocale = requestedLocale.slice(0, 2);
 
 	// only add to this if your flag is different from the locale code
 	const specialCases: Record<string, string> = {

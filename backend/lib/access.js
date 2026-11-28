@@ -13,7 +13,7 @@ import Ajv from "ajv/dist/2020.js";
 import _ from "lodash";
 import { access as logger } from "../logger.js";
 import authModel from "../models/auth.js";
-import proxyHostModel from "../models/proxy_host.js";
+import proxyHostModel, { scopeToOwnerOrAllowed } from "../models/proxy_host.js";
 import TokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import permsSchema from "./access/permissions.json" with { type: "json" };
@@ -143,7 +143,7 @@ export default function (tokenString, permissionsOverride = null) {
 						const query = proxyHostModel.query().select("id").andWhere("is_deleted", 0);
 
 						if (permissions.visibility === "user") {
-							query.andWhere("owner_user_id", tokenUserId);
+							scopeToOwnerOrAllowed(query, tokenUserId, permissions.meta);
 						}
 
 						const rows = await query;
@@ -217,7 +217,10 @@ export default function (tokenString, permissionsOverride = null) {
 	return {
 		token: Token,
 
-		isAdmin: () => _.indexOf(userRoles, "admin") !== -1,
+		getPermissions: () => permissions,
+		getRoles: () => userRoles,
+		hasRole: (role) => userRoles.includes(role),
+		isAdmin: () => userRoles.includes("admin") || Token.hasScope("admin"),
 
 		/**
 		 *
@@ -226,7 +229,8 @@ export default function (tokenString, permissionsOverride = null) {
 		 */
 		load: async (allowInternal) => {
 			if (tokenString) {
-				return await Token.load(tokenString);
+				await this.init();
+				return tokenData;
 			}
 			allowInternalAccess = allowInternal;
 			return allowInternal || null;
@@ -262,6 +266,7 @@ export default function (tokenString, permissionsOverride = null) {
 						permission_access_lists: permissions.access_lists,
 						permission_certificates: permissions.certificates,
 						permission_credentials: permissions.credentials,
+						permission_meta: permissions.meta,
 					},
 				};
 

@@ -3,6 +3,7 @@ import { getFlagCodeForLocale } from "./Utils";
 import langBg from "./lang/bg.json";
 import langDe from "./lang/de.json";
 import langPt from "./lang/pt.json";
+import langPtBr from "./lang/pt-br.json";
 import langEn from "./lang/en.json";
 import langEs from "./lang/es.json";
 import langEt from "./lang/et.json";
@@ -19,6 +20,7 @@ import langSk from "./lang/sk.json";
 import langCs from "./lang/cs.json";
 import langVi from "./lang/vi.json";
 import langZh from "./lang/zh.json";
+import langZhTw from "./lang/zh-tw.json";
 import langTr from "./lang/tr.json";
 import langHu from "./lang/hu.json";
 import langNo from "./lang/no.json";
@@ -28,7 +30,7 @@ import langFa from "./lang/fa.json";
 import langList from "./lang/lang-list.json";
 
 // first item of each array should be the language code,
-// not the country code
+// or the full locale when multiple variants share a language
 // Remember when adding to this list, also update check-locales.js script
 const localeOptions = [
 	["en", "en-US", langEn],
@@ -36,6 +38,7 @@ const localeOptions = [
 	["es", "es-ES", langEs],
 	["et", "et-EE", langEt],
 	["pt", "pt-PT", langPt],
+	["pt-BR", "pt-BR", langPtBr],
 	["fr", "fr-FR", langFr],
 	["ga", "ga-IE", langGa],
 	["ja", "ja-JP", langJa],
@@ -47,6 +50,7 @@ const localeOptions = [
 	["cs", "cs-CZ", langCs],
 	["vi", "vi-VN", langVi],
 	["zh", "zh-CN", langZh],
+	["zh-TW", "zh-TW", langZhTw],
 	["ko", "ko-KR", langKo],
 	["bg", "bg-BG", langBg],
 	["id", "id-ID", langId],
@@ -59,14 +63,18 @@ const localeOptions = [
 ];
 
 const loadMessages = (locale?: string): typeof langList & typeof langEn => {
-	const thisLocale = (locale || "en").slice(0, 2);
+	const requestedLocale = (locale || "en").toLowerCase();
+	const shortLocale = requestedLocale.slice(0, 2);
+	const localeOption =
+		localeOptions.find((option) => String(option[1]).toLowerCase() === requestedLocale) ??
+		localeOptions.find((option) => String(option[0]).toLowerCase() === shortLocale);
 
 	// ensure this lang exists in localeOptions above, otherwise fallback to en
-	if (thisLocale === "en" || !localeOptions.some(([code]) => code === thisLocale)) {
+	if (!localeOption || localeOption[0] === "en") {
 		return Object.assign({}, langList, langEn);
 	}
 
-	return Object.assign({}, langList, langEn, localeOptions.find(([code]) => code === thisLocale)?.[2]);
+	return Object.assign({}, langList, langEn, localeOption[2]);
 };
 
 const rtlLocales = ["fa"];
@@ -139,4 +147,4 @@ const T = ({
 
 //console.log("L:", localeOptions);
 
-export { localeOptions, getFlagCodeForLocale, getLocale, isRTLLocale, createIntl, changeLocale, intl, T };
+export { localeOptions, loadMessages, getFlagCodeForLocale, getLocale, isRTLLocale, createIntl, changeLocale, intl, T };

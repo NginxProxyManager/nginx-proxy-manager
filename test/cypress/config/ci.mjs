@@ -7,6 +7,7 @@ export default defineConfig({
 	allowCypressEnv: false,
 	requestTimeout: 30000,
 	defaultCommandTimeout: 20000,
+	taskTimeout: 90000,
 	reporter: "cypress-multi-reporters",
 	reporterOptions: {
 		configFile: "multi-reporter.json"

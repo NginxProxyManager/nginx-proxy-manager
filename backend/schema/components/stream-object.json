@@ -39,7 +39,7 @@
 				{
 					"description": "Domain Name",
 					"type": "string",
-					"pattern": "^(?:[^.*]+\\.?)+[^.]$",
+					"pattern": "^(?=[^\\s\\p{Cc};{}\"'#\\\\$/]+$)[^.*]+(?:\\.[^.*]+)*\\.?[^.]$",
 					"example": "example.com"
 				},
 				{
