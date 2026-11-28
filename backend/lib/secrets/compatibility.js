@@ -11,7 +11,7 @@ const setCredentialKeys = (credentialsIni) => {
 	const keys = new Set();
 	for (const line of `${credentialsIni || ""}`.split("\n")) {
 		const match = line.match(/^\s*([A-Za-z0-9_.:-]+)\s*=\s*(.*?)\s*$/);
-		if (match && match[2].replace(/^(["'])(.*)\1$/, "$2").length) {
+		if (match?.[2].replace(/^(["'])(.*)\1$/, "$2").length) {
 			keys.add(match[1]);
 		}
 	}

@@ -1,6 +1,6 @@
 import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
 import errs from "../lib/error.js";
-import { validateDnsCredentialsFormat } from "../lib/secrets/resolve.js";
+import { assertDnsCredentialsCompatible, validateDnsCredentialsFormat } from "../lib/secrets/resolve.js";
 import {
 	deleteCredentialFile,
 	readCredentialFile,
@@ -15,9 +15,15 @@ import internalAuditLog from "./audit-log.js";
 const omissions = () => ["is_deleted", "storage_path", "encryption_key_id"];
 
 const internalCredential = {
-	create: async (access, data) => {
+	/**
+	 * @param {Access}  access
+	 * @param {Object}  data
+	 * @param {Object}  [options]
+	 * @param {boolean} [options.checkCompatibility]  see validateDnsCredentialsFormat
+	 */
+	create: async (access, data, options = {}) => {
 		await access.can("credentials:create", data);
-		validateDnsCredentialsFormat(data.dns_provider, data.credentials);
+		validateDnsCredentialsFormat(data.dns_provider, data.credentials, options);
 
 		const row = await credentialModel.query().insertAndFetch({
 			name: data.name,
@@ -156,22 +162,13 @@ const internalCredential = {
 
 		const eligible = certs.filter((cert) => {
 			const meta = cert.meta || {};
-			return meta.dns_challenge && typeof meta.dns_provider_credentials === "string" && !meta.credential_ref?.type;
+			return (
+				meta.dns_challenge &&
+				typeof meta.dns_provider_credentials === "string" &&
+				meta.dns_provider_credentials.trim() &&
+				!meta.credential_ref?.type
+			);
 		});
-
-		// Check every certificate before migrating any, so one bad legacy credential can't leave
-		// the migration half done. The dry run reports the same problem.
-		const invalid = [];
-		for (const cert of eligible) {
-			try {
-				validateDnsCredentialsFormat(cert.meta.dns_provider, cert.meta.dns_provider_credentials);
-			} catch (err) {
-				invalid.push(`certificate #${cert.id}: ${err.message}`);
-			}
-		}
-		if (invalid.length) {
-			throw new errs.ValidationError(`Fix these certificates' DNS credentials before migrating: ${invalid.join(" ")}`);
-		}
 
 		const results = [];
 		for (const cert of eligible) {
@@ -184,12 +181,25 @@ const internalCredential = {
 				status: "skipped",
 			};
 
+			// Credentials the certbot plugin would refuse are still migrated: a stored credential can
+			// be edited in the UI, inline certificate credentials can't. Flag them so they get fixed.
+			try {
+				assertDnsCredentialsCompatible(meta.dns_provider, meta.dns_provider_credentials);
+			} catch (err) {
+				entry.needs_fix = true;
+				entry.problem = err.message;
+			}
+
 			if (!data.dry_run) {
-				const cred = await internalCredential.create(access, {
-					name: `Migrated cert #${cert.id}`,
-					dns_provider: meta.dns_provider,
-					credentials: meta.dns_provider_credentials,
-				});
+				const cred = await internalCredential.create(
+					access,
+					{
+						name: `Migrated cert #${cert.id}`,
+						dns_provider: meta.dns_provider,
+						credentials: meta.dns_provider_credentials,
+					},
+					{ checkCompatibility: false },
+				);
 
 				const newMeta = {
 					...meta,

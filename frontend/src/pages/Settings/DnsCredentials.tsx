@@ -19,10 +19,17 @@ export default function DnsCredentials() {
 		setMigrateMsg(null);
 		try {
 			const result = await migrateLegacyCredentials(dryRun);
+			// Credentials the DNS plugin would refuse are migrated anyway so they can be edited here
+			const toFix = (result.results || []).filter((r: any) => r.needsFix);
+			const fixNote = toFix.length
+				? dryRun
+					? `. ${toFix.length} of them have credentials that must be fixed after migrating (certificate #${toFix.map((r: any) => r.certificateId).join(", #")}).`
+					: `. ${toFix.length} need their credentials fixed: edit ${toFix.map((r: any) => `"Migrated cert #${r.certificateId}"`).join(", ")} below.`
+				: "";
 			setMigrateMsg(
-				dryRun
+				(dryRun
 					? `Dry run: ${result.count} certificate(s) eligible`
-					: `Migrated ${result.count} certificate(s)`,
+					: `Migrated ${result.count} certificate(s)`) + fixNote,
 			);
 		} catch (e: any) {
 			setMigrateMsg(e.message);

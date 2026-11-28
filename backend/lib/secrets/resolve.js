@@ -59,15 +59,21 @@ export const materializeCertbotCredentials = async (certificate) => {
 };
 
 /**
- * @param {string} provider
- * @param {string} credentialsIni
+ * @param {string}  provider
+ * @param {string}  credentialsIni
+ * @param {Object}  [options]
+ * @param {boolean} [options.checkCompatibility]  false skips assertDnsCredentialsCompatible, for the
+ *                                                legacy migration, which moves broken credentials
+ *                                                into the store so they can be fixed there
  */
-export const validateDnsCredentialsFormat = (provider, credentialsIni) => {
+export const validateDnsCredentialsFormat = (provider, credentialsIni, { checkCompatibility = true } = {}) => {
 	if (!dnsPlugins[provider]) {
 		throw new errs.ValidationError(`Unknown DNS provider: ${provider}`);
 	}
 	if (!credentialsIni || typeof credentialsIni !== "string" || !credentialsIni.trim()) {
 		throw new errs.ValidationError("Credentials cannot be empty");
 	}
-	assertDnsCredentialsCompatible(provider, credentialsIni);
+	if (checkCompatibility) {
+		assertDnsCredentialsCompatible(provider, credentialsIni);
+	}
 };

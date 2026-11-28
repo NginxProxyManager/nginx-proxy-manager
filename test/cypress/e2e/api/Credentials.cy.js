@@ -45,6 +45,43 @@ describe('Credentials endpoints', () => {
 		});
 	});
 
+	it('Rejects Cloudflare credentials that mix an API token with the global key', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path: '/api/credentials',
+			data: {
+				name: 'Cypress mixed Cloudflare credential',
+				dns_provider: 'cloudflare',
+				credentials:
+					'dns_cloudflare_email = cypress@example.com\ndns_cloudflare_api_key = 0123456789abcdef\ndns_cloudflare_api_token = 0123456789abcdef',
+			},
+			returnOnError: true,
+		}).then((data) => {
+			expect(data.error.code).to.equal(400);
+			expect(data.error.message).to.contain('not both');
+		});
+	});
+
+	it('Accepts Cloudflare credentials with only an API token', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path: '/api/credentials',
+			data: {
+				name: 'Cypress Cloudflare token credential',
+				dns_provider: 'cloudflare',
+				credentials: '# dns_cloudflare_email = cypress@example.com\ndns_cloudflare_api_token = 0123456789abcdef',
+			},
+		}).then((data) => {
+			cy.validateSwaggerSchema('post', 201, '/credentials', data);
+			cy.task('backendApiDelete', {
+				token: token,
+				path: `/api/credentials/${data.id}`,
+			}).then((deleted) => {
+				expect(deleted).to.equal(true);
+			});
+		});
+	});
+
 	it('Migrate legacy credentials (dry run)', () => {
 		cy.task('backendApiPost', {
 			token: token,
