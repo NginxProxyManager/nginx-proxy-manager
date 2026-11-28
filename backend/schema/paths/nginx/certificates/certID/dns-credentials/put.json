@@ -67,6 +67,10 @@
 								"field": {
 									"type": "string"
 								}
+							},
+							"example": {
+								"type": "internal",
+								"id": 1
 							}
 						},
 						"dns_provider_credentials": {
