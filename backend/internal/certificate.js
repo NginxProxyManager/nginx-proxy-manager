@@ -19,7 +19,7 @@ import internalAuditLog from "./audit-log.js";
 import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
 import internalWebhook from "./webhook.js";
-import { resolveDnsCredentials } from "../lib/secrets/resolve.js";
+import { assertDnsCredentialsCompatible, resolveDnsCredentials } from "../lib/secrets/resolve.js";
 import { writeCertbotCredentialsFile } from "../lib/secrets/storage.js";
 
 const letsencryptConfig = "/etc/letsencrypt.ini";
@@ -78,6 +78,12 @@ const certbotHints = [
 		/: (6003|6111|9103|9109|10000) [A-Za-z]|Invalid request headers|Invalid access token|Authentication error/i,
 		() =>
 			"Cloudflare rejected the API token. Check the token value and that it has Zone > DNS > Edit for this domain's zone.",
+		"cloudflare",
+	],
+	[
+		/are not needed when using an API Token/i,
+		() =>
+			"The Cloudflare credentials contain both an API token and the email + Global API key. Keep only dns_cloudflare_api_token (recommended), or only dns_cloudflare_email and dns_cloudflare_api_key.",
 		"cloudflare",
 	],
 	[
@@ -292,6 +298,9 @@ const internalCertificate = {
 			(prepared.credential_ref?.type === "external" && prepared.credential_ref.provider_id)
 		) {
 			delete prepared.dns_provider_credentials;
+		}
+		if (prepared.dns_challenge && typeof prepared.dns_provider_credentials === "string") {
+			assertDnsCredentialsCompatible(prepared.dns_provider, prepared.dns_provider_credentials);
 		}
 		return prepared;
 	},

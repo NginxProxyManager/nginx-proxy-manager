@@ -154,15 +154,28 @@ const internalCredential = {
 			.where("is_deleted", 0)
 			.andWhere("provider", "letsencrypt");
 
-		const results = [];
-		for (const cert of certs) {
+		const eligible = certs.filter((cert) => {
 			const meta = cert.meta || {};
-			if (!meta.dns_challenge || typeof meta.dns_provider_credentials !== "string") {
-				continue;
+			return meta.dns_challenge && typeof meta.dns_provider_credentials === "string" && !meta.credential_ref?.type;
+		});
+
+		// Check every certificate before migrating any, so one bad legacy credential can't leave
+		// the migration half done. The dry run reports the same problem.
+		const invalid = [];
+		for (const cert of eligible) {
+			try {
+				validateDnsCredentialsFormat(cert.meta.dns_provider, cert.meta.dns_provider_credentials);
+			} catch (err) {
+				invalid.push(`certificate #${cert.id}: ${err.message}`);
 			}
-			if (meta.credential_ref?.type) {
-				continue;
-			}
+		}
+		if (invalid.length) {
+			throw new errs.ValidationError(`Fix these certificates' DNS credentials before migrating: ${invalid.join(" ")}`);
+		}
+
+		const results = [];
+		for (const cert of eligible) {
+			const meta = cert.meta;
 
 			const entry = {
 				certificate_id: cert.id,

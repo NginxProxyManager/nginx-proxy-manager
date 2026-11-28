@@ -3,7 +3,10 @@ import errs from "../error.js";
 import credentialModel from "../../models/credential.js";
 import now from "../../models/now_helper.js";
 import { resolveExternalCredential } from "./resolvers/external.js";
+import { assertDnsCredentialsCompatible } from "./compatibility.js";
 import { readCredentialFile, writeCertbotCredentialsFile } from "./storage.js";
+
+export { assertDnsCredentialsCompatible };
 
 /**
  * Resolve DNS certbot credentials plaintext for a certificate.
@@ -66,4 +69,5 @@ export const validateDnsCredentialsFormat = (provider, credentialsIni) => {
 	if (!credentialsIni || typeof credentialsIni !== "string" || !credentialsIni.trim()) {
 		throw new errs.ValidationError("Credentials cannot be empty");
 	}
+	assertDnsCredentialsCompatible(provider, credentialsIni);
 };
