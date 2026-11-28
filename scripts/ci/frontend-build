@@ -19,7 +19,10 @@ if hash docker 2>/dev/null; then
 		sh -c "set -e
 			DOCS_BUILD=/tmp/npm-docs-build
 			rm -rf \"\${DOCS_BUILD}\"
-			cp -a /app/docs \"\${DOCS_BUILD}\"
+			mkdir -p \"\${DOCS_BUILD}\"
+			# Leave out node_modules and dist: Jenkins' parallel Docs stage runs yarn install in
+			# /app/docs at the same time, and copying its half-written tree breaks npm install.
+			tar -C /app/docs --exclude=./node_modules --exclude=./dist -cf - . | tar -C \"\${DOCS_BUILD}\" -xf -
 			cd \"\${DOCS_BUILD}\" && NPM_REPO_ROOT=/app npm install && NPM_REPO_ROOT=/app npm run build && \
 			cd /app/frontend && npm ci && npm run lint && npm run locale-compile && npm run test -- run --no-color && npm run build && \
 			rm -rf /app/frontend/dist/docs && mkdir -p /app/frontend/dist/docs && \
