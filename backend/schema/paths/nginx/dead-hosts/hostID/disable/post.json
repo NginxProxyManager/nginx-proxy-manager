@@ -1,12 +1,17 @@
 {
 	"operationId": "disableDeadHost",
 	"summary": "Disable a 404 Host",
-	"tags": ["404-hosts"],
+	"tags": [
+		"404-hosts"
+	],
 	"security": [
 		{
-			"bearerAuth": ["dead_hosts.manage"]
+			"bearerAuth": [
+				"dead_hosts.manage"
+			]
 		}
 	],
+	"description": "Disables a 404 host without deleting its configuration.",
 	"parameters": [
 		{
 			"in": "path",

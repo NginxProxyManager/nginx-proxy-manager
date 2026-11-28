@@ -1,0 +1,18 @@
+{
+	"type": "object",
+	"description": "Async certificate request accepted; poll the job endpoint for completion",
+	"required": ["job_id", "status"],
+	"additionalProperties": false,
+	"properties": {
+		"job_id": {
+			"type": "integer",
+			"minimum": 1,
+			"example": 1
+		},
+		"status": {
+			"type": "string",
+			"enum": ["pending", "running", "completed", "failed"],
+			"example": "pending"
+		}
+	}
+}

@@ -1,7 +1,9 @@
 {
 	"operationId": "updateProxyHost",
 	"summary": "Update a Proxy Host",
-	"tags": ["proxy-hosts"],
+	"tags": [
+		"proxy-hosts"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Updates proxy host domains, upstream, advanced options, or certificate linkage.",
 	"parameters": [
 		{
 			"in": "path",
@@ -57,7 +60,7 @@
 							"$ref": "../../../../components/proxy-host-object.json#/properties/hsts_subdomains"
 						},
 						"trust_forwarded_proto": {
-    						"$ref": "../../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
+							"$ref": "../../../../components/proxy-host-object.json#/properties/trust_forwarded_proto"
 						},
 						"http2_support": {
 							"$ref": "../../../../components/proxy-host-object.json#/properties/http2_support"

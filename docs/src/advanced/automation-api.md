@@ -1,0 +1,180 @@
+---
+outline: deep
+---
+
+# Automation API
+
+Nginx Proxy Manager exposes a REST API at `/api` on the admin port (default `81`).
+
+- **Full reference (Redoc):** [API Reference](/api-reference/)
+- **Try it out (Swagger UI):** [API Reference (Swagger)](/api-reference/swagger) — requires `/api` on the same host as the docs site
+- **Live schema from a running instance:** `GET /api/schema`
+
+## Authentication
+
+### User JWT (existing)
+
+```bash
+curl -s -X POST http://127.0.0.1:81/api/tokens \
+  -H 'Content-Type: application/json' \
+  -d '{"identity":"admin@example.com","secret":"your-password"}'
+```
+
+Use `Authorization: Bearer <token>` on subsequent requests. Tokens default to 1-day expiry; refresh with `GET /api/tokens`.
+
+### API keys (new)
+
+Admins can create long-lived keys:
+
+```bash
+curl -s -X POST http://127.0.0.1:81/api/api-keys \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"terraform","permissions":{"proxy_hosts":"manage","certificates":"manage"}}'
+```
+
+The response includes `key` once (`npmak_...`). Use it as:
+
+`Authorization: Bearer npmak_<prefix>_<secret>`
+
+## Proxy hosts
+
+| Method | Path |
+|--------|------|
+| GET | `/api/nginx/proxy-hosts` |
+| POST | `/api/nginx/proxy-hosts` |
+| GET | `/api/nginx/proxy-hosts/{id}` |
+| PUT | `/api/nginx/proxy-hosts/{id}` |
+| DELETE | `/api/nginx/proxy-hosts/{id}` |
+| POST | `/api/nginx/proxy-hosts/{id}/enable` |
+| POST | `/api/nginx/proxy-hosts/{id}/disable` |
+
+## Certificates
+
+| Method | Path |
+|--------|------|
+| GET | `/api/nginx/certificates` |
+| POST | `/api/nginx/certificates` |
+| PUT | `/api/nginx/certificates/{id}` |
+| DELETE | `/api/nginx/certificates/{id}` |
+| POST | `/api/nginx/certificates/{id}/renew` |
+
+Append `?async=true` to **POST** (create) or **renew** to receive `202` with `{ job_id, status }`. Poll `GET /api/jobs/{job_id}`.
+
+## Admin UI (Settings)
+
+| Feature | Location |
+|---------|----------|
+| DNS credentials (internal vault) | **Settings** → **DNS credentials** (`/settings?tab=dns-credentials`; `/credentials` redirects here) |
+| External stores (Vault, AWS, Azure, Infisical, HTTP) | **Settings** → **External credential stores** |
+| API keys & webhooks | **Settings** → **API keys** / **Webhooks** |
+
+Users with credentials-only permission can open Settings for the DNS credentials tab without full admin access.
+
+## DNS credential vault
+
+Secrets are encrypted on the **`/data` persistent volume** at `/data/credentials/`. Metadata is in the database.
+
+| Method | Path |
+|--------|------|
+| GET | `/api/credentials` |
+| POST | `/api/credentials` |
+| PUT | `/api/credentials/{id}` |
+| DELETE | `/api/credentials/{id}` |
+| POST | `/api/credentials/{id}/test` |
+
+Create a certificate referencing a stored credential:
+
+```json
+{
+  "provider": "letsencrypt",
+  "domain_names": ["example.com"],
+  "meta": {
+    "dns_challenge": true,
+    "dns_provider": "cloudflare",
+    "credential_ref": { "type": "internal", "id": 1 }
+  }
+}
+```
+
+Set `NPM_SECRETS_ENCRYPTION_KEY` (32-byte base64) before first use in production, or NPM generates `/data/keys/secrets.json` on the data volume.
+
+## External credential stores (Vault, AWS, Azure, Infisical)
+
+Configure providers (admin, Settings → External Credential Stores or API):
+
+| Method | Path |
+|--------|------|
+| GET | `/api/credential-providers` |
+| POST | `/api/credential-providers` |
+| PUT | `/api/credential-providers/{id}` |
+| DELETE | `/api/credential-providers/{id}` |
+| POST | `/api/credential-providers/{id}/test` |
+| POST | `/api/credential-providers/{id}/test-resolve` |
+
+Provider `type`: `vault` (HashiCorp Vault), `aws`, `azure`, `infisical`, `http`. OIDC client secrets (and Infisical Universal Auth secrets) are stored encrypted under `/data/credentials/providers/`.
+
+### Infisical
+
+Use **Universal Auth** (Machine Identity client ID + secret). Automation outside the admin UI (for example a separate CI/CD OIDC integration with Infisical) should not reuse the same credentials as the NPM provider entry unless you intend that trust boundary.
+
+Example provider:
+
+```json
+{
+  "name": "Infisical prod",
+  "type": "infisical",
+  "oidc_client_id": "<universal-auth-client-id>",
+  "oidc_client_secret": "<universal-auth-client-secret>",
+  "meta": {
+    "host": "https://vault.example.com",
+    "workspace_id": "<project-uuid>",
+    "environment_slug": "prod",
+    "auth_method": "universal"
+  }
+}
+```
+
+`credential_ref.path` is the Infisical **folder + secret key** (environment comes from the provider’s `environment_slug`, not from this path):
+
+- `/DNS/cloudflare-api-token` — secret key `cloudflare-api-token` in folder `/DNS`
+- `cloudflare-api-token` — same key at project root (`secretPath=/`)
+
+Alternatively set `path` to the folder (e.g. `/DNS`) and `field` to the secret key.
+
+Reference in a certificate:
+
+```json
+"meta": {
+  "dns_challenge": true,
+  "dns_provider": "cloudflare",
+  "credential_ref": {
+    "type": "external",
+    "provider_id": 1,
+    "path": "/DNS/cloudflare-api-token"
+  }
+}
+```
+
+## Webhooks
+
+Configure endpoints (admin only):
+
+| Method | Path |
+|--------|------|
+| GET | `/api/webhooks` |
+| POST | `/api/webhooks` |
+| DELETE | `/api/webhooks/{id}` |
+
+Events: `proxy_host.created|updated|deleted|enabled|disabled`, `certificate.created|updated|deleted|renewed|failed`. Verify `X-NPM-Signature: sha256=<hmac>` over the raw JSON body. Failed deliveries are retried up to three times with backoff.
+
+## Docker volume
+
+Mount persistent storage:
+
+```yaml
+volumes:
+  - ./data:/data
+```
+
+The credential vault requires `/data` to survive container recreation.

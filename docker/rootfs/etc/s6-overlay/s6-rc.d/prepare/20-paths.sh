@@ -28,12 +28,16 @@ mkdir -p \
 	/data/nginx/dead_host \
 	/data/nginx/temp \
 	/data/letsencrypt-acme-challenge \
+	/data/credentials \
+	/data/credentials/providers \
 	/run/nginx \
 	/tmp/nginx/body \
 	/var/log/nginx \
 	/var/lib/nginx/cache/public \
 	/var/lib/nginx/cache/private \
 	/var/cache/nginx/proxy_temp
+
+chmod 700 /data/credentials /data/credentials/providers 2>/dev/null || true
 
 touch /var/log/nginx/error.log || true
 chmod 777 /var/log/nginx/error.log || true

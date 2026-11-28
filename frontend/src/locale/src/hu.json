@@ -766,5 +766,83 @@
 	},
 	"users": {
 		"defaultMessage": "Felhasználók"
+	},
+	"api-key": {
+		"defaultMessage": "API kulcs"
+	},
+	"api-keys": {
+		"defaultMessage": "Automatizálási API kulcsok"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Másolja ki most a kulcsot — nem jelenik meg újra."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Visszavonja ezt az API kulcsot? A használó automatizálások leállnak."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer tokenek (npmak_…) szkriptekhez és CI-hez. Csak adminisztrátoroknak."
+	},
+	"credential": {
+		"defaultMessage": "Hitelesítő adat"
+	},
+	"credential-provider": {
+		"defaultMessage": "Hitelesítő szolgáltató"
+	},
+	"credential-providers": {
+		"defaultMessage": "Külső hitelesítő tárolók"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Vault, AWS Secrets Manager, Azure Key Vault vagy Infisical csatlakoztatása OIDC-n keresztül."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "OIDC teszt"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Feloldás teszt"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Titok útvonala"
+	},
+	"credentials": {
+		"defaultMessage": "DNS hitelesítő adatok"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Titok útvonala"
+	},
+	"credentials.source": {
+		"defaultMessage": "Hitelesítő forrás"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Külső tároló (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "NPM széfben tárolva"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Kézi megadás (egyszeri)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Tárolt hitelesítő"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Titkosítva a /data köteten, újrahasználható DNS tanúsítványokhoz."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Régi DNS hitelesítők migrálása"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} tanúsítvány inline hitelesítőit a széfbe helyezné."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhookok"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Aláírási titok (X-NPM-Signature ellenőrzéshez)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Aláírt HTTP visszahívások host vagy tanúsítvány változáskor."
 	}
 }

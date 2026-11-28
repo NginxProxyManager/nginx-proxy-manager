@@ -216,6 +216,47 @@ describe('Certificates endpoints', () => {
 		});
 	});
 
+	it('Only DNS challenge certificates accept new DNS credentials', () => {
+		cy.task('backendApiPost', {
+			token: token,
+			path:  '/api/nginx/certificates',
+			data:  {
+				provider: 'other',
+				nice_name: 'DNS credentials test certificate',
+			},
+		}).then((cert) => {
+			cy.task('backendApiPut', {
+				token: token,
+				path:  `/api/nginx/certificates/${cert.id}/dns-credentials`,
+				data:  {
+					dns_provider_credentials: 'dns_cloudflare_api_token = 0123456789abcdef',
+				},
+				returnOnError: true,
+			}).then((data) => {
+				expect(data.error.code).to.equal(400);
+				expect(data.error.message).to.contain('Only DNS challenge certificates');
+
+				// Exactly one of credential_ref or dns_provider_credentials
+				cy.task('backendApiPut', {
+					token: token,
+					path:  `/api/nginx/certificates/${cert.id}/dns-credentials`,
+					data:  {
+						credential_ref: { type: 'internal', id: 1 },
+						dns_provider_credentials: 'dns_cloudflare_api_token = 0123456789abcdef',
+					},
+					returnOnError: true,
+				}).then((data) => {
+					expect(data.error.code).to.equal(400);
+
+					cy.task('backendApiDelete', {
+						token: token,
+						path:  `/api/nginx/certificates/${cert.id}`,
+					});
+				});
+			});
+		});
+	});
+
 	it('Request Certificate - CVE-2024-46256/CVE-2024-46257', () => {
 		cy.task('backendApiPost', {
 			token: token,

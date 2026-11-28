@@ -1,0 +1,38 @@
+{
+	"operationId": "testCredentialProvider",
+	"summary": "Test provider authentication",
+	"tags": [
+		"credential-providers"
+	],
+	"description": "Verifies that the provider can obtain an access token (OIDC client credentials or Infisical Universal Auth).",
+	"parameters": [
+		{
+			"in": "path",
+			"name": "providerID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "Credential provider ID",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "OK",
+			"content": {
+				"application/json": {
+					"example": {
+						"ok": true,
+						"type": "vault",
+						"name": "Cypress vault stub"
+					},
+					"schema": {
+						"$ref": "../../../../components/credential-provider-test-object.json"
+					}
+				}
+			}
+		}
+	}
+}

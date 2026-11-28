@@ -51,13 +51,28 @@ const execFile = (cmd, args, options) => {
  * @param   {Array}  omissions
  * @returns {Function}
  */
-const omitRow = (omissions) => {
+const omitNestedMeta = (row, metaKeys) => {
+	if (!row || typeof row !== "object" || !row.meta || typeof row.meta !== "object") {
+		return row;
+	}
+	const meta = { ...row.meta };
+	for (const key of metaKeys) {
+		delete meta[key];
+	}
+	return { ...row, meta };
+};
+
+const omitRow = (omissions, metaOmissions = []) => {
 	/**
 	 * @param   {Object} row
 	 * @returns {Object}
 	 */
 	return (row) => {
-		return _.omit(row, omissions);
+		let result = _.omit(row, omissions);
+		if (metaOmissions.length) {
+			result = omitNestedMeta(result, metaOmissions);
+		}
+		return result;
 	};
 };
 
@@ -67,14 +82,14 @@ const omitRow = (omissions) => {
  * @param   {Array}  omissions
  * @returns {Function}
  */
-const omitRows = (omissions) => {
+const omitRows = (omissions, metaOmissions = []) => {
 	/**
 	 * @param   {Array} rows
 	 * @returns {Object}
 	 */
 	return (rows) => {
 		rows.forEach((row, idx) => {
-			rows[idx] = _.omit(row, omissions);
+			rows[idx] = omitRow(omissions, metaOmissions)(row);
 		});
 		return rows;
 	};

@@ -1,12 +1,17 @@
 {
 	"operationId": "getSetting",
 	"summary": "Get a setting",
-	"tags": ["settings"],
+	"tags": [
+		"settings"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
+	"description": "Returns one setting by id or key identifier.",
 	"parameters": [
 		{
 			"in": "path",

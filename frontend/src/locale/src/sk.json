@@ -766,5 +766,83 @@
 	},
 	"users": {
 		"defaultMessage": "Používatelia"
+	},
+	"api-key": {
+		"defaultMessage": "API kľúč"
+	},
+	"api-keys": {
+		"defaultMessage": "API kľúče pre automatizáciu"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Skopírujte tento kľúč teraz — už sa znova nezobrazí."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Zrušiť tento API kľúč? Automatizácie, ktoré ho používajú, prestanú fungovať."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer tokeny (npmak_…) pre skripty a CI. Len pre administrátorov."
+	},
+	"credential": {
+		"defaultMessage": "Prihlasovacie údaje"
+	},
+	"credential-provider": {
+		"defaultMessage": "Poskytovateľ prihlasovacích údajov"
+	},
+	"credential-providers": {
+		"defaultMessage": "Externé úložiská prihlasovacích údajov"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Prepojte Vault, AWS Secrets Manager, Azure Key Vault alebo Infisical cez OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Otestovať OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Otestovať načítanie"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Cesta k tajnému údaju"
+	},
+	"credentials": {
+		"defaultMessage": "DNS prihlasovacie údaje"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Cesta k tajnému údaju"
+	},
+	"credentials.source": {
+		"defaultMessage": "Zdroj prihlasovacích údajov"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Externé úložisko (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Uložené v trezore NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Zadať ručne (jednorazovo)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Uložené prihlasovacie údaje"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Šifrované na zväzku /data a znovu použiteľné pre DNS certifikáty."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migrácia starých DNS prihlasovacích údajov"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} certifikát(ov) presunie vložené údaje do trezora."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooky"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Podpisové tajomstvo (overenie X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Podpísané HTTP callbacky pri zmene proxy hostiteľov alebo certifikátov."
 	}
 }

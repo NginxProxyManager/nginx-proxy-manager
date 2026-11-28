@@ -1,5 +1,5 @@
-FROM nginxproxymanager/testca AS testca
-FROM nginxproxymanager/nginx-full:certbot-node
+FROM docker.io/nginxproxymanager/testca AS testca
+FROM docker.io/nginxproxymanager/nginx-full:certbot-node
 LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]

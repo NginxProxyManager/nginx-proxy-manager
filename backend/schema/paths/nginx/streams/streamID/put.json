@@ -1,12 +1,17 @@
 {
 	"operationId": "updateStream",
 	"summary": "Update a Stream",
-	"tags": ["streams"],
+	"tags": [
+		"streams"
+	],
 	"security": [
 		{
-			"bearerAuth": ["streams.manage"]
+			"bearerAuth": [
+				"streams.manage"
+			]
 		}
 	],
+	"description": "Updates stream listen ports, upstream, or protocol options.",
 	"parameters": [
 		{
 			"in": "path",
@@ -87,7 +92,9 @@
 									"name": "Administrator",
 									"nickname": "Admin",
 									"avatar": "",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								},
 								"certificate_id": 0
 							}

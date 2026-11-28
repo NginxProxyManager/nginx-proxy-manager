@@ -1,3 +1,4 @@
+export * from "./FormLabelWithHelp";
 export * from "./AccessClientFields";
 export * from "./AccessField";
 export * from "./BasicAuthFields";

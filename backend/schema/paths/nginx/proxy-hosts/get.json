@@ -1,7 +1,9 @@
 {
 	"operationId": "getProxyHosts",
 	"summary": "Get all proxy hosts",
-	"tags": ["proxy-hosts"],
+	"tags": [
+		"proxy-hosts"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Lists reverse proxy hosts (domain to upstream mapping).",
 	"parameters": [
 		{
 			"in": "query",

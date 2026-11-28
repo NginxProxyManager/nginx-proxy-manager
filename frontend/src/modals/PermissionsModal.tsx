@@ -162,6 +162,7 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 							visibility: data.permissions?.visibility || "user",
 							accessLists: data.permissions?.accessLists || "hidden",
 							certificates: data.permissions?.certificates || "hidden",
+							credentials: data.permissions?.credentials || "manage",
 							deadHosts: data.permissions?.deadHosts || "hidden",
 							proxyHosts: data.permissions?.proxyHosts || "hidden",
 							redirectionHosts: data.permissions?.redirectionHosts || "hidden",
@@ -342,6 +343,14 @@ const PermissionsModal = EasyModal.create(({ id, visible, remove }: Props) => {
 												<T id="certificates" />
 											</label>
 											<Field name="certificates">
+												{({ field, form }: any) => getPermissionButtons(field, form)}
+											</Field>
+										</div>
+										<div className="mb-3">
+											<label htmlFor="ignored" className="form-label">
+												<T id="credentials" />
+											</label>
+											<Field name="credentials">
 												{({ field, form }: any) => getPermissionButtons(field, form)}
 											</Field>
 										</div>

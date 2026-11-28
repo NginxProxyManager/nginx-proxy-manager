@@ -1,7 +1,10 @@
 {
 	"operationId": "regenUser2faCodes",
 	"summary": "Regenerate 2FA backup codes",
-	"tags": ["users"],
+	"tags": [
+		"users"
+	],
+	"description": "Regenerates one-time backup codes after verifying an existing TOTP code.",
 	"parameters": [
 		{
 			"in": "path",
@@ -30,7 +33,9 @@
 							"example": "123456"
 						}
 					},
-					"required": ["code"],
+					"required": [
+						"code"
+					],
 					"type": "object"
 				},
 				"example": {
@@ -61,7 +66,9 @@
 					},
 					"schema": {
 						"type": "object",
-						"required": ["backup_codes"],
+						"required": [
+							"backup_codes"
+						],
 						"additionalProperties": false,
 						"properties": {
 							"backup_codes": {

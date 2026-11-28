@@ -16,8 +16,8 @@ anonymous volumes are removed on completion.
 
 ```
 cd nginxproxymanager/test
-yarn install
-yarn run cypress
+npm install
+npm run cypress
 ```
 
 ## VS Code

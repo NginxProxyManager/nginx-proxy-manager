@@ -1,7 +1,10 @@
 {
 	"operationId": "health",
 	"summary": "Returns the API health status",
-	"tags": ["public"],
+	"tags": [
+		"public"
+	],
+	"description": "Public health check for the admin API. Returns setup status and semantic version fields without authentication.",
 	"responses": {
 		"200": {
 			"description": "200 response",
@@ -15,7 +18,8 @@
 								"version": {
 									"major": 2,
 									"minor": 1,
-									"revision": 0
+									"revision": 0,
+									"string": "v2.1.0"
 								}
 							}
 						}

@@ -1,12 +1,17 @@
 {
 	"operationId": "updateRedirectionHost",
 	"summary": "Update a Redirection Host",
-	"tags": ["redirection-hosts"],
+	"tags": [
+		"redirection-hosts"
+	],
 	"security": [
 		{
-			"bearerAuth": ["redirection_hosts.manage"]
+			"bearerAuth": [
+				"redirection_hosts.manage"
+			]
 		}
 	],
+	"description": "Updates redirection host matching rules and destination.",
 	"parameters": [
 		{
 			"in": "path",
@@ -86,7 +91,9 @@
 								"created_on": "2024-10-09T01:13:12.000Z",
 								"modified_on": "2024-10-09T01:18:11.000Z",
 								"owner_user_id": 1,
-								"domain_names": ["test.example.com"],
+								"domain_names": [
+									"test.example.com"
+								],
 								"forward_domain_name": "something-else.com",
 								"preserve_path": false,
 								"certificate_id": 0,
@@ -112,7 +119,9 @@
 									"name": "Administrator",
 									"nickname": "Admin",
 									"avatar": "",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								},
 								"certificate": null
 							}

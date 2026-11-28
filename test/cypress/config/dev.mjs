@@ -18,6 +18,8 @@ export default defineConfig({
 		},
 		env: {
 			swaggerBase: `{{baseUrl}}/api/schema?ts=${Date.now()}`,
+			// Set to 1 with docker compose --profile vault for VaultIntegration.cy.js
+			VAULT_INTEGRATION: 0,
 		},
 		baseUrl: "http://127.0.0.1:3081",
 	}

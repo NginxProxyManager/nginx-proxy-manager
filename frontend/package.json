@@ -38,6 +38,7 @@
 		"react-router-dom": "^7.18.5",
 		"react-select": "^5.10.2",
 		"react-toastify": "^11.2.0",
+		"rehype-sanitize": "^6.0.0",
 		"rooks": "^9.9.0"
 	},
 	"devDependencies": {

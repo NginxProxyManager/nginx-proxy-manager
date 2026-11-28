@@ -200,6 +200,15 @@
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Dữ liệu này sẽ được lưu trữ dưới dạng bản rõ trong cơ sở dữ liệu và trong một tệp!"
 	},
+	"certificates.dns.change-credentials": {
+		"defaultMessage": "Đổi thông tin xác thực DNS"
+	},
+	"certificates.dns.change-credentials.help": {
+		"defaultMessage": "Thay thế thông tin xác thực DNS mà chứng chỉ này sử dụng. Thay đổi có hiệu lực ở lần gia hạn tiếp theo."
+	},
+	"certificates.dns.credentials-required": {
+		"defaultMessage": "Chọn thông tin xác thực đã lưu hoặc bên ngoài, hoặc nhập thông tin xác thực"
+	},
 	"certificates.dns.propagation-seconds": {
 		"defaultMessage": "Thời gian lan truyền (giây)"
 	},
@@ -850,5 +859,152 @@
 	},
 	"users": {
 		"defaultMessage": "Người dùng"
+	},
+	"api-key": {
+		"defaultMessage": "Khóa API"
+	},
+	"api-keys": {
+		"defaultMessage": "Khóa API tự động hóa"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Sao chép khóa này ngay — sẽ không hiển thị lại."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Thu hồi khóa API này? Tự động hóa đang dùng sẽ ngừng hoạt động."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Token Bearer (npmak_…) cho script và CI. Chỉ quản trị viên."
+	},
+	"credential": {
+		"defaultMessage": "Thông tin xác thực"
+	},
+	"credential-provider": {
+		"defaultMessage": "Nhà cung cấp thông tin xác thực"
+	},
+	"credential-providers": {
+		"defaultMessage": "Kho thông tin xác thực bên ngoài"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Kết nối Vault, AWS Secrets Manager, Azure Key Vault hoặc Infisical qua OIDC."
+	},
+	"credential-providers.aws.region": {
+		"defaultMessage": "Vùng AWS"
+	},
+	"credential-providers.aws.role-arn": {
+		"defaultMessage": "ARN vai trò IAM"
+	},
+	"credential-providers.azure.tenant": {
+		"defaultMessage": "ID tenant"
+	},
+	"credential-providers.azure.vault-url": {
+		"defaultMessage": "URL Key Vault"
+	},
+	"credential-providers.field.name": {
+		"defaultMessage": "Tên"
+	},
+	"credential-providers.field.type": {
+		"defaultMessage": "Loại"
+	},
+	"credential-providers.http.url-template": {
+		"defaultMessage": "Mẫu URL"
+	},
+	"credential-providers.infisical.client-id": {
+		"defaultMessage": "Client ID của Universal Auth"
+	},
+	"credential-providers.infisical.client-secret": {
+		"defaultMessage": "Client secret của Universal Auth"
+	},
+	"credential-providers.infisical.environment": {
+		"defaultMessage": "Slug môi trường"
+	},
+	"credential-providers.infisical.host": {
+		"defaultMessage": "Máy chủ Infisical"
+	},
+	"credential-providers.infisical.workspace-id": {
+		"defaultMessage": "ID dự án (workspace)"
+	},
+	"credential-providers.oidc.audience": {
+		"defaultMessage": "Audience (tùy chọn)"
+	},
+	"credential-providers.oidc.client-id": {
+		"defaultMessage": "ID máy khách"
+	},
+	"credential-providers.oidc.client-secret": {
+		"defaultMessage": "Bí mật máy khách"
+	},
+	"credential-providers.oidc.issuer": {
+		"defaultMessage": "Nhà phát hành OIDC"
+	},
+	"credential-providers.test-auth": {
+		"defaultMessage": "Kiểm tra xác thực"
+	},
+	"credential-providers.vault.address": {
+		"defaultMessage": "Địa chỉ Vault"
+	},
+	"credential-providers.vault.mount": {
+		"defaultMessage": "Điểm gắn bí mật"
+	},
+	"credential-providers.vault.role": {
+		"defaultMessage": "Vai trò Vault"
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Kiểm tra OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Kiểm tra phân giải"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Đường dẫn bí mật"
+	},
+	"credentials": {
+		"defaultMessage": "Thông tin xác thực DNS"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Đường dẫn bí mật"
+	},
+	"credentials.source": {
+		"defaultMessage": "Nguồn thông tin xác thực"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Kho bên ngoài (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Lưu trong kho NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Nhập thủ công (một lần)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Thông tin xác thực đã lưu"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Mã hóa trên volume /data, tái sử dụng cho chứng chỉ DNS."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Di chuyển thông tin xác thực DNS cũ"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} chứng chỉ sẽ chuyển thông tin nội tuyến vào kho."
+	},
+	"webhook": {
+		"defaultMessage": "Điểm cuối webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Bí mật ký (xác minh X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Nhận callback HTTP có chữ ký khi host hoặc chứng chỉ thay đổi."
+	},
+	"documentation": {
+		"defaultMessage": "Tài liệu"
+	},
+	"documentation.open-new-tab": {
+		"defaultMessage": "Mở trong thẻ mới"
+	},
+	"help.view-full-docs": {
+		"defaultMessage": "Xem toàn bộ tài liệu"
 	}
 }

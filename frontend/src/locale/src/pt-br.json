@@ -143,6 +143,21 @@
 	"action.view-details": {
 		"defaultMessage": "Ver Detalhes"
 	},
+	"api-key": {
+		"defaultMessage": "Chave de API"
+	},
+	"api-keys": {
+		"defaultMessage": "Chaves de API de automação"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Copie esta chave agora — ela não será exibida novamente."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Revogar esta chave de API? As automações que a utilizam deixarão de funcionar."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Tokens Bearer (npmak_…) para scripts e CI. Somente administradores."
+	},
 	"auditlogs": {
 		"defaultMessage": "Logs de Auditoria"
 	},
@@ -191,11 +206,20 @@
 	"certificates.custom.warning": {
 		"defaultMessage": "Arquivos de chave protegidos por senha não são suportados."
 	},
+	"certificates.dns.change-credentials": {
+		"defaultMessage": "Alterar credenciais de DNS"
+	},
+	"certificates.dns.change-credentials.help": {
+		"defaultMessage": "Substitui as credenciais de DNS usadas por este certificado. A alteração entra em vigor na próxima renovação."
+	},
 	"certificates.dns.credentials": {
 		"defaultMessage": "Conteúdo do Arquivo de Credenciais"
 	},
 	"certificates.dns.credentials-note": {
 		"defaultMessage": "Este plugin requer um arquivo de configuração contendo um token de API ou outras credenciais do seu provedor"
+	},
+	"certificates.dns.credentials-required": {
+		"defaultMessage": "Escolha uma credencial armazenada ou externa, ou insira as credenciais"
 	},
 	"certificates.dns.credentials-warning": {
 		"defaultMessage": "Estes dados serão armazenados em texto puro no banco de dados e em um arquivo!"
@@ -332,6 +356,117 @@
 	"created-on": {
 		"defaultMessage": "Criado em: {date}"
 	},
+	"credential": {
+		"defaultMessage": "Credencial"
+	},
+	"credential-provider": {
+		"defaultMessage": "Provedor de credenciais"
+	},
+	"credential-providers": {
+		"defaultMessage": "Repositórios externos de credenciais"
+	},
+	"credential-providers.aws.region": {
+		"defaultMessage": "Região da AWS"
+	},
+	"credential-providers.aws.role-arn": {
+		"defaultMessage": "ARN da função IAM"
+	},
+	"credential-providers.azure.tenant": {
+		"defaultMessage": "ID do locatário"
+	},
+	"credential-providers.azure.vault-url": {
+		"defaultMessage": "URL do Key Vault"
+	},
+	"credential-providers.field.name": {
+		"defaultMessage": "Nome"
+	},
+	"credential-providers.field.type": {
+		"defaultMessage": "Tipo"
+	},
+	"credential-providers.http.url-template": {
+		"defaultMessage": "Modelo de URL"
+	},
+	"credential-providers.infisical.client-id": {
+		"defaultMessage": "ID do cliente do Universal Auth"
+	},
+	"credential-providers.infisical.client-secret": {
+		"defaultMessage": "Segredo do cliente do Universal Auth"
+	},
+	"credential-providers.infisical.environment": {
+		"defaultMessage": "Slug do ambiente"
+	},
+	"credential-providers.infisical.host": {
+		"defaultMessage": "Host do Infisical"
+	},
+	"credential-providers.infisical.workspace-id": {
+		"defaultMessage": "ID do projeto (workspace)"
+	},
+	"credential-providers.oidc.audience": {
+		"defaultMessage": "Audiência (opcional)"
+	},
+	"credential-providers.oidc.client-id": {
+		"defaultMessage": "ID do cliente"
+	},
+	"credential-providers.oidc.client-secret": {
+		"defaultMessage": "Segredo do cliente"
+	},
+	"credential-providers.oidc.issuer": {
+		"defaultMessage": "Emissor OIDC"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Pasta e chave do segredo (ex.: /DNS/cloudflare-api-token)"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Conecte HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, Infisical (Universal Auth) ou um endpoint HTTP personalizado."
+	},
+	"credential-providers.test-auth": {
+		"defaultMessage": "Testar autenticação"
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Testar OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Testar resolução"
+	},
+	"credential-providers.vault.address": {
+		"defaultMessage": "Endereço do Vault"
+	},
+	"credential-providers.vault.mount": {
+		"defaultMessage": "Ponto de montagem de segredos"
+	},
+	"credential-providers.vault.role": {
+		"defaultMessage": "Função do Vault"
+	},
+	"credentials": {
+		"defaultMessage": "Credenciais de DNS"
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migrar credenciais de DNS legadas"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} certificado(s) teriam as credenciais embutidas movidas para o cofre."
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Pasta + chave do segredo no Infisical"
+	},
+	"credentials.source": {
+		"defaultMessage": "Origem da credencial"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Repositório externo (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Armazenada no cofre do NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Inserir manualmente (uso único)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Credencial armazenada"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Criptografadas no volume /data e reutilizáveis em certificados DNS."
+	},
 	"dashboard": {
 		"defaultMessage": "Painel"
 	},
@@ -346,6 +481,12 @@
 	},
 	"disabled": {
 		"defaultMessage": "Desativado"
+	},
+	"documentation": {
+		"defaultMessage": "Documentação"
+	},
+	"documentation.open-new-tab": {
+		"defaultMessage": "Abrir em nova aba"
 	},
 	"domain-names": {
 		"defaultMessage": "Nomes de Domínio"
@@ -439,6 +580,9 @@
 	},
 	"form.unsaved-changes": {
 		"defaultMessage": "Há alterações não salvas. Tem certeza de que deseja descartá-las?"
+	},
+	"help.view-full-docs": {
+		"defaultMessage": "Ver documentação completa"
 	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "Bloquear Exploits Comuns"
@@ -850,5 +994,17 @@
 	},
 	"users": {
 		"defaultMessage": "Usuários"
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooks"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Segredo de assinatura (use para verificar o X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Receba callbacks HTTP assinados quando hosts ou certificados forem alterados."
 	}
 }

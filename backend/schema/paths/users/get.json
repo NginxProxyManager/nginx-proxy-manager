@@ -1,12 +1,17 @@
 {
 	"operationId": "getUsers",
 	"summary": "Get all users",
-	"tags": ["users"],
+	"tags": [
+		"users"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
+	"description": "Lists administrator accounts and role assignments.",
 	"parameters": [
 		{
 			"in": "query",
@@ -14,7 +19,9 @@
 			"description": "Expansions",
 			"schema": {
 				"type": "string",
-				"enum": ["permissions"]
+				"enum": [
+					"permissions"
+				]
 			}
 		}
 	],
@@ -35,7 +42,9 @@
 									"name": "Jamie Curnow",
 									"nickname": "James",
 									"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-									"roles": ["admin"]
+									"roles": [
+										"admin"
+									]
 								}
 							]
 						},
@@ -50,7 +59,9 @@
 									"name": "Jamie Curnow",
 									"nickname": "James",
 									"avatar": "//www.gravatar.com/avatar/6193176330f8d38747f038c170ddb193?default=mm",
-									"roles": ["admin"],
+									"roles": [
+										"admin"
+									],
 									"permissions": {
 										"visibility": "all",
 										"proxy_hosts": "manage",
@@ -58,7 +69,8 @@
 										"dead_hosts": "manage",
 										"streams": "manage",
 										"access_lists": "manage",
-										"certificates": "manage"
+										"certificates": "manage",
+										"credentials": "manage"
 									}
 								}
 							]

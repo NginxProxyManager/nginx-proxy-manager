@@ -1,7 +1,10 @@
 {
 	"operationId": "checkVersion",
 	"summary": "Returns any new version data from github",
-	"tags": ["public"],
+	"tags": [
+		"public"
+	],
+	"description": "Checks whether a newer upstream release is available compared to the running version.",
 	"responses": {
 		"200": {
 			"description": "200 response",

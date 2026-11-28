@@ -1,12 +1,17 @@
 {
 	"operationId": "enableProxyHost",
 	"summary": "Enable a Proxy Host",
-	"tags": ["proxy-hosts"],
+	"tags": [
+		"proxy-hosts"
+	],
 	"security": [
 		{
-			"bearerAuth": ["proxy_hosts.manage"]
+			"bearerAuth": [
+				"proxy_hosts.manage"
+			]
 		}
 	],
+	"description": "Enables a proxy host and applies nginx configuration.",
 	"parameters": [
 		{
 			"in": "path",

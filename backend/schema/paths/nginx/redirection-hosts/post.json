@@ -1,7 +1,9 @@
 {
 	"operationId": "createRedirectionHost",
 	"summary": "Create a Redirection Host",
-	"tags": ["redirection-hosts"],
+	"tags": [
+		"redirection-hosts"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Creates a redirection host with source domains and target URL or scheme.",
 	"requestBody": {
 		"description": "Redirection Host Payload",
 		"required": true,

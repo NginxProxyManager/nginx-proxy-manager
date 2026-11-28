@@ -679,5 +679,83 @@
 	},
 	"users": {
 		"defaultMessage": "Úsáideoirí"
+	},
+	"api-key": {
+		"defaultMessage": "Eochair API"
+	},
+	"api-keys": {
+		"defaultMessage": "Eochracha API uathoibrithe"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Cóipeáil an eochair seo anois — ní thaispeánfar arís í."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Cúlghairm an eochair API seo? Stopfaidh uathoibriú a úsáideann í."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Comharthaí Bearer (npmak_…) do scripteanna agus CI. Riarthóirí amháin."
+	},
+	"credential": {
+		"defaultMessage": "Dintiúr"
+	},
+	"credential-provider": {
+		"defaultMessage": "Soláthraí dintiúir"
+	},
+	"credential-providers": {
+		"defaultMessage": "Stórálacha seachtracha dintiúir"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Ceangail Vault, AWS Secrets Manager, Azure Key Vault nó Infisical trí OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Tástáil OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Tástáil réitigh"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Conair rúnda"
+	},
+	"credentials": {
+		"defaultMessage": "Dintiúir DNS"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Conair rúnda"
+	},
+	"credentials.source": {
+		"defaultMessage": "Foinse dintiúir"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Stór seachtrach (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Stóráilte i stórlann NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Iontráil de láimh (uair amháin)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Dintiúr stóráilte"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Criptithe ar an toirt /data, in-athúsáidte do dheimhnithe DNS."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Aistrigh seandintiúir DNS"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "Bogfadh {count} deimhniú(í) dintiúir inlíne go dtí an stórlann."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooks"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Rún sínithe (do fhíorú X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Glaoanna HTTP sínithe nuair a athraíonn óstach nó deimhnithe."
 	}
 }

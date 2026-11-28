@@ -1,7 +1,9 @@
 {
 	"operationId": "create404Host",
 	"summary": "Create a 404 Host",
-	"tags": ["404-hosts"],
+	"tags": [
+		"404-hosts"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Creates a 404 host that serves a default site when no other host matches.",
 	"requestBody": {
 		"description": "404 Host Payload",
 		"required": true,

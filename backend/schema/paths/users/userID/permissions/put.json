@@ -1,12 +1,17 @@
 {
 	"operationId": "updateUserPermissions",
 	"summary": "Update a User's Permissions",
-	"tags": ["users"],
+	"tags": [
+		"users"
+	],
 	"security": [
 		{
-			"bearerAuth": ["admin"]
+			"bearerAuth": [
+				"admin"
+			]
 		}
 	],
+	"description": "Updates fine-grained permissions and roles assigned to a user.",
 	"parameters": [
 		{
 			"in": "path",

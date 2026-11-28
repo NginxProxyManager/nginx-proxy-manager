@@ -679,5 +679,83 @@
 	},
 	"users": {
 		"defaultMessage": "Pengguna"
+	},
+	"api-key": {
+		"defaultMessage": "Kunci API"
+	},
+	"api-keys": {
+		"defaultMessage": "Kunci API otomasi"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Salin kunci ini sekarang — tidak akan ditampilkan lagi."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Cabut kunci API ini? Otomasi yang menggunakannya akan berhenti."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Token Bearer (npmak_…) untuk skrip dan CI. Hanya admin."
+	},
+	"credential": {
+		"defaultMessage": "Kredensial"
+	},
+	"credential-provider": {
+		"defaultMessage": "Penyedia kredensial"
+	},
+	"credential-providers": {
+		"defaultMessage": "Penyimpanan kredensial eksternal"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Hubungkan Vault, AWS Secrets Manager, Azure Key Vault, atau Infisical melalui OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Uji OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Uji pengambilan"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Jalur rahasia"
+	},
+	"credentials": {
+		"defaultMessage": "Kredensial DNS"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Jalur rahasia"
+	},
+	"credentials.source": {
+		"defaultMessage": "Sumber kredensial"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Penyimpanan eksternal (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Disimpan di brankas NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Masukkan manual (sekali)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Kredensial tersimpan"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Terenkripsi di volume /data, dapat dipakai ulang untuk sertifikat DNS."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migrasi kredensial DNS lama"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} sertifikat akan memindahkan kredensial inline ke brankas."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Rahasia tanda tangan (verifikasi X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Callback HTTP bertanda tangan saat host atau sertifikat berubah."
 	}
 }

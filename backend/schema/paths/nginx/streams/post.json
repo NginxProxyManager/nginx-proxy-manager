@@ -1,7 +1,9 @@
 {
 	"operationId": "createStream",
 	"summary": "Create a Stream",
-	"tags": ["streams"],
+	"tags": [
+		"streams"
+	],
 	"security": [
 		{
 			"bearerAuth": [
@@ -9,6 +11,7 @@
 			]
 		}
 	],
+	"description": "Creates a layer-4 stream forwarding entry.",
 	"requestBody": {
 		"description": "Stream Payload",
 		"required": true,

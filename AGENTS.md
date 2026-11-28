@@ -55,7 +55,7 @@ asked for are easy to spot as AI slop and will be closed.
 - **Migrations are append-only.** Never edit an existing migration; add a new one
   named `YYYYMMDDHHMMSS_description.js`, and implement `down` where feasible.
 - **API changes need schema changes.** If you change a request or response shape,
-  update `backend/schema/` to match and run `yarn validate-schema` in `backend/`.
+  update `backend/schema/` to match and run `npm run validate-schema` in `backend/`.
   Call out breaking API changes explicitly.
 - **nginx templates** (`backend/templates/`) must produce valid config for every
   combination of options (SSL on/off, HTTP/2, HSTS, custom locations, access
@@ -88,8 +88,8 @@ asked for are easy to spot as AI slop and will be closed.
 - Run lint before finishing:
 
   ```bash
-  cd backend && yarn lint
-  cd frontend && yarn lint
+  cd backend && npm run lint
+  cd frontend && npm run lint
   ```
 
 - Match the conventions of surrounding code rather than introducing new patterns
@@ -101,15 +101,15 @@ Tests must be written in the language and framework of the folder they belong to
 
 | Folder | Framework | Command |
 | --- | --- | --- |
-| `frontend/` | React + Vitest | `cd frontend && yarn test --run` (plain `yarn test` starts watch mode) |
-| `backend/` | Node.js built-in test runner (`node --test`) | `cd backend && yarn test` |
+| `frontend/` | React + Vitest | `cd frontend && npm test -- --run` (plain `npm test` starts watch mode) |
+| `backend/` | Node.js built-in test runner (`node --test`) | `cd backend && npm test` |
 | `test/` | Cypress | `./scripts/cypress-dev` (needs the dev stack running) |
 
 - Don't add test files in any other language or framework (e.g. Python scripts).
 - Add or update tests for bug fixes and new behaviour.
 - Other useful checks:
-  - `cd frontend && yarn build` for the type check and production build.
-  - `cd backend && yarn validate-schema` for the API schema.
+  - `cd frontend && npm run build` for the type check and production build.
+  - `cd backend && npm run validate-schema` for the API schema.
   - `./scripts/start-dev` / `./scripts/stop-dev` for the full Docker dev stack
     (UI on port 3081).
 - If you could not run a test (e.g. no Docker available), say so plainly rather

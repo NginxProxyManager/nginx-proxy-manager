@@ -9,6 +9,7 @@ import {
 	showCustomCertificateModal,
 	showDeleteConfirmModal,
 	showDNSCertificateModal,
+	showDNSCredentialsModal,
 	showHelpModal,
 	showHTTPCertificateModal,
 	showRenewCertificateModal,
@@ -146,6 +147,7 @@ export default function TableWrapper() {
 					isFetching={isFetching}
 					onRenew={showRenewCertificateModal}
 					onDownload={handleDownload}
+					onChangeCredentials={showDNSCredentialsModal}
 					onDelete={(id: number) =>
 						showDeleteConfirmModal({
 							title: <T id="object.delete" tData={{ object: "certificate" }} />,

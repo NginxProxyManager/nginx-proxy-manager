@@ -1,0 +1,51 @@
+{
+	"type": "object",
+	"description": "Asynchronous background job",
+	"required": ["id", "created_on", "modified_on", "owner_user_id", "type", "status", "payload"],
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"$ref": "../common.json#/properties/id"
+		},
+		"created_on": {
+			"$ref": "../common.json#/properties/created_on"
+		},
+		"modified_on": {
+			"$ref": "../common.json#/properties/modified_on"
+		},
+		"owner_user_id": {
+			"$ref": "../common.json#/properties/user_id"
+		},
+		"type": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 64,
+			"example": "certificate.create"
+		},
+		"status": {
+			"type": "string",
+			"enum": ["pending", "running", "completed", "failed"],
+			"example": "pending"
+		},
+		"payload": {
+			"type": "object",
+			"description": "Job input payload",
+			"example": {}
+		},
+		"result": {
+			"type": ["object", "null"],
+			"description": "Job result when completed",
+			"example": null
+		},
+		"error": {
+			"type": ["string", "null"],
+			"description": "Error message when failed",
+			"example": null
+		},
+		"finished_on": {
+			"type": ["string", "null"],
+			"description": "Completion timestamp",
+			"example": null
+		}
+	}
+}

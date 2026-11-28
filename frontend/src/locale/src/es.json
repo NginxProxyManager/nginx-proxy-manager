@@ -688,5 +688,83 @@
 	},
 	"users": {
 		"defaultMessage": "Usuarios"
+	},
+	"api-key": {
+		"defaultMessage": "Clave API"
+	},
+	"api-keys": {
+		"defaultMessage": "Claves API de automatización"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Copie esta clave ahora; no se volverá a mostrar."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "¿Revocar esta clave API? Las automatizaciones que la usen dejarán de funcionar."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Tokens Bearer (npmak_…) para scripts y CI. Solo administradores."
+	},
+	"credential": {
+		"defaultMessage": "Credencial"
+	},
+	"credential-provider": {
+		"defaultMessage": "Proveedor de credenciales"
+	},
+	"credential-providers": {
+		"defaultMessage": "Almacenes externos de credenciales"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Conecte Vault, AWS Secrets Manager, Azure Key Vault o Infisical mediante OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Probar OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Probar obtención"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Ruta del secreto"
+	},
+	"credentials": {
+		"defaultMessage": "Credenciales DNS"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Ruta del secreto"
+	},
+	"credentials.source": {
+		"defaultMessage": "Origen de la credencial"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Almacén externo (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Guardada en la bóveda de NPM"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Introducir manualmente (una vez)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Credencial guardada"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Cifrada en el volumen /data y reutilizable para certificados DNS."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migrar credenciales DNS antiguas"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} certificado(s) moverían credenciales integradas a la bóveda."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooks"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Secreto de firma (verificación X-NPM-Signature)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Reciba callbacks HTTP firmados al cambiar hosts proxy o certificados."
 	}
 }

@@ -772,5 +772,83 @@
 	},
 	"users": {
 		"defaultMessage": "Brukere"
+	},
+	"api-key": {
+		"defaultMessage": "API-nøkkel"
+	},
+	"api-keys": {
+		"defaultMessage": "API-nøkler for automatisering"
+	},
+	"api-keys.copy-once": {
+		"defaultMessage": "Kopier denne nøkkelen nå — den vises ikke igjen."
+	},
+	"api-keys.revoke-confirm": {
+		"defaultMessage": "Tilbakekalle denne API-nøkkelen? Automatiseringer som bruker den stopper."
+	},
+	"api-keys.subtitle": {
+		"defaultMessage": "Bearer-tokens (npmak_…) for skript og CI. Kun administratorer."
+	},
+	"credential": {
+		"defaultMessage": "Legitimasjon"
+	},
+	"credential-provider": {
+		"defaultMessage": "Legitimasjonsleverandør"
+	},
+	"credential-providers": {
+		"defaultMessage": "Eksterne legitimasjonslagre"
+	},
+	"credential-providers.subtitle": {
+		"defaultMessage": "Koble Vault, AWS Secrets Manager, Azure Key Vault eller Infisical via OIDC."
+	},
+	"credential-providers.test-oidc": {
+		"defaultMessage": "Test OIDC"
+	},
+	"credential-providers.test-resolve": {
+		"defaultMessage": "Test oppløsning"
+	},
+	"credential-providers.resolve-path": {
+		"defaultMessage": "Hemmelig sti"
+	},
+	"credentials": {
+		"defaultMessage": "DNS-legitimasjon"
+	},
+	"credentials.secret-path": {
+		"defaultMessage": "Hemmelig sti"
+	},
+	"credentials.source": {
+		"defaultMessage": "Kilde for legitimasjon"
+	},
+	"credentials.source.external": {
+		"defaultMessage": "Eksternt lager (Vault, AWS, …)"
+	},
+	"credentials.source.internal": {
+		"defaultMessage": "Lagret i NPM-hvelv"
+	},
+	"credentials.source.manual": {
+		"defaultMessage": "Skriv inn manuelt (engangs)"
+	},
+	"credentials.stored": {
+		"defaultMessage": "Lagret legitimasjon"
+	},
+	"credentials.subtitle": {
+		"defaultMessage": "Kryptert på /data-volumet, gjenbrukbar for DNS-sertifikater."
+	},
+	"credentials.migrate": {
+		"defaultMessage": "Migrer eldre DNS-legitimasjon"
+	},
+	"credentials.migrate.summary": {
+		"defaultMessage": "{count} sertifikat(er) flytter inline-legitimasjon til hvelvet."
+	},
+	"webhook": {
+		"defaultMessage": "Webhook"
+	},
+	"webhooks": {
+		"defaultMessage": "Webhooks"
+	},
+	"webhooks.signing-secret": {
+		"defaultMessage": "Signeringshemmelighet (for X-NPM-Signature-verifisering)"
+	},
+	"webhooks.subtitle": {
+		"defaultMessage": "Signerte HTTP-tilbakeringinger ved endring av verter eller sertifikater."
 	}
 }

@@ -60,6 +60,7 @@ const internalUser = {
 			streams: "manage",
 			access_lists: "manage",
 			certificates: "manage",
+			credentials: "manage",
 		});
 
 		user = await internalUser.get(access, { id: user.id, expand: ["permissions"] });
